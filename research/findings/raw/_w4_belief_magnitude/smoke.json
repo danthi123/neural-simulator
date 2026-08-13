@@ -1,0 +1,368 @@
+{
+  "runner": "_w4_belief_magnitude_calibration_derisk",
+  "faculty": "D pragmatics: the LAST W4 lever -- calibrate the graded belief's neural success-landscape MAGNITUDE. The ~2x implicature overshoot was the whole-population landscape read summing off-target belief-only AND-gate leak; reading the true-intent detector (matched group) + linearizing its content-free transfer to the RSA-posterior scale lands the implicature cell on the analytic 0.20. FUNCTIONAL pragmatics correlate.",
+  "builds_on": [
+    "2026-08-13-w4-informativeness-objective-BOUNDARY (objective half surpassed; residual = landscape read)",
+    "2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY (the graded plateau read reused here)",
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)"
+  ],
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "smoke": true,
+  "move_eps": 0.03,
+  "recovery_tol": 0.08,
+  "verdict": "UNDEFINED -- smoke (n<6); the whole-pop-vs-matched-vs-calibrated implicature cell + the per-objective A/B teeth are printed for mechanism-check only. The 6-seed bar is authoritative.",
+  "go": false,
+  "external_grounding": [
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA posterior scale the read is calibrated to.",
+    "Mikulasch & Priesemann; Larkum (2013) TiNS 36(3):141 -- the dendritic analog read whose transfer is linearized. The inverse-transfer is the standard linearizing read-out / transfer-function deconvolution."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PRINCIPLED, non-circular: the matched read is a FAITHFUL encoder of the RSA posterior (mean |T^{-1}(matched)-belief_mass| < 0.08 -- it lands on the posterior scale, NOT the analytic target; T is measured with content-free drives); weights' L1 == ANALYTIC_L1",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "recovery_err=0.06565 (tol 0.08); L1==ANALYTIC_L1=True"
+    },
+    {
+      "kind": "require",
+      "name": "BELIEF unchanged (moat): graded implicature margin > 0.05 AND reading the matched detector preserves argmax/recall",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "margin=0.463 argmax_preserved=True"
+    },
+    {
+      "kind": "require",
+      "name": "VALID: SCRAMBLE (graded mass on WRONG intents) LOSES to one-hot on the MATCHED OBJ_inf (reading the true-intent detector cannot rescue wrong-intent mass)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.0 onehot=0.8"
+    },
+    {
+      "kind": "require",
+      "name": "the whole-population RAW arm reproduces [W]'s boundary (onehot >= graded on OBJ_inf)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "wholepop OBJ_inf move=-0.1499"
+    },
+    {
+      "kind": "control",
+      "name": "the read correction REMOVES the ~2x implicature overshoot (whole-pop cell -> matched, toward analytic)",
+      "ok": true,
+      "detail": "treatment=0.1977 control=0.0016 |sep|=0.1961 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA + the all-or-none coincidence current",
+      "why": "a host-side READ-OUT correction (read the true-intent detector instead of the whole population); beliefs byte-identical to the W4 A/B; the magnitude-preserving graded read reused; plasticity off."
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "gates": {
+    "MATCHED_OBJ_inf_graded_beats_onehot_6of6": true,
+    "principled_faithful_read_recovers_posterior": true,
+    "weights_L1_matches_analytic": true,
+    "matched_read_recovers_posterior": true,
+    "belief_unchanged_moat": true,
+    "scramble_loses": true,
+    "onehot_reproduced": true,
+    "wholepop_reproduces_W_boundary": true,
+    "calibrated_inverse_also_beats_onehot_reported": true
+  },
+  "implicature_cell_graded": {
+    "wholepop": 0.3977,
+    "matched": 0.2016,
+    "calibrated": 0.2569,
+    "analytic": 0.2,
+    "onehot_wholepop": 0.1523,
+    "onehot_calibrated": 0.0,
+    "transfer_ratio_r025_r1_mean": 0.1853
+  },
+  "recovery": {
+    "mean_recovery_err_onehot_graded": 0.06565,
+    "tol": 0.08,
+    "per_belief": {
+      "onehot": 0.0554,
+      "graded": 0.0759,
+      "scramble": 0.048,
+      "graded_lesion": 0.0598
+    },
+    "note": "mean |fhat-belief_mass|; small => the inverse maps the read to the RSA posterior scale (not the analytic target) -- the non-circularity anti-cheat."
+  },
+  "aggregate": {
+    "calibrated": {
+      "M1": {
+        "onehot": 0.83392,
+        "graded": 0.84266,
+        "scramble": 0.05306,
+        "move": 0.00874,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.94308,
+        "scramble": 0.0,
+        "move": 0.14308,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.71813,
+        "graded": 0.64461,
+        "scramble": 0.13265,
+        "move": -0.07352,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.83392,
+        "graded": 0.84266,
+        "scramble": 0.18639,
+        "move": 0.00874,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    },
+    "matched": {
+      "M1": {
+        "onehot": 0.88421,
+        "graded": 0.93526,
+        "scramble": 0.03503,
+        "move": 0.05105,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.8,
+        "graded": 0.99845,
+        "scramble": 0.0,
+        "move": 0.19845,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.84386,
+        "graded": 0.83919,
+        "scramble": 0.08757,
+        "move": -0.00467,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.88421,
+        "graded": 0.93526,
+        "scramble": 0.16836,
+        "move": 0.05105,
+        "seeds_graded_gt_onehot": 1,
+        "scramble_loses": true
+      }
+    },
+    "wholepop_reproduces_W_boundary": {
+      "M1": {
+        "onehot": 0.86461,
+        "graded": 0.75067,
+        "scramble": 0.22159,
+        "move": -0.11394,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.95226,
+        "graded": 0.80234,
+        "scramble": 0.30335,
+        "move": -0.14992,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.83597,
+        "graded": 0.78547,
+        "scramble": 0.30617,
+        "move": -0.0505,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.86461,
+        "graded": 0.75067,
+        "scramble": 0.28553,
+        "move": -0.11394,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    },
+    "belief_implicature_margin_graded": 0.463,
+    "argmax_preserved": true
+  },
+  "informativeness_weights": {
+    "primary_per_intent_entropy_w_inf": [
+      -0.0,
+      -0.0,
+      0.5004
+    ],
+    "L1_matches_analytic_ANALYTIC_L1": true,
+    "intents": [
+      "none",
+      "SBNA",
+      "all"
+    ],
+    "utterances": [
+      "none",
+      "some",
+      "all"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 88.0,
+      "slope": 0.11,
+      "transfer_ratio_r025_r1": 0.1853,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.86461,
+            "OBJ_inf": 0.95226,
+            "OBJ_surp": 0.83597,
+            "OBJ_cell": 0.86461
+          },
+          "graded": {
+            "M1": 0.75067,
+            "OBJ_inf": 0.80234,
+            "OBJ_surp": 0.78547,
+            "OBJ_cell": 0.75067
+          },
+          "scramble": {
+            "M1": 0.22159,
+            "OBJ_inf": 0.30335,
+            "OBJ_surp": 0.30617,
+            "OBJ_cell": 0.28553
+          },
+          "graded_lesion": {
+            "M1": 0.71199,
+            "OBJ_inf": 0.69519,
+            "OBJ_surp": 0.76762,
+            "OBJ_cell": 0.71199
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.88421,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.84386,
+            "OBJ_cell": 0.88421
+          },
+          "graded": {
+            "M1": 0.93526,
+            "OBJ_inf": 0.99845,
+            "OBJ_surp": 0.83919,
+            "OBJ_cell": 0.93526
+          },
+          "scramble": {
+            "M1": 0.03503,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.08757,
+            "OBJ_cell": 0.16836
+          },
+          "graded_lesion": {
+            "M1": 0.8484,
+            "OBJ_inf": 0.77222,
+            "OBJ_surp": 0.77285,
+            "OBJ_cell": 0.8484
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.83392,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.71813,
+            "OBJ_cell": 0.83392
+          },
+          "graded": {
+            "M1": 0.84266,
+            "OBJ_inf": 0.94308,
+            "OBJ_surp": 0.64461,
+            "OBJ_cell": 0.84266
+          },
+          "scramble": {
+            "M1": 0.05306,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.13265,
+            "OBJ_cell": 0.18639
+          },
+          "graded_lesion": {
+            "M1": 0.79285,
+            "OBJ_inf": 0.83488,
+            "OBJ_surp": 0.59221,
+            "OBJ_cell": 0.79285
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.1523,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded": {
+          "wholepop": 0.3977,
+          "matched": 0.2016,
+          "calibrated": 0.2569
+        },
+        "scramble": {
+          "wholepop": 0.3212,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded_lesion": {
+          "wholepop": 0.5048,
+          "matched": 0.4278,
+          "calibrated": 0.3651
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0554,
+        "graded": 0.0759,
+        "scramble": 0.048,
+        "graded_lesion": 0.0598
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          0.7018,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.5849,
+          0.9431
+        ]
+      },
+      "belief_implicature_margin_graded": 0.463
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. The W4 pragmatic residual was a READ artifact: the whole-population landscape read summed off-target belief-only AND-gate leak (at high belief mass, an off-target detector leaks without the intent), inflating the implicature cell ~2x -- NOT the belief content (correct, moat intact) and NOT the coincidence nonlinearity (the graded plateau is magnitude-preserving, r_coinc(.27)/r_coinc(1)~0.23). The fix is a host-side READ-OUT correction (the same category as the row-norm + mag-fidelity the pipeline already applies): read the TRUE-INTENT detector success[t] (the correct definition of 'posterior mass on the intended state', using ONLY the intent goal) instead of the whole population. That single content-independent change lands the implicature cell on the analytic scale and flips the objective; it rescales MAGNITUDE/topography, it does NOT change the belief (byte-identical) or which intent wins (recall intact); SCRAMBLE still loses; the analytic 0.20 is an OUTPUT (belief content 0.27 + row-norm), never an input. A separate inverse of the detector's content-free transfer certifies the matched read faithfully encodes the posterior (the RECOVERY anti-cheat, mean|T^{-1}(matched)-mass| small -- it maps to the posterior, not the target); it is superfluous as a fix because the coincidence transfer is already magnitude-preserving. Once read faithfully, the objective rewards the graded belief's superior RSA calibration (its standing strength) instead of penalizing it for the leak. numpy-CPU real spiking Izhikevich; NO sim/ edit; additive NEW runner. NOT a claim of phenomenal access to another mind; a self-report would be a functional read-out.",
+  "elapsed_seconds": 3.0
+}

@@ -1,0 +1,1041 @@
+{
+  "runner": "_w4_belief_magnitude_calibration_derisk",
+  "faculty": "D pragmatics: the LAST W4 lever -- calibrate the graded belief's neural success-landscape MAGNITUDE. The ~2x implicature overshoot was the whole-population landscape read summing off-target belief-only AND-gate leak; reading the true-intent detector (matched group) + linearizing its content-free transfer to the RSA-posterior scale lands the implicature cell on the analytic 0.20. FUNCTIONAL pragmatics correlate.",
+  "builds_on": [
+    "2026-08-13-w4-informativeness-objective-BOUNDARY (objective half surpassed; residual = landscape read)",
+    "2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY (the graded plateau read reused here)",
+    "2026-08-01-W4-recursive-theory-of-mind-...-6seed-GO (depth-2 scalar implicature GO)"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "smoke": false,
+  "move_eps": 0.03,
+  "recovery_tol": 0.08,
+  "verdict": "BOUNDARY -- MATCHED OBJ_inf move=+0.0905 (5/6). The read correction moves the implicature cell (whole-pop 0.32 -> matched 0.17, analytic 0.20) but does NOT clear the 6/6 MATCHED OBJ_inf GO bar. CAL per-intent onehot=[1.0, 0.923, 0.806] graded=[1.0, 0.897, 0.91] (none, SBNA, all). The refuted deep-credit/BDSP rule is NOT re-proposed.",
+  "go": false,
+  "external_grounding": [
+    "Frank & Goodman (2012) Science 336(6084):998 -- the RSA posterior scale the read is calibrated to.",
+    "Mikulasch & Priesemann; Larkum (2013) TiNS 36(3):141 -- the dendritic analog read whose transfer is linearized. The inverse-transfer is the standard linearizing read-out / transfer-function deconvolution."
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PRINCIPLED, non-circular: the matched read is a FAITHFUL encoder of the RSA posterior (mean |T^{-1}(matched)-belief_mass| < 0.08 -- it lands on the posterior scale, NOT the analytic target; T is measured with content-free drives); weights' L1 == ANALYTIC_L1",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "recovery_err=0.04191 (tol 0.08); L1==ANALYTIC_L1=True"
+    },
+    {
+      "kind": "require",
+      "name": "BELIEF unchanged (moat): graded implicature margin > 0.05 AND reading the matched detector preserves argmax/recall",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "margin=0.50627 argmax_preserved=True"
+    },
+    {
+      "kind": "require",
+      "name": "VALID: SCRAMBLE (graded mass on WRONG intents) LOSES to one-hot on the MATCHED OBJ_inf (reading the true-intent detector cannot rescue wrong-intent mass)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "scramble=0.18889 onehot=0.81668"
+    },
+    {
+      "kind": "require",
+      "name": "the whole-population RAW arm reproduces [W]'s boundary (onehot >= graded on OBJ_inf)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "wholepop OBJ_inf move=-0.0108"
+    },
+    {
+      "kind": "control",
+      "name": "the read correction REMOVES the ~2x implicature overshoot (whole-pop cell -> matched, toward analytic)",
+      "ok": true,
+      "detail": "treatment=0.11595 control=0.02812 |sep|=0.08783 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/OU/NMDA + the all-or-none coincidence current",
+      "why": "a host-side READ-OUT correction (read the true-intent detector instead of the whole population); beliefs byte-identical to the W4 A/B; the magnitude-preserving graded read reused; plasticity off."
+    }
+  ],
+  "undefined_reasons": [],
+  "gates": {
+    "MATCHED_OBJ_inf_graded_beats_onehot_6of6": false,
+    "principled_faithful_read_recovers_posterior": true,
+    "weights_L1_matches_analytic": true,
+    "matched_read_recovers_posterior": true,
+    "belief_unchanged_moat": true,
+    "scramble_loses": true,
+    "onehot_reproduced": true,
+    "wholepop_reproduces_W_boundary": true,
+    "calibrated_inverse_also_beats_onehot_reported": false
+  },
+  "implicature_cell_graded": {
+    "wholepop": 0.316,
+    "matched": 0.1719,
+    "calibrated": 0.1627,
+    "analytic": 0.2,
+    "onehot_wholepop": 0.07577,
+    "onehot_calibrated": 0.04878,
+    "transfer_ratio_r025_r1_mean": 0.2304
+  },
+  "recovery": {
+    "mean_recovery_err_onehot_graded": 0.04191,
+    "tol": 0.08,
+    "per_belief": {
+      "onehot": 0.03378,
+      "graded": 0.05005,
+      "scramble": 0.05105,
+      "graded_lesion": 0.03247
+    },
+    "note": "mean |fhat-belief_mass|; small => the inverse maps the read to the RSA posterior scale (not the analytic target) -- the non-circularity anti-cheat."
+  },
+  "aggregate": {
+    "calibrated": {
+      "M1": {
+        "onehot": 0.90965,
+        "graded": 0.93549,
+        "scramble": 0.09075,
+        "move": 0.02584,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.80631,
+        "graded": 0.90968,
+        "scramble": 0.1964,
+        "move": 0.10337,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.90326,
+        "graded": 0.89893,
+        "scramble": 0.09594,
+        "move": -0.00433,
+        "seeds_graded_gt_onehot": 4,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.91645,
+        "graded": 0.94686,
+        "scramble": 0.1422,
+        "move": 0.03041,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      }
+    },
+    "matched": {
+      "M1": {
+        "onehot": 0.92002,
+        "graded": 0.94534,
+        "scramble": 0.08642,
+        "move": 0.02532,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.81668,
+        "graded": 0.90718,
+        "scramble": 0.18889,
+        "move": 0.0905,
+        "seeds_graded_gt_onehot": 5,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.92227,
+        "graded": 0.92523,
+        "scramble": 0.09013,
+        "move": 0.00296,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.92707,
+        "graded": 0.95574,
+        "scramble": 0.13704,
+        "move": 0.02867,
+        "seeds_graded_gt_onehot": 6,
+        "scramble_loses": true
+      }
+    },
+    "wholepop_reproduces_W_boundary": {
+      "M1": {
+        "onehot": 0.88843,
+        "graded": 0.80675,
+        "scramble": 0.19182,
+        "move": -0.08168,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      },
+      "OBJ_inf": {
+        "onehot": 0.84566,
+        "graded": 0.83485,
+        "scramble": 0.28049,
+        "move": -0.01081,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_surp": {
+        "onehot": 0.88107,
+        "graded": 0.87048,
+        "scramble": 0.28246,
+        "move": -0.01059,
+        "seeds_graded_gt_onehot": 3,
+        "scramble_loses": true
+      },
+      "OBJ_cell": {
+        "onehot": 0.89815,
+        "graded": 0.81221,
+        "scramble": 0.22042,
+        "move": -0.08594,
+        "seeds_graded_gt_onehot": 0,
+        "scramble_loses": true
+      }
+    },
+    "belief_implicature_margin_graded": 0.50627,
+    "argmax_preserved": true
+  },
+  "informativeness_weights": {
+    "primary_per_intent_entropy_w_inf": [
+      -0.0,
+      -0.0,
+      0.5004
+    ],
+    "L1_matches_analytic_ANALYTIC_L1": true,
+    "intents": [
+      "none",
+      "SBNA",
+      "all"
+    ],
+    "utterances": [
+      "none",
+      "some",
+      "all"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "center": 88.0,
+      "slope": 0.11,
+      "transfer_ratio_r025_r1": 0.1853,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.86461,
+            "OBJ_inf": 0.95226,
+            "OBJ_surp": 0.83597,
+            "OBJ_cell": 0.86461
+          },
+          "graded": {
+            "M1": 0.75067,
+            "OBJ_inf": 0.80234,
+            "OBJ_surp": 0.78547,
+            "OBJ_cell": 0.75067
+          },
+          "scramble": {
+            "M1": 0.22159,
+            "OBJ_inf": 0.30335,
+            "OBJ_surp": 0.30617,
+            "OBJ_cell": 0.28553
+          },
+          "graded_lesion": {
+            "M1": 0.71199,
+            "OBJ_inf": 0.69519,
+            "OBJ_surp": 0.76762,
+            "OBJ_cell": 0.71199
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.88421,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.84386,
+            "OBJ_cell": 0.88421
+          },
+          "graded": {
+            "M1": 0.93526,
+            "OBJ_inf": 0.99845,
+            "OBJ_surp": 0.83919,
+            "OBJ_cell": 0.93526
+          },
+          "scramble": {
+            "M1": 0.03503,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.08757,
+            "OBJ_cell": 0.16836
+          },
+          "graded_lesion": {
+            "M1": 0.8484,
+            "OBJ_inf": 0.77222,
+            "OBJ_surp": 0.77285,
+            "OBJ_cell": 0.8484
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.83392,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.71813,
+            "OBJ_cell": 0.83392
+          },
+          "graded": {
+            "M1": 0.84266,
+            "OBJ_inf": 0.94308,
+            "OBJ_surp": 0.64461,
+            "OBJ_cell": 0.84266
+          },
+          "scramble": {
+            "M1": 0.05306,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.13265,
+            "OBJ_cell": 0.18639
+          },
+          "graded_lesion": {
+            "M1": 0.79285,
+            "OBJ_inf": 0.83488,
+            "OBJ_surp": 0.59221,
+            "OBJ_cell": 0.79285
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.1523,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded": {
+          "wholepop": 0.3977,
+          "matched": 0.2016,
+          "calibrated": 0.2569
+        },
+        "scramble": {
+          "wholepop": 0.3212,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded_lesion": {
+          "wholepop": 0.5048,
+          "matched": 0.4278,
+          "calibrated": 0.3651
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0554,
+        "graded": 0.0759,
+        "scramble": 0.048,
+        "graded_lesion": 0.0598
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          0.7018,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.5849,
+          0.9431
+        ]
+      },
+      "belief_implicature_margin_graded": 0.463
+    },
+    {
+      "seed": 43,
+      "center": 88.0,
+      "slope": 0.08,
+      "transfer_ratio_r025_r1": 0.3159,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.89476,
+            "OBJ_inf": 0.80733,
+            "OBJ_surp": 0.87196,
+            "OBJ_cell": 0.91104
+          },
+          "graded": {
+            "M1": 0.88761,
+            "OBJ_inf": 0.88579,
+            "OBJ_surp": 0.87639,
+            "OBJ_cell": 0.89368
+          },
+          "scramble": {
+            "M1": 0.13775,
+            "OBJ_inf": 0.28333,
+            "OBJ_surp": 0.14937,
+            "OBJ_cell": 0.13867
+          },
+          "graded_lesion": {
+            "M1": 0.73351,
+            "OBJ_inf": 0.69119,
+            "OBJ_surp": 0.85085,
+            "OBJ_cell": 0.73786
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.91783,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.92791,
+            "OBJ_cell": 0.91783
+          },
+          "graded": {
+            "M1": 0.95591,
+            "OBJ_inf": 0.92543,
+            "OBJ_surp": 0.9395,
+            "OBJ_cell": 0.95591
+          },
+          "scramble": {
+            "M1": 0.07442,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.05271,
+            "OBJ_cell": 0.07442
+          },
+          "graded_lesion": {
+            "M1": 0.9115,
+            "OBJ_inf": 0.80192,
+            "OBJ_surp": 0.91081,
+            "OBJ_cell": 0.9115
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.90252,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.88964,
+            "OBJ_cell": 0.90252
+          },
+          "graded": {
+            "M1": 0.95519,
+            "OBJ_inf": 0.98132,
+            "OBJ_surp": 0.90042,
+            "OBJ_cell": 0.95519
+          },
+          "scramble": {
+            "M1": 0.08207,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.07185,
+            "OBJ_cell": 0.08207
+          },
+          "graded_lesion": {
+            "M1": 0.90096,
+            "OBJ_inf": 0.87935,
+            "OBJ_surp": 0.83284,
+            "OBJ_cell": 0.90096
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.0073,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded": {
+          "wholepop": 0.2596,
+          "matched": 0.2746,
+          "calibrated": 0.2187
+        },
+        "scramble": {
+          "wholepop": 0.9083,
+          "matched": 1.0,
+          "calibrated": 1.0
+        },
+        "graded_lesion": {
+          "wholepop": 0.4697,
+          "matched": 0.3981,
+          "calibrated": 0.3207
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.012,
+        "graded": 0.0227,
+        "scramble": 0.0418,
+        "graded_lesion": 0.0175
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          0.9076,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.8842,
+          0.9813
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5955
+    },
+    {
+      "seed": 44,
+      "center": 96.0,
+      "slope": 0.08,
+      "transfer_ratio_r025_r1": 0.1317,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.8614,
+            "OBJ_inf": 0.80966,
+            "OBJ_surp": 0.86923,
+            "OBJ_cell": 0.88362
+          },
+          "graded": {
+            "M1": 0.75421,
+            "OBJ_inf": 0.7752,
+            "OBJ_surp": 0.85607,
+            "OBJ_cell": 0.77385
+          },
+          "scramble": {
+            "M1": 0.25608,
+            "OBJ_inf": 0.4006,
+            "OBJ_surp": 0.37314,
+            "OBJ_cell": 0.27837
+          },
+          "graded_lesion": {
+            "M1": 0.73029,
+            "OBJ_inf": 0.70816,
+            "OBJ_surp": 0.83172,
+            "OBJ_cell": 0.74765
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.93655,
+            "OBJ_inf": 0.80966,
+            "OBJ_surp": 0.96828,
+            "OBJ_cell": 0.95878
+          },
+          "graded": {
+            "M1": 0.92299,
+            "OBJ_inf": 0.76897,
+            "OBJ_surp": 0.96149,
+            "OBJ_cell": 0.96897
+          },
+          "scramble": {
+            "M1": 0.14086,
+            "OBJ_inf": 0.42259,
+            "OBJ_surp": 0.07043,
+            "OBJ_cell": 0.1656
+          },
+          "graded_lesion": {
+            "M1": 0.9266,
+            "OBJ_inf": 0.77979,
+            "OBJ_surp": 0.9633,
+            "OBJ_cell": 0.94639
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.92116,
+            "OBJ_inf": 0.76348,
+            "OBJ_surp": 0.96058,
+            "OBJ_cell": 0.94541
+          },
+          "graded": {
+            "M1": 0.90694,
+            "OBJ_inf": 0.72081,
+            "OBJ_surp": 0.95347,
+            "OBJ_cell": 0.96018
+          },
+          "scramble": {
+            "M1": 0.15722,
+            "OBJ_inf": 0.47167,
+            "OBJ_surp": 0.07861,
+            "OBJ_cell": 0.18741
+          },
+          "graded_lesion": {
+            "M1": 0.91364,
+            "OBJ_inf": 0.74092,
+            "OBJ_surp": 0.95682,
+            "OBJ_cell": 0.93692
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.1903,
+          "matched": 0.1903,
+          "calibrated": 0.2183
+        },
+        "graded": {
+          "wholepop": 0.248,
+          "matched": 0.0172,
+          "calibrated": 0.0
+        },
+        "scramble": {
+          "wholepop": 0.5988,
+          "matched": 0.5548,
+          "calibrated": 0.4567
+        },
+        "graded_lesion": {
+          "wholepop": 0.3357,
+          "matched": 0.242,
+          "calibrated": 0.2496
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0885,
+        "graded": 0.0846,
+        "scramble": 0.0995,
+        "graded_lesion": 0.0499
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          1.0,
+          0.7635
+        ],
+        "graded": [
+          1.0,
+          1.0,
+          0.7208
+        ]
+      },
+      "belief_implicature_margin_graded": 0.4845
+    },
+    {
+      "seed": 100,
+      "center": 88.0,
+      "slope": 0.08,
+      "transfer_ratio_r025_r1": 0.3162,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.85472,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.84829,
+            "OBJ_cell": 0.85918
+          },
+          "graded": {
+            "M1": 0.84094,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.85468,
+            "OBJ_cell": 0.84257
+          },
+          "scramble": {
+            "M1": 0.1265,
+            "OBJ_inf": 0.22066,
+            "OBJ_surp": 0.16915,
+            "OBJ_cell": 0.1288
+          },
+          "graded_lesion": {
+            "M1": 0.69557,
+            "OBJ_inf": 0.67327,
+            "OBJ_surp": 0.82822,
+            "OBJ_cell": 0.69667
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.92602,
+            "OBJ_inf": 0.82008,
+            "OBJ_surp": 0.935,
+            "OBJ_cell": 0.93048
+          },
+          "graded": {
+            "M1": 0.94836,
+            "OBJ_inf": 0.89883,
+            "OBJ_surp": 0.93834,
+            "OBJ_cell": 0.94998
+          },
+          "scramble": {
+            "M1": 0.08188,
+            "OBJ_inf": 0.22463,
+            "OBJ_surp": 0.05495,
+            "OBJ_cell": 0.08462
+          },
+          "graded_lesion": {
+            "M1": 0.90375,
+            "OBJ_inf": 0.76905,
+            "OBJ_surp": 0.91334,
+            "OBJ_cell": 0.90507
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.93022,
+            "OBJ_inf": 0.80847,
+            "OBJ_surp": 0.95322,
+            "OBJ_cell": 0.9321
+          },
+          "graded": {
+            "M1": 0.97464,
+            "OBJ_inf": 0.95305,
+            "OBJ_surp": 0.96791,
+            "OBJ_cell": 0.97537
+          },
+          "scramble": {
+            "M1": 0.07294,
+            "OBJ_inf": 0.20992,
+            "OBJ_surp": 0.04241,
+            "OBJ_cell": 0.07405
+          },
+          "graded_lesion": {
+            "M1": 0.93242,
+            "OBJ_inf": 0.83146,
+            "OBJ_surp": 0.94342,
+            "OBJ_cell": 0.93303
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.0201,
+          "matched": 0.0201,
+          "calibrated": 0.0085
+        },
+        "graded": {
+          "wholepop": 0.2865,
+          "matched": 0.2865,
+          "calibrated": 0.2405
+        },
+        "scramble": {
+          "wholepop": 0.9587,
+          "matched": 0.9507,
+          "calibrated": 0.9802
+        },
+        "graded_lesion": {
+          "wholepop": 0.5168,
+          "matched": 0.419,
+          "calibrated": 0.3631
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0094,
+        "graded": 0.0312,
+        "scramble": 0.0352,
+        "graded_lesion": 0.013
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": false
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          0.9822,
+          0.8085
+        ],
+        "graded": [
+          1.0,
+          0.9709,
+          0.953
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5102
+    },
+    {
+      "seed": 101,
+      "center": 88.0,
+      "slope": 0.11,
+      "transfer_ratio_r025_r1": 0.2019,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.93603,
+            "OBJ_inf": 0.88462,
+            "OBJ_surp": 0.93007,
+            "OBJ_cell": 0.95142
+          },
+          "graded": {
+            "M1": 0.80366,
+            "OBJ_inf": 0.80109,
+            "OBJ_surp": 0.91129,
+            "OBJ_cell": 0.80912
+          },
+          "scramble": {
+            "M1": 0.19759,
+            "OBJ_inf": 0.275,
+            "OBJ_surp": 0.30172,
+            "OBJ_cell": 0.20777
+          },
+          "graded_lesion": {
+            "M1": 0.79191,
+            "OBJ_inf": 0.72758,
+            "OBJ_surp": 0.89881,
+            "OBJ_cell": 0.79671
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.93649,
+            "OBJ_inf": 0.87031,
+            "OBJ_surp": 0.92769,
+            "OBJ_cell": 0.95212
+          },
+          "graded": {
+            "M1": 0.94815,
+            "OBJ_inf": 0.91852,
+            "OBJ_surp": 0.92469,
+            "OBJ_cell": 0.96296
+          },
+          "scramble": {
+            "M1": 0.10551,
+            "OBJ_inf": 0.28612,
+            "OBJ_surp": 0.07304,
+            "OBJ_cell": 0.11508
+          },
+          "graded_lesion": {
+            "M1": 0.90702,
+            "OBJ_inf": 0.8044,
+            "OBJ_surp": 0.89795,
+            "OBJ_cell": 0.91252
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.9553,
+            "OBJ_inf": 0.86591,
+            "OBJ_surp": 0.97765,
+            "OBJ_cell": 0.96995
+          },
+          "graded": {
+            "M1": 0.96386,
+            "OBJ_inf": 0.89157,
+            "OBJ_surp": 0.98193,
+            "OBJ_cell": 0.9781
+          },
+          "scramble": {
+            "M1": 0.09894,
+            "OBJ_inf": 0.29683,
+            "OBJ_surp": 0.04947,
+            "OBJ_cell": 0.1097
+          },
+          "graded_lesion": {
+            "M1": 0.9461,
+            "OBJ_inf": 0.83831,
+            "OBJ_surp": 0.97305,
+            "OBJ_cell": 0.95149
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.0846,
+          "matched": 0.0703,
+          "calibrated": 0.0659
+        },
+        "graded": {
+          "wholepop": 0.3497,
+          "matched": 0.1185,
+          "calibrated": 0.0916
+        },
+        "scramble": {
+          "wholepop": 0.8333,
+          "matched": 0.8278,
+          "calibrated": 0.8063
+        },
+        "graded_lesion": {
+          "wholepop": 0.4293,
+          "matched": 0.3462,
+          "calibrated": 0.3132
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0242,
+        "graded": 0.0511,
+        "scramble": 0.046,
+        "graded_lesion": 0.0281
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          1.0,
+          0.8659
+        ],
+        "graded": [
+          1.0,
+          1.0,
+          0.8916
+        ]
+      },
+      "belief_implicature_margin_graded": 0.4495
+    },
+    {
+      "seed": 102,
+      "center": 96.0,
+      "slope": 0.08,
+      "transfer_ratio_r025_r1": 0.2313,
+      "analytic_implicature_cell": 0.2,
+      "scores": {
+        "wholepop": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.80339,
+            "OBJ_inf": 0.84583,
+            "OBJ_surp": 0.93899,
+            "OBJ_cell": 0.80339
+          },
+          "scramble": {
+            "M1": 0.21141,
+            "OBJ_inf": 0.2,
+            "OBJ_surp": 0.3952,
+            "OBJ_cell": 0.28336
+          },
+          "graded_lesion": {
+            "M1": 0.77522,
+            "OBJ_inf": 0.77011,
+            "OBJ_surp": 0.92363,
+            "OBJ_cell": 0.77522
+          }
+        },
+        "matched": {
+          "onehot": {
+            "M1": 0.91903,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.9309,
+            "OBJ_cell": 0.91903
+          },
+          "graded": {
+            "M1": 0.96136,
+            "OBJ_inf": 0.93287,
+            "OBJ_surp": 0.94816,
+            "OBJ_cell": 0.96136
+          },
+          "scramble": {
+            "M1": 0.08084,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.2021,
+            "OBJ_cell": 0.21417
+          },
+          "graded_lesion": {
+            "M1": 0.9401,
+            "OBJ_inf": 0.8832,
+            "OBJ_surp": 0.92812,
+            "OBJ_cell": 0.9401
+          }
+        },
+        "calibrated": {
+          "onehot": {
+            "M1": 0.9148,
+            "OBJ_inf": 0.8,
+            "OBJ_surp": 0.92033,
+            "OBJ_cell": 0.9148
+          },
+          "graded": {
+            "M1": 0.96965,
+            "OBJ_inf": 0.96828,
+            "OBJ_surp": 0.94527,
+            "OBJ_cell": 0.96965
+          },
+          "scramble": {
+            "M1": 0.08027,
+            "OBJ_inf": 0.0,
+            "OBJ_surp": 0.20066,
+            "OBJ_cell": 0.2136
+          },
+          "graded_lesion": {
+            "M1": 0.93313,
+            "OBJ_inf": 0.89509,
+            "OBJ_surp": 0.90277,
+            "OBJ_cell": 0.93313
+          }
+        }
+      },
+      "impl_cell": {
+        "onehot": {
+          "wholepop": 0.0,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded": {
+          "wholepop": 0.3542,
+          "matched": 0.1329,
+          "calibrated": 0.1683
+        },
+        "scramble": {
+          "wholepop": 0.3525,
+          "matched": 0.0,
+          "calibrated": 0.0
+        },
+        "graded_lesion": {
+          "wholepop": 0.4299,
+          "matched": 0.3168,
+          "calibrated": 0.3049
+        }
+      },
+      "recovery_err": {
+        "onehot": 0.0132,
+        "graded": 0.0348,
+        "scramble": 0.0358,
+        "graded_lesion": 0.0265
+      },
+      "argmax_preserved": {
+        "onehot": true,
+        "graded": true,
+        "scramble": true,
+        "graded_lesion": true
+      },
+      "per_intent_calibrated": {
+        "onehot": [
+          1.0,
+          0.9444,
+          0.8
+        ],
+        "graded": [
+          1.0,
+          0.9407,
+          0.9683
+        ]
+      },
+      "belief_implicature_margin_graded": 0.5349
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL pragmatics correlate. The W4 pragmatic residual was a READ artifact: the whole-population landscape read summed off-target belief-only AND-gate leak (at high belief mass, an off-target detector leaks without the intent), inflating the implicature cell ~2x -- NOT the belief content (correct, moat intact) and NOT the coincidence nonlinearity (the graded plateau is magnitude-preserving, r_coinc(.27)/r_coinc(1)~0.23). The fix is a host-side READ-OUT correction (the same category as the row-norm + mag-fidelity the pipeline already applies): read the TRUE-INTENT detector success[t] (the correct definition of 'posterior mass on the intended state', using ONLY the intent goal) instead of the whole population. That single content-independent change lands the implicature cell on the analytic scale and flips the objective; it rescales MAGNITUDE/topography, it does NOT change the belief (byte-identical) or which intent wins (recall intact); SCRAMBLE still loses; the analytic 0.20 is an OUTPUT (belief content 0.27 + row-norm), never an input. A separate inverse of the detector's content-free transfer certifies the matched read faithfully encodes the posterior (the RECOVERY anti-cheat, mean|T^{-1}(matched)-mass| small -- it maps to the posterior, not the target); it is superfluous as a fix because the coincidence transfer is already magnitude-preserving. Once read faithfully, the objective rewards the graded belief's superior RSA calibration (its standing strength) instead of penalizing it for the leak. numpy-CPU real spiking Izhikevich; NO sim/ edit; additive NEW runner. NOT a claim of phenomenal access to another mind; a self-report would be a functional read-out.",
+  "elapsed_seconds": 18.5
+}
