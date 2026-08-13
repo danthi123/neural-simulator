@@ -60,6 +60,17 @@ date: 2026-07-23
 > **CROSS-CUTTING (do NOT over-claim a shared fix — see the FALSIFIED note above): the recurring last-mile residual is
 > HOMEOSTATIC-GAIN / divisive-normalization across heterogeneity** (the "missing companion process"), showing up in
 > prospective, affect, and the W4 detector — each a distinct de-risk, not a proven single primitive.
+> **🌙 ONE-SUBSTRATE MERGE — comprehensively DE-RISKED (2026-08-13, owner-directed "close the merge"):** two DISTINCT
+> organs now genuinely share ONE spiking neuron pool (one `cp_` array, one step, one `cfg.seed`) with a LOAD-BEARING
+> cross-organ synapse (novelty gates recall, ≥42×), and the merge is **byte-EXACT end-to-end** — INIT via a guarded
+> `per_region_threshold_heterogeneity` flag (`fb27b610`) + the TRAINED/adapted read via a guarded
+> `per_region_homeostasis_isolation` flag (`529c104e`, which also CORRECTED the cause: a deterministic shared-CLOCK
+> homeostatic idle-drift, proven by a training-order-flip control — not FP, not pooled activity). It **SCALES**
+> (`733dc5a0`): 3 organs on one pool + two DIFFERENT builders (expectation GABA_B + Wong-Wang role NMDA) coexist via a
+> config superset, all cross-synapses load-bearing, init byte-exact. Both flags default-OFF → byte-identical to legacy
+> (determinism suite 9/9, parent-verified). This DE-RISKS §0.2 residual #1: the organs CAN share one substrate. It is
+> NOT yet integrated — production organs remain co-residency; the next step is migrating the real organ set onto the
+> shared pool (+ per-organ `dt_ms`/`enable_homeostasis` scoping only if a future builder pair can't reconcile).
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
