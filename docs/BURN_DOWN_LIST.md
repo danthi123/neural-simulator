@@ -32,9 +32,23 @@ with the no-confab moat intact and the host/external piece deleted-or-demoted-to
   CPU test-oracle; the production default should be the fluent path (A1 target). STATUS: QUEUED.
 
 ## B. GENERATION mechanisms (the brain's own content generation)
-- **B1. The generative DRAW (#3E) = host b2 oracle.** The spiking WTA sampler hardcodes an 8×8 taxonomy + KeyErrors on
-  arbitrary vocab, so the #3E open-ended draw runs on the host. **Burn-down → a VOCAB-AGNOSTIC spiking generative draw.**
-  STATUS: RESEARCH-NEEDED (part of the spiking-generation de-risk).
+- **B1. The generative DRAW (#3E). WIRED — genuinely SPIKING (F1, 2026-08-13).** The #3E open-ended DRAW (picking WHICH
+  verb/object filler from the brain's likelihood) was the host b2 oracle (`np.random.choice`) because the b2 spiking WTA
+  sampler hardcodes an 8×8 taxonomy + KeyErrors on runtime vocab. `/api/brain-chat` (via `ChatBrain._generate_hypothesis`)
+  now routes that DRAW through a VOCAB-AGNOSTIC spiking soft-WTA (`VocabAgnosticSpikingDrawOrgan` →
+  `research/runners/vocab_agnostic_spiking_generation_production_organ.py`, reuse-by-import): role pools are INDUCED from
+  the brain's OWN stored-fact concepts (no taxonomy), intersected with the plausibility graph row, and a taxonomy-free
+  `VocabAgnosticSpikingSampler` is pre-injected onto the proposer — the unchanged generate loop then draws the winner off
+  `cp_firing_states` of a co-resident Izhikevich bank (OU noise IS the stochasticity). Default-ON (`BRAIN_SPIKING_DRAW=0`
+  → the host oracle draw, byte-identical), lesion-load-bearing (`BRAIN_SPIKING_DRAW_LESION=1` → likelihood ablated →
+  plausibility collapses). Every downstream gate (`_plausible`/`_contradicts`) + the #3E moat verify are UNCHANGED (0 leaks
+  by construction). Verified numpy-CPU: organ verify GO (draw 0 host-rng/>0 spiking; LESION plausible-frac 0.828→0.035,
+  95.7% attributable; noise-ablation deterministic argmax; flag-off 16==16 byte-identical) + through the REAL handler (5/6
+  open-ended prompts return flagged spiking-drawn hyps @ 400 spiking draws/0 host-rng, render "perhaps the dog chases the
+  mouse [a guess…]", LESION collapses the handler proposer's plausible-frac 0.862→0.009, flag-off a no-op) + smoke
+  byte-identical. STATUS: **WIRED**. Commit `6670bda25`. **RESIDUALS** (ride existing rows): the plausibility LIKELIHOOD
+  matrix, the SVO template, and the RF-composer moat remain host scaffolds; the WTA bank is co-resident (rides the
+  one-brain merge, #1). (Was B1/B2 open-ended-generation host-DRAW.)
 - **B2. The plausibility gate (#3E) = host** (selectional-preference over the brain's clean fact co-occurrence graph).
   **Burn-down → spiking plausibility.** STATUS: QUEUED.
 - **B3. Non-contradiction ASSERTION-gate. WIRED (Gate-B, 2026-08-12).** The generation-path non-contradiction check was
@@ -319,7 +333,22 @@ _(the faculty-integration audit is designing the concrete wiring for each; wire 
   self/identity + noisy-anaphora fallback. Burn-down → neural self/identity + a robust anaphora WM. STATUS: QUEUED.
 - **F2. `_learned_assoc` graph polluted by the `__free` reserve-slot codes** (a latent interaction from the recruit-an-assembly
   vocab_headroom fix — noise edges like "dog use worm"). Bug to fix. STATUS: QUEUED.
-- **F3. discourse-register PARTIAL**, neural-render PARTIAL — not default-on. STATUS: QUEUED.
+- **F3. discourse-register — WIRED / default-ON (D3, F2, 2026-08-13).** `/api/brain-chat` now answers "who was doing it
+  BEFORE?" across a discourse connective off the held spiking prev-slot (four FS-WTA attractor slots read from
+  `cp_firing_states`), while still tracking "who is doing it NOW?" — a single-event register structurally cannot do this.
+  PART A: both register-construction sites in `brain_chat_tui.py` (`_build_tiny_demo` + `_load_self_knowledge`) build
+  `make_discourse_register` (the validated spiking twin) instead of `PairEventRegister(spiking=False)`. PART B: the
+  `brain_chat` handler runs an additive fold of a discourse SVO clause (a connective marks the boundary → SHIFT; pure
+  side-effect, reply byte-identical) + a disjoint before/now query short-circuit answered off the register + the moat
+  abstain (a before-answer only after a connective boundary actually opened this conversation). Reuse-by-import from
+  `research/runners/d3_discourse_event_register_production_organ.py`. Default-ON (`BRAIN_DISCOURSE_REGISTER=0` → the
+  register is built spiking=False AND the endpoint block is skipped → byte-identical), lesion-load-bearing
+  (`BRAIN_DISCOURSE_REGISTER_LESION=1` silences the spiking prev-hold → who-was-before collapses, NOW preserved). Verified
+  numpy-CPU: organ verify seed42 ALL_OK (BEFORE 0.900/NOW 0.917, LESION→0.150 83% attributable, moat 1.000; source branch
+  42/43/44 all ALL_OK) + real handler (before/now on spikes; LESION collapse + register-type flip; flag-off block skipped)
+  + smoke flag-off byte-identical, default-ON discourse resolves. STATUS: **WIRED**. Commit `d817effd0`. **RESIDUALS**: the
+  transition-δ RNN (`multislot_rnn`, rate-learned), the boundary/connective detection + referent/verb parse are host; the
+  register is co-resident (rides the one-brain merge, #1). **neural-render PARTIAL** — still not default-on (QUEUED).
 - **F4. Any host-computed reward / value / neuromodulator** on the live turn (audit D2 to confirm none are host-formula).
 
 ---

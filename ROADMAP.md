@@ -173,6 +173,21 @@ moat-safe unless noted):
   duplicate; organ verify rf 6/6 + onebrain 3/3; an integration fix recruits a runtime-novel corrected patient before the
   rewrite). Ten spiking co-resident reads now run on the default turn (D5+D6 add new bridges; B3+B4 reuse the recall composer /
   D2 window). Findings 2026-08-12-D5-episodic / D6-multiref-WM / B3-noncontradiction / reconsolidation-production-organ.
+- **TWO MORE faculties WIRED into `/api/brain-chat` (2026-08-13, default-on + lesion-load-bearing, verified numpy-CPU through
+  the real handler) — the count is now TWELVE spiking co-resident reads on the default turn.** **B1 GENERATIVE DRAW (F1)** —
+  the #3E open-ended DRAW (which verb/object filler the brain volunteers) moves from the b2 host oracle (`np.random.choice`,
+  blocked because the taxonomy WTA sampler KeyErrors on runtime vocab) to a genuinely-SPIKING VOCAB-AGNOSTIC soft-WTA read off
+  `cp_firing_states` (role pools induced from the brain's own stored-fact concepts; `VocabAgnosticSpikingDrawOrgan`). Organ
+  verify GO (draw 0 host-rng/>0 spiking; LESION plausible-frac 0.828→0.035, 95.7% attributable; flag-off 16==16 byte-identical)
+  + real handler (5/6 prompts return flagged spiking-drawn hyps, render "perhaps the dog chases the mouse [a guess…]", LESION
+  collapses the handler proposer's plausible-frac 0.862→0.009). Residual host: the plausibility likelihood + SVO template +
+  RF-composer moat (commit 6670bda25). **D3 DISCOURSE EVENT REGISTER (F2)** — "who was doing it BEFORE?" across a connective,
+  answered off four held FS-WTA spiking attractor slots (a single-event register structurally cannot); the register-construction
+  sites now build the spiking twin, and the handler folds discourse clauses + short-circuits the disjoint before/now query.
+  Organ verify seed42 ALL_OK (BEFORE 0.900/NOW 0.917, LESION→0.150 83% attributable, moat 1.000) + real handler (before/now on
+  spikes, LESION collapse + register-type flip, flag-off block skipped) + smoke flag-off byte-identical. Residual host: the
+  transition-δ RNN + boundary/parse (commit d817effd0). Both compose cleanly with the ~12 default-on organs (no conflict; the
+  before/now query class is disjoint; the DRAW change is confined to the open-ended generation branch).
 - **A1 open-prose deep-context — INCONCLUSIVE (not a GO, honest):** the controlled-lag credit task is TOO EASY to exhibit
   the wall — random AND sign-flipped feedback both tie/beat the BPTT ceiling (T=48), and at T=64 the BPTT ceiling is itself
   INVALID (vanishing-gradient: 0.599 < the forward-eligibility local rule 0.973). Bounded findings: the banked ~44% e-prop
