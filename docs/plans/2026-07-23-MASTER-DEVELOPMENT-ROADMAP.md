@@ -71,6 +71,20 @@ date: 2026-07-23
 > (determinism suite 9/9, parent-verified). This DE-RISKS §0.2 residual #1: the organs CAN share one substrate. It is
 > NOT yet integrated — production organs remain co-residency; the next step is migrating the real organ set onto the
 > shared pool (+ per-organ `dt_ms`/`enable_homeostasis` scoping only if a future builder pair can't reconcile).
+> **🌙 MERGE→PRODUCTION rung 1 LANDED (`0a76462e`, GO):** the D2 surprise + E2 world-model organs now run on ONE shared
+> `SimulationBridge` in the production path behind a default-off `BRAIN_ONEBRAIN_MERGE` flag — reads byte-identical
+> merged-vs-co-resident (max delta 0.0), both faculties alive, no regression (determinism 9/9, flag-off smoke byte-clean).
+> Discovered + fixed (runner-side, no `sim/` edit) a THIRD byte-identity seam: read-time homeostatic spontaneous firing of
+> silenced FS neurons footprints the co-resident during its reads → a read-isolation guard (0.69 Hz → 0.0). Co-residency
+> is now RETIRABLE for this pair (opt-in; migrating the rest is the next arc).
+> **🌙 FLUID MOUTH — PARITY WALL BROKEN (`6ba85dce`, GO 6/6):** reading the next-word winner from the CONTINUOUS signed
+> synaptic-CONDUCTANCE margin (`df_e·g_e + df_i·g_i` off `cp_conductance_*`, subthreshold — not a spike count) clears the
+> sparse-spike-margin wall the divisive-norm/recurrent-WTA companions couldn't. Recovers **0.921 of perfect-argmax = parity**
+> (read-fid 0.55→1.18), silence 0.19→0.0, inhibitory-shadow negative weights load-bearing 6/6 (generalize to unseen seeds,
+> not decorative), 0 host draws, coherent free-gen (nll ~1). Grounded in Holt-Koch 1997 (shunting subtractive near rest).
+> So the mouth's next-word READ is a fully-substrate signed graded-conductance read at parity — the logit matmul + argmax +
+> the sparse-margin wall all retired onto the substrate. Residual: the read is linear (~8% miss) + the hidden feature `h` /
+> read-out weights remain host/BPTT (read biologized, not the whole mouth); NOT wired to production. Next = LIP ramp / learned read.
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
