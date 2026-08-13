@@ -200,7 +200,14 @@ class SpikingRoleCompetition:
                  cue_to_role_init=4.0, cue_drive_pA=3500.0, role_teacher_pA=2600.0,
                  hebbian_lr=0.02, hebbian_max=60.0,
                  with_snc=False, n_snc=40,
+                 dt_ms=0.5, homeostasis=False, per_region_thresh=False,
                  verbose=False):
+        # dt_ms / homeostasis / per_region_thresh: ADDITIVE, DEFAULT-PRESERVING (0.5 / False / False ->
+        # byte-identical to the standalone comprehension monitor). They exist so the SAME circuit can be
+        # built at the ONE-BRAIN MERGE shared operating point (dt=1.0, homeostasis ON, per-region threshold
+        # heterogeneity ON) that the surprise+world-model shared pool uses -- reconciling the single global
+        # dt_ms / enable_homeostasis the Wong-Wang builder sets differently (mapped GENUINE-CONFLICTs in
+        # 2026-08-13-one-brain-merge-Norgan-GO.md, proven reconcilable at dt=1.0 / homeostasis ON).
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
@@ -286,8 +293,9 @@ class SpikingRoleCompetition:
                                           plastic=True, plasticity_gate=f"cue_{c}"))
         cfg.region_pathways = pathways
 
-        cfg.dt_ms = 0.5
+        cfg.dt_ms = float(dt_ms)
         cfg.seed = int(seed)
+        cfg.per_region_threshold_heterogeneity = bool(per_region_thresh)
         cfg.enable_nmda = True
         cfg.enable_ou_process = False
         cfg.enable_structural_plasticity = False
@@ -296,7 +304,7 @@ class SpikingRoleCompetition:
         cfg.hebbian_learning_rate = float(hebbian_lr)
         cfg.enable_stdp = False
         cfg.enable_short_term_plasticity = False
-        cfg.enable_homeostasis = False
+        cfg.enable_homeostasis = bool(homeostasis)
         cfg.enable_reward_modulation = False
         cfg.stdp_w_max = 60.0
         cfg.fast_spike_reset = True

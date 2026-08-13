@@ -77,6 +77,15 @@ date: 2026-07-23
 > Discovered + fixed (runner-side, no `sim/` edit) a THIRD byte-identity seam: read-time homeostatic spontaneous firing of
 > silenced FS neurons footprints the co-resident during its reads → a read-isolation guard (0.69 Hz → 0.0). Co-residency
 > is now RETIRABLE for this pair (opt-in; migrating the rest is the next arc).
+> **🌙 MERGE→PRODUCTION rung 2 (2026-08-13, split verdict): a 3rd FACULTY joins the pool (GO), the next REGION-OWNING organ
+> is a MEASURED dt BOUNDARY.** (A) rung-1 pair still byte-identical (regression guard). (B) GO 6/6: RECONSOLIDATION
+> (belief revision) owns no neurons — its spiking window IS the merged surprise organ, so the faculty rides the shared pool
+> byte-identically + alive. (C) BOUNDARY: COMPREHENSION (Wong-Wang role WTA, native `dt=0.5`) — graded well/ill AUC drops
+> to 3/6 clearing 0.80 at the shared `dt=1.0` (vs 6/6 at 0.5); per-region `dt` can't be byte-exact (single-dt integrator).
+> Mapped: each remaining own-neuron organ diverges on ONE faculty-load-bearing GLOBAL flag; the reconcilable-without-sim-edit
+> set beyond rung 1 is EMPTY. Named next rung = additive default-off `per_region_parameter_heterogeneity` (unlocks the
+> metacog/pragmatic/affect cluster). No `sim/` edit; smoke byte-clean; determinism 9/9.
+> `2026-08-13-merge-production-rung2-BOUNDARY.md`.
 > **🌙 FLUID MOUTH — PARITY WALL BROKEN (`6ba85dce`, GO 6/6):** reading the next-word winner from the CONTINUOUS signed
 > synaptic-CONDUCTANCE margin (`df_e·g_e + df_i·g_i` off `cp_conductance_*`, subthreshold — not a spike count) clears the
 > sparse-spike-margin wall the divisive-norm/recurrent-WTA companions couldn't. Recovers **0.921 of perfect-argmax = parity**

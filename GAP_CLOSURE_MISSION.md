@@ -255,6 +255,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >   its reads; the participation-gated isolation can't freeze them) with a read-isolation guard that restores the
 >   co-resident's neural slice per read (preserves each organ's own self-drift; a no-op flag-off). NO `sim/` edit.
 >   `2026-08-13-merge-production-integration-rung1-GO.md`; runner `_onebrain_merge_rung1_verify.py`.
+> - **[PI] MERGE→PRODUCTION rung 2 (2026-08-13) — split verdict, both 6/6:** (A) rung-1 pair STILL byte-identical
+>   merged-vs-co-resident (regression guard, max delta 0.0). (B) **GO — a 3rd production FACULTY joins the shared pool
+>   byte-identically:** RECONSOLIDATION (belief revision) owns no neurons — its spiking window IS the merged surprise organ,
+>   so on the shared bridge the belief-revision faculty rides the pool; window read byte-identical (0.0) + faculty alive 6/6.
+>   (C) **BOUNDARY — the next REGION-OWNING organ can't join at the shared `dt=1.0`:** COMPREHENSION (Wong-Wang role WTA,
+>   native `dt=0.5`) — its graded well/ill AUC MEASURED 0.865/0.859/0.589/0.758/0.880/0.562 at `dt=1.0` (3/6 clear 0.80) vs
+>   1.000/6 at `dt=0.5`; per-region `dt` can't be byte-exact (single-dt integrator). Every remaining own-neuron organ diverges
+>   on ONE faculty-load-bearing GLOBAL flag (comprehension: dt; metacog/pragmatic/affect: parameter-heterogeneity;
+>   causal/curiosity: stdp+reward+neuromod) → reconcilable-without-sim-edit set beyond rung 1 = EMPTY. **Named next rung:**
+>   additive default-off `per_region_parameter_heterogeneity` (name-keyed, mirrors `per_region_threshold_heterogeneity`)
+>   unlocks the metacog/pragmatic/affect cluster (largest, 3 organs). NO `sim/` edit here (one default-preserving
+>   `research/runners` kwarg add; smoke byte-identical; `test_determinism` 9/9). `2026-08-13-merge-production-rung2-BOUNDARY.md`;
+>   runner `_onebrain_merge_rung2_verify.py`.
 >
 > **🔴 LIVE LANES (owner-approved, concurrent):**
 > - **[GC] (iso):** GRADED/CONDUCTANCE mouth read — resolve the winner from the continuous signed conductance margin (not a
