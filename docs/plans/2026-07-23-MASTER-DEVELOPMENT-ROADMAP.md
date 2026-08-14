@@ -6,7 +6,7 @@ date: 2026-07-23
 
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
-**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-13** (a big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
+**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-14** (2026-08-14 continuation wave — see the §0 continuation block below; prior big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
 **Supersedes-by-extension:** `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` (that plan's F1–F6 are absorbed here as sub-faculties; this doc adds the full faculty map, the developmental staging spine, the theory-of-mind ladder the F-plan omitted, the walls ledger, and the parallelization map).
 **Anchors:** `GAP_CLOSURE_MISSION.md` · `CLAUDE.md` · the master directive (`project_master_directive_relentless_biological_emergence`).
 **⭐ FACULTY-MAP GAP AUDIT + PRIORITIZED BUILD PLAN (2026-08-12, a 12-agent grounded audit):** `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` — the honest reckoning (the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; several organ internals still host-designed) and the Tier-1/2/3 next-faculty priorities. The keystone is a NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation (organs talk via ignition not Python; ACT on the conflict/confidence signals we only report). Read it for the forward faculty priorities; this master doc's §§2/7/8 remain the faculty-tag / wall-ledger / parallelization detail.
@@ -21,6 +21,27 @@ date: 2026-07-23
 > [`docs/BURN_DOWN_LIST.md`](../BURN_DOWN_LIST.md); the machine-checked wiring truth is
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
+
+> **🛠️ 2026-08-14 CONTINUATION WAVE (updates §0.1/§0.2 — read this FIRST):** an 8-lane autonomous wave landed on main
+> + both remotes. **ONE-SUBSTRATE (Track 1):** the COMPOSER (core moat organ) now joins production pool #1 — first opt-in
+> (`562cbff5c`) then **production-DEFAULT** (`77759c2dc`, independently re-verified 1/1 + agent 6/6: byte-identical through
+> the real handler, moat abstains, genuinely one pool N=47440, det 9/9) — so the shipped brain's recall RF-pipeline shares
+> ONE `cp_membrane_potential_v` with surprise + world-model BY DEFAULT (residual: the config-coupled Hebbian PARSER stays
+> on a private bridge — next lever named). A config-SUPERSET merge (surprise GABA_B + Wong-Wang comprehension NMDA) mapped
+> its conflict to `enable_homeostasis` NOT dt (`994ed8c0e` BOUNDARY); the ALREADY-SHIPPED `BrainRegion.enable_homeostasis`
+> primitive (NO sim/ edit — the boundary had conflated it with `per_region_homeostasis_isolation`) then RECONCILED
+> comprehension 6/6 (AUC 1.000, byte-id, answer-preserved), leaving a mapped surprise-side residual (`944b0fc4a`; next:
+> threshold-robust surprise read + restore cross-drive under role-homeo-OFF). **FLUID MOUTH (Track 2):** the input
+> projection `Wv@LN(emb)` is on the substrate → the WHOLE mouth matmul chain is now signed graded-conductance reads
+> (`055bfdf2d`); the read-out WEIGHTS are now LEARNED on-substrate by a local three-factor e-prop rule (qualified GO 6/6,
+> `6070d79d` — retires the copied Qwen `head_w`; the learning forward used a host-linear proxy → batched-substrate-forward
+> = named next lever). **FACULTY:** the self-initiated UTTERANCE loop CLOSES (`26bdae143` — a spontaneous curiosity-selected
+> CA3 thought is SPOKEN, 6/6). **BREADTH (disjoint CPU lanes):** GNW Rung-2b — intrinsic SFA is NOT the workspace-eviction
+> effector (`3a5db012` BOUNDARY, fatigue-to-evict==fatigue-that-kills; next = a salience-gated dis-inhibition pulse) but it
+> PROVED the continuous no-reset protocol (0 `_restore_state`); Perception B1 V1 self-org operating-point re-test in
+> flight. Honest reckoning UNCHANGED at the top level: the shipped brain is still ~ONE integrated spiking family + a bench
+> of unwired GOs; the 3 missing properties remain FLUID mouth · ONE substrate · EMERGENT — but the composer default-flip is
+> a real one-substrate step and the mouth is now substrate-plumbed with learned read-out weights.
 
 > **🌙 2026-08-13 OVERNIGHT WAVE (updates §0.1/§0.2 below — read this first):** A 7-lane wave-3 + 3-lane wave-4 landed
 > (all on main + both remotes @ `789481fc2`). **ONE-SUBSTRATE step:** the GNW N-organ ignition BUS was FLIPPED from

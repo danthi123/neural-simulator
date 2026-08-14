@@ -23,6 +23,21 @@ Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
 alarm that implied otherwise was retired).
 
+**2026-08-14 CONTINUATION WAVE.** An 8-lane autonomous wave landed (all on main + both remotes). The biggest step: the
+**composer — the "moat" organ that guards against making things up — now shares the one shared brain-pool with the
+surprise and world-model organs BY DEFAULT** (not just as an opt-in), verified bit-for-bit identical to the old separate
+setup through the real chat handler, with the no-confab guarantee intact and a one-flag revert. On the "mouth" (how the
+brain turns thought into words): the entire chain of internal math is now done by the neurons themselves rather than by
+host arithmetic, and — a real learning step — the final word-choosing weights are now **learned by a biologically
+local rule** instead of copied from the language-model scaffold (honestly bounded: the learning used a host stand-in for
+one intermediate signal, with the fully-neural version named as the next step). A new self-generated-speech loop closed:
+the brain can now **spontaneously surface a curiosity-selected thought and say it out loud, unprompted**. Two honest
+negatives were also banked with their next mechanisms named (a workspace-eviction method and an organ-merge conflict),
+and a config-merge conflict was traced to an already-existing engine switch and partly resolved with no engine edit. The
+plain reckoning is unchanged: the brain is still one integrated spiking family plus a bench of validated-but-unwired
+pieces, and the three missing properties remain a fluid open-ended mouth, a single shared substrate, and full emergence —
+but this wave moved the substrate-sharing and the mouth's plumbing genuinely forward.
+
 **2026-08-13 OVERNIGHT PRODUCTION-WIRING WAVE.** A one-substrate milestone + a faculty wave landed (all on main + both
 remotes). The **GNW ignition bus was promoted to the DEFAULT** way the brain combines its organ reads on the live chat
 turn — the spiking substrate itself now authors the combine-and-decide step that host Python used to do, verified
