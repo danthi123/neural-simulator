@@ -1,0 +1,35 @@
+{
+ "run_id": "1786673259-1437681",
+ "runner": "research/runners/_wkv_mouth_rh_shunt_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a90e937008c4edc88/research/runners/_wkv_mouth_rh_shunt_derisk.py",
+  "--smoke",
+  "--seeds",
+  "42",
+  "--n-eval-pos",
+  "30",
+  "--n-anticheat",
+  "20",
+  "--json",
+  "research/findings/raw/_wkv_rh_shunt_smoke.json"
+ ],
+ "git_sha": "2d3f2bd36",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T22:07:39",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3032.5,
+ "corpus_check_query": "shunt the mouth r_h gate onto the substrate as divisive shunting inhibition",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_rh_shunt_smoke.json"
+}
