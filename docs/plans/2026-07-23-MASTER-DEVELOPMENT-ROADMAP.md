@@ -94,6 +94,20 @@ date: 2026-07-23
 > So the mouth's next-word READ is a fully-substrate signed graded-conductance read at parity — the logit matmul + argmax +
 > the sparse-margin wall all retired onto the substrate. Residual: the read is linear (~8% miss) + the hidden feature `h` /
 > read-out weights remain host/BPTT (read biologized, not the whole mouth); NOT wired to production. Next = LIP ramp / learned read.
+> **🌙 FLUID MOUTH — FULL state→logits pipeline SUBSTRATE END-TO-END (`699f1f5c`, GO 6/6) + the WKV state itself (`b91f896b`):**
+> the read reached parity (graded-conductance, recov→~0.98 with a homeostatic set-point + population code), the output
+> projection `Wo_sp@state` biologized (`37e7f520`, corr 0.984), and the **WKV recurrent STATE integrator** — the transformer/
+> BPTT CORE — carried on the substrate's slow-NMDA recurrent conductance (state_corr 0.793, reproduces the host next-word +
+> deep-context decisions at the host-NLL ceiling; the 2026-08-13 graded read broke July's input-pool rate-code wall). Composed
+> END-TO-END (state → projection → read-out + `head_b` tonic population): **recov_argmax 0.9137, composition MULTIPLICATIVE not
+> a collapse** (0.948×0.962), every anti-cheat 6/6 (0 host matmul on state/margin, lesions collapse, scramble→chance). So the
+> transformer mouth's entire FORWARD PASS is biologized as spiking graded-conductance mechanisms. Remaining host: the trained
+> WEIGHTS (Wv/Wo_sp/head values — learnable via the resolved 2026-08-12 e-prop rule), the `r_h` gate, LN, embedding; the read is
+> argmax not a calibrated distribution (deep-NLL gap 0.2–1.75 nats). Next rung: shunt `r_h` onto the substrate, then substrate `Wv` via e-prop.
+> **🌙 ONE-SUBSTRATE — 4 organs PRODUCTION-DEFAULT (2 pools):** pool #1 surprise+world-model (`ad196326`) + pool #2
+> metacog+pragmatic (`bbe0addb`, via the NMDA-conductance confidence read that also de-noised metacog standalone). Both flipped
+> default-ON (escape-flagged), answer-preserving 6/6, determinism 9/9. `scaffold_retired: PARTIAL`. Remaining co-resident: affect
+> (structural region-name collision), comprehension (per-region `dt`), causal/curiosity (plasticity/neuromod); neither pool merged with the composer bridge.
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
