@@ -251,12 +251,15 @@ def _native_surprise(seed, xp):
     return _surprise_bools(bridge, cfg, idx_map, meta, xp)
 
 
-def _build_and_prep(seed, dt_ms, homeo, comp_src, cross_weight):
+def _build_and_prep(seed, dt_ms, homeo, comp_src, cross_weight, per_region_homeo=False):
     """A config-superset bridge (surprise_S + Wong-Wang role) at (dt_ms, homeo) with the comprehension organ's
     frozen learned cue->role weights installed. `cross_weight`=0 -> the surprise->role cross is present but SILENT
-    (the DECOUPLED baseline: byte-id everything except the one cross edge, no in-place mutation)."""
+    (the DECOUPLED baseline: byte-id everything except the one cross edge, no in-place mutation).
+    `per_region_homeo=True` -> the BOUNDARY unblock: surprise (`_S`) regions opt in to homeostasis, role regions
+    stay OFF (global flag forced OFF), via the EXISTING per-region `BrainRegion.enable_homeostasis` primitive."""
     merged, cfg_m, meta = build_merged_diffbuilder(seed, dt_ms=dt_ms, homeostasis=homeo,
-                                                   per_region_thresh=True, cross_weight=cross_weight)
+                                                   per_region_thresh=True, cross_weight=cross_weight,
+                                                   per_region_homeo=per_region_homeo)
     _install_learned_cue_role(merged, comp_src)     # graded AUC is load-bearing on the learned weights (frozen)
     merged._blk = meta["blk"]
     return merged, cfg_m, meta
@@ -268,14 +271,21 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
     xp, _ = get_backend()
     battery = build_battery(seed, n_per_cond=6)
 
+    # PER-REGION cell (`homeo == "PR"`): the BOUNDARY unblock. surprise `_S` regions opt in to homeostasis,
+    # role stays OFF (global flag OFF). The comprehension weight-source + read template therefore build with
+    # role-homeostasis OFF (its native operating point, AUC 1.000), while the merged bridge scopes homeostasis
+    # per-region via the existing `BrainRegion.enable_homeostasis` primitive (NO new engine edit).
+    per_region = (homeo == "PR")
+    comp_homeo = False if per_region else homeo
+
     # ---- weight source + read template: the comprehension organ at THIS operating point ----
-    comp_src = _build_comp(seed, dt_ms=dt_ms, homeostasis=homeo, per_region_thresh=True)
+    comp_src = _build_comp(seed, dt_ms=dt_ms, homeostasis=comp_homeo, per_region_thresh=True)
 
     # ---- the merged config-superset bridge + a fresh DECOUPLED twin (cross=0). No in-place CSR mutation:
     #      the _install_block_diagonal_full toggle does NOT round-trip cleanly, so each comparison is a
     #      FRESH build differing only in the cross weight (the one coupling channel surprise_S->sel_agent). ----
-    merged, cfg_m, meta = _build_and_prep(seed, dt_ms, homeo, comp_src, CROSS_WEIGHT)
-    dec, cfg_d, _ = _build_and_prep(seed, dt_ms, homeo, comp_src, 0.0)     # decoupled twin
+    merged, cfg_m, meta = _build_and_prep(seed, dt_ms, homeo, comp_src, CROSS_WEIGHT, per_region_homeo=per_region)
+    dec, cfg_d, _ = _build_and_prep(seed, dt_ms, homeo, comp_src, 0.0, per_region_homeo=per_region)  # decoupled twin
     idx_S = _idx_map(merged, "_S", xp)
     idx_S_d = _idx_map(dec, "_S", xp)
 
@@ -289,7 +299,8 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
 
     # ── (2) DETERMINISM: build twice -> hash membrane + thresholds ──
     b2, _, _ = build_merged_diffbuilder(seed, dt_ms=dt_ms, homeostasis=homeo,
-                                        per_region_thresh=True, cross_weight=CROSS_WEIGHT)
+                                        per_region_thresh=True, cross_weight=CROSS_WEIGHT,
+                                        per_region_homeo=per_region)
     determ = bool(_arr_hash(merged.cp_membrane_potential_v) == _arr_hash(b2.cp_membrane_potential_v)
                   and _arr_hash(merged.cp_neuron_firing_thresholds) == _arr_hash(b2.cp_neuron_firing_thresholds))
 
@@ -477,7 +488,11 @@ def main():
     a = ap.parse_args()
 
     seeds = [42] if a.smoke else [int(s) for s in a.seeds.split(",") if s.strip()]
-    cells = [(float(c.split(":")[0]), c.split(":")[1] == "True") for c in a.cells.split(",")]
+    # cell tag after ':' is True | False | PR. PR = per-region homeostasis (surprise ON, role OFF, global OFF) —
+    # the config-superset BOUNDARY unblock via the existing BrainRegion.enable_homeostasis engine primitive.
+    def _homeo_tag(t):
+        return "PR" if t == "PR" else (t == "True")
+    cells = [(float(c.split(":")[0]), _homeo_tag(c.split(":")[1])) for c in a.cells.split(",")]
 
     from sim.backend import get_backend
     xp, _ = get_backend()

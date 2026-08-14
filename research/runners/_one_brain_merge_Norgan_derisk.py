@@ -347,11 +347,20 @@ def _global_config_conflict_map():
 
 
 def build_merged_diffbuilder(seed, *, dt_ms=1.0, homeostasis=True, per_region_thresh=True,
-                             cross_weight=40.0, n_trained=8, n_novel=4, blk=24, cue_blk=24):
+                             cross_weight=40.0, n_trained=8, n_novel=4, blk=24, cue_blk=24,
+                             per_region_homeo=False):
     """ONE bridge = SURPRISE expectation organ (suffix _S; GABA_B prediction) + Wong-Wang
     SpikingRoleCompetition (NMDA mutual-inhibition WTA), config = the SUPERSET. Reuse-by-import:
     both builders' actual BrainRegion / RegionPathway specs are pulled from their own construction
-    and combined into one merged config with reconciled globals. Cross synapse surprise_S -> sel_agent."""
+    and combined into one merged config with reconciled globals. Cross synapse surprise_S -> sel_agent.
+
+    `per_region_homeo` (2026-08-14, DEFAULT-OFF -> byte-identical to the legacy global path): when True,
+    the ONE binding conflict the config-superset BOUNDARY mapped (surprise needs homeostasis ON, role
+    needs it OFF) is resolved WITHOUT a new engine primitive -- the global `cfg.enable_homeostasis` is
+    forced OFF and the surprise (`_S`) `BrainRegion`s each opt IN via the EXISTING per-region
+    `BrainRegion.enable_homeostasis=True` (sim/regions.py:171, built 2026-06-08): the fused engine then
+    uses the adapted thresholds for the surprise slice and the fixed `cp_izh_vpeak` for the role slice.
+    The `homeostasis` arg is ignored when this is True."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import RegionPathway
@@ -371,6 +380,15 @@ def build_merged_diffbuilder(seed, *, dt_ms=1.0, homeostasis=True, per_region_th
     rc = SpikingRoleCompetition(seed=seed)
     role_regions = list(rc.bridge.core_config.brain_regions)
     role_paths = list(rc.bridge.core_config.region_pathways)
+
+    # PER-REGION HOMEOSTASIS (the config-superset BOUNDARY unblock, using the EXISTING engine primitive).
+    # surprise (`_S`) regions opt IN to intrinsic-threshold adaptation; role regions keep the default
+    # (`enable_homeostasis=False` -> fixed vpeak). Global flag forced OFF so the role WTA's graded margin
+    # is not corrupted by adaptation, while the surprise slice keeps its native homeostasis operating point.
+    if per_region_homeo:
+        homeostasis = False
+        for r in exp_regions:
+            r.enable_homeostasis = True
 
     # SUPERSET config.
     cfg = CoreSimConfig()
