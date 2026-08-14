@@ -1,0 +1,37 @@
+{
+  "run_id": "1786664585-1382394",
+  "runner": "research/runners/_wkv_mouth_full_substrate_pipeline_derisk.py",
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/wt-wkv-full-substrate/research/runners/_wkv_mouth_full_substrate_pipeline_derisk.py",
+    "--smoke",
+    "--seeds",
+    "42",
+    "--n-eval-pos",
+    "20",
+    "--n-anticheat",
+    "12",
+    "--ckpt",
+    "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed{seed}.npz",
+    "--json",
+    "/home/dant123/Projects/sim/.claude/worktrees/wt-wkv-full-substrate/research/findings/raw/_wkv_full_substrate_pipeline_smoke.json"
+  ],
+  "git_sha": "067df7d1b",
+  "git_dirty": true,
+  "source_kind": null,
+  "source_manifest_sha256": null,
+  "source_manifest_verified_at_start": null,
+  "source_manifest_start_error": null,
+  "source_manifest_verified_at_exit": null,
+  "source_manifest_exit_error": null,
+  "started": "2026-08-13T19:43:05",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "sim_backend": "cupy",
+  "sim_backend_requested": "cupy",
+  "sim_backend_cupy_importable": true,
+  "corpus_check_age_s": 0.6,
+  "corpus_check_query": "compose WKV substrate state into the substrate read chain, full mouth state->logits end-to-end",
+  "artifact": "research/findings/raw/_wkv_full_substrate_pipeline_smoke.json",
+  "corpus_check_fresh": true
+}
