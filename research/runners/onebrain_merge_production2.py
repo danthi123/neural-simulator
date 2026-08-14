@@ -66,15 +66,17 @@ from research.runners._recursive_tom_rsa_derisk import (
 from sim.regions import BrainRegion, RegionPathway
 
 
-# PRODUCTION DEFAULT for pool #2 — DEFAULT-OFF (opt-in). The genuine two-organ merge is byte-identical
-# (merged == coresident-with-flags, 6/6) and PRAGMATIC is answer-preserving vs pre-flip, BUT METACOG's
-# balance-of-evidence confidence is NOT answer-preserving under the per-region heterogeneity re-draw the pool
-# requires (its narrow dynamic range — a pre-existing declared property, `metacog_production_organ` "NARROW DYNAMIC
-# RANGE" residual; the per-region param/threshold seams shift the small margin enough to flip the confident/uncertain
-# decision at mid-range evidence). Per the flip gate's rule ("scope an organ that can't join cleanly"), the
-# production-default flip is WITHHELD until metacog's confidence read is made robust to the re-draw. The pool is
-# built + byte-identical + wired behind `BRAIN_ONEBRAIN_MERGE2=1` (opt-in); absent/0 -> separate bridges (today).
-_MERGE2_DEFAULT_ON = False
+# PRODUCTION DEFAULT for pool #2 — DEFAULT-ON (2026-08-13). The genuine two-organ merge is byte-identical
+# (merged == coresident-with-flags, 6/6) and BOTH organs are now answer-preserving vs pre-flip: PRAGMATIC was 6/6;
+# METACOG became 6/6 once its confidence read was made robust to the per-region heterogeneity re-draw. The blocker
+# was metacog's ABSOLUTE spike-rate margin sitting at the workspace's ~0.1%-firing noise floor (near-random,
+# seed-fragile), which the per-region param/threshold seams reshuffled -> the confident/uncertain flip at mid-range
+# evidence. RESOLVED by adopting the DIVISIVE-NORMALIZED NMDA-CONDUCTANCE balance read as the metacog production
+# default (`metacog_production_organ.nmda_norm_margin`, GO `2026-08-13-metacog-robust-confidence-GO.md`): it tracks
+# evidence monotonically in both the standalone and merged build, so the self-calibrated threshold lands at the same
+# boundary -> the decision is invariant to the re-draw (answer-preservation 1/6 -> 6/6). `BRAIN_ONEBRAIN_MERGE2=0`
+# (or false/no/off) is the escape to two separate bridges (byte-identical to the pre-flip production).
+_MERGE2_DEFAULT_ON = True
 
 
 def merge2_enabled() -> bool:

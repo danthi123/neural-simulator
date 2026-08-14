@@ -74,96 +74,49 @@ import json
 import os
 from pathlib import Path
 
-import numpy as np
-
-from research.runners._second_order_metacog_monitor_derisk import _run_trial, K_CLASSES
-from research.runners._gnw_rung1_ignition_curve_derisk import _restore_state, DRIVE_STEPS, FREE_STEPS
-from research.runners.metacog_production_organ import (
-    MetacogProductionOrgan, BASE_PA, SIG_LO, SIG_HI, READ_REPS, READ_JITTER_PA, READ_SEED,
-)
+# reuse-by-import: the CANONICAL divisive-normalized NMDA-conductance margin is defined once in the production
+# organ (metacog_production_organ.nmda_norm_margin); the base MetacogProductionOrgan dispatches its `_margin` to
+# it under confidence_read="nmda_norm", so this de-risk drives the identical read through the real organ APIs.
+from research.runners.metacog_production_organ import MetacogProductionOrgan
 from research.runners.pragmatic_production_organ import PragmaticProductionOrgan
 from research.runners.onebrain_merge_production2 import MergedSubstrate2
 from research.runners._recursive_tom_rsa_derisk import UTTS
-from sim.backend import to_host
 from tools.lab import lever, void_if
 
 # the pool-#2 metacog evidence sweep (low -> high answer confidence).
 MC_EVID = [0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0]
-NORM_EPS = 1e-9   # divisive-normalization stabilizer
 
 
 class RobustMetacogProductionOrgan(MetacogProductionOrgan):
-    """MetacogProductionOrgan with a DIVISIVE-NORMALIZED NMDA-CONDUCTANCE balance read. Everything else — the
-    shared/standalone build path, the self-calibrating confident/uncertain threshold, the lesion, judge() — is
-    inherited unchanged; only the confidence MARGIN is replaced.
+    """MetacogProductionOrgan PINNED to the divisive-normalized NMDA-conductance confidence read — which is now the
+    production DEFAULT (`metacog_production_organ.nmda_norm_margin`; adopted 2026-08-13). Kept as a named alias for
+    this A/B so the read is forced explicitly regardless of the `BRAIN_METACOG_READ` env. The margin logic is NOT
+    reimplemented here — the base class dispatches `_margin` to the canonical `nmda_norm_margin` (single source of
+    truth, reuse-by-import).
 
-    WHY the NMDA conductance. The absolute spike-count margin the production organ reads (`confidence_read="balance"`,
-    `|rate(asm1)-rate(asm0)|` off `cp_firing_states`) sits at the NOISE FLOOR: the workspace assemblies fire at ~0.1%
-    at this operating point, so the margin is a difference of ~0.1 spikes — even the STANDALONE build's margin(evidence)
-    is only ~0.5 monotone (near-random), which is the real reason the per-region re-draw flips the decision. The slow-
-    NMDA recurrent conductance (`cp_conductance_g_nmda`) is the assembly's GRADED synaptic accumulator — the very
-    "balance-of-evidence integrator" the metacog faculty was designed around (Wang persistent NMDA; the docstring's
-    "slow NMDA lets meta INTEGRATE the settled balance-of-evidence"). It is driven by presynaptic spikes through NMDA
-    synapses (a genuine substrate/spiking state, NOT the injected current), integrates the sparse spikes into a smooth
-    graded signal, and tracks evidence monotone 1.00 in BOTH the standalone and the merged build with the two curves
-    nearly overlapping -> the confident/uncertain decision is invariant to the re-draw. The read is a Carandini & Heeger
-    DIVISIVE NORMALIZATION off conductances (explicitly the anti-cheat's sanctioned form), NOT a host rescale of the
-    answer: numerator = the two competing accumulators' balance, denominator = their summed co-active NMDA drive (the
-    normalization pool)."""
+    WHY the NMDA conductance. The absolute spike-count margin (`confidence_read="balance"`, `|rate(asm1)-rate(asm0)|`
+    off `cp_firing_states`) sits at the NOISE FLOOR: the workspace assemblies fire at ~0.1% at this operating point, so
+    the margin is a difference of ~0.1 spikes — even the STANDALONE build's margin(evidence) is only ~0.5 monotone
+    (near-random), which is the real reason the per-region re-draw flips the decision. The slow-NMDA recurrent
+    conductance (`cp_conductance_g_nmda`) is the assembly's GRADED synaptic accumulator — the "balance-of-evidence
+    integrator" the metacog faculty was designed around (Wang persistent NMDA) — driven by presynaptic spikes through
+    NMDA synapses (a genuine substrate/spiking state, NOT the injected current), and it tracks evidence monotone 1.00 in
+    BOTH the standalone and the merged build -> the confident/uncertain decision is invariant to the re-draw. Carandini
+    & Heeger DIVISIVE NORMALIZATION off conductances, NOT a host rescale of the answer."""
 
-    def _margin(self, evidence: float, lesion: bool = False) -> float:
-        """conf = |g_nmda(asm1) - g_nmda(asm0)| / (g_nmda(asm1) + g_nmda(asm0) + eps), the assemblies' late-window
-        mean recurrent-NMDA conductance off `cp_conductance_g_nmda`, averaged over READ_REPS fixed-seed jittered reads.
-        `lesion` removes the evidence differential (both assemblies at base) so the numerator collapses -> ~0."""
-        bridge, xp, idx, snap = self.bridge, self.xp, self.idx, self.snap
-        mem = idx["member_dev"]
-        sig = SIG_LO + float(np.clip(evidence, 0.0, 1.0)) * (SIG_HI - SIG_LO)
-        late_start = FREE_STEPS - max(1, FREE_STEPS // 3)
-        rng = np.random.default_rng(READ_SEED)
-        vals = []
-        for _ in range(READ_REPS):
-            j = float(rng.normal(0.0, READ_JITTER_PA)) if READ_JITTER_PA > 0 else 0.0
-            if lesion:
-                dp = [BASE_PA + j, BASE_PA + j]
-            else:
-                dp = [BASE_PA + sig + j, BASE_PA + j]
-            dp = [max(0.0, x) for x in dp]
-
-            bridge.cp_external_input_current[:] = 0.0
-            _restore_state(bridge, snap)
-            bridge.cp_external_input_current[:] = 0.0
-
-            def _set_drive():
-                for k in range(K_CLASSES):
-                    bridge.cp_external_input_current[mem[k]] = xp.float32(float(dp[k]))
-
-            for _ in range(DRIVE_STEPS):
-                bridge.cp_external_input_current[:] = 0.0
-                _set_drive()
-                bridge._run_one_simulation_step()
-
-            g_acc = {0: 0.0, 1: 0.0}
-            n_late = 0
-            for t in range(FREE_STEPS):
-                bridge.cp_external_input_current[:] = 0.0
-                _set_drive()
-                bridge._run_one_simulation_step()
-                if t >= late_start:
-                    for k in range(K_CLASSES):
-                        g_acc[k] += float(to_host(bridge.cp_conductance_g_nmda[mem[k]].astype(xp.float64).mean()))
-                    n_late += 1
-            n_late = float(max(1, n_late))
-            g0 = g_acc[0] / n_late
-            g1 = g_acc[1] / n_late
-            vals.append(abs(g1 - g0) / (g0 + g1 + NORM_EPS))
-        return float(np.mean(vals))
+    def __init__(self, seed: int = 42, shared=None):
+        super().__init__(seed=seed, shared=shared, confidence_read="nmda_norm")
 
 
 def _metacog_cls(read: str):
+    """Return a 0-arg-per-(seed,shared) factory for the requested read. `nmda_norm` -> the production DEFAULT read
+    (RobustMetacogProductionOrgan, pinned); `balance` -> the original ABSOLUTE spike-rate read (the 1/6 baseline
+    control / lever), forced explicitly since the production default is now nmda_norm."""
+    from functools import partial
     if read == "nmda_norm":
         return RobustMetacogProductionOrgan
     if read == "balance":
-        return MetacogProductionOrgan
+        return partial(MetacogProductionOrgan, confidence_read="balance")
     raise ValueError(f"unknown read={read!r}")
 
 
@@ -234,8 +187,9 @@ def run_seed(seed: int, read: str) -> dict:
     }
 
     if read == "nmda_norm":
-        # Compare against the CURRENTLY-SHIPPED absolute-spike read on the standalone build.
-        abs_today = MetacogProductionOrgan(seed=seed, shared=None)
+        # Compare against the PRE-2026-08-13 absolute-spike read on the standalone build (forced explicitly: the
+        # production default is now the nmda_norm read this de-risk installed, so `balance` is the escape).
+        abs_today = MetacogProductionOrgan(seed=seed, shared=None, confidence_read="balance")
         mc_abs_t = _read_metacog(abs_today)
         row["mc_absolute_today"] = mc_abs_t
 

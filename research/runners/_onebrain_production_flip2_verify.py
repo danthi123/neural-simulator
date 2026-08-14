@@ -153,11 +153,11 @@ def main():
     print(f"  ==> MERGE-GO (A+B, genuine one-pool merge):  {agg['merge_go']}/{n}")
     print(f"  C. answer preserved vs today — PRAGMATIC:    {agg['pragmatic_answer_preserved']}/{n}")
     print(f"  C. answer preserved vs today — METACOG:      {agg['metacog_answer_preserved']}/{n}  "
-          f"(narrow-margin confidence — NOT invariant to the per-region re-draw; the flip blocker)")
+          f"(nmda_norm divisive-conductance read — de-noised + invariant to the per-region re-draw; blocker RESOLVED)")
     print(f"  D. residual vs today (documented, >0): metacog {agg['residual_metacog_balance_max']:.4f}  "
           f"pragmatic {agg['residual_pragmatic_belief_max']:.4f}")
     print(f"  ==> FULL FLIP-GO (A+B+C both organs):        {agg['flip_go']}/{n}  "
-          f"(SCOPED: merge+pragmatic GO, metacog answer-preservation BOUNDARY -> pool default-OFF)")
+          f"(GO: genuine one-pool merge + BOTH organs answer-preserving -> pool #2 default-ON)")
     print(f"  wrote {args.out}")
     return agg
 

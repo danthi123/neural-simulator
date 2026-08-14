@@ -1,10 +1,15 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-08-13
 mechanism: one-brain-merge
 integration_faculty: onebrain-merge-organs-pool2
 ---
+
+> **RESOLVED 2026-08-13 — the withheld flip is now GO.** The metacog answer-preservation boundary (1/6) was the
+> ABSOLUTE spike-rate margin sitting at the workspace firing noise floor; the divisive-normalized NMDA-conductance
+> read (`2026-08-13-metacog-robust-confidence-GO.md`) makes the decision monotone + re-draw-invariant (6/6). Pool #2
+> (`_MERGE2_DEFAULT_ON=True`) + the metacog `nmda_norm` read are now default-ON — see `2026-08-13-onebrain-pool2-flip-GO.md`.
 
 # One-substrate SECOND pool (SCOPED): the metacog + pragmatic production organs share ONE spiking bridge BYTE-IDENTICALLY end-to-end (the first two-FULLY-WIRED-organ merge, `per_region_wiring_seed` exercised) — pragmatic is answer-preserving, metacog's narrow-margin confidence is a MEASURED answer-preservation boundary, affect is a STRUCTURAL exclusion → the production-default flip is WITHHELD (pool default-OFF, opt-in)
 

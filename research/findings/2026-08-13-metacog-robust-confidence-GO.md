@@ -110,6 +110,11 @@ default-preserving flag, then flip the default), re-run `_onebrain_production_fl
 `onebrain_merge_production2._MERGE2_DEFAULT_ON=True`. Affect remains a separate rung (its own pool / the recall-composer
 bridge — the structural name-collision + global-OU exclusion from `2026-08-13-onebrain-second-pool-SCOPED.md`).
 
+**DONE 2026-08-13:** this rung is complete. `nmda_norm` is now the metacog DEFAULT read (canonical
+`metacog_production_organ.nmda_norm_margin`; escape `BRAIN_METACOG_READ=balance`), `_MERGE2_DEFAULT_ON=True`, and the
+end-to-end `_onebrain_production_flip2_verify` is FLIP-GO 6/6 (determinism 9/9, smoke byte-identical). See
+`2026-08-13-onebrain-pool2-flip-GO.md`.
+
 ## Reproduce
 
 ```bash
