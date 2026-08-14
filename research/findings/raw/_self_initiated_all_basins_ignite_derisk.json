@@ -1,0 +1,484 @@
+{
+  "probe": "self_initiated_all_basins_ignite_DIAG",
+  "GO": false,
+  "mode": "diag_only",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 4,
+  "rest_steps": 3000,
+  "solo_steps": 3000,
+  "acid_steps": 800,
+  "min_frac": 0.3,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "basins DISJOINT (overlap 0) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "GO substrate ignites FEWER than n_mem basins (the residual) -- mean",
+      "ok": true,
+      "detail": "measured=3.0 expect=<function _main_diag.<locals>.<lambda> at 0x7f362a037ec0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "a basin fails even in ISOLATION (absolute-threshold, NOT competition) on >=5/6 seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function _main_diag.<locals>.<lambda> at 0x7f362a037ec0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "STP self-ignites the bistable down-state WITHOUT noise (substrate-STP incompatibility) every seed",
+      "ok": true,
+      "detail": "measured=6 expect=<function _main_diag.<locals>.<lambda> at 0x7f362a037ec0>",
+      "note": ""
+    }
+  ],
+  "elapsed_seconds": 4012.7,
+  "verdict": "NEGATIVE/PARTIAL (diagnostic) -- adaptation-driven itinerancy (ca3->ca3 STP) does NOT close the all-4-basins-ignite residual, and the reason CORRECTS the diagnosis: the GO substrate ignites 3.0/4 basins (reliability 0.00); the tail basin fails even in ISOLATION (solo mean 3.0/4 ignite; a basin fails solo on 6/6 seeds) -> ABSOLUTE-THRESHOLD, NOT competition lock-in, so STP (a competition-reshaper) cannot rescue it; and STP on the recurrent SELF-IGNITES the bistable down-state without noise on 6/6 seeds (substrate-STP incompatibility). STP is BANKED (the fair-sampling fix for competition lock-in, which is NOT the failure mode here); the named next rung is a CONNECTIVITY-aware pattern separation / scale lever (larger n_ca3, guaranteed within-assembly recurrent density) so every disjoint basin can complete. Per THE LAW: method banked, next named; not a stop.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          100.0,
+          80.0,
+          32.0,
+          0.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.3798426511954993,
+          0.3735680379746835,
+          0.36531557665260195,
+          0.12112517580872012
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 99.01710510253906,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 286.0,
+            "member": 0.34719065656565656,
+            "random": 0.043416193181818184,
+            "n_events": 3
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 186.0,
+            "member": 0.37050531914893614,
+            "random": 0.039696919326241135,
+            "n_events": 2
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 103.0,
+            "member": 0.37611832611832613,
+            "random": 0.03828463203463203,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 1.0,
+            "member": 0.11984288587229763,
+            "random": 0.04342524509803921,
+            "n_events": 3
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 511077,
+        "stable": false,
+        "apical_rest_max": 12.277377128601074
+      }
+    },
+    {
+      "seed": 43,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          61.0,
+          94.0,
+          56.0,
+          0.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.37659481076863055,
+          0.3840722135518273,
+          0.36203423722200545,
+          0.12981613343737808
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 102.1208724975586,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 480.0,
+            "member": 0.3871461925287356,
+            "random": 0.03848531788793104,
+            "n_events": 2
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 290.0,
+            "member": 0.39366853441424254,
+            "random": 0.03897420422031474,
+            "n_events": 2
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 54.0,
+            "member": 0.37203553778124593,
+            "random": 0.03848070295226948,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.11879766949152543,
+            "random": 0.03882216631355932,
+            "n_events": 2
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 506074,
+        "stable": false,
+        "apical_rest_max": 14.811552047729492
+      }
+    },
+    {
+      "seed": 44,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          64.0,
+          109.0,
+          56.0,
+          0.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.3848404255319149,
+          0.3895809155383623,
+          0.3761895551257254,
+          0.14004271437782076
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 108.04842376708984,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 424.0,
+            "member": 0.3844971264367816,
+            "random": 0.037255971623563214,
+            "n_events": 2
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 490.0,
+            "member": 0.38549242424242425,
+            "random": 0.03703286186331399,
+            "n_events": 2
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 92.0,
+            "member": 0.3693071338383838,
+            "random": 0.03653024384469697,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.12267029737206087,
+            "random": 0.03735487984094052,
+            "n_events": 2
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 495916,
+        "stable": false,
+        "apical_rest_max": 54.77094268798828
+      }
+    },
+    {
+      "seed": 100,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          81.0,
+          64.0,
+          85.0,
+          0.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.3569751413214716,
+          0.3549201881197294,
+          0.3577072328792512,
+          0.12776735242331574
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 112.81475067138672,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 348.0,
+            "member": 0.3404124579124579,
+            "random": 0.04090488215488216,
+            "n_events": 3
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 260.0,
+            "member": 0.3582857857857858,
+            "random": 0.04028512887887888,
+            "n_events": 3
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 144.0,
+            "member": 0.3971671160760144,
+            "random": 0.036430245249101184,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.15279953917050693,
+            "random": 0.03741515456989247,
+            "n_events": 2
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 519136,
+        "stable": false,
+        "apical_rest_max": -56.89551544189453
+      }
+    },
+    {
+      "seed": 101,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          105.0,
+          95.0,
+          24.0,
+          2.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.39770174571805006,
+          0.3896475625823452,
+          0.37450592885375494,
+          0.155
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 107.46519470214844,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 303.0,
+            "member": 0.3972161306042885,
+            "random": 0.03973714668615985,
+            "n_events": 2
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 366.0,
+            "member": 0.39716810966810967,
+            "random": 0.04107481060606061,
+            "n_events": 2
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 78.0,
+            "member": 0.3698773448773449,
+            "random": 0.04087414321789322,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.13627074314574314,
+            "random": 0.040862531565656564,
+            "n_events": 2
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 513179,
+        "stable": false,
+        "apical_rest_max": 22.148147583007812
+      }
+    },
+    {
+      "seed": 102,
+      "n_mem": 4,
+      "baseline": {
+        "n_visited_coherent": 3,
+        "all_ignite": false,
+        "dwell": [
+          62.0,
+          40.0,
+          90.0,
+          3.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "per_member": [
+          0.3856658249158249,
+          0.37352188552188553,
+          0.3848888888888889,
+          0.1604503367003367
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 105.36904907226562,
+        "weights_frozen": true
+      },
+      "solo": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 827.0,
+            "member": 0.39662698412698416,
+            "random": 0.03793365199615199,
+            "n_events": 2
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 146.0,
+            "member": 0.371787037037037,
+            "random": 0.037994791666666666,
+            "n_events": 2
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 85.0,
+            "member": 0.37131648936170214,
+            "random": 0.03805961879432625,
+            "n_events": 2
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.1322521551724138,
+            "random": 0.038265759698275864,
+            "n_events": 2
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false
+      },
+      "stp_nonoise": {
+        "total_ca3_spikes": 513360,
+        "stable": false,
+        "apical_rest_max": 16232.9423828125
+      }
+    }
+  ]
+}
