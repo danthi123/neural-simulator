@@ -1,0 +1,1059 @@
+{
+  "runner": "_gnw_rung2b_sfa_workspace_eviction_derisk",
+  "mode": "smoke",
+  "grid": [
+    {
+      "seed": 42,
+      "izh_d_applied": 200.0,
+      "izh_a_applied": 0.009999999776482582,
+      "operating_point": {
+        "izh_d": 200.0,
+        "izh_a": 0.01,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "winner_per_challenger": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "both"
+      ],
+      "mutual_exclusion": false,
+      "a_holds_weak": true,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": false,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.3333333333333333,
+              "winner": "both",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 1,
+        "anti_annihilation": true,
+        "A_pre": 0.7625,
+        "B_pre": 0.0,
+        "A_post": 0.3333333333333333,
+        "B_post": 0.0,
+        "winner_post": "A"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 200.0,
+      "izh_a_applied": 0.019999999552965164,
+      "operating_point": {
+        "izh_d": 200.0,
+        "izh_a": 0.02,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "winner_per_challenger": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "both"
+      ],
+      "mutual_exclusion": false,
+      "a_holds_weak": true,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": false,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.3333333333333333,
+              "winner": "both",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 1,
+        "anti_annihilation": true,
+        "A_pre": 0.75,
+        "B_pre": 0.0,
+        "A_post": 0.3333333333333333,
+        "B_post": 0.0,
+        "winner_post": "A"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 200.0,
+      "izh_a_applied": 0.029999999329447746,
+      "operating_point": {
+        "izh_d": 200.0,
+        "izh_a": 0.03,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "winner_per_challenger": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "both"
+      ],
+      "mutual_exclusion": false,
+      "a_holds_weak": true,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": false,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.3333333333333333,
+              "winner": "both",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 2,
+        "anti_annihilation": false,
+        "A_pre": 0.75,
+        "B_pre": 0.0,
+        "A_post": 0.3333333333333333,
+        "B_post": 0.3333333333333333,
+        "winner_post": "both"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 400.0,
+      "izh_a_applied": 0.009999999776482582,
+      "operating_point": {
+        "izh_d": 400.0,
+        "izh_a": 0.01,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.016666666666666666,
+        0.0015151515151515152,
+        0.0003787878787878788,
+        0.0003787878787878788,
+        0.0007575757575757576,
+        0.0003787878787878788,
+        0.0003787878787878788,
+        0.0003787878787878788,
+        0.0007575757575757576
+      ],
+      "b_rates": [
+        0.0,
+        0.020454545454545454,
+        0.020454545454545454,
+        0.017803030303030303,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": false,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": true,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.0,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.0007575757575757576,
+              "winner": "none",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.0003787878787878788,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.0007575757575757576,
+              "winner": "none",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": false,
+        "n_ignited_post": 0,
+        "anti_annihilation": false,
+        "A_pre": 0.0,
+        "B_pre": 0.0,
+        "A_post": 0.0,
+        "B_post": 0.0,
+        "winner_post": "none"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 400.0,
+      "izh_a_applied": 0.019999999552965164,
+      "operating_point": {
+        "izh_d": 400.0,
+        "izh_a": 0.02,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": true,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": false,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 1,
+        "anti_annihilation": true,
+        "A_pre": 0.775,
+        "B_pre": 0.0,
+        "A_post": 0.3333333333333333,
+        "B_post": 0.0,
+        "winner_post": "A"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 400.0,
+      "izh_a_applied": 0.029999999329447746,
+      "operating_point": {
+        "izh_d": 400.0,
+        "izh_a": 0.03,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": true,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": false,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.3333333333333333,
+              "B": 0.0,
+              "winner": "A",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.3333333333333333,
+              "winner": "B",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 1,
+        "anti_annihilation": true,
+        "A_pre": 0.7625,
+        "B_pre": 0.0,
+        "A_post": 0.3333333333333333,
+        "B_post": 0.0,
+        "winner_post": "A"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 600.0,
+      "izh_a_applied": 0.009999999776482582,
+      "operating_point": {
+        "izh_d": 600.0,
+        "izh_a": 0.01,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "b_rates": [
+        0.0,
+        0.0,
+        0.0,
+        0.020833333333333332,
+        0.009848484848484848,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": false,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": true,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.0,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.0,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": false,
+        "n_ignited_post": 0,
+        "anti_annihilation": false,
+        "A_pre": 0.0,
+        "B_pre": 0.0,
+        "A_post": 0.0,
+        "B_post": 0.0,
+        "winner_post": "none"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 600.0,
+      "izh_a_applied": 0.019999999552965164,
+      "operating_point": {
+        "izh_d": 600.0,
+        "izh_a": 0.02,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.020833333333333332,
+        0.015909090909090907,
+        0.02196969696969697,
+        0.024242424242424242,
+        0.023484848484848483,
+        0.025,
+        0.025,
+        0.026893939393939394,
+        0.023863636363636365
+      ],
+      "b_rates": [
+        0.0,
+        0.016666666666666666,
+        0.02462121212121212,
+        0.022727272727272728,
+        0.021212121212121213,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": false,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": true,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.028409090909090908,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.02462121212121212,
+              "winner": "none",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.022727272727272728,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.015909090909090907,
+              "winner": "none",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": false,
+        "n_ignited_post": 0,
+        "anti_annihilation": false,
+        "A_pre": 0.0,
+        "B_pre": 0.0,
+        "A_post": 0.027651515151515153,
+        "B_post": 0.0,
+        "winner_post": "none"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    },
+    {
+      "seed": 42,
+      "izh_d_applied": 600.0,
+      "izh_a_applied": 0.029999999329447746,
+      "operating_point": {
+        "izh_d": 600.0,
+        "izh_a": 0.03,
+        "fs_to_ws": 28.0,
+        "ou_noise_pA": 40.0,
+        "incumbent_settle": 150,
+        "heterogeneity": true,
+        "drive_inc": 5000.0,
+        "chal_max": 8000.0,
+        "n_chal": 9
+      },
+      "drive_challengers": [
+        0.0,
+        1000.0,
+        2000.0,
+        3000.0,
+        4000.0,
+        5000.0,
+        6000.0,
+        7000.0,
+        8000.0
+      ],
+      "a_rates": [
+        0.0125,
+        0.017424242424242425,
+        0.023863636363636365,
+        0.030303030303030304,
+        0.022727272727272728,
+        0.02462121212121212,
+        0.02803030303030303,
+        0.02196969696969697,
+        0.02727272727272727
+      ],
+      "b_rates": [
+        0.0,
+        0.01628787878787879,
+        0.026515151515151516,
+        0.026893939393939394,
+        0.020454545454545454,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "winner_per_challenger": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "mutual_exclusion": true,
+      "a_holds_weak": false,
+      "b_takes_strong": false,
+      "monotone": true,
+      "crossover": false,
+      "annihilation_on_sweep": true,
+      "causal_swap": {
+        "attribution": 0.0,
+        "pass": false,
+        "trials": [
+          {
+            "strong_drive": 8000.0,
+            "B_challenges": {
+              "A": 0.028409090909090908,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0003787878787878788,
+              "B": 0.020075757575757577,
+              "winner": "none",
+              "follows_salience": false
+            }
+          },
+          {
+            "strong_drive": 6800.0,
+            "B_challenges": {
+              "A": 0.02462121212121212,
+              "B": 0.0,
+              "winner": "none",
+              "follows_salience": false
+            },
+            "A_challenges": {
+              "A": 0.0,
+              "B": 0.015909090909090907,
+              "winner": "none",
+              "follows_salience": false
+            }
+          }
+        ]
+      },
+      "continuous_headline": {
+        "no_restore_calls": true,
+        "takeover": false,
+        "incumbent_ignited_pre_challenge": true,
+        "n_ignited_post": 0,
+        "anti_annihilation": false,
+        "A_pre": 0.2375,
+        "B_pre": 0.0,
+        "A_post": 0.026515151515151516,
+        "B_post": 0.0,
+        "winner_post": "none"
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "ad28b0e5f2a2bfdfe60f4f0287c63307ccec84df7193228cd3ce63a0ef35afdc",
+      "op_go": false
+    }
+  ]
+}

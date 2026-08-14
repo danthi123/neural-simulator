@@ -1,0 +1,31 @@
+{
+ "run_id": "1786690268-1554297",
+ "runner": "research/runners/_gnw_rung2b_sfa_workspace_eviction_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/wt-selfws/research/runners/_gnw_rung2b_sfa_workspace_eviction_derisk.py",
+  "--seed",
+  "42",
+  "--smoke",
+  "--json",
+  "research/findings/raw/_gnw_rung2b_smoke42.json"
+ ],
+ "git_sha": "994ed8c0e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-14T02:51:08",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 699.4,
+ "corpus_check_query": "SFA spike-frequency-adaptation eviction of a workspace attractor competitive access GNW",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_rung2b_smoke42.json"
+}
