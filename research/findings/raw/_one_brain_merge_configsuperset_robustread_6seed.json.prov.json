@@ -1,0 +1,31 @@
+{
+ "run_id": "1786694212-1579744",
+ "runner": "research/runners/_one_brain_merge_configsuperset_production_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/wt-surpres/research/runners/_one_brain_merge_configsuperset_production_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--cells",
+  "0.5:PR,0.5:PRX",
+  "--out",
+  "research/findings/raw/_one_brain_merge_configsuperset_robustread_6seed.json"
+ ],
+ "git_sha": "93ecfee9f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-14T03:56:52",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_one_brain_merge_configsuperset_robustread_6seed.json"
+}

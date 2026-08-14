@@ -58,6 +58,16 @@ from tools.verdict import Verdict
 
 READ_STEPS = 60
 CROSS_WEIGHT = 40.0
+# ── PRX cell levers (runner-only; PRX = PR + L1). L1 = margin-dead-band robust surprise read. ──
+# L2 (higher surprise_S->sel_agent cross gain) was PROPOSED to close cross_load_bearing but is EMPIRICALLY
+# FALSIFIED (2026-08-14 trained sweep, seeds 42/43, weights 40..250): on a WORKING seed (42) raising the gain
+# 40->60 SILENCES sel_agent under contradict (25->0 Hz -- the strong contradict surprise over-drives sel_agent
+# out of its spiking regime, a depolarization-block-like effect); on a WEAK seed (43) NO weight (<=250) ever
+# makes contradict fire the agent. The anti-cheat "cap CROSS_WEIGHT_HIGH at the largest load-bearing value"
+# therefore CAPS IT AT 40 == CROSS_WEIGHT (no lift). The real residual is weak/nonuniform surprise_S contradict
+# firing on 4/6 seeds -> the fully-learned CA3 all-to-all recall rung (uniform strong violation firing), NOT gain.
+CROSS_WEIGHT_HIGH = 40.0    # == CROSS_WEIGHT: L2 falsified (depol-block); PRX carries L1 only. Banked, next lever named.
+SURP_MARGIN_FRAC = 0.25     # L1: margin dead-band fraction for the robust surprise read (PRX); 0.0 -> byte-id hair-trigger
 # native-production build params for the surprise organ (verbatim from SurpriseProductionOrgan._build_one)
 SURP_N_TRAINED, SURP_N_NOVEL, SURP_BLK, SURP_CUE_BLK, SURP_CUE_W, SURP_NREPS = 8, 4, 24, 24, 0.8, 22
 
@@ -206,24 +216,35 @@ def _comprehended(margins, battery):
 
 
 # ── surprise reads on the merged bridge (Norgan-style: measure_conditions confirm/contradict/novel per fact) ──
-def _surprise_bools(bridge, cfg, idx_map, meta, xp, iso_mask=None):
-    """Per-fact-per-condition `surprised` bool over the surprise panel via `measure_conditions`, thresholded
-    exactly as SurpriseProductionOrgan (midpoint of confirm and the weaker violation). If `iso_mask` given, run
-    the whole measurement inside the read-isolation guard (restore the co-resident role slice)."""
+def _classify_surprise(res, robust=False, margin_frac=0.0):
+    """The ONE surprise decision rule, shared by the merged read AND the native baseline (anti-cheat #3: same
+    rule both sides). `robust=False` (mu=0) reproduces SurpriseProductionOrgan's hair-trigger EXACTLY; `robust=True`
+    adds a margin dead-band `mu = margin_frac * max(contradict-confirm, 0)` on the SAME calibrated threshold, so a
+    fact must clear `thr + mu` to count as surprised (mismatch-negativity: a genuine deviant clears a MARGIN over
+    the predicted baseline, not a razor edge). In-band facts default to NOT-surprised (the conservative null)."""
+    conf, contra, nov = res["confirm_hz"], res["contradict_hz"], res["novel_hz"]
+    thr = 0.5 * (conf + min(contra, nov))                       # unchanged calibration
+    mu = (margin_frac * max(contra - conf, 0.0)) if robust else 0.0
+    _s = lambda m: bool(m >= thr + mu)                          # robust=False, mu=0 -> old rule EXACTLY
+    bools = ([_s(m) for m in res["confirm_per"]]      # expect all False (not surprised)
+             + [_s(m) for m in res["contradict_per"]]  # expect all True
+             + [_s(m) for m in res["novel_per"]])      # expect all True
+    return bools, dict(confirm_hz=float(conf), contradict_hz=float(contra), novel_hz=float(nov),
+                       threshold=float(thr), margin=float(mu),
+                       separation=float(contra / max(conf, 1e-6)))
+
+
+def _surprise_bools(bridge, cfg, idx_map, meta, xp, iso_mask=None, robust=False, margin_frac=0.0):
+    """Per-fact-per-condition `surprised` bool over the surprise panel via `measure_conditions`, thresholded via
+    the shared `_classify_surprise` rule. If `iso_mask` given, run the whole measurement inside the read-isolation
+    guard (restore the co-resident role slice). Byte-identical to the shipped hair-trigger when `robust=False`."""
     guard = _read_isolation(bridge, iso_mask, xp) if iso_mask is not None else None
     if guard is not None:
         with guard:
             res = measure_conditions(bridge, cfg, idx_map, meta, xp)
     else:
         res = measure_conditions(bridge, cfg, idx_map, meta, xp)
-    conf, contra, nov = res["confirm_hz"], res["contradict_hz"], res["novel_hz"]
-    thr = 0.5 * (conf + min(contra, nov))
-    bools = ([m >= thr for m in res["confirm_per"]]      # expect all False (not surprised)
-             + [m >= thr for m in res["contradict_per"]]  # expect all True
-             + [m >= thr for m in res["novel_per"]])      # expect all True
-    return [bool(b) for b in bools], dict(confirm_hz=float(conf), contradict_hz=float(contra),
-                                          novel_hz=float(nov), threshold=float(thr),
-                                          separation=float(contra / max(conf, 1e-6)))
+    return _classify_surprise(res, robust=robust, margin_frac=margin_frac)
 
 
 # ── cached native baselines (dt/homeo-independent -> built ONCE per seed) ──
@@ -239,8 +260,10 @@ def _native_comp(seed, battery):
 
 
 def _native_surprise(seed, xp):
-    """SHIPPED production surprise answer: the standalone expectation circuit at native dt=1.0 (the params
-    SurpriseProductionOrgan builds), trained + measured. Per-fact-per-condition `surprised` bool."""
+    """SHIPPED production surprise answer, computed ONCE per seed: the standalone expectation circuit at native
+    dt=1.0 (the params SurpriseProductionOrgan builds), trained + measured. Returns the RAW `measure_conditions`
+    dict (confirm/contradict/novel per-fact rates) so `run_cell` classifies it with the CELL's read mode (the
+    rates are read-mode-independent; classifying downstream avoids a second standalone train per cell)."""
     bridge, cfg, meta = build_expectation_circuit(seed, n_trained=SURP_N_TRAINED, n_novel=SURP_N_NOVEL,
                                                   blk=SURP_BLK, cue_blk=SURP_CUE_BLK,
                                                   cue_to_expected_weight=SURP_CUE_W)
@@ -248,7 +271,7 @@ def _native_surprise(seed, xp):
     idx_map = {n: xp.asarray(_idx(bridge, n)) for n in ("cue", "patient_expected", "patient_asserted", "surprise")}
     train_expectation(bridge, cfg, idx_map, meta, xp, n_reps=SURP_NREPS)
     cfg.enable_hebbian_learning = False
-    return _surprise_bools(bridge, cfg, idx_map, meta, xp)
+    return measure_conditions(bridge, cfg, idx_map, meta, xp)
 
 
 def _build_and_prep(seed, dt_ms, homeo, comp_src, cross_weight, per_region_homeo=False):
@@ -275,7 +298,12 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
     # role stays OFF (global flag OFF). The comprehension weight-source + read template therefore build with
     # role-homeostasis OFF (its native operating point, AUC 1.000), while the merged bridge scopes homeostasis
     # per-region via the existing `BrainRegion.enable_homeostasis` primitive (NO new engine edit).
-    per_region = (homeo == "PR")
+    # PRX = PR + the two surprise-side residual levers (runner-only): L1 a margin-dead-band robust surprise read
+    # + L2 a higher surprise_S->sel_agent cross gain. Both inert at their defaults (mu=0, cross=40) -> PR/global
+    # cells are byte-identical; the new behaviour is reachable ONLY via the PRX tag.
+    per_region = homeo in ("PR", "PRX")
+    robust_read = (homeo == "PRX")                                  # L1
+    cross_w = CROSS_WEIGHT_HIGH if homeo == "PRX" else CROSS_WEIGHT  # L2
     comp_homeo = False if per_region else homeo
 
     # ---- weight source + read template: the comprehension organ at THIS operating point ----
@@ -284,7 +312,7 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
     # ---- the merged config-superset bridge + a fresh DECOUPLED twin (cross=0). No in-place CSR mutation:
     #      the _install_block_diagonal_full toggle does NOT round-trip cleanly, so each comparison is a
     #      FRESH build differing only in the cross weight (the one coupling channel surprise_S->sel_agent). ----
-    merged, cfg_m, meta = _build_and_prep(seed, dt_ms, homeo, comp_src, CROSS_WEIGHT, per_region_homeo=per_region)
+    merged, cfg_m, meta = _build_and_prep(seed, dt_ms, homeo, comp_src, cross_w, per_region_homeo=per_region)
     dec, cfg_d, _ = _build_and_prep(seed, dt_ms, homeo, comp_src, 0.0, per_region_homeo=per_region)  # decoupled twin
     idx_S = _idx_map(merged, "_S", xp)
     idx_S_d = _idx_map(dec, "_S", xp)
@@ -299,7 +327,7 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
 
     # ── (2) DETERMINISM: build twice -> hash membrane + thresholds ──
     b2, _, _ = build_merged_diffbuilder(seed, dt_ms=dt_ms, homeostasis=homeo,
-                                        per_region_thresh=True, cross_weight=CROSS_WEIGHT,
+                                        per_region_thresh=True, cross_weight=cross_w,
                                         per_region_homeo=per_region)
     determ = bool(_arr_hash(merged.cp_membrane_potential_v) == _arr_hash(b2.cp_membrane_potential_v)
                   and _arr_hash(merged.cp_neuron_firing_thresholds) == _arr_hash(b2.cp_neuron_firing_thresholds))
@@ -365,8 +393,10 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
         cf.enable_hebbian_learning = True
         train_expectation(br, cf, ix, meta, xp, n_reps=SURP_NREPS)
         cf.enable_hebbian_learning = False
-    surp_bool_m, surp_stats_m = _surprise_bools(merged, cfg_m, idx_S, meta, xp, iso_mask=role_mask)
-    surp_bool_d, surp_stats_d = _surprise_bools(dec, cfg_d, idx_S_d, meta, xp)
+    surp_bool_m, surp_stats_m = _surprise_bools(merged, cfg_m, idx_S, meta, xp, iso_mask=role_mask,
+                                                robust=robust_read, margin_frac=SURP_MARGIN_FRAC)
+    surp_bool_d, surp_stats_d = _surprise_bools(dec, cfg_d, idx_S_d, meta, xp,
+                                                robust=robust_read, margin_frac=SURP_MARGIN_FRAC)
     surprise_functional = bool(surp_stats_m["separation"] >= 2.0 and surp_stats_m["contradict_hz"] >= 5.0)
 
     # ── (5b) surprise byte-id: role cannot perturb surprise (no sel->surprise path). Merged(cross=40) vs
@@ -374,10 +404,24 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
     surp_byte_id_err = max(abs(surp_stats_m[k] - surp_stats_d[k]) for k in ("confirm_hz", "contradict_hz", "novel_hz"))
     surp_byte_id = bool(surp_bool_m == surp_bool_d)
 
-    # ── (5c) surprise answer-preserved vs the SHIPPED NATIVE read (dt=1.0, homeo ON, production defaults) ──
-    surp_bool_native, surp_stats_native = native_cache["surp"]
+    # ── (5c) surprise answer-preserved vs the SHIPPED NATIVE read (dt=1.0, homeo ON, production defaults).
+    #        Classify the cached RAW native rates with THIS cell's read mode -> the SAME rule both sides
+    #        (anti-cheat #3), so common-mode near-boundary flips cancel instead of appearing as mismatches. ──
+    surp_bool_native, surp_stats_native = _classify_surprise(native_cache["surp_res"], robust=robust_read,
+                                                             margin_frac=SURP_MARGIN_FRAC)
     surp_match = sum(a == b for a, b in zip(surp_bool_m, surp_bool_native))
     surp_answer_preserved = bool(surp_match == len(surp_bool_native))
+
+    # ── NATIVE-FLOOR anti-cheat (robust read only, §3.2): a too-large dead-band must not trivially null the
+    #    faculty. On the NATIVE standalone the robust read must still label >=5/8 contradict + >=5/8 novel as
+    #    surprised AND >=7/8 confirm as not-surprised. Ordering in _classify_surprise: confirm | contradict | novel. ──
+    native_robust_floor_ok = None
+    if robust_read:
+        nb, _ns = _classify_surprise(native_cache["surp_res"], robust=True, margin_frac=SURP_MARGIN_FRAC)
+        n_t = SURP_N_TRAINED
+        conf_b, contra_b, nov_b = nb[:n_t], nb[n_t:2 * n_t], nb[2 * n_t:3 * n_t]
+        native_robust_floor_ok = bool(sum(contra_b) >= 5 and sum(nov_b) >= 5
+                                      and sum(not b for b in conf_b) >= 7)
 
     # ── READ-ISOLATION verify (surp): a surprise read, under the guard, leaves the role slice bit-for-bit unchanged ──
     _hard_reset(merged)
@@ -395,13 +439,19 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
             cur = _surprise_current(br, mt, xp, condition=cond)
             cur = cur.copy(); cur[_idx(br, "cue_position_neg")] = np.float32(3500.0)
             return _role_rates(br, None, None, xp, extra_current=xp.asarray(cur))["agent"]
-        return _one("contradict") - _one("confirm")
+        contra_r = _one("contradict"); conf_r = _one("confirm")   # order preserved -> cross_intact byte-id
+        return contra_r - conf_r, contra_r, conf_r
 
-    cross_intact = _agent_bias(merged, meta)
-    cross_lesion = _agent_bias(dec, meta)
+    cross_intact, agent_contra_hz, agent_confirm_hz = _agent_bias(merged, meta)
+    cross_lesion, _, _ = _agent_bias(dec, meta)
     cross_frac = attributable_to("sel_agent bias @ surprise_S->sel_agent cross", cross_intact, cross_lesion)
     cross_lb = bool(abs(cross_intact) >= 1.0 and abs(cross_intact) >= 5.0 * max(abs(cross_lesion), 1e-6)
                     and (cross_frac is None or cross_frac >= 0.8))
+    # ANTI-CHEAT #4: the bias must be surprise-DRIVEN, not a saturated agent floor -> confirm-condition sel_agent
+    # must NOT reach/exceed contradict-condition. Caps CROSS_WEIGHT_HIGH (too high a gain would let residual
+    # confirm-surprise drive agent and shrink/invert the bias). cross_lesion (decoupled cross=0) stays ~0 -> the
+    # rise is load-bearing on the cross, not a floor. Silent-seed (both 0) is safe: no drive, no inversion.
+    cross_confirm_below_contradict = bool(agent_confirm_hz == 0.0 or agent_confirm_hz < agent_contra_hz)
 
     # ── VERDICT (merge-specific axes must be exact; the organ-variance axes carry the 6-seed slack) ──
     V = Verdict(f"config-superset merge seed={seed} dt={dt_ms} homeo={homeo}")
@@ -439,6 +489,10 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
         "cross_intact_hz": float(cross_intact), "cross_lesion_hz": float(cross_lesion),
         "cross_attribution_frac": (float(cross_frac) if cross_frac is not None else None),
         "cross_load_bearing": cross_lb,
+        "cross_agent_contra_hz": float(agent_contra_hz), "cross_agent_confirm_hz": float(agent_confirm_hz),
+        "cross_confirm_below_contradict": cross_confirm_below_contradict,
+        "cross_weight": float(cross_w), "surp_margin_frac": float(SURP_MARGIN_FRAC if robust_read else 0.0),
+        "native_robust_floor_ok": native_robust_floor_ok,
         "read_iso_comp": bool(read_iso_comp), "read_iso_surp": bool(read_iso_surp),
     }
     if verbose:
@@ -447,7 +501,9 @@ def run_cell(seed, dt_ms, homeo, *, native_cache, verbose=True):
               f"ans={comp_answer_preserved}({comp_match}/{len(comp_bool_m)}) | "
               f"SURP sep={surp_stats_m['separation']:.1f}x func={surprise_functional} "
               f"byteid={surp_byte_id} ans={surp_answer_preserved}({surp_match}/{len(surp_bool_native)}) | "
-              f"cross {cross_intact:+.1f}/{cross_lesion:+.1f}({cross_lb}) | "
+              f"cross {cross_intact:+.1f}/{cross_lesion:+.1f}({cross_lb}) "
+              f"[a_contra={agent_contra_hz:.0f} a_conf={agent_confirm_hz:.0f} cw={cross_w:.0f} "
+              f"cbc={cross_confirm_below_contradict} floor={native_robust_floor_ok}] | "
               f"iso c={read_iso_comp} s={read_iso_surp} | GO={go}", flush=True)
     return row
 
@@ -488,10 +544,11 @@ def main():
     a = ap.parse_args()
 
     seeds = [42] if a.smoke else [int(s) for s in a.seeds.split(",") if s.strip()]
-    # cell tag after ':' is True | False | PR. PR = per-region homeostasis (surprise ON, role OFF, global OFF) —
-    # the config-superset BOUNDARY unblock via the existing BrainRegion.enable_homeostasis engine primitive.
+    # cell tag after ':' is True | False | PR | PRX. PR = per-region homeostasis (surprise ON, role OFF, global
+    # OFF) — the config-superset BOUNDARY unblock via the existing BrainRegion.enable_homeostasis primitive. PRX =
+    # PR + the two surprise-side residual levers (L1 robust margin-dead-band read, L2 higher cross gain).
     def _homeo_tag(t):
-        return "PR" if t == "PR" else (t == "True")
+        return t if t in ("PR", "PRX") else (t == "True")
     cells = [(float(c.split(":")[0]), _homeo_tag(c.split(":")[1])) for c in a.cells.split(",")]
 
     from sim.backend import get_backend
@@ -505,7 +562,7 @@ def main():
 
     rows = []
     for s in seeds:
-        native_cache = {"comp": _native_comp(s, build_battery(s, n_per_cond=6)), "surp": _native_surprise(s, xp)}
+        native_cache = {"comp": _native_comp(s, build_battery(s, n_per_cond=6)), "surp_res": _native_surprise(s, xp)}
         for (dt, h) in cells:
             rows.append(run_cell(s, dt, h, native_cache=native_cache))
 
