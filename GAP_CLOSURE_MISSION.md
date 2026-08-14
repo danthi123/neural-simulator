@@ -15,6 +15,25 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-14 (READ FIRST — live resume point)
 
+> **✅✅ 2026-08-14 CONTINUATION WAVE COMPLETE — 9 lanes consolidated on main + both remotes @ `2b0742d9` (full detail:
+> the MASTER ROADMAP §0 continuation block, synced `f959df3b`).** HEADLINE: the COMPOSER (the moat organ) now joins
+> production pool #1 **BY DEFAULT** (`77759c2dc`→`1510bb0fc`, independently re-verified 1/1 + agent 6/6 + det 9/9 + smoke
+> byte-id — the moat organ shares ONE `cp_membrane_potential_v` with surprise + world-model by default; residual = the
+> config-coupled Hebbian parser stays on a private bridge); the WHOLE MOUTH matmul chain is on the substrate (`055bfdf2d`)
+> + the read-out WEIGHTS are now LEARNED on-substrate by a local three-factor e-prop rule (qualified GO, `6070d79d`;
+> host-linear-proxy forward → batched-substrate-forward = next lever); the self-initiated UTTERANCE loop CLOSED
+> (`26bdae143`). BOUNDARIES banked + surpassed SAME-CYCLE (no defer): config-superset merge → per-region homeostasis
+> (already-shipped primitive, no sim/ edit) reconciled comprehension 6/6, surprise-side residual mapped (`f959df3b`); GNW
+> Rung-2b SFA-eviction NEGATIVE → salience-gated dis-inhibition pulse is next (`3a5db01`); B1 V1 self-org → the "silent
+> forward" premise was REFUTED (V1 active-sparse) and the real wall diagnosed as common-mode learning (`2b0742d9`; next =
+> learned anti-Hebbian inhibition).
+> **LIVE:** [DMN] all-basins-ignite (GPU, ~45min) + [A] affect 2nd-order conditioning (CPU) running. Heartbeat `bnxflymhe`.
+> Owner GAMING (Palworld sharing GPU) → HOLD GPU launches; CPU lanes free.
+> **NEXT-RUNG QUEUE:** Track-1 = surprise-side residual (threshold-robust surprise read + restore cross-drive) +
+> OneBrainComposer parser-on-pool; Track-2 = LN(emb) biologization + batched-substrate-forward e-prop (GPU); Faculty =
+> [DMN] result + question-vs-remark on the substrate; Breadth = Rung-2c salience-gated dis-inhibition + B curiosity (needs
+> scoping). Ready inventory specs in the scratchpad (spec_lane_*.md, spec_track*.md).
+
 > **✅ CONTINUATION 2026-08-14 (owner standing directive: "continue on both lanes autonomously" + "parallelize, GPU
 > available"; ultracode on). 3 LANES CONSOLIDATED on main + both remotes @ `26bdae14`:**
 > - **[CPF] composer→pool-1 (`562cbff5c`)** — the RF-phasor recall composer + transducer cleanup can JOIN production
