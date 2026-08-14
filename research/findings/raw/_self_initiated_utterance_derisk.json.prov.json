@@ -1,0 +1,41 @@
+{
+ "run_id": "1786676643-1458315",
+ "runner": "research/runners/_self_initiated_utterance_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a59a1c944044c2fcc/research/runners/_self_initiated_utterance_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-mem",
+  "4",
+  "--rest-steps",
+  "4000",
+  "--acid-steps",
+  "1200",
+  "--gain-scale",
+  "1.0"
+ ],
+ "git_sha": "0260d1523",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T23:04:03",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5117.2,
+ "corpus_check_query": "self-initiation selects thoughts, route the selected thought seed to an utterance via the composer/mouth",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_self_initiated_utterance_derisk.json"
+}

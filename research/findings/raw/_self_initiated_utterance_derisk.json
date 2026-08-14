@@ -1,0 +1,1231 @@
+{
+  "probe": "self_initiated_utterance",
+  "GO": true,
+  "n_go": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 4,
+  "rest_steps": 4000,
+  "acid_steps": 1200,
+  "gain_scale": 1.0,
+  "D": 256,
+  "curiosity_bias_attribution": 0.676767404909141,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seeds passing all anti-cheats >= threshold",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f9b237b7100>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "mouth fidelity: every stored fact decodes on-bridge + unknown subject abstains (every seed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "balanced basins DISJOINT (max pairwise overlap == 0) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ABOUT-THE-SELECTED-CONCEPT: production about-selected rate (mean) >= 0.9",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f9b237b7100>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "about-selected: production vs SCRAMBLE-routing negative control",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "production speaks MULTIPLE distinct concepts (mean >= 2)",
+      "ok": true,
+      "detail": "measured=3.0 expect=<function main.<locals>.<lambda> at 0x7f9b237b7100>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coherent: surfaced member vs random floor",
+      "ok": true,
+      "detail": "treatment=0.381861 control=0.0394001 |sep|=0.342461 > 0.15",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "coherence member above random",
+      "ok": true,
+      "detail": "0.381861 vs floor 0.0394001",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "curiosity-steered: novel-utterance share on vs reversed",
+      "ok": true,
+      "detail": "treatment=0.756884 control=0.24465 |sep|=0.512235 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "internally-triggered: NO-NOISE -> 0 utterances every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "substrate-attributable: STORE-LESION collapses the utterance stream every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity byte-frozen during the wander every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "elapsed_seconds": 3327.9,
+  "verdict": "GO 6/6 -- the self-initiation loop CLOSES: a noise-driven (no-prompt) CA3 wander SELECTS a curiosity-biased basin and the OneBrainComposer MOUTH speaks a coherent SVO utterance ABOUT it. production: 476.5 utterances/session about 3.0 distinct concepts, about-selected 1.00 (vs SCRAMBLE 0.00); coherence member 0.38 vs random 0.04; novel-concept utterance share HIGH-gain 0.76 vs LOW-gain(reversed) 0.24; NO-NOISE 0.0 utt; STORE-LESION 0.0 utt; 68% of the novel-concept surfacing attributable to the curiosity gain. => internally-generated -> selected -> SPOKEN: the first self-initiated-utterance correlate.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.65,
+        0.95,
+        0.35,
+        0.15
+      ],
+      "gains_on": [
+        1.6048265460030167,
+        2.0,
+        1.1613876319758674,
+        1.06184012066365
+      ],
+      "gains_reversed": [
+        1.1613876319758674,
+        1.06184012066365,
+        1.6048265460030167,
+        2.0
+      ],
+      "novel_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "novel_set": [
+        1,
+        0
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.45407104492188,
+      "on": {
+        "stream": {
+          "n_utt": 331,
+          "n_about": 331,
+          "about_rate": 1.0,
+          "counts": [
+            88.0,
+            200.0,
+            43.0,
+            0.0
+          ],
+          "share": [
+            0.26586102719033233,
+            0.6042296072507553,
+            0.1299093655589124,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.34720636145404665,
+        "pooled_random": 0.04329475308641975
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 331,
+        "routing": [
+          1,
+          0,
+          3,
+          2
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 244,
+          "n_about": 244,
+          "about_rate": 1.0,
+          "counts": [
+            64.0,
+            52.0,
+            128.0,
+            0.0
+          ],
+          "share": [
+            0.26229508196721313,
+            0.21311475409836064,
+            0.5245901639344263,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.8700906344410876,
+        "novel_share_reversed": 0.47540983606557374,
+        "uniform_expectation": 0.5,
+        "attributable": 0.45360883424408016
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.95,
+        0.15,
+        0.35,
+        0.65
+      ],
+      "gains_on": [
+        2.0,
+        1.0584239130434783,
+        1.172554347826087,
+        1.528532608695652
+      ],
+      "gains_reversed": [
+        1.0584239130434783,
+        2.0,
+        1.528532608695652,
+        1.172554347826087
+      ],
+      "novel_order": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "novel_set": [
+        0,
+        3
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.46508026123047,
+      "on": {
+        "stream": {
+          "n_utt": 540,
+          "n_about": 540,
+          "about_rate": 1.0,
+          "counts": [
+            427.0,
+            36.0,
+            77.0,
+            0.0
+          ],
+          "share": [
+            0.7907407407407407,
+            0.06666666666666667,
+            0.1425925925925926,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.38907004830917874,
+        "pooled_random": 0.037121829710144924
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 540,
+        "routing": [
+          1,
+          2,
+          3,
+          0
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 528,
+          "n_about": 528,
+          "about_rate": 1.0,
+          "counts": [
+            51.0,
+            434.0,
+            43.0,
+            0.0
+          ],
+          "share": [
+            0.09659090909090909,
+            0.821969696969697,
+            0.08143939393939394,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.7907407407407407,
+        "novel_share_reversed": 0.09659090909090909,
+        "uniform_expectation": 0.5,
+        "attributable": 0.8778475622737918
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.15,
+        0.65,
+        0.35,
+        0.95
+      ],
+      "gains_on": [
+        1.0779874213836478,
+        1.608805031446541,
+        1.2050314465408805,
+        2.0
+      ],
+      "gains_reversed": [
+        2.0,
+        1.2050314465408805,
+        1.608805031446541,
+        1.0779874213836478
+      ],
+      "novel_order": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "novel_set": [
+        3,
+        1
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.45525360107422,
+      "on": {
+        "stream": {
+          "n_utt": 234,
+          "n_about": 234,
+          "about_rate": 1.0,
+          "counts": [
+            50.0,
+            109.0,
+            75.0,
+            0.0
+          ],
+          "share": [
+            0.21367521367521367,
+            0.4658119658119658,
+            0.32051282051282054,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.38706696998722867,
+        "pooled_random": 0.039172254150702426
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 234,
+        "routing": [
+          3,
+          2,
+          1,
+          0
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 288,
+          "n_about": 288,
+          "about_rate": 1.0,
+          "counts": [
+            198.0,
+            49.0,
+            41.0,
+            0.0
+          ],
+          "share": [
+            0.6875,
+            0.1701388888888889,
+            0.1423611111111111,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.4658119658119658,
+        "novel_share_reversed": 0.1701388888888889,
+        "uniform_expectation": 0.5,
+        "attributable": 0.6347477064220184
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.15,
+        0.95,
+        0.65,
+        0.35
+      ],
+      "gains_on": [
+        1.0900123304562268,
+        2.0,
+        1.5930949445129472,
+        1.189889025893958
+      ],
+      "gains_reversed": [
+        2.0,
+        1.0900123304562268,
+        1.189889025893958,
+        1.5930949445129472
+      ],
+      "novel_order": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "novel_set": [
+        1,
+        2
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.45269012451172,
+      "on": {
+        "stream": {
+          "n_utt": 1018,
+          "n_about": 1018,
+          "about_rate": 1.0,
+          "counts": [
+            52.0,
+            845.0,
+            121.0,
+            0.0
+          ],
+          "share": [
+            0.05108055009823183,
+            0.8300589390962672,
+            0.11886051080550099,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.4121145667198299,
+        "pooled_random": 0.035430372807017545
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 1018,
+        "routing": [
+          2,
+          3,
+          0,
+          1
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 272,
+          "n_about": 272,
+          "about_rate": 1.0,
+          "counts": [
+            151.0,
+            77.0,
+            44.0,
+            0.0
+          ],
+          "share": [
+            0.5551470588235294,
+            0.28308823529411764,
+            0.16176470588235295,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.9489194499017681,
+        "novel_share_reversed": 0.44485294117647056,
+        "uniform_expectation": 0.5,
+        "attributable": 0.531200523687736
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.35,
+        0.15,
+        0.95,
+        0.65
+      ],
+      "gains_on": [
+        1.197387518142235,
+        1.060957910014514,
+        2.0,
+        1.6008708272859216
+      ],
+      "gains_reversed": [
+        1.6008708272859216,
+        2.0,
+        1.060957910014514,
+        1.197387518142235
+      ],
+      "novel_order": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "novel_set": [
+        2,
+        3
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.46182250976562,
+      "on": {
+        "stream": {
+          "n_utt": 433,
+          "n_about": 433,
+          "about_rate": 1.0,
+          "counts": [
+            45.0,
+            42.0,
+            346.0,
+            0.0
+          ],
+          "share": [
+            0.10392609699769054,
+            0.09699769053117784,
+            0.7990762124711316,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.39893944907591194,
+        "pooled_random": 0.04021033892417626
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 433,
+        "routing": [
+          1,
+          2,
+          3,
+          0
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 403,
+          "n_about": 403,
+          "about_rate": 1.0,
+          "counts": [
+            76.0,
+            252.0,
+            74.0,
+            1.0
+          ],
+          "share": [
+            0.18858560794044665,
+            0.6253101736972705,
+            0.18362282878411912,
+            0.0024813895781637717
+          ],
+          "n_concepts_spoken": 4,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.7990762124711316,
+        "novel_share_reversed": 0.18610421836228289,
+        "uniform_expectation": 0.5,
+        "attributable": 0.767100790315409
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "n_mem": 4,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "novelties": [
+        0.65,
+        0.35,
+        0.15,
+        0.95
+      ],
+      "gains_on": [
+        1.6175395858708892,
+        1.2058465286236297,
+        1.079171741778319,
+        2.0
+      ],
+      "gains_reversed": [
+        1.2058465286236297,
+        1.6175395858708892,
+        2.0,
+        1.079171741778319
+      ],
+      "novel_order": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "novel_set": [
+        3,
+        0
+      ],
+      "decode_ok": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "max_pair_overlap": 0,
+      "weights_frozen": true,
+      "apical_rest_max": -80.46243286132812,
+      "on": {
+        "stream": {
+          "n_utt": 303,
+          "n_about": 303,
+          "about_rate": 1.0,
+          "counts": [
+            202.0,
+            19.0,
+            82.0,
+            0.0
+          ],
+          "share": [
+            0.6666666666666666,
+            0.0627062706270627,
+            0.2706270627062706,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 0,
+              "spoke_about": "dog",
+              "utterance": "dog chase ball",
+              "question": "what does dog chase?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        },
+        "pooled_member": 0.3567702110712863,
+        "pooled_random": 0.04117090160436934
+      },
+      "scramble": {
+        "about_rate": 0.0,
+        "n_utt": 303,
+        "routing": [
+          1,
+          0,
+          3,
+          2
+        ]
+      },
+      "reversed": {
+        "stream": {
+          "n_utt": 327,
+          "n_about": 327,
+          "about_rate": 1.0,
+          "counts": [
+            31.0,
+            86.0,
+            210.0,
+            0.0
+          ],
+          "share": [
+            0.09480122324159021,
+            0.26299694189602446,
+            0.6422018348623854,
+            0.0
+          ],
+          "n_concepts_spoken": 3,
+          "examples": [
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 2,
+              "spoke_about": "bird",
+              "utterance": "bird see seed",
+              "question": "what does bird see?",
+              "about_selected": true
+            },
+            {
+              "surfaced_basin": 1,
+              "spoke_about": "cat",
+              "utterance": "cat eat worm",
+              "question": "what does cat eat?",
+              "about_selected": true
+            }
+          ]
+        }
+      },
+      "no_noise": {
+        "n_utt": 0
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "pooled_member": 0.0,
+        "pooled_random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.6666666666666666,
+        "novel_share_reversed": 0.09480122324159021,
+        "uniform_expectation": 0.5,
+        "attributable": 0.8577981651376146
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "internally_triggered": true,
+        "about_selected": true,
+        "production_speaks": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    }
+  ]
+}
