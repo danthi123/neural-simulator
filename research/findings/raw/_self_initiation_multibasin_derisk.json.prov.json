@@ -1,0 +1,43 @@
+{
+ "run_id": "1786670501-1420471",
+ "runner": "research/runners/_self_initiation_multibasin_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a49c21ac6e9fe80bd/research/runners/_self_initiation_multibasin_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-mem",
+  "4",
+  "--rest-steps",
+  "4000",
+  "--acid-steps",
+  "1000",
+  "--gain-scale",
+  "1.0",
+  "--out",
+  "research/findings/raw/_self_initiation_multibasin_derisk.json"
+ ],
+ "git_sha": "067df7d1b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-13T21:21:41",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10612.1,
+ "corpus_check_query": "self-initiation de-risked steering not selection; multiple balanced basins so the wander selects among concepts",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_self_initiation_multibasin_derisk.json"
+}

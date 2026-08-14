@@ -1,0 +1,1615 @@
+{
+  "probe": "self_initiation_multibasin",
+  "GO": true,
+  "n_go": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 4,
+  "rest_steps": 4000,
+  "gain_scale": 1.0,
+  "min_visit": 3,
+  "top1_max": 0.7,
+  "ent_min": 0.55,
+  "curiosity_bias_attribution": 0.6632881461027028,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seeds passing all anti-cheats >= threshold",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f3e981be980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "balanced basins are DISJOINT (max pairwise overlap == 0) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "balanced (uniform-gain) wander visits >= min_visit distinct COHERENT basins (mean) -- selection capacity",
+      "ok": true,
+      "detail": "measured=3.0 expect=<function main.<locals>.<lambda> at 0x7f3e981be980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "production (curiosity-on) wander visits MULTIPLE (mean >= 2) distinct COHERENT concepts",
+      "ok": true,
+      "detail": "measured=3.0 expect=<function main.<locals>.<lambda> at 0x7f3e981be980>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "curiosity bias: novel visit share HIGH-gain (on) vs LOW-gain (reversed), same concepts",
+      "ok": true,
+      "detail": "treatment=0.706133 control=0.237763 |sep|=0.46837 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coherent: surfaced member vs random floor",
+      "ok": true,
+      "detail": "treatment=0.367563 control=0.0382751 |sep|=0.329288 > 0.15",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "coherence member above random",
+      "ok": true,
+      "detail": "0.367563 vs floor 0.0382751",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "internally-generated: NO-NOISE acid silent every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "store-lesion collapses coherence every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity byte-frozen during the session every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "within-concept dose-response positive (corroborator, mean r_within >= 0.25)",
+      "ok": true,
+      "detail": "measured=0.5886330917455922 expect=<function main.<locals>.<lambda> at 0x7f3e981be980>",
+      "note": ""
+    }
+  ],
+  "elapsed_seconds": 3843.0,
+  "verdict": "GO 6/6 -- 4 DISJOINT balanced CA3 basins; the noise-driven wander SELECTS among balanced basins (uniform-gain visits mean 3.0 of 4 coherent, entropy 0.78) and the production wander (curiosity-on) visits MULTIPLE (mean 3.0, top1 0.62) with CURIOSITY biasing WHICH surfaces (within-concept dose r=0.59; novel visit-share HIGH-gain 0.71 vs LOW-gain 0.24 vs uniform 0.45); coherence member 0.37 vs random 0.04; 66% of the novel-concept surfacing attributable to the curiosity gain. => self-initiation now SELECTS its own thoughts among several balanced concepts (a step toward internally-driven ideation).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_mem": 4,
+      "novelties": [
+        0.65,
+        0.95,
+        0.35,
+        0.15
+      ],
+      "wants_hz": [
+        69.61805555555554,
+        115.10416666666666,
+        18.57638888888889,
+        7.118055555555555
+      ],
+      "gains_on": [
+        1.6048265460030167,
+        2.0,
+        1.1613876319758674,
+        1.06184012066365
+      ],
+      "gains_reversed": [
+        1.1613876319758674,
+        1.06184012066365,
+        1.6048265460030167,
+        2.0
+      ],
+      "novel_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "curiosity": {
+        "threshold_hz": 58.85416666666666,
+        "calib": {
+          "want_novel_hz": 114.4097222222222,
+          "want_familiar_hz": 3.2986111111111107,
+          "threshold_hz": 58.85416666666666,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 100.60115051269531,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          78.0,
+          80.0,
+          52.0,
+          0.0
+        ],
+        "share": [
+          0.37142857142857144,
+          0.38095238095238093,
+          0.24761904761904763,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.38095238095238093,
+        "entropy": 0.7798882683435825,
+        "pooled_member": 0.36735578357413806,
+        "pooled_random": 0.03836376022887099,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.3704249776243447,
+          0.3689825469888761,
+          0.36265982610919323,
+          0.12535641222350083
+        ],
+        "per_mass": [
+          0.15093854166666668,
+          0.15593663194444446,
+          0.1294378472222222,
+          0.00881875
+        ],
+        "total_dwell": 210.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          90.0,
+          225.0,
+          51.0,
+          0.0
+        ],
+        "share": [
+          0.2459016393442623,
+          0.6147540983606558,
+          0.13934426229508196,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.6147540983606558,
+        "entropy": 0.662684291909712,
+        "pooled_member": 0.3559508101851852,
+        "pooled_random": 0.04058875868055556,
+        "per_events": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "per_member": [
+          0.3450572916666667,
+          0.3731371527777778,
+          0.3496579861111111,
+          0.129421875
+        ],
+        "per_mass": [
+          0.18004409722222223,
+          0.20850225694444444,
+          0.14735520833333335,
+          0.013673958333333333
+        ],
+        "total_dwell": 366.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4535140991211,
+      "reversed": {
+        "dwell": [
+          70.0,
+          77.0,
+          154.0,
+          0.0
+        ],
+        "share": [
+          0.23255813953488372,
+          0.2558139534883721,
+          0.5116279069767442,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.5116279069767442,
+        "entropy": 0.743591396375416,
+        "pooled_member": 0.3404749503968254,
+        "pooled_random": 0.04863839285714285,
+        "per_events": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "per_member": [
+          0.33475198412698415,
+          0.3338727678571429,
+          0.3528000992063492,
+          0.12116691468253969
+        ],
+        "per_mass": [
+          0.15867899305555555,
+          0.15276614583333334,
+          0.19808715277777778,
+          0.03243472222222222
+        ],
+        "total_dwell": 301.0
+      },
+      "bias": {
+        "r_within": 0.5188016062410722,
+        "r_on_crossconcept": 0.968421792598542,
+        "r_reversed_crossconcept": 0.2196897577924832,
+        "novel_share_on": 0.860655737704918,
+        "novel_share_balanced": 0.7523809523809524,
+        "novel_share_reversed": 0.4883720930232558,
+        "uniform_expectation": 0.5,
+        "attributable": 0.4325581395348837
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.4516830444336
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.5003669857978821
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "n_mem": 4,
+      "novelties": [
+        0.95,
+        0.15,
+        0.35,
+        0.65
+      ],
+      "wants_hz": [
+        127.77777777777777,
+        7.465277777777777,
+        22.048611111111107,
+        67.53472222222221
+      ],
+      "gains_on": [
+        2.0,
+        1.0584239130434783,
+        1.172554347826087,
+        1.528532608695652
+      ],
+      "gains_reversed": [
+        1.0584239130434783,
+        2.0,
+        1.528532608695652,
+        1.172554347826087
+      ],
+      "novel_order": [
+        0,
+        3,
+        2,
+        1
+      ],
+      "curiosity": {
+        "threshold_hz": 65.36458333333333,
+        "calib": {
+          "want_novel_hz": 125.52083333333331,
+          "want_familiar_hz": 5.208333333333333,
+          "threshold_hz": 65.36458333333333,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 109.3890380859375,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          96.0,
+          57.0,
+          77.0,
+          0.0
+        ],
+        "share": [
+          0.41739130434782606,
+          0.24782608695652175,
+          0.3347826086956522,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.41739130434782606,
+        "entropy": 0.7767152547979947,
+        "pooled_member": 0.38483222785797894,
+        "pooled_random": 0.036343416731694625,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.38713909481076864,
+          0.38862498374300947,
+          0.37873260502015865,
+          0.12216315515671738
+        ],
+        "per_mass": [
+          0.16709114583333334,
+          0.15794444444444444,
+          0.14463211805555556,
+          0.012599479166666663
+        ],
+        "total_dwell": 230.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          318.0,
+          28.0,
+          66.0,
+          0.0
+        ],
+        "share": [
+          0.7718446601941747,
+          0.06796116504854369,
+          0.16019417475728157,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.7718446601941747,
+        "entropy": 0.48762801908226966,
+        "pooled_member": 0.382593201754386,
+        "pooled_random": 0.03871299342105264,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.3963176169590643,
+          0.3712463450292398,
+          0.3802156432748538,
+          0.12304641812865497
+        ],
+        "per_mass": [
+          0.20936041666666666,
+          0.13699583333333334,
+          0.15777118055555556,
+          0.022808506944444445
+        ],
+        "total_dwell": 412.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.45384216308594,
+      "reversed": {
+        "dwell": [
+          97.0,
+          242.0,
+          43.0,
+          0.0
+        ],
+        "share": [
+          0.25392670157068065,
+          0.6335078534031413,
+          0.112565445026178,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.6335078534031413,
+        "entropy": 0.6370313857917049,
+        "pooled_member": 0.3883162922005734,
+        "pooled_random": 0.030909250482710194,
+        "per_events": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "per_member": [
+          0.39080612603124454,
+          0.398856196243637,
+          0.37528655432683866,
+          0.15984531332280147
+        ],
+        "per_mass": [
+          0.13815503472222224,
+          0.20640381944444444,
+          0.17932760416666668,
+          0.019168055555555556
+        ],
+        "total_dwell": 382.0
+      },
+      "bias": {
+        "r_within": 0.7292518936435545,
+        "r_on_crossconcept": 0.7384622769303026,
+        "r_reversed_crossconcept": -0.5153919919360107,
+        "novel_share_on": 0.7718446601941747,
+        "novel_share_balanced": 0.41739130434782606,
+        "novel_share_reversed": 0.25392670157068065,
+        "uniform_expectation": 0.5,
+        "attributable": 0.6710132042543383
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.46498107910156
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.500871479511261
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "n_mem": 4,
+      "novelties": [
+        0.15,
+        0.65,
+        0.35,
+        0.95
+      ],
+      "wants_hz": [
+        10.763888888888888,
+        84.02777777777777,
+        28.298611111111107,
+        138.02083333333331
+      ],
+      "gains_on": [
+        1.0779874213836478,
+        1.608805031446541,
+        1.2050314465408805,
+        2.0
+      ],
+      "gains_reversed": [
+        2.0,
+        1.2050314465408805,
+        1.608805031446541,
+        1.0779874213836478
+      ],
+      "novel_order": [
+        3,
+        1,
+        2,
+        0
+      ],
+      "curiosity": {
+        "threshold_hz": 69.96527777777779,
+        "calib": {
+          "want_novel_hz": 133.50694444444446,
+          "want_familiar_hz": 6.423611111111111,
+          "threshold_hz": 69.96527777777779,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 105.40509796142578,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          63.0,
+          65.0,
+          85.0,
+          0.0
+        ],
+        "share": [
+          0.29577464788732394,
+          0.3051643192488263,
+          0.39906103286384975,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.39906103286384975,
+        "entropy": 0.7856159072982504,
+        "pooled_member": 0.3812478508489147,
+        "pooled_random": 0.03623388136686009,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.3788596067053514,
+          0.3789676015473888,
+          0.3859163442940039,
+          0.12447533849129594
+        ],
+        "per_mass": [
+          0.16742916666666666,
+          0.15290381944444445,
+          0.14824791666666667,
+          0.012102256944444445
+        ],
+        "total_dwell": 213.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          69.0,
+          127.0,
+          53.0,
+          0.0
+        ],
+        "share": [
+          0.27710843373493976,
+          0.5100401606425703,
+          0.21285140562248997,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.5100401606425703,
+        "entropy": 0.7417862535247869,
+        "pooled_member": 0.3847067901234568,
+        "pooled_random": 0.03739699074074074,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.3884537037037037,
+          0.3826111111111111,
+          0.3830555555555556,
+          0.13312037037037036
+        ],
+        "per_mass": [
+          0.14619201388888892,
+          0.18929062500000002,
+          0.1566949652777778,
+          0.029573263888888895
+        ],
+        "total_dwell": 249.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.45578002929688,
+      "reversed": {
+        "dwell": [
+          113.0,
+          91.0,
+          49.0,
+          0.0
+        ],
+        "share": [
+          0.44664031620553357,
+          0.35968379446640314,
+          0.19367588932806323,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.44664031620553357,
+        "entropy": 0.7543222470850152,
+        "pooled_member": 0.3779340277777778,
+        "pooled_random": 0.03771798670977011,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.38828125,
+          0.37789691091954025,
+          0.3676239224137931,
+          0.146253591954023
+        ],
+        "per_mass": [
+          0.19594149305555555,
+          0.14585520833333335,
+          0.17797395833333332,
+          0.017556423611111115
+        ],
+        "total_dwell": 253.0
+      },
+      "bias": {
+        "r_within": 0.33885305584233577,
+        "r_on_crossconcept": -0.3511493695764589,
+        "r_reversed_crossconcept": -0.7563983148175146,
+        "novel_share_on": 0.5100401606425703,
+        "novel_share_balanced": 0.3051643192488263,
+        "novel_share_reversed": 0.35968379446640314,
+        "uniform_expectation": 0.5,
+        "attributable": 0.29479319037689466
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.45458984375
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.4999099671840668
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "n_mem": 4,
+      "novelties": [
+        0.15,
+        0.95,
+        0.65,
+        0.35
+      ],
+      "wants_hz": [
+        12.67361111111111,
+        140.7986111111111,
+        83.50694444444444,
+        26.736111111111107
+      ],
+      "gains_on": [
+        1.0900123304562268,
+        2.0,
+        1.5930949445129472,
+        1.189889025893958
+      ],
+      "gains_reversed": [
+        2.0,
+        1.0900123304562268,
+        1.189889025893958,
+        1.5930949445129472
+      ],
+      "novel_order": [
+        1,
+        2,
+        3,
+        0
+      ],
+      "curiosity": {
+        "threshold_hz": 74.82638888888889,
+        "calib": {
+          "want_novel_hz": 141.84027777777777,
+          "want_familiar_hz": 7.812499999999998,
+          "threshold_hz": 74.82638888888889,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 110.8187484741211,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          66.0,
+          91.0,
+          50.0,
+          2.0
+        ],
+        "share": [
+          0.3157894736842105,
+          0.4354066985645933,
+          0.23923444976076555,
+          0.009569377990430622
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 4,
+        "n_visited_coherent": 3,
+        "top1_share": 0.4354066985645933,
+        "entropy": 0.8026457535416962,
+        "pooled_member": 0.33516242588932804,
+        "pooled_random": 0.035895709815546774,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.39466979578392625,
+          0.3998311923583663,
+          0.3977289196310936,
+          0.14841979578392622
+        ],
+        "per_mass": [
+          0.15937256944444445,
+          0.16464409722222223,
+          0.15356493055555556,
+          0.01490607638888889
+        ],
+        "total_dwell": 209.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          74.0,
+          322.0,
+          130.0,
+          0.0
+        ],
+        "share": [
+          0.14068441064638784,
+          0.6121673003802282,
+          0.24714828897338403,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.6121673003802282,
+        "entropy": 0.6649323088066569,
+        "pooled_member": 0.4074318636818637,
+        "pooled_random": 0.035463588588588585,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.40629095004095006,
+          0.4134938916188916,
+          0.4025107493857494,
+          0.1533724064974065
+        ],
+        "per_mass": [
+          0.14791684027777777,
+          0.21659392361111113,
+          0.19879131944444442,
+          0.019801736111111107
+        ],
+        "total_dwell": 526.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4508285522461,
+      "reversed": {
+        "dwell": [
+          529.0,
+          61.0,
+          53.0,
+          0.0
+        ],
+        "share": [
+          0.8227060653188181,
+          0.09486780715396578,
+          0.08242612752721618,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.8227060653188181,
+        "entropy": 0.42539243163325413,
+        "pooled_member": 0.4017753896430367,
+        "pooled_random": 0.03695807409502262,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.40916195324283566,
+          0.40064196832579185,
+          0.39552224736048264,
+          0.13049113876319757
+        ],
+        "per_mass": [
+          0.22326944444444446,
+          0.16059774305555555,
+          0.16223819444444446,
+          0.01917083333333333
+        ],
+        "total_dwell": 643.0
+      },
+      "bias": {
+        "r_within": 0.7304973117821458,
+        "r_on_crossconcept": 0.8669097407082882,
+        "r_reversed_crossconcept": -0.6394188085400188,
+        "novel_share_on": 0.8593155893536122,
+        "novel_share_balanced": 0.6746411483253588,
+        "novel_share_reversed": 0.17729393468118196,
+        "uniform_expectation": 0.5,
+        "attributable": 0.7936800671630494
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.45246124267578
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.5004335641860962
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "n_mem": 4,
+      "novelties": [
+        0.35,
+        0.15,
+        0.95,
+        0.65
+      ],
+      "wants_hz": [
+        23.611111111111107,
+        7.291666666666666,
+        119.61805555555554,
+        71.875
+      ],
+      "gains_on": [
+        1.197387518142235,
+        1.060957910014514,
+        2.0,
+        1.6008708272859216
+      ],
+      "gains_reversed": [
+        1.6008708272859216,
+        2.0,
+        1.060957910014514,
+        1.197387518142235
+      ],
+      "novel_order": [
+        2,
+        3,
+        0,
+        1
+      ],
+      "curiosity": {
+        "threshold_hz": 61.80555555555555,
+        "calib": {
+          "want_novel_hz": 120.65972222222221,
+          "want_familiar_hz": 2.9513888888888884,
+          "threshold_hz": 61.80555555555555,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 107.8843002319336,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          69.0,
+          112.0,
+          43.0,
+          0.0
+        ],
+        "share": [
+          0.3080357142857143,
+          0.5,
+          0.19196428571428573,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.5,
+        "entropy": 0.740192364510196,
+        "pooled_member": 0.4132623456790123,
+        "pooled_random": 0.03949884259259259,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.415787037037037,
+          0.4285925925925926,
+          0.39540740740740743,
+          0.18549074074074073
+        ],
+        "per_mass": [
+          0.16670381944444443,
+          0.16628819444444445,
+          0.13563194444444446,
+          0.021422048611111112
+        ],
+        "total_dwell": 224.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          67.0,
+          57.0,
+          418.0,
+          2.0
+        ],
+        "share": [
+          0.12316176470588236,
+          0.10477941176470588,
+          0.7683823529411765,
+          0.003676470588235294
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 4,
+        "n_visited_coherent": 3,
+        "top1_share": 0.7683823529411765,
+        "entropy": 0.517464119358745,
+        "pooled_member": 0.34552692397543716,
+        "pooled_random": 0.03958667067147244,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.399491890268322,
+          0.3947553731144039,
+          0.41113836603924714,
+          0.17672206647977573
+        ],
+        "per_mass": [
+          0.16505399305555554,
+          0.14774965277777777,
+          0.2177017361111111,
+          0.023132291666666673
+        ],
+        "total_dwell": 544.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.46076202392578,
+      "reversed": {
+        "dwell": [
+          125.0,
+          407.0,
+          19.0,
+          0.0
+        ],
+        "share": [
+          0.22686025408348456,
+          0.7386569872958257,
+          0.034482758620689655,
+          0.0
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 3,
+        "n_visited_coherent": 3,
+        "top1_share": 0.7386569872958257,
+        "entropy": 0.4879180955427916,
+        "pooled_member": 0.3938746085307221,
+        "pooled_random": 0.0399615009262935,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.40477537382559214,
+          0.40723666798994307,
+          0.36961178377663095,
+          0.15865670901151252
+        ],
+        "per_mass": [
+          0.19193333333333332,
+          0.21638715277777776,
+          0.12264149305555558,
+          0.01712795138888889
+        ],
+        "total_dwell": 551.0
+      },
+      "bias": {
+        "r_within": 0.7325482122567107,
+        "r_on_crossconcept": 0.725205432077612,
+        "r_reversed_crossconcept": -0.8442693488546513,
+        "novel_share_on": 0.7720588235294118,
+        "novel_share_balanced": 0.19196428571428573,
+        "novel_share_reversed": 0.034482758620689655,
+        "uniform_expectation": 0.5,
+        "attributable": 0.955336617405583
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.46170043945312
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.5006510019302368
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "n_mem": 4,
+      "novelties": [
+        0.65,
+        0.35,
+        0.15,
+        0.95
+      ],
+      "wants_hz": [
+        88.02083333333333,
+        29.340277777777775,
+        11.284722222222221,
+        142.5347222222222
+      ],
+      "gains_on": [
+        1.6175395858708892,
+        1.2058465286236297,
+        1.079171741778319,
+        2.0
+      ],
+      "gains_reversed": [
+        1.2058465286236297,
+        1.6175395858708892,
+        2.0,
+        1.079171741778319
+      ],
+      "novel_order": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "curiosity": {
+        "threshold_hz": 73.87152777777777,
+        "calib": {
+          "want_novel_hz": 143.22916666666666,
+          "want_familiar_hz": 4.513888888888888,
+          "threshold_hz": 73.87152777777777,
+          "novel_signal": 0.95,
+          "familiar_signal": 0.0,
+          "read_reps": 4
+        }
+      },
+      "w_within": 111.54430389404297,
+      "max_pair_overlap": 0,
+      "balanced": {
+        "dwell": [
+          75.0,
+          51.0,
+          86.0,
+          3.0
+        ],
+        "share": [
+          0.3488372093023256,
+          0.2372093023255814,
+          0.4,
+          0.013953488372093023
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 4,
+        "n_visited_coherent": 3,
+        "top1_share": 0.4,
+        "entropy": 0.8185877023894249,
+        "pooled_member": 0.3308846241383795,
+        "pooled_random": 0.03754521475484458,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.3801876056704383,
+          0.38263590844062945,
+          0.39246244635193134,
+          0.16825253609051893
+        ],
+        "per_mass": [
+          0.16194791666666666,
+          0.16545538194444445,
+          0.14924340277777778,
+          0.014168229166666671
+        ],
+        "total_dwell": 215.0
+      },
+      "curiosity_on": {
+        "dwell": [
+          105.0,
+          24.0,
+          99.0,
+          1.0
+        ],
+        "share": [
+          0.4585152838427948,
+          0.10480349344978165,
+          0.43231441048034935,
+          0.004366812227074236
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 4,
+        "n_visited_coherent": 3,
+        "top1_share": 0.4585152838427948,
+        "entropy": 0.7070665561442537,
+        "pooled_member": 0.32916645622895624,
+        "pooled_random": 0.03790151515151515,
+        "per_events": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "per_member": [
+          0.39129545454545456,
+          0.37457575757575756,
+          0.3900614478114478,
+          0.16073316498316498
+        ],
+        "per_mass": [
+          0.18875347222222222,
+          0.15793854166666665,
+          0.1487298611111111,
+          0.03126024305555556
+        ],
+        "total_dwell": 229.0
+      },
+      "weights_frozen": true,
+      "apical_rest_max": -80.4576644897461,
+      "reversed": {
+        "dwell": [
+          43.0,
+          107.0,
+          239.0,
+          1.0
+        ],
+        "share": [
+          0.11025641025641025,
+          0.2743589743589744,
+          0.6128205128205129,
+          0.002564102564102564
+        ],
+        "visited": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "visited_coherent": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "n_visited": 4,
+        "n_visited_coherent": 3,
+        "top1_share": 0.6128205128205129,
+        "entropy": 0.6588273118690209,
+        "pooled_member": 0.34027608401084014,
+        "pooled_random": 0.02957542908762421,
+        "per_events": [
+          3,
+          3,
+          3,
+          3
+        ],
+        "per_member": [
+          0.3934643179765131,
+          0.3920709123757904,
+          0.4083818879855465,
+          0.1671872177055104
+        ],
+        "per_mass": [
+          0.15306909722222223,
+          0.18609687500000002,
+          0.2085765625,
+          0.00969236111111111
+        ],
+        "total_dwell": 390.0
+      },
+      "bias": {
+        "r_within": 0.48184647070773406,
+        "r_on_crossconcept": -0.5031252452505122,
+        "r_reversed_crossconcept": -0.9398704618479498,
+        "novel_share_on": 0.462882096069869,
+        "novel_share_balanced": 0.3627906976744186,
+        "novel_share_reversed": 0.11282051282051282,
+        "uniform_expectation": 0.5,
+        "attributable": 0.7562651185292695
+      },
+      "no_noise": {
+        "total_dwell": 0.0,
+        "n_visited": 0,
+        "max_member": 0.0,
+        "apical_rest_max": -80.462158203125
+      },
+      "store_lesion": {
+        "pooled_member": 0.0,
+        "pooled_random": 0.0,
+        "n_visited_coherent": 0,
+        "w_within": 0.49956202507019043
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "balanced": true,
+        "production_selects": true,
+        "coherent": true,
+        "curiosity_biased": true,
+        "internally_generated": true,
+        "store_lesion_load_bearing": true
+      },
+      "seed_go": true
+    }
+  ]
+}
