@@ -23,7 +23,7 @@ Axon's CaP−CaD rule NO-GO (which validated our own SST-microcircuit). The gap#
 deep-credit-on-spikes frontier is a mapped, deprioritized boundary (the tool
 alarm that implied otherwise was retired).
 
-**2026-08-14 CONTINUATION WAVE.** An 8-lane autonomous wave landed (all on main + both remotes). The biggest step: the
+**2026-08-14 CONTINUATION WAVE.** A 13-lane autonomous wave landed (all on main + both remotes). Late additions (5 more): the composer's word-parser also joined the shared brain-pool by default (so the whole composer — recall and parsing — now runs on the one shared substrate); plus four honest results — two "partial" organ-merges redirected to deeper learning mechanisms, and two mapped boundaries (one proving the emotion system needs a bodily/interoceptive input channel, not more text). The biggest step of the wave: the
 **composer — the "moat" organ that guards against making things up — now shares the one shared brain-pool with the
 surprise and world-model organs BY DEFAULT** (not just as an opt-in), verified bit-for-bit identical to the old separate
 setup through the real chat handler, with the no-confab guarantee intact and a one-flag revert. On the "mouth" (how the

@@ -112,6 +112,42 @@ def composer_merge_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# ── ONEBRAIN-PARSER-IN-POOL#1 (Track-1 next rung, the [CFLIP] next lever). DEFAULT-OFF. When ON (and the composer
+# is on pool #1), the OneBrainComposer's config-COUPLED Hebbian PARSER's INFERENCE joins pool #1 too: its `"parse"`
+# conj->role edges are TRANSPLANTED (standalone-trained, hebbian_max_weight=400) onto the pool's reserved-idle
+# `onebrain_composer` sub-slice [rf_base:rf_base+126] (disjoint from every RF op), and `hear()` comprehends ON the
+# shared bridge. Three conflicts, each resolved with an EXISTING primitive (NO sim/ edit): (A) hebbian_max_weight
+# 45(pool) vs 400(parser) -> the parse edges get a PERMANENT per-synapse gain-0 (the gated potentiate/decay/clip at
+# sim/bridge.py:9640/9662/9677-9687 leave gain-0 synapses VERBATIM), so the transplanted 400-weights survive EVERY
+# Hebbian step -- crucially the surprise/world-model organs' OWN Hebbian training, which clips the WHOLE shared
+# cp_connections to 45; gain-1 elsewhere is byte-identical to the un-gated scalar path so the organs are unperturbed;
+# (B) `_run_one_simulation_step` steps ALL neurons -> `MergedSubstrate.parser_isolation` snapshots+restores the full
+# per-neuron state + cp_connections.data, keep-masking ONLY the parser slice, so surprise/world-model + the RF slice
+# stay byte-identical; (C) global homeostasis vs the parser's fixed vpeak -> `cfg.enable_homeostasis=False` +
+# per-region `BrainRegion.enable_homeostasis=True` on surprise+world-model (the diffbuilder pattern), so those organs
+# keep adapted thresholds while the parser slice fires on fixed vpeak = standalone. Because the parser FREEZES on the
+# pool (transplanted weights, no per-role_of drift), the GO-gate is ANSWER-identity (hear()-decoded fact dicts) vs the
+# standalone, not raw-firing byte-identity -- DECLARED, not hidden. DEFAULT FLIPPED ON 2026-08-14 by the 6/6 GO
+# (`_onebrain_composer_pool1_production_verify --parser-on-pool`: parser answer-identical + correct, recall/surprise/
+# world-model byte-identical max delta 0.0 Hz, moat abstains, genuinely-one-pool with gain-0 on all 720 parse edges)
+# + byte-identical-when-off (BRAIN_PARSER_MERGE=0 vs unset, 2/2, delta 0.0) + determinism 9/9. `BRAIN_PARSER_MERGE=0`
+# is the ESCAPE (parser back on its private bridge, byte-identical to the composer default-flip). Finding:
+# 2026-08-14-onebrain-parser-on-pool-GO.
+_PARSER_IN_POOL1_DEFAULT_ON = True
+
+
+def parser_merge_enabled() -> bool:
+    """DEFAULT-OFF (`_PARSER_IN_POOL1_DEFAULT_ON`). `BRAIN_PARSER_MERGE` in {1,true,yes,on} -> the OneBrainComposer's
+    Hebbian PARSER inference JOINS pool #1 (its `"parse"` slice bound onto [rf_base:rf_base+126], `hear()` comprehends
+    on the shared bridge); {0,false,no,off} or ABSENT -> the parser stays on its PRIVATE bridge exactly as the shipped
+    composer default-flip (byte-identical). Only meaningful when `composer_merge_enabled()` (the composer must already
+    be on pool #1); parser-on-pool never activates on its own."""
+    v = os.environ.get("BRAIN_PARSER_MERGE")
+    if v is None:
+        return _PARSER_IN_POOL1_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 # PRODUCTION DEFAULT (flipped ON 2026-08-13): the surprise + world-model production organs build on ONE shared
 # `SimulationBridge` (one `cp_membrane_potential_v`) by default. This is byte-identical to the co-resident-WITH-
 # merge-flags baseline (rung-1, 6/6 GO) and ANSWER-PRESERVING vs the pre-flip separate-bridge reads (every
@@ -145,12 +181,21 @@ class MergedSubstrate:
     def __init__(self, seed: int = 42, organs=("surprise", "worldmodel"),
                  composer_D: int = _COMPOSER_D, composer_kmax: int = _COMPOSER_KMAX,
                  cleanup_blk: int = _CLEANUP_BLK, cleanup_vocab: int = _CLEANUP_VOCAB,
-                 onebrain_span: "int | None" = None):
+                 onebrain_span: "int | None" = None, parser_on_pool: bool = False):
         self.seed = int(seed)
         self.organs = tuple(organs)
         # ONEBRAIN-COMPOSER region span (the b-closer): the OneBrainComposer.n_total the "onebrain_composer" region is
         # sized to (None unless that organ is present).
         self.onebrain_span = onebrain_span
+        # ONEBRAIN-PARSER-IN-POOL#1 (Track-1 rung, DEFAULT-OFF -> byte-identical): when True, the pool cfg forces the
+        # global `enable_homeostasis=False` and opts surprise+world-model IN via the per-region
+        # `BrainRegion.enable_homeostasis` (CONFLICT C), so the parser slice fires on fixed vpeak = standalone while
+        # the two organs keep adapted thresholds. The parser bind itself (transplant + repoint + isolation-wrap) is
+        # done in `_pool1_onebrain_init` when this is set. False keeps the 3-organ pool byte-identical to the shipped
+        # composer default-flip.
+        self.parser_on_pool = bool(parser_on_pool)
+        self._parser_slice = None          # (lo, hi) parser sub-slice on the pool, set by the bind
+        self._parser_keep_mask_cache = None
         self.bridge = self.cfg = self.xp = None
         self.meta_surprise = None      # metaS: n_trained/n_novel/n_concepts/blk/cue_blk/W_exc/W_inh
         self.meta_worldmodel = None    # metaW: n_states/blk/npred/nobs/nsurp
@@ -259,6 +304,23 @@ class MergedSubstrate:
                 name="onebrain_composer", n_neurons=span, exc_fraction=1.0, internal_density=0.0,
                 exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
             self.meta_composer = {"onebrain_span": span}
+        # CONFLICT C (parser-on-pool only): the parser is a threshold-dependent spiking circuit that needs the FIXED
+        # `cp_izh_vpeak` (its standalone bridge runs `enable_homeostasis=False`), but the pool defaults global
+        # homeostasis ON so surprise/world-model fire on ADAPTED thresholds. Resolve WITHOUT a new engine primitive
+        # (the `_one_brain_merge_Norgan_derisk` diffbuilder pattern, sim/regions.py:171 built 2026-06-08): force the
+        # global flag OFF and opt surprise+world-model IN via the EXISTING per-region `BrainRegion.enable_homeostasis`.
+        # The 3-branch spike-select (sim/bridge.py:9221-9229) then uses adapted thresholds for the two organs' slices
+        # (branch 2, via the built `cp_homeostasis_neuron_mask`) and fixed vpeak for the `onebrain_composer` slice
+        # (its region flag left False). Byte-identical for the two organs (verified by read: the homeostasis UPDATE
+        # runs identically -- `cp_homeostasis_update_neuron_mask` is None in BOTH configs, so update_mask reduces to
+        # `_participated` in both; only the SELECT differs, and only for the composer slice, which never feeds the
+        # organs). Left untouched (byte-identical) unless parser_on_pool.
+        if self.parser_on_pool:
+            cfg.enable_homeostasis = False
+            _homeo_names = set(self._SURPRISE_REGIONS) | set(self._WORLDMODEL_REGIONS)
+            for r in regions:
+                if getattr(r, "name", None) in _homeo_names:
+                    r.enable_homeostasis = True
         cfg.brain_regions = regions
         cfg.region_pathways = pathways
 
@@ -380,6 +442,57 @@ class MergedSubstrate:
                 cur = getattr(b, name)
                 setattr(b, name, self.xp.where(keep, cur, snap))
 
+    def _parser_keep_mask(self):
+        """xp boolean mask, True over the PARSER sub-slice [rf_base:rf_base+126] (the only neurons `parser_isolation`
+        lets self-evolve across a parser stepping burst); False elsewhere (restored)."""
+        m = self._parser_keep_mask_cache
+        if m is None:
+            self.ensure_built()
+            lo, hi = self._parser_slice
+            n = int(self.bridge.cp_membrane_potential_v.shape[0])
+            m = self.xp.zeros(n, dtype=bool)
+            m[int(lo):int(hi)] = True
+            self._parser_keep_mask_cache = m
+        return m
+
+    @contextlib.contextmanager
+    def parser_isolation(self):
+        """Make a PARSER stepping burst (`role_of`) on the pool leave NO footprint on the co-resident organs' or the
+        RF slice's persistent state, and FREEZE the parse pathway across it.
+
+        CONFLICT B: `BridgeParser.role_of` drives only the parser conj units but calls `_run_one_simulation_step()`
+        over the WHOLE bridge for `test_steps` (x3 roles x every `hear()`), which evolves surprise/world-model + the
+        RF-slice v/u (Izhikevich) and their thresholds/EMA (homeostasis; the spontaneous-FS coupling the
+        `read_isolation` docstring documents). We snapshot the FULL per-neuron state PLUS `cp_connections.data`, run
+        the burst, then RESTORE everything EXCEPT the parser slice [rf_base:rf_base+126] -- so surprise/world-model
+        AND the RF slice are byte-restored and only the parser slice self-evolves (== its standalone inference; there
+        is no cross synapse, so the restored co-residents never influenced the read).
+
+        CONFLICT A is handled at BIND (a permanent gain-0 plasticity gate on the parse edges -- see
+        `_bind_parser_onto_pool`) so the transplanted 400-weights survive EVERY Hebbian step (the ORGANS' training
+        clips the WHOLE shared `cp_connections` to the pool's 45 -- the gated clip at sim/bridge.py:9677-9687 leaves
+        gain-0 synapses verbatim). Here we ALSO restore `cp_connections.data` after the burst so any surprise/
+        world-model edge drift from the burst's spontaneous firing is undone (the parse edges, gain-0, do not
+        change -> their restore is a no-op)."""
+        b = self.bridge
+        keep = self._parser_keep_mask()
+        snaps = []
+        for name in self._PER_NEURON_STATE:
+            arr = getattr(b, name, None)
+            snaps.append(None if arr is None else arr.copy())
+        conn_snap = (b.cp_connections.data.copy()
+                     if getattr(b, "cp_connections", None) is not None else None)
+        try:
+            yield
+        finally:
+            for name, snap in zip(self._PER_NEURON_STATE, snaps):
+                if snap is None:
+                    continue
+                cur = getattr(b, name)
+                setattr(b, name, self.xp.where(keep, cur, snap))
+            if conn_snap is not None:
+                b.cp_connections.data[:] = conn_snap        # restore all weights (organs pristine; parse frozen)
+
 
 # The process-shared production merge substrate (built once on first use; holds BOTH organs).
 _MERGED_SUBSTRATE: "MergedSubstrate | None" = None
@@ -396,10 +509,13 @@ def get_merged_substrate(seed: int = 42) -> MergedSubstrate:
     if _MERGED_SUBSTRATE is None:
         if composer_merge_enabled() and _ONEBRAIN_SPAN is not None:
             # ONEBRAIN-COMPOSER (the b-closer): the pool carries the production-default OneBrainComposer's full layout
-            # span as a single "onebrain_composer" region (its parser stays on a private bridge). This is the branch the
-            # DEFAULT flip exercises -- the SHIPPED composer path, not the RF-phasor path.
+            # span as a single "onebrain_composer" region. The DEFAULT flip runs its parser on a private bridge; when
+            # `parser_merge_enabled()` (the Track-1 rung) is ALSO on, the parser's INFERENCE joins pool #1 too (the
+            # CONFLICT-C homeostasis flip is applied here at build; the bind is in `_pool1_onebrain_init`).
+            _parser_on_pool = parser_merge_enabled()
             _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel", "onebrain_composer"),
-                                                onebrain_span=int(_ONEBRAIN_SPAN))
+                                                onebrain_span=int(_ONEBRAIN_SPAN),
+                                                parser_on_pool=_parser_on_pool)
         elif composer_merge_enabled():
             _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel", "composer", "cleanup"))
         else:
@@ -523,6 +639,75 @@ caller mis-sizes it (rf_base + span > pool_N), __init__ RAISES rather than silen
 silently wrong" invariant."""
 
 
+def _bind_parser_onto_pool(comp, substrate, base):
+    """Bind the composer's config-COUPLED Hebbian PARSER's INFERENCE onto pool #1's reserved-idle parser sub-slice
+    [base : base+P_local] (P_local = 6 + 3*R = 126), disjoint from every RF op (the RF layout starts at base+P_local).
+    Three steps, all with EXISTING primitives (NO sim/ edit):
+
+      1) TRANSPLANT (CONFLICT A) — read the standalone-trained conj->role weights (hebbian_max_weight=400) from the
+         parser's PRIVATE bridge (its `cp_connections` holds ONLY the 720 `"parse"` edges -- build_coresident_bridge
+         sets connections_per_neuron=0) and ADD them to the pool at base-shifted coords via
+         `set_pathway_weights(add_missing=True)` -- which ADDS the parse edges WITHOUT clobbering the region-built
+         surprise/world-model connections (unlike `inject_explicit_wiring`, which rebuilds the CSR wholesale).
+      2) REPOINT — point the parser's bridge handle + every index array (conj/role) onto the pool slice, and set its
+         array-sizing `_n` to the pool N, so `role_of` drives + reads the POOL's parser neurons.
+      3) ISOLATION-WRAP (CONFLICT B + the CONFLICT A freeze) — replace the parser's `role_of` with a wrapper that runs
+         the whole stepping burst inside `substrate.parser_isolation()`: the transplanted weights are frozen (global
+         Hebbian off + cp_connections.data restored) and surprise/world-model + the RF slice are byte-restored.
+
+    After this, `comp.parser.bridge IS pool` (criterion 3) and `hear()` comprehends on the shared bridge."""
+    parser = comp.parser
+    priv = comp._parser_bridge
+    pool = substrate.bridge
+    P_local = 6 + 3 * int(parser.R)                       # 126 (conj 0..5 + 3*R role neurons) -- the parser slice size
+    # 1) TRANSPLANT the trained parse edges (private cp_connections = exactly the 720 conj->role edges) shifted +base.
+    coo = priv.cp_connections.tocoo()
+    pre = np.asarray(_host(coo.row), dtype=np.int64) + int(base)
+    post = np.asarray(_host(coo.col), dtype=np.int64) + int(base)
+    w = np.asarray(_host(coo.data), dtype=np.float32)
+    pool.set_pathway_weights("onebrain_parser", pre, post, w, add_missing=True)
+    # 1b) FREEZE (CONFLICT A) — a PERMANENT per-synapse gain-0 on the parse edges. The parse edges now live on the
+    #     SHARED `cp_connections`; the pool's global `hebbian_max_weight=45` clip runs on EVERY Hebbian step (the
+    #     surprise/world-model organs TRAIN Hebbian on this bridge) and, ungated, would crush the transplanted
+    #     400-weights to 45. The gated potentiation/decay/clip (sim/bridge.py:9640/9662/9677-9687) leave a gain-0
+    #     synapse VERBATIM, so gain-0 makes the pool's 45 a don't-care for the parse slice. `gain=1.0` elsewhere is
+    #     byte-identical to the un-gated scalar path (x*1.0==x; the gated clip == cp.clip for gain>0), so surprise/
+    #     world-model reads are UNPERTURBED (criterion 4). Set DIRECTLY on the per-synapse array (no named gate
+    #     registered) since the array is all the Hebbian sites read; the pool runs no structural plasticity, so the
+    #     nnz-sized array is stable.
+    import sim.backend as _B
+    xp_pool, _ = _B.get_backend()
+    nnz = int(pool.cp_connections.nnz)
+    _coo2 = pool.cp_connections.tocoo()                  # CSR-order rows/cols align 1:1 with cp_connections.data
+    _row = xp_pool.asarray(_coo2.row); _col = xp_pool.asarray(_coo2.col)
+    _in_parse = ((_row >= int(base)) & (_row < int(base) + 6)
+                 & (_col >= int(base) + 6) & (_col < int(base) + P_local))   # conj(base..+5) -> role(base+6..+125)
+    if pool.cp_plasticity_rate_gain is None:
+        pool.cp_plasticity_rate_gain = xp_pool.ones(nnz, dtype=xp_pool.float32)
+    pool.cp_plasticity_rate_gain[_in_parse] = xp_pool.float32(0.0)
+    substrate._parser_frozen_idx = _in_parse             # kept for the anti-cheat "genuinely frozen" assertion
+    # 2) REPOINT the parser onto the pool slice (rebuild the index arrays at +base; refresh _n; swap the bridge).
+    parser.bridge = pool
+    parser.conj = [int(base) + k for k in range(6)]
+    parser.role_idx = {r: [int(base) + 6 + i * int(parser.R) + j for j in range(int(parser.R))]
+                       for i, r in enumerate(parser.ROLES)}
+    pxp = parser._bridge_xp()                             # derives xp from the pool bridge's OWN arrays (post-swap)
+    parser.conj_arr = pxp.asarray(parser.conj, dtype=pxp.int64)
+    parser.role_arr = {r: pxp.asarray(v, dtype=pxp.int64) for r, v in parser.role_idx.items()}
+    parser._n = int(pool.core_config.num_neurons)
+    # 3) ISOLATION-WRAP role_of (the only parser op `hear()` runs on the pool -- inference; the parser is TRAINED on
+    #    the private bridge in OneBrainComposer.__init__, so no training runs on the pool).
+    substrate._parser_slice = (int(base), int(base) + P_local)
+    substrate._parser_keep_mask_cache = None
+    _orig_role_of = parser.role_of
+    def _isolated_role_of(position, voice=0, __orig=_orig_role_of, __sub=substrate):
+        with __sub.parser_isolation():
+            return __orig(position, voice)
+    parser.role_of = _isolated_role_of
+    comp._parser_on_pool = True
+    comp._parser_slice = (int(base), int(base) + P_local)
+
+
 def _pool1_onebrain_init(self, substrate, rf_base, seed=42, **ob_kwargs):
     from research.runners.one_brain_composer import OneBrainComposer
     # 1) FULL standalone build: parser + RF on a PRIVATE big bridge, the complete byte-identical layout.
@@ -562,6 +747,13 @@ def _pool1_onebrain_init(self, substrate, rf_base, seed=42, **ob_kwargs):
     self._csr_cache = {}
     self._store_csr = None
     self._store_dirty = True
+    self._parser_on_pool = False
+    # ONEBRAIN-PARSER-IN-POOL#1 (Track-1 rung, opt-in via `parser_merge_enabled()`; the substrate carries the flag +
+    # the CONFLICT-C homeostasis flip already applied at build). When set, the parser's INFERENCE joins the pool too:
+    # its trained conj->role edges are transplanted onto [base:base+126] + `hear()` comprehends on the shared bridge.
+    # Left OFF -> the parser stays on `self._parser_bridge` (byte-identical to the shipped composer default-flip).
+    if getattr(substrate, "parser_on_pool", False):
+        _bind_parser_onto_pool(self, substrate, base)
 
 
 def _pool1_onebrain_class():

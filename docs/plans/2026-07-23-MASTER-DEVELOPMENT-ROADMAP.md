@@ -22,8 +22,19 @@ date: 2026-07-23
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
-> **🛠️ 2026-08-14 CONTINUATION WAVE (updates §0.1/§0.2 — read this FIRST):** an 8-lane autonomous wave landed on main
-> + both remotes. **ONE-SUBSTRATE (Track 1):** the COMPOSER (core moat organ) now joins production pool #1 — first opt-in
+> **🛠️ 2026-08-14 CONTINUATION WAVE (updates §0.1/§0.2 — read this FIRST):** a 13-lane autonomous wave landed on main
+> + both remotes.
+> **FINAL 5 (2026-08-14 late):** composer PARSER also joins pool #1 BY DEFAULT (`61e37158` GO 6/6 — parser inference on
+> the shared bridge, moat + surprise + world-model byte-identical 0.00 Hz, independently re-verified; residual = frozen
+> inference-on-pool not learning-on-pool, next lever = a guarded per-region `hebbian_max_weight` sim/ feature);
+> config-superset surprise-residual PARTIAL (`8937ebd3` — both [HOMEO]-mapped levers empirically FALSIFIED with proof,
+> redirected to the fully-learned CA3 all-to-all recall rung; comprehension stays reconciled 6/6); DMN all-basins-ignite
+> PARTIAL (`c9283c49` — 3/4 basins, the tail fails to ignite SOLO = a structural last-encoded weakness, NOT competition;
+> next = per-basin encode/ignitability equalization); Perception B1 V1 self-org BOUNDARY (`2b0742d9` — the "silent-forward"
+> premise was REFUTED by instrumentation, real wall = common-mode learning, next = learned anti-Hebbian inhibition);
+> Affect 2nd-order conditioning BOUNDARY (`93ecfee9` — closes the CPU-corpus method space for graded valence strength,
+> PROVES the embodiment requirement).
+> **ONE-SUBSTRATE (Track 1):** the COMPOSER (core moat organ) now joins production pool #1 — first opt-in
 > (`562cbff5c`) then **production-DEFAULT** (`77759c2dc`, independently re-verified 1/1 + agent 6/6: byte-identical through
 > the real handler, moat abstains, genuinely one pool N=47440, det 9/9) — so the shipped brain's recall RF-pipeline shares
 > ONE `cp_membrane_potential_v` with surprise + world-model BY DEFAULT (residual: the config-coupled Hebbian PARSER stays

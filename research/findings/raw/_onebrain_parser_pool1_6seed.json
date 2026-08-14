@@ -1,0 +1,1479 @@
+{
+  "mode": "onebrain_parser_pool1_verify_6seed",
+  "kind": "onebrain",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_go": true,
+  "per_seed_go": {
+    "42": true,
+    "43": true,
+    "44": true,
+    "100": true,
+    "101": true,
+    "102": true
+  },
+  "criteria_by_seed": {
+    "42": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    },
+    "43": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    },
+    "44": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    },
+    "100": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    },
+    "101": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    },
+    "102": {
+      "1_parse_answer_id": true,
+      "1_parse_correct_ref": true,
+      "2_recall_byte_id": true,
+      "2_qp_byte_id": true,
+      "2_recall_correct": true,
+      "2_moat_ok": true,
+      "3_surprise_byte_id": true,
+      "3_surprise_alive": true,
+      "3_wm_byte_id": true,
+      "3_wm_alive": true,
+      "4_parser_on_pool": true,
+      "surprise_maxerr_hz": 0.0,
+      "worldmodel_maxerr_hz": 0.0
+    }
+  },
+  "rows": [
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 42,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=4.97685 control=0 |sep|=4.97685 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=44.4444 control=0 |sep|=44.4444 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.0,
+      "surprise_contradict_hz": 4.976851851851852,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 44.44444444444444,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    },
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 43,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=5.49769 control=0.173611 |sep|=5.32407 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=47.5694 control=0 |sep|=47.5694 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.1736111111111111,
+      "surprise_contradict_hz": 5.497685185185185,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 47.56944444444444,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    },
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 44,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=5.2662 control=0 |sep|=5.2662 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=10.0694 control=0 |sep|=10.0694 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.0,
+      "surprise_contradict_hz": 5.266203703703703,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 10.069444444444445,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    },
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 100,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=5.15046 control=0 |sep|=5.15046 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=34.7222 control=0 |sep|=34.7222 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.0,
+      "surprise_contradict_hz": 5.150462962962964,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 34.72222222222223,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    },
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 101,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=4.80324 control=0 |sep|=4.80324 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=32.6389 control=0 |sep|=32.6389 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.0,
+      "surprise_contradict_hz": 4.8032407407407405,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 32.638888888888886,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    },
+    {
+      "mode": "onebrain_parser_pool1_verify",
+      "kind": "onebrain",
+      "seed": 102,
+      "status": "GO",
+      "go": true,
+      "GO": true,
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "parser answer-identical (decoded facts off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "parser correct on the standalone (off) reference",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "query_patient byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recall correct (stored answers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-confab moat abstains on unstored cue",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "surprise faculty alive (contradict>>confirm)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel byte-identical (off==on)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "worldmodel faculty alive (violated>>expected)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "genuinely parser-on-pool (bridge/idx/v-obj/gain-0 frozen 720)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "control",
+          "name": "surprise separation (contradict vs confirm)",
+          "ok": true,
+          "detail": "treatment=5.38194 control=0.347222 |sep|=5.03472 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        },
+        {
+          "kind": "control",
+          "name": "worldmodel separation (violated vs expected)",
+          "ok": true,
+          "detail": "treatment=34.375 control=0 |sep|=34.375 > 1",
+          "note": "byte-identity of a LIVE organ under the CONFLICT-C homeostasis flip"
+        }
+      ],
+      "undefined_reasons": [],
+      "parse_byte_identical": true,
+      "parse_correct": true,
+      "recall_byte_identical": true,
+      "query_patient_byte_identical": true,
+      "recall_correct": true,
+      "moat_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_alive": true,
+      "surprise_confirm_hz": 0.3472222222222222,
+      "surprise_contradict_hz": 5.381944444444445,
+      "worldmodel_maxerr_hz": 0.0,
+      "worldmodel_byte_identical": true,
+      "worldmodel_alive": true,
+      "worldmodel_expected_hz": 0.0,
+      "worldmodel_violated_hz": 34.375,
+      "parser_on_pool_ok": true,
+      "parser_pool": {
+        "parser_slice": [
+          1584,
+          1710
+        ],
+        "parser_bridge_is_pool": true,
+        "indices_in_slice": true,
+        "same_v_array_object": true,
+        "N": 47440,
+        "v_len": 47440,
+        "one_v_array": true,
+        "n_frozen_parse_edges": 720,
+        "gain0_on_parse_gain1_else": true,
+        "homeostasis_global_off": true,
+        "genuinely_parser_on_pool": true
+      },
+      "off_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "on_parse_panel": {
+        "dog chase cat|active": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "brain use spikes|active": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "cat eat fish|active": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        },
+        "bird chase worm|active": {
+          "agent": "bird",
+          "action": "chase",
+          "patient": "worm"
+        },
+        "cat chase dog|passive": {
+          "agent": "dog",
+          "action": "chase",
+          "patient": "cat"
+        },
+        "spikes use brain|passive": {
+          "agent": "brain",
+          "action": "use",
+          "patient": "spikes"
+        },
+        "fish eat cat|passive": {
+          "agent": "cat",
+          "action": "eat",
+          "patient": "fish"
+        }
+      },
+      "off_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      },
+      "on_recall": {
+        "dog|chase": "cat",
+        "cat|eat": "fish",
+        "brain|use": "spikes",
+        "brain|learn": "words",
+        "brain|store": "memory",
+        "owl|eat": null,
+        "lion|roar": null
+      }
+    }
+  ]
+}

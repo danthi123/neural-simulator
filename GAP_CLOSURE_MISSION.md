@@ -27,8 +27,11 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > Rung-2b SFA-eviction NEGATIVE → salience-gated dis-inhibition pulse is next (`3a5db01`); B1 V1 self-org → the "silent
 > forward" premise was REFUTED (V1 active-sparse) and the real wall diagnosed as common-mode learning (`2b0742d9`; next =
 > learned anti-Hebbian inhibition).
-> **LIVE:** [DMN] all-basins-ignite (GPU, ~45min) + [A] affect 2nd-order conditioning (CPU) running. Heartbeat `bnxflymhe`.
-> Owner GAMING (Palworld sharing GPU) → HOLD GPU launches; CPU lanes free.
+> **⏸ PAUSED 2026-08-14 for an owner usage-break** (owner: ~5% weekly Claude usage left — "take a break after the
+> current tasks complete in their entirety, don't cut them short"). All 13 continuation-wave lanes LANDED + consolidated
+> (the final 5: parser-on-pool GO `61e37158`, surprise-residual PARTIAL `8937ebd3`, DMN all-basins PARTIAL `c9283c49`,
+> Perception V1 BOUNDARY `2b0742d9`, Affect 2nd-order BOUNDARY `93ecfee9` — see MASTER ROADMAP §0 "FINAL 5"). NOTHING
+> running; the session heartbeat was stopped. **RESUME from the NEXT-RUNG QUEUE below.**
 > **NEXT-RUNG QUEUE:** Track-1 = surprise-side residual (threshold-robust surprise read + restore cross-drive) +
 > OneBrainComposer parser-on-pool; Track-2 = LN(emb) biologization + batched-substrate-forward e-prop (GPU); Faculty =
 > [DMN] result + question-vs-remark on the substrate; Breadth = Rung-2c salience-gated dis-inhibition + B curiosity (needs
