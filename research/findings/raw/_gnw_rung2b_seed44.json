@@ -1,0 +1,219 @@
+{
+  "runner": "_gnw_rung2b_sfa_workspace_eviction_derisk",
+  "mode": "single",
+  "go": false,
+  "verdict": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "incumbent ignites & holds a weak challenger",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "SFA injected (izh_d differs from RS default)",
+      "ok": true,
+      "detail": "before=100 after=400 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "knob",
+      "name": "izh_d applied to workspace neurons",
+      "ok": true,
+      "detail": "requested=400 applied=400",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WTA inhibition load-bearing (fs=0 lesion co-ignites)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "SFA-OFF reproduces the phase-erratic negative",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "continuous headline: zero _restore_state calls",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "homeostasis",
+      "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+    },
+    {
+      "process": "short_term_plasticity",
+      "why": "STP banked as annihilating for eviction (2026-08-01)"
+    }
+  ],
+  "undefined_reasons": [],
+  "backend": "numpy",
+  "operating_point": {
+    "izh_d": 400.0,
+    "izh_a": 0.03,
+    "fs_to_ws": 28.0,
+    "ou_noise_pA": 40.0,
+    "incumbent_settle": 150,
+    "heterogeneity": true,
+    "drive_inc": 5000.0,
+    "chal_max": 8000.0,
+    "n_chal": 9
+  },
+  "eval": {
+    "seed": 44,
+    "izh_d_applied": 400.0,
+    "izh_a_applied": 0.029999999329447746,
+    "operating_point": {
+      "izh_d": 400.0,
+      "izh_a": 0.03,
+      "fs_to_ws": 28.0,
+      "ou_noise_pA": 40.0,
+      "incumbent_settle": 150,
+      "heterogeneity": true,
+      "drive_inc": 5000.0,
+      "chal_max": 8000.0,
+      "n_chal": 9
+    },
+    "drive_challengers": [
+      0.0,
+      1000.0,
+      2000.0,
+      3000.0,
+      4000.0,
+      5000.0,
+      6000.0,
+      7000.0,
+      8000.0
+    ],
+    "a_rates": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "b_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "winner_per_challenger": [
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A"
+    ],
+    "mutual_exclusion": true,
+    "a_holds_weak": true,
+    "b_takes_strong": false,
+    "monotone": true,
+    "crossover": false,
+    "annihilation_on_sweep": false,
+    "causal_swap": {
+      "attribution": 0.0,
+      "pass": false,
+      "trials": [
+        {
+          "strong_drive": 8000.0,
+          "B_challenges": {
+            "A": 0.3333333333333333,
+            "B": 0.0,
+            "winner": "A",
+            "follows_salience": false
+          },
+          "A_challenges": {
+            "A": 0.0,
+            "B": 0.3333333333333333,
+            "winner": "B",
+            "follows_salience": false
+          }
+        },
+        {
+          "strong_drive": 6800.0,
+          "B_challenges": {
+            "A": 0.3333333333333333,
+            "B": 0.0,
+            "winner": "A",
+            "follows_salience": false
+          },
+          "A_challenges": {
+            "A": 0.0,
+            "B": 0.3333333333333333,
+            "winner": "B",
+            "follows_salience": false
+          }
+        }
+      ]
+    },
+    "continuous_headline": {
+      "no_restore_calls": true,
+      "takeover": false,
+      "incumbent_ignited_pre_challenge": true,
+      "n_ignited_post": 1,
+      "anti_annihilation": true,
+      "A_pre": 0.775,
+      "B_pre": 0.0,
+      "A_post": 0.3333333333333333,
+      "B_post": 0.0,
+      "winner_post": "A"
+    },
+    "seed_deterministic": true,
+    "threshold_hash": "761e8f4bcdfdd1493522a06e7b97f9f8b80e5aec2c3d2f925c3661de676bbb75",
+    "op_go": false
+  },
+  "control_sfa_off": {
+    "reproduces_negative": true,
+    "monotone": true,
+    "crossover": false,
+    "causal_swap_pass": false,
+    "winner_per_challenger": [
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "both"
+    ]
+  },
+  "control_wta_lesion": {
+    "both_ignite": true,
+    "A": 0.3333333333333333,
+    "B": 0.3333333333333333
+  }
+}
