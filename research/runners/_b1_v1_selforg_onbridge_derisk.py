@@ -303,19 +303,30 @@ def _freeze(bridge):
     bridge.core_config.enable_homeostasis = False
 
 
-def develop(bridge, r0, n_retina, n_steps, drive_pA, present_steps, seed, xp, shuffle=False):
-    """Developmental phase: stream oriented gratings, run the plastic bridge."""
+def develop(bridge, r0, n_retina, v0, n_v1, n_steps, drive_pA, present_steps, seed, xp, shuffle=False):
+    """Developmental phase: stream oriented gratings, run the plastic bridge.
+
+    THE OPERATING-POINT INSTRUMENT (added 2026-08-14). Every prior on-bridge run measured V1 firing
+    ONLY at test read-out (under a different drive), never DURING the plastic phase -- so the
+    silent-forward precondition (the 2026-08-02 dead-forward VOID lens) was never checked. We now count
+    V1 spikes over the ENTIRE developmental window and return the mean per-step firing FRACTION. If this
+    is silent (or saturated), the correlational rule was never fairly exercised and the OSI result is
+    VOID, not NEGATIVE (see run_seed). This is the "instrument is part of the emulation" fix."""
     rng = np.random.default_rng(seed * 101 + (7 if shuffle else 3))
     steps_done = 0
+    v1_spike_total = 0.0
     while steps_done < n_steps:
         img = render_oriented_field(rng, shuffle=shuffle)
         _drive_image(bridge, r0, n_retina, img, drive_pA, xp)
         for _ in range(present_steps):
             bridge._run_one_simulation_step()
+            fired = to_host(bridge.cp_firing_states[v0:v0 + n_v1])
+            v1_spike_total += float(np.asarray(fired, dtype=np.float32).sum())
             steps_done += 1
             if steps_done >= n_steps:
                 break
     bridge.cp_external_input_current[:] = 0.0
+    return v1_spike_total / max(1, steps_done) / max(1, n_v1)
 
 
 # ============================================================================
@@ -460,7 +471,7 @@ def run_seed(seed, a):
     rf_pre = read_v1_rfs(bridge, r0, v0, n_retina, n_v1, n_orient, n_freq, n_pos, retina_size, radius)
     osi_pre_mean, osi_pre_frac = gabor_orientation_tuning(rf_pre)
 
-    develop(bridge, r0, n_retina, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=False)
+    dev_ff = develop(bridge, r0, n_retina, v0, n_v1, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=False)
     _freeze(bridge)   # critical-period close: freeze all plasticity for read-out
 
     rf_post = read_v1_rfs(bridge, r0, v0, n_retina, n_v1, n_orient, n_freq, n_pos, retina_size, radius)
@@ -475,7 +486,7 @@ def run_seed(seed, a):
         n_inh=a.n_inh, inh_exc_w=a.inh_exc_w, inh_inh_w=a.inh_inh_w, inh_density=a.inh_density,
         homeo_target=a.homeo_target, homeo_ema_alpha=a.homeo_ema_alpha, homeo_adapt_rate=a.homeo_adapt_rate,
         rule=a.rule)
-    develop(bridge_sh, r0s, n_ret_s, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=True)
+    dev_ff_shuf = develop(bridge_sh, r0s, n_ret_s, v0s, n_v1, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=True)
     _freeze(bridge_sh)
     rf_shuf = read_v1_rfs(bridge_sh, r0s, v0s, n_ret_s, n_v1, n_orient, n_freq, n_pos, retina_size, radius)
     osi_shuf_mean, osi_shuf_frac = gabor_orientation_tuning(rf_shuf)
@@ -518,11 +529,23 @@ def run_seed(seed, a):
     lift_over_controls = (osi_post_frac >= osi_pre_frac + 0.15) and (osi_post_frac >= osi_shuf_frac + 0.15)
     geometry_ok = (rsa_host_post >= rsa_gate) and (m_p >= margin_gate)
 
-    if learned_oriented and lift_over_controls and geometry_ok:
+    # ---- OPERATING-POINT PRECONDITION (the 2026-08-02 dead-forward VOID lens) ----
+    # If V1 was SILENT (or saturated) during the plastic phase, the correlational rule was never
+    # fairly exercised: the OSI result is VOID, not a mechanism verdict. dev_ff is the mean per-step
+    # V1 firing fraction over the ENTIRE developmental window (measured by the new develop() probe).
+    op_point_ok = (dev_ff >= a.dev_active_lo) and (dev_ff <= a.dev_active_hi)
+
+    if not op_point_ok:
+        # Silent-forward (or saturated) -> the rule had no fair chance. Do NOT report as NEGATIVE.
+        verdict = "VOID"
+    elif learned_oriented and lift_over_controls and geometry_ok:
         verdict = "GO"
     elif lift_over_controls and (osi_post_frac >= 0.3):
         verdict = "PARTIAL"
     else:
+        # Active-sparse yet OSI below the self-org gate = a mapped substrate residual (BOUNDARY), not
+        # a silent artifact. Reported as NEGATIVE at the per-seed level; the summary distinguishes
+        # BOUNDARY (op-point verified) from VOID (op-point never reached).
         verdict = "NEGATIVE"
 
     # WEIGHT SATURATION -- the quantity that DIAGNOSES this runner's failure, and which it never recorded.
@@ -569,8 +592,17 @@ def run_seed(seed, a):
         _diag = "NEITHER — raw weights carry a signed ON-OFF structure; look downstream of the weights"
     print("  => %s" % _diag)
 
+    print("  OPERATING POINT: dev V1 firing fraction=%.5f (shuffle-dev=%.5f) | band=[%.3f,%.3f] -> %s"
+          % (dev_ff, dev_ff_shuf, a.dev_active_lo, a.dev_active_hi,
+             "ACTIVE-SPARSE (op point reached)" if op_point_ok
+             else ("SILENT (dead-forward -> VOID)" if dev_ff < a.dev_active_lo else "SATURATED (-> VOID)")))
+
     return dict(
         seed=seed, backend=backend, n_v1=n_v1, elapsed_s=round(elapsed, 1),
+        dev_firing_fraction=round(dev_ff, 5),
+        dev_firing_fraction_shuffle=round(dev_ff_shuf, 5),
+        op_point_ok=bool(op_point_ok),
+        dev_active_band=[a.dev_active_lo, a.dev_active_hi],
         v1_firing_rate=round(v1_rate, 4),
         saturation=_sat,
         raw_weights=_raw,
@@ -628,6 +660,12 @@ def main():
     ap.add_argument("--homeo-ema-alpha", type=float, default=0.01)
     ap.add_argument("--homeo-adapt-rate", type=float, default=0.004)
     ap.add_argument("--rule", type=str, default="hebbian", choices=["hebbian", "stdp", "both"])
+    # OPERATING-POINT PRECONDITION band (mean per-step V1 firing fraction over the plastic phase).
+    # dev firing outside [lo, hi] -> the run is VOID (silent-forward / saturated), not scored.
+    ap.add_argument("--dev-active-lo", type=float, default=0.005,
+                    help="developmental V1 firing fraction floor; below = SILENT -> VOID (dead-forward)")
+    ap.add_argument("--dev-active-hi", type=float, default=0.05,
+                    help="developmental V1 firing fraction ceiling; above = SATURATED -> VOID")
     ap.add_argument("--n-categories", type=int, default=4)
     ap.add_argument("--n-exemplars", type=int, default=4)
     ap.add_argument("--n-orient-dec", type=int, default=8)
@@ -650,13 +688,44 @@ def main():
         return [f(r) for r in per_seed]
 
     verdicts = [r["verdict"] for r in per_seed]
-    all_go = all(v == "GO" for v in verdicts)
-    overall = "GO" if all_go else ("PARTIAL" if all(v in ("GO", "PARTIAL") for v in verdicts) else "NEGATIVE")
+
+    # ---- OPERATING-POINT-AWARE overall verdict (VOID / GO / BOUNDARY / PARTIAL / NEGATIVE) ----
+    # VOID seeds (op point never reached: silent-forward or saturated) are NOT scored on OSI.
+    op_ok = [bool(r["op_point_ok"]) for r in per_seed]
+    n_op_ok = sum(op_ok)
+    # Phase-2 GO gate (spec go_gate): among op-point-verified seeds, osi_post_frac >= 0.50 AND
+    # osi_post_frac >= max(pre_random_frac, shuffle_frac) + 0.20, on >= 2/3 seeds.
+    def _phase2_pass(r):
+        op = r["osi"]["post_learned"]["frac_gt0_5"]
+        pre = r["osi"]["pre_random"]["frac_gt0_5"]
+        shuf = r["osi"]["shuffle_ctrl"]["frac_gt0_5"]
+        return bool(r["op_point_ok"] and op >= 0.50 and op >= max(pre, shuf) + 0.20)
+    n_phase2 = sum(_phase2_pass(r) for r in per_seed)
+    n_seeds = len(per_seed)
+
+    if n_op_ok == 0:
+        # No seed ever reached the active-sparse operating point -> the whole rung is VOID (dead-forward).
+        overall = "VOID"
+    elif n_phase2 >= max(2, (2 * n_seeds + 2) // 3):  # >= 2/3 of seeds (and >= 2)
+        overall = "GO"
+    elif n_op_ok == n_seeds:
+        # Every seed active-sparse but the OSI gate did not clear -> a MAPPED substrate residual, not
+        # a silent artifact: BOUNDARY (named next mechanism = learned anti-Hebbian recurrent inhibition).
+        overall = "BOUNDARY"
+    else:
+        # Some seeds VOID, some active-sparse-but-below-gate -> mixed; report the stronger label.
+        overall = "BOUNDARY-PARTIAL"
 
     summary = dict(
         overall_verdict=overall,
         seeds=a.seeds,
         per_seed_verdicts=verdicts,
+        op_point_ok=op_ok,
+        n_op_point_verified=n_op_ok,
+        n_phase2_go_seeds=n_phase2,
+        dev_firing_fraction=[r["dev_firing_fraction"] for r in per_seed],
+        dev_firing_fraction_mean=round(float(np.mean(col(lambda r: r["dev_firing_fraction"]))), 5),
+        dev_active_band=[a.dev_active_lo, a.dev_active_hi],
         osi_pre_frac_mean=round(float(np.mean(col(lambda r: r["osi"]["pre_random"]["frac_gt0_5"]))), 4),
         osi_post_frac_mean=round(float(np.mean(col(lambda r: r["osi"]["post_learned"]["frac_gt0_5"]))), 4),
         osi_shuffle_frac_mean=round(float(np.mean(col(lambda r: r["osi"]["shuffle_ctrl"]["frac_gt0_5"]))), 4),

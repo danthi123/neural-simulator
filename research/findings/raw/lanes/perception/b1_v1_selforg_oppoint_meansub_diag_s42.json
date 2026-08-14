@@ -1,0 +1,116 @@
+{
+  "summary": {
+    "overall_verdict": "BOUNDARY",
+    "seeds": [
+      42
+    ],
+    "per_seed_verdicts": [
+      "NEGATIVE"
+    ],
+    "op_point_ok": [
+      true
+    ],
+    "n_op_point_verified": 1,
+    "n_phase2_go_seeds": 0,
+    "dev_firing_fraction": [
+      0.00899
+    ],
+    "dev_firing_fraction_mean": 0.00899,
+    "dev_active_band": [
+      0.005,
+      0.05
+    ],
+    "osi_pre_frac_mean": 0.0044,
+    "osi_post_frac_mean": 0.0029,
+    "osi_shuffle_frac_mean": 0.0024,
+    "osi_post_mean_mean": 0.1684,
+    "rsa_vs_host_mean": 0.762,
+    "margin_mean": 0.1584,
+    "orient_decode_mean": 0.3281,
+    "host_decode_mean": 0.9844,
+    "v1_firing_rate_mean": 0.003
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "n_v1": 2048,
+      "elapsed_s": 156.9,
+      "dev_firing_fraction": 0.00899,
+      "dev_firing_fraction_shuffle": 0.00882,
+      "op_point_ok": true,
+      "dev_active_band": [
+        0.005,
+        0.05
+      ],
+      "v1_firing_rate": 0.003,
+      "saturation": {
+        "w_mean": 4.420136,
+        "w_absmax": 70.0,
+        "frac_rf_near_zero": 0.5078,
+        "frac_cells_all_zero": 0.0288
+      },
+      "raw_weights": {
+        "on_mean": 2.267988,
+        "off_mean": 2.272522,
+        "on_absmax": 70.0,
+        "off_absmax": 70.0,
+        "on_minus_off_mean": -0.004535,
+        "raw_mean_abs": 2.270255,
+        "l2_mean": 498.008789,
+        "l2_min": 159.91362,
+        "l2_max": 704.603638,
+        "l2_std": 123.05088,
+        "frac_cells_l2_near_zero": 0.0,
+        "frac_raw_near_zero": 0.9558
+      },
+      "plasticity": {
+        "total_plasticity_events": 18760229,
+        "v1_activity_ema_mean": 0.00903875,
+        "v1_activity_ema_max": 0.02610307,
+        "v1_activity_ema_min": 7e-08,
+        "frac_v1_ema_zero": 0.0
+      },
+      "weight_diagnosis": "COMMON-MODE CONVERGENCE \u2014 raw weights are healthy but ON and OFF cancel; adding weight mass cannot help, the common mode has to be removed",
+      "osi": {
+        "pre_random": {
+          "mean": 0.1716,
+          "frac_gt0_5": 0.0044
+        },
+        "post_learned": {
+          "mean": 0.1684,
+          "frac_gt0_5": 0.0029
+        },
+        "shuffle_ctrl": {
+          "mean": 0.1653,
+          "frac_gt0_5": 0.0024
+        }
+      },
+      "geometry": {
+        "host_reference": {
+          "margin": 0.7573,
+          "rsa_vs_pixels": 0.989,
+          "orient_decode": 0.9844
+        },
+        "v1_firing_post": {
+          "within": 0.1745,
+          "between": 0.0161,
+          "margin": 0.1584,
+          "rsa_vs_host": 0.762,
+          "rsa_vs_pixels": 0.7618,
+          "orient_decode": 0.3281
+        }
+      },
+      "gates": {
+        "osi_self_gate": 0.5,
+        "osi_ctrl_ceiling": 0.0544,
+        "rsa_gate": 0.6,
+        "margin_gate": 0.15
+      },
+      "learned_oriented": false,
+      "lift_over_controls": false,
+      "geometry_ok": true,
+      "verdict": "NEGATIVE"
+    }
+  ]
+}
