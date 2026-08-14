@@ -1,0 +1,696 @@
+{
+  "probe": "affect_second_order_conditioning (higher-order Pavlovian evaluative conditioning)",
+  "verdict": "BOUNDARY / HONEST NEGATIVE (build-informative, 6-seed) -- STRENGTH r=+0.104 (min -0.241; first-order +0.101; static-diff +0.134; ridge +0.288, gap-to-ridge +0.184), SIGN r=+0.496 (min +0.186). beats-first 3/6; beats-std 1/6; no-cond +0.000; unpaired-2nd sig 0/6; sat 0.07. FAILED: ['G1_strength_mean>=0.20', 'G1_strength_every_seed>=0.12', 'G1_strength_beats_first_order(0.10)_in>=5of6', 'G2_beats_static_diffusion_in>=5of6', 'G3_sign_every_seed>=0.25', 'G5b_unpaired_second_order_beaten_in>=5of6', 'G6_discrete_emotion>=0.85_and_5of6_noncollapse']. LOAD-BEARING NEGATIVE: the graded second-order conditioning reads STRENGTH r=+0.104 (first-order boundary +0.101, static-diffusion +0.134, ridge-Warriner +0.288) -- the LAST unsupervised corpus write (multi-step associative) does NOT recover graded valence strength either. With the single-step third-factor family already ruled out by the oracle ceiling, the code-geometry strength the ridge extracts is unreachable without magnitude supervision => the board's 'needs a bodily/interoceptive/embodiment input' is now PROVEN, not hypothesized. The next axis is EMBODIMENT (interoceptive/bodily reinforcement magnitude), NOT another corpus write. Per THE LAW this is a verdict on the METHODS (single- AND multi-step corpus writes), not a deferral.",
+  "GO": false,
+  "QUALIFIED_GO": false,
+  "preconditions": [
+    {
+      "name": "corpus_loaded(vocab>=24)",
+      "ok": true,
+      "detail": "vocab=139"
+    },
+    {
+      "name": "held_set_adequate(min n_held>=20)",
+      "ok": true,
+      "detail": "min_n_held=64"
+    },
+    {
+      "name": "no_conditioning_reads_zero(|r|<0.05)",
+      "ok": true,
+      "detail": "no_conditioning_r=+0.0000"
+    },
+    {
+      "name": "innate_US_signal_present(corr(s_K,Warriner)>0)",
+      "ok": true,
+      "detail": "corr_sK_warriner=+0.516"
+    },
+    {
+      "name": "second_order_pass_moved_the_field(mean|increment|>0.005; per-seed lever asserts MOVED every seed)",
+      "ok": true,
+      "detail": "mean|increment(train)|=0.0819; run_seed lever asserts the K>=2 pass MOVED s_c (100% of writers) every seed"
+    },
+    {
+      "name": "graded_not_saturated(non-explosion: sat_frac<0.5 AND IQR>0.02)",
+      "ok": true,
+      "detail": "sat_frac=0.066 IQR=0.362 std=0.354"
+    },
+    {
+      "name": "order_lesion_reproduces_first_order(K=1 strength ~0.10)",
+      "ok": true,
+      "detail": "K=1 strength=+0.101 (first-order boundary ~0.10)"
+    },
+    {
+      "name": "weights_warriner_free(asserted; no-cond collapse + --corrupt-warriner give it teeth)",
+      "ok": true,
+      "detail": "second_order_field + selforg_opponent_weights take no Warriner arg; --corrupt-warriner byte-identical; no-cond collapse to +0.000 confirms the weights come from conditioning"
+    }
+  ],
+  "verdict_earned": {
+    "label": "second-order (higher-order) evaluative conditioning (affect graded-STRENGTH surpass)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: G1 held-out STRENGTH r >= 0.20 (toward ridge 0.27-0.29) (0.104221 vs floor 0.2)",
+      "unmet: G1 every seed STRENGTH r >= 0.12 (measured=-0.24065118875394553 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)",
+      "unmet: G1 strength beats the first-order boundary (0.10) in >= 5/6 seeds (measured=3 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)",
+      "unmet: G2 strength beats static-diffusion baseline in >= 5/6 seeds (measured=1 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)",
+      "unmet: G3 every seed SIGN r >= 0.25 (measured=0.18629134939003864 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)",
+      "unmet: G5b unpaired-second-order permutation beaten (perm-p<0.05) in >= 5/6 (measured=0 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)",
+      "unmet: G6 discrete-emotion discrimination >= 0.85 (>=5/6 non-collapsed) (measured=0.75 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>)"
+    ],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "G1 held-out STRENGTH r >= 0.20 (toward ridge 0.27-0.29)",
+        "ok": false,
+        "detail": "0.104221 vs floor 0.2",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 every seed STRENGTH r >= 0.12",
+        "ok": false,
+        "detail": "measured=-0.24065118875394553 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G1 strength beats the first-order boundary (0.10) in >= 5/6 seeds",
+        "ok": false,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G2 strength beats static-diffusion baseline in >= 5/6 seeds",
+        "ok": false,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "G3 held-out SIGN r >= 0.45 (not traded for strength)",
+        "ok": true,
+        "detail": "0.495876 vs floor 0.45",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G3 every seed SIGN r >= 0.25",
+        "ok": false,
+        "detail": "measured=0.18629134939003864 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "G4 no-conditioning lesion collapses the read",
+        "ok": true,
+        "detail": "treatment=0.495876 control=0 |sep|=0.495876 > 0.395876",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G5a order-lesion (K=1) reproduces the first-order boundary (~0.10)",
+        "ok": true,
+        "detail": "measured=0.100618008573778 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G5b unpaired-second-order permutation beaten (perm-p<0.05) in >= 5/6",
+        "ok": false,
+        "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "G6 discrete-emotion discrimination >= 0.85 (>=5/6 non-collapsed)",
+        "ok": false,
+        "detail": "measured=0.75 expect=<function main.<locals>.<lambda> at 0x7f62da75bc40>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "Warriner appraisal SEED + all SINGLE-STEP third-factor writes -- RETIRED: the opponent weights derive from a MULTI-STEP second-order conditioning field over the self-organized code graph, ~10 innate primary signs, NO Warriner",
+        "why": "this de-risk's whole point; Warriner is EVAL-only ground-truth, never a write input"
+      }
+    ],
+    "chance": null
+  },
+  "checks": {
+    "G1_strength_mean>=0.20": false,
+    "G1_strength_every_seed>=0.12": false,
+    "G1_strength_beats_first_order(0.10)_in>=5of6": false,
+    "G2_beats_static_diffusion_in>=5of6": false,
+    "G3_sign_holds_mean>=0.45": true,
+    "G3_sign_every_seed>=0.25": false,
+    "G4_no_conditioning_collapses(+0.000)": true,
+    "G5a_order_lesion_reproduces_first_order": true,
+    "G5b_unpaired_second_order_beaten_in>=5of6": false,
+    "G6_discrete_emotion>=0.85_and_5of6_noncollapse": false
+  },
+  "means": {
+    "str_2nd": 0.10422130107764849,
+    "str_2nd_min": -0.24065118875394553,
+    "str_first_order": 0.100618008573778,
+    "str_static_diff": 0.13373378664330698,
+    "str_ridge": 0.28772552674040014,
+    "str_beat_first_seeds": 3,
+    "str_beat_std_seeds": 1,
+    "sign_2nd": 0.49587624277056425,
+    "sign_2nd_min": 0.18629134939003864,
+    "sign_first_order": 0.5072494586542496,
+    "sign_static_diff": 0.472346639229267,
+    "sign_ridge": 0.7278810638507215,
+    "no_conditioning": 0.0,
+    "unpaired_seeds_sig": 0,
+    "permcode_seeds_sig": 5,
+    "intact_abs_2nd": 0.02527126736111111,
+    "lesion_abs_2nd": 0.0,
+    "r_perp_2nd": -0.07698656457516867,
+    "corr_sK_warriner": 0.5162807680169447,
+    "sec_order_incr_mag": 0.08188979618328343,
+    "sec_order_sat_frac": 0.0664677657480315,
+    "sec_order_iqr": 0.3618452445329447,
+    "sec_order_std": 0.3543992993614858,
+    "b_accuracy": 0.75,
+    "b_noncollapse_seeds": 5
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": 0.18480279535333818,
+      "a_r_str_first": 0.25225692759525564,
+      "a_r_str_static_diff": 0.2144526556023295,
+      "a_r_str_ridge": 0.2770180567758826,
+      "a_r_sign_2nd": 0.4698221540402958,
+      "a_r_sign_first": 0.4616112456228346,
+      "a_r_sign_static_diff": 0.41027126227437133,
+      "a_r_sign_ridge": 0.6587285401708123,
+      "a_intact_abs_2nd": 0.030690104166666666,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": 0.0540785541878149,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": 0.2822082387608117,
+      "a_lin_sign_r_2nd": 0.4984295233625676,
+      "a_unpaired_perm_p": 0.6268656716417911,
+      "a_unpaired_null_mean": 0.28597688248571507,
+      "a_permcode_perm_p": 0.01990049751243781,
+      "a_permcode_null_mean": -0.027802882987899055,
+      "sec_order_incr_mag": 0.06966641015985854,
+      "sec_order_sat_frac": 0.0,
+      "sec_order_iqr": 0.34660288444911985,
+      "sec_order_std": 0.38033784395415404,
+      "corr_sK_warriner": 0.5390732312988904,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.1454,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0864,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.0116,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1411,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "primaries": [
+        "hug",
+        "sweet",
+        "treat",
+        "candy",
+        "cake",
+        "hungry",
+        "pain",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": 0.02817667727108619,
+      "a_r_str_first": -0.13603769430434973,
+      "a_r_str_static_diff": 0.028575887435317367,
+      "a_r_str_ridge": 0.3754552146658114,
+      "a_r_sign_2nd": 0.6068353724476674,
+      "a_r_sign_first": 0.5369802010061013,
+      "a_r_sign_static_diff": 0.5936108649986502,
+      "a_r_sign_ridge": 0.8625760829803194,
+      "a_intact_abs_2nd": 0.019869791666666668,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": 0.01006308754694187,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": 0.04482197812037996,
+      "a_lin_sign_r_2nd": 0.5716044442416436,
+      "a_unpaired_perm_p": 0.22885572139303484,
+      "a_unpaired_null_mean": 0.008995508007136497,
+      "a_permcode_perm_p": 0.01990049751243781,
+      "a_permcode_null_mean": -0.02482290385637187,
+      "sec_order_incr_mag": 0.03411426007549278,
+      "sec_order_sat_frac": 0.015748031496062992,
+      "sec_order_iqr": 0.37067751888926226,
+      "sec_order_std": 0.4005335603133031,
+      "corr_sK_warriner": 0.465757637577682,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3928,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.1074,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3898,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1255,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "primaries": [
+        "cuddle",
+        "hug",
+        "cozy",
+        "candy",
+        "warm",
+        "pain",
+        "hungry",
+        "bite",
+        "cold",
+        "hurt"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": 0.2982126228241884,
+      "a_r_str_first": 0.19923278644588613,
+      "a_r_str_static_diff": 0.312242537481093,
+      "a_r_str_ridge": 0.21057499754044867,
+      "a_r_sign_2nd": 0.6683069662355532,
+      "a_r_sign_first": 0.577892113100838,
+      "a_r_sign_static_diff": 0.6678968498179196,
+      "a_r_sign_ridge": 0.7475820050332336,
+      "a_intact_abs_2nd": 0.02259765625,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": -0.29590877860070847,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": 0.15278050286837633,
+      "a_lin_sign_r_2nd": 0.6232221702507736,
+      "a_unpaired_perm_p": 0.5223880597014925,
+      "a_unpaired_null_mean": 0.15333777012782002,
+      "a_permcode_perm_p": 0.014925373134328358,
+      "a_permcode_null_mean": -0.023629939219875978,
+      "sec_order_incr_mag": 0.047957113389140694,
+      "sec_order_sat_frac": 0.023622047244094488,
+      "sec_order_iqr": 0.35655511395460115,
+      "sec_order_std": 0.3612796549461901,
+      "corr_sK_warriner": 0.5873032973950334,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.2692,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_seeking",
+          "margin": 0.0455,
+          "ok": false
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.326,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.0995,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "primaries": [
+        "hug",
+        "food",
+        "candy",
+        "cozy",
+        "sweet",
+        "scared",
+        "cold",
+        "afraid",
+        "cry",
+        "hungry"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": 0.2806838919241491,
+      "a_r_str_first": 0.32315718835930807,
+      "a_r_str_static_diff": 0.35893381077841335,
+      "a_r_str_ridge": 0.2244789898424734,
+      "a_r_sign_2nd": 0.6757641075484766,
+      "a_r_sign_first": 0.6927841243728976,
+      "a_r_sign_static_diff": 0.6612222812570271,
+      "a_r_sign_ridge": 0.7223244972925408,
+      "a_intact_abs_2nd": 0.018496093749999998,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": 0.03193858005045531,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": 0.3374087443208283,
+      "a_lin_sign_r_2nd": 0.6688201814232975,
+      "a_unpaired_perm_p": 0.19900497512437812,
+      "a_unpaired_null_mean": 0.3248371150887101,
+      "a_permcode_perm_p": 0.004975124378109453,
+      "a_permcode_null_mean": 0.001655045353144351,
+      "sec_order_incr_mag": 0.09453327078302276,
+      "sec_order_sat_frac": 0.0234375,
+      "sec_order_iqr": 0.4370829085904517,
+      "sec_order_std": 0.3752097755952375,
+      "corr_sK_warriner": 0.5895508370651412,
+      "b_accuracy": 0.75,
+      "b_distinct_winners": 3,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.2172,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_seeking",
+          "margin": 0.3179,
+          "ok": false
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.3883,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.1111,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "primaries": [
+        "kiss",
+        "sweet",
+        "cozy",
+        "warm",
+        "cake",
+        "hungry",
+        "cold",
+        "bite",
+        "sick",
+        "pain"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 127,
+      "n_train": 63,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": 0.07410300784707459,
+      "a_r_str_first": 0.05991808005906532,
+      "a_r_str_static_diff": 0.04551414141395346,
+      "a_r_str_ridge": 0.3925037682375027,
+      "a_r_sign_2nd": 0.36823750696135393,
+      "a_r_sign_first": 0.35244468320682926,
+      "a_r_sign_static_diff": 0.2841973634855642,
+      "a_r_sign_ridge": 0.6920401739946448,
+      "a_intact_abs_2nd": 0.021549479166666663,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": -0.09406043212949303,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": 0.16381571421468724,
+      "a_lin_sign_r_2nd": 0.49004809563049556,
+      "a_unpaired_perm_p": 0.07462686567164178,
+      "a_unpaired_null_mean": 0.14529864926867375,
+      "a_permcode_perm_p": 0.014925373134328358,
+      "a_permcode_null_mean": -0.017040358045216447,
+      "sec_order_incr_mag": 0.04657605151973023,
+      "sec_order_sat_frac": 0.007874015748031496,
+      "sec_order_iqr": 0.3305568670977329,
+      "sec_order_std": 0.34743794825953656,
+      "corr_sK_warriner": 0.4889694652354114,
+      "b_accuracy": 1.0,
+      "b_distinct_winners": 4,
+      "b_distinct": true,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_seeking",
+          "margin": 0.3649,
+          "ok": true
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_care",
+          "margin": 0.0533,
+          "ok": true
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_fear",
+          "margin": 0.0588,
+          "ok": true
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_rage",
+          "margin": 0.187,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "primaries": [
+        "sweet",
+        "candy",
+        "cuddle",
+        "kiss",
+        "cozy",
+        "scared",
+        "bite",
+        "cold",
+        "cry",
+        "fall"
+      ],
+      "n_vocab": 139,
+      "code_dim": 64,
+      "n_reinforced": 128,
+      "n_train": 64,
+      "n_held": 64,
+      "n_held_probe": 48,
+      "a_r_str_2nd": -0.24065118875394553,
+      "a_r_str_first": -0.09481923671249733,
+      "a_r_str_static_diff": -0.15731631285126482,
+      "a_r_str_ridge": 0.2463221333802819,
+      "a_r_sign_2nd": 0.18629134939003864,
+      "a_r_sign_first": 0.42178438461599693,
+      "a_r_sign_static_diff": 0.21688121354206963,
+      "a_r_sign_ridge": 0.684035083632778,
+      "a_intact_abs_2nd": 0.038424479166666664,
+      "a_lesion_abs_2nd": 0.0,
+      "a_r_perp_2nd": -0.16803039850602264,
+      "a_r_no_conditioning": 0.0,
+      "a_lin_str_r_2nd": -0.30298239720489184,
+      "a_lin_sign_r_2nd": 0.2683998449309067,
+      "a_unpaired_perm_p": 0.6268656716417911,
+      "a_unpaired_null_mean": -0.30056073480688733,
+      "a_permcode_perm_p": 0.2537313432835821,
+      "a_permcode_null_mean": 0.02190659664851311,
+      "sec_order_incr_mag": 0.19849167117245559,
+      "sec_order_sat_frac": 0.328125,
+      "sec_order_iqr": 0.3295961742165,
+      "sec_order_std": 0.26159701310049366,
+      "corr_sK_warriner": 0.4270301395295101,
+      "b_accuracy": 0.0,
+      "b_distinct_winners": 2,
+      "b_distinct": false,
+      "b_rows": [
+        {
+          "cond": "goal_congruent_self_certain",
+          "intended": "emo_seeking",
+          "winner": "emo_rage",
+          "margin": 0.3484,
+          "ok": false
+        },
+        {
+          "cond": "goal_congruent_other",
+          "intended": "emo_care",
+          "winner": "emo_rage",
+          "margin": 0.012,
+          "ok": false
+        },
+        {
+          "cond": "threat_uncertain",
+          "intended": "emo_fear",
+          "winner": "emo_rage",
+          "margin": 0.2752,
+          "ok": false
+        },
+        {
+          "cond": "goal_blocked_other_certain",
+          "intended": "emo_rage",
+          "winner": "emo_fear",
+          "margin": 0.0933,
+          "ok": false
+        }
+      ]
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "seed_frac": 0.5,
+    "gamma": 0.5,
+    "orders": 3,
+    "knn": 20,
+    "n_perm": 200,
+    "rung_b": true,
+    "n_vocab": 139,
+    "appetitive_pool": [
+      "hug",
+      "kiss",
+      "cuddle",
+      "cake",
+      "candy",
+      "sweet",
+      "warm",
+      "treat",
+      "food",
+      "cozy"
+    ],
+    "aversive_pool": [
+      "hurt",
+      "pain",
+      "sick",
+      "cry",
+      "scared",
+      "afraid",
+      "cold",
+      "hungry",
+      "bite",
+      "fall"
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "s_c^(k) = softclip(s_c^(1) + gamma * sum_d A_cd * s_d^(k-1)), k=2..K, over the row-stochastic kNN cosine graph A of the self-organized PPMI code (self excluded, held excluded as sources). s_c^(1) = Rescorla-Wagner asymptote of co-occurrence with ~2*n_each INNATE primaries. The final s_c^(K) feeds the SAME Warriner-free three-factor Hebbian opponent map (selforg_opponent_weights) as [E]; the opponent READ is the unchanged spiking differential off cp_firing_states. Rescorla 1980 second-order conditioning: an already-valenced concept is a CONDITIONED reinforcer for its associates (no direct US pairing); gamma<1 = higher orders extinguish. STATIC-DIFFUSION baseline = the CONVERGED smoother of the same operator (the only difference is the Rescorla order-limit).",
+  "HONEST_RESIDUALS": "Warriner is EVAL-only ground-truth, NEVER a write input (asserted; --corrupt-warriner byte-identical). Residuals: (1) ~2*n_each innate primary SIGNS host-supplied (the faithful floor; 140->~10 compression, unchanged from DR-2b); (2) rate-level numpy Hebbian second-order write (a fully-spiking second-order write is the next rung); (3) standalone de-risk bridge (build_one_brain fold-in pending). Functional read-outs only; never a claim of phenomenal experience.",
+  "elapsed_seconds": 26.2
+}
