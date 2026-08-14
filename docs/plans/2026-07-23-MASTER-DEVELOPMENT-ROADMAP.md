@@ -108,6 +108,16 @@ date: 2026-07-23
 > metacog+pragmatic (`bbe0addb`, via the NMDA-conductance confidence read that also de-noised metacog standalone). Both flipped
 > default-ON (escape-flagged), answer-preserving 6/6, determinism 9/9. `scaffold_retired: PARTIAL`. Remaining co-resident: affect
 > (structural region-name collision), comprehension (per-region `dt`), causal/curiosity (plasticity/neuromod); neither pool merged with the composer bridge.
+> **🌙 LATER 2026-08-14 (autonomous, both tracks):** **MOUTH — `r_h` gate biologized** (`02db2d90`, GO): the last host
+> elementwise multiply realized as spiking DIVISIVE SHUNTING-INHIBITION (Holt-Koch; gate fidelity 0.959; full pipeline
+> recov 0.86) — so the whole mouth FORWARD PATH (Wv→state→Wo_sp→`r_h`→head_w→head_b) is now substrate; only LN + embedding +
+> the trained WEIGHTS (e-prop-learnable) remain host. Last matmul `Wv@LN(emb)` in flight. **ONE-SUBSTRATE — the COMPOSER can
+> share a substrate:** composer↔surprise merge byte-identical + moat-preserved (`f8fc74cb`), the RF-phasor recall now DRIVES
+> the cross-synapse via a phase→spike transducer (`0e8336fa`, 0/6→6/6), and the composer + surprise + world-model (pool #1)
+> all merge on ONE bridge byte-identical (`0abf988e`, GO 6/6, N=2248) — the deepest one-substrate rung de-risked; next =
+> the production flip of the composer into pool #1. **SELF-INITIATION SELECTS** (`0260d152`, GO): the DMN wander visits ~3
+> balanced basins, curiosity biasing which (66% attributable); next = seed→utterance routing (in flight) to close the
+> self-initiated-conversation loop.
 
 ### 0.1 What is WIRED + DEFAULT-ON in production today (`/api/brain-chat`)
 
