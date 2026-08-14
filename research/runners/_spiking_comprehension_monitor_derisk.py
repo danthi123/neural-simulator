@@ -188,8 +188,18 @@ def roc_auc(scores, labels):
     return float((r_pos - n1 * (n1 + 1) / 2.0) / (n1 * n0))
 
 
-def _build_comp(seed):
-    comp = SpikingRoleCompetition(seed=seed)
+def _build_comp(seed, *, dt_ms=0.5, homeostasis=False, per_region_thresh=False):
+    """Build the installed-weight, frozen-plasticity comprehension competition.
+
+    dt_ms / homeostasis / per_region_thresh are ADDITIVE and DEFAULT-PRESERVING: the defaults
+    (0.5 / False / False) reproduce the standalone comprehension monitor bit-for-bit (every existing
+    caller passes seed only). They are threaded through to `SpikingRoleCompetition` (which already
+    accepts them, from the rung-2 instrument edit) so the SAME comprehension circuit can be built at
+    the ONE-BRAIN MERGE shared operating point (dt=1.0, homeostasis ON, per-region threshold
+    heterogeneity ON) that the config-superset production merge de-risk sweeps -- reconciling the
+    single global dt_ms / enable_homeostasis the Wong-Wang and surprise builders set differently."""
+    comp = SpikingRoleCompetition(seed=seed, dt_ms=dt_ms, homeostasis=homeostasis,
+                                  per_region_thresh=per_region_thresh)
     for c, w in INSTALLED_CUE_WEIGHTS.items():
         comp.set_cue_weight(c, w)
     comp.freeze_all_cue_plasticity()
