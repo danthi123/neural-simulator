@@ -267,12 +267,36 @@ class BrainConversationalAgent:
             # (default 128) -- without it a runtime new word's code lives only on the inner comp and the outer cleanup
             # codebook is blind to it, so the taught fact stores but never recalls (2026-08-12 wrap-vs-inner bug). The
             # numpy/test-oracle onebrain path can pass 0 for byte-identical layout.
-            self.composer = OneBrainComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
-                                             enable_attributed=enable_attributed,
-                                             enable_multiframe=enable_multiframe,
-                                             enable_spiking_cleanup=enable_spiking_cleanup,
-                                             integrated_loop=integrated_loop,
-                                             vocab_headroom=(128 if vocab_headroom is None else int(vocab_headroom)))
+            _ob_vh = 128 if vocab_headroom is None else int(vocab_headroom)
+            # COMPOSER-IN-POOL#1 (the b-closer, opt-in DEFAULT-OFF -> byte-identical): when BRAIN_COMPOSER_MERGE is ON,
+            # the production-DEFAULT OneBrainComposer's RF recall/store ops run on pool #1's SHARED spiking bridge (its
+            # onebrain_composer slice) -- ONE cp_membrane_potential_v with the surprise + world-model organs -- while its
+            # PARSER stays on a private bridge (pool #1's Hebbian/homeostasis config is incompatible with the parser's,
+            # and the Izhikevich step is whole-bridge). Recall + the no-confab MOAT are byte-identical (rebased-RF
+            # identity + an identical private-bridge parser); surprise/world-model stay byte-identical (masked RF writes
+            # leave their v/u untouched). Default-off keeps this construction byte-identical to before. This is the
+            # SHIPPED composer path the DEFAULT flip must route -- NOT the RF-phasor path (which only the composer_kind=
+            # 'rf' branch joins). See 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP.
+            _ob_pool1 = False
+            try:
+                from research.runners.onebrain_merge_production import composer_merge_enabled
+                _ob_pool1 = composer_merge_enabled()
+            except Exception:
+                _ob_pool1 = False
+            if _ob_pool1:
+                from research.runners.onebrain_merge_production import make_pool1_onebrain_composer
+                self.composer = make_pool1_onebrain_composer(
+                    seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
+                    enable_attributed=enable_attributed, enable_multiframe=enable_multiframe,
+                    enable_spiking_cleanup=enable_spiking_cleanup, integrated_loop=integrated_loop,
+                    vocab_headroom=_ob_vh)
+            else:
+                self.composer = OneBrainComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
+                                                 enable_attributed=enable_attributed,
+                                                 enable_multiframe=enable_multiframe,
+                                                 enable_spiking_cleanup=enable_spiking_cleanup,
+                                                 integrated_loop=integrated_loop,
+                                                 vocab_headroom=_ob_vh)
         elif composer_kind == "slotbinder":
             # the gap-#2 SlotBinderComposer: a fully-spiking competitive-slot binder (each (fact, role) -> its own
             # slot = the win over the FHRR superposition cap) with content-addressable multi-fact recall by a neural
