@@ -1,0 +1,333 @@
+{
+  "mode": "onebrain_composer_merge",
+  "n_seeds": 6,
+  "n_one_shared_pool": 6,
+  "n_determinism_ok": 6,
+  "n_surprise_byte_identical": 6,
+  "n_surprise_faculty_alive": 6,
+  "n_composer_recall_byte_identical": 6,
+  "n_composer_recall_correct": 6,
+  "n_moat_preserved": 6,
+  "n_composer_op_isolated": 6,
+  "n_merge_go": 6,
+  "n_cross_load_bearing": 6,
+  "n_recall_drives_edge_natively": 0,
+  "max_surprise_maxerr_hz": 0.0,
+  "merge_verdict": "GO",
+  "cross_verdict": "GO",
+  "cross_weight": 8.0,
+  "results": [
+    {
+      "seed": 42,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 7.967032967032966,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.658275462962963,
+        "contradict_hz": 5.244502314814815,
+        "novel_hz": 5.208333333333334
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.658275462962963,
+        "contradict_hz": 5.244502314814815,
+        "novel_hz": 5.208333333333334
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.0,
+      "cross_intact_current_hz": 92.88194444444446,
+      "cross_lesion_current_hz": 0.0,
+      "cross_interaction_current_hz": 92.88194444444446,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": 0.0,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    },
+    {
+      "seed": 43,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 5.355555555555556,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.9765625,
+        "contradict_hz": 5.230034722222222,
+        "novel_hz": 5.454282407407407
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.9765625,
+        "contradict_hz": 5.230034722222222,
+        "novel_hz": 5.454282407407407
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.11574074074074074,
+      "cross_intact_current_hz": 99.4212962962963,
+      "cross_lesion_current_hz": 0.11574074074074074,
+      "cross_interaction_current_hz": 99.30555555555556,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": -0.11574074074074074,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    },
+    {
+      "seed": 44,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 16.999999999999996,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.3038194444444445,
+        "contradict_hz": 5.164930555555555,
+        "novel_hz": 5.324074074074074
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.3038194444444445,
+        "contradict_hz": 5.164930555555555,
+        "novel_hz": 5.324074074074074
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.0,
+      "cross_intact_current_hz": 93.46064814814815,
+      "cross_lesion_current_hz": 0.0,
+      "cross_interaction_current_hz": 93.46064814814815,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": 0.0,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    },
+    {
+      "seed": 100,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 11.403225806451612,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.4484953703703704,
+        "contradict_hz": 5.114293981481482,
+        "novel_hz": 5.541087962962964
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.4484953703703704,
+        "contradict_hz": 5.114293981481482,
+        "novel_hz": 5.541087962962964
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.0,
+      "cross_intact_current_hz": 98.37962962962963,
+      "cross_lesion_current_hz": 0.0,
+      "cross_interaction_current_hz": 98.37962962962963,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": 0.0,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    },
+    {
+      "seed": 101,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 6.841121495327103,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.7740162037037037,
+        "contradict_hz": 5.295138888888889,
+        "novel_hz": 5.063657407407407
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.7740162037037037,
+        "contradict_hz": 5.295138888888889,
+        "novel_hz": 5.063657407407407
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.0,
+      "cross_intact_current_hz": 93.86574074074075,
+      "cross_lesion_current_hz": 0.0,
+      "cross_interaction_current_hz": 93.86574074074075,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": 0.0,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    },
+    {
+      "seed": 102,
+      "D_cmp": 64,
+      "one_shared_pool": true,
+      "n_all": 1504,
+      "n_surp": 1056,
+      "n_cmp": 448,
+      "determinism_ok": true,
+      "surprise_maxerr_hz": 0.0,
+      "surprise_byte_identical": true,
+      "surprise_separation_ratio": 61.33333333333334,
+      "surprise_faculty_alive": true,
+      "surprise_merged": {
+        "confirm_hz": 0.08680555555555555,
+        "contradict_hz": 5.324074074074074,
+        "novel_hz": 5.425347222222222
+      },
+      "surprise_solo": {
+        "confirm_hz": 0.08680555555555555,
+        "contradict_hz": 5.324074074074074,
+        "novel_hz": 5.425347222222222
+      },
+      "composer_recall_shared": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_isolated": [
+        "cat",
+        "mouse",
+        "deer"
+      ],
+      "composer_recall_byte_identical": true,
+      "composer_recall_correct": true,
+      "moat_shared_abstain": null,
+      "moat_isolated_abstain": null,
+      "moat_preserved": true,
+      "interleave_maxerr": 0.0,
+      "composer_op_isolated": true,
+      "cross_edges_in_pool": 129024,
+      "cross_base_none_hz": 0.0,
+      "cross_intact_current_hz": 97.91666666666667,
+      "cross_lesion_current_hz": 0.0,
+      "cross_interaction_current_hz": 97.91666666666667,
+      "cross_interaction_current_lesion_hz": 0.0,
+      "cross_attribution_frac": 1.0,
+      "cross_load_bearing": true,
+      "cross_rf_recall_hz": 0.0,
+      "cross_interaction_rf_hz": 0.0,
+      "recall_drives_edge_natively": false,
+      "merge_go": true
+    }
+  ]
+}
