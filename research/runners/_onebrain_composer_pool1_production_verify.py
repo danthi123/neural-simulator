@@ -41,15 +41,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 #  One process: build the production 'rf' brain + drive the real recall / surprise / world-model reads.
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 def run_panel(seed: int = 42) -> dict:
-    # The REAL server brain-construction path uses BRAIN_COMPOSER_KIND (default 'onebrain'); force 'rf' so we
-    # exercise the RF-phasor composer the de-risk validated + this rung wires.
-    os.environ["BRAIN_COMPOSER_KIND"] = "rf"
+    # The composer KIND under test: `BRAIN_COMPOSER_KIND` (the driver sets it). 'rf' = the RF-phasor composer (the
+    # original opt-in wire verify); 'onebrain' = the SHIPPED production-default composer (the DEFAULT-FLIP verify --
+    # the b-closer routes it through pool #1 via make_pool1_onebrain_composer). Default 'onebrain' (the production
+    # default) if the driver did not set it.
+    kind = os.environ.get("BRAIN_COMPOSER_KIND", "onebrain")
+    os.environ["BRAIN_COMPOSER_KIND"] = kind
     import research.runners.onebrain_merge_production as MP
     from research.runners.brain_chat_tui import _build_tiny_demo
 
     merge_on = MP.composer_merge_enabled()
     agent, _aliases, _n = _build_tiny_demo(seed, use_multiturn=True, enable_neural_render=False,
-                                           composer_kind="rf")
+                                           composer_kind=kind)
     inner = getattr(agent, "agent", agent)
     composer = inner.composer
 
@@ -150,10 +153,17 @@ def run_panel(seed: int = 42) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  The compare driver: run the panel in two SEPARATE subprocesses (flag OFF / ON) + diff.
 # ─────────────────────────────────────────────────────────────────────────────────────────────
-def _emit_subprocess(merge_val: str, seed: int) -> dict:
+def _emit_subprocess(merge_val, seed: int, kind: str = "rf") -> dict:
+    """Run ONE panel in a fresh subprocess (the merge flag is read at first-build of a process-global singleton, so
+    ON/OFF/DEFAULT must be separate processes). `merge_val`: "0"/"1" sets `BRAIN_COMPOSER_MERGE`; None leaves it UNSET
+    so the process reads the module DEFAULT (`_COMPOSER_IN_POOL1_DEFAULT_ON`) -- the DEFAULT-no-env leg of the flip
+    verify. `kind` selects the composer under test ('rf' or 'onebrain')."""
     env = dict(os.environ)
-    env["BRAIN_COMPOSER_MERGE"] = merge_val
-    env["BRAIN_COMPOSER_KIND"] = "rf"
+    if merge_val is None:
+        env.pop("BRAIN_COMPOSER_MERGE", None)     # DEFAULT-no-env: read _COMPOSER_IN_POOL1_DEFAULT_ON
+    else:
+        env["BRAIN_COMPOSER_MERGE"] = str(merge_val)
+    env["BRAIN_COMPOSER_KIND"] = kind
     env.setdefault("SIM_BACKEND", "numpy")
     with tempfile.NamedTemporaryFile("r", suffix=".json", delete=False) as tf:
         outp = tf.name
@@ -174,9 +184,20 @@ def _dict_maxerr(a: dict, b: dict, keys) -> float:
     return e
 
 
-def compare(seed: int = 42) -> dict:
-    off = _emit_subprocess("0", seed)
-    on = _emit_subprocess("1", seed)
+def compare(seed: int = 42, kind: str = "rf", default_flip: bool = False) -> dict:
+    """Diff two panels run in separate subprocesses.
+
+    default_flip=False (the original opt-in wire verify): OFF (`BRAIN_COMPOSER_MERGE=0`, private) vs ON
+    (`BRAIN_COMPOSER_MERGE=1`, pool). default_flip=True (the DEFAULT-FLIP verify): ESCAPE (`BRAIN_COMPOSER_MERGE=0`,
+    the byte-identical revert) vs DEFAULT (NO env -> reads `_COMPOSER_IN_POOL1_DEFAULT_ON`; when the flag is ON this is
+    the pool path). In both cases `off` = the private/escape baseline, `on` = the pool path -- so the diff logic below
+    is shared. `kind` selects the composer ('rf' or the shipped 'onebrain')."""
+    if default_flip:
+        off = _emit_subprocess("0", seed, kind=kind)      # ESCAPE: BRAIN_COMPOSER_MERGE=0 (private, byte-id revert)
+        on = _emit_subprocess(None, seed, kind=kind)      # DEFAULT: no env -> reads _COMPOSER_IN_POOL1_DEFAULT_ON
+    else:
+        off = _emit_subprocess("0", seed, kind=kind)
+        on = _emit_subprocess("1", seed, kind=kind)
 
     # (1) recall byte-identical + correct + moat
     recall_byte_id = bool(off["recall"] == on["recall"])
@@ -222,7 +243,9 @@ def compare(seed: int = 42) -> dict:
     # PRECONDITIONS carried WITH the verdict (tools.verdict.Verdict): each axis that must hold for the wire GO,
     # measured beside it -> the artifact travels with what earned it (gate: verdict-preconditions).
     from tools.verdict import Verdict
-    V = Verdict("composer -> pool #1 production wire (opt-in, default-off)")
+    _vlabel = (f"onebrain composer -> pool #1 DEFAULT-FLIP ({kind}; DEFAULT-no-env vs ESCAPE MERGE=0)"
+               if default_flip else f"composer ({kind}) -> pool #1 production wire (opt-in, default-off)")
+    V = Verdict(_vlabel)
     V.require("composer recall byte-identical (off==on)", recall_byte_id, expect=True)
     V.require("query_patient byte-identical (off==on)", qp_byte_id, expect=True)
     V.require("recall correct (stored answers)", recall_correct, expect=True)
@@ -239,7 +262,9 @@ def compare(seed: int = 42) -> dict:
     verdict = V.decide(go=go, verbose=False)
 
     return {
-        "mode": "onebrain_composer_pool1_production_verify", "seed": seed,
+        "mode": ("onebrain_composer_pool1_DEFAULT_FLIP" if default_flip
+                 else "onebrain_composer_pool1_production_verify"),
+        "kind": kind, "default_flip": bool(default_flip), "seed": seed,
         "status": verdict["status"], "go": verdict["go"],
         "preconditions": verdict["preconditions"],
         "undefined_reasons": verdict["undefined_reasons"],
@@ -257,11 +282,33 @@ def compare(seed: int = 42) -> dict:
     }
 
 
+def _print_one(res):
+    tag = "DEFAULT-FLIP" if res.get("default_flip") else "WIRE"
+    print(f"=== COMPOSER({res.get('kind')}) -> POOL #1 {tag} VERIFY seed={res['seed']} "
+          f"({'DEFAULT-no-env vs ESCAPE MERGE=0' if res.get('default_flip') else 'OFF vs ON'}) ===")
+    print(f"  (1) recall byte-identical (who/what):    {res['recall_byte_identical']}")
+    print(f"      query_patient byte-identical:        {res['query_patient_byte_identical']}")
+    print(f"      recall CORRECT (stored answers):     {res['recall_correct']}")
+    print(f"  (2) no-confab MOAT abstains (unstored):  {res['moat_ok']}")
+    print(f"  (4) SURPRISE byte-identical:             {res['surprise_byte_identical']}  (max err {res['surprise_maxerr_hz']:.2e} Hz)")
+    print(f"      surprise ALIVE (contradict>>confirm):{res['surprise_alive']}  (confirm {res['surprise_confirm_hz']:.2f} vs contradict {res['surprise_contradict_hz']:.2f} Hz)")
+    print(f"  (4) WORLD-MODEL byte-identical:          {res['worldmodel_byte_identical']}  (max err {res['worldmodel_maxerr_hz']:.2e} Hz)")
+    print(f"      world-model ALIVE (violated>>exp):   {res['worldmodel_alive']}  (expected {res['worldmodel_expected_hz']:.2f} vs violated {res['worldmodel_violated_hz']:.2f} Hz)")
+    print(f"  (3) GENUINELY ONE POOL when DEFAULT:     {res['one_pool_ok']}  {res['one_pool']}")
+    print(f"  ==> per-seed GO:                         {res['GO']}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--emit", action="store_true", help="run ONE panel for the current env; write JSON to --out")
     ap.add_argument("--compare", action="store_true", help="run flag OFF/ON in subprocesses + diff")
+    ap.add_argument("--default-flip", action="store_true",
+                    help="DEFAULT-FLIP mode: diff DEFAULT-no-env vs ESCAPE BRAIN_COMPOSER_MERGE=0 over --seeds "
+                         "(exercises the SHIPPED composer path routed to pool #1). Requires the default flag ON.")
+    ap.add_argument("--kind", default=None, help="composer kind under test: 'rf' or 'onebrain' "
+                    "(default 'onebrain' for --default-flip, else 'rf').")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--seeds", default=None, help="comma-separated seeds for --default-flip (default 42,43,44,100,101,102)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -274,19 +321,41 @@ def main():
             print(json.dumps(res, indent=2))
         return
 
-    # default = compare
-    res = compare(args.seed)
-    print("=== COMPOSER -> POOL #1 PRODUCTION WIRE VERIFY (flag OFF vs ON, through the real handler) ===")
-    print(f"  recall byte-identical (who/what):      {res['recall_byte_identical']}")
-    print(f"  query_patient byte-identical:          {res['query_patient_byte_identical']}")
-    print(f"  recall CORRECT (stored answers):       {res['recall_correct']}")
-    print(f"  no-confab MOAT abstains (unstored):    {res['moat_ok']}")
-    print(f"  SURPRISE byte-identical:               {res['surprise_byte_identical']}  (max err {res['surprise_maxerr_hz']:.2e} Hz)")
-    print(f"    surprise ALIVE (contradict>>confirm):{res['surprise_alive']}  (confirm {res['surprise_confirm_hz']:.2f} vs contradict {res['surprise_contradict_hz']:.2f} Hz)")
-    print(f"  WORLD-MODEL byte-identical:            {res['worldmodel_byte_identical']}  (max err {res['worldmodel_maxerr_hz']:.2e} Hz)")
-    print(f"    world-model ALIVE (violated>>exp):   {res['worldmodel_alive']}  (expected {res['worldmodel_expected_hz']:.2f} vs violated {res['worldmodel_violated_hz']:.2f} Hz)")
-    print(f"  GENUINELY ONE POOL when ON:            {res['one_pool_ok']}  {res['one_pool']}")
-    print(f"  ==> PRODUCTION WIRE GO:                {res['GO']}")
+    if args.default_flip:
+        # The DEFAULT-FLIP verify: the SHIPPED (onebrain) composer path routed to pool #1, DEFAULT-no-env (reads
+        # _COMPOSER_IN_POOL1_DEFAULT_ON) vs ESCAPE MERGE=0, over 6 seeds. GO iff 6/6 seeds pass criteria 1-4.
+        kind = args.kind or "onebrain"
+        seeds = [int(s) for s in (args.seeds.split(",") if args.seeds else ["42", "43", "44", "100", "101", "102"])]
+        rows = [compare(s, kind=kind, default_flip=True) for s in seeds]
+        for r in rows:
+            _print_one(r)
+        n_go = sum(1 for r in rows if r["GO"])
+        agg = {
+            "mode": "onebrain_composer_pool1_DEFAULT_FLIP_6seed", "kind": kind, "seeds": seeds,
+            "n_go": n_go, "n_seeds": len(seeds), "all_go": bool(n_go == len(seeds)),
+            "per_seed_go": {r["seed"]: r["GO"] for r in rows},
+            "criteria_by_seed": {r["seed"]: {
+                "1_recall_byte_id": r["recall_byte_identical"], "1_qp_byte_id": r["query_patient_byte_identical"],
+                "1_recall_correct": r["recall_correct"], "2_moat_ok": r["moat_ok"],
+                "3_one_pool": r["one_pool_ok"],
+                "4_surprise_byte_id": r["surprise_byte_identical"], "4_surprise_alive": r["surprise_alive"],
+                "4_wm_byte_id": r["worldmodel_byte_identical"], "4_wm_alive": r["worldmodel_alive"],
+                "surprise_maxerr_hz": r["surprise_maxerr_hz"], "worldmodel_maxerr_hz": r["worldmodel_maxerr_hz"],
+            } for r in rows},
+            "rows": rows,
+        }
+        print(f"\n==> DEFAULT-FLIP {kind}: {n_go}/{len(seeds)} seeds GO (criteria 1-4).  "
+              f"ALL-GO={agg['all_go']}")
+        if args.out:
+            os.makedirs(os.path.dirname(args.out), exist_ok=True)
+            with open(args.out, "w") as f:
+                json.dump(agg, f, indent=2)
+            print(f"  wrote {args.out}")
+        return
+
+    # default = single-seed compare (the original opt-in wire verify; kind default 'rf')
+    res = compare(args.seed, kind=(args.kind or "rf"))
+    _print_one(res)
     if args.out:
         os.makedirs(os.path.dirname(args.out), exist_ok=True)
         with open(args.out, "w") as f:

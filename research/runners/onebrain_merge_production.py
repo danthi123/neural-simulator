@@ -73,10 +73,30 @@ _COMPOSER_KMAX = 16
 _CLEANUP_BLK = 24
 _CLEANUP_VOCAB = 16
 
-# COMPOSER-IN-POOL#1 DEFAULT (DEFAULT-OFF: the FIRST production-integration rung for the core moat organ). The
-# de-risk is 6/6 GO (`2026-08-13-onebrain-composer-pool1-merge-GO.md`); default stays OFF this rung because the
-# composer is the central no-confab MOAT organ, so the default flip is the NEXT rung.
-_COMPOSER_IN_POOL1_DEFAULT_ON = False
+# ── ONEBRAIN-COMPOSER-IN-POOL#1 sizing (the b-closer). The PRODUCTION-DEFAULT composer is `OneBrainComposer`
+# (`composer_kind='onebrain'`), NOT the RF-phasor path wired above. Its whole who/what pipeline (parser + big-RF +
+# k_max store + Q registers + batched cleanup) lives on ONE bridge sized to its full layout span
+# `OneBrainComposer.n_total` (D=128, headroom vocab, k_max=32, attribute role -> 45856 at the tiny-demo vocab). To
+# join pool #1, the pool reserves a region of EXACTLY that span (`_ONEBRAIN_SPAN`, registered at bind time before the
+# process-global substrate is first built), and `Pool1BoundOneBrainComposer` REBASES the composer's whole RF layout
+# onto that slice (the CoResidentOneBrainComposer index-shift, Probe-1 byte-identical) while its parser stays on a
+# PRIVATE full-size bridge (byte-identical comprehension; the pool's Hebbian/homeostasis config differs from the
+# composer bridge's, and `_run_one_simulation_step` steps ALL neurons, so the parser CANNOT run on the pool without
+# breaking both recall byte-identity AND surprise/world-model byte-identity). Default None -> no onebrain region (the
+# RF-path region + every existing caller is byte-unchanged).
+_ONEBRAIN_SPAN: "int | None" = None
+
+# COMPOSER-IN-POOL#1 DEFAULT (flipped ON 2026-08-14): the PRODUCTION-DEFAULT composer joins pool #1 by default. The
+# b-closer (`Pool1BoundOneBrainComposer`) routes the SHIPPED `OneBrainComposer` (`composer_kind='onebrain'`) RF
+# recall/store onto pool #1's shared bridge (one `cp_membrane_potential_v` with surprise + world-model), its parser on
+# a private bridge. Earned by the DEFAULT-FLIP verify (`_onebrain_composer_pool1_production_verify.py --default-flip`,
+# 6/6 seeds): DEFAULT-no-env vs ESCAPE `BRAIN_COMPOSER_MERGE=0` is byte-identical (recall/moat/surprise/world-model
+# max delta 0.0), the moat abstains, it is genuinely one pool, both organs stay alive; determinism 9/9 + smoke
+# byte-identical to the pre-flip baseline. `BRAIN_COMPOSER_MERGE=0` is the ESCAPE (each composer builds its own
+# bridge, byte-identical to the pre-flip production). Ledger row: onebrain-composer-pool1-DEFAULT-FLIP. Finding:
+# 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO.md. (The RF-phasor `composer_kind='rf'` path also joins pool #1
+# under this flag -- its own 6/6-GO wire, byte-identical.)
+_COMPOSER_IN_POOL1_DEFAULT_ON = True
 
 
 def composer_merge_enabled() -> bool:
@@ -124,9 +144,13 @@ class MergedSubstrate:
 
     def __init__(self, seed: int = 42, organs=("surprise", "worldmodel"),
                  composer_D: int = _COMPOSER_D, composer_kmax: int = _COMPOSER_KMAX,
-                 cleanup_blk: int = _CLEANUP_BLK, cleanup_vocab: int = _CLEANUP_VOCAB):
+                 cleanup_blk: int = _CLEANUP_BLK, cleanup_vocab: int = _CLEANUP_VOCAB,
+                 onebrain_span: "int | None" = None):
         self.seed = int(seed)
         self.organs = tuple(organs)
+        # ONEBRAIN-COMPOSER region span (the b-closer): the OneBrainComposer.n_total the "onebrain_composer" region is
+        # sized to (None unless that organ is present).
+        self.onebrain_span = onebrain_span
         self.bridge = self.cfg = self.xp = None
         self.meta_surprise = None      # metaS: n_trained/n_novel/n_concepts/blk/cue_blk/W_exc/W_inh
         self.meta_worldmodel = None    # metaW: n_states/blk/npred/nobs/nsurp
@@ -221,6 +245,20 @@ class MergedSubstrate:
                 exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
             if self.meta_composer is not None:
                 self.meta_composer["cleanup_n"] = cleanup_n
+        # ONEBRAIN-COMPOSER (the b-closer, opt-in): a SINGLE region sized to the production OneBrainComposer's full
+        # layout span (parser + big-RF + store + Q + cleanup blocks), appended AFTER surprise + world-model (name-keyed
+        # per-region init => surprise/world-model slices are index- and byte-IDENTICAL to the 2-organ pool). The
+        # composer's RF recall/store ops run on this slice (masked, so surprise/world-model v/u stay byte-untouched);
+        # its parser runs on a PRIVATE bridge (config-incompatible with the pool). NO cross synapse (the recall->surprise
+        # edge is the next behavioural rung), so both organs' reads stay byte-identical and this slice is idle (frozen by
+        # per_region_homeostasis_isolation) except during a composer op.
+        if "onebrain_composer" in self.organs:
+            from sim.regions import BrainRegion
+            span = int(self.onebrain_span)
+            regions.append(BrainRegion(
+                name="onebrain_composer", n_neurons=span, exc_fraction=1.0, internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
+            self.meta_composer = {"onebrain_span": span}
         cfg.brain_regions = regions
         cfg.region_pathways = pathways
 
@@ -277,6 +315,12 @@ class MergedSubstrate:
         """The phase->spike transducer cleanup region's neuron indices on the shared bridge (host int array)."""
         self.ensure_built()
         return np.asarray(_host(_idx(self.bridge, "cleanup")))
+
+    def onebrain_composer_idx(self):
+        """The ONEBRAIN-COMPOSER region's neuron indices on the shared bridge (host int array; contiguous block sized to
+        the production OneBrainComposer's full layout span)."""
+        self.ensure_built()
+        return np.asarray(_host(_idx(self.bridge, "onebrain_composer")))
 
     def _keep_mask(self, active: str):
         """Cached xp boolean mask, True over the ACTIVE organ's neurons (the ones allowed to keep their
@@ -350,9 +394,16 @@ def get_merged_substrate(seed: int = 42) -> MergedSubstrate:
     the SAME 2- or 4-organ singleton for this process."""
     global _MERGED_SUBSTRATE
     if _MERGED_SUBSTRATE is None:
-        organs = ("surprise", "worldmodel", "composer", "cleanup") if composer_merge_enabled() \
-            else ("surprise", "worldmodel")
-        _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=organs)
+        if composer_merge_enabled() and _ONEBRAIN_SPAN is not None:
+            # ONEBRAIN-COMPOSER (the b-closer): the pool carries the production-default OneBrainComposer's full layout
+            # span as a single "onebrain_composer" region (its parser stays on a private bridge). This is the branch the
+            # DEFAULT flip exercises -- the SHIPPED composer path, not the RF-phasor path.
+            _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel", "onebrain_composer"),
+                                                onebrain_span=int(_ONEBRAIN_SPAN))
+        elif composer_merge_enabled():
+            _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel", "composer", "cleanup"))
+        else:
+            _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel"))
     return _MERGED_SUBSTRATE
 
 
@@ -412,3 +463,131 @@ def make_pool1_composer(seed: int = 42, **rf_kwargs) -> "Pool1BoundComposer":
     comp = Pool1BoundComposer(seed=seed, **rf_kwargs)
     comp.bind_to_pool1(get_merged_substrate(seed))
     return comp
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  The b-closer: the PRODUCTION-DEFAULT OneBrainComposer BOUND to pool #1's shared bridge.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+def _onebrain_layout_span(seed: int, D: int, vocab, k_max: int, enable_attributed: bool,
+                          vocab_headroom: int) -> int:
+    """The standalone `OneBrainComposer.n_total` (the full RF layout span) for these params -- the size the pool
+    reserves for the "onebrain_composer" region. Mirrors `OneBrainComposer.__init__`'s layout math EXACTLY, INCLUDING
+    the `vocab_headroom` reserved cleanup slots (which `CoResidentOneBrainComposer.n_total_for` OMITS) and the
+    attribute role (n_roles=5). A drift here over/under-sizes the region and the rebase bounds-check in
+    `Pool1BoundOneBrainComposer.__init__` fails loudly (never silently wrong)."""
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab)
+    V = len(comp.words) + max(0, int(vocab_headroom))     # + headroom reserved slots (recruit-an-assembly pool)
+    NP = len(comp.pol_words)
+    D = int(D); k_max = int(k_max)
+    P = 6 + 3 * 40
+    n_roles = 5 if enable_attributed else 4               # agent/action/patient(+attribute)+polarity
+    n_main = n_roles - 1
+    store_base = P + (2 * n_roles + 1) * D
+    block = 1 + D
+    q_base = store_base + k_max * block
+    cb = n_main * V + NP
+    c_base = q_base + n_roles * D
+    bat_q_base = c_base + cb
+    bat_c_base = bat_q_base + k_max * n_roles * D
+    return int(bat_c_base + k_max * cb)
+
+
+# The b-closer class is a SUBCLASS of the (heavy) `OneBrainComposer`, built lazily + cached so importing this module
+# never pulls one_brain_composer -> brain_conversational_agent -> (lazy) onebrain_merge_production at import time. The
+# docstring for the class lives on `_POOL1_ONEBRAIN_DOC` (attached to the built class).
+_POOL1_ONEBRAIN_CLASS = None
+_POOL1_ONEBRAIN_DOC = """The production-DEFAULT `OneBrainComposer` with its RF RECALL/STORE ops bound to pool #1's
+shared bridge (one `cp_membrane_potential_v` with surprise + world-model), while its PARSER stays on a PRIVATE
+full-size bridge.
+
+WHY THE SPLIT. `OneBrainComposer` runs TWO substrates on one bridge: the RF who/what pipeline (config-INDEPENDENT
+resonate-and-fire dynamics -- `_rf_advance_one` reads only the per-op `_rf_omega/_rf_lambda/_rf_floor`, never the
+cfg's Hebbian/homeostasis) AND a Hebbian PARSER (`BridgeParser`, Izhikevich `_run_one_simulation_step` over the WHOLE
+bridge, trained with `hebbian_max_weight=400`). The RF ops port onto pool #1's slice BYTE-IDENTICALLY (the
+`CoResidentOneBrainComposer` index-shift, Probe-1 GO at atol 1e-9). The parser CANNOT: pool #1's config differs
+(`hebbian_max_weight=45`, `per_region_homeostasis_isolation=True`) AND its `_run_one_simulation_step` steps ALL
+neurons -> the parser would (1) train differently (broken comprehension -> broken recall byte-identity) and (2)
+advance + corrupt surprise/world-model (broken criterion-4 byte-identity). So the parser keeps its OWN bridge.
+
+CONSTRUCTION. Build a FULL standalone `OneBrainComposer` (parser trained on its private big bridge; the complete
+layout with `vocab_headroom` + recruit slots), then REBASE only the RF layout (`P/store_base/q_base/c_base/bat_q_base/
+bat_c_base += rf_base`, `n_total = pool_N`, `rf_mask`/`_rf_reset_mask` = the composer's span on the pool, `self.b =
+pool.bridge`). The parser handle keeps pointing at the private bridge, so `hear()` comprehends there and the RF
+store/read run on the pool slice. Recall answers are byte-identical to the standalone by construction (identical
+parser classification + rebased-RF identity); surprise/world-model stay byte-identical (masked RF writes leave their
+v/u untouched, and the Izhikevich step is never called on the pool).
+
+OVERFLOW. The pool region is sized to EXACTLY the standalone `n_total`, so every RF op fits by construction. If a
+caller mis-sizes it (rf_base + span > pool_N), __init__ RAISES rather than silently truncating -- the spec's "never
+silently wrong" invariant."""
+
+
+def _pool1_onebrain_init(self, substrate, rf_base, seed=42, **ob_kwargs):
+    from research.runners.one_brain_composer import OneBrainComposer
+    # 1) FULL standalone build: parser + RF on a PRIVATE big bridge, the complete byte-identical layout.
+    OneBrainComposer.__init__(self, seed=seed, **ob_kwargs)
+    # 2) The parser keeps its OWN (private) bridge -- the one OneBrainComposer.__init__ just built + trained.
+    self._parser_bridge = self.b
+    # 3) REBASE the RF layout onto pool #1's "onebrain_composer" slice.
+    substrate.ensure_built()
+    pool = substrate.bridge
+    N = int(pool.core_config.num_neurons)
+    span = int(self.n_total)                                # the standalone layout span (pre-rebase n_total)
+    cmp_idx = np.asarray(substrate.onebrain_composer_idx())
+    base = int(cmp_idx.min())
+    if int(rf_base) != base:
+        raise ValueError(f"onebrain_composer region base {base} != requested rf_base {int(rf_base)}")
+    if base + span > N:
+        raise ValueError(f"onebrain_composer span {span} at base {base} exceeds pool N={N} "
+                         f"(region reserved {len(cmp_idx)}) -- size _ONEBRAIN_SPAN to the composer's n_total")
+    if len(cmp_idx) < span:
+        raise ValueError(f"onebrain_composer region has {len(cmp_idx)} neurons < layout span {span}")
+    self._rf_base = base
+    self.P += base
+    self.store_base += base
+    self.q_base += base
+    self.c_base += base
+    self.bat_q_base += base
+    self.bat_c_base += base
+    self.n_total = N                                        # array-sizing is the full pool N
+    self.b = pool                                           # RF ops now run on the pool slice
+    self.rf_mask = np.zeros(N, dtype=bool)
+    self.rf_mask[base:base + span] = True
+    self._rf_reset_mask = self.rf_mask                      # per-op v/u reset restricted to the composer slice
+    self._layout_span = span
+    self._pool1 = substrate                                 # criterion-3: composer._pool1.bridge IS the pool bridge
+    self._merged = pool                                     # parity with Pool1BoundComposer's anti-cheat attribute
+    # Any store CSR cached against the pre-rebase n_total is stale; force a rebuild on first read.
+    self._csr_cache = {}
+    self._store_csr = None
+    self._store_dirty = True
+
+
+def _pool1_onebrain_class():
+    """Lazily build + cache the `Pool1BoundOneBrainComposer` subclass of `OneBrainComposer`."""
+    global _POOL1_ONEBRAIN_CLASS
+    if _POOL1_ONEBRAIN_CLASS is None:
+        from research.runners.one_brain_composer import OneBrainComposer
+        _POOL1_ONEBRAIN_CLASS = type("Pool1BoundOneBrainComposer", (OneBrainComposer,),
+                                     {"__init__": _pool1_onebrain_init, "__doc__": _POOL1_ONEBRAIN_DOC})
+    return _POOL1_ONEBRAIN_CLASS
+
+
+def make_pool1_onebrain_composer(seed: int = 42, D: int = 128, vocab=None, k_max: int = 32,
+                                 enable_attributed: bool = False, vocab_headroom: int = 128,
+                                 **ob_kwargs):
+    """Build the production-default OneBrainComposer BOUND to pool #1 (its RF recall/store on the shared bridge; its
+    parser on a private bridge). Registers the composer's full layout span as the pool's "onebrain_composer" region
+    BEFORE the process-global substrate is first built (so surprise/world-model join the SAME pool), then binds. The
+    `ob_kwargs` are exactly the `OneBrainComposer` kwargs the agent would otherwise pass (grounded_codes,
+    enable_multiframe, enable_spiking_cleanup, integrated_loop, ...)."""
+    global _ONEBRAIN_SPAN
+    span = _onebrain_layout_span(seed, D, vocab, k_max, enable_attributed, vocab_headroom)
+    _ONEBRAIN_SPAN = int(span)                              # registered so get_merged_substrate reserves the region
+    substrate = get_merged_substrate(seed)
+    substrate.ensure_built()
+    base = int(np.asarray(substrate.onebrain_composer_idx()).min())
+    cls = _pool1_onebrain_class()
+    return cls(substrate, rf_base=base, seed=seed, D=D, vocab=vocab, k_max=k_max,
+               enable_attributed=enable_attributed, vocab_headroom=vocab_headroom, **ob_kwargs)
