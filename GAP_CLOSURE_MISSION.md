@@ -13,7 +13,37 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-13 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-14 (READ FIRST — live resume point)
+
+> **✅ CONTINUATION 2026-08-14 (owner standing directive: "continue on both lanes autonomously" + "parallelize, GPU
+> available"; ultracode on). 3 LANES CONSOLIDATED on main + both remotes @ `26bdae14`:**
+> - **[CPF] composer→pool-1 (`562cbff5c`)** — the RF-phasor recall composer + transducer cleanup can JOIN production
+>   pool #1 (surprise + world-model) on ONE shared bridge, OPT-IN / DEFAULT-OFF (`BRAIN_COMPOSER_MERGE`,
+>   `_COMPOSER_IN_POOL1_DEFAULT_ON=False`). Byte-identical when off (surprise + world-model reads Δ0.0 Hz through the
+>   real handler), moat abstains on unstored cues, genuinely one pool when ON (N=6064, one `cp_membrane_potential_v`),
+>   det 9/9. Residual blocking the DEFAULT flip: the production-default composer is `OneBrainComposer` (a larger
+>   co-resident merge path, not the RF path de-risked) + fixed region sizing (large-K moat scans fall back off-pool,
+>   still byte-identical). The recall→surprise cross-synapse is a separate behavioral rung.
+> - **[WV] mouth input projection (`055bfdf2d`)** — `Wv @ LN(emb)`, the LAST host matmul on the mouth forward path, is
+>   now a signed graded-conductance substrate read (v_corr 0.9805; signed ≫ positive-only +0.18, inhibitory shadow
+>   load-bearing 6/6; full-pipeline recov 0.885, only −0.046 vs host `v`). ⇒ the ENTIRE mouth matmul chain
+>   (Wv→WKV→Wo→r_h→head_w→head_b) is now substrate. Residual: LN(emb) + embedding lookup (labelled-line sensory input =
+>   legit under the standard) + the trained weight VALUES (still copied from Qwen → the e-prop LEARNING rung).
+> - **[SU] self-initiated utterance (`26bdae143`)** — the loop CLOSES 6/6: a spontaneous, curiosity-SELECTED CA3 thought
+>   (no prompt) routes into the composer/mouth and is SPOKEN as a coherent SVO about that concept. No-noise → 0
+>   utterances; about-selected 1.00 vs scramble 0.00; curiosity 68%-attributable; store-lesion → 0. Residual: fluent
+>   articulation still leans on the Broca/Qwen scaffold (the measured proposition is a bare spiking SVO);
+>   `integrated_loop=False` seam; 3-of-4 basins ignite.
+>
+> **NEXT RUNGS (research workflow `wse297v0s` speccing — grounded, no-run):** Track-2 mouth = biologize LN(emb), then
+> e-prop / three-factor readout WEIGHT LEARNING (retire the copied Qwen weight values — the emergence-bar burn-down).
+> Track-1 one-substrate = the `OneBrainComposer` default-merge path (to flip composer-in-pool-1 DEFAULT-ON) OR the
+> config-SUPERSET merge (surprise + Wong-Wang comprehension, GABA_B + NMDA coexisting on one bridge). Faculty =
+> all-basins reliably ignite + fluent articulation of the selected proposition.
+>
+> **OPS:** heartbeat Monitor `bnxflymhe` live (prev `b0hkwgbna` STALE). Box healthy (~11/20 load). ⚠️ CONTENTION LESSON:
+> concurrent numpy runs OVERSUBSCRIBE BLAS (each grabs ~all 20 cores → load 31 → cascading 600s watchdog stalls that
+> LOOK like agent parks); cap `OMP_NUM_THREADS`/`OPENBLAS_NUM_THREADS` per run + keep ≤2 concurrent CPU-heavy lanes.
 
 > **🌙 OVERNIGHT AUTONOMOUS (owner to bed 2026-08-13 ~02:30 EDT — "continue all night, max compute, parallelize, deep
 > research + RAG, get as much done as possible before tomorrow's check-in; best judgement, don't wait on me"). Full
