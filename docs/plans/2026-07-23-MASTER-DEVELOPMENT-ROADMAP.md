@@ -114,8 +114,12 @@ date: 2026-07-23
 > the trained WEIGHTS (e-prop-learnable) remain host. Last matmul `Wv@LN(emb)` in flight. **ONE-SUBSTRATE — the COMPOSER can
 > share a substrate:** composer↔surprise merge byte-identical + moat-preserved (`f8fc74cb`), the RF-phasor recall now DRIVES
 > the cross-synapse via a phase→spike transducer (`0e8336fa`, 0/6→6/6), and the composer + surprise + world-model (pool #1)
-> all merge on ONE bridge byte-identical (`0abf988e`, GO 6/6, N=2248) — the deepest one-substrate rung de-risked; next =
-> the production flip of the composer into pool #1. **SELF-INITIATION SELECTS** (`0260d152`, GO): the DMN wander visits ~3
+> all merge on ONE bridge byte-identical (`0abf988e`, GO 6/6, N=2248) — the deepest one-substrate rung de-risked; the
+> **composer can now JOIN production pool #1 (opt-in `BRAIN_COMPOSER_MERGE`, DEFAULT-OFF)** — the RF-phasor recall +
+> transducer cleanup join surprise + world-model on ONE bridge, byte-identical recall/moat/surprise/world-model through
+> the REAL handler, one pool N=6064, no regression (determ 9/9), `2026-08-13-onebrain-composer-pool1-production-wire-GO`;
+> DEFAULT stays OFF (core moat organ) — flip blocked on the production-default OneBrainComposer's own large bridge (not
+> the RF path wired here) + fixed composer-region sizing. **SELF-INITIATION SELECTS** (`0260d152`, GO): the DMN wander visits ~3
 > balanced basins, curiosity biasing which (66% attributable); next = seed→utterance routing (in flight) to close the
 > self-initiated-conversation loop.
 

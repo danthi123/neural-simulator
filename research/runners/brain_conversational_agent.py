@@ -297,11 +297,29 @@ class BrainConversationalAgent:
             # enable_rf_cudagraph (opt-in, GPU-only): route the resonate step through the fused RF megakernel
             # (1 CUDA launch/step instead of ~15). Default OFF = byte-identical loop path; validated answer-identical
             # across the full conversational stack incl. embedded clauses (2026-06-17-rf-megakernel-resonate-GO.md).
-            self.composer = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=200,
-                                             enable_spiking_cleanup=enable_spiking_cleanup,
-                                             enable_substrate_store=enable_substrate_store,
-                                             grounded_codes=grounded_codes,
-                                             enable_rf_cudagraph=enable_rf_cudagraph)
+            _rf_kwargs = dict(seed=seed, D=D, vocab=vocab, period=200,
+                              enable_spiking_cleanup=enable_spiking_cleanup,
+                              enable_substrate_store=enable_substrate_store,
+                              grounded_codes=grounded_codes,
+                              enable_rf_cudagraph=enable_rf_cudagraph)
+            # COMPOSER-IN-POOL#1 (opt-in, DEFAULT-OFF -> byte-identical): when BRAIN_COMPOSER_MERGE is ON, the
+            # RF-phasor recall composer runs on pool #1's SHARED spiking bridge (its masked composer slice) --
+            # ONE cp_membrane_potential_v with the surprise + world-model organs -- instead of its own per-op RF
+            # bridges. Recall + the no-confab MOAT are byte-identical (a masked shared-slice RF op == a dedicated
+            # per-op RF bridge; de-risk 6/6, 2026-08-13-onebrain-composer-pool1-merge-GO.md). Default-off keeps
+            # this construction byte-identical to before. Only the RF-phasor path joins; the OneBrainComposer's
+            # own large co-resident bridge is a separate (larger) merge -- see the wire finding's residual.
+            _pool1_composer = False
+            try:
+                from research.runners.onebrain_merge_production import composer_merge_enabled
+                _pool1_composer = composer_merge_enabled()
+            except Exception:
+                _pool1_composer = False
+            if _pool1_composer:
+                from research.runners.onebrain_merge_production import make_pool1_composer
+                self.composer = make_pool1_composer(**_rf_kwargs)
+            else:
+                self.composer = RFPhasorComposer(**_rf_kwargs)
         # The agent's own comprehension parser -- built ONLY when the composer does not carry its own. The
         # OneBrainComposer carries an on-bridge parser (it has `hear`), so for it there is ONE parser on the one brain
         # and the agent's separate parser is skipped; the rf / rate / external paths build the agent parser as before.

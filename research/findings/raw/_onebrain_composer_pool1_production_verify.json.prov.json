@@ -1,0 +1,31 @@
+{
+ "run_id": "1786680286-1482087",
+ "runner": "research/runners/_onebrain_composer_pool1_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_onebrain_composer_pool1_production_verify.py",
+  "--compare",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/_onebrain_composer_pool1_production_verify.json"
+ ],
+ "git_sha": "ed22093ca",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-14T00:04:46",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 310635.4,
+ "corpus_check_query": "assembly-size-aware CA3 completion feedforward divisive normalization inhibition E%-max small emergent assembly",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_onebrain_composer_pool1_production_verify.json"
+}

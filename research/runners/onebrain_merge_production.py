@@ -42,18 +42,54 @@ from __future__ import annotations
 import contextlib
 import os
 
+import numpy as np
+
 from research.runners._spiking_expectation_rpe_derisk import (
     build_expectation_circuit,
     _install_block_diagonal,
     _idx,
+    _host,
 )
 from research.runners._affective_world_model_derisk import build_world_model_circuit
+from research.runners.rf_phasor_composer import RFPhasorComposer
 
 # The surprise organ's build parameters (must match SurpriseProductionOrgan's defaults so the merged slice is
 # byte-identical to the standalone organ).
 _SURPRISE_KW = dict(n_trained=8, n_novel=4, blk=24, cue_blk=24, cue_to_expected_weight=0.8)
 # The worldmodel organ's build parameter (must match WorldModelProductionOrgan's default).
 _WORLDMODEL_KW = dict(n_states=6)
+
+# ── COMPOSER-IN-POOL#1 sizing (the RECALL COMPOSER + its phase->spike TRANSDUCER cleanup on pool #1) ──
+# The composer region holds the RF-phasor recall's resonate ops on a masked SLICE of the shared bridge. Size it
+# for the largest RF op the recall issues: a 6-role encode/bundle (<=4*D) AND the K-fact batched moat scan
+# (2*K*D) must fit -> max(7, 2*K)*D. D matches the production RF composer (BrainConversationalAgent D=128);
+# `_COMPOSER_KMAX` caps the store size whose batched scan stays ON the shared pool (a larger store's scan
+# gracefully FALLS BACK to a private per-op RF bridge -- byte-identical, but off-pool: the sizing residual named
+# in the wire finding). The CLEANUP region is V word-blocks of the phase->spike transducer (idle in the
+# byte-identical production turn -- the recall->surprise cross synapse is the NEXT behavioural rung, not wired
+# here, so surprise stays byte-identical).
+_COMPOSER_D = 128
+_COMPOSER_KMAX = 16
+_CLEANUP_BLK = 24
+_CLEANUP_VOCAB = 16
+
+# COMPOSER-IN-POOL#1 DEFAULT (DEFAULT-OFF: the FIRST production-integration rung for the core moat organ). The
+# de-risk is 6/6 GO (`2026-08-13-onebrain-composer-pool1-merge-GO.md`); default stays OFF this rung because the
+# composer is the central no-confab MOAT organ, so the default flip is the NEXT rung.
+_COMPOSER_IN_POOL1_DEFAULT_ON = False
+
+
+def composer_merge_enabled() -> bool:
+    """DEFAULT-OFF (`_COMPOSER_IN_POOL1_DEFAULT_ON`). `BRAIN_COMPOSER_MERGE` in {1,true,yes,on} -> the RF-phasor
+    RECALL COMPOSER (the `/api/brain-chat` recall organ) + its phase->spike TRANSDUCER cleanup region JOIN pool
+    #1's shared bridge (alongside surprise + world-model, one `cp_membrane_potential_v`); in {0,false,no,off} or
+    ABSENT -> the composer builds its OWN per-op RF bridges exactly as today (production byte-identical). Only
+    the RF-phasor composer path (`composer_kind='rf'`) joins here; the production-default OneBrainComposer builds
+    its own large co-resident bridge -- a separate, larger merge (see the wire finding's residual)."""
+    v = os.environ.get("BRAIN_COMPOSER_MERGE")
+    if v is None:
+        return _COMPOSER_IN_POOL1_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "yes", "on")
 
 
 # PRODUCTION DEFAULT (flipped ON 2026-08-13): the surprise + world-model production organs build on ONE shared
@@ -86,12 +122,20 @@ class MergedSubstrate:
     or a single-organ tuple for the byte-identity CO-RESIDENT baseline (an organ on its own bridge, both flags ON,
     the same construction path — so merged-vs-solo isolates the merge itself)."""
 
-    def __init__(self, seed: int = 42, organs=("surprise", "worldmodel")):
+    def __init__(self, seed: int = 42, organs=("surprise", "worldmodel"),
+                 composer_D: int = _COMPOSER_D, composer_kmax: int = _COMPOSER_KMAX,
+                 cleanup_blk: int = _CLEANUP_BLK, cleanup_vocab: int = _CLEANUP_VOCAB):
         self.seed = int(seed)
         self.organs = tuple(organs)
         self.bridge = self.cfg = self.xp = None
         self.meta_surprise = None      # metaS: n_trained/n_novel/n_concepts/blk/cue_blk/W_exc/W_inh
         self.meta_worldmodel = None    # metaW: n_states/blk/npred/nobs/nsurp
+        # COMPOSER-IN-POOL#1 (opt-in): the recall composer's region + the phase->spike transducer cleanup region.
+        self.composer_D = int(composer_D)
+        self.composer_kmax = int(composer_kmax)
+        self.cleanup_blk = int(cleanup_blk)
+        self.cleanup_vocab = int(cleanup_vocab)
+        self.meta_composer = None      # {'D', 'cmp_n', 'kmax', 'cleanup_n'} when the composer region is present
         self._built = False
 
     def ensure_built(self):
@@ -156,6 +200,27 @@ class MergedSubstrate:
         if "worldmodel" in self.organs:
             regions += list(cfgW.brain_regions)
             pathways += list(cfgW.region_pathways)
+        # COMPOSER-IN-POOL#1 (opt-in): append the recall COMPOSER region + the phase->spike TRANSDUCER cleanup
+        # region AFTER surprise + world-model (name-keyed per-region init => the surprise/world-model slices are
+        # INDEX- and byte-IDENTICAL to the 2-organ pool -- de-risk 6/6). NO cross synapse is added here (the
+        # recall->surprise edge is the next behavioural rung), so both faculties' reads stay byte-identical and
+        # the cleanup region is idle (frozen by per_region_homeostasis_isolation). Sizing: max(7, 2*K)*D so a
+        # 6-role encode/bundle AND a K-fact batched moat scan both fit on the shared composer slice.
+        if "composer" in self.organs:
+            from sim.regions import BrainRegion
+            cmp_n = max(7, 2 * self.composer_kmax) * self.composer_D
+            regions.append(BrainRegion(
+                name="composer", n_neurons=cmp_n, exc_fraction=1.0, internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
+            self.meta_composer = {"D": self.composer_D, "cmp_n": cmp_n, "kmax": self.composer_kmax}
+        if "cleanup" in self.organs:
+            from sim.regions import BrainRegion
+            cleanup_n = self.cleanup_vocab * self.cleanup_blk
+            regions.append(BrainRegion(
+                name="cleanup", n_neurons=cleanup_n, exc_fraction=1.0, internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
+            if self.meta_composer is not None:
+                self.meta_composer["cleanup_n"] = cleanup_n
         cfg.brain_regions = regions
         cfg.region_pathways = pathways
 
@@ -202,6 +267,16 @@ class MergedSubstrate:
         """The worldmodel organ's region -> neuron-index map on the shared bridge."""
         self.ensure_built()
         return {n: self.xp.asarray(_idx(self.bridge, n)) for n in self._WORLDMODEL_REGIONS}
+
+    def composer_idx(self):
+        """The composer region's neuron indices on the shared bridge (host int array; contiguous block)."""
+        self.ensure_built()
+        return np.asarray(_host(_idx(self.bridge, "composer")))
+
+    def cleanup_idx(self):
+        """The phase->spike transducer cleanup region's neuron indices on the shared bridge (host int array)."""
+        self.ensure_built()
+        return np.asarray(_host(_idx(self.bridge, "cleanup")))
 
     def _keep_mask(self, active: str):
         """Cached xp boolean mask, True over the ACTIVE organ's neurons (the ones allowed to keep their
@@ -267,8 +342,73 @@ _MERGED_SUBSTRATE: "MergedSubstrate | None" = None
 
 
 def get_merged_substrate(seed: int = 42) -> MergedSubstrate:
-    """The process-shared surprise+worldmodel merged substrate (the production merge, both organs on one pool)."""
+    """The process-shared merged substrate. Default: surprise + world-model on one pool (the production merge).
+    When `composer_merge_enabled()` (opt-in `BRAIN_COMPOSER_MERGE`, default-off) the pool ALSO carries the recall
+    COMPOSER region + the phase->spike TRANSDUCER cleanup region, so the RF-phasor recall can run on the shared
+    bridge alongside the two organs (byte-identical surprise/world-model reads -- name-keyed init). Built ONCE;
+    the flag is read at first build, so every caller (surprise organ, world-model organ, the composer bind) gets
+    the SAME 2- or 4-organ singleton for this process."""
     global _MERGED_SUBSTRATE
     if _MERGED_SUBSTRATE is None:
-        _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel"))
+        organs = ("surprise", "worldmodel", "composer", "cleanup") if composer_merge_enabled() \
+            else ("surprise", "worldmodel")
+        _MERGED_SUBSTRATE = MergedSubstrate(seed=seed, organs=organs)
     return _MERGED_SUBSTRATE
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  The production RF-phasor recall composer BOUND to pool #1's shared bridge (the composer slice).
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+class Pool1BoundComposer(RFPhasorComposer):
+    """An `RFPhasorComposer` whose RF resonate ops run on a masked SLICE of pool #1's shared bridge (one
+    `cp_membrane_potential_v` shared with surprise + world-model). The de-risk `SharedBridgeComposer` index-shift
+    mechanism, made production-robust with a GRACEFUL FALLBACK: an RF op too large for the composer region runs
+    on a private per-op RF bridge instead (byte-identical -- a masked shared-slice RF op == a dedicated per-op RF
+    bridge, de-risk 6/6 -- but off-pool). All other composer state (concept/role codes, kb, the no-confab moat)
+    is unchanged, so recall + moat are byte-identical to a standalone `RFPhasorComposer`."""
+
+    def bind_to_pool1(self, substrate: "MergedSubstrate"):
+        """Bind this composer's RF ops onto `substrate`'s composer region. Requires the region D to match self.D."""
+        substrate.ensure_built()
+        if substrate.composer_D != self.D:
+            raise ValueError(f"pool #1 composer region D={substrate.composer_D} != composer D={self.D}")
+        cmp_idx = np.asarray(substrate.composer_idx())
+        self._pool1 = substrate
+        self._rf_base = int(cmp_idx.min())
+        self._rf_size = int(len(cmp_idx))
+        N = int(substrate.bridge.core_config.num_neurons)
+        m = np.zeros(N, dtype=bool)
+        m[cmp_idx] = True
+        self._rf_mask = m
+        return self
+
+    def _resonate(self, n, conns, kick):
+        n = int(n)
+        pool1 = getattr(self, "_pool1", None)
+        if pool1 is None or n > self._rf_size:
+            # FALLBACK: an op bigger than the composer region (a large-K batched scan) runs on a private per-op
+            # RF bridge -- byte-identical to the shared-slice op, but off the shared pool (the sizing residual).
+            return super()._resonate(n, conns, kick)
+        b = pool1.bridge
+        base = self._rf_base
+        N = int(b.core_config.num_neurons)
+        shifted = [(base + int(post), base + int(pre), w) for (post, pre, w) in conns]
+        b.rf_set_complex_weights(shifted)
+        full_kick = np.zeros(N, dtype=np.complex128)
+        kk = np.asarray(kick, dtype=np.complex128).reshape(-1)
+        full_kick[base:base + n] = kk[:n]
+        b.rf_kick(full_kick, period=self.period, lam=0.0, neuron_mask=self._rf_mask)
+        b.rf_resonate_steps(self.period + 8)
+        phases = np.asarray(b.rf_read_phases())
+        if self.trace:
+            self._last_resonate_n = n
+        return phases[base:base + n]
+
+
+def make_pool1_composer(seed: int = 42, **rf_kwargs) -> "Pool1BoundComposer":
+    """Build the production RF-phasor recall composer BOUND to pool #1's shared bridge. `rf_kwargs` are exactly
+    the `RFPhasorComposer` kwargs the caller would otherwise pass (D, vocab, period, grounded_codes, ...). The
+    composer's D must match the pool's composer region (`_COMPOSER_D`)."""
+    comp = Pool1BoundComposer(seed=seed, **rf_kwargs)
+    comp.bind_to_pool1(get_merged_substrate(seed))
+    return comp

@@ -1,0 +1,239 @@
+{
+  "mode": "onebrain_composer_pool1_production_verify",
+  "seed": 42,
+  "status": "GO",
+  "go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "composer recall byte-identical (off==on)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "query_patient byte-identical (off==on)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "recall correct (stored answers)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-confab moat abstains on unstored cue",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "surprise byte-identical (off==on)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "surprise faculty alive (contradict>>confirm)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "worldmodel byte-identical (off==on)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "worldmodel faculty alive (violated>>expected)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "genuinely one pool when ON",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "surprise separation (contradict vs confirm)",
+      "ok": true,
+      "detail": "treatment=4.97685 control=0 |sep|=4.97685 > 1",
+      "note": "the byte-identity is of a LIVE organ, not exact-of-dead"
+    },
+    {
+      "kind": "control",
+      "name": "worldmodel separation (violated vs expected)",
+      "ok": true,
+      "detail": "treatment=44.4444 control=0 |sep|=44.4444 > 1",
+      "note": "the byte-identity is of a LIVE organ, not exact-of-dead"
+    }
+  ],
+  "undefined_reasons": [],
+  "recall_byte_identical": true,
+  "query_patient_byte_identical": true,
+  "recall_correct": true,
+  "moat_ok": true,
+  "surprise_maxerr_hz": 0.0,
+  "surprise_byte_identical": true,
+  "surprise_alive": true,
+  "surprise_confirm_hz": 0.0,
+  "surprise_contradict_hz": 4.976851851851852,
+  "worldmodel_maxerr_hz": 0.0,
+  "worldmodel_byte_identical": true,
+  "worldmodel_alive": true,
+  "worldmodel_expected_hz": 0.0,
+  "worldmodel_violated_hz": 44.44444444444444,
+  "one_pool": {
+    "regions": [
+      "surprise",
+      "worldmodel",
+      "composer",
+      "cleanup"
+    ],
+    "N": 6064,
+    "v_len": 6064,
+    "composer_on_pool1": true,
+    "surprise_on_pool1": true,
+    "worldmodel_on_pool1": true,
+    "one_v_array": true,
+    "genuinely_one_pool": true
+  },
+  "one_pool_ok": true,
+  "GO": true,
+  "off_recall": {
+    "dog|chase": "cat",
+    "cat|eat": "fish",
+    "brain|use": "spikes",
+    "brain|learn": "words",
+    "brain|store": "memory",
+    "owl|eat": null,
+    "lion|roar": null
+  },
+  "on_recall": {
+    "dog|chase": "cat",
+    "cat|eat": "fish",
+    "brain|use": "spikes",
+    "brain|learn": "words",
+    "brain|store": "memory",
+    "owl|eat": null,
+    "lion|roar": null
+  },
+  "off_surprise": {
+    "dog|chase|cat|cat": {
+      "hz": 0.0,
+      "surprised": false,
+      "th": 2.629484953703704
+    },
+    "dog|chase|cat|fish": {
+      "hz": 4.976851851851852,
+      "surprised": true,
+      "th": 2.629484953703704
+    },
+    "brain|use|spikes|words": {
+      "hz": 5.439814814814815,
+      "surprised": true,
+      "th": 2.629484953703704
+    },
+    "brain|learn|words|words": {
+      "hz": 5.439814814814815,
+      "surprised": true,
+      "th": 2.629484953703704
+    }
+  },
+  "on_surprise": {
+    "dog|chase|cat|cat": {
+      "hz": 0.0,
+      "surprised": false,
+      "th": 2.629484953703704
+    },
+    "dog|chase|cat|fish": {
+      "hz": 4.976851851851852,
+      "surprised": true,
+      "th": 2.629484953703704
+    },
+    "brain|use|spikes|words": {
+      "hz": 5.439814814814815,
+      "surprised": true,
+      "th": 2.629484953703704
+    },
+    "brain|learn|words|words": {
+      "hz": 5.439814814814815,
+      "surprised": true,
+      "th": 2.629484953703704
+    }
+  },
+  "off_worldmodel": {
+    "exp+1": {
+      "pred_sign": 1,
+      "pp": 435.4166666666667,
+      "pn": 10.069444444444445,
+      "margin": 425.34722222222223
+    },
+    "surp+1|+1": {
+      "hz": 0.0,
+      "surprised": false
+    },
+    "surp+1|-1": {
+      "hz": 44.44444444444444,
+      "surprised": true
+    },
+    "exp-1": {
+      "pred_sign": -1,
+      "pp": 30.208333333333336,
+      "pn": 418.4027777777778,
+      "margin": -388.1944444444445
+    },
+    "surp-1|+1": {
+      "hz": 34.72222222222223,
+      "surprised": true
+    },
+    "surp-1|-1": {
+      "hz": 0.0,
+      "surprised": false
+    }
+  },
+  "on_worldmodel": {
+    "exp+1": {
+      "pred_sign": 1,
+      "pp": 435.4166666666667,
+      "pn": 10.069444444444445,
+      "margin": 425.34722222222223
+    },
+    "surp+1|+1": {
+      "hz": 0.0,
+      "surprised": false
+    },
+    "surp+1|-1": {
+      "hz": 44.44444444444444,
+      "surprised": true
+    },
+    "exp-1": {
+      "pred_sign": -1,
+      "pp": 30.208333333333336,
+      "pn": 418.4027777777778,
+      "margin": -388.1944444444445
+    },
+    "surp-1|+1": {
+      "hz": 34.72222222222223,
+      "surprised": true
+    },
+    "surp-1|-1": {
+      "hz": 0.0,
+      "surprised": false
+    }
+  }
+}
