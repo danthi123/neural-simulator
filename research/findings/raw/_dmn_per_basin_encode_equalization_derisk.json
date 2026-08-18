@@ -1,0 +1,2012 @@
+{
+  "probe": "dmn_per_basin_encode_equalization",
+  "GO": true,
+  "n_go": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 4,
+  "rest_steps": 8000,
+  "acid_steps": 1200,
+  "solo_steps": 3000,
+  "encode_mode": "consolidated",
+  "homeostatic": false,
+  "homeo_target": 0.32,
+  "gain_scale": 1.0,
+  "min_frac": 0.3,
+  "D": 256,
+  "curiosity_bias_attribution": 0.9072579014221782,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PRIMARY: every disjoint basin ignites SOLO on >= threshold seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb917bd11c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "equalization load-bearing: SOLO n_ignite equalized vs sequential baseline",
+      "ok": true,
+      "detail": "treatment=4 control=3 |sep|=1 > 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "basins DISJOINT (max pairwise overlap == 0) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "SECONDARY: all basins ignite in the balanced uniform-gain WANDER on >= threshold seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb917bd11c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "closed loop speaks about EVERY concept (mean n_concepts_spoken == n_mem)",
+      "ok": true,
+      "detail": "measured=4.0 expect=<function main.<locals>.<lambda> at 0x7fb917bd11c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ABOUT-THE-SELECTED-CONCEPT rate (mean) >= 0.9",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fb917bd11c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "about-selected: production vs SCRAMBLE-routing",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "curiosity-steered: novel utterance share on vs reversed",
+      "ok": true,
+      "detail": "treatment=0.922181 control=0.085525 |sep|=0.836656 > 0.05",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "coherent: surfaced member vs random floor",
+      "ok": true,
+      "detail": "treatment=0.437111 control=0.0306196 |sep|=0.406492 > 0.15",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "internally-triggered: NO-NOISE -> 0 utterances every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "substrate-attributable: STORE-LESION collapses the utterance stream every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity byte-frozen (solo + wander) every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "elapsed_seconds": 5122.0,
+  "verdict": "GO 6/6 -- per-basin ENCODE equalization (consolidated encode) makes 4.0/4 disjoint basins ignite SOLO (baseline sequential 3.0/4); all-solo-ignite on 6/6 seeds. Competitive wander ignites 4.0/4 (all-4 on 6/6 seeds); closed loop speaks about 4.0/4 concepts (about-selected 1.00 vs SCRAMBLE 0.00); coherence member 0.44 vs random 0.03; novel-share on 0.92 vs reversed 0.09; 91% attributable to the curiosity gain. => every disjoint basin ignites; the DMN wander covers the FULL store.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2062.0,
+            "member": 0.4495729615008544,
+            "random": 0.031106087968674322,
+            "w_within": 168.2064666748047,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 1947.0,
+            "member": 0.4524426158291406,
+            "random": 0.02854839610989877,
+            "w_within": 197.46449279785156,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1790.0,
+            "member": 0.4511545664466627,
+            "random": 0.030724209190167096,
+            "w_within": 244.33998107910156,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 385.0,
+            "member": 0.4367215532445418,
+            "random": 0.032001079486711666,
+            "w_within": 269.36077880859375,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          168.2064666748047,
+          197.46449279785156,
+          244.33998107910156,
+          269.36077880859375
+        ],
+        "w_within_all": [
+          168.2064666748047,
+          202.7149200439453,
+          243.9715118408203,
+          282.53118896484375
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 493.0,
+            "member": 0.33919396961063625,
+            "random": 0.04532333214624881,
+            "w_within": 149.64553833007812,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 357.0,
+            "member": 0.385168991416309,
+            "random": 0.03896403344062947,
+            "w_within": 162.72032165527344,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 89.0,
+            "member": 0.37365337699024137,
+            "random": 0.03815445236260914,
+            "w_within": 200.11793518066406,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.1018454218106996,
+            "random": 0.04469843106995885,
+            "w_within": 28.286434173583984,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          149.64553833007812,
+          162.72032165527344,
+          200.11793518066406,
+          28.286434173583984
+        ],
+        "w_within_all": [
+          149.64553833007812,
+          157.1065673828125,
+          195.6032257080078,
+          30.92881965637207
+        ]
+      },
+      "novelties": [
+        0.65,
+        0.95,
+        0.35,
+        0.15
+      ],
+      "gains_on": [
+        1.6048265460030167,
+        2.0,
+        1.1613876319758674,
+        1.06184012066365
+      ],
+      "novel_set": [
+        1,
+        0
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          1754.0,
+          2030.0,
+          591.0,
+          76.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.42073083672329903,
+          0.4161780130812794,
+          0.4123118569035654,
+          0.3922357322325915
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 217.41970825195312,
+        "weights_frozen": true,
+        "visit_order": [
+          1,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          0,
+          0,
+          3,
+          2,
+          1,
+          2,
+          1,
+          2,
+          0,
+          2,
+          1,
+          0,
+          1,
+          3,
+          3,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          1,
+          0,
+          2,
+          0,
+          2,
+          0
+        ]
+      },
+      "on": {
+        "n_utt": 3896,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.34188911704312114,
+          0.5864989733059548,
+          0.059291581108829566,
+          0.012320328542094456
+        ],
+        "member": 0.4114216079059829,
+        "random": 0.03814002403846154,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.4543685913086,
+        "weights_frozen": true,
+        "visit_order": [
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          3,
+          1,
+          0,
+          1,
+          1,
+          1,
+          2,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          1,
+          3,
+          3,
+          1,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          3,
+          0,
+          2,
+          0,
+          2,
+          0,
+          1,
+          0,
+          2,
+          0
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.05553135888501742,
+        "n_utt": 4592
+      },
+      "novel_share_on": 0.928388090349076,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.4543685913086
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.928388090349076,
+        "novel_share_reversed": 0.05553135888501742,
+        "attributable": 0.9401851882178524
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2237.0,
+            "member": 0.4479186451408674,
+            "random": 0.0281859087414643,
+            "w_within": 184.97177124023438,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 2072.0,
+            "member": 0.45620018835948856,
+            "random": 0.02616978653465762,
+            "w_within": 205.354736328125,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1889.0,
+            "member": 0.4455427547363031,
+            "random": 0.02971984873698583,
+            "w_within": 247.73402404785156,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 357.0,
+            "member": 0.43316030852616216,
+            "random": 0.02676728293725245,
+            "w_within": 267.8735046386719,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          184.97177124023438,
+          205.354736328125,
+          247.73402404785156,
+          267.8735046386719
+        ],
+        "w_within_all": [
+          184.97177124023438,
+          207.26551818847656,
+          243.5814971923828,
+          275.9018249511719
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 660.0,
+            "member": 0.38930615164520743,
+            "random": 0.03847293007868384,
+            "w_within": 153.12925720214844,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 416.0,
+            "member": 0.39003102836879433,
+            "random": 0.038067375886524826,
+            "w_within": 172.23196411132812,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 87.0,
+            "member": 0.3842231638418079,
+            "random": 0.038140448446327684,
+            "w_within": 202.3406524658203,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.1221078431372549,
+            "random": 0.03827731092436974,
+            "w_within": 30.111543655395508,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          153.12925720214844,
+          172.23196411132812,
+          202.3406524658203,
+          30.111543655395508
+        ],
+        "w_within_all": [
+          153.12925720214844,
+          178.7111358642578,
+          216.18301391601562,
+          30.345712661743164
+        ]
+      },
+      "novelties": [
+        0.95,
+        0.15,
+        0.35,
+        0.65
+      ],
+      "gains_on": [
+        2.0,
+        1.0584239130434783,
+        1.172554347826087,
+        1.528532608695652
+      ],
+      "novel_set": [
+        0,
+        3
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          1673.0,
+          997.0,
+          1145.0,
+          54.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.4440660102424809,
+          0.44109247234247234,
+          0.4431912790368673,
+          0.4307781951164304
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 215.5499267578125,
+        "weights_frozen": true,
+        "visit_order": [
+          1,
+          3,
+          3,
+          3,
+          3,
+          1,
+          2,
+          2,
+          0,
+          3,
+          2,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          2,
+          0,
+          1,
+          0,
+          3,
+          0,
+          3,
+          3,
+          3,
+          3,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          0,
+          1,
+          3,
+          2,
+          1
+        ]
+      },
+      "on": {
+        "n_utt": 3569,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.5934435416082936,
+          0.040347436256654524,
+          0.06808629868310451,
+          0.29812272345194735
+        ],
+        "member": 0.4423150070415695,
+        "random": 0.029119960623866875,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.46512603759766,
+        "weights_frozen": true,
+        "visit_order": [
+          3,
+          1,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          2,
+          3,
+          3,
+          0,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          1,
+          0,
+          1,
+          3,
+          1,
+          3,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          3,
+          2,
+          0,
+          1,
+          0,
+          3,
+          0
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.057157569515962924,
+        "n_utt": 3884
+      },
+      "novel_share_on": 0.891566265060241,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.46512603759766
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.891566265060241,
+        "novel_share_reversed": 0.057157569515962924,
+        "attributable": 0.935890834191555
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2241.0,
+            "member": 0.4515133903893232,
+            "random": 0.02998630668581695,
+            "w_within": 172.10824584960938,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 2189.0,
+            "member": 0.4559686112478434,
+            "random": 0.026796941423904774,
+            "w_within": 199.23414611816406,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1134.0,
+            "member": 0.4462279541446208,
+            "random": 0.029106930877764208,
+            "w_within": 231.28057861328125,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 442.0,
+            "member": 0.4331209363236726,
+            "random": 0.028691940430124508,
+            "w_within": 286.1897888183594,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          172.10824584960938,
+          199.23414611816406,
+          231.28057861328125,
+          286.1897888183594
+        ],
+        "w_within_all": [
+          172.10824584960938,
+          202.46206665039062,
+          243.1773681640625,
+          282.9869079589844
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 375.0,
+            "member": 0.38374888121723566,
+            "random": 0.037124108969441245,
+            "w_within": 134.05320739746094,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 249.0,
+            "member": 0.3732880434782609,
+            "random": 0.03648550724637681,
+            "w_within": 154.45458984375,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 147.0,
+            "member": 0.3967202309437992,
+            "random": 0.03675619076224804,
+            "w_within": 212.85459899902344,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.1347861842105263,
+            "random": 0.03765739217836257,
+            "w_within": 26.691059112548828,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          134.05320739746094,
+          154.45458984375,
+          212.85459899902344,
+          26.691059112548828
+        ],
+        "w_within_all": [
+          134.05320739746094,
+          157.44456481933594,
+          202.0154266357422,
+          30.616409301757812
+        ]
+      },
+      "novelties": [
+        0.15,
+        0.65,
+        0.35,
+        0.95
+      ],
+      "gains_on": [
+        1.0779874213836478,
+        1.608805031446541,
+        1.2050314465408805,
+        2.0
+      ],
+      "novel_set": [
+        3,
+        1
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          1711.0,
+          1801.0,
+          458.0,
+          20.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.441294927932859,
+          0.44085545520890346,
+          0.44353630724320375,
+          0.4215740740740741
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 211.09375,
+        "weights_frozen": true,
+        "visit_order": [
+          2,
+          1,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          1,
+          1,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          0,
+          3,
+          3,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2
+        ]
+      },
+      "on": {
+        "n_utt": 4452,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.03324348607367475,
+          0.3890386343216532,
+          0.03032345013477089,
+          0.5473944294699011
+        ],
+        "member": 0.4496194375345495,
+        "random": 0.026281094527363186,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.45613098144531,
+        "weights_frozen": true,
+        "visit_order": [
+          1,
+          0,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          0,
+          1,
+          3,
+          3,
+          3,
+          3,
+          1,
+          0,
+          3,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          3,
+          0,
+          1,
+          1,
+          0,
+          2,
+          3,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.07567804024496938,
+        "n_utt": 4572
+      },
+      "novel_share_on": 0.9364330637915543,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.45613098144531
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.9364330637915543,
+        "novel_share_reversed": 0.07567804024496938,
+        "attributable": 0.9191847840799703
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2178.0,
+            "member": 0.4563546118233618,
+            "random": 0.03714276175213675,
+            "w_within": 167.41567993164062,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 1761.0,
+            "member": 0.4565349002849003,
+            "random": 0.03682308360042735,
+            "w_within": 186.9362335205078,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1565.0,
+            "member": 0.4493727106227106,
+            "random": 0.028411341744675078,
+            "w_within": 254.72789001464844,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 241.0,
+            "member": 0.44430765856315774,
+            "random": 0.027228969622687893,
+            "w_within": 272.6884765625,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          167.41567993164062,
+          186.9362335205078,
+          254.72789001464844,
+          272.6884765625
+        ],
+        "w_within_all": [
+          167.41567993164062,
+          200.49752807617188,
+          257.3213195800781,
+          274.41827392578125
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 440.0,
+            "member": 0.3868174835916771,
+            "random": 0.037171178955453146,
+            "w_within": 133.66110229492188,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 660.0,
+            "member": 0.3952637696709585,
+            "random": 0.036204063841201714,
+            "w_within": 170.65211486816406,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 126.0,
+            "member": 0.33308666837147854,
+            "random": 0.04249070344798193,
+            "w_within": 217.97511291503906,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.13245169082125605,
+            "random": 0.04256717995169082,
+            "w_within": 33.73817443847656,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          133.66110229492188,
+          170.65211486816406,
+          217.97511291503906,
+          33.73817443847656
+        ],
+        "w_within_all": [
+          133.66110229492188,
+          164.6531982421875,
+          202.42869567871094,
+          24.665681838989258
+        ]
+      },
+      "novelties": [
+        0.15,
+        0.95,
+        0.65,
+        0.35
+      ],
+      "gains_on": [
+        1.0900123304562268,
+        2.0,
+        1.5930949445129472,
+        1.189889025893958
+      ],
+      "novel_set": [
+        1,
+        2
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          1826.0,
+          1845.0,
+          734.0,
+          55.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.44620483288166213,
+          0.4448588527551942,
+          0.4381989611562782,
+          0.435263098464318
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 213.82130432128906,
+        "weights_frozen": true,
+        "visit_order": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          1,
+          3,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          2,
+          0,
+          1,
+          3,
+          0,
+          3,
+          1,
+          3,
+          0,
+          3,
+          0,
+          3,
+          1,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3
+        ]
+      },
+      "on": {
+        "n_utt": 5399,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.046860529727727356,
+          0.49620300055565847,
+          0.4463789590664938,
+          0.010557510650120392
+        ],
+        "member": 0.45007002314814815,
+        "random": 0.026542534722222223,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.45252227783203,
+        "weights_frozen": true,
+        "visit_order": [
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          1,
+          0,
+          0,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.16091693145710395,
+        "n_utt": 4406
+      },
+      "novel_share_on": 0.9425819596221523,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.45252227783203
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.9425819596221523,
+        "novel_share_reversed": 0.16091693145710395,
+        "attributable": 0.8292807009359591
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2321.0,
+            "member": 0.45172960079155544,
+            "random": 0.0288369166505074,
+            "w_within": 179.33294677734375,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 1647.0,
+            "member": 0.44581504581504583,
+            "random": 0.02880545609712276,
+            "w_within": 196.0154571533203,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1200.0,
+            "member": 0.4364107142857143,
+            "random": 0.031816716269841276,
+            "w_within": 232.9661407470703,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 446.0,
+            "member": 0.4328922466422467,
+            "random": 0.031242154113247864,
+            "w_within": 277.2105407714844,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          179.33294677734375,
+          196.0154571533203,
+          232.9661407470703,
+          277.2105407714844
+        ],
+        "w_within_all": [
+          179.33294677734375,
+          211.60015869140625,
+          246.09796142578125,
+          275.9352722167969
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 910.0,
+            "member": 0.40690088659520973,
+            "random": 0.04101950178642318,
+            "w_within": 157.21925354003906,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 420.0,
+            "member": 0.39530561674008813,
+            "random": 0.040173113986784144,
+            "w_within": 169.02169799804688,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 112.0,
+            "member": 0.38781565656565653,
+            "random": 0.04110637626262627,
+            "w_within": 209.7892608642578,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.1419759825327511,
+            "random": 0.04060592046741064,
+            "w_within": 25.925453186035156,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          157.21925354003906,
+          169.02169799804688,
+          209.7892608642578,
+          25.925453186035156
+        ],
+        "w_within_all": [
+          157.21925354003906,
+          165.75927734375,
+          196.88375854492188,
+          35.46709442138672
+        ]
+      },
+      "novelties": [
+        0.35,
+        0.15,
+        0.95,
+        0.65
+      ],
+      "gains_on": [
+        1.197387518142235,
+        1.060957910014514,
+        2.0,
+        1.6008708272859216
+      ],
+      "novel_set": [
+        2,
+        3
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          1950.0,
+          1652.0,
+          632.0,
+          49.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.4472089198927434,
+          0.4470570429026311,
+          0.4413127409083291,
+          0.43121637757667175
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 214.3565673828125,
+        "weights_frozen": true,
+        "visit_order": [
+          2,
+          3,
+          0,
+          3,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          0,
+          2,
+          1,
+          2,
+          1,
+          2,
+          1,
+          1,
+          2,
+          0,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          2,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3
+        ]
+      },
+      "on": {
+        "n_utt": 3460,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.08352601156069364,
+          0.020520231213872833,
+          0.5910404624277457,
+          0.30491329479768786
+        ],
+        "member": 0.41684902225495013,
+        "random": 0.035301882619456715,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.46192169189453,
+        "weights_frozen": true,
+        "visit_order": [
+          3,
+          2,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          1,
+          0,
+          2,
+          3,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          1,
+          3,
+          0,
+          2
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.030232104544567977,
+        "n_utt": 5127
+      },
+      "novel_share_on": 0.8959537572254335,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.46192169189453
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.8959537572254335,
+        "novel_share_reversed": 0.030232104544567977,
+        "attributable": 0.9662570704115467
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "n_mem": 4,
+      "encode_mode": "consolidated",
+      "homeostatic": false,
+      "settle_steps": 600,
+      "facts": [
+        "dog chase ball",
+        "cat eat worm",
+        "bird see seed",
+        "fish hear bug"
+      ],
+      "solo_equalized": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 2448.0,
+            "member": 0.4575249466258238,
+            "random": 0.031484324236517224,
+            "w_within": 195.72511291503906,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 1689.0,
+            "member": 0.44897211199294534,
+            "random": 0.031577932098765436,
+            "w_within": 196.1243133544922,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 1575.0,
+            "member": 0.4568310901107293,
+            "random": 0.03241270224799542,
+            "w_within": 248.5724639892578,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": true,
+            "dwell": 255.0,
+            "member": 0.4435719914443319,
+            "random": 0.03190743261942287,
+            "w_within": 274.6330871582031,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 4,
+        "all_solo_ignite": true,
+        "w_within_per": [
+          195.72511291503906,
+          196.1243133544922,
+          248.5724639892578,
+          274.6330871582031
+        ],
+        "w_within_all": [
+          195.72511291503906,
+          207.4485626220703,
+          252.89340209960938,
+          283.09808349609375
+        ]
+      },
+      "solo_baseline_seq": {
+        "per_basin": [
+          {
+            "basin": 0,
+            "solo_ignites": true,
+            "dwell": 607.0,
+            "member": 0.3526526526526526,
+            "random": 0.04403356481481482,
+            "w_within": 156.2757568359375,
+            "weights_frozen": true
+          },
+          {
+            "basin": 1,
+            "solo_ignites": true,
+            "dwell": 186.0,
+            "member": 0.3671211322081575,
+            "random": 0.038099287974683545,
+            "w_within": 154.62416076660156,
+            "weights_frozen": true
+          },
+          {
+            "basin": 2,
+            "solo_ignites": true,
+            "dwell": 118.0,
+            "member": 0.3857168079096045,
+            "random": 0.03846532726630714,
+            "w_within": 213.5475311279297,
+            "weights_frozen": true
+          },
+          {
+            "basin": 3,
+            "solo_ignites": false,
+            "dwell": 0.0,
+            "member": 0.11835721468074407,
+            "random": 0.040802146178984415,
+            "w_within": 25.18282127380371,
+            "weights_frozen": true
+          }
+        ],
+        "n_solo_ignite": 3,
+        "all_solo_ignite": false,
+        "w_within_per": [
+          156.2757568359375,
+          154.62416076660156,
+          213.5475311279297,
+          25.18282127380371
+        ],
+        "w_within_all": [
+          156.2757568359375,
+          163.68980407714844,
+          201.2689666748047,
+          31.454265594482422
+        ]
+      },
+      "novelties": [
+        0.65,
+        0.35,
+        0.15,
+        0.95
+      ],
+      "gains_on": [
+        1.6175395858708892,
+        1.2058465286236297,
+        1.079171741778319,
+        2.0
+      ],
+      "novel_set": [
+        3,
+        0
+      ],
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "balanced": {
+        "n_visited_coherent": 4,
+        "all_ignite": true,
+        "dwell": [
+          3194.0,
+          1383.0,
+          1040.0,
+          73.0
+        ],
+        "coherent": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_member": [
+          0.44447794269222846,
+          0.44765576685219544,
+          0.448538961038961,
+          0.43963164811379096
+        ],
+        "max_pair_overlap": 0,
+        "w_within": 220.85765075683594,
+        "weights_frozen": true,
+        "visit_order": [
+          2,
+          3,
+          3,
+          3,
+          2,
+          2,
+          0,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          0,
+          3,
+          1,
+          0,
+          1,
+          2,
+          1,
+          1,
+          3,
+          3,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          2,
+          3,
+          1,
+          3,
+          0,
+          3,
+          1,
+          3,
+          1,
+          3,
+          0,
+          3,
+          0,
+          3,
+          2,
+          3
+        ]
+      },
+      "on": {
+        "n_utt": 5191,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "share": [
+          0.45155076093238294,
+          0.0379502985937199,
+          0.02388749759198613,
+          0.486611442881911
+        ],
+        "member": 0.4523937722399764,
+        "random": 0.0283320123920582,
+        "n_visited_coherent": 4,
+        "apical_rest_max": -80.46268463134766,
+        "weights_frozen": true,
+        "visit_order": [
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          0,
+          3,
+          3,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          0,
+          3,
+          2,
+          2,
+          2,
+          2,
+          2,
+          0,
+          2,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          2,
+          0,
+          2,
+          0,
+          2,
+          0
+        ]
+      },
+      "scramble_about": 0.0,
+      "reversed": {
+        "novel_share": 0.13363394138143062,
+        "n_utt": 4879
+      },
+      "novel_share_on": 0.9381622038142939,
+      "no_noise": {
+        "n_utt": 0,
+        "apical_rest_max": -80.46268463134766
+      },
+      "store_lesion": {
+        "n_utt": 0,
+        "about_n": 0,
+        "member": 0.0,
+        "random": 0.0
+      },
+      "bias": {
+        "novel_share_on": 0.9381622038142939,
+        "novel_share_reversed": 0.13363394138143062,
+        "attributable": 0.8575577433858304
+      },
+      "checks": {
+        "disjoint_ok": true,
+        "mouth_fidelity": true,
+        "ALL_BASINS_SOLO_IGNITE": true,
+        "equalization_load_bearing": true,
+        "ALL_BASINS_IGNITE_WANDER": true,
+        "loop_speaks_every_concept": true,
+        "about_selected": true,
+        "scramble_collapses": true,
+        "curiosity_steered": true,
+        "internally_triggered": true,
+        "store_lesion_load_bearing": true,
+        "weights_byte_frozen": true
+      },
+      "seed_go": true
+    }
+  ],
+  "corpus_check_fresh": true,
+  "corpus_check_note": "before_you_build.sh run; surfaced 2026-07-18-gap4-gap5-UNIFICATION-BTSP-stores-bistable-CA3 (consistent BTSP-store mechanism), no contradiction"
+}
