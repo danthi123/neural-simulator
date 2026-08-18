@@ -1,0 +1,29 @@
+{
+ "run_id": "1787086718-1389807",
+ "runner": "research/runners/_generate_channel_wiring_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/wt-genwire/research/runners/_generate_channel_wiring_verify.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_generate_channel_wiring_verify.json"
+ ],
+ "git_sha": "682899c2c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-18T16:58:38",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_generate_channel_wiring_verify.json"
+}
