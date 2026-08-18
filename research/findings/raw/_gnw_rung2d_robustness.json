@@ -1,0 +1,182 @@
+{
+  "runner": "_gnw_rung2d_weakenable_recurrence_derisk",
+  "mode": "robustness",
+  "drive_inc": 5000.0,
+  "drive_chal": 5000.0,
+  "hold_steps": 400,
+  "fs_to_ws": 16.0,
+  "ou_noise": 40.0,
+  "sweep": [
+    {
+      "U": 0.02,
+      "tau_D": 300.0,
+      "label": "frozen-op-GO",
+      "n_go": 6,
+      "n_seeds": 6,
+      "per_seed": [
+        {
+          "seed": 42,
+          "go": true,
+          "empty_len": 106,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.428889077906751
+        },
+        {
+          "seed": 43,
+          "go": true,
+          "empty_len": 107,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.46320662442056976
+        },
+        {
+          "seed": 44,
+          "go": true,
+          "empty_len": 118,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.46435538947431637
+        },
+        {
+          "seed": 100,
+          "go": true,
+          "empty_len": 100,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.43071807509193344
+        },
+        {
+          "seed": 101,
+          "go": true,
+          "empty_len": 82,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.4244611279808178
+        },
+        {
+          "seed": 102,
+          "go": true,
+          "empty_len": 107,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.4300240769263814
+        }
+      ]
+    },
+    {
+      "U": 0.025,
+      "tau_D": 300.0,
+      "label": "edge-stronger-depression",
+      "n_go": 2,
+      "n_seeds": 6,
+      "per_seed": [
+        {
+          "seed": 42,
+          "go": false,
+          "empty_len": 208,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.4706469224858537
+        },
+        {
+          "seed": 43,
+          "go": true,
+          "empty_len": 259,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.5141397708081359
+        },
+        {
+          "seed": 44,
+          "go": false,
+          "empty_len": 267,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.6647152513290694
+        },
+        {
+          "seed": 100,
+          "go": false,
+          "empty_len": 229,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.49269049036663065
+        },
+        {
+          "seed": 101,
+          "go": true,
+          "empty_len": 186,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.4394907624940142
+        },
+        {
+          "seed": 102,
+          "go": false,
+          "empty_len": 212,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.468441612925829
+        }
+      ]
+    },
+    {
+      "U": 0.02,
+      "tau_D": 250.0,
+      "label": "edge-faster-recovery",
+      "n_go": 1,
+      "n_seeds": 6,
+      "per_seed": [
+        {
+          "seed": 42,
+          "go": false,
+          "empty_len": 4,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.44633641973201427
+        },
+        {
+          "seed": 43,
+          "go": false,
+          "empty_len": 10,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.4832183986625225
+        },
+        {
+          "seed": 44,
+          "go": true,
+          "empty_len": 45,
+          "b_ignites": true,
+          "a_self_evicts": true,
+          "xA_min": 0.4704586665557942
+        },
+        {
+          "seed": 100,
+          "go": false,
+          "empty_len": 22,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.4466467809766588
+        },
+        {
+          "seed": 101,
+          "go": false,
+          "empty_len": 6,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.4416541003417448
+        },
+        {
+          "seed": 102,
+          "go": false,
+          "empty_len": 11,
+          "b_ignites": false,
+          "a_self_evicts": true,
+          "xA_min": 0.4436725450325282
+        }
+      ]
+    }
+  ]
+}
