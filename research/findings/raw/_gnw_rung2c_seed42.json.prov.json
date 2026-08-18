@@ -1,0 +1,39 @@
+{
+ "run_id": "1787085743-1354968",
+ "runner": "research/runners/_gnw_rung2c_salience_disinhibition_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/wt-rung2c/research/runners/_gnw_rung2c_salience_disinhibition_derisk.py",
+  "--seed",
+  "42",
+  "--salience-gain",
+  "1.0",
+  "--dis-to-fs",
+  "30",
+  "--pulse-duration",
+  "25",
+  "--fs-to-ws",
+  "16",
+  "--a2fs",
+  "4",
+  "--json",
+  "research/findings/raw/_gnw_rung2c_seed42.json"
+ ],
+ "git_sha": "682899c2c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-18T16:42:23",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_gnw_rung2c_seed42.json"
+}
