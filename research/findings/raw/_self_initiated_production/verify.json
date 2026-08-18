@@ -1,0 +1,200 @@
+{
+  "probe": "self_initiated_production_verify",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "PASS": true,
+  "gates": {
+    "A_idle_coherent_per_seed": true,
+    "A_handler_idle_coherent": true,
+    "B_flag_off_byte_identical": true,
+    "B_pristine_head_byte_identical": true,
+    "C_lesion_collapses_per_seed": true,
+    "C_handler_lesion_neutral": true,
+    "D_moat_safe": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_utt": 4,
+      "concept": "cat",
+      "utterance": "cat eat worm",
+      "question": "what does cat eat?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    },
+    {
+      "seed": 43,
+      "n_utt": 4,
+      "concept": "dog",
+      "utterance": "dog chase ball",
+      "question": "what does dog chase?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    },
+    {
+      "seed": 44,
+      "n_utt": 4,
+      "concept": "fish",
+      "utterance": "fish hear bug",
+      "question": "what does fish hear?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    },
+    {
+      "seed": 100,
+      "n_utt": 4,
+      "concept": "cat",
+      "utterance": "cat eat worm",
+      "question": "what does cat eat?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    },
+    {
+      "seed": 101,
+      "n_utt": 4,
+      "concept": "bird",
+      "utterance": "bird see seed",
+      "question": "what does bird see?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    },
+    {
+      "seed": 102,
+      "n_utt": 4,
+      "concept": "fish",
+      "utterance": "fish hear bug",
+      "question": "what does fish hear?",
+      "about_rate": 1.0,
+      "mouth_fidelity": true,
+      "moat_abstains": true,
+      "unknown_abstains": true,
+      "lesion_n_utt": 0,
+      "path": "light-numpy-deferred-wander",
+      "coherent": true,
+      "collapses": true
+    }
+  ],
+  "handler": {
+    "idle": {
+      "answer": "Something's been on my mind \u2014 cat eat worm. What does cat eat?",
+      "self_initiated": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "mouth_fidelity": true,
+        "moat_abstains": true,
+        "n_utt": 4,
+        "about_rate": 1.0,
+        "n_concepts_spoken": 4,
+        "concept": "cat",
+        "utterance": "cat eat worm",
+        "question": "what does cat eat?",
+        "examples": [
+          {
+            "concept": "dog",
+            "utterance": "dog chase ball",
+            "novelty": 0.65
+          },
+          {
+            "concept": "cat",
+            "utterance": "cat eat worm",
+            "novelty": 0.95
+          },
+          {
+            "concept": "bird",
+            "utterance": "bird see seed",
+            "novelty": 0.35
+          },
+          {
+            "concept": "fish",
+            "utterance": "fish hear bug",
+            "novelty": 0.15
+          }
+        ],
+        "path": "light-numpy-deferred-wander",
+        "kind": "self_initiated"
+      },
+      "ok": true
+    },
+    "empty": {
+      "answer": "Something's been on my mind \u2014 cat eat worm. What does cat eat?",
+      "ok": true
+    },
+    "lesion": {
+      "answer": "Nothing in particular is surfacing for me to bring up right now.",
+      "self_initiated": {
+        "on": true,
+        "lesioned": true,
+        "composer": "onebrain",
+        "mouth_fidelity": true,
+        "moat_abstains": true,
+        "n_utt": 0,
+        "about_rate": 0.0,
+        "n_concepts_spoken": 0,
+        "concept": null,
+        "utterance": null,
+        "question": null,
+        "examples": [],
+        "path": "light-numpy-deferred-wander",
+        "kind": "self_initiated"
+      },
+      "ok": true
+    }
+  },
+  "store_attribution": 1.0,
+  "byte_identical": {
+    "sha_on": "3bb23ca3756329c79b9be10d5390ce3c33c4ec84dfff4e3c1cedf5b26f7574db",
+    "sha_off": "3bb23ca3756329c79b9be10d5390ce3c33c4ec84dfff4e3c1cedf5b26f7574db",
+    "sha_pristine": "3bb23ca3756329c79b9be10d5390ce3c33c4ec84dfff4e3c1cedf5b26f7574db",
+    "flag_off_byte_identical": true,
+    "pristine_head_byte_identical": true,
+    "no_self_initiated_key_on_reactive": true
+  },
+  "panel": [
+    "what does the dog chase?",
+    "what is the capital of france?",
+    "wolf hunt deer",
+    "what does the wolf hunt?",
+    "the dog chased the cat",
+    "what does it eat?"
+  ],
+  "elapsed_seconds": 288.5,
+  "NOTE": "reuse-by-import of the 6-seed GO _self_initiated_utterance_derisk (multibasin CA3 selection + curiosity want + OneBrainComposer mouth); NO sim/ edit. On numpy the heavy CA3 wander is DEFERRED (the light path speaks the mouth's curiosity-top decodable concept); the full curiosity-biased CA3-selection wander + its NO-ENCODE store-lesion collapse are the committed cupy GO research/findings/raw/_self_initiated_utterance_derisk.json. The store NO-ENCODE lesion (an emptied RF store, not a host flag) is load-bearing on BOTH paths."
+}

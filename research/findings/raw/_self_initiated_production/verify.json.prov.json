@@ -1,0 +1,23 @@
+{
+ "run_id": "1787091884-1543522",
+ "runner": "research/runners/_self_initiated_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/self-initiate-wire/research/runners/_self_initiated_production_verify.py"
+ ],
+ "git_sha": "b3e0280e9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-18T18:24:44",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_self_initiated_production/verify.json"
+}

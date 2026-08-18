@@ -2966,6 +2966,28 @@ _SESSION_DISCOURSE: dict = {}
 # intention-holding bridge is per-session. See research/runners/prospective_memory_production_organ.py. ────────────
 _SESSION_PMEM: dict = {}
 
+# ─── SELF-INITIATED UTTERANCE (2026-08-18): the first INTERNALLY-GENERATED turn class. On an IDLE/EMPTY turn the brain
+# SELECTS a stored concept ITSELF (a curiosity-biased CA3 wander on cupy; the mouth's curiosity-top decodable concept
+# on the numpy-deferred path) and SPEAKS it through the OneBrainComposer mouth. PER-SESSION organ (its own self-
+# contained selection substrate + mouth, like _SESSION_MULTIREF), keyed identically to the ChatBrain cache; cleared on
+# reset. See research/runners/self_initiated_production_organ.py. ──────────────────────────────────────────────────
+_SESSION_SELFINIT: dict = {}
+# The DEFAULT-ON master switch (the production-integration anchor). BRAIN_SELF_INITIATE=0 disables the idle block
+# byte-identically (the row STAYS on_by_default:YES). Flipping this to False would turn the faculty OFF by default.
+_SELF_INITIATE_DEFAULT_ON = True
+
+
+def _get_selfinit_organ(cache_key):
+    """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
+    own mouth + selection substrate for THIS conversation; cleared on reset. See
+    research/runners/self_initiated_production_organ.py."""
+    org = _SESSION_SELFINIT.get(cache_key)
+    if org is None:
+        from research.runners.self_initiated_production_organ import SelfInitiationOrgan
+        org = SelfInitiationOrgan(seed=42)
+        _SESSION_SELFINIT[cache_key] = org
+    return org
+
 
 def _get_multiref_organ(cache_key):
     """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
@@ -3528,6 +3550,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+        _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
         _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
         _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
         try:  # drop this conversation's episodic memory (D5, Hook C) — mirrors _SESSION_MOOD/_SESSION_WORLDVIEW
@@ -3600,6 +3623,45 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         return getattr(c, "last_trace", None) if c is not None else None
 
     msg = (req.message or "").strip()
+
+    # ── SELF-INITIATED UTTERANCE — the first INTERNALLY-GENERATED turn class (2026-08-18) ────────────────────────
+    # On an IDLE/EMPTY turn (an EMPTY message, or a bare "say something / what's on your mind" lead-in — a DISJOINT
+    # class, nothing else matches it) the brain SELECTS a stored concept ITSELF and SPEAKS it, rather than reacting to
+    # user content. The SELECTION is the substrate's (a noise-seeded, curiosity-biased CA3 wander — the multibasin
+    # self-initiation GO, 66% attributable — on cupy; on the numpy-deferred path the mouth's CURIOSITY-TOP decodable
+    # concept, the heavy wander DEFERRED like d5's BTSP write); the utterance CONTENT is the OneBrainComposer mouth's
+    # on-bridge RF decode (render_fact), moat-safe by construction (it speaks ONLY a stored concept; an emptied store
+    # abstains). Reuse-by-import from `self_initiated_production_organ` (the loop-closing de-risk 6-seed GO). SCOPE
+    # (honest): the buildable-now integration is the idle-turn SHORT-CIRCUIT — the TIMING is still HTTP-triggered
+    # ("say something"), only the CONTENT is internally selected; a truly proactive NO-HTTP idle-tick is the named
+    # deferred rung. This runs FIRST (before the empty-422): a self-initiated remark on an idle turn REPLACES the 422 /
+    # normal handling. Default-ON; `BRAIN_SELF_INITIATE=0` -> the block is fully skipped (an empty message still 422s,
+    # a "say something" turn falls to the normal path — byte-identical). LESION (`BRAIN_SELF_INITIATE_LESION=1`): the
+    # CA3/mouth store NO-ENCODE control (an emptied RF store, not a host flag) -> the utterance stream collapses ->
+    # n_utt=0 -> the honest neutral idle line (load-bearing). Guarded so a wiring failure can never crash a turn.
+    try:
+        import research.runners.self_initiated_production_organ as _SI
+        _selfinit_on = _SELF_INITIATE_DEFAULT_ON and _SI.selfinit_enabled()
+    except Exception:
+        _SI = None
+        _selfinit_on = False
+    if _selfinit_on and _SI.is_selfinit_trigger(req.message):
+        try:
+            _si_rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
+            siorg = _get_selfinit_organ(cache_key)
+            si = siorg.speak(lesion=_SI.selfinit_lesioned())
+            spoke = bool(si.get("n_utt", 0) >= 1 and si.get("utterance"))
+            answer = _SI.self_initiated_text(si) if spoke else _SI.idle_fallback_text()
+            return JSONResponse({
+                "answer": answer,
+                "abstained": (not spoke), "recalled_svo": None, "verified": bool(spoke),
+                "renderer": _si_rname, "brain": req.brain, "source": source, "rich": False,
+                "activity": None, "affect": None,
+                "self_initiated": dict(si, kind="self_initiated"), "inner_state_readout": True,
+            })
+        except Exception:
+            pass  # never let self-initiation crash a turn -> fall through to the normal empty/normal handling
+
     if not msg:
         raise HTTPException(422, "message must be non-empty")
 
