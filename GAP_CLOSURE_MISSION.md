@@ -31,8 +31,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > loop-count EMERGES from the substrate's OWN spiking read (n_ignited ignition/conflict count) not a host counter, with
 > a real no-host-orchestration guard — first time the conflict signal is ACTED on. Caveat: the load-bearing read is the
 > ignition COUNT (binary) not graded NMDA-confidence (that needs the unbuilt Part-B rung); per-hop-reset form. The
-> workspace now also has a working EVICTION mechanism (Rung-2d GO) + the named STOP effector (rung-e STN→GPi veto,
-> building). Live lanes +
+> workspace now also has a working EVICTION mechanism (Rung-2d GO). **GNW workspace-control SYNTHESIS (3 landings):**
+> the localist recurrent attractor can be cleared from *WITHIN* (Rung-2d STD depletes its own recurrent resources →
+> empty window, GO) but NOT from *OUTSIDE* (rung-e STN→GPi veto: the conflict SENSOR + SELECTIVITY are GO 6/6, but a
+> graded external inhibitory brake cannot drive the co-ignited attractor to n_ignited=0 — NO-GO effector, `cf726217`,
+> min n_post=2: weak leaves survivors, strong destabilizes upward). ⇒ **next GNW rung = a DISTRIBUTED-OVERWRITE
+> workspace (overlapping patterns + divisive normalization / shared global-gain; Carandini-Heeger), where withdrawing a
+> SHARED resource de-ignites all content uniformly — and the STN conflict sensor built here is its ready effector arm.**
+> Live lanes +
 > the adversarially-verified NEXT-RUNG QUEUE (survey `wzujthh3q`: 3 READY = STN-veto, self-initiated-utterance wiring,
 > V1-decorr; 7 settled) are in **`scratchpad/OVERNIGHT_STATE.md`** — the live working board this session.
 >
