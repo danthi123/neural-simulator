@@ -38,6 +38,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > min n_post=2: weak leaves survivors, strong destabilizes upward). ⇒ **next GNW rung = a DISTRIBUTED-OVERWRITE
 > workspace (overlapping patterns + divisive normalization / shared global-gain; Carandini-Heeger), where withdrawing a
 > SHARED resource de-ignites all content uniformly — and the STN conflict sensor built here is its ready effector arm.**
+ **UPDATE: the DISTRIBUTED-OVERWRITE workspace LANDED PARTIAL (`8fdf58a2`) — the
+> GLOBAL STOP now WORKS 6/6** (divisive-norm makes content clearable + conflict-triggered Tsodyks-Markram depression of
+> the SHARED recurrence de-ignites all content → n_ignited→0; the function external STN inhibition FAILED at). This
+> CLOSES the STN-veto external-clear NO-GO — the workspace now has a conflict-triggered global brake (the honesty-boundary
+> STOP effector). GNW workspace-control now has: ignition + deliberation-depth-from-substrate (keystone) + eviction
+> (Rung-2d) + conflict-sensing + selectivity (STN) + GLOBAL STOP (distributed-overwrite). **Remaining GNW residual =
+> ACTIVE OVERWRITE (swap A→B while staying ignited, n stays 1) — still 0/6; next levers: Rung-2d self-eviction path /
+> larger overlap + sub-critical private core / use-driven shared-only depression.**
 > Live lanes +
 > the adversarially-verified NEXT-RUNG QUEUE (survey `wzujthh3q`: 3 READY = STN-veto, self-initiated-utterance wiring,
 > V1-decorr; 7 settled) are in **`scratchpad/OVERNIGHT_STATE.md`** — the live working board this session.
