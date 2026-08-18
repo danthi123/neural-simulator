@@ -1,0 +1,24 @@
+{
+ "run_id": "1786530013-535400",
+ "runner": "research/runners/_burndown_3E_brain_owns_generation.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_burndown_3E_brain_owns_generation.py",
+  "--seeds",
+  "100,101,102"
+ ],
+ "git_sha": "e4eec09f4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-12T06:20:13",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 32472.7,
+ "corpus_check_query": "gap4 SoftHebb soft-WTA Hebbian deep spiking unsupervised local",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/emerge/burndown_3E_brain_owns_generation_s100-102.log"
+}

@@ -1,0 +1,26 @@
+{
+ "run_id": "1786526142-507977",
+ "runner": "research/runners/_longitudinal_develop_loop_gpu.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_longitudinal_develop_loop_gpu.py",
+  "--n-days",
+  "4",
+  "--seed",
+  "100"
+ ],
+ "git_sha": "44bb51b1a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-12T05:15:42",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 28176.1,
+ "corpus_check_query": "gap4 SoftHebb soft-WTA Hebbian deep spiking unsupervised local",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/emerge/longitudinal_develop_s43.log"
+}
