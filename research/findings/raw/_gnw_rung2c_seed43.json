@@ -1,0 +1,249 @@
+{
+  "runner": "_gnw_rung2c_salience_disinhibition_derisk",
+  "mode": "single",
+  "go": false,
+  "verdict": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "incumbent ignites & holds a weak challenger",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "pulse is salience-gated (0 at zero salience, scales with salience)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "knob",
+      "name": "VIP dis-inhibition pulse current (strong challenger)",
+      "ok": true,
+      "detail": "requested=8000 applied=8000",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "WTA inhibition load-bearing (fs=0 lesion co-ignites)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PULSE-OFF reproduces the non-eviction negative",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "continuous headline: zero _restore_state calls",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "homeostasis",
+      "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+    },
+    {
+      "process": "short_term_plasticity",
+      "why": "STP banked as annihilating for eviction (2026-08-01)"
+    },
+    {
+      "process": "intrinsic_SFA",
+      "why": "intrinsic Izhikevich SFA banked as self-extinguishing for eviction (Rung-2b)"
+    }
+  ],
+  "undefined_reasons": [],
+  "backend": "numpy",
+  "operating_point": {
+    "salience_gain": 1.0,
+    "dis_to_fs": 30.0,
+    "pulse_duration": 25,
+    "fs_to_ws": 16.0,
+    "a2fs": 4.0,
+    "ou_noise_pA": 40.0,
+    "incumbent_settle": 120,
+    "heterogeneity": true,
+    "drive_inc": 5000.0,
+    "chal_max": 8000.0,
+    "n_chal": 9
+  },
+  "eval": {
+    "seed": 43,
+    "operating_point": {
+      "salience_gain": 1.0,
+      "dis_to_fs": 30.0,
+      "pulse_duration": 25,
+      "fs_to_ws": 16.0,
+      "a2fs": 4.0,
+      "ou_noise_pA": 40.0,
+      "incumbent_settle": 120,
+      "heterogeneity": true,
+      "drive_inc": 5000.0,
+      "chal_max": 8000.0,
+      "n_chal": 9
+    },
+    "drive_challengers": [
+      0.0,
+      1000.0,
+      2000.0,
+      3000.0,
+      4000.0,
+      5000.0,
+      6000.0,
+      7000.0,
+      8000.0
+    ],
+    "vip_currents": [
+      0.0,
+      1000.0,
+      2000.0,
+      3000.0,
+      4000.0,
+      5000.0,
+      6000.0,
+      7000.0,
+      8000.0
+    ],
+    "a_rates": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "b_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "winner_per_challenger": [
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "both",
+      "both",
+      "both"
+    ],
+    "mutual_exclusion": false,
+    "a_holds_weak": true,
+    "b_takes_strong": false,
+    "monotone": true,
+    "crossover": false,
+    "annihilation_on_sweep": false,
+    "pulse_zero_at_zero_salience": true,
+    "pulse_scales_with_salience": true,
+    "causal_swap": {
+      "attribution": 0.0,
+      "pass": false,
+      "trials": [
+        {
+          "strong_drive": 8000.0,
+          "B_challenges": {
+            "A": 0.3333333333333333,
+            "B": 0.3333333333333333,
+            "winner": "both",
+            "follows_salience": false
+          },
+          "A_challenges": {
+            "A": 0.3333333333333333,
+            "B": 0.3333333333333333,
+            "winner": "both",
+            "follows_salience": false
+          }
+        },
+        {
+          "strong_drive": 6800.0,
+          "B_challenges": {
+            "A": 0.3333333333333333,
+            "B": 0.3333333333333333,
+            "winner": "both",
+            "follows_salience": false
+          },
+          "A_challenges": {
+            "A": 0.0,
+            "B": 0.3333333333333333,
+            "winner": "B",
+            "follows_salience": false
+          }
+        }
+      ]
+    },
+    "continuous_headline": {
+      "no_restore_calls": true,
+      "takeover": false,
+      "incumbent_ignited_pre_challenge": true,
+      "vip_current_strong": 8000.0,
+      "n_ignited_post": 2,
+      "anti_annihilation": false,
+      "A_pre": 0.8125,
+      "B_pre": 0.0,
+      "A_post": 0.3333333333333333,
+      "B_post": 0.3333333333333333,
+      "winner_post": "both"
+    },
+    "seed_deterministic": true,
+    "threshold_hash": "b9f32e55d63d09101a489c03b2445be55fff387513c77ccb3de76bbc6ebef4d5",
+    "op_go": false
+  },
+  "control_pulse_off": {
+    "reproduces_negative": true,
+    "monotone": true,
+    "crossover": false,
+    "causal_swap_pass": false,
+    "mutual_exclusion": false,
+    "continuous_takeover": false,
+    "winner_per_challenger": [
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "A",
+      "both"
+    ]
+  },
+  "control_wta_lesion": {
+    "both_ignite": true,
+    "A": 0.3333333333333333,
+    "B": 0.3333333333333333,
+    "drive_chal": 5000.0
+  },
+  "attribution": {
+    "label": "workspace single-content (A-B gap @ strongest-held challenger) via FS inhibition",
+    "intact_gap_hold": 0.3333333333333333,
+    "lesion_gap_hold": 0.0,
+    "fraction_attributable_to_inhibition": 1.0,
+    "held_challenger_drive": 5000.0
+  }
+}

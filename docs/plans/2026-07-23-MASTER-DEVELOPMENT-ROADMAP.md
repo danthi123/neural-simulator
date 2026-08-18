@@ -22,6 +22,23 @@ date: 2026-07-23
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-08-17 — WAVE-1 BANKING + REPRIORITIZATION + a parallel wave (read this FIRST).** Banked 8 wave-1 compute
+> verdicts on main (`1340108c`): **GO** second-order-metacog (type-2 SDT; host-weight-fit residual) + **GO** burndown_3E
+> brain-owns-generation (4 anti-cheats; only the DRAW is spiking); PARTIAL reslm-companion (rate-GO / spike-BOUNDARY) +
+> self-schema-metacog (wave-1 3/6 — **SUPERSEDED: a committed wave-2 is GO 6/6**, main-finding doc-sync owed); BOUNDARY
+> replay-v3 (target-FS loop never recruits) + longitudinal SMOKE-ONLY (the 7-day compressed-week was NEVER run — a ready
+> GPU job); **NEGATIVE** emerge-stream-eprop (the 0.036-nat gain is refuted — credit-DIRECTION-independent operating-point
+> nudge) + gap#4 rep_fwd_credit 0/12 (deep-credit-on-spikes wall — the DEPRIORITIZED parallel track, re-confirmed).
+> **REPRIORITIZED** (owner priority-check) onto the roadmap's actual #1: the T1-1 KEYSTONE (re-entrant deliberation loop —
+> the re-entrant CYCLE COUNT becomes an emergent read of the substrate's OWN spiking confidence/conflict, replacing the
+> host-fixed hop count) + converting GO de-risks into WIRED CONTINUITY. Parallel wave across GPU + 20-core CPU + mini-PC
+> pool 40/41/42: [KEYSTONE] re-entrant deliberation, [GEN-WIRE] wire burndown_3E→production, [MOUTH-EPROP] batched
+> substrate-forward e-prop, [dmnbasins] per-basin ignition; pool = gap#4 microcircuit surpass ×3 (never-run) + V1-pooler ×2.
+> **GNW WORKSPACE-EVICTION wall UPDATED:** Rung-2b (SFA) + Rung-2c (salience dis-inhibition) are BOTH BOUNDARY — the
+> substrate has an EMPTY metastable window (recurrence frozen far above the ignition knee → self-extinguish or co-ignite,
+> no tip-point); next = **Rung-2d dynamically-weakenable recurrence** (Mongillo-Barak-Tsodyks 2008 synaptic-WM STD at the
+> Mongillo operating point the banked STP negative never tested, OR a distributed-overwrite workspace).
+>
 > **🛠️ 2026-08-14 CONTINUATION WAVE (updates §0.1/§0.2 — read this FIRST):** a 13-lane autonomous wave landed on main
 > + both remotes.
 > **FINAL 5 (2026-08-14 late):** composer PARSER also joins pool #1 BY DEFAULT (`61e37158` GO 6/6 — parser inference on
