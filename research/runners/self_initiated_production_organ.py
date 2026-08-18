@@ -62,7 +62,7 @@ import numpy as np
 from research.runners._self_initiated_utterance_derisk import (
     _lexicon, _build_mouth, _utterance_stream,
 )
-from research.runners._self_initiation_multibasin_derisk import _run_condition, _selection, NOV_BY_NMEM
+from research.runners._self_initiation_multibasin_derisk import _selection, NOV_BY_NMEM
 from research.runners._self_initiated_spontaneous_thought_derisk import _curiosity_wants
 from research.runners._gap5_spontaneous_reactivation_derisk import GO_CFG
 from research.runners.one_brain_composer import OneBrainComposer
@@ -117,6 +117,34 @@ def _wander_rest_steps() -> int:
         return 4000 if get_backend()[1] == "cupy" else 500
     except Exception:
         return 500
+
+
+def selfinit_consolidate() -> bool:
+    """Default-ON. Fold the DMN per-basin encode-EQUALIZATION GO (2026-08-17,
+    `_dmn_per_basin_encode_equalization_derisk`) into the multi-basin CA3 store WRITE: a POST-ENCODE CONSOLIDATION
+    settle (the substrate's OWN BTSP running with zero input) converts the LAST-encoded basin's slow eligibility trace
+    to a synaptic weight like every other basin -> ALL N disjoint basins ignite -> the previously-dead TAIL concept
+    becomes self-initiable (coverage N/N vs the pre-integration 3/4). `BRAIN_SELF_INITIATE_CONSOLIDATE` in
+    {0,false,no,off} reverts to the plain sequential encode (the pre-integration 3/4) -- the consolidation-off LESION
+    control. A WRITE-path property only (the numpy light path never touches it), so it is byte-identical off + on any
+    reactive turn."""
+    v = os.environ.get("BRAIN_SELF_INITIATE_CONSOLIDATE")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def _settle_steps() -> int:
+    """The post-encode consolidation length (zero-input BTSP settle steps). Default 600 -- the DMN equalization GO
+    operating point (settle 600 converts the tail w 29->281, all basins strong). `BRAIN_SELF_INITIATE_SETTLE`
+    overrides (settle 0 == the sequential encode -> the settle itself is load-bearing, not the mode dispatch)."""
+    v = os.environ.get("BRAIN_SELF_INITIATE_SETTLE")
+    if v is not None:
+        try:
+            return max(0, int(v))
+        except ValueError:
+            pass
+    return 600
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -254,14 +282,27 @@ class SelfInitiationOrgan:
     def _wander_speak(self, lesion: bool) -> dict:
         """FULL path (cupy / forced): the real curiosity-biased noise CA3 wander SELECTS the basin (stochastic
         attractor competition under non-specific noise, 0 host content-draw), route the DOMINANT surfaced basin through
-        the mouth. LESION = the CA3-store NO-ENCODE control (no assembly forms -> no coherent surfacing -> collapse)."""
+        the mouth. The store WRITE folds in the DMN per-basin encode-EQUALIZATION GO (the post-encode CONSOLIDATION
+        settle, `selfinit_consolidate()` default-ON) so ALL N disjoint basins ignite and the previously-dead TAIL
+        concept is self-initiable -- reuse-by-import of `_run_wander(encode_mode="consolidated")` from the equalization
+        de-risk (the sequential arm is byte-for-byte `_prepare_balanced`, so consolidation-off reproduces the
+        pre-integration 3/4 exactly -> a clean lesion). LESION = the CA3-store NO-ENCODE control (do_encode=False -> no
+        assembly forms -> no coherent surfacing -> collapse)."""
         out = dict(self._base(lesion), path="ca3-wander-cupy")
         cfg = dict(GO_CFG); cfg["n_ca3"] = 2000; cfg["n_mem"] = int(self.n_mem)
+        # the CONSOLIDATION is a WRITE-path property; the store-lesion skips the encode entirely, so it stays sequential.
+        consolidate = selfinit_consolidate() and not lesion
+        encode_mode = "consolidated" if consolidate else "sequential"
+        cfg["settle_steps"] = _settle_steps()
+        out["encode_mode"] = encode_mode; out["settle_steps"] = int(cfg["settle_steps"])
         rest_steps = _wander_rest_steps()
         gains = [1.0] * self.n_mem if lesion else self.gains_on
         do_encode = not lesion
         ident = list(range(self.n_mem))
-        F, prep, diag = _run_condition(self.seed, cfg, rest_steps, noise_on=True, gains=gains, do_encode=do_encode)
+        # reuse-by-import: the equalization de-risk's wander (encode_mode dispatch -> consolidated settle or sequential)
+        from research.runners._dmn_per_basin_encode_equalization_derisk import _run_wander
+        F, prep, diag = _run_wander(self.seed, cfg, rest_steps, True, gains=gains, encode_mode=encode_mode,
+                                    do_encode=do_encode)
         st = _utterance_stream(F, prep["assemblies_local"], self.agents, self.utt_by_agent, self.decode_ok,
                                self.min_frac, ident)
         sel = _selection(F, prep["assemblies_local"], self.seed, self.min_frac)
@@ -269,7 +310,8 @@ class SelfInitiationOrgan:
                    n_concepts_spoken=int(st["n_concepts_spoken"]), share=st["share"],
                    examples=st["examples"][:4], max_pair_overlap=int(prep["max_pair_overlap"]),
                    weights_frozen=bool(diag.get("weights_frozen", False)),
-                   pooled_member=float(sel["pooled_member"]), pooled_random=float(sel["pooled_random"]))
+                   pooled_member=float(sel["pooled_member"]), pooled_random=float(sel["pooled_random"]),
+                   n_visited_coherent=int(sel["n_visited_coherent"]))
         counts = np.asarray(st["counts"], dtype=float)
         if counts.sum() > 0:
             self._dominant(out, self.agents[int(np.argmax(counts))])

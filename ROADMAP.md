@@ -544,6 +544,16 @@ its controls and lesions, and is tested at the required seed coverage.
   action selector in Gate A also has a four-seed positive result. These results
   establish small pieces of action and communication, not a self-directed
   conversational mind.
+- **Self-initiated utterance (production-wired, narrow):** on an idle turn the
+  brain selects a stored concept itself (a noise-seeded, curiosity-biased CA3
+  wander) and speaks it through the composer mouth — wired into `/api/brain-chat`,
+  on by default, moat-safe, and byte-identical on every reactive turn. As of
+  2026-08-18 its multi-basin CA3 store uses the DMN *consolidated* encode (a
+  post-encode BTSP settle), so all N basins ignite and the previously-dead tail
+  concept is reliably self-initiable (coverage 4/4 on 6/6 seeds, up from 3/4;
+  utterance magnitude 82% attributable to the consolidation). The timing is still
+  HTTP-triggered (a truly proactive idle-tick is deferred) and the heavy wander is
+  deferred on the numpy path — these host seams stand; the scaffold is not retired.
 - **Delayed reward is still open:** Gate B, which tests whether local neural
   activity can assign delayed credit to the action that caused an outcome, is
   a no-go. Unrelated or yoked reward still creates arbitrary preferences. The
