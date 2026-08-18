@@ -6,7 +6,7 @@ date: 2026-07-23
 
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
-**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-14** (2026-08-14 continuation wave — see the §0 continuation block below; prior big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
+**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-18** (2026-08-18 GNW-keystone + integration wave — see the §0 continuation block below; prior big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
 **Supersedes-by-extension:** `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` (that plan's F1–F6 are absorbed here as sub-faculties; this doc adds the full faculty map, the developmental staging spine, the theory-of-mind ladder the F-plan omitted, the walls ledger, and the parallelization map).
 **Anchors:** `GAP_CLOSURE_MISSION.md` · `CLAUDE.md` · the master directive (`project_master_directive_relentless_biological_emergence`).
 **⭐ FACULTY-MAP GAP AUDIT + PRIORITIZED BUILD PLAN (2026-08-12, a 12-agent grounded audit):** `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` — the honest reckoning (the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; several organ internals still host-designed) and the Tier-1/2/3 next-faculty priorities. The keystone is a NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation (organs talk via ignition not Python; ACT on the conflict/confidence signals we only report). Read it for the forward faculty priorities; this master doc's §§2/7/8 remain the faculty-tag / wall-ledger / parallelization detail.
@@ -22,6 +22,27 @@ date: 2026-07-23
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-08-18 — GNW-KEYSTONE + INTEGRATION WAVE (read this FIRST; consolidated on main, both remotes).** 8 landings.
+> **THE GNW KEYSTONE ADVANCED 3 RUNGS + a synthesis:** (1) **keystone rung-d LANDED GO-caveat 6/6** (`c22c8156`) — the
+> re-entrant deliberation loop-count EMERGES from the substrate's OWN spiking read (n_ignited ignition/conflict count),
+> not a host counter, with a real no-host-orchestration guard; the roadmap's #1. Caveat: the load-bearing read is the
+> ignition COUNT (binary), not graded NMDA-confidence (that needs the unbuilt Part-B rung). (2) **GNW eviction wall
+> SURPASSED — Rung-2d weakenable-recurrence GO 6/6** (`b3e0280e`): Mongillo-Barak-Tsodyks STD on the E→E loop opens the
+> empty metastable window (ignited→empty→ignited handover), STD attributable 1.0. (3) **STN→GPi stop-veto** (`cf726217`):
+> conflict SENSOR + SELECTIVITY are GO 6/6, but the global-clear EFFECTOR is a clean NO-GO 6/6 — external inhibition can't
+> drive the co-ignited localist attractor to n_ignited=0. **SYNTHESIS: the workspace is clearable from WITHIN (resource
+> depletion) + selectable (conflict sensor) but NOT from OUTSIDE (external inhibition) → next GNW rung = a
+> DISTRIBUTED-OVERWRITE + divisive-normalization workspace (Carandini-Heeger), reusing the STN sensor as effector
+> [BUILDING].** **INTEGRATION SPINE +2 production faculties:** open-ended GENERATE channel wired to `/api/brain-chat`
+> (master `BRAIN_GENERATE_CHANNEL`, default-ON, byte-identical-off, `abb795a6`); **SELF-INITIATED UTTERANCE = faculty #29**
+> (`1250516c`, ledger 28→29) — the first INTERNALLY-GENERATED turn class (idle turn → curiosity-selected CA3 concept →
+> spoken; timing still HTTP-triggered, true proactive idle-tick deferred). **DMN all-basins-ignite BOUNDARY→GO**
+> (`b32fce45`): the 2026-08-14 failure was POSITIONAL (BTSP slow eligibility trace never converts for the LAST basin), fix
+> = `consolidated` encode (post-encode settle) → 4/4 ignite; magnitude-scaling banked NEGATIVE (the "missing companion
+> process"). **self-schema-metacog doc-sync** — wave-1 PARTIAL corrected to the verified wave-2 GO 6/6 (`eebbc129`). IN
+> FLIGHT: [MOUTH-EPROP] batched substrate-forward e-prop 6-seed, [DIST-OVERWRITE] GNW next rung, [DMN-INTEGRATE] fold the
+> 4/4 DMN store into the self-init faculty. (Pool idle w/ stranded results — needs owner-keyed rsync, chipped.)
+>
 > **🗓️ 2026-08-17 — WAVE-1 BANKING + REPRIORITIZATION + a parallel wave (read this FIRST).** Banked 8 wave-1 compute
 > verdicts on main (`1340108c`): **GO** second-order-metacog (type-2 SDT; host-weight-fit residual) + **GO** burndown_3E
 > brain-owns-generation (4 anti-cheats; only the DRAW is spiking); PARTIAL reslm-companion (rate-GO / spike-BOUNDARY) +
