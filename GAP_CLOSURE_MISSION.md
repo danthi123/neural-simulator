@@ -27,8 +27,12 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > (`b3e0280e`): Mongillo-Barak-Tsodyks STD on the E→E loop opens the empty metastable window (ignited→empty→ignited
 > handover), STD attributable 1.0, byte-identical-off, 0 host-reset. (Runner-level de-risk; not yet production-wired.)
 >
-> **CURRENT FRONTIER:** the T1-1 KEYSTONE (neural workspace bus + RE-ENTRANT deliberation loop, roadmap #1) is building;
-> the workspace now HAS a working eviction mechanism (Rung-2d) + a next STOP effector (STN veto, building). Live lanes +
+> **CURRENT FRONTIER:** the T1-1 KEYSTONE rung-d **LANDED GO-caveat 6/6** (`c22c8156`): the re-entrant deliberation
+> loop-count EMERGES from the substrate's OWN spiking read (n_ignited ignition/conflict count) not a host counter, with
+> a real no-host-orchestration guard — first time the conflict signal is ACTED on. Caveat: the load-bearing read is the
+> ignition COUNT (binary) not graded NMDA-confidence (that needs the unbuilt Part-B rung); per-hop-reset form. The
+> workspace now also has a working EVICTION mechanism (Rung-2d GO) + the named STOP effector (rung-e STN→GPi veto,
+> building). Live lanes +
 > the adversarially-verified NEXT-RUNG QUEUE (survey `wzujthh3q`: 3 READY = STN-veto, self-initiated-utterance wiring,
 > V1-decorr; 7 settled) are in **`scratchpad/OVERNIGHT_STATE.md`** — the live working board this session.
 >
