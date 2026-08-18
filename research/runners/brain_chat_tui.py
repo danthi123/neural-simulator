@@ -115,6 +115,28 @@ _OPEN_ENDED_PATTERNS = [
     (re.compile(r"^guess(?:\s+.*?\babout (?:a |an |the )?(?P<topic>[a-z]+)\b)?"), True),
 ]
 
+# MASTER ON/OFF for the whole #3E open-ended GENERATE channel (the brain VOLUNTEERS a novel grounded HYPOTHESIS on
+# an explicit open-ended prompt via generative replay over its own fact-association graph). Follows this codebase's
+# universal faculty-switch convention ("default-ON; BRAIN_X=0 is the byte-identical-oracle escape" — cf.
+# BRAIN_AFFECT / BRAIN_SURPRISE / BRAIN_METACOG / BRAIN_CURIOSITY / BRAIN_SPIKING_MOUTH): the channel is already the
+# committed production default (ledger row open-ended-generation on_by_default:YES), so DEFAULT-ON preserves it.
+# BRAIN_GENERATE_CHANNEL=0 (or false/off/no) disables the WHOLE channel: `_parse_open_ended` returns _NOT_OPEN_ENDED
+# for EVERY turn, so gate()/gate_extract() fall through to the unchanged recall/abstain/learn/anaphora pipeline —
+# byte-identical, and NO generative proposer / spiking-draw organ is ever built. This is the single clean master
+# switch the channel previously lacked (the pre-existing BRAIN_SPIKING_DRAW/BRAIN_SPIKING_MOUTH flags only control
+# HOW the channel draws/speaks, not WHETHER it fires).
+_GENERATE_CHANNEL_DEFAULT_ON = True
+
+
+def _generate_channel_enabled():
+    """Whether the #3E open-ended GENERATE channel fires. Default = `_GENERATE_CHANNEL_DEFAULT_ON` (ON — the
+    committed production default + the codebase's default-ON-with-=0-escape convention). Set BRAIN_GENERATE_CHANNEL
+    to 0/false/off/no to disable the channel entirely (byte-identical to the pre-generate recall/abstain pipeline)."""
+    v = os.environ.get("BRAIN_GENERATE_CHANNEL")
+    if v is None:
+        return _GENERATE_CHANNEL_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
 
 # ============================================================================================================
 # Self-reference + a free-text question -> a (kind, cue) the brain answers against its stored SVO facts.
@@ -398,6 +420,11 @@ class ChatBrain:
         None: a bare 'guess' -> free generation), else the `_NOT_OPEN_ENDED` sentinel. Deliberately conservative:
         only the fixed lead-ins in `_OPEN_ENDED_PATTERNS` match, so a normal recall/teach/yes-no/anaphora turn
         never enters the generation branch and gate() stays byte-identical."""
+        # MASTER SWITCH (default-ON; BRAIN_GENERATE_CHANNEL=0 = byte-identical escape): when the GENERATE channel is
+        # OFF, treat EVERY turn as not-open-ended, so gate()/gate_extract() never enter the generation branch and the
+        # recall/abstain/learn/anaphora pipeline is byte-identical (no proposer / spiking-draw organ ever built).
+        if not _generate_channel_enabled():
+            return _NOT_OPEN_ENDED
         ql = question.lower().strip()
         for rx, _has_topic in _OPEN_ENDED_PATTERNS:
             m = rx.match(ql)
