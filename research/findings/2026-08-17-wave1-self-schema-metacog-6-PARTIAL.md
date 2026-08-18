@@ -6,6 +6,14 @@ mechanism: wave1-banking
 ---
 ## self-schema-metacog-6 — wave-1 verdict: PARTIAL / BOUNDARY (3/6 seeds GO)
 
+> **⚠️ SUPERSEDED (2026-08-18) → this PARTIAL is the DYNAMIC-POOL config; a stronger operating point is a GO 6/6.**
+> The wave-2 config `--learned-report-steps 80 --response1-tonic-pa 200` on the same runner reaches **verdict: GO,
+> n_go: 6/6** (committed `dc3978263`, on main): aggregate `research/findings/raw/lanes/metacog/metacog_self_schema_
+> dynamic_integration_6seed_report80_resp1plus200_fanout_aggregate.json` — mean self type-2 AUC 0.769, meta-d′ 2.18,
+> self-vs-meta spearman 0.95, and all four controls (domain-dissociation, meta-lesion, permuted-confidence,
+> self-read-lesion) collapse on ALL 6 seeds. The 3/6 below is a real boundary of the dynamic-pool op-point, NOT of the
+> faculty; the faculty is GO at the report80/resp1+200 point. No further compute owed.
+
 **Runner:** `_laneC_self_schema_metacog_integration_derisk` (numpy, 160 trials/seed).
 **Claim under test:** a self_schema confidence pool reads a dynamic meta/aPFC (Fleming-Daw type-2 SDT) confidence population through fixed on-substrate synapses, yielding a metacognitive self-report.
 
