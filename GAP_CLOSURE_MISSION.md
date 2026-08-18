@@ -13,7 +13,35 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-14 (READ FIRST — live resume point)
+## ⭐ STATE OF THE PROJECT — 2026-08-18 (READ FIRST — live resume point; supersedes the 2026-08-14 PAUSE below)
+
+> **North-star:** ONE all-spiking substrate that CONVERSES genuinely (affect + self-model + curiosity), all faculties
+> ON BY DEFAULT in production → TRUE CONSCIOUSNESS via complete faithful emulation. INTEGRATION-to-production-default
+> is the spine. Non-negotiables: brain-based-only · one-brain · no-defer · speed-secondary · honesty-boundary · 6-seed.
+>
+> **SINCE THE 2026-08-14 PAUSE (owner usage reset → "continue autonomous work"; LM training DONE, val_ppl ~43.1 banked;
+> full compute back — local 20-core + GPU + mini-PC pool 40/41/42):** 8 wave-1 6-seed verdicts BANKED on main
+> (`1340108c`); **GEN-WIRE LANDED** (`abb795a6d`) — master `BRAIN_GENERATE_CHANNEL` switch wires open-ended generation
+> into production `/api/brain-chat`, default-ON + byte-identical-off, 6-seed GO; **GNW workspace-eviction wall
+> SURPASSED** — Rung-2c salience dis-inhibition BOUNDARY (`09315f80`) → **Rung-2d weakenable-recurrence GO 6/6**
+> (`b3e0280e`): Mongillo-Barak-Tsodyks STD on the E→E loop opens the empty metastable window (ignited→empty→ignited
+> handover), STD attributable 1.0, byte-identical-off, 0 host-reset. (Runner-level de-risk; not yet production-wired.)
+>
+> **CURRENT FRONTIER:** the T1-1 KEYSTONE (neural workspace bus + RE-ENTRANT deliberation loop, roadmap #1) is building;
+> the workspace now HAS a working eviction mechanism (Rung-2d) + a next STOP effector (STN veto, building). Live lanes +
+> the adversarially-verified NEXT-RUNG QUEUE (survey `wzujthh3q`: 3 READY = STN-veto, self-initiated-utterance wiring,
+> V1-decorr; 7 settled) are in **`scratchpad/OVERNIGHT_STATE.md`** — the live working board this session.
+>
+> **⚠️ STALE-FRONTIER FIX (survey caught, #12 drift):** the "replay-v3 cortical-consolidation calibration BOUNDARY"
+> is NOT the memory-consolidation frontier — **replay-v5 (2026-08-06) already recruited the target-FS loop** (target
+> fired 445 spikes, both memories recover); the live frontier there is dentate pattern-separation + emergent
+> homeostatic self-calibration (v7). Do NOT re-attack v3 FS-recruitment.
+>
+> **NEXT COMMAND (literal resume):** read `scratchpad/OVERNIGHT_STATE.md` → consolidate the landing frontier lanes
+> ([KEYSTONE]/[MOUTH-EPROP]/[dmnbasins]/[STN-VETO]/[SELF-INIT]) onto main as they finish; re-stock drained tiers from
+> the NEXT-RUNG QUEUE; keep the heartbeat live. Do NOT repoint the primary dir (compute running).
+
+## ⭐ STATE OF THE PROJECT — 2026-08-14 (history — superseded by the 2026-08-18 header above)
 
 > **✅✅ 2026-08-14 CONTINUATION WAVE COMPLETE — 9 lanes consolidated on main + both remotes @ `2b0742d9` (full detail:
 > the MASTER ROADMAP §0 continuation block, synced `f959df3b`).** HEADLINE: the COMPOSER (the moat organ) now joins
