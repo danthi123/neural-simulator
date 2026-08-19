@@ -1,0 +1,215 @@
+{
+  "runner": "verify_swap_drives (in-process /api/brain-chat)",
+  "backend": "numpy",
+  "ts": "2026-08-19T08:25:21",
+  "part_a": {
+    "pass": true,
+    "topic_change_swap_rate": 1.0,
+    "same_topic_swap_rate": 0.0,
+    "lead_iff_swap": true,
+    "n_change": 3,
+    "n_change_swap": 3,
+    "n_hold": 3,
+    "n_hold_swap": 0,
+    "rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "kind": "establish",
+        "swapped": false,
+        "held_topic": "dog",
+        "lead": "",
+        "evicted_topic": null,
+        "reason": "first_thought",
+        "mm_peak": 0.05555555555555555,
+        "boost_max": 0.027777777777777776,
+        "answer": "The dog chases cat.",
+        "row_ok": true
+      },
+      {
+        "i": 1,
+        "msg": "what does the dog chase?",
+        "kind": "hold",
+        "swapped": false,
+        "held_topic": "dog",
+        "lead": "",
+        "evicted_topic": null,
+        "reason": "same_topic_hold",
+        "mm_peak": 0.06666666666666667,
+        "boost_max": 0.03333333333333333,
+        "answer": "The dog chases cat.",
+        "row_ok": true
+      },
+      {
+        "i": 2,
+        "msg": "what does the brain use?",
+        "kind": "change",
+        "swapped": true,
+        "held_topic": "brain",
+        "lead": "On brain, then \u2014 ",
+        "evicted_topic": "dog",
+        "reason": "topic_change_swap",
+        "mm_peak": 0.3277777777777778,
+        "boost_max": 0.16,
+        "answer": "On brain, then \u2014 The brain uses spikes.",
+        "row_ok": true
+      },
+      {
+        "i": 3,
+        "msg": "what does the brain store?",
+        "kind": "hold",
+        "swapped": false,
+        "held_topic": "brain",
+        "lead": "",
+        "evicted_topic": null,
+        "reason": "same_topic_hold",
+        "mm_peak": 0.03333333333333333,
+        "boost_max": 0.016666666666666666,
+        "answer": "The brain stores memory.",
+        "row_ok": true
+      },
+      {
+        "i": 4,
+        "msg": "what does the cat eat?",
+        "kind": "change",
+        "swapped": true,
+        "held_topic": "cat",
+        "lead": "On cat, then \u2014 ",
+        "evicted_topic": "brain",
+        "reason": "topic_change_swap",
+        "mm_peak": 0.29444444444444445,
+        "boost_max": 0.15666666666666668,
+        "answer": "On cat, then \u2014 The cat eats fish.",
+        "row_ok": true
+      },
+      {
+        "i": 5,
+        "msg": "tell me more",
+        "kind": "hold",
+        "swapped": false,
+        "held_topic": "cat",
+        "lead": "",
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "mm_peak": null,
+        "boost_max": null,
+        "answer": "The tell mes more.",
+        "row_ok": true
+      },
+      {
+        "i": 6,
+        "msg": "what does the dog chase?",
+        "kind": "change",
+        "swapped": true,
+        "held_topic": "dog",
+        "lead": "On dog, then \u2014 ",
+        "evicted_topic": "cat",
+        "reason": "topic_change_swap",
+        "mm_peak": 0.26666666666666666,
+        "boost_max": 0.16,
+        "answer": "On dog, then \u2014 The dog chases cat.",
+        "row_ok": true
+      }
+    ]
+  },
+  "part_b": {
+    "pass": true,
+    "intact_diff": true,
+    "lead_swap": "On dog, then \u2014 ",
+    "lead_hold": "",
+    "ans_swap": "On dog, then \u2014 The dog chases cat.",
+    "ans_hold": "The dog chases cat.",
+    "swapped_swap_ctx": true,
+    "swapped_hold_ctx": false,
+    "swap_lead_ok": true,
+    "hold_no_lead": true,
+    "base_identical": true,
+    "content_identical": true,
+    "lesion_lead_gone": true,
+    "lesion_no_swap": true,
+    "lesion_equals_base": true,
+    "lesion_reason": "mismatch_held_no_swap",
+    "lesion_mm_peak": 0.011111111111111112
+  },
+  "part_c": {
+    "pass": true,
+    "off_ever_has_key": false,
+    "on_always_has_key": true,
+    "neutral_byte_identical_all": true,
+    "content_invariant_all": true,
+    "c1_rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "off_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "on_stripped_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "The dog chases cat.",
+        "on_answer": "The dog chases cat."
+      },
+      {
+        "i": 1,
+        "msg": "what does the dog chase?",
+        "off_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "on_stripped_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "The dog chases cat.",
+        "on_answer": "The dog chases cat."
+      },
+      {
+        "i": 2,
+        "msg": "what does a unicorn fly?",
+        "off_md5": "7f15f54177fdc350804b64472afcb605",
+        "on_stripped_md5": "7f15f54177fdc350804b64472afcb605",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "I don't know about that.",
+        "on_answer": "I don't know about that."
+      }
+    ],
+    "c2_rows": [
+      {
+        "msg": "what does the dog chase?",
+        "content_md5": "350812dd8c839400dd103c4663302447",
+        "content_invariant": true,
+        "off_answer": "The dog chases cat.",
+        "swap_answer": "On dog, then \u2014 The dog chases cat.",
+        "hold_answer": "The dog chases cat.",
+        "swap_lead": "On dog, then \u2014 ",
+        "hold_lead": ""
+      }
+    ]
+  },
+  "git_sha": "f572ccf0c1bac81408b0198627562ad34a5aa5ed",
+  "preconditions": [
+    {
+      "name": "(A) the swap tracks the conversation (change swap-rate 1.00, hold 0.00, lead iff swap)",
+      "ok": true
+    },
+    {
+      "name": "(B) message-fixed: the held-topic context changes the reply lead (swap 'On dog' != hold '') with content identical",
+      "ok": true
+    },
+    {
+      "name": "(B) the neural lesion (mismatch detector silenced) collapses the swap -> the transition lead VANISHES -> == base",
+      "ok": true
+    },
+    {
+      "name": "(C) content fields swap-invariant across {off,swap,hold}",
+      "ok": true
+    },
+    {
+      "name": "(C) byte-identical-off: OFF never carries the key; a no-swap ON-minus-key == OFF",
+      "ok": true
+    }
+  ],
+  "verdict": "GO"
+}

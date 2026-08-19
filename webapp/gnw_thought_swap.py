@@ -256,14 +256,20 @@ class ThoughtSwapWorkspace:
     def _held_topic(self) -> Optional[str]:
         return self.slot_to_topic.get(self.held_slot) if self.held_slot is not None else None
 
-    def observe(self, topic: Optional[str]) -> dict:
+    def observe(self, topic: Optional[str], *, lesion: bool = False) -> dict:
         """Run one neural swap decision for the incoming `topic` against the currently-held topic. Returns a per-turn
-        info dict (never raises out; the caller degrades to no-op). The swap-vs-hold VERDICT is the substrate's."""
+        info dict (never raises out; the caller degrades to no-op). The swap-vs-hold VERDICT is the substrate's.
+
+        `lesion=True` threads `trigger_lesion=True` into `run_intention_swap` -> the spiking mismatch/salience
+        detector is given NO proposal drive (mm never fires -> the STD boost stays 0), so a salient TOPIC-CHANGE can
+        no longer trigger a swap (the incumbent holds). This is the de-risk's own NEURAL lesion (the swap DECISION
+        collapses at its source, the mismatch spikes), reused-by-import for the board-#85 load-bearing proof. Default
+        False -> byte-identical to the #77 observer (which never passes it)."""
         with self._lock:
             self.n_turns += 1
             info = {"acted": False, "turn": self.n_turns, "topic": topic, "swapped": False,
                     "held_topic_before": self._held_topic(), "held_topic": self._held_topic(),
-                    "evicted_topic": None, "reason": None, "seed": self.seed}
+                    "evicted_topic": None, "reason": None, "seed": self.seed, "lesioned": bool(lesion)}
             if topic is None:
                 info["reason"] = "no_topic_hold"
                 return info
@@ -275,7 +281,8 @@ class ThoughtSwapWorkspace:
                 # FIRST THOUGHT: establish + hold the opening topic (a match probe: ignite the slot, pred vetoes its own
                 # proposal -> it holds). Confirms the workspace ignites and holds a single coalition.
                 r = self._isolated(lambda: run_intention_swap(self._S, self._std, incumbent=slot, proposed=slot,
-                                                              proposal_pa=SALIENT_PA, isolate=True))
+                                                              proposal_pa=SALIENT_PA, trigger_lesion=bool(lesion),
+                                                              isolate=True))
                 self.held_slot = int(slot)
                 info.update({"acted": True, "reason": "first_thought", "held_slot": int(slot),
                              "held_topic": topic, "held_topic_before": None,
@@ -287,7 +294,8 @@ class ThoughtSwapWorkspace:
             # THERE IS A HELD TOPIC: present the incoming topic as a salient proposal; the substrate decides swap-vs-hold.
             incumbent = int(self.held_slot)
             r = self._isolated(lambda: run_intention_swap(self._S, self._std, incumbent=incumbent, proposed=int(slot),
-                                                          proposal_pa=SALIENT_PA, isolate=True))
+                                                          proposal_pa=SALIENT_PA, trigger_lesion=bool(lesion),
+                                                          isolate=True))
             swapped = bool(r["swapped"])
             evicted = None
             if swapped:
@@ -316,15 +324,17 @@ def get_swap_workspace(chat, *, seed: int = _DEFAULT_SEED) -> ThoughtSwapWorkspa
     return ws
 
 
-def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED) -> dict:
+def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED, lesion: bool = False) -> dict:
     """The production entry point: extract this turn's grounded topic from the user message and run one neural swap
     decision on the per-session held-topic workspace. Returns the per-turn `gnw_swap` info (also stashed on
-    `chat._last_gnw_swap`). Never raises out (on any error it returns an inert info dict so a turn can never crash)."""
+    `chat._last_gnw_swap`). Never raises out (on any error it returns an inert info dict so a turn can never crash).
+    `lesion=True` silences the mismatch detector (the de-risk's neural swap lesion) -> a topic-change can no longer
+    swap; default False -> byte-identical to the #77 observer."""
     try:
         composer = getattr(getattr(chat, "inner", None), "composer", None)
         topic = _extract_topic(message, composer)
         ws = get_swap_workspace(chat, seed=seed)
-        info = ws.observe(topic)
+        info = ws.observe(topic, lesion=bool(lesion))
     except Exception as e:  # never let the swap tracker crash / change a turn
         info = {"acted": False, "reason": f"error:{type(e).__name__}: {e}", "swapped": False}
     chat._last_gnw_swap = info

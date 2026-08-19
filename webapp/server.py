@@ -3000,6 +3000,30 @@ def _gnw_swap_flag_on() -> bool:
     return os.environ.get("BRAIN_GNW_SWAP", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# ─── SWAP DRIVES THE RESPONSE (board #85, 2026-08-19): the #77 neural thought-swap verdict made LOAD-BEARING on the
+# live turn — a neural SWAP (topic change) makes the reply LEAD with a topic-transition acknowledgment naming the
+# newly-held coalition ("On <newtopic>, then -- <answer>"); a HOLD stays silent (the natural discourse move). The
+# production-integration anchor. When `_SWAP_DRIVES_DEFAULT_ON` is False the block is gated on the env flag alone
+# (`BRAIN_SWAP_DRIVES=1` opts in for review); the response carries NO `swap_drives` key and NO transition lead ->
+# byte-identical. Flipping the anchor to True installs the coupling by default (a `BRAIN_SWAP_DRIVES=0` escape reverts
+# to the byte-identical oracle). This SUPERSEDES the #77 observer block below (a single neural swap runs per turn: the
+# drives path when on, else the #77 observer). See webapp/swap_drives_chat.py.
+_SWAP_DRIVES_DEFAULT_ON = True
+
+
+def _swap_drives_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-ON anchor: enabled UNLESS
+    `BRAIN_SWAP_DRIVES` is an explicit off (0/false/no/off). Default-OFF anchor: enabled only on an explicit truthy
+    opt-in. Kept lightweight so the disabled path does no swap work."""
+    try:
+        from webapp import swap_drives_chat as _SDC
+    except Exception:
+        return False
+    if _SWAP_DRIVES_DEFAULT_ON:
+        return not _SDC.swap_drives_off()
+    return _SDC.swap_drives_enabled()
+
+
 # ─── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19): the #81 graded-affect ladder read made LOAD-BEARING on the
 # live turn — the brain's felt valence x arousal (read NEURALLY off the #81 interoceptive ladder) colors the AFFECTIVE
 # EXPRESSION the reply leads with (a graded warmth/curtness marker) + its forthcomingness. The production-integration
@@ -3715,13 +3739,27 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # neural swap machinery: a DIFFERENT salient topic is a mismatch -> the spiking mismatch/salience detector fires ->
     # the incumbent coalition self-evicts (recurrence depression) -> the neural vacancy gate admits the newcomer (a
     # SWAP); the SAME topic MATCHES -> the pred interneuron vetoes the detector -> the current thought persists (NO
-    # swap). The swap-vs-hold VERDICT is the substrate's, not a host `if`. ADDITIVE + DEFAULT-OFF: `BRAIN_GNW_SWAP` must
-    # be truthy (the anchor `_GNW_SWAP_DEFAULT_ON` is False pending owner review) — otherwise this block is fully skipped
-    # (no workspace built, no `gnw_swap` key) -> the turn is BYTE-IDENTICAL. When enabled the tracker NEVER changes the
-    # answer (answer/abstained/recalled_svo/verified unchanged); it only stashes a per-turn `gnw_swap` info block that
-    # the two main return paths attach (mirroring how `gnw_bus` is attached). Reuse-by-import (NO sim/ edit). Guarded so
-    # a wiring failure can never crash a turn. See webapp/gnw_thought_swap.py.
-    if _GNW_SWAP_DEFAULT_ON or _gnw_swap_flag_on():
+    # swap). The swap-vs-hold VERDICT is the substrate's, not a host `if`. ONE neural swap runs per turn.
+    #
+    # SWAP DRIVES THE RESPONSE (board #85): when the drives path is on (`_swap_drives_on()`, default-ON anchor) it runs
+    # that single neural swap (with the lesion threaded) AND maps the verdict to a topic-transition LEAD prepended to
+    # the answer OUTERMOST — on a SWAP the reply announces the shift ("On <newtopic>, then -- <answer>"); a HOLD stays
+    # silent. `BRAIN_SWAP_DRIVES=0` -> the block is fully skipped (no key, no lead -> byte-identical oracle). LESION
+    # (`BRAIN_SWAP_DRIVES_LESION=1`): silence the mismatch detector -> the swap collapses -> the lead VANISHES (the
+    # load-bearing proof). When the drives path is OFF but the #77 observer is on (`BRAIN_GNW_SWAP`), the original
+    # observe runs instead (metadata-only, no lead). Never both (a double observe would double-advance the workspace).
+    # Reuse-by-import (NO sim/ edit). Guarded so a wiring failure can never crash a turn. See swap_drives_chat.py.
+    swap_drives_info = None
+    swap_drives_lead = ""
+    if _swap_drives_on():
+        try:
+            from webapp import swap_drives_chat as _SDC
+            swap_drives_info = _SDC.observe_turn(chat, msg)
+            swap_drives_lead = str(swap_drives_info.get("lead", "") or "")
+        except Exception as _sde:  # never let the swap coupling crash a turn — degrade to the un-led answer
+            swap_drives_info = {"on": True, "error": f"{type(_sde).__name__}: {_sde}", "lead": ""}
+            swap_drives_lead = ""
+    elif _GNW_SWAP_DEFAULT_ON or _gnw_swap_flag_on():
         try:
             from webapp import gnw_thought_swap as _gnw_swap_mod
             _gnw_swap_mod.observe_turn(chat, msg)
@@ -4606,6 +4644,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = affect_drives_lead + resp["answer"]
         if affect_drives_info is not None:
             resp["affect_drives"] = affect_drives_info
+        # SWAP DRIVES THE RESPONSE (board #85): prepend the topic-transition lead OUTERMOST (the discourse shift is
+        # announced first, ahead of the tone) + attach the additive `swap_drives` trace. Empty lead / no key when
+        # disabled or on a hold -> byte-identical. The content fields above are unchanged (the swap frames the reply,
+        # never a fact); the lead VANISHES under the neural mismatch-detector lesion (the load-bearing proof).
+        if swap_drives_lead:
+            resp["answer"] = swap_drives_lead + resp["answer"]
+        if swap_drives_info is not None:
+            resp["swap_drives"] = swap_drives_info
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -4732,6 +4778,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = affect_drives_lead + _resp["answer"]
     if affect_drives_info is not None:
         _resp["affect_drives"] = affect_drives_info
+    # SWAP DRIVES THE RESPONSE (board #85, single-fact path): prepend the topic-transition lead OUTERMOST + attach the
+    # additive `swap_drives` trace. Empty lead / no key when disabled or on a hold -> byte-identical. The content
+    # fields are unchanged (the swap frames the reply, never a fact); the lead VANISHES under the neural swap lesion.
+    if swap_drives_lead:
+        _resp["answer"] = swap_drives_lead + _resp["answer"]
+    if swap_drives_info is not None:
+        _resp["swap_drives"] = swap_drives_info
     return JSONResponse(_resp)
 
 
