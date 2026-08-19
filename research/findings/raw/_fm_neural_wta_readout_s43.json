@@ -1,0 +1,179 @@
+{
+  "runner": "_fm_neural_wta_readout_derisk",
+  "argv": [
+    "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+    "--seeds",
+    "43",
+    "--out",
+    "research/findings/raw/_fm_neural_wta_readout_s43.json"
+  ],
+  "seeds": [
+    43
+  ],
+  "results": [
+    {
+      "seed": 43,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 40,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.02598854166666666,
+      "res_mean_spk_read": 0.025523958333333333,
+      "ens_mean_spk_read": 0.009615364583333334,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 1.4,
+      "ffi_out_selected": 4.0,
+      "wta_ie_selected": 70.0,
+      "train_agree_neural_probe": 1.0,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "neural_wta_heldout": 0.56,
+      "neural_wta_train": 0.92,
+      "wta_lesion_heldout": 0.0,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.22576723531827267,
+      "dominant_rate_heldout": 0.0,
+      "wta_lesion_dominance": 0.3087611523998788,
+      "wta_lesion_dominant_rate": 0.0,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.48,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 571.8,
+      "verdict": {
+        "label": "fm neural-WTA world-model read-out (lateral-inhibition winner, load-bearing)",
+        "status": "UNDEFINED",
+        "go": false,
+        "undefined_reasons": [
+          "unmet: matched sham UNCHANGED (|d|<=0.08) (measured=0.08000000000000007 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>)"
+        ],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.02598854166666666 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.025523958333333333 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.009615364583333334 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/logit-argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": false,
+            "detail": "measured=0.08000000000000007 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained two-pathway synapses + a fixed lateral-inhibition WTA; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "wta_load_bearing(neural-fallback>=0.20)": true,
+          "beats_chance/prior(>=+0.20)": true,
+          "approaches_rate_ceiling(>=ceil-0.15)": false,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true
+        }
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "two-pathway rate == ridge (decomposition exact)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (feature)",
+      "ok": true,
+      "detail": "measured=0.02598854166666666 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (read)",
+      "ok": true,
+      "detail": "measured=0.025523958333333333 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ensembles active (read)",
+      "ok": true,
+      "detail": "measured=0.009615364583333334 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seeded (byte-identical substrate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content path clean (no host matmul/logit-argmax)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "matched sham UNCHANGED (|d|<=0.08)",
+      "ok": false,
+      "detail": "measured=0.08000000000000007 expect=<function _verdict.<locals>.<lambda> at 0x7fd3f1b66f20>",
+      "note": ""
+    }
+  ]
+}

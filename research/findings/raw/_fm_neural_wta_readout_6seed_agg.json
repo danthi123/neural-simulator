@@ -1,0 +1,292 @@
+{
+  "provenance": {
+    "aggregator": "research/runners/_aggregate_fm_neural_wta_seeds",
+    "argv": [
+      "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_aggregate_fm_neural_wta_seeds.py"
+    ],
+    "git_sha": "e0d77781ad32396463769359f0a9c1879251e5e5",
+    "generated_utc": "2026-08-19T09:52:56Z",
+    "inputs": [
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s100.json",
+        "seeds": [
+          100
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "100",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s100.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s100.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "100",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s100.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s101.json",
+        "seeds": [
+          101
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "101",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s101.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s101.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "101",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s101.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s102.json",
+        "seeds": [
+          102
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "102",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s102.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s102.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "102",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s102.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s42.json",
+        "seeds": [
+          42
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "42",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s42.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s42.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "42",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s42.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s43.json",
+        "seeds": [
+          43
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "43",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s43.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s43.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "43",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s43.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s44.json",
+        "seeds": [
+          44
+        ],
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "44",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s44.json"
+        ]
+      },
+      {
+        "file": "research/findings/raw/_fm_neural_wta_readout_s44.json.prov.json",
+        "seeds": null,
+        "runner_argv": [
+          "/home/dant123/Projects/sim-worktrees/park-drafts-cleanup/research/runners/_fm_neural_wta_readout_derisk.py",
+          "--seeds",
+          "44",
+          "--out",
+          "research/findings/raw/_fm_neural_wta_readout_s44.json"
+        ]
+      }
+    ],
+    "seeds": [
+      100,
+      101,
+      102,
+      42,
+      43,
+      44
+    ],
+    "sim_backend": "numpy",
+    "backend_note": "per-seed runs and this aggregation both ran on numpy/CPU (see each per-seed .prov.json sim_backend=numpy); recorded during park-drafts-cleanup landing."
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "neural_wta_heldout": 0.16,
+      "wta_lesion_heldout": 0.04,
+      "twopath_rate_heldout": 0.76,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.2697463527584249,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.16,
+      "untrained_control_heldout": 0.04,
+      "wta_ie_selected": 70.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "NO-GO"
+    },
+    {
+      "seed": 101,
+      "neural_wta_heldout": 0.52,
+      "wta_lesion_heldout": 0.16,
+      "twopath_rate_heldout": 0.76,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.22939460812924944,
+      "lesion_wp_heldout": 0.08,
+      "lesion_silence_heldout": 0.08,
+      "matched_sham_heldout": 0.48,
+      "untrained_control_heldout": 0.0,
+      "wta_ie_selected": 70.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "NO-GO"
+    },
+    {
+      "seed": 102,
+      "neural_wta_heldout": 0.12,
+      "wta_lesion_heldout": 0.16,
+      "twopath_rate_heldout": 0.64,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.3571944069789684,
+      "lesion_wp_heldout": 0.08,
+      "lesion_silence_heldout": 0.16,
+      "matched_sham_heldout": 0.12,
+      "untrained_control_heldout": 0.04,
+      "wta_ie_selected": 110.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "NO-GO"
+    },
+    {
+      "seed": 42,
+      "neural_wta_heldout": 0.6,
+      "wta_lesion_heldout": 0.16,
+      "twopath_rate_heldout": 0.84,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.2258605917918646,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.6,
+      "untrained_control_heldout": 0.0,
+      "wta_ie_selected": 40.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "NO-GO"
+    },
+    {
+      "seed": 43,
+      "neural_wta_heldout": 0.56,
+      "wta_lesion_heldout": 0.0,
+      "twopath_rate_heldout": 0.76,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.22576723531827267,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.48,
+      "untrained_control_heldout": 0.04,
+      "wta_ie_selected": 70.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "UNDEFINED"
+    },
+    {
+      "seed": 44,
+      "neural_wta_heldout": 0.04,
+      "wta_lesion_heldout": 0.0,
+      "twopath_rate_heldout": 0.72,
+      "prior_baseline_host_argmax": 0.447,
+      "winner_dominance_heldout": 0.3898179448738046,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.04,
+      "untrained_control_heldout": 0.04,
+      "wta_ie_selected": 70.0,
+      "chance": 0.04,
+      "seeded": true,
+      "content_path_clean": true,
+      "verdict_status": "NO-GO"
+    }
+  ],
+  "agg": {
+    "ridge_heldout_acc": 0.7466666666666666,
+    "twopath_rate_heldout": 0.7466666666666666,
+    "neural_wta_heldout": 0.3333333333333333,
+    "neural_wta_train": 0.5533333333333333,
+    "wta_lesion_heldout": 0.08666666666666667,
+    "prior_baseline_host_argmax": 0.447,
+    "winner_dominance_heldout": 0.2829635233084308,
+    "dominant_rate_heldout": 0.0,
+    "wta_lesion_dominance": 0.3162140925320926,
+    "lesion_wp_heldout": 0.04,
+    "lesion_silence_heldout": 0.05333333333333334,
+    "matched_sham_heldout": 0.3133333333333333,
+    "untrained_control_heldout": 0.02666666666666667,
+    "prior_lookup_heldout": 0.0,
+    "chance": 0.04,
+    "wta_ie_selected": 71.66666666666667,
+    "res_mean_spk_read": 0.023589062499999997,
+    "ens_mean_spk_read": 0.008100043402777778
+  },
+  "go": 0,
+  "n": 6
+}
