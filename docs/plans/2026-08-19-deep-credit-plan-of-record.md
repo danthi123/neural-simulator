@@ -65,5 +65,10 @@ beat it.** Backprop-less-at-depth is not something we should promise to solve.
   frontier (drive-couplings, memory, the faculties that actually gate talking). Deep-credit stays a documented, mapped
   boundary with its one open lever recorded here.
 
-Recommendation: **Option 2**, with Option 1 available as a single bounded run if/when we want to formally close gap#4 —
-never as "the crux." Deep credit does not gate conversation; the scaffold is the right production call.
+**DECISION (2026-08-19, owner-delegated best-judgment): Option 2.** Accept the scaffold-bridge; do NOT run a new
+deep-credit experiment; keep the crux on the conversation frontier. Rationale: deep credit does not gate conversation
+(verified three ways now, incl. the 2026-08-19 mouth arc confirming coverage AND window excluded → the read-SNR is the
+wall), and Option 1 would most likely CHARACTERISE the read-SNR wall, not beat it — not worth the GPU on a non-blocking
+residual. **Option 1 stays available as a single bounded read-SNR run (spike-count / ensemble / dendritic read, NOT
+window) if/when we ever want to formally close gap#4 — never as "the crux."** The running mouth job finishes + lands
+its finding as the last read-regime datapoint; no further deep-credit compute is queued.
