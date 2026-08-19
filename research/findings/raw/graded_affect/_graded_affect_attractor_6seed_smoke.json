@@ -1,0 +1,50 @@
+{
+  "determinism_ok": true,
+  "chosen_i_body": 260.0,
+  "chosen_w_int": 5.0,
+  "chosen_xinh": 0.0,
+  "sweep": [
+    {
+      "i_body": 260.0,
+      "w_int": 5.0,
+      "xinh": 0.0,
+      "ok": true,
+      "corr_a_felt": 0.950298475191109,
+      "felt_levels_seed": 5,
+      "corr_h_mood": 0.9517487975278605,
+      "mood_levels_seed": 7,
+      "corr_level_held": 0.9913597965727237,
+      "held_off_max": 0.0,
+      "felt_range": 0.07333333333333333,
+      "mood_range": 0.1431111111111111
+    },
+    {
+      "i_body": 260.0,
+      "w_int": 6.0,
+      "xinh": 0.0,
+      "ok": true,
+      "corr_a_felt": 0.9510570138755486,
+      "felt_levels_seed": 5,
+      "corr_h_mood": 0.9707124074855855,
+      "mood_levels_seed": 7,
+      "corr_level_held": 0.9494561314482322,
+      "held_off_max": 0.0,
+      "felt_range": 0.07775,
+      "mood_range": 0.15505555555555556
+    },
+    {
+      "i_body": 260.0,
+      "w_int": 7.0,
+      "xinh": 0.0,
+      "ok": true,
+      "corr_a_felt": 0.9380084766947906,
+      "felt_levels_seed": 4,
+      "corr_h_mood": 0.9589480799302185,
+      "mood_levels_seed": 5,
+      "corr_level_held": 0.948678479025151,
+      "held_off_max": 0.0,
+      "felt_range": 0.07816666666666666,
+      "mood_range": 0.15480555555555556
+    }
+  ]
+}
