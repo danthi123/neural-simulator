@@ -183,6 +183,16 @@ indistinguishable from the summary alone.** I misread "byte-identical arms" as "
 wrong for a different reason each time. Distinguish them by measuring the lever's effect on a continuous quantity
 *before* interpreting the outcome.
 
+## "CORRECTLY DID NOTHING" MUST NOT PAD THE HEADLINE (2026-08-19, from Shiu & Sterne et al. 2024)
+
+When a lesion / screen / anti-cheat sweep is DOMINATED by cases where the model CORRECTLY predicts NO effect, those
+easy true-negatives inflate the headline accuracy. **Report the score BOTH with AND without the correct-silence
+cases, and LEAD with the harder number.** Precedent: Shiu & Sterne et al. 2024 (Nature 634:210) reported 91% of
+predictions matched, and SEPARATELY 84% excluding the split-GAL4 screen where most cell types correctly did nothing
+— the 84% is the honest headline. Here: whenever a sweep's "collapse"/lesion arms are mostly expected-zero, state how
+many cases are correct-silence and give the score net of them, so a wall of trivial true-negatives cannot read as a
+strong result. Pairs with the single-seed / headline gates.
+
 ## What this skill MUST NOT do
 - Rubber-stamp — a skeptic that "confirms" without trying to break it did nothing. The prompt must push to REFUTE.
 - Verify only the happy path — test the claim against the case you'd EXPECT to break it (a run you KNOW is broken, the seed you fear).
