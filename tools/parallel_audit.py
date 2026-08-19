@@ -113,6 +113,16 @@ def main():
         print("✓ SATURATED (compute full — holding for lanes is the async pattern).")
     else:
         print("✓ SATURATED (%d lanes cover the %d ready tasks)." % (total_lanes, n_open))
+
+    # COST-ROUTING — agent tokens count toward the Claude usage limit; mechanical work must go to non-Claude
+    # machinery. Fires whenever cheap idle compute exists, so the routing is enforced every cycle, not remembered.
+    if idle_pool > 10 or idle_local > 6:
+        print("   💸 COST-ROUTING (agent tokens burn the usage limit): put MECHANICAL work on non-Claude machinery —")
+        print("      • CPU param grids / TUNING → `tools/sweep_pool.sh` (headless on the %d idle pool cores, 0 tokens)"
+              % idle_pool)
+        print("      • GPU sweeps/tuning → `tools/gpu_queue.sh add '<cmd>'` (headless, sequential, VRAM-contention-safe,")
+        print("        pausable for gaming); multi-SEED of one config → controller fans out `--seeds` directly")
+        print("      • reserve AGENTS for genuine BUILDS/integration (new runner, wiring) that need judgment.")
     return 0
 
 
