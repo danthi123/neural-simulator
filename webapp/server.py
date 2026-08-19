@@ -2976,6 +2976,11 @@ _SESSION_SELFINIT: dict = {}
 # byte-identically (the row STAYS on_by_default:YES). Flipping this to False would turn the faculty OFF by default.
 _SELF_INITIATE_DEFAULT_ON = True
 
+# ─── GNW CONFIDENCE/CONFLICT-GATED DELIBERATION (2026-08-18, T1-1 rung d): the DEFAULT-ON master switch (the production-
+# integration anchor). BRAIN_GNW_DELIBERATE=0 makes the installed gate wrapper a pure pass-through (byte-identical); the
+# row STAYS on_by_default:YES. Flipping this to False would turn the faculty OFF by default. See webapp/gnw_deliberation.py.
+_GNW_DELIBERATE_DEFAULT_ON = True
+
 
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
@@ -3597,6 +3602,24 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _gnw_bus_mod.install_bus_gate(chat)
     except Exception:
         pass
+
+    # GNW CONFIDENCE/CONFLICT-GATED DELIBERATION — THE KEYSTONE, WIRED (T1-1 rung d, 2026-08-18): after the bus commits,
+    # the WORKSPACE's OWN spiking conflict read (n_ignited + the nmda_norm confidence balance) DECIDES commit-vs-abstain.
+    # When the brain has >=2 genuinely-competing stored answers under the SAME (agent, action) (today's bus commits the
+    # arbitrary FIRST-match), the candidates are driven EQUALLY into the P1.2 GNW workspace; a sustained co-ignition /
+    # low-confidence read (the keystone acc_conflict_gate) makes the brain ABSTAIN ("I don't know") instead of committing
+    # the shaky answer (deliberation-until-sure + halt-if-unsure — the "ACT on the conflict/confidence signals we only
+    # REPORT" audit item). DEFAULT-ON (BRAIN_GNW_DELIBERATE=0 -> pure pass-through, byte-identical). LESION lever
+    # (BRAIN_GNW_DELIBERATE_LESION=1): the conflict read runs on the recurrence-ZEROED workspace -> the conflict cannot
+    # co-ignite -> the brain commits the shaky answer again (the abstain is the SPIKING competition, not a host len()).
+    # MOAT-safe: it can ONLY ADD abstentions on a genuine multi-answer conflict; never un-abstains, never invents a fact,
+    # never flips a confident single-answer recall (n_ignited==1). Reuse-by-import (NO sim/ edit). See webapp/gnw_deliberation.py.
+    if _GNW_DELIBERATE_DEFAULT_ON:
+        try:
+            from webapp import gnw_deliberation as _gnw_delib_mod
+            _gnw_delib_mod.install_deliberation_gate(chat)
+        except Exception:
+            pass
 
     # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
     # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +

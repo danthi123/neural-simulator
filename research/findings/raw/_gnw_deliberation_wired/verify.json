@@ -1,0 +1,390 @@
+{
+  "runner": "_gnw_deliberation_wired_verify",
+  "go": true,
+  "status": "GO",
+  "gateA_abstain_on_conflict": true,
+  "gateB_byte_identical": true,
+  "gateC_lesion_load_bearing": true,
+  "gateD_moat_safe": true,
+  "seed_sweep": {
+    "rows": [
+      {
+        "seed": 42,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "two_cand": "ABSTAIN",
+        "one_cand": "ADVANCE",
+        "lesion_two": "COMMIT",
+        "conf2": 0.0,
+        "n2": 2,
+        "conf1": 1.0,
+        "n1": 1,
+        "nl": 0,
+        "ok": true
+      }
+    ],
+    "n_ok": 6,
+    "n": 6,
+    "all_ok": true
+  },
+  "attribution_to_workspace": 1.0,
+  "conflict": {
+    "q": "what does dog chase?",
+    "n_candidates": 2,
+    "pristine_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "wired_svo": null,
+    "lesion_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "off_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "wired_info": {
+      "decision": "ABSTAIN",
+      "abstained": true,
+      "n_candidates": 2,
+      "conf": 0.0,
+      "n_ignited": 2
+    },
+    "lesion_info": {
+      "decision": "COMMIT",
+      "abstained": false,
+      "n_candidates": 2,
+      "conf": 0.0,
+      "n_ignited": 0
+    },
+    "single_pristine": [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    "single_wired": [
+      "cat",
+      "eat",
+      "fish"
+    ],
+    "abstain_on_conflict": true,
+    "lesion_commits": true,
+    "off_commits": true,
+    "single_not_flipped": true
+  },
+  "handler_conflict": {
+    "default_abstained": true,
+    "off_abstained": false,
+    "lesion_abstained": false,
+    "default_answer": "I don't know about that.",
+    "off_answer": "The dog chases cat.",
+    "lesion_answer": "The dog chases cat.",
+    "default_recalled": null,
+    "off_recalled": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "ok": true
+  },
+  "byte_identical": {
+    "rows": [
+      {
+        "cls": "stored",
+        "q": "what does dog chase?",
+        "pristine": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "wired": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "stored",
+        "q": "what does cat eat?",
+        "pristine": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "wired": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "stored",
+        "q": "what does brain use?",
+        "pristine": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "wired": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "stored",
+        "q": "what does brain learn?",
+        "pristine": [
+          "brain",
+          "learn",
+          "words"
+        ],
+        "wired": [
+          "brain",
+          "learn",
+          "words"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "unstored",
+        "q": "what does fish fly?",
+        "pristine": null,
+        "wired": null,
+        "identical": true
+      },
+      {
+        "cls": "inconsistent",
+        "q": "what does dog eat?",
+        "pristine": null,
+        "wired": null,
+        "identical": true
+      },
+      {
+        "cls": "inconsistent",
+        "q": "what does cat chase?",
+        "pristine": null,
+        "wired": null,
+        "identical": true
+      },
+      {
+        "cls": "self",
+        "q": "what are you",
+        "pristine": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "wired": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "acquisition",
+        "q": "sky hold cloud",
+        "pristine": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "wired": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "acquisition",
+        "q": "what does sky hold?",
+        "pristine": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "wired": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "anaphora",
+        "q": "what does dog chase?",
+        "pristine": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "wired": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "anaphora",
+        "q": "what does it eat?",
+        "pristine": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "wired": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "identical": true
+      }
+    ],
+    "n_identical": 12,
+    "n_total": 12,
+    "ok": true
+  },
+  "handler_hash_on": "334cc206a5a23981e0e2ae1724501255",
+  "handler_hash_off": "334cc206a5a23981e0e2ae1724501255",
+  "handler_hash_identical": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) abstain-on-conflict: pristine COMMITS, wired ABSTAINS (real gate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "pristine=['dog', 'chase', 'cat'] wired=None n_candidates=2"
+    },
+    {
+      "kind": "require",
+      "name": "(A) 6-seed robustness: the workspace conflict read separates 2-cand->ABSTAIN / 1-cand->ADVANCE / lesion-2-cand->COMMIT on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "6/6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "(A) real handler: default ABSTAINS, flag-off + lesion COMMIT",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "default_abstained=True off=False lesion=False"
+    },
+    {
+      "kind": "require",
+      "name": "(B) reactive panel byte-identical: wired gate == pristine gate (in-process)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "12/12 turns identical"
+    },
+    {
+      "kind": "require",
+      "name": "(B) real handler byte-identical: flag default-ON == BRAIN_GNW_DELIBERATE=0 (separate processes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "on=334cc206a5a23981e0e2ae1724501255 off=334cc206a5a23981e0e2ae1724501255"
+    },
+    {
+      "kind": "require",
+      "name": "(C) LESION load-bearing: recurrence-zeroed workspace RE-COMMITS the shaky answer",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "lesion_svo=['dog', 'chase', 'cat'] info={'decision': 'COMMIT', 'abstained': False, 'n_candidates': 2, 'conf': 0.0, 'n_ignited': 0}"
+    },
+    {
+      "kind": "require",
+      "name": "(C) flag-off is a pure pass-through (commits == pristine)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D) moat-safe: a single clean answer is NOT over-abstained/flipped",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "single pristine=['cat', 'eat', 'fish'] wired=['cat', 'eat', 'fish']"
+    },
+    {
+      "kind": "control",
+      "name": "the abstain is owed to the SPIKING workspace conflict read (intact ABSTAINS, lesion COMMITS)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/... = 0) in the handler checks",
+      "why": "disabled ONLY for speed; they run identically on every flag arm, so the comparison is unaffected"
+    }
+  ],
+  "undefined_reasons": []
+}

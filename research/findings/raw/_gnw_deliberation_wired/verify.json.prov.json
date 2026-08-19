@@ -1,0 +1,26 @@
+{
+ "run_id": "1787112363-2139520",
+ "runner": "research/runners/_gnw_deliberation_wired_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gnw-deliberation-wire/research/runners/_gnw_deliberation_wired_verify.py"
+ ],
+ "git_sha": "f0bc9ee91",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T00:06:03",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 570.2,
+ "corpus_check_query": "wire GNW confidence/conflict-gated deliberation abstain into production brain-chat",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_deliberation_wired/verify.json"
+}
