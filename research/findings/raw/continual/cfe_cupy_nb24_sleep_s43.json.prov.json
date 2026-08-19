@@ -1,0 +1,30 @@
+{
+ "run_id": "1786427497-3918281",
+ "runner": "research/runners/continual_forgetting_eval.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/continual_forgetting_eval.py",
+  "--seed",
+  "43",
+  "--phase-b-events",
+  "24",
+  "--enable-sleep-consolidation",
+  "--skip-sanity-check",
+  "--out-stats",
+  "research/findings/raw/continual/cfe_cupy_nb24_sleep_s43.json"
+ ],
+ "git_sha": "44bb51b1a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-11T01:51:37",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5192.7,
+ "corpus_check_query": "continual learning retain N facts without forgetting past the replay cap",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/continual/cfe_cupy_nb24_sleep_s43.json"
+}
