@@ -1,0 +1,559 @@
+{
+  "runner": "_gnw_quench_evict_overwrite_derisk",
+  "mode": "smoke",
+  "seed": 42,
+  "grid": [
+    {
+      "quench_w": 2.0,
+      "quench_window": 120,
+      "b_overlap": 0,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.007333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.008,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 170.62419929504395,
+          "empty_steps": 104,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.016,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 2.0,
+      "quench_window": 120,
+      "b_overlap": 40,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.007333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.0085,
+          "old_rate_midclear": 0.32875,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 174.01362190246581,
+          "empty_steps": 104,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.016666666666666666,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 4.0,
+      "quench_window": 120,
+      "b_overlap": 0,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 2,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.33575,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 185.87018737792968,
+          "empty_steps": 88,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.016666666666666666,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 4.0,
+      "quench_window": 120,
+      "b_overlap": 40,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 2,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3335,
+          "old_rate_midclear": 0.32875,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 217.34194145202636,
+          "empty_steps": 50,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 2,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 8.0,
+      "quench_window": 120,
+      "b_overlap": 0,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 253.24562950134276,
+          "empty_steps": 16,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 8.0,
+      "quench_window": 120,
+      "b_overlap": 40,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.32875,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 260.1358615875244,
+          "empty_steps": 16,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 16.0,
+      "quench_window": 120,
+      "b_overlap": 0,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 318.36053161621095,
+          "empty_steps": 13,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    },
+    {
+      "quench_w": 16.0,
+      "quench_window": 120,
+      "b_overlap": 40,
+      "quench_thal_w": 0.0,
+      "seed_go": false,
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.32875,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 325.90172271728517,
+          "empty_steps": 13,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      }
+    }
+  ]
+}

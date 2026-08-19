@@ -1,0 +1,1693 @@
+{
+  "runner": "_gnw_quench_evict_overwrite_derisk",
+  "mode": "six_seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "operating_point": {
+    "quench_w": 16.0,
+    "quench_window": 120,
+    "quench_drive_pA": 2500.0,
+    "quench_n": 30,
+    "quench_thal_w": 0.0,
+    "b_overlap": 0,
+    "w_rec": 34.0,
+    "heterogeneity": true,
+    "reignite_hold": 120
+  },
+  "counts": {
+    "seed_go": 0,
+    "swap_ok": 0,
+    "open_loop": 6,
+    "load_bearing": 0,
+    "standing_fails": 6,
+    "no_quench_fails": 6,
+    "reignite_ok": 0,
+    "additive_substrate": 0,
+    "n_seeds": 6
+  },
+  "pooled_go": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 318.36053161621095,
+          "empty_steps": 13,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2414814814814815,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.01,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.009333333333333334,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.012666666666666666,
+            0.002
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.32875,
+            0.3295,
+            0.33075
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 2,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 318.36053161621095,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 13,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.015333333333333332,
+            0.002
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.33,
+            0.32825,
+            0.3385
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 2,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.33,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.32825,
+          "old_rate_midclear": 0.34175,
+          "gi_rest": 147.4848175048828,
+          "gi_midclear": 317.8693229675293,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 7,
+          "quench_clear_rate": 0.25055555555555553,
+          "quench_read_rate": 0.2414814814814815,
+          "quench_hold_rate": 0.003611111111111111,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.011333333333333334,
+            0.002
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.01,
+            0.0013333333333333333
+          ],
+          "hold_rates": [
+            0.33,
+            0.00925,
+            0.00125
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.33,
+          "new_rate_post": 0.01,
+          "new_rate_hold": 0.00925,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 151.79786682128906,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 12,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.012666666666666666,
+            0.002
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.009333333333333334,
+            0.0013333333333333333
+          ],
+          "hold_rates": [
+            0.32875,
+            0.0115,
+            0.0015
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32875,
+          "new_rate_post": 0.009333333333333334,
+          "new_rate_hold": 0.0115,
+          "old_rate_midclear": 0.34425,
+          "gi_rest": 149.5832061767578,
+          "gi_midclear": 151.57465858459472,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 104,
+          "quench_clear_rate": 0.2511111111111111,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "913e2d484319e0e90d4a4f1acda19e5d96f621557ab00323bfd58185cb33d48c"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.327,
+          "new_rate_hold": 0.34175,
+          "old_rate_midclear": 0.33975,
+          "gi_rest": 153.52352905273438,
+          "gi_midclear": 323.38259201049806,
+          "empty_steps": 7,
+          "quench_clear_rate": 0.2586111111111111,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2562962962962963,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.008,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.007333333333333333,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.012666666666666666,
+            0.014
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.327,
+            0.34175,
+            0.332
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 1,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.327,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.34175,
+          "old_rate_midclear": 0.33975,
+          "gi_rest": 153.52352905273438,
+          "gi_midclear": 323.38259201049806,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 7,
+          "quench_clear_rate": 0.2586111111111111,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.011333333333333334,
+            0.012
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.3315,
+            0.32875,
+            0.32925
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.3315,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.32875,
+          "old_rate_midclear": 0.339,
+          "gi_rest": 150.7652130126953,
+          "gi_midclear": 323.35630798339844,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.25833333333333336,
+          "quench_read_rate": 0.2562962962962963,
+          "quench_hold_rate": 0.003611111111111111,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.011333333333333334,
+            0.014
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.008,
+            0.01
+          ],
+          "hold_rates": [
+            0.33075,
+            0.00725,
+            0.00925
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.33075,
+          "new_rate_post": 0.008,
+          "new_rate_hold": 0.00725,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 157.6846160888672,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.012666666666666666,
+            0.014
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.007333333333333333,
+            0.009333333333333334
+          ],
+          "hold_rates": [
+            0.327,
+            0.007,
+            0.0095
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.327,
+          "new_rate_post": 0.007333333333333333,
+          "new_rate_hold": 0.007,
+          "old_rate_midclear": 0.33975,
+          "gi_rest": 153.52352905273438,
+          "gi_midclear": 153.3276065826416,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 52,
+          "quench_clear_rate": 0.2586111111111111,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "786c898d4b41dfb8650478c4c2e9d85e510e3405affe421dd67b160e7ab22ddc"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32675,
+          "new_rate_hold": 0.32775,
+          "old_rate_midclear": 0.33775,
+          "gi_rest": 155.26873779296875,
+          "gi_midclear": 321.7093559265137,
+          "empty_steps": 49,
+          "quench_clear_rate": 0.2613888888888889,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2525925925925926,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.006,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.004666666666666667,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006666666666666667,
+            0.008
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.32675,
+            0.32775,
+            0.33875
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 2,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32675,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.32775,
+          "old_rate_midclear": 0.33775,
+          "gi_rest": 155.26873779296875,
+          "gi_midclear": 321.7093559265137,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 49,
+          "quench_clear_rate": 0.2613888888888889,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006666666666666667,
+            0.008
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.3265,
+            0.33,
+            0.3275
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 1,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.3265,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.33,
+          "old_rate_midclear": 0.34025,
+          "gi_rest": 149.66726684570312,
+          "gi_midclear": 323.97277908325196,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 7,
+          "quench_clear_rate": 0.26055555555555554,
+          "quench_read_rate": 0.2525925925925926,
+          "quench_hold_rate": 0.004722222222222222,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.005333333333333333,
+            0.005333333333333333
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.006,
+            0.005333333333333333
+          ],
+          "hold_rates": [
+            0.32725,
+            0.00575,
+            0.0055
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32725,
+          "new_rate_post": 0.006,
+          "new_rate_hold": 0.00575,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 152.37149047851562,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 12,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006666666666666667,
+            0.008
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.004666666666666667,
+            0.005333333333333333
+          ],
+          "hold_rates": [
+            0.32675,
+            0.005,
+            0.00525
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32675,
+          "new_rate_post": 0.004666666666666667,
+          "new_rate_hold": 0.005,
+          "old_rate_midclear": 0.33775,
+          "gi_rest": 155.26873779296875,
+          "gi_midclear": 150.98396186828614,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 52,
+          "quench_clear_rate": 0.2613888888888889,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "12da583ee1a07be9547d3eb763da0605f782c51f6320fb69679698d5dd9333d7"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.34275,
+          "new_rate_hold": 0.333,
+          "old_rate_midclear": 0.32825,
+          "gi_rest": 163.03854370117188,
+          "gi_midclear": 328.000040435791,
+          "empty_steps": 15,
+          "quench_clear_rate": 0.26416666666666666,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2562962962962963,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.005333333333333333,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.004666666666666667,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.011333333333333334,
+            0.016
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.34275,
+            0.333,
+            0.33725
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.34275,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.333,
+          "old_rate_midclear": 0.32825,
+          "gi_rest": 163.03854370117188,
+          "gi_midclear": 328.000040435791,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 15,
+          "quench_clear_rate": 0.26416666666666666,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.004666666666666667,
+            0.014
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.34125,
+            0.32875,
+            0.32825
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.34125,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.32875,
+          "old_rate_midclear": 0.3285,
+          "gi_rest": 164.6403350830078,
+          "gi_midclear": 329.8152503967285,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 5,
+          "quench_clear_rate": 0.26472222222222225,
+          "quench_read_rate": 0.2562962962962963,
+          "quench_hold_rate": 0.0030555555555555557,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.008666666666666666,
+            0.010666666666666666
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.005333333333333333,
+            0.007333333333333333
+          ],
+          "hold_rates": [
+            0.34125,
+            0.00575,
+            0.00675
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.34125,
+          "new_rate_post": 0.005333333333333333,
+          "new_rate_hold": 0.00575,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 170.32525634765625,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 12,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.011333333333333334,
+            0.016
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.004666666666666667,
+            0.008666666666666666
+          ],
+          "hold_rates": [
+            0.34275,
+            0.00525,
+            0.00825
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.34275,
+          "new_rate_post": 0.004666666666666667,
+          "new_rate_hold": 0.00525,
+          "old_rate_midclear": 0.32825,
+          "gi_rest": 163.03854370117188,
+          "gi_midclear": 151.99554710388185,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 103,
+          "quench_clear_rate": 0.26416666666666666,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "0b4c45106e6c5ac22192a522cfa2e90c8e3edd3698f6485c497cb37b7d3aa5f2"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.331,
+          "new_rate_hold": 0.33575,
+          "old_rate_midclear": 0.33575,
+          "gi_rest": 146.9844970703125,
+          "gi_midclear": 305.18869400024414,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.25,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.23777777777777778,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.004,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.005333333333333333,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006666666666666667,
+            0.006
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.331,
+            0.33575,
+            0.33125
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 1,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.331,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.33575,
+          "old_rate_midclear": 0.33575,
+          "gi_rest": 146.9844970703125,
+          "gi_midclear": 305.18869400024414,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.25,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006,
+            0.005333333333333333
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.3315,
+            0.33875,
+            0.33825
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 1,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.3315,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.33875,
+          "old_rate_midclear": 0.33575,
+          "gi_rest": 153.44204711914062,
+          "gi_midclear": 306.10971755981444,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.25,
+          "quench_read_rate": 0.23777777777777778,
+          "quench_hold_rate": 0.0033333333333333335,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.005333333333333333,
+            0.0026666666666666666
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.004,
+            0.004666666666666667
+          ],
+          "hold_rates": [
+            0.3375,
+            0.0055,
+            0.005
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.3375,
+          "new_rate_post": 0.004,
+          "new_rate_hold": 0.0055,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 148.7267303466797,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.006666666666666667,
+            0.006
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.005333333333333333,
+            0.004666666666666667
+          ],
+          "hold_rates": [
+            0.331,
+            0.00525,
+            0.005
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.331,
+          "new_rate_post": 0.005333333333333333,
+          "new_rate_hold": 0.00525,
+          "old_rate_midclear": 0.33575,
+          "gi_rest": 146.9844970703125,
+          "gi_midclear": 144.28436622619628,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 0,
+          "quench_clear_rate": 0.25,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "a94c943d3a7abce74547165f12a4971e42a2e91f5b31ca247ceb2f74fa203e60"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "verdict": "NO-GO",
+      "seed_go": false,
+      "operating_point": {
+        "quench_w": 16.0,
+        "quench_window": 120,
+        "quench_drive_pA": 2500.0,
+        "quench_n": 30,
+        "quench_thal_w": 0.0,
+        "b_overlap": 0,
+        "w_rec": 34.0,
+        "heterogeneity": true,
+        "reignite_hold": 120
+      },
+      "go_gate": {
+        "swap_ok": false,
+        "open_loop": true,
+        "load_bearing": false,
+        "standing_fails": true,
+        "no_quench_fails": true,
+        "reignite_ok": false
+      },
+      "anti_cheats": {
+        "quench_load_bearing": false,
+        "quench_open_loop": true,
+        "standing_brake_fails": true,
+        "no_quench_partial_reproduced": true,
+        "reignition_survives": false,
+        "seed_deterministic": true,
+        "additive_substrate": false
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 0,
+          "n_pre": 1,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "old_residual_hold": 0.32825,
+          "new_rate_hold": 0.3255,
+          "old_rate_midclear": 0.34275,
+          "gi_rest": 156.5620574951172,
+          "gi_midclear": 328.9032958984375,
+          "empty_steps": 56,
+          "quench_clear_rate": 0.2569444444444444,
+          "quench_read_rate": 0.0
+        },
+        "standing": {
+          "winner_post": 0,
+          "n_post": 3,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.3333333333333333,
+          "quench_read_rate": 0.2518518518518518,
+          "went_empty": false,
+          "swapped": false
+        },
+        "no_quench": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0013333333333333333,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0033333333333333335,
+          "co_ignition": false,
+          "incumbent_held": true,
+          "swapped": false
+        }
+      },
+      "measurements": {
+        "headline": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.004666666666666667,
+            0.010666666666666666
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.32825,
+            0.3255,
+            0.331
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 2,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32825,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.3255,
+          "old_rate_midclear": 0.34275,
+          "gi_rest": 156.5620574951172,
+          "gi_midclear": 328.9032958984375,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 56,
+          "quench_clear_rate": 0.2569444444444444,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "standing": {
+          "mode": "standing",
+          "pre_rates": [
+            0.3333333333333333,
+            0.005333333333333333,
+            0.015333333333333332
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          "hold_rates": [
+            0.327,
+            0.3295,
+            0.33575
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 2,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 3,
+          "n_ignited_hold": 3,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "AMBIGUOUS_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.327,
+          "new_rate_post": 0.3333333333333333,
+          "new_rate_hold": 0.3295,
+          "old_rate_midclear": 0.34275,
+          "gi_rest": 147.7473907470703,
+          "gi_midclear": 329.60573348999026,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 6,
+          "quench_clear_rate": 0.2569444444444444,
+          "quench_read_rate": 0.2518518518518518,
+          "quench_hold_rate": 0.0044444444444444444,
+          "co_ignition": true,
+          "went_empty": false,
+          "incumbent_held": false
+        },
+        "no_quench": {
+          "mode": "no_quench",
+          "pre_rates": [
+            0.3333333333333333,
+            0.007333333333333333,
+            0.013333333333333334
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.0013333333333333333,
+            0.008666666666666666
+          ],
+          "hold_rates": [
+            0.327,
+            0.00275,
+            0.0065
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.327,
+          "new_rate_post": 0.0013333333333333333,
+          "new_rate_hold": 0.00275,
+          "old_rate_midclear": -1.0,
+          "gi_rest": 166.19076538085938,
+          "gi_midclear": -1.0,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 12,
+          "quench_clear_rate": 0.0,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "lesion": {
+          "mode": "transient",
+          "pre_rates": [
+            0.3333333333333333,
+            0.004666666666666667,
+            0.010666666666666666
+          ],
+          "post_rates": [
+            0.3333333333333333,
+            0.0033333333333333335,
+            0.006666666666666667
+          ],
+          "hold_rates": [
+            0.32825,
+            0.003,
+            0.00675
+          ],
+          "winner_pre": 0,
+          "winner_post": 0,
+          "winner_hold": 0,
+          "n_ignited_pre": 1,
+          "n_ignited_post": 1,
+          "n_ignited_hold": 1,
+          "delivered_pre": "COMMIT_p0",
+          "delivered_post": "COMMIT_p0",
+          "old_residual_post": 0.3333333333333333,
+          "old_residual_hold": 0.32825,
+          "new_rate_post": 0.0033333333333333335,
+          "new_rate_hold": 0.003,
+          "old_rate_midclear": 0.34275,
+          "gi_rest": 156.5620574951172,
+          "gi_midclear": 151.25909347534179,
+          "swapped": false,
+          "reignite_ok": false,
+          "empty_steps": 104,
+          "quench_clear_rate": 0.2569444444444444,
+          "quench_read_rate": 0.0,
+          "quench_hold_rate": 0.0,
+          "co_ignition": false,
+          "went_empty": false,
+          "incumbent_held": true
+        },
+        "substrate_hash": "ac0491c229d94bedd378ffa6841f3f38f563822ec41823e76161934718c9f7c9"
+      },
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "the clear is an EXTERNAL FS pulse, not recurrence depletion"
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ]
+}

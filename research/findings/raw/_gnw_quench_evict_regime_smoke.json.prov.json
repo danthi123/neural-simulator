@@ -1,0 +1,41 @@
+{
+ "run_id": "1787117778-2300452",
+ "runner": "research/runners/_gnw_quench_evict_overwrite_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-gnw-evict/research/runners/_gnw_quench_evict_overwrite_derisk.py",
+  "--smoke",
+  "--seed",
+  "42",
+  "--w-grid",
+  "2",
+  "4",
+  "8",
+  "16",
+  "--window-grid",
+  "120",
+  "--overlap-grid",
+  "0",
+  "40",
+  "--json",
+  "research/findings/raw/_gnw_quench_evict_regime_smoke.json"
+ ],
+ "git_sha": "e06282c3f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T01:36:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1533.9,
+ "corpus_check_query": "GNW workspace eviction via active transient open-loop quench (affect-active-clear transfer)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_quench_evict_regime_smoke.json"
+}
