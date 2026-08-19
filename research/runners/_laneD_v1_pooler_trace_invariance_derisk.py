@@ -396,6 +396,106 @@ class TraceV1Pooler(OnSubstratePooler):
             boost = np.exp(2.0 * (self.k_win / self.n_col - duty / ((e + 1) * max(len(stream), 1))))
 
 
+class AntiHebbianDecorr:
+    """Foldiak (1990) local anti-Hebbian lateral-inhibition sparse-coding decorrelation
+    (SAILnet, Zylberberg-Murphy-DeWeese 2011 PLoS CB 7(10):e1002250), inserted between the
+    V1-complex features and the trace pooler.
+
+    Feedforward is the IDENTITY (each decorrelation unit reads one V1-complex feature); the
+    LEARNED object is the symmetric, non-negative, per-pair lateral INHIBITORY weight W_ij
+    between units. The output settles under recurrent inhibition::
+
+        y = relu(x - W @ y)           (bounded: y_i <= x_i, W >= 0, so stable by construction)
+
+    W is updated anti-Hebbianly toward a co-activity target p^2 (SAILnet's inhibitory rule)::
+
+        dW_ij = lr * (y_i y_j - p^2)   for i != j, then W = max(W, 0), symmetric, zero-diagonal.
+
+    Pairs that co-fire ABOVE the target grow lateral inhibition (are pushed apart / decorrelated);
+    pairs below the target relax toward zero. p^2 defaults to the natural mean pairwise co-activity
+    of the input (measured once at W=0), so the rule removes the EXCESS/redundant correlation
+    (the position-covarying structure) rather than driving all co-activity to zero -- this is the
+    principled guard against the over-sparsification boundary (2026-05-31: dead codes + within-
+    identity reliability collapse). This is PLASTIC per-pair decorrelation, NOT fixed inhibition,
+    divisive normalization, or homeostatic synaptic scaling (all already refuted on this route).
+
+    lr == 0 keeps W at its zero init, so `transform` is the exact identity (y = relu(x) = x for the
+    non-negative V1-complex features): byte-identical to the no-decorrelation control.
+    """
+
+    def __init__(self, n_dim: int, lr: float, target_p: float, n_settle: int) -> None:
+        self.n_dim = int(n_dim)
+        self.lr = float(lr)
+        self.target_p = float(target_p)  # <0 => auto-calibrate to natural mean co-activity
+        self.n_settle = int(n_settle)
+        self.W = np.zeros((self.n_dim, self.n_dim), dtype=np.float64)
+        self._p2 = 0.0
+
+    def _settle(self, x: np.ndarray) -> np.ndarray:
+        y = x.astype(np.float64, copy=True)
+        for _ in range(self.n_settle):
+            y = np.maximum(x - self.W @ y, 0.0)
+        return y
+
+    def _auto_p2(self, X: np.ndarray) -> float:
+        # Mean off-diagonal second moment of the input (settled at W=0 => y=x): the natural
+        # mean pairwise co-activity. Off-diagonal only; the diagonal (self-moments) is excluded.
+        Xd = X.astype(np.float64)
+        C = (Xd.T @ Xd) / max(1, Xd.shape[0])
+        d = self.n_dim
+        offdiag_sum = float(C.sum() - np.trace(C))
+        n_off = d * (d - 1)
+        return offdiag_sum / max(1, n_off)
+
+    def learn(self, X: np.ndarray, epochs: int) -> None:
+        """Learn W on the train V1-complex ensemble (unsupervised, deterministic order)."""
+        if self.lr <= 0.0:
+            return  # exact identity transform (anti-cheat: lr=0 == no-decorrelation control)
+        self._p2 = self.target_p ** 2 if self.target_p >= 0.0 else self._auto_p2(X)
+        Xd = X.astype(np.float64)
+        for _ in range(int(epochs)):
+            for i in range(Xd.shape[0]):
+                y = self._settle(Xd[i])
+                dW = self.lr * (np.outer(y, y) - self._p2)
+                np.fill_diagonal(dW, 0.0)
+                self.W += dW
+                np.maximum(self.W, 0.0, out=self.W)
+                self.W = 0.5 * (self.W + self.W.T)  # keep symmetric
+
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        if self.lr <= 0.0 or not np.any(self.W):
+            return X  # identity: byte-identical to the no-decorrelation control
+        return np.stack([self._settle(X[i]) for i in range(X.shape[0])]).astype(np.float32)
+
+
+def _mean_abs_offdiag_corr(X: np.ndarray) -> float:
+    """Mean |Pearson correlation| over feature pairs that vary (instrument: did decorr decorrelate?)."""
+    Xd = X.astype(np.float64)
+    std = Xd.std(axis=0)
+    live = std > 1e-9
+    if int(live.sum()) < 2:
+        return 0.0
+    C = np.corrcoef(Xd[:, live], rowvar=False)
+    d = C.shape[0]
+    off = np.abs(C[~np.eye(d, dtype=bool)])
+    return float(np.mean(off)) if off.size else 0.0
+
+
+def _within_reliability(codes: np.ndarray, labels: np.ndarray) -> float:
+    """Mean within-category cosine of held codes (the over-sparsification reliability floor)."""
+    c = _cos_normalize(codes)
+    vals = []
+    for lab in np.unique(labels):
+        idx = np.where(labels == lab)[0]
+        if idx.size < 2:
+            continue
+        sub = c[idx]
+        sim = sub @ sub.T
+        iu = np.triu_indices(idx.size, k=1)
+        vals.extend(sim[iu].tolist())
+    return float(np.mean(vals)) if vals else 0.0
+
+
 def _make_stream_indices(
     labels: np.ndarray,
     pos_labels: np.ndarray,
@@ -488,6 +588,39 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
     held_v1 = _normalize_complex(held_v1, a.complex_norm, a.n_orientations, a.n_pos)
     scramble_v1 = _normalize_complex(scramble_v1, a.complex_norm, a.n_orientations, a.n_pos)
 
+    # --- Learned anti-Hebbian lateral-inhibition DECORRELATION (Foldiak/SAILnet), default-off ---
+    # Plastic per-pair decorrelation on the V1-complex features BEFORE the pooler top-k selection.
+    # Learned once per seed on the TRAIN ensemble, then applied identically to train/held/scramble
+    # (and therefore to the V1-direct control, which reads the same decorrelated features): a fair,
+    # like-for-like representation stage. lr=0 => identity => byte-identical to the no-decorr control.
+    decorr_info: dict[str, float] = {"decorr": bool(a.decorr)}
+    if a.decorr:
+        corr_before = _mean_abs_offdiag_corr(train_v1)
+        decorr = AntiHebbianDecorr(
+            n_dim=int(train_v1.shape[1]),
+            lr=a.decorr_lr,
+            target_p=a.decorr_target_p,
+            n_settle=a.decorr_settle,
+        )
+        decorr.learn(train_v1, a.decorr_epochs)
+        train_v1 = decorr.transform(train_v1)
+        held_v1 = decorr.transform(held_v1)
+        scramble_v1 = decorr.transform(scramble_v1)
+        corr_after = _mean_abs_offdiag_corr(train_v1)
+        # Over-sparsification guard 1/2: feature-level alive fraction (dead V1 units after decorr).
+        feat_alive = float(np.mean((train_v1 > 1e-6).any(axis=0)))
+        decorr_info.update(
+            decorr_lr=float(a.decorr_lr),
+            decorr_target_p=float(a.decorr_target_p),
+            decorr_p2=round(float(decorr._p2), 6),
+            decorr_epochs=int(a.decorr_epochs),
+            decorr_settle=int(a.decorr_settle),
+            mean_abs_offdiag_corr_before=round(corr_before, 4),
+            mean_abs_offdiag_corr_after=round(corr_after, 4),
+            corr_reduction=round(corr_before - corr_after, 4),
+            train_feat_alive_frac=round(feat_alive, 4),
+        )
+
     train_feats = _top_features(train_v1, a.t_active)
     held_feats = _top_features(held_v1, a.t_active)
     scramble_feats = _top_features(scramble_v1, a.t_active)
@@ -534,6 +667,20 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
     scramble_collapses = grouped_metrics["scramble_decode"] <= chance + a.decode_margin
     trace_go = bool(decode_ok and beats_shuffled and beats_v1 and beats_frozen and scramble_collapses)
 
+    # Over-sparsification guard 2/2 (2026-05-31 boundary): pooler columns must stay ALIVE and the
+    # within-identity code must stay RELIABLE -- decorrelation that reaches separation only by killing
+    # codes (dead columns / collapsed within-category cosine) is the refuted failure mode, not a win.
+    pooler_col_alive_frac = float(np.mean(grouped_held.sum(axis=0) > 0.0))
+    within_reliability = _within_reliability(grouped_held, held_labels)
+    over_sparsified = bool(pooler_col_alive_frac < a.alive_floor or within_reliability < a.reliability_floor)
+    guard = {
+        "pooler_col_alive_frac": round(pooler_col_alive_frac, 4),
+        "within_identity_reliability": round(within_reliability, 4),
+        "alive_floor": a.alive_floor,
+        "reliability_floor": a.reliability_floor,
+        "over_sparsified": over_sparsified,
+    }
+
     return {
         "seed": seed,
         "chance": round(chance, 4),
@@ -545,6 +692,8 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
         "v1_pooler_trace": grouped_metrics,
         "shuffled_temporal": shuffled_metrics,
         "no_learning": frozen_metrics,
+        "decorr": decorr_info,
+        "over_sparsification_guard": guard,
         "decision": {
             "trace_margin_delta_vs_shuffled": round(float(trace_margin_delta), 4),
             "pooler_margin_delta_vs_v1": round(float(pooler_v1_delta), 4),
@@ -599,6 +748,36 @@ def main() -> int:
         "pruned at winner-SELECTION time (O'Reilly kWTA / PV feedback inhibition). 0 => plain top-k "
         "(exact legacy behavior). Applied identically in learning, inference, and all control arms.",
     )
+    parser.add_argument(
+        "--decorr",
+        action="store_true",
+        help="Learned anti-Hebbian lateral-inhibition DECORRELATION (Foldiak 1990 / SAILnet) on the "
+        "V1-complex features BEFORE the pooler top-k. Plastic per-pair inhibition W_ij learned on the "
+        "train ensemble; output settles y=relu(x-W y); anti-Hebbian dW=lr(y_i y_j - p^2). Default off; "
+        "with --decorr-lr 0 the transform is the exact identity (byte-identical to the no-decorr control).",
+    )
+    parser.add_argument(
+        "--decorr-lr",
+        type=float,
+        default=0.0,
+        help="Anti-Hebbian learning rate for the lateral inhibitory weights (0 => identity/no-op).",
+    )
+    parser.add_argument(
+        "--decorr-target-p",
+        type=float,
+        default=-1.0,
+        help="Co-activity target p for the anti-Hebbian rule (dW=lr(y_i y_j - p^2)). <0 => auto-calibrate "
+        "p^2 to the natural mean pairwise co-activity of the input (removes EXCESS correlation only; the "
+        "principled guard against the 2026-05-31 over-sparsification boundary).",
+    )
+    parser.add_argument("--decorr-epochs", type=int, default=8,
+                        help="Passes over the train ensemble for anti-Hebbian decorrelation learning.")
+    parser.add_argument("--decorr-settle", type=int, default=4,
+                        help="Recurrent settling iterations for y=relu(x-W y).")
+    parser.add_argument("--alive-floor", type=float, default=0.15,
+                        help="Over-sparsification guard: min fraction of pooler columns that must stay alive.")
+    parser.add_argument("--reliability-floor", type=float, default=0.30,
+                        help="Over-sparsification guard: min within-identity held-code cosine.")
     parser.add_argument("--epochs", type=int, default=12)
     parser.add_argument("--n-bouts", type=int, default=18)
     parser.add_argument("--bout-len", type=int, default=E50_BOUT_LEN)
@@ -642,10 +821,13 @@ def main() -> int:
         sm = row["shuffled_temporal"]
         vm = row["v1_complex"]
         dec = row["decision"]
+        g = row["over_sparsification_guard"]
         print(
             f"  [seed {seed}] pooler held-decode {gm['heldpos_decode']:.2f} "
             f"margin {gm['held_train_margin']:+.3f} | shuffled {sm['held_train_margin']:+.3f} "
-            f"| V1 {vm['held_train_margin']:+.3f} | trace_go={dec['trace_go']}",
+            f"| V1 {vm['held_train_margin']:+.3f} | trace_go={dec['trace_go']} "
+            f"| alive={g['pooler_col_alive_frac']:.2f} within={g['within_identity_reliability']:.2f} "
+            f"oversparse={g['over_sparsified']}",
             flush=True,
         )
 
@@ -667,11 +849,23 @@ def main() -> int:
             vals.append(float(cur))
         return float(np.mean(vals)) if vals else 0.0
 
+    over_sparsified_flags = [bool(r["over_sparsification_guard"]["over_sparsified"]) for r in rows]
+
+    def _gmean(key: str) -> float:
+        vals = [float(r["over_sparsification_guard"][key]) for r in rows]
+        return round(float(np.mean(vals)), 4) if vals else 0.0
+
     summary = {
         "probe": "laneD_v1_pooler_trace_invariance",
         "overall_verdict": overall,
         "seeds": args.seeds,
         "per_seed_trace_go": trace_go_flags,
+        "decorr": bool(args.decorr),
+        "decorr_lr": float(args.decorr_lr),
+        "per_seed_over_sparsified": over_sparsified_flags,
+        "any_over_sparsified": bool(any(over_sparsified_flags)),
+        "pooler_col_alive_frac_mean": _gmean("pooler_col_alive_frac"),
+        "within_identity_reliability_mean": _gmean("within_identity_reliability"),
         "chance": round(1.0 / args.n_categories, 4),
         "v1_pooler_trace_heldpos_decode_mean": round(mean(("v1_pooler_trace", "heldpos_decode")), 4),
         "v1_pooler_trace_margin_mean": round(mean(("v1_pooler_trace", "held_train_margin")), 4),
@@ -691,6 +885,11 @@ def main() -> int:
         "config": vars(args),
         "elapsed_seconds": round(time.time() - t0, 1),
     }
+    if args.decorr:
+        red = [float(r["decorr"].get("corr_reduction", 0.0)) for r in rows]
+        alive = [float(r["decorr"].get("train_feat_alive_frac", 0.0)) for r in rows]
+        summary["decorr_corr_reduction_mean"] = round(float(np.mean(red)), 4) if red else 0.0
+        summary["decorr_train_feat_alive_frac_mean"] = round(float(np.mean(alive)), 4) if alive else 0.0
     lever(
         "trace margin vs shuffled",
         summary["shuffled_temporal_margin_mean"],

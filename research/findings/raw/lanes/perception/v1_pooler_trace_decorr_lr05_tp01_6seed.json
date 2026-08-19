@@ -1,0 +1,683 @@
+{
+  "summary": {
+    "probe": "laneD_v1_pooler_trace_invariance",
+    "overall_verdict": "TRACE-ROUTED-NOGO",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "per_seed_trace_go": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "decorr": true,
+    "decorr_lr": 0.05,
+    "per_seed_over_sparsified": [
+      true,
+      false,
+      true,
+      false,
+      false,
+      true
+    ],
+    "any_over_sparsified": true,
+    "pooler_col_alive_frac_mean": 0.1479,
+    "within_identity_reliability_mean": 0.5424,
+    "chance": 0.3333,
+    "v1_pooler_trace_heldpos_decode_mean": 0.3403,
+    "v1_pooler_trace_margin_mean": 0.0039,
+    "shuffled_temporal_margin_mean": -0.0174,
+    "v1_complex_margin_mean": -0.0037,
+    "no_learning_margin_mean": 0.0003,
+    "mechanism": "Pixels -> existing Gabor/V1 -> V1-complex top features -> OnSubstratePooler permanences in cp_connections, trained with the EMERGE-50 Foldiak trace rule over same-category position-jittered temporal bouts. The shuffled-temporal arm uses the same multiset in randomized order.",
+    "go_gate": "Per seed: held-position decode >= chance+decode_margin, grouped trace held-to-train margin beats shuffled-temporal by trace_delta, beats V1-complex by v1_delta, beats no-learning by trace_delta, and per-image pixel scramble does not decode above chance+decode_margin.",
+    "config": {
+      "seeds": [
+        42,
+        43,
+        44,
+        100,
+        101,
+        102
+      ],
+      "n_categories": 3,
+      "n_train_pos": 4,
+      "n_held_pos": 1,
+      "position_axis": "y",
+      "n_ex": 8,
+      "image_size": 32,
+      "bar_len_frac": 0.35,
+      "orientation_offset_deg": 0.0,
+      "pixel_noise": 0.035,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "rf_radius": 4,
+      "complex_norm": "local_orient_div",
+      "t_active": 24,
+      "n_col": 240,
+      "k_win": 8,
+      "inhib_frac": 0.67,
+      "decorr": true,
+      "decorr_lr": 0.05,
+      "decorr_target_p": 0.1,
+      "decorr_epochs": 8,
+      "decorr_settle": 4,
+      "alive_floor": 0.15,
+      "reliability_floor": 0.3,
+      "epochs": 12,
+      "n_bouts": 18,
+      "bout_len": 12,
+      "trace_decay": 0.75,
+      "pool_lr_pot": 0.08,
+      "pool_lr_depress": 0.01,
+      "homeo_scale": false,
+      "homeo_target": -1.0,
+      "decode_margin": 0.1,
+      "trace_delta": 0.05,
+      "v1_delta": 0.02,
+      "out": "research/findings/raw/lanes/perception/v1_pooler_trace_decorr_lr05_tp01_6seed.json"
+    },
+    "elapsed_seconds": 138.7,
+    "decorr_corr_reduction_mean": 0.0021,
+    "decorr_train_feat_alive_frac_mean": 1.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.1304,
+        "held_train_cross_cos": 0.1263,
+        "held_train_margin": 0.0041,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.2917,
+        "held_train_same_cos": 0.2308,
+        "held_train_cross_cos": 0.1525,
+        "held_train_margin": 0.0783,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.6667,
+        "scramble_decode": 0.2083,
+        "held_train_same_cos": 0.3545,
+        "held_train_cross_cos": 0.3253,
+        "held_train_margin": 0.0292,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.375,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.0787,
+        "held_train_cross_cos": 0.0776,
+        "held_train_margin": 0.0011,
+        "mean_code_activity": 0.033
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1239,
+        "mean_abs_offdiag_corr_after": 0.1213,
+        "corr_reduction": 0.0025,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.1208,
+        "within_identity_reliability": 0.5908,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": true
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.0491,
+        "pooler_margin_delta_vs_v1": 0.0742,
+        "decode_ok": true,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": true,
+        "trace_beats_no_learning": true,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 43,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.375,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.1156,
+        "held_train_cross_cos": 0.1193,
+        "held_train_margin": -0.0037,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.25,
+        "scramble_decode": 0.4167,
+        "held_train_same_cos": 0.1515,
+        "held_train_cross_cos": 0.1404,
+        "held_train_margin": 0.0111,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.2917,
+        "scramble_decode": 0.375,
+        "held_train_same_cos": 0.2915,
+        "held_train_cross_cos": 0.3224,
+        "held_train_margin": -0.0309,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.4583,
+        "scramble_decode": 0.5,
+        "held_train_same_cos": 0.0557,
+        "held_train_cross_cos": 0.0567,
+        "held_train_margin": -0.001,
+        "mean_code_activity": 0.0328
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1209,
+        "mean_abs_offdiag_corr_after": 0.1189,
+        "corr_reduction": 0.002,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.1958,
+        "within_identity_reliability": 0.4122,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": false
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.042,
+        "pooler_margin_delta_vs_v1": 0.0148,
+        "decode_ok": false,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": false,
+        "trace_beats_no_learning": false,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 44,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.125,
+        "scramble_decode": 0.375,
+        "held_train_same_cos": 0.1063,
+        "held_train_cross_cos": 0.1191,
+        "held_train_margin": -0.0128,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.25,
+        "scramble_decode": 0.4583,
+        "held_train_same_cos": 0.1158,
+        "held_train_cross_cos": 0.1239,
+        "held_train_margin": -0.008,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.2917,
+        "scramble_decode": 0.2083,
+        "held_train_same_cos": 0.1524,
+        "held_train_cross_cos": 0.1645,
+        "held_train_margin": -0.0121,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.4583,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.052,
+        "held_train_cross_cos": 0.0407,
+        "held_train_margin": 0.0112,
+        "mean_code_activity": 0.0326
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1207,
+        "mean_abs_offdiag_corr_after": 0.119,
+        "corr_reduction": 0.0017,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.1,
+        "within_identity_reliability": 0.6577,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": true
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.0041,
+        "pooler_margin_delta_vs_v1": 0.0048,
+        "decode_ok": false,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": false,
+        "trace_beats_no_learning": false,
+        "scramble_collapses": false,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 100,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.25,
+        "held_train_same_cos": 0.1192,
+        "held_train_cross_cos": 0.1186,
+        "held_train_margin": 0.0006,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.1667,
+        "scramble_decode": 0.375,
+        "held_train_same_cos": 0.1113,
+        "held_train_cross_cos": 0.1943,
+        "held_train_margin": -0.083,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.0417,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.3275,
+        "held_train_cross_cos": 0.4009,
+        "held_train_margin": -0.0734,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.375,
+        "held_train_same_cos": 0.0732,
+        "held_train_cross_cos": 0.0686,
+        "held_train_margin": 0.0047,
+        "mean_code_activity": 0.0326
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1217,
+        "mean_abs_offdiag_corr_after": 0.1196,
+        "corr_reduction": 0.0021,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.225,
+        "within_identity_reliability": 0.4286,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": false
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": -0.0096,
+        "pooler_margin_delta_vs_v1": -0.0836,
+        "decode_ok": false,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": false,
+        "trace_beats_no_learning": false,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 101,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.375,
+        "scramble_decode": 0.4167,
+        "held_train_same_cos": 0.111,
+        "held_train_cross_cos": 0.1141,
+        "held_train_margin": -0.0031,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.4167,
+        "scramble_decode": 0.25,
+        "held_train_same_cos": 0.168,
+        "held_train_cross_cos": 0.1637,
+        "held_train_margin": 0.0042,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.2917,
+        "scramble_decode": 0.2917,
+        "held_train_same_cos": 0.1898,
+        "held_train_cross_cos": 0.1897,
+        "held_train_margin": 0.0001,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.375,
+        "scramble_decode": 0.3333,
+        "held_train_same_cos": 0.0352,
+        "held_train_cross_cos": 0.0412,
+        "held_train_margin": -0.006,
+        "mean_code_activity": 0.0326
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1234,
+        "mean_abs_offdiag_corr_after": 0.1211,
+        "corr_reduction": 0.0023,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.1542,
+        "within_identity_reliability": 0.4241,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": false
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.0041,
+        "pooler_margin_delta_vs_v1": 0.0073,
+        "decode_ok": false,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": false,
+        "trace_beats_no_learning": false,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    },
+    {
+      "seed": 102,
+      "chance": 0.3333,
+      "n_train_images": 96,
+      "n_held_images": 24,
+      "train_positions": [
+        [
+          16.0,
+          7.68
+        ],
+        [
+          16.0,
+          11.84
+        ],
+        [
+          16.0,
+          16.0
+        ],
+        [
+          16.0,
+          20.16
+        ]
+      ],
+      "held_positions": [
+        [
+          16.0,
+          24.32
+        ]
+      ],
+      "v1_complex": {
+        "heldpos_decode": 0.5,
+        "scramble_decode": 0.4167,
+        "held_train_same_cos": 0.11,
+        "held_train_cross_cos": 0.1174,
+        "held_train_margin": -0.0074,
+        "mean_code_activity": 0.0469
+      },
+      "v1_pooler_trace": {
+        "heldpos_decode": 0.4583,
+        "scramble_decode": 0.375,
+        "held_train_same_cos": 0.2873,
+        "held_train_cross_cos": 0.2665,
+        "held_train_margin": 0.0208,
+        "mean_code_activity": 0.0333
+      },
+      "shuffled_temporal": {
+        "heldpos_decode": 0.3333,
+        "scramble_decode": 0.2917,
+        "held_train_same_cos": 0.3249,
+        "held_train_cross_cos": 0.3423,
+        "held_train_margin": -0.0175,
+        "mean_code_activity": 0.0333
+      },
+      "no_learning": {
+        "heldpos_decode": 0.125,
+        "scramble_decode": 0.25,
+        "held_train_same_cos": 0.0401,
+        "held_train_cross_cos": 0.0481,
+        "held_train_margin": -0.008,
+        "mean_code_activity": 0.0326
+      },
+      "decorr": {
+        "decorr": true,
+        "decorr_lr": 0.05,
+        "decorr_target_p": 0.1,
+        "decorr_p2": 0.01,
+        "decorr_epochs": 8,
+        "decorr_settle": 4,
+        "mean_abs_offdiag_corr_before": 0.1222,
+        "mean_abs_offdiag_corr_after": 0.12,
+        "corr_reduction": 0.0022,
+        "train_feat_alive_frac": 1.0
+      },
+      "over_sparsification_guard": {
+        "pooler_col_alive_frac": 0.0917,
+        "within_identity_reliability": 0.7411,
+        "alive_floor": 0.15,
+        "reliability_floor": 0.3,
+        "over_sparsified": true
+      },
+      "decision": {
+        "trace_margin_delta_vs_shuffled": 0.0383,
+        "pooler_margin_delta_vs_v1": 0.0282,
+        "decode_ok": true,
+        "trace_beats_shuffled": false,
+        "trace_beats_v1": true,
+        "trace_beats_no_learning": false,
+        "scramble_collapses": true,
+        "trace_go": false,
+        "verdict": "TRACE-ROUTED-NOGO"
+      },
+      "stream": {
+        "n_bouts": 18,
+        "bout_len": 12,
+        "grouped_stream_len": 216,
+        "same_multiset_shuffled_temporal": true
+      }
+    }
+  ]
+}
