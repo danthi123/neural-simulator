@@ -784,3 +784,106 @@ def assert_backend(expected, note=""):
             "device is a different experiment, not a slower one. Set SIM_BACKEND explicitly at the call "
             "site — runners default it to numpy via setdefault, which silently wins." % (expected, resolved, actual))
     return resolved
+
+
+def _avg_rank(x):
+    """Average (fractional) ranks of a 1-D array, ties shared — the rank transform Spearman needs."""
+    import numpy as _np
+    x = _np.asarray(x, dtype=float)
+    order = _np.argsort(x, kind="mergesort")
+    ranks = _np.empty(len(x), dtype=float)
+    ranks[order] = _np.arange(len(x), dtype=float)
+    # average tied ranks
+    _, inv, counts = _np.unique(x, return_inverse=True, return_counts=True)
+    csum = _np.concatenate([[0], _np.cumsum(counts)])
+    avg = (csum[:-1] + csum[1:] - 1) / 2.0            # mean 0-based rank within each tie group
+    return avg[inv]
+
+
+def _pearson(a, b):
+    import numpy as _np
+    a = _np.asarray(a, float); b = _np.asarray(b, float)
+    if len(a) < 2 or _np.std(a) < 1e-12 or _np.std(b) < 1e-12:
+        return float("nan")
+    return float(_np.corrcoef(a, b)[0, 1])
+
+
+def functional_vs_anatomical(F, W, labels=None, edge_thresh=0.0, diag_zero=True):
+    """Compare a FUNCTIONAL connectivity matrix (perturb-and-measure) to the ANATOMICAL one (weight graph).
+
+    THE VALIDATION QUESTION (Randi, Sharma, Dvali & Leifer, "Neural signal propagation atlas of C. elegans",
+    Nature 623:406-414, 2023). Inspecting the static weight graph tells you what CAN connect; it does NOT
+    tell you what DOES propagate. Randi et al. perturbed each neuron in the LIVE animal and measured the
+    downstream response, and found the FUNCTIONAL map differs from the anatomical wiring diagram -- ongoing
+    state and neuromodulation reweight the effective connectivity, polysynaptic paths create edges with no
+    direct synapse, and inhibition flips signs. This helper quantifies that difference for our substrate.
+
+    `F[i][j]` = signed response of region j to perturbing region i (Delta firing rate, from the probe).
+    `W[i][j]` = signed anatomical strength i->j (sign from the presynaptic transmitter, magnitude from
+                density x weight; 0 where there is NO direct synapse). Both N x N, same region ordering.
+
+    A high F-vs-W correlation means the functional map merely re-reads the wiring diagram (a simple
+    substrate). The SCIENTIFICALLY INTERESTING outcome is a correlation < 1 WITH a mechanism for the
+    difference: (a) POLYSYNAPTIC edges -- cells where W==0 but |F|>thresh, activity that propagated through
+    an intermediate region with no direct synapse; (b) SIGN FLIPS on direct edges -- an anatomical
+    projection whose functional effect is opposite (di-synaptic inhibition -> net excitation, i.e.
+    disinhibition). Both are reported so the caller can name the driver rather than assert one.
+
+    Returns a dict:
+      n_offdiag, pearson_r / spearman_rho (over ALL off-diagonal cells),
+      pearson_r_nz / spearman_rho_nz (over the UNION of cells that are nonzero in EITHER matrix -- the fair
+        comparison, since the shared-zero cells inflate any correlation toward agreement),
+      n_direct (W!=0 off-diag), n_direct_active (of those, |F|>thresh),
+      sign_agree_direct (fraction of ACTIVE direct edges whose functional sign matches anatomy),
+      polysynaptic (list of dicts {i,j,from,to,F}: W==0 but |F|>thresh -- functional edges with NO synapse),
+      silent_anatomical (list: W!=0 but |F|<=thresh -- wired but functionally quiet at this operating point),
+      sign_flips (list: direct edges where sign(F) != sign(W)).
+    """
+    import numpy as _np
+    F = _np.array(F, dtype=float); W = _np.array(W, dtype=float)
+    if F.shape != W.shape or F.ndim != 2 or F.shape[0] != F.shape[1]:
+        raise ValueError("F and W must be the same N x N shape; got %r and %r" % (F.shape, W.shape))
+    n = F.shape[0]
+    labels = list(labels) if labels is not None else [str(i) for i in range(n)]
+    if diag_zero:
+        F = F.copy(); W = W.copy()
+        _np.fill_diagonal(F, 0.0); _np.fill_diagonal(W, 0.0)
+    off = ~_np.eye(n, dtype=bool)
+    fo = F[off]; wo = W[off]
+    r_all = _pearson(fo, wo)
+    rho_all = _pearson(_avg_rank(fo), _avg_rank(wo))
+    nz = off & ((_np.abs(W) > 0) | (_np.abs(F) > edge_thresh))
+    fnz = F[nz]; wnz = W[nz]
+    r_nz = _pearson(fnz, wnz)
+    rho_nz = _pearson(_avg_rank(fnz), _avg_rank(wnz))
+    poly, silent, flips = [], [], []
+    n_direct = 0; n_direct_active = 0; n_sign_ok = 0
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+            w = float(W[i, j]); f = float(F[i, j])
+            active = abs(f) > edge_thresh
+            if w != 0.0:
+                n_direct += 1
+                if active:
+                    n_direct_active += 1
+                    if (f > 0) == (w > 0):
+                        n_sign_ok += 1
+                    else:
+                        flips.append(dict(i=i, j=j, **{"from": labels[i], "to": labels[j]},
+                                          F=round(f, 6), W=round(w, 6)))
+                else:
+                    silent.append(dict(i=i, j=j, **{"from": labels[i], "to": labels[j]}, W=round(w, 6)))
+            elif active:
+                poly.append(dict(i=i, j=j, **{"from": labels[i], "to": labels[j]}, F=round(f, 6)))
+    poly.sort(key=lambda d: -abs(d["F"]))
+    return dict(
+        n=n, labels=labels, edge_thresh=float(edge_thresh),
+        n_offdiag=int(off.sum()), n_union_nonzero=int(nz.sum()),
+        pearson_r=r_all, spearman_rho=rho_all, pearson_r_nz=r_nz, spearman_rho_nz=rho_nz,
+        n_direct=n_direct, n_direct_active=n_direct_active,
+        sign_agree_direct=(float(n_sign_ok) / n_direct_active if n_direct_active else float("nan")),
+        n_polysynaptic=len(poly), polysynaptic=poly,
+        n_silent_anatomical=len(silent), silent_anatomical=silent,
+        n_sign_flips=len(flips), sign_flips=flips)
