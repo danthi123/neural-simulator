@@ -1,0 +1,183 @@
+{
+  "runner": "_gnw_neural_vacancy_gate_derisk",
+  "mode": "smoke",
+  "seed": 42,
+  "result": {
+    "seed": 42,
+    "verdict": "GO",
+    "seed_go": true,
+    "operating_point": {
+      "boost": 0.12,
+      "evict_steps": 260,
+      "boost_steps": 200,
+      "proposal_pa": 2800.0,
+      "reignite_hold": 150,
+      "w_rec": 34.0,
+      "w_ws_occ": 8.0,
+      "w_occ_gate": 20.0,
+      "w_gate_ws": 100.0,
+      "occ_n": 40,
+      "gate_per": 60,
+      "occ_stuck_pa": 1600.0,
+      "U_baseline": 0.0,
+      "tau_D": 250.0,
+      "heterogeneity": true
+    },
+    "go_gate": {
+      "swap_ok": true,
+      "reignite_ok": true,
+      "timing_ok": true,
+      "gate_load_bearing": true,
+      "noevict_locks_out": true,
+      "detector_enforces_timing": true,
+      "reversible": true,
+      "no_host_reset": true,
+      "seed_deterministic": true
+    },
+    "anti_cheats": {
+      "gate_load_bearing": true,
+      "noevict_non_circular": true,
+      "detector_enforces_timing": true,
+      "reversible_two_swap": true,
+      "no_host_workspace_reset": true,
+      "seed_deterministic": true,
+      "swap_attributable_fraction": 0.0
+    },
+    "timing": {
+      "a_vacate_step": 90,
+      "gate_open_step": 147,
+      "b_ignite_step": 159,
+      "coign_steps": 0,
+      "admit_after_vacate_gap": 69
+    },
+    "residual": {
+      "headline": {
+        "winner_pre": 0,
+        "winner_post": 1,
+        "n_pre": 1,
+        "n_post": 1,
+        "old_residual_post": 0.0,
+        "new_ignited": true,
+        "new_rate_post": 0.3333333333333333,
+        "xA_min": 0.12218106665053981,
+        "old_residual_hold": 0.003,
+        "new_rate_hold": 0.3382
+      },
+      "noevict": {
+        "winner_post": 0,
+        "n_post": 1,
+        "old_residual_post": 0.3333333333333333,
+        "new_rate_post": 0.004,
+        "swapped": false
+      },
+      "detector_removed": {
+        "winner_post": 1,
+        "n_post": 1,
+        "premature": true,
+        "co_ignition": false,
+        "coign_steps": 61,
+        "b_ignite_step": 9,
+        "a_vacate_step": 70,
+        "new_rate_post": 0.3333333333333333,
+        "old_residual_post": 0.002,
+        "swapped": true
+      },
+      "reversibility": {
+        "reversible": true,
+        "s1_evicted_A": true,
+        "recovered": true,
+        "s2_brought_A_back": true,
+        "xA_recovered": 0.9885058608345509,
+        "recover_steps": 750,
+        "swap1_swapped": true,
+        "swap2_winner_hold": 0,
+        "swap2_n_hold": 1,
+        "swap2_b_ignite_step": 218,
+        "swap2_a_vacate_step": 160
+      }
+    },
+    "host_workspace_reset_calls": 0,
+    "substrate_hash": "2d1e2f7f35ba50c3ba91a9465cf05fd6068b695576a8c6832210f6b7ed9de984",
+    "std_weight_writes": 1605,
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "NEURAL-GATED single-move swap: old->baseline & new ignites (n_post==1, winner B)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "TIMING: challenger ignites only AFTER incumbent vacates (windowed, zero co-ignition)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "NON-CIRCULAR / veto works: proposal alone (no eviction) cannot admit -> incumbent holds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "detector ENFORCES timing: removing occ->gate admits prematurely",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "admitted coalition re-ignites and HOLDS",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "REVERSIBLE two-swap A->B->A (both admissions neural-gated)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no host workspace reset in the swap headline (continuous run)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "homeostasis",
+        "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+      },
+      {
+        "process": "native_short_term_plasticity",
+        "why": "engine global STP banked as annihilating (2026-08-01); STD targets ONLY the incumbent E->E loop"
+      },
+      {
+        "process": "additive_substrate_hash",
+        "why": "N/A: RNG-prefix property does not hold on this engine; determinism (build-twice) is the substrate-integrity anti-cheat instead"
+      }
+    ],
+    "undefined_reasons": []
+  }
+}

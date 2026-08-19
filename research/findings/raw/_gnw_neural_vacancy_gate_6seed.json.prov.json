@@ -1,0 +1,28 @@
+{
+ "run_id": "1787124780-2547303",
+ "runner": "research/runners/_gnw_neural_vacancy_gate_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-vacancy-gate/research/runners/_gnw_neural_vacancy_gate_derisk.py",
+  "--six-seed",
+  "--json",
+  "research/findings/raw/_gnw_neural_vacancy_gate_6seed.json"
+ ],
+ "git_sha": "fa300e1a0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T03:33:00",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_gnw_neural_vacancy_gate_6seed.json"
+}
