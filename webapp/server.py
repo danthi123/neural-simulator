@@ -2987,6 +2987,18 @@ _GNW_DELIBERATE_DEFAULT_ON = True
 # Flipping this to False would turn the faculty OFF by default. See webapp/gnw_multistep_deliberation.py.
 _GNW_MULTISTEP_DEFAULT_ON = True
 
+# ─── GNW NEURAL THOUGHT-SWAP into the LIVE held-topic workspace (2026-08-19, board #77): the production-integration
+# anchor, DEFAULT-OFF (a reversible flag pending owner review). When False (the default) the swap block is gated on the
+# env flag alone (`BRAIN_GNW_SWAP=1` opts in for review); the response carries NO `gnw_swap` key by default -> byte-
+# identical. Flipping this to True would install the held-topic swap tracker by default. See webapp/gnw_thought_swap.py.
+_GNW_SWAP_DEFAULT_ON = False
+
+
+def _gnw_swap_flag_on() -> bool:
+    """The `BRAIN_GNW_SWAP` opt-in (a lightweight env read so the DISABLED default path imports nothing / does no work).
+    Truthy (1/true/on/yes) -> enable the held-topic swap tracker; unset or 0/false/off/no -> skip the block entirely."""
+    return os.environ.get("BRAIN_GNW_SWAP", "0").strip().lower() in ("1", "true", "on", "yes")
+
 
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
@@ -3671,6 +3683,27 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         return getattr(c, "last_trace", None) if c is not None else None
 
     msg = (req.message or "").strip()
+
+    # ── GNW NEURAL THOUGHT-SWAP — the LIVE held-topic workspace (board #77, 2026-08-19) ─────────────────────────────
+    # The already-wired GNW gates RESTORE their workspace each turn -> they do not hold a thought ACROSS turns. This
+    # block adds the missing cross-turn held-content register: a per-session GNW swap workspace whose one ignited
+    # coalition IS the current conversational TOPIC. Each turn the user message's grounded topic (host comprehension of
+    # the world input — the SAME declared boundary the SVO parser occupies) is presented to the reused 6/6-seed-GO
+    # neural swap machinery: a DIFFERENT salient topic is a mismatch -> the spiking mismatch/salience detector fires ->
+    # the incumbent coalition self-evicts (recurrence depression) -> the neural vacancy gate admits the newcomer (a
+    # SWAP); the SAME topic MATCHES -> the pred interneuron vetoes the detector -> the current thought persists (NO
+    # swap). The swap-vs-hold VERDICT is the substrate's, not a host `if`. ADDITIVE + DEFAULT-OFF: `BRAIN_GNW_SWAP` must
+    # be truthy (the anchor `_GNW_SWAP_DEFAULT_ON` is False pending owner review) — otherwise this block is fully skipped
+    # (no workspace built, no `gnw_swap` key) -> the turn is BYTE-IDENTICAL. When enabled the tracker NEVER changes the
+    # answer (answer/abstained/recalled_svo/verified unchanged); it only stashes a per-turn `gnw_swap` info block that
+    # the two main return paths attach (mirroring how `gnw_bus` is attached). Reuse-by-import (NO sim/ edit). Guarded so
+    # a wiring failure can never crash a turn. See webapp/gnw_thought_swap.py.
+    if _GNW_SWAP_DEFAULT_ON or _gnw_swap_flag_on():
+        try:
+            from webapp import gnw_thought_swap as _gnw_swap_mod
+            _gnw_swap_mod.observe_turn(chat, msg)
+        except Exception:
+            pass
 
     # ── SELF-INITIATED UTTERANCE — the first INTERNALLY-GENERATED turn class (2026-08-18) ────────────────────────
     # On an IDLE/EMPTY turn (an EMPTY message, or a bare "say something / what's on your mind" lead-in — a DISJOINT
@@ -4514,6 +4547,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             _rich_bus = getattr(chat, "_last_gnw_bus", None)
             if _rich_bus is not None:
                 resp["gnw_bus"] = _rich_bus
+        # GNW THOUGHT-SWAP observability (rich path): attach the per-turn held-topic swap read the observe block stashed
+        # (`chat._last_gnw_swap`: held topic, whether this turn swapped, the spiking read of the post-swap workspace),
+        # ONLY when BRAIN_GNW_SWAP is on. ADDITIVE + DEFAULT-OFF -> with the flag off there is no key -> byte-identical.
+        if _gnw_swap_flag_on():
+            _swap_info = getattr(chat, "_last_gnw_swap", None)
+            if _swap_info is not None:
+                resp["gnw_swap"] = _swap_info
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -4627,6 +4667,12 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _pd = _SESSION_PMEM.get(cache_key)
         if _pd is not None:
             _pd.clear()
+    # GNW THOUGHT-SWAP observability (single-fact path): attach the per-turn held-topic swap read, ONLY when
+    # BRAIN_GNW_SWAP is on. ADDITIVE + DEFAULT-OFF -> flag off there is no key -> byte-identical. See gnw_thought_swap.py.
+    if _gnw_swap_flag_on():
+        _swap_info = getattr(chat, "_last_gnw_swap", None)
+        if _swap_info is not None:
+            _resp["gnw_swap"] = _swap_info
     return JSONResponse(_resp)
 
 

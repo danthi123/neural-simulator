@@ -1,0 +1,239 @@
+{
+  "runner": "_verify_swap (in-process /api/brain-chat)",
+  "backend": "numpy",
+  "ts": "2026-08-19T05:34:00",
+  "part_a": {
+    "pass": true,
+    "topic_change_swap_rate": 1.0,
+    "same_topic_swap_rate": 0.0,
+    "n_change": 3,
+    "n_change_swap": 3,
+    "n_hold": 3,
+    "n_hold_swap": 0,
+    "rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "kind": "establish",
+        "answer": "The dog chases cat. The cat eats fish.",
+        "swapped": false,
+        "held_topic": "dog",
+        "evicted_topic": null,
+        "n_ignited_post": 1,
+        "new_rate_post": null,
+        "held_rate_post": 0.3333333333333333,
+        "old_residual_post": null,
+        "mm_peak": 0.05555555555555555,
+        "boost_max": 0.027777777777777776,
+        "reason": "first_thought",
+        "row_ok": true
+      },
+      {
+        "i": 1,
+        "msg": "what does the dog chase?",
+        "kind": "hold",
+        "answer": "The dog chases cat.",
+        "swapped": false,
+        "held_topic": "dog",
+        "evicted_topic": null,
+        "n_ignited_post": 1,
+        "new_rate_post": 0.3333333333333333,
+        "held_rate_post": null,
+        "old_residual_post": 0.3333333333333333,
+        "mm_peak": 0.06666666666666667,
+        "boost_max": 0.03333333333333333,
+        "reason": "same_topic_hold",
+        "row_ok": true
+      },
+      {
+        "i": 2,
+        "msg": "what does the brain use?",
+        "kind": "change",
+        "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+        "swapped": true,
+        "held_topic": "brain",
+        "evicted_topic": "dog",
+        "n_ignited_post": 1,
+        "new_rate_post": 0.3333333333333333,
+        "held_rate_post": null,
+        "old_residual_post": 0.0,
+        "mm_peak": 0.3277777777777778,
+        "boost_max": 0.16,
+        "reason": "topic_change_swap",
+        "row_ok": true
+      },
+      {
+        "i": 3,
+        "msg": "what does the brain store?",
+        "kind": "hold",
+        "answer": "The brain stores memory.",
+        "swapped": false,
+        "held_topic": "brain",
+        "evicted_topic": null,
+        "n_ignited_post": 1,
+        "new_rate_post": 0.3333333333333333,
+        "held_rate_post": null,
+        "old_residual_post": 0.3333333333333333,
+        "mm_peak": 0.03333333333333333,
+        "boost_max": 0.016666666666666666,
+        "reason": "same_topic_hold",
+        "row_ok": true
+      },
+      {
+        "i": 4,
+        "msg": "what does the cat eat?",
+        "kind": "change",
+        "answer": "The cat eats fish.",
+        "swapped": true,
+        "held_topic": "cat",
+        "evicted_topic": "brain",
+        "n_ignited_post": 1,
+        "new_rate_post": 0.3333333333333333,
+        "held_rate_post": null,
+        "old_residual_post": 0.0,
+        "mm_peak": 0.29444444444444445,
+        "boost_max": 0.15666666666666668,
+        "reason": "topic_change_swap",
+        "row_ok": true
+      },
+      {
+        "i": 5,
+        "msg": "tell me more",
+        "kind": "hold",
+        "answer": "I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+        "swapped": false,
+        "held_topic": "cat",
+        "evicted_topic": null,
+        "n_ignited_post": null,
+        "new_rate_post": null,
+        "held_rate_post": null,
+        "old_residual_post": null,
+        "mm_peak": null,
+        "boost_max": null,
+        "reason": "no_topic_hold",
+        "row_ok": true
+      },
+      {
+        "i": 6,
+        "msg": "what does the dog chase?",
+        "kind": "change",
+        "answer": "The dog chases cat.",
+        "swapped": true,
+        "held_topic": "dog",
+        "evicted_topic": "cat",
+        "n_ignited_post": 1,
+        "new_rate_post": 0.3333333333333333,
+        "held_rate_post": null,
+        "old_residual_post": 0.0,
+        "mm_peak": 0.26666666666666666,
+        "boost_max": 0.16,
+        "reason": "topic_change_swap",
+        "row_ok": true
+      }
+    ]
+  },
+  "part_b": {
+    "pass": true,
+    "off_ever_has_key": false,
+    "on_always_has_key": true,
+    "on_minus_swap_equals_off_all_turns": true,
+    "rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "off_md5": "6ce367287f4e38ce8794cc46b7bb20c5",
+        "on_md5": "bf32b0ade6ff66655a989e0a55ebc20f",
+        "on_minus_swap_md5": "6ce367287f4e38ce8794cc46b7bb20c5",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "The dog chases cat. The cat eats fish.",
+        "on_answer": "The dog chases cat. The cat eats fish."
+      },
+      {
+        "i": 1,
+        "msg": "what does the brain use?",
+        "off_md5": "c04226682a1a32dd98c630f0e0705bb8",
+        "on_md5": "b455abffda01693294a91b128ff4d1c9",
+        "on_minus_swap_md5": "c04226682a1a32dd98c630f0e0705bb8",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+        "on_answer": "The brain uses spikes. The brain stores memory. The brain learns words."
+      },
+      {
+        "i": 2,
+        "msg": "what does a unicorn fly?",
+        "off_md5": "fd087b8b94d1b8f606fa06dadb0c872e",
+        "on_md5": "a92bd6d7e3dda8d3f98dc7c4924c1e39",
+        "on_minus_swap_md5": "fd087b8b94d1b8f606fa06dadb0c872e",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about unicorn yet: what can you tell me about unicorn?",
+        "on_answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about unicorn yet: what can you tell me about unicorn?"
+      },
+      {
+        "i": 3,
+        "msg": "what does the cat eat all the way?",
+        "off_md5": "8cdaafa2033692dba80c77319db40860",
+        "on_md5": "4b6a67064d21669d6d46c3bffbff57ea",
+        "on_minus_swap_md5": "8cdaafa2033692dba80c77319db40860",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "The cat eats fish.",
+        "on_answer": "The cat eats fish."
+      },
+      {
+        "i": 4,
+        "msg": "who are you?",
+        "off_md5": "793f135197fd308d8ed7267f501d8d28",
+        "on_md5": "890b252bac8b744e59f295e63c13d622",
+        "on_minus_swap_md5": "793f135197fd308d8ed7267f501d8d28",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "The brain uses spikes.",
+        "on_answer": "The brain uses spikes."
+      },
+      {
+        "i": 5,
+        "msg": "tell me more",
+        "off_md5": "c8c44b9ee2f082826c2af23e2788096c",
+        "on_md5": "0e9d9d851757f37203e91c34eb5c1dcb",
+        "on_minus_swap_md5": "c8c44b9ee2f082826c2af23e2788096c",
+        "off_has_key": false,
+        "on_has_key": true,
+        "identical": true,
+        "off_answer": "I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?",
+        "on_answer": "I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn?"
+      }
+    ]
+  },
+  "git_sha": "6efdc8b8d9c28227b609ab7491e6d67643770c0c",
+  "preconditions": [
+    {
+      "name": "functional: topic-change swap rate == 1.00 through the real handler",
+      "ok": true
+    },
+    {
+      "name": "functional: same-topic/no-topic swap rate == 0.00 through the real handler",
+      "ok": true
+    },
+    {
+      "name": "byte-identical: OFF response never carries a gnw_swap key",
+      "ok": true
+    },
+    {
+      "name": "no-regression: ON-minus-gnw_swap == OFF (md5) on every panel turn",
+      "ok": true
+    },
+    {
+      "name": "ON response always carries the additive gnw_swap key",
+      "ok": true
+    }
+  ],
+  "verdict": "GO"
+}
