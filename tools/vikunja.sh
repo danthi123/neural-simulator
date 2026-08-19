@@ -170,6 +170,52 @@ print(json.dumps(d))')
             -H "Content-Type: application/json" -d "{\"due_date\": \"${DUE}T23:59:59Z\"}" | format_task
         ;;
 
+    delete-project)
+        PID="$2"
+        if [ -z "$PID" ]; then echo 'Usage: delete-project <project_id>' >&2; exit 1; fi
+        curl -s -X DELETE "${API_URL}/projects/${PID}" -H "Authorization: Bearer $TOKEN" >/dev/null && echo "Deleted project $PID"
+        ;;
+
+    delete-task)
+        TID="$2"
+        if [ -z "$TID" ]; then echo 'Usage: delete-task <task_id>' >&2; exit 1; fi
+        curl -s -X DELETE "${API_URL}/tasks/${TID}" -H "Authorization: Bearer $TOKEN" >/dev/null && echo "Deleted task $TID"
+        ;;
+
+    list-labels)
+        curl -s "${API_URL}/labels" -H "Authorization: Bearer $TOKEN" | \
+        if [[ "$FORMAT" == "json" ]]; then cat; else
+            python3 -c '
+import sys, json
+d = json.load(sys.stdin)
+for l in (d if isinstance(d, list) else []):
+    print("[" + str(l.get("id")) + "] " + str(l.get("title", "")))
+'
+        fi
+        ;;
+
+    create-label)
+        TITLE="$2"; COLOR="${3:-}"
+        if [ -z "$TITLE" ]; then echo 'Usage: create-label "title" [hexcolor]' >&2; exit 1; fi
+        JSON=$(TITLE="$TITLE" COLOR="$COLOR" python3 -c '
+import json, os
+d = {"title": os.environ["TITLE"]}
+if os.environ.get("COLOR"): d["hex_color"] = os.environ["COLOR"].lstrip("#")
+print(json.dumps(d))')
+        curl -s -X PUT "${API_URL}/labels" -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" -d "$JSON" | \
+        if [[ "$FORMAT" == "json" ]]; then cat; else
+            python3 -c 'import sys, json; l = json.load(sys.stdin); print("Created label [" + str(l.get("id")) + "] " + str(l.get("title", "")))'
+        fi
+        ;;
+
+    label-task)
+        TID="$2"; LID="$3"
+        if [ -z "$TID" ] || [ -z "$LID" ]; then echo 'Usage: label-task <task_id> <label_id>' >&2; exit 1; fi
+        curl -s -X PUT "${API_URL}/tasks/${TID}/labels" -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" -d "{\"label_id\": $LID}" >/dev/null && echo "Labeled task $TID with $LID"
+        ;;
+
     *)
         cat >&2 <<'EOF'
 Vikunja helper (neural-simulator). URL+token from ~/.claude-config/secrets/vikunja.json
