@@ -1,0 +1,604 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.938017,
+      "gain_substrate_vs_linear_corr": 0.945,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.53,
+      "learn_secs": 910.6,
+      "shuffle_secs": 306.8,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        10.715,
+        10.6934
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3931,
+      "hostlinear_argmax_agree": 0.2562,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0619,
+        "lesion_err": 0.0589,
+        "shuffle_teach": 0.0017
+      },
+      "hostlinear_floor_recov": 0.0619,
+      "weight_cosine_to_head_diag": 0.1291,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": 0.0007
+      },
+      "weight_cosine_floor": 0.0023,
+      "sub_learned": {
+        "argmax_agree": 0.276,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.4436,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.86,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9801,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.004,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0044,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.4526,
+      "integrated_bar_0.85xcopied": 0.8331,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 43,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.82015,
+      "gain_substrate_vs_linear_corr": 0.9396,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.52,
+      "learn_secs": 908.1,
+      "shuffle_secs": 301.9,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": false,
+      "verify_first_ce": [
+        10.324,
+        10.3481
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3593,
+      "hostlinear_argmax_agree": 0.2375,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.052,
+        "lesion_err": 0.0426,
+        "shuffle_teach": 0.0019
+      },
+      "hostlinear_floor_recov": 0.052,
+      "weight_cosine_to_head_diag": 0.1445,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0017,
+        "lesion_err": 0.0017,
+        "shuffle_teach": -0.0001
+      },
+      "weight_cosine_floor": 0.0017,
+      "sub_learned": {
+        "argmax_agree": 0.24,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3512,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.844,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9663,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0006,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3634,
+      "integrated_bar_0.85xcopied": 0.8214,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 44,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 10.195636,
+      "gain_substrate_vs_linear_corr": 0.9463,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.6,
+      "learn_secs": 882.4,
+      "shuffle_secs": 301.7,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": false,
+      "verify_first_ce": [
+        9.9948,
+        10.018
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3874,
+      "hostlinear_argmax_agree": 0.2587,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0378,
+        "lesion_err": 0.0436,
+        "shuffle_teach": 0.0045
+      },
+      "hostlinear_floor_recov": 0.0436,
+      "weight_cosine_to_head_diag": 0.1384,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0006,
+        "lesion_err": 0.0006,
+        "shuffle_teach": 0.0007
+      },
+      "weight_cosine_floor": 0.0007,
+      "sub_learned": {
+        "argmax_agree": 0.248,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3731,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.796,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9741,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.004,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0079,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.383,
+      "integrated_bar_0.85xcopied": 0.828,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 100,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 10.05951,
+      "gain_substrate_vs_linear_corr": 0.9468,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.48,
+      "learn_secs": 890.1,
+      "shuffle_secs": 304.7,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        10.4296,
+        10.4146
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3814,
+      "hostlinear_argmax_agree": 0.2575,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0568,
+        "lesion_err": 0.0497,
+        "shuffle_teach": 0.0005
+      },
+      "hostlinear_floor_recov": 0.0568,
+      "weight_cosine_to_head_diag": 0.1332,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0002,
+        "lesion_err": -0.0002,
+        "shuffle_teach": -0.0025
+      },
+      "weight_cosine_floor": 0.0025,
+      "sub_learned": {
+        "argmax_agree": 0.268,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3848,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.892,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9856,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0004,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3904,
+      "integrated_bar_0.85xcopied": 0.8378,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 101,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.884448,
+      "gain_substrate_vs_linear_corr": 0.9465,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.46,
+      "learn_secs": 934.0,
+      "shuffle_secs": 311.4,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": false,
+      "verify_first_ce": [
+        9.7742,
+        9.7761
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3336,
+      "hostlinear_argmax_agree": 0.21,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0553,
+        "lesion_err": 0.0457,
+        "shuffle_teach": 0.0005
+      },
+      "hostlinear_floor_recov": 0.0553,
+      "weight_cosine_to_head_diag": 0.1381,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0007,
+        "lesion_err": 0.0007,
+        "shuffle_teach": -0.0047
+      },
+      "weight_cosine_floor": 0.0047,
+      "sub_learned": {
+        "argmax_agree": 0.192,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3442,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.876,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9859,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0008,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3491,
+      "integrated_bar_0.85xcopied": 0.838,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 102,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 48,
+      "n_train_pos": 8000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "n_grad_steps": 1660,
+      "n_grad_steps_shuffle": 564,
+      "substrate_reads": 2235,
+      "main_substrate_reads": 1660,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 10,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.856234,
+      "gain_substrate_vs_linear_corr": 0.9429,
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.52,
+      "learn_secs": 920.2,
+      "shuffle_secs": 324.3,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": false,
+      "verify_first_ce": [
+        9.9177,
+        9.9271
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.396,
+      "hostlinear_argmax_agree": 0.2675,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0432,
+        "lesion_err": 0.0461,
+        "shuffle_teach": 0.0032
+      },
+      "hostlinear_floor_recov": 0.0461,
+      "weight_cosine_to_head_diag": 0.128,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0003,
+        "lesion_err": 0.0003,
+        "shuffle_teach": -0.0032
+      },
+      "weight_cosine_floor": 0.0032,
+      "sub_learned": {
+        "argmax_agree": 0.252,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.3494,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.848,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9791,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0011,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.3569,
+      "integrated_bar_0.85xcopied": 0.8322,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 6,
+    "go_count": 0,
+    "go_5of6": false,
+    "integrated_go_count": 0,
+    "parity_recovery_count": 0,
+    "anticheats_collapse_count": 6,
+    "forward_is_substrate_all": true,
+    "host_matmul_on_forward_max": 0,
+    "verify_first_all_ok": false,
+    "sub_learned_recov_mean": 0.3744,
+    "sub_copied_recov_mean": 0.9785,
+    "sub_shuffle_recov_mean": 0.0025,
+    "sub_recov_ratio_mean": 0.3826,
+    "sub_recov_ratio_min": 0.3491,
+    "hostlinear_recov_mean": 0.3751,
+    "hostlinear_floor_recov_max": 0.0619,
+    "weight_cosine_mean": 0.1352,
+    "weight_cosine_floor_max": 0.0047
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "batched_substrate_graded_conductance_read",
+  "gain_per_seed": {
+    "42": 9.938017,
+    "43": 9.82015,
+    "44": 10.195636,
+    "100": 10.05951,
+    "101": 9.884448,
+    "102": 9.856234
+  },
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+  },
+  "backend": "cupy",
+  "elapsed_s": 9273.0,
+  "argv": [
+    "/home/dant123/Projects/sim-worktrees/wt-moutheprop/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+    "--seeds",
+    "42,43,44,100,101,102",
+    "--batch",
+    "48",
+    "--n-train-pos",
+    "8000",
+    "--epochs",
+    "10",
+    "--w-target",
+    "40",
+    "--sub-read-window",
+    "120",
+    "--read-window",
+    "150",
+    "--n-sub-demo",
+    "250",
+    "--n-eval-pos",
+    "800",
+    "--n-sentences",
+    "40000",
+    "--json",
+    "research/findings/raw/_wkv_readout_eprop_batched_substrate_6seed.json"
+  ]
+}
