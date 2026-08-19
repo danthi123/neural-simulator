@@ -1,0 +1,40 @@
+{
+ "run_id": "1787112315-2138131",
+ "runner": "research/runners/_gap5_episodic_temporal_context_when_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-episodic-when/research/runners/_gap5_episodic_temporal_context_when_derisk.py",
+  "--preassigned",
+  "--n-ca3",
+  "500",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-items",
+  "6",
+  "--out",
+  "research/findings/raw/_episodic_when/when_preassigned_6seed.json"
+ ],
+ "git_sha": "f0bc9ee91",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T00:05:15",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4592.3,
+ "corpus_check_query": "episodic temporal context WHEN recency contiguity Howard-Kahana TCM LEC time cells drifting context CA3 binding",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_episodic_when/when_preassigned_6seed.json"
+}
