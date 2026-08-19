@@ -1,0 +1,6 @@
+seed 42 pred-intact  : match mm_peak=0.056 boost_max=0.028 held=True A_post=0.333 xA_min=0.972
+seed 42 pred-LESIONED: match mm_peak=0.289 boost_max=0.160 held=True A_post=0.172 xA_min=0.102
+seed 43 pred-intact  : match mm_peak=0.039 boost_max=0.019 held=True A_post=0.333 xA_min=0.983
+seed 43 pred-LESIONED: match mm_peak=0.306 boost_max=0.160 held=True A_post=0.320 xA_min=0.098
+seed 44 pred-intact  : match mm_peak=0.000 boost_max=0.000 held=True A_post=0.333 xA_min=1.000
+seed 44 pred-LESIONED: match mm_peak=0.300 boost_max=0.160 held=True A_post=0.285 xA_min=0.098
