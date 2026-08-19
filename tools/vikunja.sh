@@ -156,6 +156,14 @@ print(json.dumps(d))')
             -H "Content-Type: application/json" -d "$JSON" | format_task
         ;;
 
+    set-title)
+        TASK_ID="$2"; TITLE="$3"
+        if [ -z "$TASK_ID" ] || [ -z "$TITLE" ]; then echo 'Usage: set-title <task_id> "new title"' >&2; exit 1; fi
+        JSON=$(TITLE="$TITLE" python3 -c 'import json, os; print(json.dumps({"title": os.environ["TITLE"]}))')
+        curl -s -X POST "${API_URL}/tasks/${TASK_ID}" -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" -d "$JSON" | format_task
+        ;;
+
     set-priority)
         TASK_ID="$2"; PRIO="$3"
         if [ -z "$TASK_ID" ] || [ -z "$PRIO" ]; then echo 'Usage: set-priority <task_id> <0-5>' >&2; exit 1; fi
