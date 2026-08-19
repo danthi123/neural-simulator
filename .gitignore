@@ -164,3 +164,6 @@ research/queue/.corpus_checks.jsonl
 # Regenerable authenticated experiment campaigns. Source manifests and final
 # evidence stay tracked; thousands of compiled candidate packet files do not.
 research/experiment-runtime/
+
+# Uncommitted-finding drafts parked out of the prose scan (need artifact/citation cleanup before commit)
+.preserved-findings/
