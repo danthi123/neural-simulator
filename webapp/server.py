@@ -3047,6 +3047,31 @@ def _affect_drives_on() -> bool:
     return _ADC.affect_drives_enabled()
 
 
+# ─── DA-MODE DRIVES THE RESPONSE (board #79, 2026-08-19): the #76 spiking DA-mode (rest/focus/arousal) made
+# LOAD-BEARING on the live turn — the brain's OWN dopamine nucleus (the snc population) self-produces a DA LEVEL from
+# the message's reward/context (engagement), the level is binned to a MODE, and the mode modulates HOW forthcoming the
+# reply is (a graded ENGAGEMENT SUFFIX — distinct axis + a suffix, not a third prefix, vs #84 valence / #85 topic). The
+# production-integration anchor. When `_DA_DRIVES_DEFAULT_ON` is False the block is gated on the env flag alone
+# (`BRAIN_DA_DRIVES=1` opts in for review); the response carries NO `da_drives` key and NO suffix -> byte-identical.
+# Flipping the anchor to True installs the coupling by default (a `BRAIN_DA_DRIVES=0` escape reverts to the byte-
+# identical oracle). LESION (`BRAIN_DA_DRIVES_LESION=1`): silence the spiking SNc nucleus -> the DA level collapses ->
+# the mode is REST -> the suffix VANISHES (the load-bearing proof). See webapp/da_mode_drives_chat.py.
+_DA_DRIVES_DEFAULT_ON = True
+
+
+def _da_drives_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-ON anchor: enabled UNLESS
+    `BRAIN_DA_DRIVES` is an explicit off (0/false/no/off). Default-OFF anchor: enabled only on an explicit truthy
+    opt-in. Kept lightweight so the disabled path does no substrate work."""
+    try:
+        from webapp import da_mode_drives_chat as _DAD
+    except Exception:
+        return False
+    if _DA_DRIVES_DEFAULT_ON:
+        return not _DAD.da_drives_off()
+    return _DAD.da_drives_enabled()
+
+
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
     own mouth + selection substrate for THIS conversation; cleared on reset. See
@@ -3892,6 +3917,29 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             affect_drives_info = {"on": True, "error": f"{type(_ade).__name__}: {_ade}", "lead": ""}
             affect_drives_lead = ""
 
+    # ── DA-MODE DRIVES THE RESPONSE (board #79, 2026-08-19) ───────────────────────────────────────────────────
+    # Read the brain's OWN dopamine MODE off the #76 spiking DA nucleus (the snc population self-produces the DA
+    # LEVEL from this turn's reward/context engagement — NEURAL off the neuromodulator bus, reuse-by-import, NO
+    # sim/ edit) and turn it into a graded ENGAGEMENT SUFFIX (`da_drives_suffix`, APPENDED to the answer surface —
+    # a SUFFIX + the engagement/arousal axis, distinct from the #84 valence LEAD + the #85 topic LEAD) + a
+    # `da_drives_info` trace (engagement, self-produced DA level, mode, the suffix). The moat/recall/abstain
+    # verdict runs FIRST and unchanged — this DECORATES an already-matched surface, never a fact; the content
+    # fields (abstained/recalled_svo/verified) are byte-identical with it on or off. The neural read runs on a
+    # PRIVATE RNG timeline (host RNG restored — the #77 footgun), so the other response fields stay byte-identical.
+    # Default-ON (anchor); `BRAIN_DA_DRIVES=0` -> the block is fully skipped (no key, no suffix -> byte-identical
+    # oracle). LESION (`BRAIN_DA_DRIVES_LESION=1`): silence the SNc nucleus -> the DA level collapses -> the mode
+    # is REST -> the suffix VANISHES (the load-bearing proof). See webapp/da_mode_drives_chat.py.
+    da_drives_info = None
+    da_drives_suffix = ""
+    if _da_drives_on():
+        try:
+            from webapp import da_mode_drives_chat as _DAD
+            da_drives_info = _DAD.observe_turn(chat, msg)
+            da_drives_suffix = str(da_drives_info.get("lead", "") or "")
+        except Exception as _dde:  # never let the DA coupling crash a turn — degrade to the un-suffixed answer
+            da_drives_info = {"on": True, "error": f"{type(_dde).__name__}: {_dde}", "lead": ""}
+            da_drives_suffix = ""
+
     # ── PROSPECTIVE MEMORY (Gate-B, 2026-08-13) ──────────────────────────────────────────────────────────────
     # A co-resident spiking intention-LATCH + BA10 cue-MONITOR holds a deferred intention ("remind me to X when Y")
     # across intervening turns and RELEASES it only when the cue appears — reuse-by-import from
@@ -4652,6 +4700,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = swap_drives_lead + resp["answer"]
         if swap_drives_info is not None:
             resp["swap_drives"] = swap_drives_info
+        # DA-MODE DRIVES THE RESPONSE (board #79): APPEND the graded engagement SUFFIX (spoken last — the brain's
+        # forthcomingness) + attach the additive `da_drives` trace. Empty suffix / no key when disabled or in
+        # rest/neutral -> byte-identical. The content fields above are unchanged (the mode colors how forthcoming
+        # the reply is, never a fact); the suffix VANISHES under the neural SNc-nucleus lesion (the load-bearing proof).
+        if da_drives_suffix:
+            resp["answer"] = resp["answer"] + da_drives_suffix
+        if da_drives_info is not None:
+            resp["da_drives"] = da_drives_info
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -4785,6 +4841,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = swap_drives_lead + _resp["answer"]
     if swap_drives_info is not None:
         _resp["swap_drives"] = swap_drives_info
+    # DA-MODE DRIVES THE RESPONSE (board #79, single-fact path): APPEND the graded engagement SUFFIX + attach the
+    # additive `da_drives` trace. Empty suffix / no key when disabled or in rest/neutral -> byte-identical. The
+    # content fields are unchanged (the mode colors forthcomingness, never a fact); the suffix VANISHES under the
+    # neural SNc-nucleus lesion (the load-bearing proof).
+    if da_drives_suffix:
+        _resp["answer"] = _resp["answer"] + da_drives_suffix
+    if da_drives_info is not None:
+        _resp["da_drives"] = da_drives_info
     return JSONResponse(_resp)
 
 

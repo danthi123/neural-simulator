@@ -1,0 +1,188 @@
+{
+  "runner": "verify_da_drives (in-process /api/brain-chat)",
+  "backend": "numpy",
+  "ts": "2026-08-19T13:25:30",
+  "part_a": {
+    "pass": true,
+    "modes": [
+      "rest",
+      "rest",
+      "focus",
+      "arousal",
+      "arousal"
+    ],
+    "mode_moves": true,
+    "monotone_engaged_gt_rest": true,
+    "reached_arousal": true,
+    "suffix_iff_engaged_all": true,
+    "max_rest_da": 0.04616293556102311,
+    "min_engaged_da": 0.7009469833303944,
+    "rows": [
+      {
+        "i": 0,
+        "msg": "hi",
+        "kind": "rest",
+        "mode": "rest",
+        "da_level": 0.04616293556102311,
+        "ema_engagement": 0.0,
+        "afferent_pA": 0.0,
+        "suffix": "",
+        "answer": "I don't know about that.",
+        "row_ok": true
+      },
+      {
+        "i": 1,
+        "msg": "ok",
+        "kind": "rest",
+        "mode": "rest",
+        "da_level": 0.04616293556102311,
+        "ema_engagement": 0.0,
+        "afferent_pA": 0.0,
+        "suffix": "",
+        "answer": "I don't know about that.",
+        "row_ok": true
+      },
+      {
+        "i": 2,
+        "msg": "what does the dog chase",
+        "kind": "engaged",
+        "mode": "focus",
+        "da_level": 0.7009469833303944,
+        "ema_engagement": 0.42,
+        "afferent_pA": 588.0,
+        "suffix": " \u2014 worth going further here.",
+        "answer": "The dog chases cat. \u2014 worth going further here.",
+        "row_ok": true
+      },
+      {
+        "i": 3,
+        "msg": "what colour is the sky ocean mountain forest river",
+        "kind": "engaged",
+        "mode": "arousal",
+        "da_level": 1.025299967182588,
+        "ema_engagement": 0.7080000000000001,
+        "afferent_pA": 991.2000000000002,
+        "suffix": " \u2014 there's plenty more to dig into here!",
+        "answer": "I don't know about that. \u2014 there's plenty more to dig into here!",
+        "row_ok": true
+      },
+      {
+        "i": 4,
+        "msg": "photosynthesis chloroplast thylakoid electron transport",
+        "kind": "engaged",
+        "mode": "arousal",
+        "da_level": 1.0407838051678688,
+        "ema_engagement": 0.7932000000000001,
+        "afferent_pA": 1110.4800000000002,
+        "suffix": " \u2014 there's plenty more to dig into here!",
+        "answer": "I don't know about that. \u2014 there's plenty more to dig into here!",
+        "row_ok": true
+      }
+    ]
+  },
+  "part_b": {
+    "pass": true,
+    "intact_diff": true,
+    "suffix_focus": " \u2014 there's plenty more to dig into here!",
+    "suffix_rest": "",
+    "ans_focus": "The dog chases cat. \u2014 there's plenty more to dig into here!",
+    "ans_rest": "The dog chases cat.",
+    "mode_focus": "arousal",
+    "mode_rest": "rest",
+    "da_focus": 1.2386777669861797,
+    "da_rest": 0.04616293556102311,
+    "focus_suffix_ok": true,
+    "rest_no_suffix": true,
+    "base_identical": true,
+    "content_identical": true,
+    "lesion_suffix_gone": true,
+    "lesion_rest_mode": true,
+    "lesion_equals_base": true,
+    "mode_lesion": "rest",
+    "da_lesion": 0.04616293556102311
+  },
+  "part_c": {
+    "pass": true,
+    "off_ever_has_key": false,
+    "on_always_has_key": true,
+    "neutral_byte_identical_all": true,
+    "content_invariant_all": true,
+    "c1_rows": [
+      {
+        "i": 0,
+        "msg": "hi",
+        "off_md5": "af57eeafdd34a163ca84add044403463",
+        "on_stripped_md5": "af57eeafdd34a163ca84add044403463",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_suffix": "",
+        "on_mode": "rest",
+        "off_answer": "I don't know about that.",
+        "on_answer": "I don't know about that."
+      },
+      {
+        "i": 1,
+        "msg": "ok",
+        "off_md5": "af57eeafdd34a163ca84add044403463",
+        "on_stripped_md5": "af57eeafdd34a163ca84add044403463",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_suffix": "",
+        "on_mode": "rest",
+        "off_answer": "I don't know about that.",
+        "on_answer": "I don't know about that."
+      },
+      {
+        "i": 2,
+        "msg": "no",
+        "off_md5": "af57eeafdd34a163ca84add044403463",
+        "on_stripped_md5": "af57eeafdd34a163ca84add044403463",
+        "byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_suffix": "",
+        "on_mode": "rest",
+        "off_answer": "I don't know about that.",
+        "on_answer": "I don't know about that."
+      }
+    ],
+    "c2_rows": [
+      {
+        "msg": "what does the dog chase?",
+        "content_md5": "350812dd8c839400dd103c4663302447",
+        "content_invariant": true,
+        "off_answer": "The dog chases cat.",
+        "focus_answer": "The dog chases cat. \u2014 there's plenty more to dig into here!",
+        "rest_answer": "The dog chases cat.",
+        "focus_suffix": " \u2014 there's plenty more to dig into here!",
+        "rest_suffix": ""
+      }
+    ]
+  },
+  "git_sha": "84ee3a5862ff4dec8ce7b3cae9c64ea8330f8a77",
+  "preconditions": [
+    {
+      "name": "(A) the DA mode tracks the conversation (rest opening, engaged/novel reaches arousal, suffix iff engaged)",
+      "ok": true
+    },
+    {
+      "name": "(B) message-fixed: inducing focus vs rest changes the reply suffix, with content identical",
+      "ok": true
+    },
+    {
+      "name": "(B) the neural lesion (SNc nucleus silenced) collapses the DA level -> the engagement suffix VANISHES -> == base",
+      "ok": true
+    },
+    {
+      "name": "(C) content fields mode-invariant across {off,focus,rest}",
+      "ok": true
+    },
+    {
+      "name": "(C) byte-identical-off: OFF never carries the key; a rest ON-minus-key == OFF",
+      "ok": true
+    }
+  ],
+  "verdict": "GO"
+}
