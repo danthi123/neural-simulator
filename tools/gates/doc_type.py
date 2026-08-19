@@ -63,6 +63,11 @@ def _frontmatter(text):
 def _check_one(path, text=None):
     problems = []
     rel = os.path.relpath(path, _ROOT) if os.path.isabs(path) else path
+    # Skills + rules are NOT research docs: they use a `name:`/`description:` (or `paths:`) frontmatter schema,
+    # never a research `type:`. Exempt them so the research-doc-type gate does not force `type:` on a SKILL.md.
+    relslash = rel.replace("\\", "/")
+    if ".claude/skills/" in relslash or "/.claude/rules/" in relslash or relslash.startswith(".claude/rules/"):
+        return problems
     try:
         text = text if text is not None else open(path, errors="ignore").read()
     except OSError:
@@ -142,4 +147,10 @@ def selftest():
         open(p4, "w").write("# Legacy finding\n\nIt is a GO at 6 seeds.\n")
         if _check_one(p4):
             bad.append("FALSE POSITIVE: flagged a legacy no-frontmatter document")
+        # 5. NEGATIVE CONTROL — a SKILL.md (name/description frontmatter, no research `type:`) must NOT be flagged.
+        sk = os.path.join(d, ".claude", "skills", "x", "SKILL.md")
+        os.makedirs(os.path.dirname(sk), exist_ok=True)
+        open(sk, "w").write("---\nname: x\ndescription: a skill\n---\n\nbody\n")
+        if _check_one(sk):
+            bad.append("FALSE POSITIVE: flagged a .claude/skills SKILL.md as a research doc")
     return bad
