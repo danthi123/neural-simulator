@@ -1,0 +1,221 @@
+{
+  "runner": "verify_affect_drives (in-process /api/brain-chat)",
+  "backend": "numpy",
+  "ts": "2026-08-19T07:40:24",
+  "part_a": {
+    "pass": true,
+    "baseline_neutral": true,
+    "pos_positive": true,
+    "neg_negative": true,
+    "holds_pos": true,
+    "holds_neg": true,
+    "felt_arousal_rises": true,
+    "rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "kind": "neutral",
+        "mood": -0.003375000000000003,
+        "felt_arousal": 0.0,
+        "level": 0,
+        "lead": "",
+        "exp_sign": 0,
+        "got_sign": 0,
+        "row_ok": true,
+        "answer": "The dog chases cat."
+      },
+      {
+        "i": 1,
+        "msg": "I am so happy and joyful, this is wonderful",
+        "kind": "pos",
+        "mood": 0.06916666666666667,
+        "felt_arousal": 0.043208333333333335,
+        "level": 2,
+        "lead": "Gladly \u2014 ",
+        "exp_sign": 1,
+        "got_sign": 1,
+        "row_ok": true,
+        "answer": "Gladly \u2014 The dog chases cat."
+      },
+      {
+        "i": 2,
+        "msg": "what does the dog chase?",
+        "kind": "neutral",
+        "mood": 0.06916666666666667,
+        "felt_arousal": 0.043208333333333335,
+        "level": 2,
+        "lead": "Gladly \u2014 ",
+        "exp_sign": 1,
+        "got_sign": 1,
+        "row_ok": true,
+        "answer": "Gladly \u2014 The dog chases cat."
+      },
+      {
+        "i": 3,
+        "msg": "I feel so sad and afraid, everything is terrible",
+        "kind": "neg",
+        "mood": -0.029375,
+        "felt_arousal": 0.07029166666666667,
+        "level": -1,
+        "lead": "Hm! ",
+        "exp_sign": -1,
+        "got_sign": -1,
+        "row_ok": true,
+        "answer": "Hm! I don't know about that."
+      },
+      {
+        "i": 4,
+        "msg": "what does the dog chase?",
+        "kind": "neutral",
+        "mood": -0.029375,
+        "felt_arousal": 0.07029166666666667,
+        "level": -1,
+        "lead": "Hm! ",
+        "exp_sign": -1,
+        "got_sign": -1,
+        "row_ok": true,
+        "answer": "Hm! The dog chases cat."
+      },
+      {
+        "i": 5,
+        "msg": "this is a delight, I am glad and cheerful",
+        "kind": "pos",
+        "mood": 0.06433333333333334,
+        "felt_arousal": 0.07416666666666667,
+        "level": 2,
+        "lead": "Gladly! ",
+        "exp_sign": 1,
+        "got_sign": 1,
+        "row_ok": true,
+        "answer": "Gladly! I don't know about that."
+      },
+      {
+        "i": 6,
+        "msg": "what does the dog chase?",
+        "kind": "neutral",
+        "mood": 0.06433333333333334,
+        "felt_arousal": 0.07416666666666667,
+        "level": 2,
+        "lead": "Gladly! ",
+        "exp_sign": 1,
+        "got_sign": 1,
+        "row_ok": true,
+        "answer": "Gladly! The dog chases cat."
+      }
+    ]
+  },
+  "part_b": {
+    "pass": true,
+    "intact_diff": true,
+    "lead_pos": "Wonderful \u2014 ",
+    "lead_neg": "Frankly! ",
+    "ans_pos": "Wonderful \u2014 The dog chases cat.",
+    "ans_neg": "Frankly! The dog chases cat.",
+    "base_identical": true,
+    "content_identical": true,
+    "lesion_leads_gone": true,
+    "lesion_answers_identical": true,
+    "lesion_equals_base": true,
+    "lesion_mood_collapsed": true,
+    "lesion_mood_pos": 0.0,
+    "lesion_mood_neg": 0.0
+  },
+  "part_c": {
+    "pass": true,
+    "off_ever_has_key": false,
+    "on_always_has_key": true,
+    "neutral_byte_identical_all": true,
+    "content_invariant_all": true,
+    "c1_rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "off_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "on_stripped_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "neutral_byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "The dog chases cat.",
+        "on_answer": "The dog chases cat."
+      },
+      {
+        "i": 1,
+        "msg": "what does a unicorn fly?",
+        "off_md5": "7f15f54177fdc350804b64472afcb605",
+        "on_stripped_md5": "7f15f54177fdc350804b64472afcb605",
+        "neutral_byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "I don't know about that.",
+        "on_answer": "I don't know about that."
+      },
+      {
+        "i": 2,
+        "msg": "who are you?",
+        "off_md5": "00ef4d7a49eeb8c09adabffbb58fbd57",
+        "on_stripped_md5": "00ef4d7a49eeb8c09adabffbb58fbd57",
+        "neutral_byte_ok": true,
+        "off_has_key": false,
+        "on_has_key": true,
+        "on_lead": "",
+        "off_answer": "The brain uses spikes.",
+        "on_answer": "The brain uses spikes."
+      }
+    ],
+    "c2_rows": [
+      {
+        "i": 0,
+        "msg": "what does the dog chase?",
+        "content_md5": "350812dd8c839400dd103c4663302447",
+        "content_invariant": true,
+        "off_answer": "The dog chases cat.",
+        "induced_pos_answer": "Wonderful! The dog chases cat.",
+        "induced_neg_answer": "Frankly! The dog chases cat."
+      },
+      {
+        "i": 1,
+        "msg": "what does a unicorn fly?",
+        "content_md5": "61e7fec9e6c8eebc44699fb5d3093c72",
+        "content_invariant": true,
+        "off_answer": "I don't know about that.",
+        "induced_pos_answer": "Wonderful! I don't know about that.",
+        "induced_neg_answer": "Frankly! I don't know about that."
+      },
+      {
+        "i": 2,
+        "msg": "who are you?",
+        "content_md5": "45247f898190b66460af9d93264cfe50",
+        "content_invariant": true,
+        "off_answer": "The brain uses spikes.",
+        "induced_pos_answer": "Wonderful! The brain uses spikes.",
+        "induced_neg_answer": "Frankly! The brain uses spikes."
+      }
+    ]
+  },
+  "git_sha": "5954a5224a0e350dda916af018c8bc0fffc9ff88",
+  "preconditions": [
+    {
+      "name": "(A) mood tracks the conversation (baseline~0, pos>+tol, neg<-tol, neutral holds, felt rises)",
+      "ok": true
+    },
+    {
+      "name": "(B) message-fixed: affect changes the reply lead (pos warm != neg curt) with content identical",
+      "ok": true
+    },
+    {
+      "name": "(B) the neural lesion (intero->ladder cut) collapses the mood -> the lead difference VANISHES",
+      "ok": true
+    },
+    {
+      "name": "(C) content fields affect-invariant across {off,+pos,+neg} on every panel turn",
+      "ok": true
+    },
+    {
+      "name": "(C) byte-identical-off: OFF never carries the key; a neutral (un-induced) ON-minus-key == OFF",
+      "ok": true
+    }
+  ],
+  "verdict": "GO"
+}

@@ -3000,6 +3000,29 @@ def _gnw_swap_flag_on() -> bool:
     return os.environ.get("BRAIN_GNW_SWAP", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# ─── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19): the #81 graded-affect ladder read made LOAD-BEARING on the
+# live turn — the brain's felt valence x arousal (read NEURALLY off the #81 interoceptive ladder) colors the AFFECTIVE
+# EXPRESSION the reply leads with (a graded warmth/curtness marker) + its forthcomingness. The production-integration
+# anchor. When `_AFFECT_DRIVES_DEFAULT_ON` is False the block is gated on the env flag alone (`BRAIN_AFFECT_DRIVES=1`
+# opts in for review); the response carries NO `affect_drives` key and NO affective lead -> byte-identical. Flipping the
+# anchor to True installs the coupling by default (a `BRAIN_AFFECT_DRIVES=0` escape reverts to the byte-identical
+# oracle). Orthogonal to the Gate-B `BRAIN_AFFECT` prose-manner path. See webapp/affect_drives_chat.py.
+_AFFECT_DRIVES_DEFAULT_ON = True
+
+
+def _affect_drives_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-ON anchor: enabled UNLESS
+    `BRAIN_AFFECT_DRIVES` is an explicit off (0/false/no/off). Default-OFF anchor: enabled only on an explicit
+    truthy opt-in. Kept lightweight so the disabled path does no ladder work."""
+    try:
+        from webapp import affect_drives_chat as _ADC
+    except Exception:
+        return False
+    if _AFFECT_DRIVES_DEFAULT_ON:
+        return not _ADC.affect_drives_off()
+    return _ADC.affect_drives_enabled()
+
+
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
     own mouth + selection substrate for THIS conversation; cleared on reset. See
@@ -3809,6 +3832,28 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
 
+    # ── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19) ────────────────────────────────────────────────────
+    # Read the brain's felt valence x arousal off the #81 graded-affect LADDER (the interoceptive graded read,
+    # NEURAL off cp_firing_states — reuse-by-import, NO sim/ edit) and turn it into (a) an AFFECTIVE EXPRESSION the
+    # reply leads with (a graded warmth/curtness marker, `affect_drives_lead`, prepended OUTERMOST to the answer
+    # surface) and (b) `affect_drives_info` (the additive trace: mood, felt-arousal, graded level, the lead). The
+    # moat/recall/abstain verdict runs FIRST and unchanged — this DECORATES an already-matched surface, never a fact;
+    # the content fields (abstained/recalled_svo/verified) are byte-identical with it on or off. The neural read runs
+    # on a PRIVATE RNG timeline (host RNG restored — the #77 footgun), so the other response fields stay byte-
+    # identical. Default-ON (anchor); `BRAIN_AFFECT_DRIVES=0` -> the block is fully skipped (no key, no lead ->
+    # byte-identical oracle). LESION (`BRAIN_AFFECT_DRIVES_LESION=1`): cut the interoceptive->ladder synapses -> the
+    # neural mood collapses -> the lead VANISHES (the load-bearing proof). See webapp/affect_drives_chat.py.
+    affect_drives_info = None
+    affect_drives_lead = ""
+    if _affect_drives_on():
+        try:
+            from webapp import affect_drives_chat as _ADC
+            affect_drives_info = _ADC.observe_turn(chat, msg)
+            affect_drives_lead = str(affect_drives_info.get("lead", "") or "")
+        except Exception as _ade:  # never let the affect coupling crash a turn — degrade to the un-led answer
+            affect_drives_info = {"on": True, "error": f"{type(_ade).__name__}: {_ade}", "lead": ""}
+            affect_drives_lead = ""
+
     # ── PROSPECTIVE MEMORY (Gate-B, 2026-08-13) ──────────────────────────────────────────────────────────────
     # A co-resident spiking intention-LATCH + BA10 cue-MONITOR holds a deferred intention ("remind me to X when Y")
     # across intervening turns and RELEASES it only when the cue appears — reuse-by-import from
@@ -4554,6 +4599,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             _swap_info = getattr(chat, "_last_gnw_swap", None)
             if _swap_info is not None:
                 resp["gnw_swap"] = _swap_info
+        # AFFECT DRIVES THE RESPONSE (board #84): prepend the graded affective EXPRESSION lead OUTERMOST (spoken
+        # first, as tone) + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral
+        # -> byte-identical. The content fields above are unchanged (affect colors the surface, never a fact).
+        if affect_drives_lead:
+            resp["answer"] = affect_drives_lead + resp["answer"]
+        if affect_drives_info is not None:
+            resp["affect_drives"] = affect_drives_info
         return JSONResponse(resp)
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -4673,6 +4725,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _swap_info = getattr(chat, "_last_gnw_swap", None)
         if _swap_info is not None:
             _resp["gnw_swap"] = _swap_info
+    # AFFECT DRIVES THE RESPONSE (board #84, single-fact path): prepend the graded affective EXPRESSION lead
+    # OUTERMOST + attach the additive `affect_drives` trace. Empty lead / no key when disabled or neutral ->
+    # byte-identical. The content fields (abstained/recalled_svo/verified) are unchanged.
+    if affect_drives_lead:
+        _resp["answer"] = affect_drives_lead + _resp["answer"]
+    if affect_drives_info is not None:
+        _resp["affect_drives"] = affect_drives_info
     return JSONResponse(_resp)
 
 

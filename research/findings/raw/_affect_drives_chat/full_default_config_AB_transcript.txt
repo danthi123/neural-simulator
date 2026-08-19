@@ -1,0 +1,27 @@
+==========================================================================================
+(A) AFFECT TRACKS THE CONVERSATION through /api/brain-chat  (BRAIN_AFFECT_DRIVES default-on)
+==========================================================================================
+  [0] 'what does the dog chase?'                           kind=neutral  mood=-0.0034 felt=0.0000 lvl=+0 lead=''             OK
+  [1] 'I am so happy and joyful, this is wonderful'        kind=pos      mood=+0.0692 felt=0.0432 lvl=+2 lead='Gladly — '    OK
+  [2] 'what does the dog chase?'                           kind=neutral  mood=+0.0692 felt=0.0432 lvl=+2 lead='Gladly — '    OK
+  [3] 'I feel so sad and afraid, everything is terrible'   kind=neg      mood=-0.0294 felt=0.0703 lvl=-1 lead='Hm! '         OK
+  [4] 'what does the dog chase?'                           kind=neutral  mood=-0.0294 felt=0.0703 lvl=-1 lead='Hm! '         OK
+  [5] 'this is a delight, I am glad and cheerful'          kind=pos      mood=+0.0643 felt=0.0742 lvl=+2 lead='Gladly! '     OK
+  [6] 'what does the dog chase?'                           kind=neutral  mood=+0.0643 felt=0.0742 lvl=+2 lead='Gladly! '     OK
+  baseline_neutral=True pos_positive=True neg_negative=True holds_pos=True holds_neg=True felt_rises=True
+  (A) PASS
+==========================================================================================
+(B) AFFECT DRIVES THE RESPONSE — message FIXED, vary affect; lesion collapses the difference
+==========================================================================================
+  INTACT  pos: lead='Wonderful — ' ans='Wonderful — The dog chases cat. The cat eats fish.'
+          neg: lead='Frankly! '    ans='Frankly! The dog chases cat. The cat eats fish.'
+          intact_diff=True pos_is_warm=True neg_is_curt=True base_identical=True content_identical=True
+  LESION  pos: lead=''       mood=+0.0000 ans='The dog chases cat. The cat eats fish.'
+          neg: lead=''       mood=+0.0000 ans='The dog chases cat. The cat eats fish.'
+          leads_gone=True answers_identical=True ==base=True mood_collapsed=True
+  (B) PASS   [intact difference PRESENT and it VANISHES under the neural lesion]
+==========================================================================================
+(C) NO-REGRESSION — content affect-invariant + byte-identical-off (neutral panel md5)
+==========================================================================================
+  message                            | OFF md5   ON md5    | keys | neutral-byte | content-inv
+[exited with code 124]
