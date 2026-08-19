@@ -295,6 +295,15 @@ moat-safe unless noted):
   dissociates; majority-override 1.000; parent-scrutinized per-seed). A production-bus WIRING DESIGN exists
   (`docs/plans/2026-08-13-gnw-norgan-bus-production-wiring.md`). **NEXT (the one-substrate step): wire the bus into
   production `brain_chat` to REPLACE the host organ-orchestration** — the biggest single move toward one true substrate.
+- **GNW THOUGHT-SWAP is now FULLY SELF-DRIVEN (trigger + evict + admit all neural) — 6/6 GO (2026-08-19):** the
+  workspace swaps one held thought for another with NO host `if`. It EVICTS neurally (Rung-2d short-term depression drains
+  the incumbent's own recurrent loop below its sustain knee → self-collapse; `2026-08-19-gnw-recurrence-weaken-swap-GO`),
+  ADMITS neurally (a spiking dis-inhibitory VACANCY GATE opens on the substrate's own vacancy read;
+  `2026-08-19-gnw-neural-vacancy-gate-GO`), and now DECIDES neurally WHEN to swap: a spiking MISMATCH+SALIENCE detector
+  fires when a salient proposal MISMATCHES the held content (a prediction interneuron vetoes a match) and its rate sets
+  the eviction boost (`2026-08-19-gnw-neural-swap-intention-GO`). The DECISION is the crux — swap rate 1.00 for a salient
+  mismatch, 0.00 for a non-salient proposal, 0.00 for a match; silence the detector and a salient input does NOT swap
+  (the incumbent holds). Reversible A→B→A, deterministic. Remaining: emergent (not hand-wired) coalitions + production-wire.
 - **Causal forward-model (T1-4, the reasoning bottleneck) — 6/6 GO:** a directed, queryable n-way STATE forward model
   (generalizes E2's valence predictor). Temporal-order STDP sets edge DIRECTION, three-factor phasic DA gates
   consolidation, a teacher DO-intervention prunes confounded edges (cause-vs-correlation via invariance-across-

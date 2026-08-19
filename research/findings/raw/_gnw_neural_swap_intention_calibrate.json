@@ -1,0 +1,9 @@
+{
+  "runner": "_gnw_neural_swap_intention_derisk",
+  "mode": "calibrate",
+  "seed": 42,
+  "salient_mismatch": 0.14465020576131687,
+  "salient_match": 0.0,
+  "nonsalient_mm": 0.03518518518518519,
+  "primitive_ok": true
+}
