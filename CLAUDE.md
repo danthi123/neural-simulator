@@ -37,7 +37,11 @@ until it WORKS. Closure cannot be deferred.** **SESSION START — OR ANY CONTINU
 within-session anti-stall + RUN-STATE heartbeat Monitor is live (a prior session's died with it; a continuation usually
 has NONE), and arm one if not. It must be STATE-CHECKING (emits GPU / running-procs / recent-output every ~15 min) — a
 text-only "are you idle?" nudge is insufficient (the 2026-07-24 failure was a live-but-stalled run, not idleness). Exact
-recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". NEVER WAIT on a background run without a live state-heartbeat, and
+recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". **The heartbeat now ALSO runs `tools/parallel_audit.py` every
+cycle: `⛔ UNDER-PARALLELIZED` (idle local/pool cores or GPU + ready Vikunja board tasks > in-flight lanes) is a STALL —
+launch the listed independent work (agents for build/research · mini-PC pool for CPU · GPU for the big run) BEFORE
+holding; holding is only earned at `✓ SATURATED`. Owner-flagged recurrence 2026-08-18: past fixes failed being
+manual/advisory/passive.** NEVER WAIT on a background run without a live state-heartbeat, and
 never trust a subagent-armed Monitor / passive re-invocation to catch a completion. Then resume from CURRENT STATE.**
 Cross-session continuation is MANUAL by owner choice (a plain "continue" + the roadmap + that board re-anchors) — no
 watchdog/daemon.
