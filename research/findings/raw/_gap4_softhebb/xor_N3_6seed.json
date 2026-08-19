@@ -1,0 +1,405 @@
+{
+  "probe": "gap4_softhebb_soft_wta_hebbian_local",
+  "task": "xor",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "status": "NO-GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "regime exists: BPTT ceiling clears chance by >=0.05",
+      "ok": true,
+      "detail": "measured=0.616063138347261 expect=<function _build_verdict.<locals>.<lambda> at 0x7fafbe7b2d40>",
+      "note": "a trained non-local net must beat chance, else the task is unlearnable here and the test is UNDEFINED"
+    },
+    {
+      "kind": "require",
+      "name": "rule genuinely unsupervised (reads no label/feedback)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "SoftHebb update source-guarded: only presynaptic x + own pre-activation u"
+    },
+    {
+      "kind": "require",
+      "name": "seed control (deterministic numpy RNG; byte-identical re-run verified)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "SoftHebb vs shuffled-input control (the shuffle changed training)",
+      "ok": true,
+      "detail": "treatment=0.629526 control=0.612813 |sep|=0.0167131 > 0",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "softhebb_lift_attributable_to_structure": 2.5714285714285645,
+  "config": {
+    "hidden": 32,
+    "wide_hidden": 256,
+    "n_hidden_layers": 3,
+    "T": 24,
+    "in_gain": 1.0,
+    "train_subsample": 2000,
+    "softhebb_lr": 0.02,
+    "softhebb_tau": 0.25,
+    "softhebb_epochs": 50,
+    "batch": 32,
+    "preserve_norm": true,
+    "fa_epochs": 60,
+    "fa_lr": 0.05,
+    "bptt_epochs": 150,
+    "bptt_lr": 0.05,
+    "task_kwargs": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 85.5,
+  "results": [
+    {
+      "seed": 42,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5487465181058496,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.45125348189415043,
+      "softhebb_inherit": 0.637883008356546,
+      "softhebb_lambda": 10.0,
+      "frozen_res_matched_inherit": 0.649025069637883,
+      "frozen_res_matched_lambda": 10.0,
+      "frozen_res_wide_inherit": 0.6880222841225627,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.6323119777158774,
+      "chained_fa_inherit": 0.45125348189415043,
+      "chained_fa_kp_inherit": 0.45125348189415043,
+      "bptt_inherit": 0.6323119777158774,
+      "softhebb_over_reservoir": -0.01114206128133699,
+      "softhebb_over_wide": -0.05013927576601673,
+      "shuffled_over_reservoir": -0.01671309192200554,
+      "fa_over_chance": -0.09749303621169919,
+      "kp_over_chance": -0.09749303621169919,
+      "softhebb_layer_selectivity": [
+        0.584958217270195,
+        0.5459610027855153,
+        0.5821727019498607
+      ],
+      "reservoir_layer_selectivity": [
+        0.6155988857938719,
+        0.6072423398328691,
+        0.6518105849582173
+      ],
+      "softhebb_selectivity_rising": false,
+      "softhebb_selectivity_over_reservoir": false,
+      "softhebb_hidden_spikerate": [
+        9.3831787109375,
+        5.5799560546875,
+        3.3443603515625
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    },
+    {
+      "seed": 43,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5376044568245125,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.4623955431754875,
+      "softhebb_inherit": 0.5905292479108635,
+      "softhebb_lambda": 0.01,
+      "frozen_res_matched_inherit": 0.5821727019498607,
+      "frozen_res_matched_lambda": 1.0,
+      "frozen_res_wide_inherit": 0.7019498607242339,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.5487465181058496,
+      "chained_fa_inherit": 0.5376044568245125,
+      "chained_fa_kp_inherit": 0.5376044568245125,
+      "bptt_inherit": 0.5654596100278552,
+      "softhebb_over_reservoir": 0.00835654596100277,
+      "softhebb_over_wide": -0.11142061281337046,
+      "shuffled_over_reservoir": -0.03342618384401108,
+      "fa_over_chance": 0.0,
+      "kp_over_chance": 0.0,
+      "softhebb_layer_selectivity": [
+        0.5153203342618384,
+        0.5181058495821727,
+        0.5403899721448467
+      ],
+      "reservoir_layer_selectivity": [
+        0.5236768802228412,
+        0.5793871866295265,
+        0.5069637883008357
+      ],
+      "softhebb_selectivity_rising": true,
+      "softhebb_selectivity_over_reservoir": false,
+      "softhebb_hidden_spikerate": [
+        9.5789794921875,
+        6.487548828125,
+        3.1102294921875
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    },
+    {
+      "seed": 44,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5236768802228412,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.4763231197771588,
+      "softhebb_inherit": 0.6350974930362117,
+      "softhebb_lambda": 0.01,
+      "frozen_res_matched_inherit": 0.5933147632311978,
+      "frozen_res_matched_lambda": 100.0,
+      "frozen_res_wide_inherit": 0.6601671309192201,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.6323119777158774,
+      "chained_fa_inherit": 0.5236768802228412,
+      "chained_fa_kp_inherit": 0.5236768802228412,
+      "bptt_inherit": 0.5877437325905293,
+      "softhebb_over_reservoir": 0.04178272980501385,
+      "softhebb_over_wide": -0.025069637883008422,
+      "shuffled_over_reservoir": 0.03899721448467963,
+      "fa_over_chance": 0.0,
+      "kp_over_chance": 0.0,
+      "softhebb_layer_selectivity": [
+        0.5292479108635098,
+        0.5682451253481894,
+        0.5877437325905293
+      ],
+      "reservoir_layer_selectivity": [
+        0.5626740947075209,
+        0.5626740947075209,
+        0.5515320334261838
+      ],
+      "softhebb_selectivity_rising": true,
+      "softhebb_selectivity_over_reservoir": false,
+      "softhebb_hidden_spikerate": [
+        9.529296875,
+        6.0709228515625,
+        3.4901123046875
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    },
+    {
+      "seed": 100,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5097493036211699,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.49025069637883006,
+      "softhebb_inherit": 0.6462395543175488,
+      "softhebb_lambda": 10.0,
+      "frozen_res_matched_inherit": 0.6211699164345403,
+      "frozen_res_matched_lambda": 100.0,
+      "frozen_res_wide_inherit": 0.7075208913649025,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.6072423398328691,
+      "chained_fa_inherit": 0.5097493036211699,
+      "chained_fa_kp_inherit": 0.5097493036211699,
+      "bptt_inherit": 0.637883008356546,
+      "softhebb_over_reservoir": 0.025069637883008422,
+      "softhebb_over_wide": -0.06128133704735372,
+      "shuffled_over_reservoir": -0.01392757660167121,
+      "fa_over_chance": 0.0,
+      "kp_over_chance": 0.0,
+      "softhebb_layer_selectivity": [
+        0.5403899721448467,
+        0.5821727019498607,
+        0.5793871866295265
+      ],
+      "reservoir_layer_selectivity": [
+        0.5181058495821727,
+        0.5766016713091922,
+        0.596100278551532
+      ],
+      "softhebb_selectivity_rising": true,
+      "softhebb_selectivity_over_reservoir": false,
+      "softhebb_hidden_spikerate": [
+        9.5469970703125,
+        6.2459716796875,
+        2.658447265625
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    },
+    {
+      "seed": 101,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5236768802228412,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.4763231197771588,
+      "softhebb_inherit": 0.6434540389972145,
+      "softhebb_lambda": 100.0,
+      "frozen_res_matched_inherit": 0.6601671309192201,
+      "frozen_res_matched_lambda": 100.0,
+      "frozen_res_wide_inherit": 0.6852367688022284,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.6183844011142061,
+      "chained_fa_inherit": 0.5626740947075209,
+      "chained_fa_kp_inherit": 0.4763231197771588,
+      "bptt_inherit": 0.6601671309192201,
+      "softhebb_over_reservoir": -0.01671309192200554,
+      "softhebb_over_wide": -0.04178272980501385,
+      "shuffled_over_reservoir": -0.04178272980501396,
+      "fa_over_chance": 0.03899721448467974,
+      "kp_over_chance": -0.0473537604456824,
+      "softhebb_layer_selectivity": [
+        0.5543175487465181,
+        0.637883008356546,
+        0.6072423398328691
+      ],
+      "reservoir_layer_selectivity": [
+        0.5236768802228412,
+        0.6044568245125348,
+        0.5821727019498607
+      ],
+      "softhebb_selectivity_rising": true,
+      "softhebb_selectivity_over_reservoir": true,
+      "softhebb_hidden_spikerate": [
+        9.656005859375,
+        4.4248046875,
+        3.4935302734375
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    },
+    {
+      "seed": 102,
+      "task": "xor",
+      "n_hidden_layers": 3,
+      "chance": 0.5013927576601671,
+      "n_in": 10,
+      "k": 2,
+      "sizes": [
+        10,
+        32,
+        32,
+        32,
+        2
+      ],
+      "oracle_inherit": 0.4986072423398329,
+      "softhebb_inherit": 0.6239554317548747,
+      "softhebb_lambda": 1.0,
+      "frozen_res_matched_inherit": 0.6323119777158774,
+      "frozen_res_matched_lambda": 100.0,
+      "frozen_res_wide_inherit": 0.649025069637883,
+      "frozen_res_wide_lambda": 100.0,
+      "wide_hidden": 256,
+      "shuffled_softhebb_inherit": 0.637883008356546,
+      "chained_fa_inherit": 0.4958217270194986,
+      "chained_fa_kp_inherit": 0.4986072423398329,
+      "bptt_inherit": 0.6128133704735376,
+      "softhebb_over_reservoir": -0.00835654596100277,
+      "softhebb_over_wide": -0.02506963788300831,
+      "shuffled_over_reservoir": 0.005571030640668551,
+      "fa_over_chance": -0.005571030640668495,
+      "kp_over_chance": -0.0027855153203342198,
+      "softhebb_layer_selectivity": [
+        0.5403899721448467,
+        0.5487465181058496,
+        0.6350974930362117
+      ],
+      "reservoir_layer_selectivity": [
+        0.532033426183844,
+        0.5988857938718662,
+        0.5236768802228412
+      ],
+      "softhebb_selectivity_rising": true,
+      "softhebb_selectivity_over_reservoir": false,
+      "softhebb_hidden_spikerate": [
+        9.526123046875,
+        7.5799560546875,
+        4.02392578125
+      ],
+      "softhebb_no_label_no_feedback": true,
+      "GO": false
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "mean_chance": 0.5241411327762303,
+    "mean_oracle_inherit": 0.47585886722376974,
+    "mean_softhebb_inherit": 0.6295264623955432,
+    "mean_frozen_res_matched_inherit": 0.6230269266480967,
+    "mean_frozen_res_wide_inherit": 0.6819870009285051,
+    "mean_shuffled_softhebb_inherit": 0.6128133704735376,
+    "mean_chained_fa_inherit": 0.5134633240482822,
+    "mean_chained_fa_kp_inherit": 0.4995357474466109,
+    "mean_bptt_inherit": 0.616063138347261,
+    "mean_softhebb_over_reservoir": 0.0064995357474466236,
+    "MIN_softhebb_over_reservoir": -0.01671309192200554,
+    "mean_softhebb_over_wide": -0.05246053853296192,
+    "mean_shuffled_over_reservoir": -0.010213556174558935,
+    "MAX_shuffled_over_reservoir": 0.03899721448467963,
+    "mean_fa_over_chance": -0.01067780872794799,
+    "mean_kp_over_chance": -0.0246053853296193,
+    "selectivity_rising_seeds": "5/6",
+    "selectivity_over_reservoir_seeds": "1/6",
+    "GO_seeds": "0/6",
+    "no_label_no_feedback_all": true
+  },
+  "verdict": "NO-GO / METHOD-NEGATIVE -- SoftHebb 0.630 vs frozen-reservoir OPTIMAL matched 0.623 / wide 0.682 (lift mean +0.006, MIN -0.017); shuffled-input SoftHebb 0.613 (over-reservoir mean -0.010, MAX +0.039); WALL FA 0.513 / KP 0.500 (over-chance -0.011/-0.025); BPTT ceiling 0.616; oracle 0.476; chance 0.524. Per-layer selectivity rising 5/6, over-reservoir 1/6. GO 0/6. => SoftHebb does NOT clear the >=0.10 min-lift over the reservoir; the unsupervised soft-WTA competition adds little beyond a random projection under the enter-the-regime metric (the July-15 'unsupervised, not task-directed' objection is confirmed here). First-class negative."
+}
