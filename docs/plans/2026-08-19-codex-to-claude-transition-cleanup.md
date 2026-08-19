@@ -89,10 +89,18 @@ PRESERVE_THEN_REMOVE (4) / KEEP (0), accounting for CRLF noise and cherry-picked
 - **All 43 worktrees removed + their branches**, then a patch-equivalence pass deleted 25 more fully-on-main codex
   branch refs. **Final: 6 worktrees (the live set only), 16 codex branches (5 live/primary + 11 older refs).**
 
-## What REMAINS (optional; harmless — zero data-loss risk since nothing is being deleted)
-- **11 older codex branch REFS** (causal-composition, cross-region-one-brain, gap4-decolle/softhebb, i7-burndown1/2,
-  relational-spatial-code, replay-consolidation-v3, research-escalation, rolegate-fbalign, v13-deterministic-baseline):
-  patch-id-unique commits — could be genuinely-unique unmerged work OR modified cherry-picks. KEPT (refs only, no
-  worktree, no disk cost). A future content-audit (same workflow, adapted to branch refs via `git diff main...<branch>`)
-  can decide each. Owner keeps the `codex/` name, so there is no urgency.
-- Run-safety rule stands: re-verify nothing live is using a target (`readlink /proc/<pid>/cwd`) before removing it.
+## BRANCH REFS — DONE (2026-08-19, branch-ref-cleanup-audit workflow wf_b768d692)
+A 3-agent read-only audit content-compared all 11 older codex branch refs against main: **10 SAFE_DELETE**
+(content byte-identical or superseded by a newer/fuller main version — e.g. research-escalation main 1085L vs branch
+829L) **+ 1 PRESERVE** (`codex/gap4-softhebb` carried a UNIQUE 6-seed SoftHebb soft-WTA-Hebbian NEGATIVE finding +
+485L runner + its raw JSONs, absent from main — an honest negative). Preserved to main (`012540c8`; the claim_check
+gate correctly required the finding's cited raw artifacts, recovered from the deleted branch's still-reachable commit
+`6da43b1d2`), then all 11 refs deleted. **Final: 4 codex branches (primary `gap4-axon-capd-derisk` + the 3 live-agent
+branches), 5 worktrees (primary + gate-b + 3 live agents).** The live-agent branches are cleaned routinely as their
+agents finish + consolidate. THE CLEANUP IS COMPLETE.
+
+## If the owner later wants to REMOVE the `codex/` name (a rename, not a delete — zero history/data risk)
+`git branch -m codex/X newname` per branch (works on the checked-out primary); then per remote push-new + delete-old
+(`git push <r> newname` → `git push <r> --delete codex/X`) on origin AND gitea; then grep-and-replace any hardcoded
+branch-name references (CI/scripts/docs/memory) and set the new-branch convention so agents stop creating `codex/*`.
+Cheap now that the namespace is nearly empty (mainly the one primary branch; `main` is already the non-codex trunk).
