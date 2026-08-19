@@ -1,0 +1,110 @@
+{
+  "verdict": "GO",
+  "go_headline": true,
+  "preconditions": [
+    {
+      "kind": "control",
+      "name": "lesion-nodend collapses (dendritic self-prediction load-bearing)",
+      "ok": true,
+      "detail": "treatment=0.963845 control=0.0320346 |sep|=0.93181 > 0.481922",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "lesion-noteach collapses (somatic teaching load-bearing)",
+      "ok": true,
+      "detail": "treatment=0.963845 control=0.0767196 |sep|=0.887125 > 0.481922",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "scramble collapses (per-output addressing load-bearing)",
+      "ok": true,
+      "detail": "treatment=0.963845 control=0.0865079 |sep|=0.877337 > 0.481922",
+      "note": ""
+    }
+  ],
+  "attribution": {
+    "dendritic_self_prediction_frac": 0.9667637029027697,
+    "somatic_teaching_frac": 0.9204025617566332,
+    "per_output_addressing_frac": 0.9102470265324794
+  },
+  "chance": 0.0625,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "gain": 1.5,
+  "beta": 0.5,
+  "spike_gain": 20.0,
+  "lr": 0.02,
+  "lam": 0.0001,
+  "steps": 24000,
+  "host": 1.0,
+  "neural": 0.9638447971781305,
+  "neural_single": 1.0,
+  "lesion_nodend": 0.032034632034632034,
+  "lesion_noteach": 0.0767195767195767,
+  "scramble": 0.08650793650793649,
+  "n_parity": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "host": 1.0,
+      "neural": 1.0,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.09523809523809523,
+      "scramble": 0.19047619047619047
+    },
+    {
+      "seed": 43,
+      "host": 1.0,
+      "neural": 1.0,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.06666666666666667,
+      "lesion_noteach": 0.0,
+      "scramble": 0.06666666666666667
+    },
+    {
+      "seed": 44,
+      "host": 1.0,
+      "neural": 0.9259259259259259,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.16666666666666666,
+      "scramble": 0.16666666666666666
+    },
+    {
+      "seed": 100,
+      "host": 1.0,
+      "neural": 0.8571428571428571,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.09523809523809523,
+      "lesion_noteach": 0.14285714285714285,
+      "scramble": 0.09523809523809523
+    },
+    {
+      "seed": 101,
+      "host": 1.0,
+      "neural": 1.0,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.05555555555555555,
+      "scramble": 0.0
+    },
+    {
+      "seed": 102,
+      "host": 1.0,
+      "neural": 1.0,
+      "neural_single": 1.0,
+      "lesion_nodend": 0.030303030303030304,
+      "lesion_noteach": 0.0,
+      "scramble": 0.0
+    }
+  ]
+}
