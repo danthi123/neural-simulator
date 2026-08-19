@@ -1,0 +1,596 @@
+{
+  "probe": "vision_hmax_spiking",
+  "primary_code": "latency",
+  "overall_verdict": "SPIKING-HMAX-PARTIAL-1/6",
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "code": "both",
+    "primary_code": "latency",
+    "n_classes": 4,
+    "n_slots": 3,
+    "n_pos_total": 8,
+    "pos_span": 8.0,
+    "n_ex": 6,
+    "image_size": 56,
+    "slot_offset": 10.0,
+    "stroke_len": 7.0,
+    "stroke_tk": 1.8,
+    "pixel_noise": 0.03,
+    "primary_arm": "trace",
+    "n_orientations": 8,
+    "n_frequencies": 2,
+    "n_pos": 24,
+    "rf_radius": 3,
+    "orient_norm": "z",
+    "c1_gate": 0.15,
+    "c1_win": 6,
+    "c1_stride": 3,
+    "s2_p": 3,
+    "n_s2": 128,
+    "trace_passes": 12,
+    "trace_epochs": 40,
+    "lr": 0.2,
+    "trace_decay": 0.9,
+    "boost_beta": 2.0,
+    "s1_mode": "spiking",
+    "s2_mode": "rate",
+    "c2_pool": "drivepop",
+    "c2_k": 3,
+    "c2_pop": 24,
+    "s2_norm": "submean",
+    "T1": 64,
+    "T2": 48,
+    "tau": 8.0,
+    "v_thresh": 1.0,
+    "t_ref": 2,
+    "noise": 0.06,
+    "s1_gain": 1.2,
+    "s2_gain": 2.5,
+    "kwta_frac": 0.15,
+    "decode_margin": 0.15,
+    "beat_margin": 0.1,
+    "pos_decode_margin": 0.15,
+    "inv_gap": 0.2,
+    "out": "research/findings/raw/lanes/perception/vhmax_spk_B_frontend_spiking_6seed.json"
+  },
+  "by_code": {
+    "latency": {
+      "summary": {
+        "probe": "vision_hmax_spiking",
+        "code": "latency",
+        "overall_verdict": "SPIKING-HMAX-PARTIAL-1/6",
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "n_seeds": 6,
+        "chance_object": 0.25,
+        "per_seed_capability_go": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "decode_means": {
+          "A_v1_direct_held": 0.3767,
+          "H_flat_pool_held": 0.2812,
+          "PRIMARY_same_pos_cv": 0.3264,
+          "PRIMARY_cross_pos_cv": 0.3958,
+          "PRIMARY_held": 0.4115,
+          "PRIMARY_scramble_held": 0.2535,
+          "B_hmax_imprint_held": 0.3628,
+          "T_hmax_trace_held": 0.4115,
+          "T_hmax_traceshuffle_held": 0.4149,
+          "R_hmax_random_held": 0.4167,
+          "P1_hmax_imprint_p1_held": 0.2917
+        },
+        "dissociation_means": {
+          "object_decode_heldsplit": 0.3889,
+          "position_decode_heldsplit": 0.3125,
+          "label_shuffle_null": 0.2361
+        },
+        "invariance_gap_mean": 0.0,
+        "verdict_fracs": {
+          "capability_go": 0.1667,
+          "architecture_load_bearing": 0.6667,
+          "template_learning_load_bearing": 0.0,
+          "flat_pool_configuration_blind": 1.0,
+          "trace_load_bearing": 0.0
+        },
+        "headroom": {
+          "primary_minus_v1_held": 0.0348,
+          "primary_minus_flat_held": 0.1303,
+          "primary_minus_random_held": -0.0052,
+          "primary_p3_minus_p1_held": 0.1198
+        },
+        "elapsed_seconds": 22.3
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.3125,
+            "H_flat_pool_held": 0.3333,
+            "PRIMARY_same_pos_cv": 0.25,
+            "PRIMARY_cross_pos_cv": 0.4688,
+            "PRIMARY_held": 0.4375,
+            "PRIMARY_scramble_held": 0.2604,
+            "B_hmax_imprint_held": 0.4167,
+            "T_hmax_trace_held": 0.4375,
+            "T_hmax_traceshuffle_held": 0.4375,
+            "R_hmax_random_held": 0.4167,
+            "P1_hmax_imprint_p1_held": 0.2708
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5,
+            "position_decode_heldsplit": 0.3125,
+            "label_shuffle_null": 0.25,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": true,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 43,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4792,
+            "H_flat_pool_held": 0.3229,
+            "PRIMARY_same_pos_cv": 0.3125,
+            "PRIMARY_cross_pos_cv": 0.3125,
+            "PRIMARY_held": 0.3958,
+            "PRIMARY_scramble_held": 0.2708,
+            "B_hmax_imprint_held": 0.3646,
+            "T_hmax_trace_held": 0.3958,
+            "T_hmax_traceshuffle_held": 0.4167,
+            "R_hmax_random_held": 0.3958,
+            "P1_hmax_imprint_p1_held": 0.2917
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4375,
+            "position_decode_heldsplit": 0.3333,
+            "label_shuffle_null": 0.3333,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": false,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 44,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4062,
+            "H_flat_pool_held": 0.3646,
+            "PRIMARY_same_pos_cv": 0.3958,
+            "PRIMARY_cross_pos_cv": 0.4792,
+            "PRIMARY_held": 0.4688,
+            "PRIMARY_scramble_held": 0.2396,
+            "B_hmax_imprint_held": 0.3958,
+            "T_hmax_trace_held": 0.4688,
+            "T_hmax_traceshuffle_held": 0.4688,
+            "R_hmax_random_held": 0.4792,
+            "P1_hmax_imprint_p1_held": 0.2917
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.375,
+            "position_decode_heldsplit": 0.3333,
+            "label_shuffle_null": 0.25,
+            "position_pooled_out": false
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 100,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.3021,
+            "H_flat_pool_held": 0.2292,
+            "PRIMARY_same_pos_cv": 0.2917,
+            "PRIMARY_cross_pos_cv": 0.3229,
+            "PRIMARY_held": 0.2604,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.2396,
+            "T_hmax_trace_held": 0.2604,
+            "T_hmax_traceshuffle_held": 0.2708,
+            "R_hmax_random_held": 0.3333,
+            "P1_hmax_imprint_p1_held": 0.3125
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.3125,
+            "position_decode_heldsplit": 0.2083,
+            "label_shuffle_null": 0.25,
+            "position_pooled_out": false
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": false,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 101,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.3854,
+            "H_flat_pool_held": 0.1875,
+            "PRIMARY_same_pos_cv": 0.4167,
+            "PRIMARY_cross_pos_cv": 0.4167,
+            "PRIMARY_held": 0.4271,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.3958,
+            "T_hmax_trace_held": 0.4271,
+            "T_hmax_traceshuffle_held": 0.4167,
+            "R_hmax_random_held": 0.4167,
+            "P1_hmax_imprint_p1_held": 0.25
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4167,
+            "position_decode_heldsplit": 0.375,
+            "label_shuffle_null": 0.1875,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 102,
+          "code": "latency",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.375,
+            "H_flat_pool_held": 0.25,
+            "PRIMARY_same_pos_cv": 0.2917,
+            "PRIMARY_cross_pos_cv": 0.375,
+            "PRIMARY_held": 0.4792,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.3646,
+            "T_hmax_trace_held": 0.4792,
+            "T_hmax_traceshuffle_held": 0.4792,
+            "R_hmax_random_held": 0.4583,
+            "P1_hmax_imprint_p1_held": 0.3333
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.2917,
+            "position_decode_heldsplit": 0.3125,
+            "label_shuffle_null": 0.1458,
+            "position_pooled_out": false
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        }
+      ]
+    },
+    "count": {
+      "summary": {
+        "probe": "vision_hmax_spiking",
+        "code": "count",
+        "overall_verdict": "SPIKING-HMAX-PARTIAL-3/6",
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "n_seeds": 6,
+        "chance_object": 0.25,
+        "per_seed_capability_go": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true
+        ],
+        "decode_means": {
+          "A_v1_direct_held": 0.4184,
+          "H_flat_pool_held": 0.3003,
+          "PRIMARY_same_pos_cv": 0.4028,
+          "PRIMARY_cross_pos_cv": 0.4879,
+          "PRIMARY_held": 0.5625,
+          "PRIMARY_scramble_held": 0.2517,
+          "B_hmax_imprint_held": 0.4392,
+          "T_hmax_trace_held": 0.5625,
+          "T_hmax_traceshuffle_held": 0.5712,
+          "R_hmax_random_held": 0.5451,
+          "P1_hmax_imprint_p1_held": 0.309
+        },
+        "dissociation_means": {
+          "object_decode_heldsplit": 0.4896,
+          "position_decode_heldsplit": 0.3507,
+          "label_shuffle_null": 0.2361
+        },
+        "invariance_gap_mean": 0.0174,
+        "verdict_fracs": {
+          "capability_go": 0.5,
+          "architecture_load_bearing": 1.0,
+          "template_learning_load_bearing": 0.1667,
+          "flat_pool_configuration_blind": 1.0,
+          "trace_load_bearing": 0.0
+        },
+        "headroom": {
+          "primary_minus_v1_held": 0.1441,
+          "primary_minus_flat_held": 0.2622,
+          "primary_minus_random_held": 0.0174,
+          "primary_p3_minus_p1_held": 0.2535
+        },
+        "elapsed_seconds": 46.5
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4167,
+            "H_flat_pool_held": 0.3542,
+            "PRIMARY_same_pos_cv": 0.3333,
+            "PRIMARY_cross_pos_cv": 0.4896,
+            "PRIMARY_held": 0.6146,
+            "PRIMARY_scramble_held": 0.2604,
+            "B_hmax_imprint_held": 0.4375,
+            "T_hmax_trace_held": 0.6146,
+            "T_hmax_traceshuffle_held": 0.6458,
+            "R_hmax_random_held": 0.625,
+            "P1_hmax_imprint_p1_held": 0.2708
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.6042,
+            "position_decode_heldsplit": 0.375,
+            "label_shuffle_null": 0.2083,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": true,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 43,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4792,
+            "H_flat_pool_held": 0.3646,
+            "PRIMARY_same_pos_cv": 0.3333,
+            "PRIMARY_cross_pos_cv": 0.4375,
+            "PRIMARY_held": 0.6146,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.4375,
+            "T_hmax_trace_held": 0.6146,
+            "T_hmax_traceshuffle_held": 0.6042,
+            "R_hmax_random_held": 0.5312,
+            "P1_hmax_imprint_p1_held": 0.3333
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5417,
+            "position_decode_heldsplit": 0.3125,
+            "label_shuffle_null": 0.2292,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": true,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 44,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4583,
+            "H_flat_pool_held": 0.375,
+            "PRIMARY_same_pos_cv": 0.5833,
+            "PRIMARY_cross_pos_cv": 0.4896,
+            "PRIMARY_held": 0.5104,
+            "PRIMARY_scramble_held": 0.2396,
+            "B_hmax_imprint_held": 0.5625,
+            "T_hmax_trace_held": 0.5104,
+            "T_hmax_traceshuffle_held": 0.5104,
+            "R_hmax_random_held": 0.5521,
+            "P1_hmax_imprint_p1_held": 0.3646
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4583,
+            "position_decode_heldsplit": 0.3542,
+            "label_shuffle_null": 0.2917,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0938,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 100,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.375,
+            "H_flat_pool_held": 0.2083,
+            "PRIMARY_same_pos_cv": 0.4375,
+            "PRIMARY_cross_pos_cv": 0.4271,
+            "PRIMARY_held": 0.4583,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.375,
+            "T_hmax_trace_held": 0.4583,
+            "T_hmax_traceshuffle_held": 0.4375,
+            "R_hmax_random_held": 0.4479,
+            "P1_hmax_imprint_p1_held": 0.3229
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.3542,
+            "position_decode_heldsplit": 0.2708,
+            "label_shuffle_null": 0.1875,
+            "position_pooled_out": false
+          },
+          "invariance_gap_train_minus_held": 0.0104,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 101,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.4583,
+            "H_flat_pool_held": 0.2604,
+            "PRIMARY_same_pos_cv": 0.4167,
+            "PRIMARY_cross_pos_cv": 0.6042,
+            "PRIMARY_held": 0.6042,
+            "PRIMARY_scramble_held": 0.25,
+            "B_hmax_imprint_held": 0.3958,
+            "T_hmax_trace_held": 0.6042,
+            "T_hmax_traceshuffle_held": 0.6458,
+            "R_hmax_random_held": 0.6458,
+            "P1_hmax_imprint_p1_held": 0.25
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5208,
+            "position_decode_heldsplit": 0.4583,
+            "label_shuffle_null": 0.2708,
+            "position_pooled_out": false
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": false,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": false,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        },
+        {
+          "seed": 102,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "primary_arm": "trace",
+          "decode": {
+            "A_v1_direct_held": 0.3229,
+            "H_flat_pool_held": 0.2396,
+            "PRIMARY_same_pos_cv": 0.3125,
+            "PRIMARY_cross_pos_cv": 0.4792,
+            "PRIMARY_held": 0.5729,
+            "PRIMARY_scramble_held": 0.2604,
+            "B_hmax_imprint_held": 0.4271,
+            "T_hmax_trace_held": 0.5729,
+            "T_hmax_traceshuffle_held": 0.5833,
+            "R_hmax_random_held": 0.4688,
+            "P1_hmax_imprint_p1_held": 0.3125
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4583,
+            "position_decode_heldsplit": 0.3333,
+            "label_shuffle_null": 0.2292,
+            "position_pooled_out": true
+          },
+          "invariance_gap_train_minus_held": 0.0,
+          "verdicts": {
+            "capability_go": true,
+            "architecture_load_bearing": true,
+            "template_learning_load_bearing": true,
+            "flat_pool_configuration_blind": true,
+            "trace_load_bearing": false
+          }
+        }
+      ]
+    }
+  },
+  "operating_point_note": "PRIMARY GO read off the LATENCY (first-spike/rank-order) code -- the biologically-correct code for sparse spiking vision (Thorpe/Masquelier 2007; Kheradpisheh et al. 2018; confirmed on this substrate in 2026-06-02-step2a). The COUNT (rate) code is reported alongside to show the count-vs-latency operating point.",
+  "mechanism": "RETINA -> S1 rate Gabor drive (deployed sim.visual_cortex, reused by import) -> hypercolumn competition+gate (drive shaping) -> S1 LIF spikes (threshold+refractory+noise) -> C1 spiking WTA local MAX-pool per orientation + per-band kWTA -> S2 LIF coincidence units (convolutional configural templates; supralinear) -> C2 spiking WTA global MAX-pool. Decode off C2 spike code.",
+  "elapsed_seconds": 46.5
+}
