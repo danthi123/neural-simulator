@@ -1,0 +1,29 @@
+{
+  "seed": 42,
+  "i_body": 200.0,
+  "w_int": 10.0,
+  "note": "seed-42 mechanism trace: V+/V-/intero_comfort absolute rates (per neuron per ms) for distress/comfort/comfort-under-lesion; illustrates the dissociation in the 6-seed GO.",
+  "conditions": {
+    "distress_h0": {
+      "affect_vplus": 0.0,
+      "affect_vminus": 0.08233333333333333,
+      "mood": -0.08233333333333333,
+      "intero_comfort": 0.0,
+      "intero_discomfort": 0.035416666666666666
+    },
+    "comfort_h1": {
+      "affect_vplus": 0.08166666666666667,
+      "affect_vminus": 0.0,
+      "mood": 0.08166666666666667,
+      "intero_comfort": 0.035208333333333335,
+      "intero_discomfort": 0.0
+    },
+    "comfort_h1_lesion": {
+      "affect_vplus": 0.0,
+      "affect_vminus": 0.0,
+      "mood": 0.0,
+      "intero_comfort": 0.035208333333333335,
+      "intero_discomfort": 0.0
+    }
+  }
+}

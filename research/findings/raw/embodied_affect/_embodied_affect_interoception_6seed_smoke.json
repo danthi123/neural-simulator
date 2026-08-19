@@ -1,0 +1,106 @@
+{
+  "determinism_ok": true,
+  "chosen_i_body": 200.0,
+  "chosen_w_int": 10.0,
+  "sweep": [
+    {
+      "i_body": 200.0,
+      "w_int": 10.0,
+      "ok": true,
+      "corr_h_mood": 0.8475009071355047,
+      "mood_range": 0.17616666666666667,
+      "mood_comfort_h1": 0.08166666666666667,
+      "mood_distress_h0": -0.08233333333333333,
+      "corr_a_felt": 0.843996180351335,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 200.0,
+      "w_int": 16.0,
+      "ok": true,
+      "corr_h_mood": 0.8299432066519505,
+      "mood_range": 0.16916666666666666,
+      "mood_comfort_h1": 0.07283333333333333,
+      "mood_distress_h0": -0.0745,
+      "corr_a_felt": 0.8178171902062874,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 200.0,
+      "w_int": 22.0,
+      "ok": true,
+      "corr_h_mood": 0.8102025552788376,
+      "mood_range": 0.163,
+      "mood_comfort_h1": 0.06533333333333333,
+      "mood_distress_h0": -0.0675,
+      "corr_a_felt": 0.8015048772063389,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 300.0,
+      "w_int": 10.0,
+      "ok": false,
+      "corr_h_mood": 0.8445288389481691,
+      "mood_range": 0.16633333333333333,
+      "mood_comfort_h1": 0.07533333333333334,
+      "mood_distress_h0": -0.07733333333333334,
+      "corr_a_felt": 0.5727100895312792,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 300.0,
+      "w_int": 16.0,
+      "ok": false,
+      "corr_h_mood": 0.8253361024573086,
+      "mood_range": 0.1535,
+      "mood_comfort_h1": 0.06533333333333333,
+      "mood_distress_h0": -0.066,
+      "corr_a_felt": 0.5280368967213424,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 300.0,
+      "w_int": 22.0,
+      "ok": false,
+      "corr_h_mood": 0.8033254523582914,
+      "mood_range": 0.1398333333333333,
+      "mood_comfort_h1": 0.05483333333333333,
+      "mood_distress_h0": -0.05483333333333333,
+      "corr_a_felt": 0.4217731118978469,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 400.0,
+      "w_int": 10.0,
+      "ok": false,
+      "corr_h_mood": 0.8420217519099016,
+      "mood_range": 0.1585,
+      "mood_comfort_h1": 0.07083333333333333,
+      "mood_distress_h0": -0.07333333333333333,
+      "corr_a_felt": 0.580005710102099,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 400.0,
+      "w_int": 16.0,
+      "ok": false,
+      "corr_h_mood": 0.8167212094256452,
+      "mood_range": 0.14066666666666666,
+      "mood_comfort_h1": 0.058833333333333335,
+      "mood_distress_h0": -0.058166666666666665,
+      "corr_a_felt": 0.4767001612013891,
+      "corr_h_mood_lesion": 0.0
+    },
+    {
+      "i_body": 400.0,
+      "w_int": 22.0,
+      "ok": false,
+      "corr_h_mood": 0.782415814220268,
+      "mood_range": 0.12183333333333334,
+      "mood_comfort_h1": 0.04516666666666667,
+      "mood_distress_h0": -0.044,
+      "corr_a_felt": 0.3424899835587933,
+      "corr_h_mood_lesion": 0.0
+    }
+  ]
+}
