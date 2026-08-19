@@ -85,8 +85,16 @@ context-lesion is so decisive (it removes the only supra-threshold drive).
 - **Membership is PRE-ASSIGNED (equal-size disjoint), not emergent-DG-selected.** The emergent selection is a
   separately-closed anti-cheat (`2026-07-14-ca3-competitive-hebbian-formation-6seed-GO`,
   `2026-08-10-episodic-cortical-cue-recall-completion-6seed-GO`) and is ORTHOGONAL to the WHEN mechanism, which acts
-  on the context->CA3 pathway given working assemblies (same scoping the 2026-08-10 cortical-recall GO used). An
-  emergent n_ca3=2000 confirmation at the same operating point is the natural faithfulness follow-up.
+  on the context->CA3 pathway given working assemblies (same scoping the 2026-08-10 cortical-recall GO used).
+- **The operating point is SCALE-SPECIFIC (an emergent n_ca3=2000 probe RAN and over-completed, in-session).** At this
+  same weak operating point the emergent production substrate (whose DG-selected assemblies are much SMALLER, ~20-28
+  cells vs 71) SATURATES the dAP read: completion is near-ceiling across every serial position, so the recency
+  gradient flattens and the cue-alone baseline is no longer zero (a small tight-recurrent assembly completes more
+  readily). This is NOT a mechanism failure — the context code and `W_ctx` pathway are identical, and contiguity is
+  still present (near > far, both near-ceiling) — it is the well-known "probe must match the deployed config": the
+  smaller emergent assemblies need a proportionally WEAKER cue+context to leave completion headroom. The faithfulness
+  follow-up is a per-scale (or homeostatic per-assembly context-gain) re-tune of `ctx_pA`/`drive` on the emergent
+  substrate; the mechanism is substrate-agnostic. This is a runner-side operating-point knob, NOT a wall.
 - **The drift schedule is a host scaffold** (the LEC time-cell dynamics stand-in). Per the standing standard this is a
   documented shortcut to burn down: the faithful replacement is a SPIKING LEC time-cell population whose drift emerges
   from its own recurrent dynamics, projecting through the SAME plastic `W_ctx`. The brain-based parts here are already
