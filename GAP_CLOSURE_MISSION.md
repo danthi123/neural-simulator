@@ -28,7 +28,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 >
 > **RAG FIXED (owner ask):** was frozen since 00:04 (the updater's dirty-prose guard tripped by 4 uncommitted draft findings, silently every cycle). Parked the drafts → re-indexed + published (docstore 05:20, today's findings retrievable) + the `sim-rag-autoupdate` timer owns steady-state (incremental, ~5min). One residual: SOMA secondary index flock error (non-fatal, chip spawned).
 >
-> **STILL RUNNING (do NOT double-launch):** mouth substrate@40k decisive (~13h, gpu_queue) · drafts-cleanup agent (continual-forgetting landed as an honest re-scope; fm-neural-wta re-running for real artifacts) · RAG auto-timer. **NEXT:** interpret mouth substrate@40k when it lands; consolidate drafts; then the DRIVE-wiring rungs (#85 swap-drives-conversation, #84 affect-drives-conversation) — make faculties load-bearing, not decorative. Board (`tools/vikunja.sh list-tasks`) is the live next-action source.
+> **⭐ FIRST DRIVE-COUPLING LANDED — #84 affect-DRIVES-chat, load-bearing GO, default-ON** (`d377758b`): the #81
+> graded-affect ladder now DRIVES the live `/api/brain-chat` response — message held fixed, affect varied → different
+> affective-expression lead ("Wonderful — …" pos vs "Frankly! …" neg), content byte-identical; under the NEURAL
+> intero→ladder LESION both moods collapse to +0.0000 and both leads vanish (proves the spiking read drives it, not a
+> host `if valence>0`). No content-regression, byte-identical-off oracle. Honest residual: the READ is the #81 neural
+> mechanism (lesion-proven); the level→word-marker STRING is a host articulation scaffold (the owner-sanctioned
+> "mouth") → brain-native prosody is next-rung #86. This is the observe→drive reframe's first realization.
+>
+> **Also consolidated:** the 4 parked drafts (3 landed as honest negatives/re-scope, 1 parked with a documented
+> reason — never fabricated); `lane_check` classifier fixed (false-monoculture bug); the idle mini-PC pool stocked with
+> 7 valuable lane-C/D 6-seed de-risks.
+>
+> **STILL RUNNING (do NOT double-launch):** mouth substrate@40k decisive (~13h, gpu_queue — corrected waiter watches
+> the WORKTREE path `/tmp/.../wt-mouth/research/findings/raw/_wkv_readout_eprop_substrate_coverage40k_3seed.json`;
+> ≈0.37=real credit limit, ≈0.90=coverage artifact) · pool lane-C/D de-risks · RAG auto-timer. **NEXT:** interpret the
+> mouth substrate@40k verdict when it lands; then the remaining DRIVE-wiring rungs (#85 thought-swap-drives-focus, #86
+> brain-native affective prosody) — keep making faculties load-bearing, not decorative. Board (`tools/vikunja.sh
+> list-tasks`) is the live next-action source.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-19 (history — superseded by the CONTINUATION header above)
 
