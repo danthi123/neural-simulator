@@ -1,0 +1,43 @@
+{
+ "run_id": "1787112517-2144105",
+ "runner": "research/runners/_second_order_metacog_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/self-org-metacog/research/runners/_second_order_metacog_monitor_derisk.py",
+  "--confidence-read",
+  "plastic_acc",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-trials",
+  "160",
+  "--backend",
+  "numpy",
+  "--host-json",
+  "research/findings/raw/lanes/metacog/metacog_host_learnedacc_6seed_ceiling.json",
+  "--json",
+  "research/findings/raw/lanes/metacog/metacog_plastic_3factor_6seed.json"
+ ],
+ "git_sha": "f0bc9ee91",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T00:08:37",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5364.9,
+ "corpus_check_query": "synaptically self-organized metacognition confidence monitor three-factor Hebbian ACC error learning",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/metacog/metacog_plastic_3factor_6seed.json"
+}
