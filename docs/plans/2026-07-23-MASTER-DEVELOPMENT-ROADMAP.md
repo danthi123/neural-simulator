@@ -468,6 +468,10 @@ Everything between sensation and action is disjoint neuron-index slices (`BrainR
 
 **Three invariants:** (1) the workspace is the **single integrator** — one coalition ignites/broadcasts at a time (enables one train of thought); (2) limbic→everything is **diffuse volume transmission** (`scope="all"`/`scope="region:X"`), not point-to-point; (3) hippocampus↔cortex is **bidirectional + time-separated** (fast WAKE encode vs slow SLEEP consolidation = CLS).
 
+> **External precedent for this exact architecture (peer-reviewed, whole-brain).** Shiu & Sterne et al., *A Drosophila computational brain model reveals sensorimotor processing* (Nature 634:210–219, 2024), built a single all-spiking brain model where host code touches ONLY sensory input and motor output and everything between is neurons firing — and it reproduced two complete real sensorimotor loops, validated in the live animal.
+> That is precisely our non-negotiables (one spiking substrate; host only for world+body) realized at whole-brain (insect) scale and published, so the bet is **achievable and publishable, not idiosyncratic**; use their sensory-in/motor-out decomposition as the reference template when wiring our own spiking sense→motor arcs.
+> Honest limit: they IMPORTED a known connectome with ZERO training — it validates our FRAME, not our learning-based PATH (a contrast/ceiling on what wiring-alone buys before plasticity, not a method to clone). Board task #61; from the 2026-08-19 lit scout.
+
 > **Diagram source + HAVE/TO-ADD legend + per-integrator status:** [`docs/diagrams/brain_architecture_target.md`](../diagrams/brain_architecture_target.md) — the maintained diagrams-folder mirror of the figure below, with a colour-coded legend (the four to-add integrators dashed-purple) and each integrator's Phase-0 status. Its *as-implemented* companions are [`brain_architecture_current.md`](../diagrams/brain_architecture_current.md) (plain overview) and [`brain_architecture_detailed.md`](../diagrams/brain_architecture_detailed.md) (exhaustive per-region).
 
 ```mermaid
