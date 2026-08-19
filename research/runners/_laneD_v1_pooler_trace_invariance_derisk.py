@@ -215,6 +215,71 @@ def _normalize_complex(
     return maps.reshape(codes.shape[0], -1)
 
 
+def or_pool_local(
+    codes: np.ndarray,
+    n_orientations: int,
+    n_pos: int,
+    win: int,
+    stride: int,
+    softmax_beta: float = 0.0,
+) -> np.ndarray:
+    """Complex-cell OR-pooling ACROSS retinotopic position (Hubel & Wiesel 1962).
+
+    For each orientation channel, take the MAX (or a soft-max with softmax_beta>0) over a local
+    win x win retinotopic window sliding with `stride` across the full n_pos x n_pos V1-complex
+    sheet. This is the cross-position pooling stage the selection/decorrelation levers never made:
+    it makes a feature's response POSITION-TOLERANT within its pool BEFORE any downstream binding.
+
+    The pooling TOPOLOGY (which simple-cell positions feed one complex unit) is innate/retinotopic
+    (a developmental complex-cell RF, per the 2026-08-19 pooling-invariance finding that a
+    LEARNED-from-scratch pool is a 6-seed NO-GO because it cannot weight unseen positions). This
+    stage is a FLAGGED innate developmental scaffold, run UPSTREAM of the trace pooler.
+    """
+    N = codes.shape[0]
+    n_pos2 = n_pos * n_pos
+    if codes.shape[1] % n_pos2 != 0:
+        raise ValueError(f"codes width {codes.shape[1]} not divisible by n_pos^2={n_pos2}")
+    n_chan = codes.shape[1] // n_pos2
+    F = codes.reshape(N, n_chan, n_pos, n_pos).astype(np.float64)
+    starts = list(range(0, n_pos - win + 1, stride)) or [0]
+    out = np.zeros((N, n_chan, len(starts), len(starts)), dtype=np.float64)
+    for iy, sy in enumerate(starts):
+        for ix, sx in enumerate(starts):
+            patch = F[:, :, sy:sy + win, sx:sx + win].reshape(N, n_chan, -1)
+            if softmax_beta > 0.0:
+                w = np.exp(softmax_beta * patch)
+                out[:, :, iy, ix] = (w * patch).sum(-1) / (w.sum(-1) + 1e-9)
+            else:
+                out[:, :, iy, ix] = patch.max(-1)
+    return out.reshape(N, -1).astype(np.float32)
+
+
+def _invariance_cos_margin(
+    codes: np.ndarray,
+    cat_labels: np.ndarray,
+    pos_labels: np.ndarray,
+) -> tuple[float, float, float]:
+    """The mechanism-level invariance readout named by the 2026-08-18 root-cause finding:
+    (same-category / cross-POSITION cosine) minus (cross-category cosine), over all image pairs.
+
+    >0 means same-identity-different-position pairs are MORE similar than different-identity pairs
+    (position tolerance in the representation itself); ~0 or <0 means position dominates identity
+    (the 2026-08-18 verdict: the V1-complex cross-position invariance margin is ~0.000)."""
+    X = codes.astype(np.float64)
+    n = np.linalg.norm(X, axis=1, keepdims=True)
+    X = X / np.where(n < 1e-9, 1.0, n)
+    S = X @ X.T
+    N = X.shape[0]
+    tri = np.triu(np.ones((N, N), dtype=bool), k=1)
+    same_cat = cat_labels[:, None] == cat_labels[None, :]
+    same_pos = pos_labels[:, None] == pos_labels[None, :]
+    scp = tri & same_cat & (~same_pos)   # same category, different position
+    cc = tri & (~same_cat)               # different category (any position)
+    scp_m = float(S[scp].mean()) if scp.any() else 0.0
+    cc_m = float(S[cc].mean()) if cc.any() else 0.0
+    return round(scp_m, 4), round(cc_m, 4), round(scp_m - cc_m, 4)
+
+
 def _binary_codes(feats: list[set[int]], n_dim: int) -> np.ndarray:
     out = np.zeros((len(feats), n_dim), dtype=np.float32)
     for i, fs in enumerate(feats):
@@ -588,6 +653,30 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
     held_v1 = _normalize_complex(held_v1, a.complex_norm, a.n_orientations, a.n_pos)
     scramble_v1 = _normalize_complex(scramble_v1, a.complex_norm, a.n_orientations, a.n_pos)
 
+    # --- Cross-position OR-pooling stage (default OFF => byte-identical; the NAMED new mechanism) ---
+    # Mechanism-level invariance margin (2026-08-18 readout: same-category/cross-POSITION cosine
+    # minus cross-category cosine) measured on the train set BEFORE and AFTER cross-position pooling.
+    # Prove the margin moves BEFORE trusting a decode number.
+    prepool_scp, prepool_cc, prepool_margin = _invariance_cos_margin(train_v1, train_labels, train_pos)
+    if a.cross_pos_pool == "or_local":
+        n_orient_ch = a.n_orientations  # pool_v1_to_complex already pools over frequency -> orient x pos sheet
+        train_v1 = or_pool_local(train_v1, n_orient_ch, a.n_pos, a.or_pool_win, a.or_pool_stride, a.or_pool_softmax)
+        held_v1 = or_pool_local(held_v1, n_orient_ch, a.n_pos, a.or_pool_win, a.or_pool_stride, a.or_pool_softmax)
+        scramble_v1 = or_pool_local(scramble_v1, n_orient_ch, a.n_pos, a.or_pool_win, a.or_pool_stride, a.or_pool_softmax)
+    elif a.cross_pos_pool != "off":
+        raise ValueError(f"unknown cross_pos_pool mode: {a.cross_pos_pool}")
+    postpool_scp, postpool_cc, postpool_margin = _invariance_cos_margin(train_v1, train_labels, train_pos)
+    invariance_margin = {
+        "cross_pos_pool": a.cross_pos_pool,
+        "prepool_same_cat_cross_pos_cos": prepool_scp,
+        "prepool_cross_cat_cos": prepool_cc,
+        "prepool_margin": prepool_margin,
+        "postpool_same_cat_cross_pos_cos": postpool_scp,
+        "postpool_cross_cat_cos": postpool_cc,
+        "postpool_margin": postpool_margin,
+        "margin_lift": round(postpool_margin - prepool_margin, 4),
+    }
+
     # --- Learned anti-Hebbian lateral-inhibition DECORRELATION (Foldiak/SAILnet), default-off ---
     # Plastic per-pair decorrelation on the V1-complex features BEFORE the pooler top-k selection.
     # Learned once per seed on the TRAIN ensemble, then applied identically to train/held/scramble
@@ -692,6 +781,7 @@ def run_seed(seed: int, a: argparse.Namespace) -> dict:
         "v1_pooler_trace": grouped_metrics,
         "shuffled_temporal": shuffled_metrics,
         "no_learning": frozen_metrics,
+        "invariance_margin": invariance_margin,
         "decorr": decorr_info,
         "over_sparsification_guard": guard,
         "decision": {
@@ -735,6 +825,25 @@ def main() -> int:
         choices=["none", "local_orient_div", "orient_spatial_div", "local_orient_z", "spatial_z"],
         default="none",
         help="Optional V1-complex normalization before top-feature selection.",
+    )
+    parser.add_argument(
+        "--cross-pos-pool",
+        choices=["off", "or_local"],
+        default="off",
+        help="Cross-position complex-cell OR-pooling (Hubel-Wiesel) on the V1-complex features "
+        "UPSTREAM of the trace pooler: per orientation channel, MAX/soft-max over a local win x win "
+        "retinotopic window sliding by --or-pool-stride, making identity position-tolerant BEFORE "
+        "binding. 'off' => byte-identical to the legacy runner. Innate/retinotopic pooling TOPOLOGY "
+        "(a FLAGGED developmental complex-cell RF; a LEARNED-from-scratch pool is a 6-seed NO-GO, "
+        "2026-08-19-vision-pooling-invariance-topology-not-learning-NOGO).",
+    )
+    parser.add_argument("--or-pool-win", type=int, default=4, help="OR-pool window (positions per side).")
+    parser.add_argument("--or-pool-stride", type=int, default=2, help="OR-pool stride across the retinal sheet.")
+    parser.add_argument(
+        "--or-pool-softmax",
+        type=float,
+        default=0.0,
+        help="Soft-max sharpness beta for the OR-pool (0 => hard MAX; >0 => smooth complex-cell pool).",
     )
     parser.add_argument("--t-active", type=int, default=24)
     parser.add_argument("--n-col", type=int, default=120)
@@ -822,8 +931,11 @@ def main() -> int:
         vm = row["v1_complex"]
         dec = row["decision"]
         g = row["over_sparsification_guard"]
+        im = row["invariance_margin"]
         print(
-            f"  [seed {seed}] pooler held-decode {gm['heldpos_decode']:.2f} "
+            f"  [seed {seed}] inv-margin {im['prepool_margin']:+.4f}->{im['postpool_margin']:+.4f} "
+            f"| V1-direct dec {vm['heldpos_decode']:.2f} frozen-pool dec {row['no_learning']['heldpos_decode']:.2f} "
+            f"pooler held-decode {gm['heldpos_decode']:.2f} "
             f"margin {gm['held_train_margin']:+.3f} | shuffled {sm['held_train_margin']:+.3f} "
             f"| V1 {vm['held_train_margin']:+.3f} | trace_go={dec['trace_go']} "
             f"| alive={g['pooler_col_alive_frac']:.2f} within={g['within_identity_reliability']:.2f} "
@@ -867,6 +979,12 @@ def main() -> int:
         "pooler_col_alive_frac_mean": _gmean("pooler_col_alive_frac"),
         "within_identity_reliability_mean": _gmean("within_identity_reliability"),
         "chance": round(1.0 / args.n_categories, 4),
+        "cross_pos_pool": args.cross_pos_pool,
+        "invariance_prepool_margin_mean": round(mean(("invariance_margin", "prepool_margin")), 4),
+        "invariance_postpool_margin_mean": round(mean(("invariance_margin", "postpool_margin")), 4),
+        "invariance_margin_lift_mean": round(mean(("invariance_margin", "margin_lift")), 4),
+        "v1_complex_heldpos_decode_mean": round(mean(("v1_complex", "heldpos_decode")), 4),
+        "no_learning_heldpos_decode_mean": round(mean(("no_learning", "heldpos_decode")), 4),
         "v1_pooler_trace_heldpos_decode_mean": round(mean(("v1_pooler_trace", "heldpos_decode")), 4),
         "v1_pooler_trace_margin_mean": round(mean(("v1_pooler_trace", "held_train_margin")), 4),
         "shuffled_temporal_margin_mean": round(mean(("shuffled_temporal", "held_train_margin")), 4),
