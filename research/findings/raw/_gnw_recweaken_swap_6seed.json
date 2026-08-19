@@ -1,0 +1,1106 @@
+{
+  "runner": "_gnw_recurrence_weaken_swap_derisk",
+  "mode": "six_seed",
+  "verdict": "GO",
+  "pooled_go": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "operating_point": {
+    "boost": 0.12,
+    "evict_steps": 260,
+    "chal_pa": 5000.0,
+    "vacancy_confirm": 12,
+    "vacancy_thresh": 0.05,
+    "settle_gap": 25,
+    "b_drive": 35,
+    "reignite_hold": 150,
+    "w_rec": 34.0,
+    "U_baseline": 0.0,
+    "tau_D": 250.0,
+    "heterogeneity": true
+  },
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "single-move swap on >=5/6 (old drops to baseline & new ignites, n=1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "recurrence-weakening load-bearing on >=5/6 (lesion -> no swap)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "UNGATED control holds on 6/6 (forced B cannot displace the held incumbent; non-circular)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion reproduces the inhibition-resistant NO-GO on 6/6 (incumbent holds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "new coalition re-ignites and holds on >=5/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reversible two-swap A->B->A on >=5/6 (recurrence recovers)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no host workspace reset on 6/6 (continuous swap)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism: cfg.seed seeds the substrate on 6/6",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "homeostasis",
+      "why": "frozen base weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+    },
+    {
+      "process": "native_short_term_plasticity",
+      "why": "engine global STP banked as annihilating (2026-08-01); STD targets ONLY the incumbent E->E recurrence, in-runner, with Mongillo params"
+    },
+    {
+      "process": "additive_substrate_hash",
+      "why": "N/A: no pool is appended to build_swap_bridge; determinism (build-twice hash) is the substrate-integrity anti-cheat instead (the RNG-prefix property does not hold on this engine)"
+    }
+  ],
+  "counts": {
+    "seed_go": 6,
+    "swap_ok": 6,
+    "reignite_ok": 6,
+    "load_bearing": 6,
+    "ungated_control_holds": 6,
+    "lesion_holds": 6,
+    "reversible": 6,
+    "no_host_reset": 6,
+    "seed_deterministic": 6,
+    "ungated_forced_swap": 0,
+    "n_seeds": 6
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.12876923076923077,
+          "xA_min": 0.13917957467723813,
+          "vacancy": true,
+          "vacancy_step": 152,
+          "old_residual_hold": 0.0038,
+          "new_rate_hold": 0.3208
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0006666666666666666,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0006666666666666666,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.7565816192315515,
+          "xA_recovered": 0.9879536025761293,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.3308,
+          "swap2_old_residual_hold": 0.0
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1464,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "d9b12db6645a23eb7314a195e54f9b0a958419683e525ece804f2510de43ab22",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0013333333333333333,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.12538461538461537,
+          "xA_min": 0.14040179520101237,
+          "vacancy": true,
+          "vacancy_step": 173,
+          "old_residual_hold": 0.0038,
+          "new_rate_hold": 0.3328
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.005333333333333333,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.005333333333333333,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.7577009313316101,
+          "xA_recovered": 0.9880089955926965,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.3362,
+          "swap2_old_residual_hold": 0.003
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1527,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "b9f32e55d63d09101a489c03b2445be55fff387513c77ccb3de76bbc6ebef4d5",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.11261538461538462,
+          "xA_min": 0.1520642491318075,
+          "vacancy": true,
+          "vacancy_step": 148,
+          "old_residual_hold": 0.0038,
+          "new_rate_hold": 0.3202
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.006,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.007333333333333333,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.753442304610227,
+          "xA_recovered": 0.9877982427736046,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.3212,
+          "swap2_old_residual_hold": 0.0048
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1452,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "c9200195970cfa646a25a47814a259817515ae5776dc05a21ffdbdfd4e45552c",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.136,
+          "xA_min": 0.13772359835060308,
+          "vacancy": true,
+          "vacancy_step": 174,
+          "old_residual_hold": 0.0024,
+          "new_rate_hold": 0.3394
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0026666666666666666,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0026666666666666666,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.753309306630739,
+          "xA_recovered": 0.9877916609102616,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.3296,
+          "swap2_old_residual_hold": 0.0024
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1530,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "f49de3741e6c999f6d4c25f6b495e5b21c63bf8e842eb125c23ac7632881b732",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.13723076923076924,
+          "xA_min": 0.13777879285021435,
+          "vacancy": true,
+          "vacancy_step": 168,
+          "old_residual_hold": 0.0036,
+          "new_rate_hold": 0.338
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.0033333333333333335,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.002,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.748258162934878,
+          "xA_recovered": 0.9875416876575706,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.3346,
+          "swap2_old_residual_hold": 0.0
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1512,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "d7ddd2df9eea4e66d06613b14a86415cef0112cdd346cdba895716f93a751afb",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "seed_go": true,
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "go_gate": {
+        "swap_ok": true,
+        "reignite_ok": true,
+        "load_bearing": true,
+        "ungated_control_holds": true,
+        "lesion_holds": true,
+        "reversible": true,
+        "no_host_reset": true,
+        "seed_deterministic": true
+      },
+      "anti_cheats": {
+        "recurrence_weakening_load_bearing": true,
+        "lesion_reproduces_nogo": true,
+        "reversible_two_swap": true,
+        "no_host_workspace_reset": true,
+        "seed_deterministic": true,
+        "swap_attributable_fraction": 1.0
+      },
+      "residual": {
+        "headline": {
+          "winner_pre": 0,
+          "winner_post": 1,
+          "n_pre": 1,
+          "n_post": 1,
+          "old_residual_post": 0.0,
+          "new_ignited": true,
+          "new_rate_post": 0.3333333333333333,
+          "old_rate_midevict": 0.14046153846153847,
+          "xA_min": 0.13540694673145753,
+          "vacancy": true,
+          "vacancy_step": 157,
+          "old_residual_hold": 0.0006,
+          "new_rate_hold": 0.3324
+        },
+        "lesion": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.005333333333333333,
+          "incumbent_held": true,
+          "vacancy": false,
+          "b_driven": false,
+          "xA_min": 1.0,
+          "swapped": false
+        },
+        "lesion_forced": {
+          "winner_post": 0,
+          "n_post": 1,
+          "old_residual_post": 0.3333333333333333,
+          "new_rate_post": 0.006,
+          "co_ignition": false,
+          "swapped": false,
+          "b_driven": true
+        },
+        "reversibility": {
+          "reversible": true,
+          "s1_evicted_A": true,
+          "recovered": true,
+          "s2_brought_A_back": true,
+          "xA_after_swap1": 0.7338382934765804,
+          "xA_recovered": 0.9868280707246724,
+          "recover_steps": 750,
+          "swap1_swapped": true,
+          "swap2_winner_hold": 0,
+          "swap2_n_hold": 1,
+          "swap2_new_rate_hold": 0.32,
+          "swap2_old_residual_hold": 0.0044
+        }
+      },
+      "host_workspace_reset_calls": 0,
+      "std_weight_writes": 1479,
+      "n_rec_syn_per_loop": [
+        9900,
+        9900,
+        9900
+      ],
+      "substrate_hash": "a305d7a0c76fb868bd264b1ee0c0e885a78ab0899d8cfc317fc2eec3db9844fc",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "incumbent ignites confidently (n_pre==1, winner A) [precondition]",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "single-move swap: old drops to baseline & new ignites (n_post==1, winner B)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "recurrence-weakening LOAD-BEARING (lesion -> no swap, incumbent holds)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "UNGATED control holds (forced B volley cannot displace the held incumbent, non-circular)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "new coalition re-ignites and HOLDS",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "REVERSIBLE two-swap A->B->A (incumbent recurrence recovers)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no host workspace reset in the swap headline (continuous run)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2 foot-gun"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "engine global STP banked as annihilating (2026-08-01); STD here targets ONLY the incumbent's E->E recurrence, in-runner, with Mongillo params"
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "runner": "_gnw_recurrence_weaken_swap_derisk",
+  "mode": "robustness-window",
+  "backend": "numpy",
+  "device": "cpu",
+  "note": "Edge sweep around the GO operating point (strengthened gate: pooled_go requires ungated-forced-swap==0). Single-swap + lesion-hold + load-bearing + ungated-control hold 6/6 at EVERY edge; the two-swap reversibility is the demanding criterion (needs boost>=~0.12 and evict>=~220).",
+  "edges": [
+    {
+      "label": "default(boost0.12,evict260,chal5000)",
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "verdict": "GO",
+      "pooled_go": true,
+      "counts": {
+        "seed_go": 6,
+        "swap_ok": 6,
+        "reignite_ok": 6,
+        "load_bearing": 6,
+        "ungated_control_holds": 6,
+        "lesion_holds": 6,
+        "reversible": 6,
+        "no_host_reset": 6,
+        "seed_deterministic": 6,
+        "ungated_forced_swap": 0,
+        "n_seeds": 6
+      }
+    },
+    {
+      "label": "edge-boost0.09",
+      "operating_point": {
+        "boost": 0.09,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "verdict": "PARTIAL",
+      "pooled_go": false,
+      "counts": {
+        "seed_go": 4,
+        "swap_ok": 6,
+        "reignite_ok": 6,
+        "load_bearing": 6,
+        "ungated_control_holds": 6,
+        "lesion_holds": 6,
+        "reversible": 4,
+        "no_host_reset": 6,
+        "seed_deterministic": 6,
+        "ungated_forced_swap": 0,
+        "n_seeds": 6
+      }
+    },
+    {
+      "label": "edge-boost0.18",
+      "operating_point": {
+        "boost": 0.18,
+        "evict_steps": 260,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "verdict": "GO",
+      "pooled_go": true,
+      "counts": {
+        "seed_go": 6,
+        "swap_ok": 6,
+        "reignite_ok": 6,
+        "load_bearing": 6,
+        "ungated_control_holds": 6,
+        "lesion_holds": 6,
+        "reversible": 6,
+        "no_host_reset": 6,
+        "seed_deterministic": 6,
+        "ungated_forced_swap": 0,
+        "n_seeds": 6
+      }
+    },
+    {
+      "label": "edge-evict180",
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 180,
+        "chal_pa": 5000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "verdict": "PARTIAL",
+      "pooled_go": false,
+      "counts": {
+        "seed_go": 0,
+        "swap_ok": 6,
+        "reignite_ok": 6,
+        "load_bearing": 6,
+        "ungated_control_holds": 6,
+        "lesion_holds": 6,
+        "reversible": 0,
+        "no_host_reset": 6,
+        "seed_deterministic": 6,
+        "ungated_forced_swap": 0,
+        "n_seeds": 6
+      }
+    },
+    {
+      "label": "edge-chal4000",
+      "operating_point": {
+        "boost": 0.12,
+        "evict_steps": 260,
+        "chal_pa": 4000.0,
+        "vacancy_confirm": 12,
+        "vacancy_thresh": 0.05,
+        "settle_gap": 25,
+        "b_drive": 35,
+        "reignite_hold": 150,
+        "w_rec": 34.0,
+        "U_baseline": 0.0,
+        "tau_D": 250.0,
+        "heterogeneity": true
+      },
+      "verdict": "GO",
+      "pooled_go": true,
+      "counts": {
+        "seed_go": 5,
+        "swap_ok": 6,
+        "reignite_ok": 6,
+        "load_bearing": 6,
+        "ungated_control_holds": 6,
+        "lesion_holds": 6,
+        "reversible": 5,
+        "no_host_reset": 6,
+        "seed_deterministic": 6,
+        "ungated_forced_swap": 0,
+        "n_seeds": 6
+      }
+    }
+  ]
+}
