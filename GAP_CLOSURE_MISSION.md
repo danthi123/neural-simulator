@@ -43,9 +43,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 > the SHARED recurrence de-ignites all content → n_ignited→0; the function external STN inhibition FAILED at). This
 > CLOSES the STN-veto external-clear NO-GO — the workspace now has a conflict-triggered global brake (the honesty-boundary
 > STOP effector). GNW workspace-control now has: ignition + deliberation-depth-from-substrate (keystone) + eviction
-> (Rung-2d) + conflict-sensing + selectivity (STN) + GLOBAL STOP (distributed-overwrite). **Remaining GNW residual =
-> ACTIVE OVERWRITE (swap A→B while staying ignited, n stays 1) — still 0/6; next levers: Rung-2d self-eviction path /
-> larger overlap + sub-critical private core / use-driven shared-only depression.**
+> (Rung-2d) + conflict-sensing + selectivity (STN) + GLOBAL STOP (distributed-overwrite). **ACTIVE OVERWRITE = a
+> characterized NO-GO 6/6** (`9b814e37`): a clean single-slot swap (A→B, n stays 1) is a mapped SUBSTRATE property, not
+> a tuning miss — a structural break-in-vs-lockout catch-22 (make B strong → co-ignite n=2; add selectivity inhibition
+> → B locked out). All 3 named levers + WTA + self-limiting-gate 0/6; selectivity 6/6. **External-lit resolves it: the
+> brain overwrites via an EXTERNAL GATE, not intrinsic competition → next GNW lever = a per-slot BG-thalamus gate**
+> (O'Reilly-Frank PBWM selective gating: disinhibit the challenger's thalamic drive + inhibit the incumbent's slot on
+> B's afferent volley; theta-phase multiplexing as the item-segregation companion). The workspace's remaining hole is
+> single-slot content REPLACEMENT; stop/evict/select/deliberate all GO.
 > Live lanes +
 > the adversarially-verified NEXT-RUNG QUEUE (survey `wzujthh3q`: 3 READY = STN-veto, self-initiated-utterance wiring,
 > V1-decorr; 7 settled) are in **`scratchpad/OVERNIGHT_STATE.md`** — the live working board this session.
