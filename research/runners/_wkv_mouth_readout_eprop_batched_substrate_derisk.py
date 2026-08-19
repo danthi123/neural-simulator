@@ -315,9 +315,17 @@ def _calibrate_gain(s_batch, ro, feats_signed, seed):
     return gain, round(corr, 4)
 
 
-def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="main", max_steps=None):
+def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="main", max_steps=None,
+                             traj_eval=None, traj_out=None):
     """The LOCAL three-factor delta rule with the FORWARD margin from the BATCHED SUBSTRATE READ. mode: main |
-    frozen | lesion_err | shuffle_teach. Returns (W_hat[V,D], n_grad_steps, n_matmul_forward)."""
+    frozen | lesion_err | shuffle_teach. Returns (W_hat[V,D], n_grad_steps, n_matmul_forward).
+
+    --forward host_proxy (default substrate): swaps the substrate forward for the host-linear margin W@h+head_b (the
+    2026-08-14 proxy-GO forward, the SHORTCUT) at the IDENTICAL operating point / coverage / eval as the substrate
+    arm — a CONTROL that isolates the forward from coverage. host_proxy increments n_matmul_forward each step, so
+    forward_is_substrate=False and go=False for it (it is never a GO, only a coverage/operating-point reference).
+    traj_out (opt): if given and --eval-every-epochs>0, host-linear recovery is recorded every K epochs (cheap, no
+    substrate sim) to expose plateau-vs-still-climbing convergence. Both are additive; substrate arm is byte-identical."""
     V, D = ro.V, ro.D
     rng = np.random.default_rng(seed * 991 + 7)
     W = (0.0 if args.zero_init else 0.01) * rng.standard_normal((V, D))
@@ -343,9 +351,15 @@ def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="
         for start in range(0, n_full, B):
             bi = idx[start:start + B]
             Hb = H[bi]                                                          # [B, D] signed host feature
-            s_batch.set_weights(W)
-            margin_sub = s_batch.batch_margin(Hb, silence_bias=True)            # [B, V] ACTUAL SUBSTRATE READ
-            logits = _sub_logits(margin_sub, gain, head_b, unk)                 # gain-normalized + base-rate (no matmul)
+            if getattr(args, "forward", "substrate") == "host_proxy":
+                logits = Hb @ W.T + head_b[None, :]                             # CONTROL: host-linear proxy forward
+                if unk >= 0:
+                    logits = logits.copy(); logits[:, unk] = -1e30
+                n_matmul_forward += 1                                           # host matmul on forward -> not substrate
+            else:
+                s_batch.set_weights(W)
+                margin_sub = s_batch.batch_margin(Hb, silence_bias=True)        # [B, V] ACTUAL SUBSTRATE READ
+                logits = _sub_logits(margin_sub, gain, head_b, unk)             # gain-normalized + base-rate (no matmul)
             P = _softmax_rows(logits)
             P[np.arange(B), Ye[bi]] -= 1.0                                      # err = softmax - onehot (substrate err)
             # local delta: -lr * sum_b err_b (x) h_b / B  (explicit outer product = the UPDATE, allowed) + decay
@@ -361,6 +375,16 @@ def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="
             n_grad += 1
             if max_steps is not None and n_grad >= max_steps:
                 return W, n_grad, n_matmul_forward
+        # convergence trajectory (host-linear recovery; cheap matmul eval, no substrate sim) — off by default
+        if (traj_out is not None and traj_eval is not None and getattr(args, "eval_every_epochs", 0) > 0
+                and ((ep + 1) % args.eval_every_epochs == 0)):
+            He_, Ye_, PFe_, hw_ = traj_eval
+            rr = _eval_hostlinear(ro, W, He_, Ye_, PFe_)
+            wc = _wcos(W, hw_)
+            traj_out.append({"epoch": ep + 1, "n_grad": n_grad,
+                             "hostlinear_recov_argmax": round(float(rr["recov_argmax"]), 4), "weight_cosine": wc})
+            print(f"[traj seed {seed} ep {ep + 1}/{args.epochs}] hostlinear_recov="
+                  f"{rr['recov_argmax']:.4f} wcos={wc} n_grad={n_grad}", flush=True)
     return W, n_grad, n_matmul_forward
 
 
@@ -476,9 +500,12 @@ def run_seed(seed, ro, args):
 
     # -- LEARN (batched SUBSTRATE forward) : main + anti-cheats. frozen/lesion do NOT run the forward (free); shuffle
     #    runs the substrate forward with deranged targets (reduced budget: it must collapse regardless). --
+    hw = ro.head_w                                                              # target head (also the traj wcos ref)
     t0 = time.time()
     reads_before_main = int(s_batch._n_substrate_reads)
-    W_main, n_grad, n_mm = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "main")
+    traj = []
+    W_main, n_grad, n_mm = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "main",
+                                                    traj_eval=(He, Ye, PFe, hw), traj_out=traj)
     main_substrate_reads = int(s_batch._n_substrate_reads) - reads_before_main
     learn_secs = round(time.time() - t0, 1)
     W_frozen, _, _ = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "frozen")
@@ -496,7 +523,6 @@ def run_seed(seed, ro, args):
     substrate_reads = int(s_batch._n_substrate_reads)
     forward_read_matches = bool(main_substrate_reads == n_grad and n_grad > 0)
 
-    hw = ro.head_w
     demo_feats = _demo_feats(ro, seed, sub_tuples, args)
 
     # -- RULE-RECOVERY on the host-linear read-out (the discriminative, artifact-free channel; anti-cheats collapse
@@ -531,6 +557,8 @@ def run_seed(seed, ro, args):
         "main_substrate_reads": main_substrate_reads, "forward_read_matches_grad_steps": forward_read_matches,
         "lr": args.lr, "epochs": args.epochs, "weight_decay": args.weight_decay, "w_target": args.w_target,
         "gain": round(gain, 6), "gain_substrate_vs_linear_corr": gain_corr,
+        "forward_mode": getattr(args, "forward", "substrate"),
+        "eval_every_epochs": getattr(args, "eval_every_epochs", 0), "recovery_trajectory": traj,
         "sub_read_window": args.sub_read_window, "sub_hid_pop": args.sub_hid_pop,
         "sub_pop": args.sub_pop, "w_hat_norm": round(float(np.linalg.norm(W_main)), 2),
         "head_w_norm": round(float(np.linalg.norm(hw)), 2), "learn_secs": learn_secs, "shuffle_secs": shuf_secs,
@@ -614,6 +642,11 @@ def main():
     ap.add_argument("--n-bias", type=int, default=16)
     ap.add_argument("--bias-drive-pA", type=float, default=160.0)
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--forward", type=str, default="substrate", choices=["substrate", "host_proxy"],
+                    help="learning-forward margin: substrate (default, the real test, host_matmul=0) or host_proxy "
+                         "(CONTROL: W@h+head_b at the SAME operating point/coverage, forward_is_substrate=False)")
+    ap.add_argument("--eval-every-epochs", type=int, default=0,
+                    help="if >0, record host-linear recovery every K epochs (cheap; plateau-vs-climbing convergence)")
     ap.add_argument("--json", type=str, default="research/findings/raw/_wkv_readout_eprop_batched_substrate.json")
     args = ap.parse_args()
 
