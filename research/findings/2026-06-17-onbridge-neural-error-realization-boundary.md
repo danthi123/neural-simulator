@@ -1,3 +1,5 @@
+> **RESOLVED 2026-08-19** by [`2026-08-19-neural-error-onbridge-GO.md`](2026-08-19-neural-error-onbridge-GO.md) — the deferred on-bridge confirmation is now a 6-seed GO. It converged with a DIFFERENT, stronger method than the two-bridge Rao-Ballard attempt recorded below: the read-out neuron's OWN two compartments (Urbanczik-Senn soma-vs-dendrite mismatch, no separate error bridge), with a K=16 population read for the on-bridge SNR this doc anticipated. The boundary below was an honest deferral, not a wrong verdict; this banner updates its STATUS only.
+
 # On-bridge neural-error realization — the error population fires, but the full spiking combination is a deferred (expensive, non-load-bearing) confirmation
 
 **Date:** 2026-06-17 (track A #1, the on-bridge realization step)

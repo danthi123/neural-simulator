@@ -1,0 +1,18 @@
+{
+  "note": "single-seed(42) K-sweep of NEURAL-onbridge held-out generalization vs K error-neurons pooled per output; HOST is K-independent (host err has no spike noise). Shows the on-bridge spike-count SNR knee for the 40-pass budget.",
+  "D_h": 64,
+  "seed": 42,
+  "spike_gain": 20.0,
+  "gain": 1.5,
+  "beta": 0.5,
+  "n_passes": 40,
+  "K1_neural_seed42": 0.13333333333333333,
+  "K1_host_seed42": 0.9523809523809524,
+  "K16_neural_seed42": 0.9047619047619048,
+  "K16_host_seed42": 0.9523809523809524,
+  "K64_neural_seed42": 0.919047619047619,
+  "K64_host_seed42": 0.9523809523809524,
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "device": "cpu"
+}

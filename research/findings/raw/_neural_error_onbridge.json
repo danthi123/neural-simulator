@@ -1,0 +1,126 @@
+{
+  "verdict": "GO",
+  "go_headline": true,
+  "preconditions": [
+    {
+      "kind": "control",
+      "name": "lesion-nodend collapses (dendritic self-prediction load-bearing on-bridge)",
+      "ok": true,
+      "detail": "treatment=0.929052 control=0.0320346 |sep|=0.897018 > 0.464526",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "lesion-noteach collapses (somatic teaching load-bearing on-bridge)",
+      "ok": true,
+      "detail": "treatment=0.929052 control=0.0238095 |sep|=0.905243 > 0.464526",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "scramble collapses (per-output addressing load-bearing on-bridge)",
+      "ok": true,
+      "detail": "treatment=0.929052 control=0.042328 |sep|=0.886724 > 0.464526",
+      "note": ""
+    }
+  ],
+  "attribution": {
+    "dendritic_self_prediction_frac": 0.9655190266632151,
+    "somatic_teaching_frac": 0.9743722495469842,
+    "per_output_addressing_frac": 0.9544395547501942
+  },
+  "chance": 0.0625,
+  "byte_off_ok": true,
+  "no_sim_edit": true,
+  "no_sim_edit_msg": "no sim/ file modified",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "D_h": 64,
+  "gain": 1.5,
+  "beta": 0.5,
+  "spike_gain": 20.0,
+  "n_error_pop": 16,
+  "lr": 0.5,
+  "n_passes": 40,
+  "host": 0.9605579605579605,
+  "neural": 0.9290524290524291,
+  "numpy_derisk_ref": 0.964,
+  "lesion_nodend": 0.032034632034632034,
+  "lesion_noteach": 0.023809523809523808,
+  "scramble": 0.042328042328042326,
+  "n_parity": 5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "stage0": true,
+      "host": 0.9523809523809524,
+      "neural": 0.9047619047619048,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.0,
+      "scramble": 0.0,
+      "byte_off_ok": true,
+      "host_md5": "9099ec229f983c6dbae94722c2482fdc"
+    },
+    {
+      "seed": 43,
+      "stage0": true,
+      "host": 1.0,
+      "neural": 1.0,
+      "lesion_nodend": 0.06666666666666667,
+      "lesion_noteach": 0.0,
+      "scramble": 0.0,
+      "byte_off_ok": true,
+      "host_md5": "e05fb93f69feaeba592942e8690397aa"
+    },
+    {
+      "seed": 44,
+      "stage0": true,
+      "host": 1.0,
+      "neural": 1.0,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.0,
+      "scramble": 0.0,
+      "byte_off_ok": true,
+      "host_md5": "b6c71bfe76ad6a6f8dcce80ee5ff9fdb"
+    },
+    {
+      "seed": 100,
+      "stage0": true,
+      "host": 1.0,
+      "neural": 1.0,
+      "lesion_nodend": 0.09523809523809523,
+      "lesion_noteach": 0.14285714285714285,
+      "scramble": 0.14285714285714285,
+      "byte_off_ok": true,
+      "host_md5": "92768386df315245f8ad4a52f0e922eb"
+    },
+    {
+      "seed": 101,
+      "stage0": true,
+      "host": 1.0,
+      "neural": 1.0,
+      "lesion_nodend": 0.0,
+      "lesion_noteach": 0.0,
+      "scramble": 0.1111111111111111,
+      "byte_off_ok": true,
+      "host_md5": "bf2f43efb4bef6e9d950ee9b13e7dfc8"
+    },
+    {
+      "seed": 102,
+      "stage0": true,
+      "host": 0.810966810966811,
+      "neural": 0.6695526695526696,
+      "lesion_nodend": 0.030303030303030304,
+      "lesion_noteach": 0.0,
+      "scramble": 0.0,
+      "byte_off_ok": true,
+      "host_md5": "c6d64fc657920aaf9c928bccf0d3ac0b"
+    }
+  ]
+}

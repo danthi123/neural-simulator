@@ -1,6 +1,6 @@
 ---
 type: finding
-status: live
+status: contributing
 date: 2026-08-19
 mechanism: urbanczik-senn-dendritic-prediction
 lane: brain-based-purity burndown (board #39 — the "was I wrong?" teaching error)
@@ -8,6 +8,8 @@ verdict: de-risk-GO-6seed
 artifacts:
   - research/findings/raw/_neural_error_population.json
 ---
+
+> **STATUS 2026-08-19: this numpy de-risk is the FOUNDATION; the current LIVE frontier for this mechanism is its on-bridge realization** [`2026-08-19-neural-error-onbridge-GO.md`](2026-08-19-neural-error-onbridge-GO.md) (the neural error now drives the LIVE bridge's per-synapse plasticity, 6-seed GO). This result STANDS unchanged (it is not superseded/invalidated) — it is `contributing` because one-mechanism-one-current-status reserves `live` for the single frontier.
 
 # The "was I wrong?" teaching error is a neuron's OWN somato-dendritic mismatch (Urbanczik-Senn), not a host formula — 6-seed GO
 

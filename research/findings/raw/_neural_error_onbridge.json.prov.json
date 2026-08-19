@@ -1,0 +1,31 @@
+{
+ "run_id": "1787120402-2392512",
+ "runner": "research/runners/_neural_error_onbridge_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-nerr-onbridge/research/runners/_neural_error_onbridge_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--dh",
+  "64",
+  "--n-error-pop",
+  "16"
+ ],
+ "git_sha": "e1cd6deac",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T02:20:02",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_neural_error_onbridge.json"
+}

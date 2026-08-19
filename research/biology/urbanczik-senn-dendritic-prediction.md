@@ -4,8 +4,8 @@ id: urbanczik-senn-dendritic-prediction
 mechanism: A neuron's DENDRITE predicts its own SOMATIC firing; the local mismatch (soma - dendritic prediction) IS the teaching error that drives synaptic change -- no separate error unit and no host error formula
 status: established
 last_verified: 2026-08-19
-current_finding: research/findings/2026-08-19-neural-error-population-GO.md
-current_status: "6-seed GO. The 'was I wrong?' teaching error that corrects the brain's word choices is neuralisable via the shipped Urbanczik-Senn rule (sim/dendritic_plasticity.py): each read-out neuron's basal dendrite predicts its teacher-nudged soma, and the neuron's own soma-minus-dendrite mismatch drives the read-out delta rule as well as the exact host subtraction (NEURAL == HOST held-out generalization, 6/6 seeds). Silencing the dendritic self-prediction OR the somatic teaching OR mis-addressing the error each collapses learning. Replaces the host err = est - target formula with a local, brain-computed error."
+current_finding: research/findings/2026-08-19-neural-error-onbridge-GO.md
+current_status: "6-seed GO, now ON THE LIVE BRIDGE. The 'was I wrong?' teaching error that corrects the brain's word choices is the read-out neuron's own soma-minus-dendrite mismatch (shipped urbanczik_senn_update). Established first in numpy (2026-08-19-neural-error-population-GO.md, NEURAL=0.964), then delivered through the live SimulationBridge's per-synapse reward/eligibility channel (2026-08-19-neural-error-onbridge-GO.md, NEURAL-onbridge=0.929=97% of the host on-bridge error, 5/6 seed parity), so the production learning loop USES the neural error. NO sim/ edit (routed runner-side into the already-present cp_per_synapse_reward_override array; production path byte-identical to main). Silencing the dendritic self-prediction OR the somatic teaching OR mis-addressing the error each collapses on-bridge learning to chance (attribution 0.95-0.97). Needs a K=16 population read for the short on-bridge budget's spike-count SNR. Retires the host err = est - target formula on the production path."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "action potentials can backpropagate"
@@ -22,8 +22,10 @@ sources:
 implemented_by:
   - sim/dendritic_plasticity.py
   - research/runners/_neural_error_population_derisk.py
+  - research/runners/_neural_error_onbridge_derisk.py
 findings:
   - research/findings/2026-08-19-neural-error-population-GO.md
+  - research/findings/2026-08-19-neural-error-onbridge-GO.md
 ---
 
 # The teaching error is a neuron's own somato-dendritic mismatch, not a host subtraction
