@@ -11,3 +11,19 @@ pytest-cov     # CONTRIBUTING.md:35 already tells contributors to install this
 
 # tests/test_figure_export.py renders figures.
 matplotlib
+
+# tests/test_brian2_oracle.py -- INDEPENDENT correctness oracle. Brian2 (eLife 8:e47314,
+# 2019) shares zero code with our engine, so it cross-checks the VANILLA spiking core
+# (Izhikevich-2007 + AdEx point neurons, COBA synapse, pair-STDP) for numerical bugs a
+# same-code numpy path cannot catch. TEST-ONLY, CPU-ONLY -- never touches the GPU/bridge.
+#
+# ⛔ VERSION CONSTRAINT: brian2 2.9.0 (latest) references np.ndarray.ptp, removed in
+# numpy 2.0, so it CANNOT import under the repo's pinned numpy 2.4.x. Install brian2 in a
+# DEDICATED numpy<2 venv to actually run the oracle, e.g.:
+#     python3.11 -m venv .venv-brian2 && . .venv-brian2/bin/activate
+#     pip install "numpy==1.26.4" "brian2==2.9.0" pytest
+#     SIM_BACKEND=numpy python -m pytest tests/test_brian2_oracle.py
+# In the repo's numpy-2.x venv the test SKIPS cleanly (brian2 unimportable) rather than
+# failing CI (brian2 installs fine here -- numpy>=1.23.5 is satisfied and NOT downgraded --
+# it only fails at import). Revisit the pin when a numpy>=2 compatible brian2 releases.
+brian2
