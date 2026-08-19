@@ -79,10 +79,20 @@ untracked files before they are audited and preserved.
   throwaway class; the 6 named dirty worktrees (wt-keystone/wt-moutheprop/wt-genwire/wt-dmnbasins/wt-rung2c/
   wall-value-critic-neural) were KEPT (genuine uncommitted work).
 
-## What REMAINS (careful, do when the live agents finish — never force-delete blindly)
-- **~71 unmerged codex branches:** distinguish "content already on main via CHERRY-PICK" (safe to `-D`) from
-  "genuinely unique unmerged work" (preserve first) — needs a CONTENT compare, not a graph `--merged` check (cherry-
-  picks don't show as graph-merged). Do NOT bulk `-D`.
-- **~45 codex/named research worktrees:** dirty mostly from CRLF noise (`git diff --ignore-cr-at-eol` to see real
-  changes); remove once confirmed no real uncommitted work.
+## COMPLETED via the worktree-cleanup-audit workflow (2026-08-19, wf_dcc9f8ff)
+An 11-agent read-only audit inspected all 43 non-live worktrees and verdicted each SAFE_REMOVE (39) /
+PRESERVE_THEN_REMOVE (4) / KEEP (0), accounting for CRLF noise and cherry-picked-but-graph-unmerged content. Result:
+- **2 genuinely-unique runners preserved to main** (`6af523a0`): `_laneC_source_monitor_hetero_encoding_sweep.py`,
+  `_emerge_wm_hybrid_scale_derisk.py`. (Two of the 4 "preserve" flags were false-ish: integration-5's finding is
+  already on main under its real 2026-08-10 date — the inspector searched a truncated 08-18 name; wall-value-critic's
+  finding is on main in a fuller 6-seed form. Trust-but-verify caught both.)
+- **All 43 worktrees removed + their branches**, then a patch-equivalence pass deleted 25 more fully-on-main codex
+  branch refs. **Final: 6 worktrees (the live set only), 16 codex branches (5 live/primary + 11 older refs).**
+
+## What REMAINS (optional; harmless — zero data-loss risk since nothing is being deleted)
+- **11 older codex branch REFS** (causal-composition, cross-region-one-brain, gap4-decolle/softhebb, i7-burndown1/2,
+  relational-spatial-code, replay-consolidation-v3, research-escalation, rolegate-fbalign, v13-deterministic-baseline):
+  patch-id-unique commits — could be genuinely-unique unmerged work OR modified cherry-picks. KEPT (refs only, no
+  worktree, no disk cost). A future content-audit (same workflow, adapted to branch refs via `git diff main...<branch>`)
+  can decide each. Owner keeps the `codex/` name, so there is no urgency.
 - Run-safety rule stands: re-verify nothing live is using a target (`readlink /proc/<pid>/cwd`) before removing it.
