@@ -13,7 +13,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-19 (READ FIRST — live resume point; supersedes 2026-08-18 below)
+## ⭐ STATE OF THE PROJECT — 2026-08-19 (CONTINUATION — READ FIRST; live resume point; supersedes the earlier 2026-08-19 header below)
+
+> **North-star unchanged:** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine.
+>
+> **⭐ KEY INSIGHT this session (reframes the integration path):** the recently "wired" live-chat faculties are **OBSERVE-ONLY** — they compute a genuine *neural* verdict each turn and stash it as response metadata, but do **NOT change what the brain says**. Flipping such a faculty "default-on" satisfies the ledger checkbox while the faculty does nothing to the conversation = **hollow checkbox-integration** (the drift the gate exists to stop). The mission bar is faculties that **DRIVE** the conversation (load-bearing on content/affect/pragmatics). ⇒ **priority is now DEPTH (make wired faculties drive), not breadth (more observers) or hollow default-on flips.**
+>
+> **This continuation's landings (all on `main`, both remotes):**
+> - **#81 graded-affect 6-seed GO** (`c2af23cc`): a Koulakov/Goldman bistable-LADDER reads body-state as a SMOOTH valence×arousal (Pearson +0.97/+0.95; embodiment-lesion collapses range 0.156→0.000). Closes the #49 ±-switch residual. Default-off de-risk; **NOT yet production-wired (#84 = wire it to DRIVE the conversation).**
+> - **#75 vision R-STDP MIXED** (`3035082e`): spiking HMAX front-end preserves object-anywhere recognition; a fully spike-coded readout is PARTIAL (R-STDP makes learning load-bearing 5/6 — reframe core confirmed) with a first-class NEGATIVE on the sparsity sub-claim. Production-wire blocked (no live visual input in chat).
+> - **#77 thought-swap wired into live `/api/brain-chat`** (`1c5c01b5`): swap/hold VERDICT is neural every turn (swap-rate 1.00 on topic-change, verified through the real handler, byte-identical-off, global-RNG footgun fixed). **OBSERVE-ONLY** (default-off; doesn't drive output). #77 (wiring) DONE; **#85 = make it DRIVE.**
+>
+> **Mouth crux (#37/#80) — DECISIVE run IN FLIGHT (own the interpretation):** margin-clean 6-seed batched-substrate-forward e-prop read-out is **NO-GO on parity** (learned 0.371 == host-linear proxy 0.3705 vs copied ceiling 0.979; the READ is faithful, the LEARNED credit is the wall). Confound-exclusion running: instrument **VERIFIED** (proxy@40k reproduces 0.896; proxy-learned W read on the substrate demo = 0.865 ⇒ read is NOT the bottleneck). **DECISIVE substrate@40k (~13h, gpu_queue) running → resume: read `research/findings/raw/_wkv_readout_eprop_substrate_coverage40k_3seed.json`; ≈0.37 = REAL credit limit, ≈0.90 = coverage artifact.** Runner `--forward` flag committed (`b313c9e0` on branch research/mouth-confound-exclusion).
+>
+> **RAG FIXED (owner ask):** was frozen since 00:04 (the updater's dirty-prose guard tripped by 4 uncommitted draft findings, silently every cycle). Parked the drafts → re-indexed + published (docstore 05:20, today's findings retrievable) + the `sim-rag-autoupdate` timer owns steady-state (incremental, ~5min). One residual: SOMA secondary index flock error (non-fatal, chip spawned).
+>
+> **STILL RUNNING (do NOT double-launch):** mouth substrate@40k decisive (~13h, gpu_queue) · drafts-cleanup agent (continual-forgetting landed as an honest re-scope; fm-neural-wta re-running for real artifacts) · RAG auto-timer. **NEXT:** interpret mouth substrate@40k when it lands; consolidate drafts; then the DRIVE-wiring rungs (#85 swap-drives-conversation, #84 affect-drives-conversation) — make faculties load-bearing, not decorative. Board (`tools/vikunja.sh list-tasks`) is the live next-action source.
+
+## ⭐ STATE OF THE PROJECT — 2026-08-19 (history — superseded by the CONTINUATION header above)
 
 > **North-star unchanged:** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine. **This session's decisive landings (all on `main`, both remotes, 6-seed, anti-cheated):**
 > - **⭐ GNW EVICTION WALL CLOSED — thought-swap 6/6 GO** (`3c2797ce`, board #34): after 4 failed inhibition/gate levers, the surpass is Rung-2d STD weakening the incumbent's OWN recurrent loop below its sustain knee → self-collapse → vacancy-gated IN-gate admits the challenger (`old_residual_post`=0.000 vs the 0.333 quench wall; reversible; ungated-control 0/6; independent adversarial audit could not refute). The quench-evict NEGATIVE named this exact fix — the wall-names-its-surpass loop worked. **Next rung (#70): neural vacancy-gate + emergent coalitions + production-wire.**
