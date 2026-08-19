@@ -2981,6 +2981,12 @@ _SELF_INITIATE_DEFAULT_ON = True
 # row STAYS on_by_default:YES. Flipping this to False would turn the faculty OFF by default. See webapp/gnw_deliberation.py.
 _GNW_DELIBERATE_DEFAULT_ON = True
 
+# ─── GNW MULTI-STEP re-entrant deliberation (2026-08-19, T1-1 rung d): the DEFAULT-ON master switch (the production-
+# integration anchor). Mirrors _GNW_DELIBERATE_DEFAULT_ON: the gate wrapper is ALWAYS installed here; BRAIN_GNW_MULTISTEP=0
+# makes the installed wrapper a pure pass-through (byte-identical to the pre-flip default); the row STAYS on_by_default:YES.
+# Flipping this to False would turn the faculty OFF by default. See webapp/gnw_multistep_deliberation.py.
+_GNW_MULTISTEP_DEFAULT_ON = True
+
 
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
@@ -3621,22 +3627,24 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception:
             pass
 
-    # GNW MULTI-STEP re-entrant deliberation — THE KEYSTONE'S DEFERRED RUNG, WIRED LIVE (T1-1 rung d, 2026-08-19): the
-    # single-hop deliberation gate above decides ONCE (halt-if-unsure). This wires the other half — "deliberation-until-
-    # sure over a CHAIN": on an explicit chase-form question ("what does X <action> all the way / to the end?") the
-    # WORKSPACE cycles the partial answer back through itself, re-igniting, and the substrate's OWN spiking read
-    # (n_ignited off cp_firing_states) decides how many cycles to run — NOT a host `query_chain(cue, actions)` counter —
-    # halting when the leaf collapses ignition. DEFAULT-OFF (BRAIN_GNW_MULTISTEP unset -> not installed -> byte-identical).
+    # GNW MULTI-STEP re-entrant deliberation — THE KEYSTONE'S DEFERRED RUNG, WIRED LIVE (T1-1 rung d, 2026-08-19; flipped
+    # to DEFAULT-ON as a production-default 2026-08-19 after the 6/6-seed live GO): the single-hop deliberation gate above
+    # decides ONCE (halt-if-unsure). This wires the other half — "deliberation-until-sure over a CHAIN": on an explicit
+    # chase-form question ("what does X <action> all the way / to the end?") the WORKSPACE cycles the partial answer back
+    # through itself, re-igniting, and the substrate's OWN spiking read (n_ignited off cp_firing_states) decides how many
+    # cycles to run — NOT a host `query_chain(cue, actions)` counter — halting when the leaf collapses ignition. DEFAULT-ON
+    # (the wrapper is always installed; BRAIN_GNW_MULTISTEP=0 -> pure pass-through, byte-identical to the pre-flip default).
     # LESION lever (BRAIN_GNW_MULTISTEP_LESION=1): the chase runs on the recurrence-ZEROED workspace -> ignition cannot
     # sustain -> the multi-step terminal is NOT reached (the emergent stopping is the SPIKING competition, not a host
-    # loop). MOAT-safe: never un-abstains, abstains on an unstored/over-run chase, never invents a fact. Reuse-by-import
-    # of the 6/6-seed-GO keystone de-risk (NO sim/ edit). See webapp/gnw_multistep_deliberation.py.
-    try:
-        from webapp import gnw_multistep_deliberation as _gnw_multistep_mod
-        if _gnw_multistep_mod.multistep_enabled():
+    # loop). MOAT-safe: never un-abstains, abstains on an unstored/over-run chase, never invents a fact. Non-chase turns
+    # are byte-identical (the wrapper is inert without a chase marker). Reuse-by-import of the 6/6-seed-GO keystone
+    # de-risk (NO sim/ edit). See webapp/gnw_multistep_deliberation.py.
+    if _GNW_MULTISTEP_DEFAULT_ON:
+        try:
+            from webapp import gnw_multistep_deliberation as _gnw_multistep_mod
             _gnw_multistep_mod.install_multistep_gate(chat)
-    except Exception:
-        pass
+        except Exception:
+            pass
 
     # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
     # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +

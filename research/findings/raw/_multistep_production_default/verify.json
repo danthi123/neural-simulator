@@ -1,0 +1,515 @@
+{
+  "runner": "scratchpad/verify_flip.py through webapp.server.brain_chat (the REAL /api/brain-chat handler)",
+  "provenance": {
+    "produced_by": "verify_flip.py driver invoking webapp.server.brain_chat (BrainChatRequest) \u2014 the real production handler",
+    "backend": "SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf (heavy Gate-B organs off for speed; identical across arms)",
+    "commands": [
+      "env -u BRAIN_GNW_MULTISTEP -u BRAIN_GNW_MULTISTEP_LESION python verify_flip.py preflip_default <base fa300e1a0 code>",
+      "env -u BRAIN_GNW_MULTISTEP -u BRAIN_GNW_MULTISTEP_LESION python verify_flip.py postflip_default_on <flipped>",
+      "BRAIN_GNW_MULTISTEP=0 python verify_flip.py postflip_disabled <flipped>",
+      "BRAIN_GNW_MULTISTEP_LESION=1 python verify_flip.py postflip_lesion <flipped>"
+    ],
+    "base_sha": "fa300e1a0",
+    "branch": "codex/multistep-production-default"
+  },
+  "seed": "workspace cfg.seed default (_DEFAULT_SEED, shared P1.2 workspace)",
+  "faculty": "gnw-multistep-deliberation",
+  "flip": "webapp/server.py _GNW_MULTISTEP_DEFAULT_ON=True + multistep_enabled() default-ON (BRAIN_GNW_MULTISTEP=0 disables)",
+  "anti_cheats": {
+    "1_default_on_reaches_terminal": {
+      "pass": true,
+      "chase_answer": "The zorp chases munt.",
+      "chase_recalled_svo": [
+        "zorp",
+        "chase",
+        "munt"
+      ],
+      "note": "no env var set -> full chain terminal 'munt', not first hop 'blib'"
+    },
+    "2_disable_byte_identical": {
+      "pass": true,
+      "preflip_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "disabled_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "preflip_chase_full_md5": "0ad0f23323b9b4095a5a66ee3595e1be",
+      "disabled_chase_full_md5": "0ad0f23323b9b4095a5a66ee3595e1be",
+      "note": "BRAIN_GNW_MULTISTEP=0 byte-identical to pre-flip default (nonchase panel + full chase response)"
+    },
+    "3_live_lesion_load_bearing": {
+      "pass": true,
+      "lesion_chase_answer": "I don't know about that.",
+      "lesion_abstained": true,
+      "lesion_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "default_on_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "disable_degrades_to_first_hop": true,
+      "note": "recurrence-lesion collapses the multi-step chase to abstain (default-on); disable degrades to first-hop; ordinary/one-hop turns byte-identical"
+    },
+    "4_no_regression_ordinary_turns": {
+      "pass": true,
+      "preflip_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "default_on_nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "nonchase_answers_default_on": [
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does cat eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        },
+        {
+          "q": "what does brain use?",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "what does fish fly?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog eat?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what are you",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "sky hold cloud",
+          "answer": "I followed the shape of that, but I don't know the words 'sky' or 'cloud' yet \u2014 what do they refer to?",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does sky hold?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does it eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        }
+      ],
+      "note": "default-ON ordinary (non-chase) turns identical to pre-flip; the chase detector does not hijack normal turns"
+    }
+  },
+  "arms": {
+    "preflip_default": {
+      "label": "preflip_default",
+      "env_multistep": "<unset>",
+      "env_lesion": "<unset>",
+      "nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "nonchase_answers": [
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does cat eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        },
+        {
+          "q": "what does brain use?",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "what does fish fly?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog eat?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what are you",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "sky hold cloud",
+          "answer": "I followed the shape of that, but I don't know the words 'sky' or 'cloud' yet \u2014 what do they refer to?",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does sky hold?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does it eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        }
+      ],
+      "chase_q": "what does zorp chase all the way?",
+      "chase_answer": "The zorp chases blib.",
+      "chase_recalled_svo": [
+        "zorp",
+        "chase",
+        "blib"
+      ],
+      "chase_abstained": false,
+      "chase_full_md5": "0ad0f23323b9b4095a5a66ee3595e1be"
+    },
+    "postflip_default_on": {
+      "label": "postflip_default_on",
+      "env_multistep": "<unset>",
+      "env_lesion": "<unset>",
+      "nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "nonchase_answers": [
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does cat eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        },
+        {
+          "q": "what does brain use?",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "what does fish fly?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog eat?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what are you",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "sky hold cloud",
+          "answer": "I followed the shape of that, but I don't know the words 'sky' or 'cloud' yet \u2014 what do they refer to?",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does sky hold?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does it eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        }
+      ],
+      "chase_q": "what does zorp chase all the way?",
+      "chase_answer": "The zorp chases munt.",
+      "chase_recalled_svo": [
+        "zorp",
+        "chase",
+        "munt"
+      ],
+      "chase_abstained": false,
+      "chase_full_md5": "fbc88c54f463eaa2379c6ab114d4379f"
+    },
+    "postflip_disabled": {
+      "label": "postflip_disabled",
+      "env_multistep": "0",
+      "env_lesion": "<unset>",
+      "nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "nonchase_answers": [
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does cat eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        },
+        {
+          "q": "what does brain use?",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "what does fish fly?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog eat?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what are you",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "sky hold cloud",
+          "answer": "I followed the shape of that, but I don't know the words 'sky' or 'cloud' yet \u2014 what do they refer to?",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does sky hold?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does it eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        }
+      ],
+      "chase_q": "what does zorp chase all the way?",
+      "chase_answer": "The zorp chases blib.",
+      "chase_recalled_svo": [
+        "zorp",
+        "chase",
+        "blib"
+      ],
+      "chase_abstained": false,
+      "chase_full_md5": "0ad0f23323b9b4095a5a66ee3595e1be"
+    },
+    "postflip_lesion": {
+      "label": "postflip_lesion",
+      "env_multistep": "<unset>",
+      "env_lesion": "1",
+      "nonchase_md5": "a1313788464369f62babf8f5506b93ed",
+      "nonchase_answers": [
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does cat eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        },
+        {
+          "q": "what does brain use?",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "what does fish fly?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog eat?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what are you",
+          "answer": "The brain uses spikes.",
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ]
+        },
+        {
+          "q": "sky hold cloud",
+          "answer": "I followed the shape of that, but I don't know the words 'sky' or 'cloud' yet \u2014 what do they refer to?",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does sky hold?",
+          "answer": "I don't know about that.",
+          "recalled_svo": null
+        },
+        {
+          "q": "what does dog chase?",
+          "answer": "The dog chases cat.",
+          "recalled_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        },
+        {
+          "q": "what does it eat?",
+          "answer": "The cat eats fish.",
+          "recalled_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        }
+      ],
+      "chase_q": "what does zorp chase all the way?",
+      "chase_answer": "I don't know about that.",
+      "chase_recalled_svo": null,
+      "chase_abstained": true,
+      "chase_full_md5": "f51eeb5bc8b0f5c97986d5be5d531d03"
+    }
+  },
+  "all_four_pass": true,
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "name": "1_default_on_reaches_terminal",
+      "ok": true,
+      "detail": "no env -> chase returns chain terminal 'munt' [zorp,chase,munt], not first hop 'blib'"
+    },
+    {
+      "name": "2_disable_byte_identical",
+      "ok": true,
+      "detail": "BRAIN_GNW_MULTISTEP=0 -> nonchase md5 + full chase response md5 byte-identical to pre-flip base fa300e1a0"
+    },
+    {
+      "name": "3_live_lesion_load_bearing",
+      "ok": true,
+      "detail": "recurrence-lesion collapses the multi-step chase to abstain (default-on) while ordinary/one-hop turns byte-identical; disable degrades to first-hop"
+    },
+    {
+      "name": "4_no_regression_ordinary_turns",
+      "ok": true,
+      "detail": "default-ON nonchase panel md5 identical to pre-flip; the chase detector does not hijack normal turns"
+    }
+  ]
+}

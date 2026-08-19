@@ -31,10 +31,12 @@ runner (`_gnw_reentrant_metacog_gated_deliberation_derisk`, 6/6-seed GO). This m
     SAFETY budget correct answers never reach (the de-risk proves the stop is the spikes, not the budget).
 
 CONTRACT:
-  * DEFAULT-OFF via `BRAIN_GNW_MULTISTEP` (unset/0/false/off/no = OFF -> the gate is NOT EVEN INSTALLED in the handler,
-    so the live turn is byte-identical to today). `BRAIN_GNW_MULTISTEP` truthy = ON. (Additive default-off de-risk
-    landing; the flip to on-by-default is one setting after the live GO, mirroring how the bus + single-hop
-    deliberation were introduced default-off -> verified -> flipped.)
+  * DEFAULT-ON via `BRAIN_GNW_MULTISTEP` (production-default flip 2026-08-19). The handler INSTALLS the gate by default
+    (server `_GNW_MULTISTEP_DEFAULT_ON = True`, the production-integration anchor, mirroring the single-hop
+    `_GNW_DELIBERATE_DEFAULT_ON`); the installed wrapper is ACTIVE unless `BRAIN_GNW_MULTISTEP=0` (or false/off/no), in
+    which case it is a pure PASS-THROUGH -> the live turn is byte-identical to the pre-flip default (the reversible
+    DISABLE override). (Was default-off through the 6/6-seed live GO; flipped to on-by-default after that GO, mirroring
+    how the bus + single-hop deliberation were introduced default-off -> verified -> flipped.)
   * BYTE-IDENTICAL when there is no chase marker. Every reactive-panel turn (recall/abstain/learn/anaphora on a
     single-hop question) has no marker -> the wrapper returns the inner gate's decision UNTOUCHED. Only an explicit
     chase-form question can change the outcome.
@@ -92,10 +94,13 @@ _CHASE_MARKERS = (
 
 
 def multistep_enabled() -> bool:
-    """The master flag, DEFAULT-OFF. `BRAIN_GNW_MULTISTEP` truthy (1/true/on/yes) turns the multi-step chase gate ON.
-    Unset / 0 / false / off / no -> OFF -> the handler does not install the wrapper -> the live turn is byte-identical
-    to today. (Additive default-off de-risk landing; flip to on-by-default after the live GO.)"""
-    return os.environ.get("BRAIN_GNW_MULTISTEP", "").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag, DEFAULT-ON (production-default flip 2026-08-19, mirroring the single-hop deliberation gate).
+    `BRAIN_GNW_MULTISTEP` unset / 1 / true / on / yes -> ON. Only an explicit `BRAIN_GNW_MULTISTEP=0` (or false/off/no)
+    makes the installed wrapper a pure PASS-THROUGH -> the live turn is byte-identical to the pre-flip default: the
+    reversible, byte-identical-provable DISABLE override. (Was default-off through the 6/6-seed live GO; flipped to
+    on-by-default after that GO, mirroring how the bus + single-hop deliberation were introduced default-off ->
+    verified -> flipped.)"""
+    return os.environ.get("BRAIN_GNW_MULTISTEP", "1").strip().lower() not in ("0", "false", "off", "no")
 
 
 def multistep_lesion_on() -> bool:
