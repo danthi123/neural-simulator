@@ -531,6 +531,33 @@ None of them checks that the MEASUREMENT is meaningful. Ask both — "did it eng
 detected the effect if it were there?"
 
 
+## DOES THE FUNCTION DEPEND ON THE ACTUAL WEIGHTS, OR THEIR GROSS STATISTICS? — the weight-shuffle dependency control
+
+**Trigger:** any claim that a skill / signature EMERGED, or DEPENDS ON the learned or structured connectivity (a
+recency gradient, a compositional read, a place field, a selective assembly). Before it lands, run the
+distribution-preserving DEPENDENCY control (Shiu & Sterne 2024's built-in falsifier: a motor neuron fired 100/100 with
+the real connectome, **1/100** with weights shuffled but the global weight distribution preserved). Shuffle the trained
+matrix preserving its value multiset, re-run the function at a FIXED seed over >=20 shuffles, and require it to
+COLLAPSE. If it survives, the function rode on GROSS STATISTICS (the weight histogram / the row sums), not learned
+structure — the exact shape of the 2026-07-28 "compositional over a localist code" / "self-organized" overclaims.
+
+**How** — `tools.lab.dependency_control` (numpy-only; caller supplies the metric):
+
+```python
+from tools.lab import dependency_control
+dc = dependency_control(measure_fn, W, np.random.default_rng(seed), n_shuffles=32, mode="global")
+assert dc["collapsed"], dc          # real > shuffled p95 AND real >= 3x shuffled mean; else it rides on statistics
+```
+
+`mode="per_row"` / `"per_col"` are STRONGER (they hold the row/column SUMS fixed and still destroy within-row/col
+structure) — use them when a skeptic can say "it's just the row sums". **Two honest caveats:** it tests
+dependence-on-STRUCTURE, not correctness; and it is INSENSITIVE when the function rides on network GEOMETRY (a
+feed-forward-graph order a weight shuffle leaves intact — the gap#5 replay shuffle-bar case), so pair it with a pathway
+LESION — if zeroing the pathway ALSO fails to collapse the effect, the weights were never load-bearing. Worked example
+(the gap#5 WHEN `W_ctx` recency pathway, per_row 2/2 decisive):
+`research/findings/2026-08-19-weight-shuffle-dependency-control-gap5-when-Wctx.md`.
+
+
 ## DESIGNING A CONTROL: four ways they fail silently (2026-07-30, all four hit in ONE arc)
 
 A control that returns a number is not a control that tests something. Four distinct failures in one arc, each

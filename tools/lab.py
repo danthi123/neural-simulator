@@ -377,6 +377,124 @@ def zero_lever_control(label, criterion_on, criterion_off, *, tol=0.0):
     return True
 
 
+def _array_module(x):
+    """Return the array module (numpy or cupy) that OWNS x, WITHOUT importing cupy unless x is a cupy array.
+
+    Detected by `type(x).__module__`, so a numpy caller never triggers a cupy import (and a machine with no GPU
+    never pays for one). Falls back to numpy for lists / scalars.
+    """
+    mod = (type(x).__module__ or "").split(".")[0]
+    if mod == "cupy":
+        import cupy as xp
+        return xp
+    import numpy as xp
+    return xp
+
+
+def shuffle_preserving_marginal(W, rng, mode="global"):
+    """Return a COPY of 2-D `W` with its entries permuted, preserving a stated marginal of the weight distribution.
+
+    This is the distribution-preserving DEPENDENCY control from Shiu & Sterne et al. 2024 (Nature 634:210-219),
+    "A Drosophila computational brain model reveals sensorimotor processing". Their built-in falsifier: a descending
+    motor neuron fired in 100/100 sims with the REAL connectome weights and 1/100 with the weights shuffled but the
+    GLOBAL weight distribution preserved. If a circuit's function SURVIVES a distribution-preserving shuffle it was
+    riding on GROSS STATISTICS (the weight histogram), not on the ACTUAL learned/structured connectivity -- exactly
+    the shape of three 2026-07-28 retractions (a "compositional" read over a localist code; a "self-organized" rule
+    the host in fact supplied both factors of; a "consolidation" whose replay branch never ran). A shuffle control
+    would have had teeth against them. The same control is Ecker et al. 2022 (eLife 71850) column-identity shuffle,
+    already load-bearing in this project's gap#5 replay shuffle-bar research gate.
+
+    modes -- each holds a DIFFERENT gross statistic FIXED, so pick the strongest one a skeptic would invoke:
+      * "global"  (default): permute ALL entries. Preserves ONLY the global multiset of weights (Shiu's control).
+      * "per_row" : permute WITHIN each row. Preserves every row's multiset -> its SUM and its sorted values.
+      * "per_col" : permute WITHIN each column. Preserves every column's multiset -> its SUM and sorted values.
+    The per_row / per_col forms are STRONGER when a skeptic can say "the effect is just the row (or column) sums" --
+    they hold those sums fixed and still destroy the within-row / within-column structure.
+
+    Works for numpy AND cupy arrays (module detected via type(W).__module__; cupy is never imported for a numpy
+    array). The permutation is drawn from `rng` (a numpy Generator, e.g. np.random.default_rng(seed)) so the shuffle
+    is deterministic and backend-independent at a fixed seed. The value MULTISET is preserved EXACTLY -- a
+    permutation moves values, it never changes them (so np.sort(out.ravel()) == np.sort(W.ravel()) by construction).
+    """
+    import numpy as _np
+    ndim = getattr(W, "ndim", None)
+    if ndim != 2:
+        raise ValueError("shuffle_preserving_marginal expects a 2-D array (a weight MATRIX); got ndim=%r" % (ndim,))
+    xp = _array_module(W)
+    if mode == "global":
+        perm = xp.asarray(_np.argsort(rng.random(int(W.size))))     # a permutation of 0..N-1, deterministic from rng
+        return W.reshape(-1)[perm].reshape(W.shape).copy()
+    if mode in ("per_row", "per_col"):
+        axis = 1 if mode == "per_row" else 0
+        order = xp.asarray(_np.argsort(rng.random(tuple(int(s) for s in W.shape)), axis=axis))   # per-line permutation
+        return xp.take_along_axis(W, order, axis=axis).copy()
+    raise ValueError("mode must be 'global' | 'per_row' | 'per_col'; got %r" % (mode,))
+
+
+def dependency_control(measure_fn, W, rng, n_shuffles=32, mode="global", ratio=3.0):
+    """Does a circuit's function depend on the ACTUAL weights, or merely on their gross statistics? (Shiu 2024.)
+
+    Runs `measure_fn` ONCE on the real `W` and `n_shuffles` times on distribution-preserving shuffles of it
+    (`shuffle_preserving_marginal`, `mode`), then reports whether the real score CLEARS the shuffled null. Pass a
+    `measure_fn(W) -> float` that returns a score which is LARGE when the function is PRESENT (an effect size /
+    magnitude, e.g. a recency-gradient range, a firing probability, a decode accuracy). The caller supplies it, so
+    this helper stays numpy-only and knows nothing about the circuit.
+
+    THE VERDICT you want to be True for a genuine structure-dependent function:
+        collapsed == (real STRICTLY exceeds the shuffled p95) AND (real >= `ratio` x the shuffled MEAN),
+    and real must be > 0 (the real arm has to actually SHOW the effect first -- BOTH arms failing is not a
+    collapse, it is a void comparison). Default `ratio=3.0`: the real effect is at least 3x the mean of the
+    distribution-preserving null AND sits above its 95th percentile. When the shuffled mean is <= 0 while real > 0
+    the null sits at or below zero (the shuffle did not merely weaken the function, it ERASED or REVERSED it) --
+    the strongest possible collapse, so the ratio is reported as +inf and the p95 clearance carries the decision.
+
+    A real score that does NOT clear the shuffled p95 is the Shiu NEGATIVE, and it is a first-class result: the
+    function rides on the value DISTRIBUTION (gross statistics), not on the learned/structured connectivity, so any
+    "it emerged" / "depends on the learned weights" claim over it is an OVERCLAIM.
+
+    HONEST SCOPE (state it when you cite this): it tests dependence-on-STRUCTURE, not CORRECTNESS. And it can be
+    INSENSITIVE when the function rides on network GEOMETRY / topology rather than the weight VALUES -- e.g. an
+    order carried by the feed-forward graph that a weight shuffle leaves intact (gap#5 replay shuffle-bar finding,
+    2026-07-24). Pair it with a pathway LESION: if the lesion (zeroing the pathway) ALSO fails to collapse the
+    effect, these weights are not load-bearing at all and the shuffle was the wrong instrument.
+
+    Returns a dict: real_score, shuffled_scores, shuffled_mean, shuffled_std, shuffled_p95, shuffled_max,
+    n_ge_real (shuffles matching or beating real -- Shiu's "1/100"), frac_ge_real, ratio_vs_mean, margin_vs_p95,
+    ratio (threshold used), n_shuffles, mode, collapsed.
+    """
+    import numpy as _np
+    real = float(measure_fn(W))
+    shuffled = [float(measure_fn(shuffle_preserving_marginal(W, rng, mode=mode))) for _ in range(int(n_shuffles))]
+    arr = _np.asarray(shuffled, dtype=float)
+    mean = float(arr.mean()); std = float(arr.std()); p95 = float(_np.percentile(arr, 95)); mx = float(arr.max())
+    tol = 1e-12 * max(1.0, abs(real), abs(mean))
+    n_ge = int((arr >= real - tol).sum()); frac_ge = float(n_ge) / max(1, len(arr))
+    clears_p95 = real > p95 + tol
+    present = real > tol
+    ratio_vs_mean = (0.0 if not present else (float("inf") if mean <= tol else real / mean))
+    collapsed = bool(present and clears_p95 and ratio_vs_mean >= ratio)
+    print("  DEPENDENCY-CONTROL [%s]  real=%+.6g  shuffled: mean=%+.6g p95=%+.6g max=%+.6g (n=%d)  "
+          "ratio_vs_mean=%s  null>=real: %d/%d"
+          % (mode, real, mean, p95, mx, len(arr),
+             ("inf" if ratio_vs_mean == float("inf") else "%.2fx" % ratio_vs_mean), n_ge, len(arr)))
+    if not present:
+        print("  ⛔ the REAL arm does NOT show the effect (real=%+.6g <= 0): confirm the DEFAULT weights WORK "
+              "before running the control -- both-arms-null is not a collapse, it is a void comparison." % real)
+    elif collapsed:
+        print("  ✔ COLLAPSED: real clears the distribution-preserving null (> p95 AND >= %.1fx mean). The function "
+              "depends on the ACTUAL weights, not on their global distribution (Shiu 2024 control)." % ratio)
+    else:
+        print("  ⛔ SURVIVED THE SHUFFLE: real does NOT clear the null by the stated margin (needs real > p95 AND "
+              ">= %.1fx mean). The function rides on GROSS STATISTICS (the preserved %s marginal), not on learned "
+              "structure -- an 'it emerged / depends on the learned weights' claim over this is an OVERCLAIM (Shiu "
+              "2024). Confirm with a pathway lesion; if the lesion also fails to collapse it, the effect is not "
+              "carried by these weights at all." % (ratio, mode))
+    return dict(real_score=real, shuffled_scores=[round(x, 6) for x in shuffled], shuffled_mean=mean,
+                shuffled_std=std, shuffled_p95=p95, shuffled_max=mx, n_ge_real=n_ge, frac_ge_real=frac_ge,
+                ratio_vs_mean=ratio_vs_mean, margin_vs_p95=real - p95, ratio=float(ratio),
+                n_shuffles=int(n_shuffles), mode=mode, collapsed=collapsed)
+
+
 def _delta(a, b):
     try:
         return "%+.6g" % (b - a)
@@ -517,6 +635,60 @@ def _selfcheck():
             raise SystemExit("⛔ zero_lever_control did NOT fire on %s" % why)
 
     print("\n" + "=" * 108)
+    print("(6c) shuffle_preserving_marginal + dependency_control — the Shiu 2024 distribution-preserving control")
+    print("=" * 108)
+    import numpy as _np
+    r0 = _np.random.default_rng(0)
+    # A structured matrix: a strong DIAGONAL over small noise. The 'function' is diagonal alignment. A global
+    # shuffle scatters the diagonal (preserving only the global histogram) -> alignment collapses.
+    Wd = r0.random((8, 8)) * 0.2
+    _np.fill_diagonal(Wd, Wd.diagonal() + 4.0)
+
+    def measure_diag(W):
+        d = _np.diag(W); off = W - _np.diag(d)
+        return float(d.mean() - off.sum() / (W.size - W.shape[0]))
+
+    rng = _np.random.default_rng(12345)
+    g = shuffle_preserving_marginal(Wd, rng, mode="global")
+    _check(_np.array_equal(_np.sort(g.reshape(-1)), _np.sort(Wd.reshape(-1))),
+           "global shuffle preserves the value MULTISET exactly (sorted flat arrays identical)")
+    _check(not _np.array_equal(g, Wd), "global shuffle actually MOVED entries (not the identity)")
+    pr = shuffle_preserving_marginal(Wd, rng, mode="per_row")
+    _check(_np.array_equal(_np.sort(pr, axis=1), _np.sort(Wd, axis=1)),
+           "per_row shuffle preserves each ROW's sorted multiset -> row sums + sorted values held fixed")
+    _check(_np.allclose(pr.sum(axis=1), Wd.sum(axis=1)), "per_row shuffle preserves every row SUM (the marginal)")
+    pc = shuffle_preserving_marginal(Wd, rng, mode="per_col")
+    _check(_np.array_equal(_np.sort(pc, axis=0), _np.sort(Wd, axis=0)),
+           "per_col shuffle preserves each COLUMN's sorted multiset")
+    _check(_np.allclose(pc.sum(axis=0), Wd.sum(axis=0)), "per_col shuffle preserves every column SUM")
+    rng_a = _np.random.default_rng(7); rng_b = _np.random.default_rng(7)
+    _check(_np.array_equal(shuffle_preserving_marginal(Wd, rng_a, mode="global"),
+                           shuffle_preserving_marginal(Wd, rng_b, mode="global")),
+           "the shuffle is DETERMINISTIC at a fixed rng seed")
+    try:
+        shuffle_preserving_marginal(_np.arange(9), _np.random.default_rng(0))
+    except ValueError:
+        print("     ✔ a non-2-D input is REFUSED (a weight matrix is 2-D)")
+    else:
+        raise SystemExit("⛔ shuffle_preserving_marginal accepted a 1-D array")
+
+    print("  -- a STRUCTURE-DEPENDENT function COLLAPSES under the shuffle --")
+    dc = dependency_control(measure_diag, Wd, _np.random.default_rng(1), n_shuffles=40, mode="global")
+    _check(dc["collapsed"] is True, "diagonal-alignment function COLLAPSES under a global shuffle (Shiu-positive)")
+    _check(dc["real_score"] > dc["shuffled_p95"], "real strictly clears the shuffled p95")
+    _check(dc["n_ge_real"] == 0, "0/40 shuffles match or beat the real score (Shiu's '1/100' shape)")
+
+    print("  -- PROVE THE INSTRUMENT CAN REPORT 'SURVIVED' — a function riding on a PRESERVED gross statistic --")
+    # measure_total reads ONLY the global sum, which a global shuffle preserves EXACTLY. The control MUST NOT
+    # report a collapse here — that is the whole point of the instrument (a function on gross statistics is not
+    # structure-dependent). This is the (7)-style proof that dependency_control is capable of NOT firing.
+    dc2 = dependency_control(lambda W: float(W.sum()), Wd, _np.random.default_rng(2), n_shuffles=40, mode="global")
+    _check(dc2["collapsed"] is False,
+           "a function reading only the PRESERVED total does NOT collapse — the instrument correctly reports "
+           "'rides on gross statistics' (it can fail to fire, so a firing is informative)")
+    _check(dc2["n_ge_real"] == 40, "all 40 shuffles equal the real score (the total is invariant under shuffle)")
+
+    print("\n" + "=" * 108)
     print("(7) PROVE THE SELF-CHECK CAN FAIL — a self-check that only confirms good input is vacuous")
     print("=" * 108)
     try:
@@ -529,7 +701,9 @@ def _selfcheck():
 
     print("\nSELF-CHECK PASSED: term_budget (dominant / balanced / zero / cancelling / negative / unexplained "
           "/ refused) + attributable_to (real gap#5 numbers, clean control, both degenerate zeros, negative "
-          "arms, opposing control, refused array), and the checker was shown to be capable of failing.")
+          "arms, opposing control, refused array) + shuffle_preserving_marginal (global/per_row/per_col multiset "
+          "+ marginal preservation, determinism, 2-D guard) + dependency_control (a structure-dependent function "
+          "collapses; a gross-statistic function does NOT), and the checker was shown to be capable of failing.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,36 @@
+{
+ "run_id": "1787116369-2256272",
+ "runner": "research/runners/_weight_shuffle_dependency_control_demo.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-wshuffle/research/runners/_weight_shuffle_dependency_control_demo.py",
+  "--seeds",
+  "42",
+  "43",
+  "--n-shuffles",
+  "24",
+  "--modes",
+  "global",
+  "per_row",
+  "--out",
+  "research/findings/raw/_weight_shuffle/wshuffle_when_Wctx.json"
+ ],
+ "git_sha": "f50b22b72",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T01:12:49",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1428.7,
+ "corpus_check_query": "weight-shuffle dependency control anti-cheat",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_weight_shuffle/wshuffle_when_Wctx.json"
+}

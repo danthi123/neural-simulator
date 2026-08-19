@@ -991,7 +991,13 @@ search must screen the NaP voltage direction before CPU confirmation. The
 parameterizations exist.
 
 1. **Plan.** Materialize the treatment, controls, lesions, anti-cheats, exact
-   variables, seed partitions, expected artifacts, and resource budget.
+   variables, seed partitions, expected artifacts, and resource budget. For any
+   "it emerged / depends on the learned or structured weights" claim, include the
+   distribution-preserving **weight-shuffle dependency control**
+   (`tools.lab.dependency_control`, Shiu 2024): a function that survives a
+   value-distribution-preserving shuffle of its weights rode on gross statistics,
+   not learned structure (added 2026-08-19; demonstrated on the gap#5 WHEN `W_ctx`
+   recency pathway — see the finding and the verify-go skill).
 2. **Seal.** Freeze the command/configuration and record provenance. Keep
    development and held-out seeds mechanically separate.
 3. **Dry-run.** Validate the sealed handoff, arm materialization, control set,
