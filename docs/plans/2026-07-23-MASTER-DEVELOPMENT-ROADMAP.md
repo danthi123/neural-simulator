@@ -750,6 +750,17 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-19 — memory-separator k-WTA STABILITY (board #73), homeostat method BANKED (6-seed NO-GO).** The DG
+pattern-separator holds SINGLE memories (+1.00, 6/6) on the Izhikevich substrate but cannot keep TWO similar
+memories both discriminable — one engram dense-collapses and subsumes the other (both_win 0/6; the #71 residual).
+The #71-named next-mechanism-1 (per-granule intrinsic-excitability adaptive-threshold homeostat; Turrigiano) was
+BUILT on-substrate (per-region `BrainRegion.enable_homeostasis` on dg, no `sim/` edit) and is a decisive NO-GO: a
+per-cell firing-RATE set-point is ANTI-SPARSE — its fixed point is a uniform target-rate code (all cells active),
+so it RECRUITS silent cells and DEFEATS the k-WTA basket, driving dense-collapse 6/6 (worse than the 4/6 lesion).
+Method banked; the residual is REMAPPED to a POPULATION-competitive set-point (adaptive inhibitory GAIN /
+divisive-normalization on the dg_fs pool holding total DG activity ≈ k) and/or a developed competitive perforant
+projection (`2026-08-19-kwta-stability-homeostat-NOGO.md`, runner `_replay_dg_pattern_separation_homeostat.py`).
+
 **⭐ 2026-08-13 — THE ORDERED NEXT ACTIONS ARE §0.4 (this supersedes the "real frontier now" list far below).** In
 priority order, matching the three missing properties: **(1)** WIRE the GNW N-organ bus into production `brain_chat` to
 REPLACE the host organ-orchestration (design at `2026-08-13-gnw-norgan-bus-production-wiring.md`) — the single biggest move
