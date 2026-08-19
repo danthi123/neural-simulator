@@ -99,8 +99,12 @@ gate correctly required the finding's cited raw artifacts, recovered from the de
 branches), 5 worktrees (primary + gate-b + 3 live agents).** The live-agent branches are cleaned routinely as their
 agents finish + consolidate. THE CLEANUP IS COMPLETE.
 
-## If the owner later wants to REMOVE the `codex/` name (a rename, not a delete — zero history/data risk)
-`git branch -m codex/X newname` per branch (works on the checked-out primary); then per remote push-new + delete-old
-(`git push <r> newname` → `git push <r> --delete codex/X`) on origin AND gitea; then grep-and-replace any hardcoded
-branch-name references (CI/scripts/docs/memory) and set the new-branch convention so agents stop creating `codex/*`.
-Cheap now that the namespace is nearly empty (mainly the one primary branch; `main` is already the non-codex trunk).
+## NAME REMOVED — DONE (2026-08-19, owner: "I do want the rename, industry best practices")
+The primary was renamed `codex/gap4-axon-capd-derisk` → **`research/gap4-axon-capd-derisk`** locally and on BOTH
+remotes (pushed the new ref, deleted the old on origin AND gitea — verified: codex/=0, research/=1 on both). No
+history rewrite, no data touched (a rename leaves the branch's commits + the primary's untracked files intact).
+**GO-FORWARD CONVENTION: `main` = trunk; topic/experiment branches = `research/<kebab-slug>`** (lowercase-hyphen,
+short-lived, deleted after merge to main). Agents launch with `-b research/<slug>` — no more `codex/*`. Nothing in
+CLAUDE.md/.claude hardcodes branch names (checked), so no config edits were needed. The only remaining `codex/*` refs
+are the 3 in-flight agent branches (gnw-neural-vacancy-gate, replay-separator-bridge, vision-spiking-hierarchy), which
+are consolidated + deleted routinely as those agents finish — the last of the `codex/` namespace.
