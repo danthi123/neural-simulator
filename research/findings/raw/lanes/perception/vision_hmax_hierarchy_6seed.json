@@ -1,0 +1,536 @@
+{
+  "summary": {
+    "probe": "vision_hmax_hierarchy",
+    "overall_verdict": "HMAX-INVARIANCE-PARTIAL-5/6",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "n_seeds": 6,
+    "chance_object": 0.25,
+    "per_seed_capability_go": [
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "decode_means": {
+      "A_v1_direct_train": 0.5452,
+      "A_v1_direct_held": 0.3698,
+      "H_flat_pool_held": 0.2674,
+      "PRIMARY_same_pos_cv": 0.4479,
+      "PRIMARY_cross_pos_cv": 0.5,
+      "PRIMARY_held": 0.5972,
+      "PRIMARY_scramble_held": 0.2535,
+      "B_hmax_imprint_train": 0.2292,
+      "B_hmax_imprint_held": 0.3802,
+      "T_hmax_trace_held": 0.5972,
+      "T_hmax_traceshuffle_held": 0.592,
+      "R_hmax_random_held": 0.5851,
+      "P1_hmax_imprint_p1_held": 0.2986
+    },
+    "dissociation_means": {
+      "object_decode_heldsplit": 0.507,
+      "position_decode_heldsplit": 0.3541,
+      "label_shuffle_null": 0.2327
+    },
+    "invariance_gap_mean": 0.0191,
+    "verdict_fracs": {
+      "capability_go": 0.8333,
+      "architecture_load_bearing": 1.0,
+      "template_learning_load_bearing": 0.1667,
+      "flat_pool_configuration_blind": 1.0,
+      "trace_load_bearing": 0.0
+    },
+    "headroom": {
+      "primary_minus_v1_held": 0.2274,
+      "primary_minus_flat_held": 0.3298,
+      "primary_minus_random_held": 0.0121,
+      "primary_p3_minus_p1_held": 0.2986
+    },
+    "mechanism": "RETINA -> S1 (deployed Gabor/V1 simple) -> hypercolumn orientation-competition + firing-gate -> C1 (innate local retinotopic MAX-pool per orientation = local shift-tolerance, flagged scaffold) -> S2 (configural template units, convolutional cosine match = a local conjunction detector applied at every position by innate retinotopic weight-sharing; templates imprinted / trace-learned / random) -> C2 (innate global MAX-pool per template = position invariance). Identity decoded off C2. Objects are histogram-matched configural shapes so a flat orientation-histogram pool (= no S2 stage) is forced to chance and configuration is the only signal. HMAX = Riesenhuber & Poggio 1999, Nat Neurosci 2:1019-1025; learned patches = Serre/Poggio 2007; trace = Foldiak 1991.",
+    "go_gate": "CAPABILITY GO per seed (board #44 = position-invariant configural recognition): held-object decode >= chance+decode_margin; held beats V1-direct-held AND the FLAT-POOL (= composed conjunction+pool ARCHITECTURE load-bearing) by beat_margin; position pooled out (object decodable, position ~chance off C2); pixel-scramble does not decode; invariance gap |held-train| <= inv_gap. Reported separately (the honest test the prior NO-GO predicts FAILS): template_learning_load_bearing = HMAX-imprint beats HMAX-random (a random projection) by beat_margin.",
+    "config": {
+      "seeds": [
+        42,
+        43,
+        44,
+        100,
+        101,
+        102
+      ],
+      "n_classes": 4,
+      "n_slots": 3,
+      "n_pos_total": 8,
+      "pos_span": 8.0,
+      "n_ex": 6,
+      "image_size": 56,
+      "slot_offset": 10.0,
+      "stroke_len": 7.0,
+      "stroke_tk": 1.8,
+      "pixel_noise": 0.03,
+      "primary_arm": "trace",
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 24,
+      "rf_radius": 3,
+      "orient_norm": "z",
+      "c1_gate": 0.15,
+      "c1_win": 6,
+      "c1_stride": 3,
+      "s2_p": 3,
+      "n_s2": 128,
+      "trace_passes": 12,
+      "trace_epochs": 40,
+      "lr": 0.2,
+      "trace_decay": 0.9,
+      "boost_beta": 2.0,
+      "decode_margin": 0.15,
+      "beat_margin": 0.1,
+      "pos_decode_margin": 0.15,
+      "inv_gap": 0.2,
+      "out": "research/findings/raw/lanes/perception/vision_hmax_hierarchy_6seed.json"
+    },
+    "elapsed_seconds": 9.2
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.5521,
+        "A_v1_direct_held": 0.375,
+        "H_flat_pool_held": 0.3438,
+        "PRIMARY_same_pos_cv": 0.375,
+        "PRIMARY_cross_pos_cv": 0.5208,
+        "PRIMARY_held": 0.5938,
+        "PRIMARY_scramble_held": 0.25,
+        "B_hmax_imprint_train": 0.2083,
+        "B_hmax_imprint_held": 0.4271,
+        "T_hmax_trace_held": 0.5938,
+        "T_hmax_traceshuffle_held": 0.5938,
+        "R_hmax_random_held": 0.6354,
+        "P1_hmax_imprint_p1_held": 0.3021
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.5417,
+        "position_decode_heldsplit": 0.4375,
+        "label_shuffle_null": 0.25,
+        "position_pooled_out": false
+      },
+      "invariance_gap_train_minus_held": 0.0,
+      "verdicts": {
+        "capability_go": false,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": false,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    },
+    {
+      "seed": 43,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.5729,
+        "A_v1_direct_held": 0.4271,
+        "H_flat_pool_held": 0.3021,
+        "PRIMARY_same_pos_cv": 0.375,
+        "PRIMARY_cross_pos_cv": 0.4375,
+        "PRIMARY_held": 0.5833,
+        "PRIMARY_scramble_held": 0.2812,
+        "B_hmax_imprint_train": 0.2292,
+        "B_hmax_imprint_held": 0.3542,
+        "T_hmax_trace_held": 0.5833,
+        "T_hmax_traceshuffle_held": 0.5833,
+        "R_hmax_random_held": 0.5625,
+        "P1_hmax_imprint_p1_held": 0.2396
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.6042,
+        "position_decode_heldsplit": 0.3125,
+        "label_shuffle_null": 0.2917,
+        "position_pooled_out": true
+      },
+      "invariance_gap_train_minus_held": 0.0,
+      "verdicts": {
+        "capability_go": true,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": false,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    },
+    {
+      "seed": 44,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.6042,
+        "A_v1_direct_held": 0.4167,
+        "H_flat_pool_held": 0.3646,
+        "PRIMARY_same_pos_cv": 0.5208,
+        "PRIMARY_cross_pos_cv": 0.5,
+        "PRIMARY_held": 0.5625,
+        "PRIMARY_scramble_held": 0.2188,
+        "B_hmax_imprint_train": 0.25,
+        "B_hmax_imprint_held": 0.4792,
+        "T_hmax_trace_held": 0.5625,
+        "T_hmax_traceshuffle_held": 0.5625,
+        "R_hmax_random_held": 0.6667,
+        "P1_hmax_imprint_p1_held": 0.3438
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.5,
+        "position_decode_heldsplit": 0.375,
+        "label_shuffle_null": 0.2292,
+        "position_pooled_out": true
+      },
+      "invariance_gap_train_minus_held": 0.0208,
+      "verdicts": {
+        "capability_go": true,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": false,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    },
+    {
+      "seed": 100,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.5729,
+        "A_v1_direct_held": 0.3229,
+        "H_flat_pool_held": 0.2292,
+        "PRIMARY_same_pos_cv": 0.5,
+        "PRIMARY_cross_pos_cv": 0.4062,
+        "PRIMARY_held": 0.5625,
+        "PRIMARY_scramble_held": 0.2396,
+        "B_hmax_imprint_train": 0.2292,
+        "B_hmax_imprint_held": 0.3125,
+        "T_hmax_trace_held": 0.5625,
+        "T_hmax_traceshuffle_held": 0.5521,
+        "R_hmax_random_held": 0.5104,
+        "P1_hmax_imprint_p1_held": 0.3229
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.4375,
+        "position_decode_heldsplit": 0.3333,
+        "label_shuffle_null": 0.125,
+        "position_pooled_out": true
+      },
+      "invariance_gap_train_minus_held": 0.0938,
+      "verdicts": {
+        "capability_go": true,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": false,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    },
+    {
+      "seed": 101,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.4896,
+        "A_v1_direct_held": 0.375,
+        "H_flat_pool_held": 0.1979,
+        "PRIMARY_same_pos_cv": 0.5417,
+        "PRIMARY_cross_pos_cv": 0.6042,
+        "PRIMARY_held": 0.6667,
+        "PRIMARY_scramble_held": 0.25,
+        "B_hmax_imprint_train": 0.2083,
+        "B_hmax_imprint_held": 0.3854,
+        "T_hmax_trace_held": 0.6667,
+        "T_hmax_traceshuffle_held": 0.6667,
+        "R_hmax_random_held": 0.6354,
+        "P1_hmax_imprint_p1_held": 0.2708
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.5208,
+        "position_decode_heldsplit": 0.3958,
+        "label_shuffle_null": 0.25,
+        "position_pooled_out": true
+      },
+      "invariance_gap_train_minus_held": 0.0,
+      "verdicts": {
+        "capability_go": true,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": false,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    },
+    {
+      "seed": 102,
+      "chance_object": 0.25,
+      "chance_position": 0.25,
+      "class_perms": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ],
+      "train_positions_idx": [
+        0,
+        2,
+        4,
+        6
+      ],
+      "held_positions_idx": [
+        1,
+        3,
+        5,
+        7
+      ],
+      "n_train_images": 96,
+      "n_held_images": 96,
+      "s2_dim": 72,
+      "primary_arm": "trace",
+      "decode": {
+        "A_v1_direct_train": 0.4792,
+        "A_v1_direct_held": 0.3021,
+        "H_flat_pool_held": 0.1667,
+        "PRIMARY_same_pos_cv": 0.375,
+        "PRIMARY_cross_pos_cv": 0.5312,
+        "PRIMARY_held": 0.6146,
+        "PRIMARY_scramble_held": 0.2812,
+        "B_hmax_imprint_train": 0.25,
+        "B_hmax_imprint_held": 0.3229,
+        "T_hmax_trace_held": 0.6146,
+        "T_hmax_traceshuffle_held": 0.5938,
+        "R_hmax_random_held": 0.5,
+        "P1_hmax_imprint_p1_held": 0.3125
+      },
+      "dissociation": {
+        "object_decode_heldsplit": 0.4375,
+        "position_decode_heldsplit": 0.2708,
+        "label_shuffle_null": 0.25,
+        "position_pooled_out": true
+      },
+      "invariance_gap_train_minus_held": 0.0,
+      "verdicts": {
+        "capability_go": true,
+        "architecture_load_bearing": true,
+        "template_learning_load_bearing": true,
+        "flat_pool_configuration_blind": true,
+        "trace_load_bearing": false
+      }
+    }
+  ]
+}
