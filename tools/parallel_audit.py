@@ -71,8 +71,12 @@ def open_tasks():
         ts = json.loads(raw)
     except Exception:
         return None, []
-    # actionable = open, priority>=1, and not the north-star/stage meta rows (priority 5 north-star kept out)
-    act = [t for t in ts if not t.get("done") and 1 <= (t.get("priority") or 0) <= 4]
+    # actionable = open, priority 1-4 (priority-5 north-star kept out), and NOT labeled epic(12)/blocked(11) —
+    # those are mission-framing or production-blocked-upstream, not launchable independent work (2026-08-19: the
+    # audit was counting epics + blocked-on-no-consumer tasks as "ready", firing a false UNDER-PARALLELIZED).
+    _NOT_READY = {11, 12}  # blocked, epic
+    act = [t for t in ts if not t.get("done") and 1 <= (t.get("priority") or 0) <= 4
+           and not (_NOT_READY & {l.get("id") for l in (t.get("labels") or [])})]
     act.sort(key=lambda t: -(t.get("priority") or 0))
     return len(act), [(t.get("priority") or 0, t.get("title", "")) for t in act]
 
