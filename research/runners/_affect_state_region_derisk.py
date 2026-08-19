@@ -122,7 +122,12 @@ SILENCE_BASE_PA = 150.0            # default reticence drive to the silence pool
 # STATE (V+/V- rate differential) biases cognition through the single `affect_out` transmission gate.
 # =============================================================================================================
 class AffectStateBrain:
-    def __init__(self, seed, nmda_on=True, recur_weight=DEFAULT_RECUR_WEIGHT, ou_pA=8.0, opponent_style="cross"):
+    def __init__(self, seed, nmda_on=True, recur_weight=DEFAULT_RECUR_WEIGHT, ou_pA=8.0, opponent_style="cross",
+                 extra_regions=None, extra_pathways=None):
+        # extra_regions / extra_pathways (default None -> byte-identical to the P0.3 GO): an ADDITIVE seam so a
+        # sibling de-risk can APPEND populations + synaptic pathways (e.g. interoceptive body-state pools that
+        # project onto the affect pools) while REUSING this exact NMDA opponent attractor. Appended after the
+        # native regions/pathways so region indices of the affect pools are unchanged.
         from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
         from sim.config import CoreSimConfig
         from sim.regions import BrainRegion, RegionPathway
@@ -249,8 +254,8 @@ class AffectStateBrain:
             appraisal_mod("appraisal_vminus", "affect_vminus"),
             appraisal_mod("appraisal_arousal", "affect_arousal"),
         ]
-        cfg.brain_regions = regions
-        cfg.region_pathways = pathways
+        cfg.brain_regions = regions + list(extra_regions or [])
+        cfg.region_pathways = pathways + list(extra_pathways or [])
 
         self._bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                         runtime_state=RuntimeState(), gpu_config=GPUConfig())
