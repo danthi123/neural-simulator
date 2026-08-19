@@ -62,3 +62,27 @@ on 2026-08-19. Leave the `codex/` branch prefix as-is (owner keeps the name).
 ## Not in scope
 Renaming branches (owner keeps `codex/`); touching `main`'s history; anything that risks the primary checkout's
 untracked files before they are audited and preserved.
+
+## PROGRESS (2026-08-19) — safe bulk DONE; the scary part is resolved
+- **AGENTS.md retired** — the tracked "Codex entry-point" on main (commit `2d9fa11f`) AND the primary's 24KB untracked
+  mirror. Both gone.
+- **The primary-checkout data-loss risk is RESOLVED.** The 1,153 untracked files were categorized: ~1,065 `.json`
+  regenerable research outputs + scratch, and only **5 unique source files**. The 3 useful ones (GPU-crash training
+  watchdog `tools/train.sh` + `tools/gpu_train_watchdog.sh` + `.service`) were **preserved to main** (commit
+  `32106b0e`); the other 2 (`raw/_bounded_launcher.py`, `_throttle_daemon.py`) are superseded pre-migration scratch,
+  left in place. **No unique work is stranded.** Since the owner keeps the `codex/` name, the primary can STAY on
+  `codex/gap4-axon-capd-derisk` — no risky branch-switch needed. Step 2 above is effectively closed.
+- **Branches:** 7 merged-into-main codex branches deleted (`git branch -d` from the main worktree so the merge check
+  runs against main, not the primary's HEAD). ~71 codex branches remain, nearly all UNMERGED.
+- **Worktrees:** 156 → 49 (107 removed): 26 clean stale + 81 harness-throwaway (`worktree-agent-*`/`worktree-wf_*`,
+  force-removed with their branches — no research value, no live process). All done `--force`-free except the
+  throwaway class; the 6 named dirty worktrees (wt-keystone/wt-moutheprop/wt-genwire/wt-dmnbasins/wt-rung2c/
+  wall-value-critic-neural) were KEPT (genuine uncommitted work).
+
+## What REMAINS (careful, do when the live agents finish — never force-delete blindly)
+- **~71 unmerged codex branches:** distinguish "content already on main via CHERRY-PICK" (safe to `-D`) from
+  "genuinely unique unmerged work" (preserve first) — needs a CONTENT compare, not a graph `--merged` check (cherry-
+  picks don't show as graph-merged). Do NOT bulk `-D`.
+- **~45 codex/named research worktrees:** dirty mostly from CRLF noise (`git diff --ignore-cr-at-eol` to see real
+  changes); remove once confirmed no real uncommitted work.
+- Run-safety rule stands: re-verify nothing live is using a target (`readlink /proc/<pid>/cwd`) before removing it.
