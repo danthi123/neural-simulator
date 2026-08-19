@@ -1,0 +1,14 @@
+[Unit]
+Description=GPU-crash + training auto-resume watchdog (multi-day unattended lmtrain run3)
+After=multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/dant123/Projects/sim/tools/gpu_train_watchdog.sh
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
