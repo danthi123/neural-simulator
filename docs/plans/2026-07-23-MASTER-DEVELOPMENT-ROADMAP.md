@@ -669,6 +669,9 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-19 — gap#4 mouth read-SNR wall CONFIRMED; coverage + window both EXCLUDED; Option-2 decided.** The mouth read-out e-prop-through-the-actual-spiking-substrate FORWARD plateaus at `sub_learned_recov_mean` ~0.34 even at 5× coverage (40 000 positions, up from 8 000), while a matched-coverage host-linear-proxy forward reaches ~0.86 — so COVERAGE is excluded, and the read-window lever (120→360) was tested-negative this session too. The residual is the substrate forward's few-spike READ SNR, exactly as the 2026-08-11 layer-3 arc predicted (learning-rate-invariant; even a perfect Wᵀ oracle fails).
+> DECISION (owner-delegated, per `docs/plans/2026-08-19-deep-credit-plan-of-record.md`): **Option 2 — accept the scaffold-bridge for the mouth, keep the crux on the conversation frontier;** deep-credit stays a mapped boundary with ONE recorded open lever (a read-SNR manipulation that is NOT the integration window: ensemble / dendritic multi-compartment read). No further deep-credit compute is queued. Closes the coverage confound-exclusion sub-arm of speak-with-own-neurons (board #80); the task itself is not done — the scaffold bridges it. `research/findings/2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md`.
+
 > **⭐ 2026-08-13 RECONCILIATION (read §0.3 for the live status; the rows below retain the mechanism detail).** Two rows
 > are materially stale in their VERDICT (not their biology): (1) the **gap#4** row still reads as an open on-bridge wall —
 > superseded: the located wall was largely a per-arm-lr artifact, learned feedback (KP) reaches the 3rd hidden layer at
@@ -749,6 +752,21 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-08-19 (LATE) — THREE DRIVE-COUPLINGS NOW LIVE + the memory-separator and deep-credit frontiers moved.**
+(A) INTEGRATION (the observe→DRIVE reframe made real): three of the brain's OWN internal signals are now load-bearing
+on the live `/api/brain-chat`, each verified by lesioning the neural driver — #84 graded AFFECT → reply TONE
+(`d377758b`), #85 neural thought-SWAP → which TOPIC a turn engages (`2bf3e2f4`), #79 self-selected DOPAMINE MODE →
+reply ENGAGEMENT (`077dd53d`). All default-on GOs; the faculties no longer just get reported, they change the talk.
+(B) MEMORY-SEPARATOR (both-win): the WRITE-family is now EXHAUSTED → the next frontier is READ-time reactivation
+(board #91). After the per-cell homeostat (#73, anti-sparse NO-GO) and the population set-point (#78), this session
+tested the two write-side fixes — a competitive heterosynaptic write (#73, `98cd33bb`) and a selectivity-gated BCM
+write (#90, `15b67c2d`). The BCM write DID write a private granule and break the anti-symmetry (6/6), but neither
+closed both-win: both RE-LOCALIZE the residual OUT of the write onto the dg→answer READ-out and its recall
+reactivation. Write-family banked; frontier → read-time reactivation (#91).
+(C) DEEP-CREDIT / MOUTH: **Option 2 decided** (see the §7 2026-08-19 note) — coverage + read-window both excluded,
+few-spike read-SNR isolated as the wall; accept the language-scaffold mouth, keep the crux on conversation. Board #80
+speak-with-own-neurons is NOT done (scaffold bridges it); its coverage confound-exclusion sub-arm IS closed.
 
 **2026-08-19 — memory-separator k-WTA STABILITY (board #73), homeostat method BANKED (6-seed NO-GO).** The DG
 pattern-separator holds SINGLE memories (+1.00, 6/6) on the Izhikevich substrate but cannot keep TWO similar

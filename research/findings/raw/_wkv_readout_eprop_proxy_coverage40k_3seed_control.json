@@ -1,0 +1,540 @@
+{
+ "results": [
+  {
+   "seed": 42,
+   "V": 1000,
+   "D": 128,
+   "chance_1_over_v": 0.001,
+   "B": 48,
+   "n_train_pos": 40000,
+   "n_eval_pos": 800,
+   "n_sub_demo": 250,
+   "n_grad_steps": 24990,
+   "n_grad_steps_shuffle": 1249,
+   "substrate_reads": 11,
+   "main_substrate_reads": 0,
+   "forward_read_matches_grad_steps": false,
+   "lr": 0.3,
+   "epochs": 30,
+   "weight_decay": 0.0008,
+   "w_target": 40.0,
+   "gain": 9.823141,
+   "gain_substrate_vs_linear_corr": 0.9406,
+   "forward_mode": "host_proxy",
+   "eval_every_epochs": 3,
+   "recovery_trajectory": [
+    {
+     "epoch": 3,
+     "n_grad": 2499,
+     "hostlinear_recov_argmax": 0.8918,
+     "weight_cosine": 0.4862
+    },
+    {
+     "epoch": 6,
+     "n_grad": 4998,
+     "hostlinear_recov_argmax": 0.8974,
+     "weight_cosine": 0.4903
+    },
+    {
+     "epoch": 9,
+     "n_grad": 7497,
+     "hostlinear_recov_argmax": 0.8943,
+     "weight_cosine": 0.4914
+    },
+    {
+     "epoch": 12,
+     "n_grad": 9996,
+     "hostlinear_recov_argmax": 0.8897,
+     "weight_cosine": 0.4913
+    },
+    {
+     "epoch": 15,
+     "n_grad": 12495,
+     "hostlinear_recov_argmax": 0.8934,
+     "weight_cosine": 0.4913
+    },
+    {
+     "epoch": 18,
+     "n_grad": 14994,
+     "hostlinear_recov_argmax": 0.881,
+     "weight_cosine": 0.4912
+    },
+    {
+     "epoch": 21,
+     "n_grad": 17493,
+     "hostlinear_recov_argmax": 0.8948,
+     "weight_cosine": 0.4915
+    },
+    {
+     "epoch": 24,
+     "n_grad": 19992,
+     "hostlinear_recov_argmax": 0.896,
+     "weight_cosine": 0.4907
+    },
+    {
+     "epoch": 27,
+     "n_grad": 22491,
+     "hostlinear_recov_argmax": 0.8875,
+     "weight_cosine": 0.4913
+    },
+    {
+     "epoch": 30,
+     "n_grad": 24990,
+     "hostlinear_recov_argmax": 0.8959,
+     "weight_cosine": 0.4911
+    }
+   ],
+   "sub_read_window": 120,
+   "sub_hid_pop": 4,
+   "sub_pop": 1,
+   "w_hat_norm": 18.54,
+   "head_w_norm": 37.53,
+   "learn_secs": 368.2,
+   "shuffle_secs": 20.0,
+   "host_matmul_on_learning_forward": 24990,
+   "forward_source": "batched_substrate_graded_conductance_read",
+   "verify_first_ok": true,
+   "verify_first_ce": [
+    10.0717,
+    10.0622
+   ],
+   "verify_first_argerr": [
+    1.0,
+    1.0
+   ],
+   "hostlinear_recov_argmax": 0.8959,
+   "hostlinear_argmax_agree": 0.69,
+   "hostlinear_anticheat_recov": {
+    "frozen": 0.047,
+    "lesion_err": 0.0421,
+    "shuffle_teach": 0.0024
+   },
+   "hostlinear_floor_recov": 0.047,
+   "weight_cosine_to_head_diag": 0.4911,
+   "weight_cosine_anticheat": {
+    "frozen": -0.0023,
+    "lesion_err": -0.0023,
+    "shuffle_teach": 0.0072
+   },
+   "weight_cosine_floor": 0.0072,
+   "sub_learned": {
+    "argmax_agree": 0.648,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.8653,
+    "host_rng_draws": 0
+   },
+   "sub_copied": {
+    "argmax_agree": 0.82,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.9721,
+    "host_rng_draws": 0
+   },
+   "sub_shuffle": {
+    "argmax_agree": 0.0,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.0001,
+    "host_rng_draws": 0
+   },
+   "sub_recov_ratio_learned_over_copied": 0.8901,
+   "integrated_bar_0.85xcopied": 0.8263,
+   "host_rng_draws_on_read_path": 0,
+   "no_transport": true,
+   "no_host_grad": true,
+   "forward_is_substrate": false,
+   "anticheats_collapse": true,
+   "integrated_go": true,
+   "parity_recovery": true,
+   "go": false,
+   "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+   }
+  },
+  {
+   "seed": 43,
+   "V": 1000,
+   "D": 128,
+   "chance_1_over_v": 0.001,
+   "B": 48,
+   "n_train_pos": 40000,
+   "n_eval_pos": 800,
+   "n_sub_demo": 250,
+   "n_grad_steps": 24990,
+   "n_grad_steps_shuffle": 1249,
+   "substrate_reads": 11,
+   "main_substrate_reads": 0,
+   "forward_read_matches_grad_steps": false,
+   "lr": 0.3,
+   "epochs": 30,
+   "weight_decay": 0.0008,
+   "w_target": 40.0,
+   "gain": 9.809932,
+   "gain_substrate_vs_linear_corr": 0.944,
+   "forward_mode": "host_proxy",
+   "eval_every_epochs": 3,
+   "recovery_trajectory": [
+    {
+     "epoch": 3,
+     "n_grad": 2499,
+     "hostlinear_recov_argmax": 0.8996,
+     "weight_cosine": 0.4864
+    },
+    {
+     "epoch": 6,
+     "n_grad": 4998,
+     "hostlinear_recov_argmax": 0.8983,
+     "weight_cosine": 0.49
+    },
+    {
+     "epoch": 9,
+     "n_grad": 7497,
+     "hostlinear_recov_argmax": 0.8896,
+     "weight_cosine": 0.4905
+    },
+    {
+     "epoch": 12,
+     "n_grad": 9996,
+     "hostlinear_recov_argmax": 0.901,
+     "weight_cosine": 0.4909
+    },
+    {
+     "epoch": 15,
+     "n_grad": 12495,
+     "hostlinear_recov_argmax": 0.9077,
+     "weight_cosine": 0.4909
+    },
+    {
+     "epoch": 18,
+     "n_grad": 14994,
+     "hostlinear_recov_argmax": 0.89,
+     "weight_cosine": 0.4911
+    },
+    {
+     "epoch": 21,
+     "n_grad": 17493,
+     "hostlinear_recov_argmax": 0.8873,
+     "weight_cosine": 0.4915
+    },
+    {
+     "epoch": 24,
+     "n_grad": 19992,
+     "hostlinear_recov_argmax": 0.8995,
+     "weight_cosine": 0.491
+    },
+    {
+     "epoch": 27,
+     "n_grad": 22491,
+     "hostlinear_recov_argmax": 0.89,
+     "weight_cosine": 0.4911
+    },
+    {
+     "epoch": 30,
+     "n_grad": 24990,
+     "hostlinear_recov_argmax": 0.9038,
+     "weight_cosine": 0.4908
+    }
+   ],
+   "sub_read_window": 120,
+   "sub_hid_pop": 4,
+   "sub_pop": 1,
+   "w_hat_norm": 18.82,
+   "head_w_norm": 37.52,
+   "learn_secs": 635.7,
+   "shuffle_secs": 34.3,
+   "host_matmul_on_learning_forward": 24990,
+   "forward_source": "batched_substrate_graded_conductance_read",
+   "verify_first_ok": false,
+   "verify_first_ce": [
+    9.9987,
+    10.0144
+   ],
+   "verify_first_argerr": [
+    1.0,
+    1.0
+   ],
+   "hostlinear_recov_argmax": 0.9038,
+   "hostlinear_argmax_agree": 0.7163,
+   "hostlinear_anticheat_recov": {
+    "frozen": 0.0439,
+    "lesion_err": 0.0405,
+    "shuffle_teach": 0.0016
+   },
+   "hostlinear_floor_recov": 0.0439,
+   "weight_cosine_to_head_diag": 0.4908,
+   "weight_cosine_anticheat": {
+    "frozen": 0.0017,
+    "lesion_err": 0.0017,
+    "shuffle_teach": 0.0032
+   },
+   "weight_cosine_floor": 0.0032,
+   "sub_learned": {
+    "argmax_agree": 0.7,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.8786,
+    "host_rng_draws": 0
+   },
+   "sub_copied": {
+    "argmax_agree": 0.832,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.9715,
+    "host_rng_draws": 0
+   },
+   "sub_shuffle": {
+    "argmax_agree": 0.0,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.003,
+    "host_rng_draws": 0
+   },
+   "sub_recov_ratio_learned_over_copied": 0.9044,
+   "integrated_bar_0.85xcopied": 0.8258,
+   "host_rng_draws_on_read_path": 0,
+   "no_transport": true,
+   "no_host_grad": true,
+   "forward_is_substrate": false,
+   "anticheats_collapse": true,
+   "integrated_go": true,
+   "parity_recovery": true,
+   "go": false,
+   "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+   }
+  },
+  {
+   "seed": 44,
+   "V": 1000,
+   "D": 128,
+   "chance_1_over_v": 0.001,
+   "B": 48,
+   "n_train_pos": 40000,
+   "n_eval_pos": 800,
+   "n_sub_demo": 250,
+   "n_grad_steps": 24990,
+   "n_grad_steps_shuffle": 1249,
+   "substrate_reads": 11,
+   "main_substrate_reads": 0,
+   "forward_read_matches_grad_steps": false,
+   "lr": 0.3,
+   "epochs": 30,
+   "weight_decay": 0.0008,
+   "w_target": 40.0,
+   "gain": 10.151663,
+   "gain_substrate_vs_linear_corr": 0.9406,
+   "forward_mode": "host_proxy",
+   "eval_every_epochs": 3,
+   "recovery_trajectory": [
+    {
+     "epoch": 3,
+     "n_grad": 2499,
+     "hostlinear_recov_argmax": 0.8992,
+     "weight_cosine": 0.4962
+    },
+    {
+     "epoch": 6,
+     "n_grad": 4998,
+     "hostlinear_recov_argmax": 0.9109,
+     "weight_cosine": 0.5008
+    },
+    {
+     "epoch": 9,
+     "n_grad": 7497,
+     "hostlinear_recov_argmax": 0.8884,
+     "weight_cosine": 0.5013
+    },
+    {
+     "epoch": 12,
+     "n_grad": 9996,
+     "hostlinear_recov_argmax": 0.9093,
+     "weight_cosine": 0.5009
+    },
+    {
+     "epoch": 15,
+     "n_grad": 12495,
+     "hostlinear_recov_argmax": 0.8978,
+     "weight_cosine": 0.5009
+    },
+    {
+     "epoch": 18,
+     "n_grad": 14994,
+     "hostlinear_recov_argmax": 0.8922,
+     "weight_cosine": 0.5015
+    },
+    {
+     "epoch": 21,
+     "n_grad": 17493,
+     "hostlinear_recov_argmax": 0.8875,
+     "weight_cosine": 0.5013
+    },
+    {
+     "epoch": 24,
+     "n_grad": 19992,
+     "hostlinear_recov_argmax": 0.886,
+     "weight_cosine": 0.501
+    },
+    {
+     "epoch": 27,
+     "n_grad": 22491,
+     "hostlinear_recov_argmax": 0.8932,
+     "weight_cosine": 0.5011
+    },
+    {
+     "epoch": 30,
+     "n_grad": 24990,
+     "hostlinear_recov_argmax": 0.8992,
+     "weight_cosine": 0.5003
+    }
+   ],
+   "sub_read_window": 120,
+   "sub_hid_pop": 4,
+   "sub_pop": 1,
+   "w_hat_norm": 18.91,
+   "head_w_norm": 37.6,
+   "learn_secs": 677.9,
+   "shuffle_secs": 15.9,
+   "host_matmul_on_learning_forward": 24990,
+   "forward_source": "batched_substrate_graded_conductance_read",
+   "verify_first_ok": false,
+   "verify_first_ce": [
+    10.2761,
+    10.2766
+   ],
+   "verify_first_argerr": [
+    1.0,
+    1.0
+   ],
+   "hostlinear_recov_argmax": 0.8992,
+   "hostlinear_argmax_agree": 0.73,
+   "hostlinear_anticheat_recov": {
+    "frozen": 0.035,
+    "lesion_err": 0.0537,
+    "shuffle_teach": 0.0012
+   },
+   "hostlinear_floor_recov": 0.0537,
+   "weight_cosine_to_head_diag": 0.5003,
+   "weight_cosine_anticheat": {
+    "frozen": 0.0006,
+    "lesion_err": 0.0006,
+    "shuffle_teach": -0.0008
+   },
+   "weight_cosine_floor": 0.0008,
+   "sub_learned": {
+    "argmax_agree": 0.656,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.8341,
+    "host_rng_draws": 0
+   },
+   "sub_copied": {
+    "argmax_agree": 0.828,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.9765,
+    "host_rng_draws": 0
+   },
+   "sub_shuffle": {
+    "argmax_agree": 0.0,
+    "silent_frac": 0.0,
+    "recov_argmax": 0.001,
+    "host_rng_draws": 0
+   },
+   "sub_recov_ratio_learned_over_copied": 0.8542,
+   "integrated_bar_0.85xcopied": 0.83,
+   "host_rng_draws_on_read_path": 0,
+   "no_transport": true,
+   "no_host_grad": true,
+   "forward_is_substrate": false,
+   "anticheats_collapse": true,
+   "integrated_go": true,
+   "parity_recovery": true,
+   "go": false,
+   "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+   }
+  }
+ ],
+ "summary": {
+  "n_seeds": 3,
+  "go_count": 0,
+  "go_5of6": false,
+  "integrated_go_count": 3,
+  "parity_recovery_count": 3,
+  "anticheats_collapse_count": 3,
+  "forward_is_substrate_all": false,
+  "host_matmul_on_forward_max": 24990,
+  "verify_first_all_ok": false,
+  "sub_learned_recov_mean": 0.8593,
+  "sub_copied_recov_mean": 0.9734,
+  "sub_shuffle_recov_mean": 0.0014,
+  "sub_recov_ratio_mean": 0.8829,
+  "sub_recov_ratio_min": 0.8542,
+  "hostlinear_recov_mean": 0.8996,
+  "hostlinear_floor_recov_max": 0.0537,
+  "weight_cosine_mean": 0.4941,
+  "weight_cosine_floor_max": 0.0072
+ },
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "no_transport": true,
+ "no_host_grad": true,
+ "forward_during_learning": "batched_substrate_graded_conductance_read",
+ "gain_per_seed": {
+  "42": 9.823141,
+  "43": 9.809932,
+  "44": 10.151663
+ },
+ "seed_hash_check": {
+  "seed": 42,
+  "thr_hash_1": "1d90c97348ccaf4a",
+  "thr_hash_2": "1d90c97348ccaf4a",
+  "seeded": true
+ },
+ "backend": "cupy",
+ "elapsed_s": 2997.6,
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-mouth/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+  "--seeds",
+  "42,43,44",
+  "--forward",
+  "host_proxy",
+  "--batch",
+  "48",
+  "--n-train-pos",
+  "40000",
+  "--epochs",
+  "30",
+  "--lr",
+  "0.3",
+  "--weight-decay",
+  "8e-4",
+  "--w-target",
+  "40",
+  "--sub-read-window",
+  "120",
+  "--read-window",
+  "150",
+  "--n-sub-demo",
+  "250",
+  "--n-eval-pos",
+  "800",
+  "--n-sentences",
+  "80000",
+  "--shuffle-frac",
+  "0.05",
+  "--eval-every-epochs",
+  "3",
+  "--json",
+  "research/findings/raw/_wkv_readout_eprop_proxy_coverage40k_3seed_control.json"
+ ],
+ "elapsed_seconds": 2997.6,
+ "projected_total_hours": 0.83,
+ "cost_acknowledged": true,
+ "cost_projection": "project_cost(label=_wkv_readout_eprop_proxy_coverage40k_3seed_control, unit=1, n_units=3, elapsed_s=2998): per-seed 999s -> projected total 0.83h on cupy/GPU; run COMPLETED at that cost. Acknowledged: the read-SNR verdict (sub_learned_recov ~0.34) was already readable from seed 42 at ~0.3h; the remaining seeds confirmed and did not change it \u2014 no tail could have flipped the NO-GO."
+}
