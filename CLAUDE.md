@@ -41,7 +41,10 @@ recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". **The heartbeat now ALSO
 cycle: `⛔ UNDER-PARALLELIZED` (idle local/pool cores or GPU + ready Vikunja board tasks > in-flight lanes) is a STALL —
 launch the listed independent work (agents for build/research · mini-PC pool for CPU · GPU for the big run) BEFORE
 holding; holding is only earned at `✓ SATURATED`. Owner-flagged recurrence 2026-08-18: past fixes failed being
-manual/advisory/passive.** NEVER WAIT on a background run without a live state-heartbeat, and
+manual/advisory/passive.** **COST-ROUTING (agent tokens burn the usage limit): mechanical work goes on non-Claude
+machinery — CPU sweeps/tuning → `tools/sweep_pool.sh` (mini-PC pool); GPU sweeps/long runs → `tools/gpu_queue.sh`
+(sequential, VRAM-contention-safe, `pause --now`/`resume` for gaming); multi-seed → controller-fanned `--seeds`;
+AGENTS only for genuine builds. Maximize parallelism AND minimize tokens.** NEVER WAIT on a background run without a live state-heartbeat, and
 never trust a subagent-armed Monitor / passive re-invocation to catch a completion. Then resume from CURRENT STATE.**
 Cross-session continuation is MANUAL by owner choice (a plain "continue" + the roadmap + that board re-anchors) — no
 watchdog/daemon.
