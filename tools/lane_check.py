@@ -44,8 +44,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LANES = {
     "A · Affect":        ("CPU",  ["affect", "appraisal", "valence", "liking", "_dr2", "emotion"]),
     "B · Curiosity":     ("CPU",  ["curiosity", "novelty", "question_gen", "_dr1", "learning_progress"]),
-    "C · Self/Workspace": ("CPU/GPU", ["self_schema", "meta_d", "false_belief", "workspace", "_dr3", "_p1_2", "tom"]),
-    "D · Perception":    ("CPU/GPU", ["v1_selforg", "_b1_", "visual", "retina", "gabor", "v2_", "_it_", "nav_"]),
+    "C · Self/Workspace": ("CPU/GPU", ["self_schema", "meta_d", "metacog", "false_belief", "workspace", "gnw",
+                                        "coincidence", "ignition", "deliberation", "_dr3", "_p1_2", "tom"]),
+    "D · Perception":    ("CPU/GPU", ["v1_selforg", "v1_pooler", "pooler", "laned", "hmax", "_b1_", "visual",
+                                        "retina", "gabor", "v2_", "_it_", "nav_"]),
     "E · Language":      ("CPU",  ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                                     "comprehension", "producer", "confidence_gate"]),
     "F · gap#4 (mapped)": ("GPU",  ["gap4", "deep_credit", "selfpredict", "microcircuit", "bdsp", "eprop",
