@@ -34,8 +34,10 @@ DO-NOT-REPEAT list + the one genuinely-open lever + the pending decision. It sit
 5. **NEW confirming evidence (2026-08-19 mouth arc).** The mouth read-out e-prop-through-the-substrate-forward plateaus
    at ~0.37 recovery **even at 5× coverage (40k positions)**, while the matched-coverage host-linear-proxy forward
    reaches ~0.90 — so **coverage is excluded** and the bottleneck is the substrate forward's few-spike read, exactly as
-   (1c) predicts. (Seed-42 trajectory decisive; full 3-seed `sub_learned_recov` confirmation pending the running job —
-   `research/findings/raw/_wkv_readout_eprop_substrate_coverage40k_3seed.json`.) The mouth read-*window* lever
+   (1c) predicts. **CONFIRMED 2026-08-19** (authoritative 3-seed file, `host_matmul_on_forward=0`): substrate-forward
+   `sub_learned_recov_mean` = **0.3403**, go 0/3, anti-cheats clean, vs the matched-coverage proxy control 0.86–0.90 →
+   coverage EXCLUDED, read-SNR is the wall. Finding
+   `2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md`. The mouth read-*window* lever
    (120→360) was also tested this session and did NOT move it — so integration-time is excluded too.
 
 ## DO NOT REPEAT (each already concluded; re-running wastes compute/tokens)
