@@ -1,0 +1,682 @@
+{
+  "provenance": {
+    "kind": "derived_aggregate",
+    "producer": "research/runners/_aggregate_fm_twopath_seeds.py",
+    "sim_backend": "numpy",
+    "inputs": [
+      "research/findings/raw/_fm_learned_twopath_readout_s42.json",
+      "research/findings/raw/_fm_learned_twopath_readout_s43.json",
+      "research/findings/raw/_fm_learned_twopath_readout_s44.json",
+      "research/findings/raw/_fm_learned_twopath_readout_s100.json",
+      "research/findings/raw/_fm_learned_twopath_readout_s101.json",
+      "research/findings/raw/_fm_learned_twopath_readout_s102.json"
+    ],
+    "recovered_from_commit": "ba1e4ea36",
+    "git_sha": "c2af23ccb",
+    "note": "6-seed means aggregated from the cited per-seed artifacts (pure numpy CPU aggregation, no substrate run). Every value re-verified against the per-seed JSONs during the park-drafts-cleanup landing.",
+    "recorded_by": "park-drafts-cleanup landing: the original ba1e4ea36 aggregate carried no provenance; this block was added to record its true producer/inputs/device."
+  },
+  "rows": [
+    {
+      "seed": 100,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.022969791666666663,
+      "res_mean_spk_read": 0.0227828125,
+      "ens_mean_spk_read": 0.013930555555555554,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 0.8,
+      "ffi_out_selected": 4.0,
+      "train_agree_neural_probe": 1.0,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.72,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.72,
+      "singlepath_rate_heldout": 0.16,
+      "singlepath_spk_heldout": 0.36,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 1.0,
+      "syn_heldout_acc": 0.52,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.48,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 279.6,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f5c49f6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.022969791666666663 expect=<function _verdict.<locals>.<lambda> at 0x7f5c49f6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.0227828125 expect=<function _verdict.<locals>.<lambda> at 0x7f5c49f6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.013930555555555554 expect=<function _verdict.<locals>.<lambda> at 0x7f5c49f6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.040000000000000036 expect=<function _verdict.<locals>.<lambda> at 0x7f5c49f6a660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": true
+        }
+      }
+    },
+    {
+      "seed": 101,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.025028125,
+      "res_mean_spk_read": 0.024954687500000003,
+      "ens_mean_spk_read": 0.010757921006944443,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 1.4,
+      "ffi_out_selected": 8.0,
+      "train_agree_neural_probe": 0.875,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "singlepath_rate_heldout": 0.56,
+      "singlepath_spk_heldout": 0.4,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 1.0,
+      "syn_heldout_acc": 0.72,
+      "lesion_wp_heldout": 0.12,
+      "lesion_silence_heldout": 0.08,
+      "matched_sham_heldout": 0.76,
+      "untrained_control_heldout": 0.0,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 277.9,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7fe11ff66660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.025028125 expect=<function _verdict.<locals>.<lambda> at 0x7fe11ff66660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.024954687500000003 expect=<function _verdict.<locals>.<lambda> at 0x7fe11ff66660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.010757921006944443 expect=<function _verdict.<locals>.<lambda> at 0x7fe11ff66660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.040000000000000036 expect=<function _verdict.<locals>.<lambda> at 0x7fe11ff66660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": true,
+          "beats_chance/prior(>=+0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": true
+        }
+      }
+    },
+    {
+      "seed": 102,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.02383229166666666,
+      "res_mean_spk_read": 0.023135416666666665,
+      "ens_mean_spk_read": 0.014310546875,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 0.8,
+      "ffi_out_selected": 4.0,
+      "train_agree_neural_probe": 0.16666666666666666,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "singlepath_rate_heldout": 0.28,
+      "singlepath_spk_heldout": 0.28,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 0.52,
+      "syn_heldout_acc": 0.44,
+      "lesion_wp_heldout": 0.16,
+      "lesion_silence_heldout": 0.16,
+      "matched_sham_heldout": 0.44,
+      "untrained_control_heldout": 0.0,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 277.6,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7fe3a596a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.02383229166666666 expect=<function _verdict.<locals>.<lambda> at 0x7fe3a596a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.023135416666666665 expect=<function _verdict.<locals>.<lambda> at 0x7fe3a596a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.014310546875 expect=<function _verdict.<locals>.<lambda> at 0x7fe3a596a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7fe3a596a660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": true
+        }
+      }
+    },
+    {
+      "seed": 42,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.024382291666666663,
+      "res_mean_spk_read": 0.024297916666666662,
+      "ens_mean_spk_read": 0.01085915798611111,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 1.4,
+      "ffi_out_selected": 8.0,
+      "train_agree_neural_probe": 1.0,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "singlepath_rate_heldout": 0.72,
+      "singlepath_spk_heldout": 0.2,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 1.0,
+      "syn_heldout_acc": 0.48,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.44,
+      "untrained_control_heldout": 0.04,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 279.4,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f60aae6e660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.024382291666666663 expect=<function _verdict.<locals>.<lambda> at 0x7f60aae6e660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.024297916666666662 expect=<function _verdict.<locals>.<lambda> at 0x7f60aae6e660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.01085915798611111 expect=<function _verdict.<locals>.<lambda> at 0x7f60aae6e660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.03999999999999998 expect=<function _verdict.<locals>.<lambda> at 0x7f60aae6e660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": true
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.026566666666666662,
+      "res_mean_spk_read": 0.02598125,
+      "ens_mean_spk_read": 0.014547634548611112,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 1.4,
+      "ffi_out_selected": 4.0,
+      "train_agree_neural_probe": 0.9166666666666666,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.64,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.64,
+      "singlepath_rate_heldout": 0.4,
+      "singlepath_spk_heldout": 0.24,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 0.9733333333333334,
+      "syn_heldout_acc": 0.44,
+      "lesion_wp_heldout": 0.04,
+      "lesion_silence_heldout": 0.04,
+      "matched_sham_heldout": 0.44,
+      "untrained_control_heldout": 0.12,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 257.6,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f9135966660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.026566666666666662 expect=<function _verdict.<locals>.<lambda> at 0x7f9135966660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.02598125 expect=<function _verdict.<locals>.<lambda> at 0x7f9135966660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.014547634548611112 expect=<function _verdict.<locals>.<lambda> at 0x7f9135966660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f9135966660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": true,
+          "wp_lesion_collapses(>=0.20)": true,
+          "silence_collapses(>=0.20)": true,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": true
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.022619791666666673,
+      "res_mean_spk_read": 0.022180208333333336,
+      "ens_mean_spk_read": 0.012609374999999999,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 0.8,
+      "ffi_out_selected": 4.0,
+      "train_agree_neural_probe": 0.25,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "singlepath_rate_heldout": 0.24,
+      "singlepath_spk_heldout": 0.12,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 0.24,
+      "syn_heldout_acc": 0.08,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.08,
+      "untrained_control_heldout": 0.08,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 277.1,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.022619791666666673 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.022180208333333336 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.012609374999999999 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": false,
+          "wp_lesion_collapses(>=0.20)": false,
+          "silence_collapses(>=0.20)": false,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": false
+        }
+      }
+    }
+  ],
+  "agg": {
+    "ridge_heldout_acc": 0.7333333333333334,
+    "twopath_rate_heldout": 0.7333333333333334,
+    "syn_heldout_acc": 0.4466666666666667,
+    "syn_train_acc": 0.7888888888888889,
+    "singlepath_spk_heldout": 0.26666666666666666,
+    "prior_banked_singlepath_spk_heldout": 0.04,
+    "lesion_wp_heldout": 0.06,
+    "lesion_silence_heldout": 0.06,
+    "matched_sham_heldout": 0.44,
+    "untrained_control_heldout": 0.04666666666666667,
+    "prior_lookup_heldout": 0.0,
+    "chance": 0.04,
+    "res_mean_spk_read": 0.023888715277777778,
+    "ens_mean_spk_read": 0.012835865162037038,
+    "train_agree_neural_probe": 0.7013888888888888
+  },
+  "go": 1,
+  "n": 6
+}

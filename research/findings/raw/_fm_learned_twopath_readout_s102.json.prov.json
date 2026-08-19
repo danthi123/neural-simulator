@@ -1,0 +1,28 @@
+{
+ "run_id": "1786233193-1976522",
+ "runner": "research/runners/_fm_learned_twopath_readout_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_122d7930-bc4-2/research/runners/_fm_learned_twopath_readout_derisk.py",
+  "--seeds",
+  "102",
+  "--out",
+  "research/findings/raw/_fm_learned_twopath_readout_s102.json"
+ ],
+ "git_sha": "ffd70b301",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-08T19:53:13",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 409.3,
+ "corpus_check_query": "spiking synaptic read-out under-resolves world-model 1/25 code; Dale signed-weight realization",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_fm_learned_twopath_readout_s102.json"
+}

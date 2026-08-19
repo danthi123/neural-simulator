@@ -1,0 +1,163 @@
+{
+  "runner": "_fm_learned_twopath_readout_derisk",
+  "results": [
+    {
+      "seed": 44,
+      "G": 5,
+      "n_pool": 250,
+      "ens_p": 32,
+      "ffi_p": 8,
+      "heldout_n": 25,
+      "train_n": 75,
+      "chance": 0.04,
+      "chance_per_block": 0.2,
+      "mean_reservoir_spikes_feature": 0.022619791666666673,
+      "res_mean_spk_read": 0.022180208333333336,
+      "ens_mean_spk_read": 0.012609374999999999,
+      "syn_scale_selected": 6.0,
+      "ffi_in_selected": 0.8,
+      "ffi_out_selected": 4.0,
+      "train_agree_neural_probe": 0.25,
+      "ridge_train_acc": 1.0,
+      "ridge_heldout_acc": 0.76,
+      "twopath_rate_train": 1.0,
+      "twopath_rate_heldout": 0.76,
+      "singlepath_rate_heldout": 0.24,
+      "singlepath_spk_heldout": 0.12,
+      "prior_banked_singlepath_spk_heldout": 0.04,
+      "syn_train_acc": 0.24,
+      "syn_heldout_acc": 0.08,
+      "lesion_wp_heldout": 0.0,
+      "lesion_silence_heldout": 0.0,
+      "matched_sham_heldout": 0.08,
+      "untrained_control_heldout": 0.08,
+      "prior_lookup_heldout": 0.0,
+      "content_path_clean": true,
+      "seeded": true,
+      "elapsed_s": 277.1,
+      "verdict": {
+        "label": "fm learned two-pathway spiking read-out matches rate ceiling (neural WTA)",
+        "status": "NO-GO",
+        "go": false,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "two-pathway rate == ridge (decomposition exact)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (feature)",
+            "ok": true,
+            "detail": "measured=0.022619791666666673 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "reservoir active (read)",
+            "ok": true,
+            "detail": "measured=0.022180208333333336 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ensembles active (read)",
+            "ok": true,
+            "detail": "measured=0.012609374999999999 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "seeded (byte-identical substrate)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "content path clean (no host matmul/argmax)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "matched sham UNCHANGED (|d|<=0.08)",
+            "ok": true,
+            "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [
+          {
+            "process": "STDP/Hebbian/STP/structural",
+            "why": "fixed reservoir + delta-trained read-out map realized as fixed two-pathway synapses; on-substrate homeostasis = the read-out floor calibration"
+          }
+        ],
+        "chance": 0.04,
+        "go_criteria": {
+          "matches_rate_ceiling(>=ceil-0.15)": false,
+          "beats_chance/prior(>=+0.20)": false,
+          "wp_lesion_collapses(>=0.20)": false,
+          "silence_collapses(>=0.20)": false,
+          "untrained<=chance+0.08": true,
+          "beats_singlepath_spiking(>=+0.15)": false
+        }
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "two-pathway rate == ridge (decomposition exact)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (feature)",
+      "ok": true,
+      "detail": "measured=0.022619791666666673 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reservoir active (read)",
+      "ok": true,
+      "detail": "measured=0.022180208333333336 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ensembles active (read)",
+      "ok": true,
+      "detail": "measured=0.012609374999999999 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seeded (byte-identical substrate)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content path clean (no host matmul/argmax)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "matched sham UNCHANGED (|d|<=0.08)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function _verdict.<locals>.<lambda> at 0x7f85ded6a660>",
+      "note": ""
+    }
+  ]
+}
