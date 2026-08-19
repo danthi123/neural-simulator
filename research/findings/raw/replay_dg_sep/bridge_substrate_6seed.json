@@ -1,0 +1,2098 @@
+{
+  "gate": "replay_dg_pattern_separation",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "aggregate_status": "NO-GO",
+  "seeds_go": [],
+  "pooled_summary": {
+    "similar_on_selectivity": -0.0025196185637728135,
+    "similar_off_selectivity": 0.0,
+    "selectivity_dissociation": -0.0025196185637728135,
+    "similar_on_false_recall": 0.6787660823757024,
+    "similar_off_false_recall": 0.6823188727178269,
+    "dg_jaccard_on": 0.5352229225023343,
+    "dg_jaccard_off": 1.0,
+    "input_jaccard": 0.6,
+    "dissimilar_on_selectivity": 0.0006710781802275416,
+    "single_correct": 0.16796875000000003
+  },
+  "pooled_check_counts": {
+    "similar_on_discriminable": 0,
+    "null_shows_blur": 0,
+    "separator_dissociation": 0,
+    "dg_actually_separates": 2,
+    "dissimilar_preserved": 0,
+    "single_memory_recall": 6
+  },
+  "pooled_majority": {
+    "similar_on_discriminable": false,
+    "null_shows_blur": false,
+    "separator_dissociation": false,
+    "dg_actually_separates": false,
+    "dissimilar_preserved": false,
+    "single_memory_recall": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 42,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.68,
+            "dg_active_frac_m0": 0.11,
+            "dg_active_frac_m1": 0.1
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 3956,
+              "m1": 4241
+            },
+            "answer_spikes": {
+              "m0": 1356,
+              "m1": 1240
+            },
+            "dg_answer_weight_delta": 6.468234160416139
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2,
+              "wrong_rate": 0.1546875,
+              "background_rate": 0.07857142857142857,
+              "margin": 0.045312500000000006,
+              "selectivity": 0.12775330360457218,
+              "false_recall_fraction": 0.5936507936507937,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 315
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.15625,
+              "wrong_rate": 0.209375,
+              "background_rate": 0.08660714285714285,
+              "margin": -0.053125000000000006,
+              "selectivity": -0.14529914490174595,
+              "false_recall_fraction": 0.6978851963746223,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 331
+            }
+          },
+          "mean_selectivity": -0.008772920648586882,
+          "mean_correct": 0.178125,
+          "mean_wrong": 0.18203125,
+          "mean_false_recall": 0.645767995012708,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 42,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16752,
+              "m1": 16980
+            },
+            "answer_spikes": {
+              "m0": 890,
+              "m1": 1170
+            },
+            "dg_answer_weight_delta": 27.090489246364992
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.078125,
+              "wrong_rate": 0.109375,
+              "background_rate": 0.05357142857142857,
+              "margin": -0.03125,
+              "selectivity": -0.16666666577777778,
+              "false_recall_fraction": 0.7222222222222222,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 180
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.109375,
+              "wrong_rate": 0.078125,
+              "background_rate": 0.05357142857142857,
+              "margin": 0.03125,
+              "selectivity": 0.16666666577777778,
+              "false_recall_fraction": 0.6111111111111112,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 180
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.09375,
+          "mean_wrong": 0.09375,
+          "mean_false_recall": 0.6666666666666667,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 42,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.25,
+            "dg_active_frac_m0": 0.085,
+            "dg_active_frac_m1": 0.165
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 6178,
+              "m1": 6536
+            },
+            "answer_spikes": {
+              "m0": 1517,
+              "m1": 1458
+            },
+            "dg_answer_weight_delta": 12.603127671328062
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.21875,
+              "background_rate": 0.16071428571428573,
+              "margin": 0.03125,
+              "selectivity": 0.06666666652444445,
+              "false_recall_fraction": 0.6666666666666666,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 480
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.21875,
+              "wrong_rate": 0.25,
+              "background_rate": 0.16071428571428573,
+              "margin": -0.03125,
+              "selectivity": -0.06666666652444445,
+              "false_recall_fraction": 0.7083333333333334,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 480
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.234375,
+          "mean_wrong": 0.234375,
+          "mean_false_recall": 0.6875,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 42,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16672,
+              "m1": 16884
+            },
+            "answer_spikes": {
+              "m0": 891,
+              "m1": 1158
+            },
+            "dg_answer_weight_delta": 25.549401639726014
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.078125,
+              "wrong_rate": 0.109375,
+              "background_rate": 0.044642857142857144,
+              "margin": -0.03125,
+              "selectivity": -0.16666666577777778,
+              "false_recall_fraction": 0.7058823529411765,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 170
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.109375,
+              "wrong_rate": 0.078125,
+              "background_rate": 0.044642857142857144,
+              "margin": 0.03125,
+              "selectivity": 0.16666666577777778,
+              "false_recall_fraction": 0.5882352941176471,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 170
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.09375,
+          "mean_wrong": 0.09375,
+          "mean_false_recall": 0.6470588235294118,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 42,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.3023255813953488,
+            "dg_active_frac_m0": 0.17,
+            "dg_active_frac_m1": 0.11
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 6474
+            },
+            "answer_spikes": {
+              "m0": 1938
+            },
+            "dg_answer_weight_delta": 11.213765715442598
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.140625,
+              "background_rate": 0.16964285714285715,
+              "margin": 0.08035714285714285,
+              "selectivity": 0.27999999928319996,
+              "false_recall_fraction": 0.6363636363636364,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 440
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.140625,
+              "wrong_rate": 0.25,
+              "background_rate": 0.16964285714285715,
+              "margin": -0.109375,
+              "selectivity": -0.27999999928319996,
+              "false_recall_fraction": 0.7954545454545454,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 440
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.1953125,
+          "mean_wrong": 0.1953125,
+          "mean_false_recall": 0.7159090909090908,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": -0.008772920648586882,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": -0.008772920648586882,
+        "similar_on_false_recall": 0.645767995012708,
+        "similar_off_false_recall": 0.6666666666666667,
+        "dg_jaccard_on": 0.68,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": -0.08000000000000007,
+        "dissimilar_on_selectivity": 0.0,
+        "single_correct": 0.25,
+        "separator_attribution": 0.31999999999999995
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": false,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 43,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.5,
+            "dg_active_frac_m0": 0.09,
+            "dg_active_frac_m1": 0.12
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 3572,
+              "m1": 3713
+            },
+            "answer_spikes": {
+              "m0": 1715,
+              "m1": 1894
+            },
+            "dg_answer_weight_delta": 6.836199420109391
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2140625,
+              "wrong_rate": 0.2171875,
+              "background_rate": 0.13214285714285715,
+              "margin": -0.0031250000000000167,
+              "selectivity": -0.007246376794791048,
+              "false_recall_fraction": 0.6768867924528302,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 424
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.2015625,
+              "wrong_rate": 0.2,
+              "background_rate": 0.12053571428571427,
+              "margin": 0.0015624999999999944,
+              "selectivity": 0.0038910505739677974,
+              "false_recall_fraction": 0.6709183673469388,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 392
+            }
+          },
+          "mean_selectivity": -0.0016776631104116252,
+          "mean_correct": 0.2078125,
+          "mean_wrong": 0.20859375000000002,
+          "mean_false_recall": 0.6739025798998846,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 43,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16936,
+              "m1": 17416
+            },
+            "answer_spikes": {
+              "m0": 1961,
+              "m1": 1848
+            },
+            "dg_answer_weight_delta": 68.96831876996438
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.234375,
+              "wrong_rate": 0.234375,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6739130434782609,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 460
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.234375,
+              "wrong_rate": 0.234375,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6739130434782609,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 460
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.234375,
+          "mean_wrong": 0.234375,
+          "mean_false_recall": 0.6739130434782609,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 43,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.25,
+            "dg_active_frac_m0": 0.135,
+            "dg_active_frac_m1": 0.115
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 6650,
+              "m1": 6919
+            },
+            "answer_spikes": {
+              "m0": 1742,
+              "m1": 1809
+            },
+            "dg_answer_weight_delta": 12.413098947040737
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.21875,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.03125,
+              "selectivity": 0.06666666652444445,
+              "false_recall_fraction": 0.6521739130434783,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 460
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.21875,
+              "wrong_rate": 0.25,
+              "background_rate": 0.14285714285714285,
+              "margin": -0.03125,
+              "selectivity": -0.06666666652444445,
+              "false_recall_fraction": 0.6956521739130435,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 460
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.234375,
+          "mean_wrong": 0.234375,
+          "mean_false_recall": 0.6739130434782609,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 43,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17241,
+              "m1": 16778
+            },
+            "answer_spikes": {
+              "m0": 1971,
+              "m1": 1764
+            },
+            "dg_answer_weight_delta": 67.46402365908368
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.234375,
+              "wrong_rate": 0.21875,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.015625,
+              "selectivity": 0.03448275854458977,
+              "false_recall_fraction": 0.6666666666666666,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 450
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.21875,
+              "wrong_rate": 0.234375,
+              "background_rate": 0.14285714285714285,
+              "margin": -0.015625,
+              "selectivity": -0.03448275854458977,
+              "false_recall_fraction": 0.6888888888888889,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 450
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.2265625,
+          "mean_wrong": 0.2265625,
+          "mean_false_recall": 0.6777777777777778,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 43,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.2222222222222222,
+            "dg_active_frac_m0": 0.12,
+            "dg_active_frac_m1": 0.155
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 4226
+            },
+            "answer_spikes": {
+              "m0": 962
+            },
+            "dg_answer_weight_delta": 3.2826128323596593
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.0984375,
+              "wrong_rate": 0.05625,
+              "background_rate": 0.05625,
+              "margin": 0.042187499999999996,
+              "selectivity": 0.2727272709641873,
+              "false_recall_fraction": 0.6111111111111112,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 162
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.0625,
+              "wrong_rate": 0.109375,
+              "background_rate": 0.0625,
+              "margin": -0.046875,
+              "selectivity": -0.2727272711404959,
+              "false_recall_fraction": 0.7777777777777778,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 180
+            }
+          },
+          "mean_selectivity": -8.815428942376968e-11,
+          "mean_correct": 0.08046875,
+          "mean_wrong": 0.0828125,
+          "mean_false_recall": 0.6944444444444444,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": -0.0016776631104116252,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": -0.0016776631104116252,
+        "similar_on_false_recall": 0.6739025798998846,
+        "similar_off_false_recall": 0.6739130434782609,
+        "dg_jaccard_on": 0.5,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": 0.09999999999999998,
+        "dissimilar_on_selectivity": 0.0,
+        "single_correct": 0.0984375,
+        "separator_attribution": 0.5
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": false,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 44,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.4375,
+            "dg_active_frac_m0": 0.1,
+            "dg_active_frac_m1": 0.13
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 4123,
+              "m1": 4277
+            },
+            "answer_spikes": {
+              "m0": 1857,
+              "m1": 830
+            },
+            "dg_answer_weight_delta": 6.926149412479251
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.23125,
+              "wrong_rate": 0.0765625,
+              "background_rate": 0.18571428571428572,
+              "margin": 0.04553571428571429,
+              "selectivity": 0.5025380694333788,
+              "false_recall_fraction": 0.6345679012345679,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 405
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.0765625,
+              "wrong_rate": 0.2359375,
+              "background_rate": 0.1839285714285714,
+              "margin": -0.159375,
+              "selectivity": -0.5099999983679999,
+              "false_recall_fraction": 0.8793103448275862,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 406
+            }
+          },
+          "mean_selectivity": -0.0037309644673105824,
+          "mean_correct": 0.15390625000000002,
+          "mean_wrong": 0.15625,
+          "mean_false_recall": 0.756939123031077,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 44,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16884,
+              "m1": 17052
+            },
+            "answer_spikes": {
+              "m0": 1715,
+              "m1": 993
+            },
+            "dg_answer_weight_delta": 66.57308908543301
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2171875,
+              "wrong_rate": 0.15625,
+              "background_rate": 0.1875,
+              "margin": 0.029687500000000006,
+              "selectivity": 0.1631799158810245,
+              "false_recall_fraction": 0.6904231625835189,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 449
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.15625,
+              "wrong_rate": 0.2171875,
+              "background_rate": 0.1875,
+              "margin": -0.060937500000000006,
+              "selectivity": -0.1631799158810245,
+              "false_recall_fraction": 0.77728285077951,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 449
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.18671875,
+          "mean_wrong": 0.18671875,
+          "mean_false_recall": 0.7338530066815144,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 44,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.2857142857142857,
+            "dg_active_frac_m0": 0.085,
+            "dg_active_frac_m1": 0.095
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 4675,
+              "m1": 5171
+            },
+            "answer_spikes": {
+              "m0": 1517,
+              "m1": 848
+            },
+            "dg_answer_weight_delta": 7.929280447194663
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.215625,
+              "wrong_rate": 0.1078125,
+              "background_rate": 0.12053571428571427,
+              "margin": 0.09508928571428574,
+              "selectivity": 0.3333333323027375,
+              "false_recall_fraction": 0.5964912280701754,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 342
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.125,
+              "wrong_rate": 0.25,
+              "background_rate": 0.13392857142857142,
+              "margin": -0.125,
+              "selectivity": -0.3333333324444444,
+              "false_recall_fraction": 0.7948717948717948,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 390
+            }
+          },
+          "mean_selectivity": -7.085346198643094e-11,
+          "mean_correct": 0.1703125,
+          "mean_wrong": 0.17890625,
+          "mean_false_recall": 0.6956815114709851,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 44,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17197,
+              "m1": 16770
+            },
+            "answer_spikes": {
+              "m0": 1527,
+              "m1": 818
+            },
+            "dg_answer_weight_delta": 51.854503910265244
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.21875,
+              "wrong_rate": 0.09375,
+              "background_rate": 0.13392857142857142,
+              "margin": 0.08482142857142858,
+              "selectivity": 0.39999999871999997,
+              "false_recall_fraction": 0.6,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 350
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.09375,
+              "wrong_rate": 0.21875,
+              "background_rate": 0.13392857142857142,
+              "margin": -0.125,
+              "selectivity": -0.39999999871999997,
+              "false_recall_fraction": 0.8285714285714286,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 350
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.15625,
+          "mean_wrong": 0.15625,
+          "mean_false_recall": 0.7142857142857143,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 44,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.2647058823529412,
+            "dg_active_frac_m0": 0.105,
+            "dg_active_frac_m1": 0.11
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 3981
+            },
+            "answer_spikes": {
+              "m0": 1710
+            },
+            "dg_answer_weight_delta": 6.61132443918474
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2171875,
+              "wrong_rate": 0.0734375,
+              "background_rate": 0.18928571428571428,
+              "margin": 0.027901785714285726,
+              "selectivity": 0.4946236542120475,
+              "false_recall_fraction": 0.6507537688442211,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 398
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.06875,
+              "wrong_rate": 0.2046875,
+              "background_rate": 0.18035714285714285,
+              "margin": -0.1359375,
+              "selectivity": -0.4971428553247346,
+              "false_recall_fraction": 0.883289124668435,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 377
+            }
+          },
+          "mean_selectivity": -0.0012596005563435542,
+          "mean_correct": 0.14296875,
+          "mean_wrong": 0.1390625,
+          "mean_false_recall": 0.7670214467563281,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": -0.0037309644673105824,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": -0.0037309644673105824,
+        "similar_on_false_recall": 0.756939123031077,
+        "similar_off_false_recall": 0.7338530066815144,
+        "dg_jaccard_on": 0.4375,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": 0.16249999999999998,
+        "dissimilar_on_selectivity": -7.085346198643094e-11,
+        "single_correct": 0.2171875,
+        "separator_attribution": 0.5625
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": true,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 100,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.39285714285714285,
+            "dg_active_frac_m0": 0.075,
+            "dg_active_frac_m1": 0.12
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 2738,
+              "m1": 2844
+            },
+            "answer_spikes": {
+              "m0": 1300,
+              "m1": 1415
+            },
+            "dg_answer_weight_delta": 4.363346399334259
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.140625,
+              "wrong_rate": 0.1359375,
+              "background_rate": 0.07232142857142856,
+              "margin": 0.004687500000000011,
+              "selectivity": 0.01694915248108785,
+              "false_recall_fraction": 0.6511627906976745,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 258
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.134375,
+              "wrong_rate": 0.1359375,
+              "background_rate": 0.07053571428571428,
+              "margin": -0.0015624999999999944,
+              "selectivity": -0.005780346799425287,
+              "false_recall_fraction": 0.6587301587301587,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 252
+            }
+          },
+          "mean_selectivity": 0.005584402840831281,
+          "mean_correct": 0.1375,
+          "mean_wrong": 0.1359375,
+          "mean_false_recall": 0.6549464747139166,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 100,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17266,
+              "m1": 17350
+            },
+            "answer_spikes": {
+              "m0": 1720,
+              "m1": 1698
+            },
+            "dg_answer_weight_delta": 62.99252144131903
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.203125,
+              "wrong_rate": 0.203125,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6904761904761905,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 420
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.203125,
+              "wrong_rate": 0.203125,
+              "background_rate": 0.14285714285714285,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6904761904761905,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 420
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.203125,
+          "mean_wrong": 0.203125,
+          "mean_false_recall": 0.6904761904761905,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 100,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.2608695652173913,
+            "dg_active_frac_m0": 0.07,
+            "dg_active_frac_m1": 0.075
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 4229,
+              "m1": 4374
+            },
+            "answer_spikes": {
+              "m0": 1273,
+              "m1": 1237
+            },
+            "dg_answer_weight_delta": 7.787432032567138
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2328125,
+              "wrong_rate": 0.2296875,
+              "background_rate": 0.11964285714285713,
+              "margin": 0.0031250000000000167,
+              "selectivity": 0.006756756742147588,
+              "false_recall_fraction": 0.6534883720930232,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 430
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.215625,
+              "wrong_rate": 0.2171875,
+              "background_rate": 0.10892857142857142,
+              "margin": -0.0015624999999999944,
+              "selectivity": -0.0036101082949080397,
+              "false_recall_fraction": 0.6541353383458647,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 399
+            }
+          },
+          "mean_selectivity": 0.0015733242236197743,
+          "mean_correct": 0.22421875000000002,
+          "mean_wrong": 0.2234375,
+          "mean_false_recall": 0.653811855219444,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 100,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17005,
+              "m1": 17295
+            },
+            "answer_spikes": {
+              "m0": 1721,
+              "m1": 905
+            },
+            "dg_answer_weight_delta": 45.08602584858611
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2046875,
+              "wrong_rate": 0.1640625,
+              "background_rate": 0.0625,
+              "margin": 0.040624999999999994,
+              "selectivity": 0.11016949122665898,
+              "false_recall_fraction": 0.5718954248366013,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 306
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.1671875,
+              "wrong_rate": 0.2046875,
+              "background_rate": 0.0625,
+              "margin": -0.037500000000000006,
+              "selectivity": -0.10084033586328651,
+              "false_recall_fraction": 0.6525974025974026,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 308
+            }
+          },
+          "mean_selectivity": 0.004664577681686231,
+          "mean_correct": 0.18593749999999998,
+          "mean_wrong": 0.184375,
+          "mean_false_recall": 0.612246413717002,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 100,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.3125,
+            "dg_active_frac_m0": 0.135,
+            "dg_active_frac_m1": 0.075
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 4784
+            },
+            "answer_spikes": {
+              "m0": 1021
+            },
+            "dg_answer_weight_delta": 3.2646932875678565
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.1125,
+              "wrong_rate": 0.0234375,
+              "background_rate": 0.03571428571428571,
+              "margin": 0.07678571428571429,
+              "selectivity": 0.6551724089734444,
+              "false_recall_fraction": 0.4330708661417323,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 127
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.03125,
+              "wrong_rate": 0.140625,
+              "background_rate": 0.044642857142857144,
+              "margin": -0.109375,
+              "selectivity": -0.636363632661157,
+              "false_recall_fraction": 0.875,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 160
+            }
+          },
+          "mean_selectivity": 0.009404388156143695,
+          "mean_correct": 0.071875,
+          "mean_wrong": 0.08203125,
+          "mean_false_recall": 0.6540354330708662,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": 0.005584402840831281,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": 0.005584402840831281,
+        "similar_on_false_recall": 0.6549464747139166,
+        "similar_off_false_recall": 0.6904761904761905,
+        "dg_jaccard_on": 0.39285714285714285,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": 0.20714285714285713,
+        "dissimilar_on_selectivity": 0.0015733242236197743,
+        "single_correct": 0.1125,
+        "separator_attribution": 0.6071428571428572
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": true,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 101,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.5833333333333334,
+            "dg_active_frac_m0": 0.095,
+            "dg_active_frac_m1": 0.095
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 3546,
+              "m1": 3606
+            },
+            "answer_spikes": {
+              "m0": 1982,
+              "m1": 1912
+            },
+            "dg_answer_weight_delta": 6.693778598857112
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2125,
+              "wrong_rate": 0.2078125,
+              "background_rate": 0.11875,
+              "margin": 0.004687499999999983,
+              "selectivity": 0.011152416330343654,
+              "false_recall_fraction": 0.6616915422885572,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 402
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.1890625,
+              "wrong_rate": 0.1984375,
+              "background_rate": 0.10982142857142858,
+              "margin": -0.009374999999999994,
+              "selectivity": -0.024193548324661796,
+              "false_recall_fraction": 0.6738544474393531,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 371
+            }
+          },
+          "mean_selectivity": -0.006520565997159071,
+          "mean_correct": 0.20078125,
+          "mean_wrong": 0.203125,
+          "mean_false_recall": 0.6677729948639551,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 101,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16627,
+              "m1": 16759
+            },
+            "answer_spikes": {
+              "m0": 2123,
+              "m1": 2001
+            },
+            "dg_answer_weight_delta": 69.01630904235691
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.2375,
+              "background_rate": 0.13392857142857142,
+              "margin": 0.012500000000000011,
+              "selectivity": 0.02564102558842869,
+              "false_recall_fraction": 0.6536796536796536,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 462
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.2375,
+              "wrong_rate": 0.25,
+              "background_rate": 0.13392857142857142,
+              "margin": -0.012500000000000011,
+              "selectivity": -0.02564102558842869,
+              "false_recall_fraction": 0.670995670995671,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 462
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.24375,
+          "mean_wrong": 0.24375,
+          "mean_false_recall": 0.6623376623376623,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 101,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.3333333333333333,
+            "dg_active_frac_m0": 0.11,
+            "dg_active_frac_m1": 0.05
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 5164,
+              "m1": 5124
+            },
+            "answer_spikes": {
+              "m0": 2070,
+              "m1": 1869
+            },
+            "dg_answer_weight_delta": 9.864515829894692
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.25,
+              "background_rate": 0.13392857142857142,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6595744680851063,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 470
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.2,
+              "wrong_rate": 0.203125,
+              "background_rate": 0.10803571428571428,
+              "margin": -0.003124999999999989,
+              "selectivity": -0.007751937965266483,
+              "false_recall_fraction": 0.662269129287599,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 379
+            }
+          },
+          "mean_selectivity": -0.0038759689826332413,
+          "mean_correct": 0.225,
+          "mean_wrong": 0.2265625,
+          "mean_false_recall": 0.6609217986863527,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 101,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 16659,
+              "m1": 16513
+            },
+            "answer_spikes": {
+              "m0": 2148,
+              "m1": 2181
+            },
+            "dg_answer_weight_delta": 79.45581583338728
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.25,
+              "background_rate": 0.1875,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6981132075471698,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 530
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.25,
+              "background_rate": 0.1875,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6981132075471698,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 530
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.25,
+          "mean_wrong": 0.25,
+          "mean_false_recall": 0.6981132075471698,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 101,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.3103448275862069,
+            "dg_active_frac_m0": 0.11,
+            "dg_active_frac_m1": 0.08
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 3943
+            },
+            "answer_spikes": {
+              "m0": 1682
+            },
+            "dg_answer_weight_delta": 6.266516135100275
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.1671875,
+              "wrong_rate": 0.0734375,
+              "background_rate": 0.0875,
+              "margin": 0.0796875,
+              "selectivity": 0.38961038799122955,
+              "false_recall_fraction": 0.5753968253968254,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 252
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.109375,
+              "wrong_rate": 0.2421875,
+              "background_rate": 0.13392857142857142,
+              "margin": -0.1328125,
+              "selectivity": -0.37777777670320983,
+              "false_recall_fraction": 0.8133333333333334,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 375
+            }
+          },
+          "mean_selectivity": 0.005916305644009856,
+          "mean_correct": 0.13828125,
+          "mean_wrong": 0.1578125,
+          "mean_false_recall": 0.6943650793650793,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": -0.006520565997159071,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": -0.006520565997159071,
+        "similar_on_false_recall": 0.6677729948639551,
+        "similar_off_false_recall": 0.6623376623376623,
+        "dg_jaccard_on": 0.5833333333333334,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": 0.016666666666666607,
+        "dissimilar_on_selectivity": -0.0038759689826332413,
+        "single_correct": 0.1671875,
+        "separator_attribution": 0.41666666666666663
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": false,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "conditions": {
+        "similar_separator_on": {
+          "seed": 102,
+          "condition": "similar_separator_on",
+          "kind": "similar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 0.6176470588235294,
+            "dg_active_frac_m0": 0.14,
+            "dg_active_frac_m1": 0.135
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 5254,
+              "m1": 5474
+            },
+            "answer_spikes": {
+              "m0": 1242,
+              "m1": 670
+            },
+            "dg_answer_weight_delta": 4.4672196769341825
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.146875,
+              "wrong_rate": 0.059375,
+              "background_rate": 0.0625,
+              "margin": 0.084375,
+              "selectivity": 0.42424242218549135,
+              "false_recall_fraction": 0.5346534653465347,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 202
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.059375,
+              "wrong_rate": 0.146875,
+              "background_rate": 0.0625,
+              "margin": -0.08750000000000001,
+              "selectivity": -0.42424242218549135,
+              "false_recall_fraction": 0.8118811881188119,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 202
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.103125,
+          "mean_wrong": 0.103125,
+          "mean_false_recall": 0.6732673267326733,
+          "both_win": false
+        },
+        "similar_separator_off": {
+          "seed": 102,
+          "condition": "similar_separator_off",
+          "kind": "similar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.6,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17338,
+              "m1": 17492
+            },
+            "answer_spikes": {
+              "m0": 1003,
+              "m1": 957
+            },
+            "dg_answer_weight_delta": 27.21405873315533
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.09375,
+              "wrong_rate": 0.09375,
+              "background_rate": 0.05357142857142857,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6666666666666666,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 180
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.09375,
+              "wrong_rate": 0.09375,
+              "background_rate": 0.05357142857142857,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6666666666666666,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 180
+            }
+          },
+          "mean_selectivity": 0.0,
+          "mean_correct": 0.09375,
+          "mean_wrong": 0.09375,
+          "mean_false_recall": 0.6666666666666666,
+          "both_win": false
+        },
+        "dissimilar_separator_on": {
+          "seed": 102,
+          "condition": "dissimilar_separator_on",
+          "kind": "dissimilar",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.14705882352941177,
+            "dg_active_frac_m0": 0.065,
+            "dg_active_frac_m1": 0.13
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 5332,
+              "m1": 5507
+            },
+            "answer_spikes": {
+              "m0": 1593,
+              "m1": 1598
+            },
+            "dg_answer_weight_delta": 9.564682521995158
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.2109375,
+              "wrong_rate": 0.2109375,
+              "background_rate": 0.09642857142857143,
+              "margin": 0.0,
+              "selectivity": 0.0,
+              "false_recall_fraction": 0.6428571428571429,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 378
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.25,
+              "wrong_rate": 0.24375,
+              "background_rate": 0.10714285714285714,
+              "margin": 0.0062500000000000056,
+              "selectivity": 0.012658227822464358,
+              "false_recall_fraction": 0.6330275229357798,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 436
+            }
+          },
+          "mean_selectivity": 0.006329113911232179,
+          "mean_correct": 0.23046875,
+          "mean_wrong": 0.22734375,
+          "mean_false_recall": 0.6379423328964613,
+          "both_win": false
+        },
+        "dissimilar_separator_off": {
+          "seed": 102,
+          "condition": "dissimilar_separator_off",
+          "kind": "dissimilar",
+          "competition": false,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 1.0,
+            "dg_active_frac_m0": 1.0,
+            "dg_active_frac_m1": 1.0
+          },
+          "replay": {
+            "replay_events": 28,
+            "dg_spikes": {
+              "m0": 17009,
+              "m1": 17105
+            },
+            "answer_spikes": {
+              "m0": 1426,
+              "m1": 922
+            },
+            "dg_answer_weight_delta": 42.160626783210475
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.1625,
+              "wrong_rate": 0.1171875,
+              "background_rate": 0.10714285714285714,
+              "margin": 0.045312500000000006,
+              "selectivity": 0.16201117260509973,
+              "false_recall_fraction": 0.6521739130434783,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 299
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.1265625,
+              "wrong_rate": 0.1671875,
+              "background_rate": 0.10714285714285714,
+              "margin": -0.040624999999999994,
+              "selectivity": -0.13829787186962425,
+              "false_recall_fraction": 0.737012987012987,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 308
+            }
+          },
+          "mean_selectivity": 0.01185665036773774,
+          "mean_correct": 0.14453125,
+          "mean_wrong": 0.1421875,
+          "mean_false_recall": 0.6945934500282327,
+          "both_win": false
+        },
+        "single_separator_on": {
+          "seed": 102,
+          "condition": "single_separator_on",
+          "kind": "single",
+          "competition": true,
+          "single_bridge": true,
+          "wiring_counts": {
+            "input_to_dg": 4000,
+            "input_to_fs": 1536,
+            "dg_to_fs": 6400,
+            "fs_to_dg": 6400,
+            "answer_to_fs": 720,
+            "fs_to_answer": 720,
+            "dg_to_answer": 12000
+          },
+          "dg_separation": {
+            "input_jaccard": 0.043478260869565216,
+            "dg_jaccard": 0.15555555555555556,
+            "dg_active_frac_m0": 0.12,
+            "dg_active_frac_m1": 0.14
+          },
+          "replay": {
+            "replay_events": 14,
+            "dg_spikes": {
+              "m0": 4523
+            },
+            "answer_spikes": {
+              "m0": 1210
+            },
+            "dg_answer_weight_delta": 4.1376996490135785
+          },
+          "probes": {
+            "m0": {
+              "target": "m0",
+              "correct_rate": 0.1625,
+              "wrong_rate": 0.046875,
+              "background_rate": 0.08035714285714286,
+              "margin": 0.08214285714285714,
+              "selectivity": 0.5522388033325908,
+              "false_recall_fraction": 0.5357142857142857,
+              "target_assembly_wins": true,
+              "total_answer_spikes": 224
+            },
+            "m1": {
+              "target": "m1",
+              "correct_rate": 0.0375,
+              "wrong_rate": 0.1328125,
+              "background_rate": 0.06517857142857143,
+              "margin": -0.0953125,
+              "selectivity": -0.5596330242370171,
+              "false_recall_fraction": 0.8681318681318682,
+              "target_assembly_wins": false,
+              "total_answer_spikes": 182
+            }
+          },
+          "mean_selectivity": -0.0036971104522131593,
+          "mean_correct": 0.1,
+          "mean_wrong": 0.08984375,
+          "mean_false_recall": 0.7019230769230769,
+          "both_win": false
+        }
+      },
+      "summary": {
+        "similar_on_selectivity": 0.0,
+        "similar_off_selectivity": 0.0,
+        "selectivity_dissociation": 0.0,
+        "similar_on_false_recall": 0.6732673267326733,
+        "similar_off_false_recall": 0.6666666666666666,
+        "dg_jaccard_on": 0.6176470588235294,
+        "dg_jaccard_off": 1.0,
+        "input_jaccard": 0.6,
+        "dg_separation_gain": -0.01764705882352946,
+        "dissimilar_on_selectivity": 0.006329113911232179,
+        "single_correct": 0.1625,
+        "separator_attribution": 0.38235294117647056
+      },
+      "checks": {
+        "similar_on_discriminable": false,
+        "null_shows_blur": false,
+        "separator_dissociation": false,
+        "dg_actually_separates": false,
+        "dissimilar_preserved": false,
+        "single_memory_recall": true
+      },
+      "seed_go": false
+    }
+  ],
+  "scaffolds": [
+    "host-defined input (sensory) patterns and answer assemblies",
+    "host reinstatement of each memory's input AND answer during replay (hippocampal index / SWR trigger)",
+    "scheduled down-states between replay events",
+    "host argmax over answer-assembly spike counts for measurement only",
+    "fixed random perforant projection and fixed FS anatomy (not developed)"
+  ],
+  "elapsed_seconds": 12.957159996032715
+}
