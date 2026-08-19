@@ -1,0 +1,499 @@
+{
+  "runner": "_gnw_multistep_reentrant_deliberation_derisk",
+  "go": true,
+  "status": "GO",
+  "gateA_live_multistep": true,
+  "gateB_6seed_substrate_control": true,
+  "gateC_emergent_and_reentry_loadbearing": true,
+  "gateD_byte_identical": true,
+  "attribution_to_workspace": 1.0,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "depths": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "relation": "chase",
+  "n_per_depth": 4,
+  "n_go": 6,
+  "n_seeds": 6,
+  "go_rule": ">=5/6 seeds AND gates A,C,D",
+  "n_concepts": 63,
+  "mean_reentrant_acc": 1.0,
+  "mean_singlepass_acc": 0.25,
+  "mean_lesion_acc": 0.0,
+  "mean_single_hop_reflex_acc": 1.0,
+  "mean_spearman_hops_depth": 1.0,
+  "c2_singlepass_L1_kept_L2plus_failed": true,
+  "c2_reentry_all_depths": true,
+  "c2_difficulty_graded": true,
+  "gate_arms": {
+    "chain": [
+      "zorp",
+      "blib",
+      "krad",
+      "munt"
+    ],
+    "q_chase": "what does zorp chase all the way?",
+    "off_chase_svo": [
+      "zorp",
+      "chase",
+      "blib"
+    ],
+    "on_chase_svo": [
+      "zorp",
+      "chase",
+      "munt"
+    ],
+    "on_plain_svo": [
+      "zorp",
+      "chase",
+      "blib"
+    ],
+    "lesion_chase_svo": null,
+    "on_info": {
+      "acted": true,
+      "terminal": "munt",
+      "resolved_hops": 3,
+      "cycles": 4,
+      "reason": "chain_terminal"
+    },
+    "lesion_info": {
+      "terminal": null,
+      "resolved_hops": 0,
+      "abstained": true,
+      "reason": "chase_abstained"
+    },
+    "on_reaches_terminal": true,
+    "off_is_first_hop": true,
+    "on_plain_is_first_hop": true,
+    "plain_reason": "not_chase_form",
+    "lesion_collapses": true,
+    "resolved_hops": 3
+  },
+  "handler_arms": {
+    "q_chase": "what does zorp chase all the way?",
+    "leaf": "munt",
+    "first": "blib",
+    "on_answer": "The zorp chases munt.",
+    "off_answer": "The zorp chases blib.",
+    "lesion_answer": "I don't know about that.",
+    "on_recalled": [
+      "zorp",
+      "chase",
+      "munt"
+    ],
+    "off_recalled": [
+      "zorp",
+      "chase",
+      "blib"
+    ],
+    "lesion_abstained": true,
+    "on_reaches_terminal": true,
+    "off_is_first_hop": true,
+    "lesion_collapses": true,
+    "ok": true
+  },
+  "byte_identical": {
+    "rows": [
+      {
+        "cls": "stored",
+        "q": "what does dog chase?",
+        "base": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "wired": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "stored",
+        "q": "what does cat eat?",
+        "base": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "wired": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "stored",
+        "q": "what does brain use?",
+        "base": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "wired": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "unstored",
+        "q": "what does fish fly?",
+        "base": null,
+        "wired": null,
+        "identical": true
+      },
+      {
+        "cls": "inconsistent",
+        "q": "what does dog eat?",
+        "base": null,
+        "wired": null,
+        "identical": true
+      },
+      {
+        "cls": "self",
+        "q": "what are you",
+        "base": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "wired": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "acquisition",
+        "q": "sky hold cloud",
+        "base": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "wired": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "acquisition",
+        "q": "what does sky hold?",
+        "base": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "wired": [
+          "sky",
+          "hold",
+          "cloud"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "anaphora",
+        "q": "what does dog chase?",
+        "base": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "wired": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "identical": true
+      },
+      {
+        "cls": "anaphora",
+        "q": "what does it eat?",
+        "base": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "wired": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "identical": true
+      }
+    ],
+    "n_identical": 10,
+    "n_total": 10,
+    "ok": true
+  },
+  "handler_hash_on": "a1313788464369f62babf8f5506b93ed",
+  "handler_hash_off": "a1313788464369f62babf8f5506b93ed",
+  "handler_hash_identical": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "n_chains": 16,
+      "n_concepts": 63,
+      "reentrant_acc": 1.0,
+      "singlepass_acc": 0.25,
+      "reentrant_acc_by_depth": {
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0
+      },
+      "singlepass_acc_by_depth": {
+        "1": 1.0,
+        "2": 0.0,
+        "3": 0.0,
+        "4": 0.0
+      },
+      "lesion_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "spearman_hops_depth": 1.0,
+      "any_halt_at_H_cap": false,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "seed_go": true
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) gate: ON reaches the CHAIN TERMINAL where OFF (single-hop bus) reaches only the first hop",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "off=['zorp', 'chase', 'blib'] on=['zorp', 'chase', 'munt']"
+    },
+    {
+      "kind": "require",
+      "name": "(A) real handler: ON answer carries the terminal, OFF the first hop, LESION abstains/collapses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "on='The zorp chases munt.' off='The zorp chases blib.' lesion_abstained=True"
+    },
+    {
+      "kind": "require",
+      "name": "(B) 6-seed substrate control: >=5/6 seeds GO on the LIVE composer+workspace",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "6/6 seeds; mean reent=1.00 single=0.25 lesion=0.00"
+    },
+    {
+      "kind": "require",
+      "name": "(C1) EMERGENT-STOP dissociation: recurrence-zeroed workspace collapses the multi-step chase (<=0.10) while the 1-hop reflex survives (>=0.85) on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "mean lesion=0.00 reflex=1.00"
+    },
+    {
+      "kind": "require",
+      "name": "(C2a) RE-ENTRY load-bearing: single-pass keeps L=1 (>=0.99) but FAILS L>=2 (<=0.10)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C2b) re-entry reaches every depth (>=0.90 per L)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C2c) DIFFICULTY-GRADED emergent stop: spearman(resolved_hops, depth)>=0.9, no halt at H_cap",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "mean spearman=1.00"
+    },
+    {
+      "kind": "require",
+      "name": "(D) reactive panel byte-identical (in-process, multi-step ON but inert on non-chase turns)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "10/10 turns identical"
+    },
+    {
+      "kind": "require",
+      "name": "(D) real handler byte-identical: BRAIN_GNW_MULTISTEP=1 == =0 on the reactive panel (separate processes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "on=a1313788464369f62babf8f5506b93ed off=a1313788464369f62babf8f5506b93ed"
+    },
+    {
+      "kind": "control",
+      "name": "the multi-step convergence is owed to the SPIKING workspace ignition read (intact reaches the terminal, recurrence-zeroed lesion does not)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) moat holds on all seeds (unstored cue + over-run past a leaf -> abstain)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/... = 0) in the handler checks",
+      "why": "disabled ONLY for speed; they run identically on every flag arm, so the comparison is unaffected"
+    }
+  ],
+  "undefined_reasons": []
+}

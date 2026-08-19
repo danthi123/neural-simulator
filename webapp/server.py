@@ -3621,6 +3621,23 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception:
             pass
 
+    # GNW MULTI-STEP re-entrant deliberation — THE KEYSTONE'S DEFERRED RUNG, WIRED LIVE (T1-1 rung d, 2026-08-19): the
+    # single-hop deliberation gate above decides ONCE (halt-if-unsure). This wires the other half — "deliberation-until-
+    # sure over a CHAIN": on an explicit chase-form question ("what does X <action> all the way / to the end?") the
+    # WORKSPACE cycles the partial answer back through itself, re-igniting, and the substrate's OWN spiking read
+    # (n_ignited off cp_firing_states) decides how many cycles to run — NOT a host `query_chain(cue, actions)` counter —
+    # halting when the leaf collapses ignition. DEFAULT-OFF (BRAIN_GNW_MULTISTEP unset -> not installed -> byte-identical).
+    # LESION lever (BRAIN_GNW_MULTISTEP_LESION=1): the chase runs on the recurrence-ZEROED workspace -> ignition cannot
+    # sustain -> the multi-step terminal is NOT reached (the emergent stopping is the SPIKING competition, not a host
+    # loop). MOAT-safe: never un-abstains, abstains on an unstored/over-run chase, never invents a fact. Reuse-by-import
+    # of the 6/6-seed-GO keystone de-risk (NO sim/ edit). See webapp/gnw_multistep_deliberation.py.
+    try:
+        from webapp import gnw_multistep_deliberation as _gnw_multistep_mod
+        if _gnw_multistep_mod.multistep_enabled():
+            _gnw_multistep_mod.install_multistep_gate(chat)
+    except Exception:
+        pass
+
     # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
     # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +
     # the no-confab moat is unchanged). After the gate runs the spiking recall (`what_does` -> composer.query_patient),
