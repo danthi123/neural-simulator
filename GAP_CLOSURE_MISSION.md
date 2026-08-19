@@ -13,7 +13,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-18 (READ FIRST — live resume point; supersedes the 2026-08-14 PAUSE below)
+## ⭐ STATE OF THE PROJECT — 2026-08-19 (READ FIRST — live resume point; supersedes 2026-08-18 below)
+
+> **North-star unchanged:** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine. **This session's decisive landings (all on `main`, both remotes, 6-seed, anti-cheated):**
+> - **⭐ GNW EVICTION WALL CLOSED — thought-swap 6/6 GO** (`3c2797ce`, board #34): after 4 failed inhibition/gate levers, the surpass is Rung-2d STD weakening the incumbent's OWN recurrent loop below its sustain knee → self-collapse → vacancy-gated IN-gate admits the challenger (`old_residual_post`=0.000 vs the 0.333 quench wall; reversible; ungated-control 0/6; independent adversarial audit could not refute). The quench-evict NEGATIVE named this exact fix — the wall-names-its-surpass loop worked. **Next rung (#70): neural vacancy-gate + emergent coalitions + production-wire.**
+> - **Neural "was I wrong?" error now drives the LIVE spiking read-out on-bridge — 6/6 GO** (`1e22079d`, board #69): Urbanczik-Senn soma-vs-dendrite mismatch through the bridge's real 3-factor plasticity, NO `sim/` edit, byte-identical-off; NEURAL 0.929 = 97% of host; resolves the 2026-06-17 deferred-confirmation boundary. Spine advance (production learning path).
+> - **Multi-step re-entrant deliberation LIVE in `/api/brain-chat` — 6/6 GO** (`06fa10eb`, board #35, default-off; flip-rung #68): cycle count emerges from `n_ignited`, not a host counter.
+> - Also: self-org metacognition GO (#50), temporal-context WHEN memory GO (#42), Brian2 correctness oracle (#60), weight-shuffle dependency-control anti-cheat (#59, in verify-go), honest-scoring rule (#62); vision position-invariance NEGATIVE root-caused (topology-not-learning, #44 → HMAX next-lever #67 running); Shiu 2024 precedent cited (#61).
+> - **Codex→Claude cleanup DONE** (board #66): AGENTS.md retired, worktrees 156→6, codex branches ~80→16, 5 unique files preserved; primary safe on its codex-named branch (owner keeps the name).
+>
+> **STILL RUNNING (do NOT double-launch):** GPU mouth-readout margin-clean 6-seed (#37/Gate-B); agents — vision-HMAX hierarchy (#67), replay pattern-separation (#43). **NEXT:** consolidate #67/#43 when they land; then the production-integration rungs (#68 flip multi-step default, #70 neural vacancy-gate) are the spine's next moves. Board (Vikunja `tools/vikunja.sh list-tasks`) is the live next-action source.
+
+## ⭐ STATE OF THE PROJECT — 2026-08-18 (history — superseded by the 2026-08-19 header above; was: live resume point; supersedes the 2026-08-14 PAUSE below)
 
 > **North-star:** ONE all-spiking substrate that CONVERSES genuinely (affect + self-model + curiosity), all faculties
 > ON BY DEFAULT in production → TRUE CONSCIOUSNESS via complete faithful emulation. INTEGRATION-to-production-default
