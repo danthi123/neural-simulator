@@ -1,0 +1,1113 @@
+{
+  "knobs": {
+    "seed": 42,
+    "parser_class": "BridgeParser (unchanged, reused)",
+    "np_binder_class": "NPHeadBinder (new, this file, generalizes AttributedBridgeParser)",
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "neuron_model": "IZHIKEVICH",
+    "bridgeparser_num_neurons": 126,
+    "npbinder_num_neurons": 82,
+    "build_train_seconds": 2.1791937351226807,
+    "np_binder_sanity_check": {
+      "input": [
+        "alpha",
+        "beta",
+        "gamma"
+      ],
+      "roles": [
+        "MODIFIER",
+        "MODIFIER",
+        "HEAD"
+      ],
+      "ok": true
+    },
+    "determiners_stripped": [
+      "a",
+      "an",
+      "that",
+      "the",
+      "these",
+      "this",
+      "those",
+      "to"
+    ],
+    "negators_set": [
+      "didn't",
+      "do",
+      "does",
+      "doesn't",
+      "don't",
+      "never",
+      "not"
+    ],
+    "passive_aux": [
+      "was",
+      "were"
+    ],
+    "copula_aux": [
+      "are",
+      "is",
+      "was",
+      "were"
+    ],
+    "participles_lexicon": [
+      "built",
+      "constructed",
+      "created",
+      "designed",
+      "discovered",
+      "founded"
+    ],
+    "plain_svo_verb_lexicon_fallback": [
+      "hosts",
+      "produces",
+      "supports"
+    ],
+    "n_items_baseline_imported": 12,
+    "n_items_new": 8,
+    "n_items_total": 20
+  },
+  "aggregate": {
+    "combined_set": {
+      "before": {
+        "n_assertion_clauses": 19,
+        "n_opinion_clauses": 2,
+        "n_parsed": 9,
+        "n_unparsed": 10,
+        "extraction_coverage": 0.47368421052631576,
+        "verifier_on_parsed_subset": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "tn": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "false_claim_catch": {
+          "false_claims_total": 9,
+          "false_claims_caught": 5,
+          "false_claims_slipped_unparsed": 4,
+          "catch_rate": 0.5555555555555556
+        }
+      },
+      "after": {
+        "n_assertion_clauses": 19,
+        "n_opinion_clauses": 2,
+        "n_parsed": 18,
+        "n_unparsed": 1,
+        "extraction_coverage": 0.9473684210526315,
+        "verifier_on_parsed_subset": {
+          "tp": 8,
+          "fp": 0,
+          "fn": 0,
+          "tn": 10,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "false_claim_catch": {
+          "false_claims_total": 9,
+          "false_claims_caught": 8,
+          "false_claims_slipped_unparsed": 1,
+          "catch_rate": 0.8888888888888888
+        }
+      }
+    },
+    "hard_subset_multiword_np_copula_passive": {
+      "n_clauses": 10,
+      "before_parsed": 0,
+      "before_coverage": 0.0,
+      "after_parsed": 9,
+      "after_coverage": 0.9,
+      "still_unparsed_texts": [
+        "the eiffel tower was built in london"
+      ]
+    },
+    "newly_parsed_subset": {
+      "n_clauses": 9,
+      "texts": [
+        "the great barrier reef is the largest coral reef system in the world",
+        "great barrier reef supports coral",
+        "great barrier reef supports cacti",
+        "great barrier reef hosts diverse marine life",
+        "amazon rainforest produces oxygen",
+        "eiffel tower is a famous landmark",
+        "eiffel tower is a natural wonder",
+        "eiffel tower was built by gustave eiffel",
+        "eiffel tower was built by isambard kingdom brunel"
+      ],
+      "verifier": {
+        "tp": 3,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "false_claim_catch": {
+        "false_total": 3,
+        "false_caught": 3,
+        "catch_rate": 1.0
+      }
+    }
+  },
+  "items_before": [
+    {
+      "paragraph": "Mercury orbits the sun.",
+      "clause_results": [
+        {
+          "gold_text": "Mercury orbits the sun",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Mercury orbits the sun",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The moon orbits the earth, and Newton discovered gravity.",
+      "clause_results": [
+        {
+          "gold_text": "moon orbits the earth",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The moon orbits the earth",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        },
+        {
+          "gold_text": "Newton discovered gravity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Newton discovered gravity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The sun orbits the moon.",
+      "clause_results": [
+        {
+          "gold_text": "sun orbits the moon",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The sun orbits the moon",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Fish breathe air.",
+      "clause_results": [
+        {
+          "gold_text": "Fish breathe air",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Fish breathe air",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Darwin discovered relativity.",
+      "clause_results": [
+        {
+          "gold_text": "Darwin discovered relativity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Darwin discovered relativity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Flowers pollinate bees.",
+      "clause_results": [
+        {
+          "gold_text": "Flowers pollinate bees",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Flowers pollinate bees",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps pollinate flowers.",
+      "clause_results": [
+        {
+          "gold_text": "Wasps pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Wasps pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps do not pollinate flowers.",
+      "clause_results": [
+        {
+          "gold_text": "Wasps do not pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Wasps do not pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "I think whales might breathe fire.",
+      "clause_results": [
+        {
+          "gold_text": "I think whales might breathe fire",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "matched_claim_text": "I think whales might breathe fire",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef is the largest coral reef system in the world.",
+      "clause_results": [
+        {
+          "gold_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built in London.",
+      "clause_results": [
+        {
+          "gold_text": "The Eiffel Tower was built in London",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower was built in London",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "Perhaps the ancient pyramids were built by extraterrestrial visitors.",
+      "clause_results": [
+        {
+          "gold_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "matched_claim_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef supports coral.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef supports coral",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "supports",
+            "coral"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef supports coral",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef supports cacti.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef supports cacti",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "supports",
+            "cacti"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Great Barrier Reef supports cacti",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef hosts diverse marine life.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef hosts diverse marine life",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "hosts",
+            "diverse marine life"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef hosts diverse marine life",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Amazon Rainforest produces oxygen.",
+      "clause_results": [
+        {
+          "gold_text": "Amazon Rainforest produces oxygen",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "amazon rainforest",
+            "produces",
+            "oxygen"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Amazon Rainforest produces oxygen",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower is a famous landmark.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower is a famous landmark",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "eiffel tower",
+            "is",
+            "famous landmark"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Eiffel Tower is a famous landmark",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower is a natural wonder.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower is a natural wonder",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "eiffel tower",
+            "is",
+            "natural wonder"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower is a natural wonder",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Gustave Eiffel.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower was built by Gustave Eiffel",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "gustave eiffel",
+            "built",
+            "eiffel tower"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Eiffel Tower was built by Gustave Eiffel",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Isambard Kingdom Brunel.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower was built by Isambard Kingdom Brunel",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "isambard kingdom brunel",
+            "built",
+            "eiffel tower"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower was built by Isambard Kingdom Brunel",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    }
+  ],
+  "items_after": [
+    {
+      "paragraph": "Mercury orbits the sun.",
+      "clause_results": [
+        {
+          "gold_text": "Mercury orbits the sun",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Mercury orbits the sun",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The moon orbits the earth, and Newton discovered gravity.",
+      "clause_results": [
+        {
+          "gold_text": "moon orbits the earth",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The moon orbits the earth",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        },
+        {
+          "gold_text": "Newton discovered gravity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Newton discovered gravity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The sun orbits the moon.",
+      "clause_results": [
+        {
+          "gold_text": "sun orbits the moon",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The sun orbits the moon",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Fish breathe air.",
+      "clause_results": [
+        {
+          "gold_text": "Fish breathe air",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Fish breathe air",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Darwin discovered relativity.",
+      "clause_results": [
+        {
+          "gold_text": "Darwin discovered relativity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Darwin discovered relativity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Flowers pollinate bees.",
+      "clause_results": [
+        {
+          "gold_text": "Flowers pollinate bees",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Flowers pollinate bees",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps pollinate flowers.",
+      "clause_results": [
+        {
+          "gold_text": "Wasps pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "Wasps pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps do not pollinate flowers.",
+      "clause_results": [
+        {
+          "gold_text": "Wasps do not pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "Wasps do not pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "I think whales might breathe fire.",
+      "clause_results": [
+        {
+          "gold_text": "I think whales might breathe fire",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "matched_claim_text": "I think whales might breathe fire",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef is the largest coral reef system in the world.",
+      "clause_results": [
+        {
+          "gold_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "great barrier reef",
+            "is",
+            "largest coral reef system in world"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built in London.",
+      "clause_results": [
+        {
+          "gold_text": "The Eiffel Tower was built in London",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower was built in London",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "Perhaps the ancient pyramids were built by extraterrestrial visitors.",
+      "clause_results": [
+        {
+          "gold_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "matched_claim_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef supports coral.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef supports coral",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "supports",
+            "coral"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef supports coral",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "great barrier reef",
+            "supports",
+            "coral"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef supports cacti.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef supports cacti",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "supports",
+            "cacti"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Great Barrier Reef supports cacti",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "great barrier reef",
+            "supports",
+            "cacti"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef hosts diverse marine life.",
+      "clause_results": [
+        {
+          "gold_text": "Great Barrier Reef hosts diverse marine life",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "great barrier reef",
+            "hosts",
+            "diverse marine life"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Great Barrier Reef hosts diverse marine life",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "great barrier reef",
+            "hosts",
+            "diverse marine life"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Amazon Rainforest produces oxygen.",
+      "clause_results": [
+        {
+          "gold_text": "Amazon Rainforest produces oxygen",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "amazon rainforest",
+            "produces",
+            "oxygen"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Amazon Rainforest produces oxygen",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "amazon rainforest",
+            "produces",
+            "oxygen"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower is a famous landmark.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower is a famous landmark",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "eiffel tower",
+            "is",
+            "famous landmark"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Eiffel Tower is a famous landmark",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "eiffel tower",
+            "is",
+            "famous landmark"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower is a natural wonder.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower is a natural wonder",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "eiffel tower",
+            "is",
+            "natural wonder"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower is a natural wonder",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "eiffel tower",
+            "is",
+            "natural wonder"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Gustave Eiffel.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower was built by Gustave Eiffel",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "gustave eiffel",
+            "built",
+            "eiffel tower"
+          ],
+          "gold_label": true,
+          "matched_claim_text": "The Eiffel Tower was built by Gustave Eiffel",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "gustave eiffel",
+            "built",
+            "eiffel tower"
+          ],
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Isambard Kingdom Brunel.",
+      "clause_results": [
+        {
+          "gold_text": "Eiffel Tower was built by Isambard Kingdom Brunel",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "isambard kingdom brunel",
+            "built",
+            "eiffel tower"
+          ],
+          "gold_label": false,
+          "matched_claim_text": "The Eiffel Tower was built by Isambard Kingdom Brunel",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "isambard kingdom brunel",
+            "built",
+            "eiffel tower"
+          ],
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    }
+  ]
+}
