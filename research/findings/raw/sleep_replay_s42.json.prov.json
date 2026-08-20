@@ -1,0 +1,30 @@
+{
+ "run_id": "1786254958-1281429",
+ "runner": "research/runners/_teacher_loop_sleep_replay_consolidation_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_teacher_loop_sleep_replay_consolidation_derisk.py",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/sleep_replay_s42.json"
+ ],
+ "git_sha": "bfb7ec92aaf3bb6d602beaae16b0d692c0111c4d",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "e4f854c6bef1d1c75d96e890ca45ce8ef39183cb1ba376b0bafc68453dc7b5fc",
+ "source_manifest_verified_at_start": false,
+ "source_manifest_start_error": "source file set differs from manifest; missing=[], extra=['autodispatch.out', 'job_status.log']",
+ "source_manifest_verified_at_exit": false,
+ "source_manifest_exit_error": "source file set differs from manifest; missing=[], extra=['autodispatch.out', 'job_status.log']",
+ "started": "2026-08-09T01:55:58",
+ "env": {
+  "POOL_CHECKED_REASON": "sleep-replay consolidation single-seed GO (banked bfb7ec92, adversarially confirmed: 0.10->0.90 self-generated); this 6-seed confirms retention (target ~0.90 toward the 8/10 ceiling) generalizes; the host-store residual is separate (biologize-next); not re-deriving",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/sleep_replay_s42.json"
+}

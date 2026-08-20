@@ -1,0 +1,35 @@
+{
+ "run_id": "1787236054-1489139",
+ "runner": "research/runners/_teacher_loop_sleep_replay_consolidation_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_teacher_loop_sleep_replay_consolidation_derisk.py",
+  "--aggregate",
+  "research/findings/raw/sleep_replay_n20_s42.json",
+  "research/findings/raw/sleep_replay_n20_s43.json",
+  "research/findings/raw/sleep_replay_n20_s44.json",
+  "research/findings/raw/sleep_replay_n20_s100.json",
+  "research/findings/raw/sleep_replay_n20_s101.json",
+  "research/findings/raw/sleep_replay_n20_s102.json",
+  "--out",
+  "research/findings/raw/sleep_replay_aggregate_6seed_n20.json"
+ ],
+ "git_sha": "7d04f11a7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T10:27:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 46299.6,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/sleep_replay_aggregate_6seed_n20.json"
+}

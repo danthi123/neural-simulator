@@ -1,0 +1,357 @@
+{
+  "probe": "teacher_loop_sleep_replay_consolidation",
+  "seed": 43,
+  "backend": "numpy",
+  "single_seed_smoke": true,
+  "elapsed_seconds": 827.3,
+  "result": {
+    "seed": 43,
+    "K_classes": 20,
+    "chance": 0.05,
+    "n_max": 20,
+    "milestones": [
+      1,
+      10,
+      20
+    ],
+    "config": {
+      "hidden": 24,
+      "settle_steps": 25,
+      "epochs": 40,
+      "batch": 20,
+      "eprop_lr": 0.5,
+      "w_clip": 4000.0,
+      "n_draws": 32,
+      "d_p": 12,
+      "noise": 0.12,
+      "test_n": 40,
+      "replay_epochs": 24,
+      "replay_per_fact": 16,
+      "replay_noise": 0.1
+    },
+    "arms": {
+      "noreplay": {
+        "arm": "noreplay",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.1,
+            "n_recalled": 1,
+            "N": 10,
+            "mean_retained_acc": 0.1,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.05,
+            "n_recalled": 1,
+            "N": 20,
+            "mean_retained_acc": 0.05,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        },
+        "wall_seconds": 170.8
+      },
+      "replay": {
+        "arm": "replay",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.4,
+            "n_recalled": 4,
+            "N": 10,
+            "mean_retained_acc": 0.35,
+            "oldest_fact_acc": 0.85,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.85,
+              0.0,
+              0.925,
+              0.0,
+              0.525,
+              0.0,
+              0.375,
+              0.0,
+              0.825,
+              0.0
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.45,
+            "n_recalled": 9,
+            "N": 20,
+            "mean_retained_acc": 0.3925,
+            "oldest_fact_acc": 0.7,
+            "most_recent_fact_acc": 0.2,
+            "per_fact_acc": [
+              0.7,
+              0.5,
+              0.0,
+              0.55,
+              0.0,
+              0.475,
+              0.0,
+              0.325,
+              0.0,
+              0.075,
+              0.375,
+              0.9,
+              0.65,
+              0.75,
+              0.65,
+              0.0,
+              0.925,
+              0.775,
+              0.0,
+              0.2
+            ]
+          }
+        },
+        "wall_seconds": 333.5
+      },
+      "scramble": {
+        "arm": "scramble",
+        "acquire_acc_immediate": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_acquire_acc_immediate": 1.0,
+        "retention_curve": {
+          "1": {
+            "frac_recalled": 1.0,
+            "n_recalled": 1,
+            "N": 1,
+            "mean_retained_acc": 1.0,
+            "oldest_fact_acc": 1.0,
+            "most_recent_fact_acc": 1.0,
+            "per_fact_acc": [
+              1.0
+            ]
+          },
+          "10": {
+            "frac_recalled": 0.0,
+            "n_recalled": 0,
+            "N": 10,
+            "mean_retained_acc": 0.065,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 0.025,
+            "per_fact_acc": [
+              0.0,
+              0.475,
+              0.15,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.025
+            ]
+          },
+          "20": {
+            "frac_recalled": 0.05,
+            "n_recalled": 1,
+            "N": 20,
+            "mean_retained_acc": 0.045,
+            "oldest_fact_acc": 0.0,
+            "most_recent_fact_acc": 0.0,
+            "per_fact_acc": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.9,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "wall_seconds": 323.1
+      }
+    }
+  },
+  "verdict": {
+    "largest_N": 20,
+    "noreplay_frac_recalled": 0.05,
+    "replay_frac_recalled": 0.45,
+    "scramble_frac_recalled": 0.05,
+    "replay_immediate_acq": 1.0,
+    "retention_rise_replay_minus_noreplay": 0.4,
+    "self_generation_margin_replay_minus_scramble": 0.4,
+    "label": "teacher-loop sleep-replay consolidation",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "reaches",
+        "name": "(a) retention RISES vs no-replay sequential",
+        "ok": true,
+        "detail": "before=0.05 after=0.45 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(b) no-replay forgets (consolidation load-bearing)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "noreplay frac_recalled@N=20 = 0.05"
+      },
+      {
+        "kind": "floor",
+        "name": "(c) immediate acquisition stays perfect (REPLAY)",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "(d) store CONTENT is the source (replay vs scramble)",
+        "ok": true,
+        "detail": "treatment=0.45 control=0.05 |sep|=0.4 > 0.15",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(d') scramble forgets like no-replay (content-lesioned)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "scramble 0.05 vs noreplay 0.05"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.05
+  }
+}

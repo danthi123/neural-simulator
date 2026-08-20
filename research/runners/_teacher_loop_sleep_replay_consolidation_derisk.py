@@ -270,6 +270,128 @@ def _verdict(result):
     }
 
 
+def _aggregate_verdict(paths, min_seeds=6, mean_rise_floor=0.25, content_margin=0.15,
+                       direction_min=5, content_min=5):
+    """6-SEED AGGREGATE GO-gate. The single-run _verdict is PER-SEED (each artifact self-labels
+    single_seed_smoke); this project validates at >=6 seeds (3-seed indicators are unreliable). This reads N
+    per-seed artifacts and earns ONE aggregate verdict from the seed-level distribution.
+
+    Each seed contributes its raw arm MEASUREMENTS (replay/noreplay/scramble frac_recalled at the largest N +
+    the REPLAY immediate acquisition). A per-seed artifact that self-labels UNDEFINED because its scramble
+    control did not clear the +0.15 margin is NOT a broken instrument -- its arms ran, acquisition was
+    preserved, and no-replay forgot; it contributes a valid *small-effect* data point (direction yes, content
+    margin no). We therefore aggregate the raw measurements and re-apply the teeth across seeds.
+
+    PRECONDITIONS (UNDEFINED, not NO-GO, if any fails -- the comparison is void, not negative):
+      * >= min_seeds artifacts present and well-formed.
+      * the WALL IS REAL on every seed: no-replay forgets (noreplay frac < 0.5). If no-replay already retains,
+        there is nothing to consolidate and the arms are not comparable to the scaling baseline.
+      * acquisition preserved on every seed: REPLAY immediate acq >= 0.9 (consolidation must not break learning
+        the new fact -- otherwise a 'retention' gain could be a failure to acquire the recent fact).
+      * the arms genuinely differ (mean replay != mean noreplay).
+    TEETH:
+      (1) DIRECTION / load-bearing: replay > noreplay on >= direction_min / N seeds.
+      (2) CONTENT / self-generation: replay > scramble + content_margin on >= content_min / N seeds
+          (the retention rise comes from the STORED ENGRAM CONTENT, not extra gradient steps).
+      (3) SCRAMBLE NEVER RESCUES: scramble <= noreplay + 0.10 on ALL seeds (ordered/correct-content replay is
+          load-bearing; scrambled replay -- identical compute, corrupted content -- must forget like no-replay).
+      (4) MEAN EFFECT FLOOR: mean(replay - noreplay) > mean_rise_floor. Justified: the sequential wall retains
+          ~1/N ~= 0.1 at N=10 and the INTERLEAVED ceiling is ~0.8 (scaling finding fcdc2fd2), a ~0.7 span; a
+          +0.25 mean recovers >= ~1/3 of that gap (~2.5 of 10 facts) -- a non-trivial, non-noise effect.
+      (5) NOT SINGLE-SEED-DRIVEN: with the single largest-rise seed removed, the remaining mean rise > 0.15.
+    """
+    from tools.lab import attributable_to
+    from tools.verdict import Verdict
+    rows = []
+    for p in paths:
+        d = json.loads(Path(p).read_text())
+        v = d.get("verdict", {})
+        rows.append({
+            "seed": d.get("seed"), "path": str(p), "per_seed_status": v.get("status"),
+            "N": v.get("largest_N"),
+            "replay": float(v["replay_frac_recalled"]), "noreplay": float(v["noreplay_frac_recalled"]),
+            "scramble": float(v["scramble_frac_recalled"]), "acq": float(v["replay_immediate_acq"]),
+        })
+    rows.sort(key=lambda r: (r["seed"] if r["seed"] is not None else 0))
+    n = len(rows)
+    rises = [r["replay"] - r["noreplay"] for r in rows]
+    mean_rise = float(np.mean(rises)) if rises else float("nan")
+    mean_replay = float(np.mean([r["replay"] for r in rows])) if rows else float("nan")
+    mean_noreplay = float(np.mean([r["noreplay"] for r in rows])) if rows else float("nan")
+    mean_scramble = float(np.mean([r["scramble"] for r in rows])) if rows else float("nan")
+    n_direction = sum(r["replay"] > r["noreplay"] for r in rows)
+    n_content = sum(r["replay"] > r["scramble"] + content_margin for r in rows)
+    n_scramble_ok = sum(r["scramble"] <= r["noreplay"] + 0.10 for r in rows)
+    n_wall = sum(r["noreplay"] < 0.5 for r in rows)
+    n_acq = sum(r["acq"] >= 0.9 for r in rows)
+    # leave-one-out on the single largest-rise seed (guards against one lucky seed carrying the mean).
+    if n >= 2:
+        j = int(np.argmax(rises))
+        loo_rise = float(np.mean([x for k, x in enumerate(rises) if k != j]))
+    else:
+        loo_rise = float("nan")
+
+    attributable_to("aggregate self-replay content (mean replay vs mean scramble)", mean_replay, mean_scramble)
+
+    chance = json.loads(Path(paths[0]).read_text()).get("result", {}).get("chance")
+    v = Verdict("teacher-loop sleep-replay consolidation (6-seed aggregate)", chance=chance)
+    v.require(">= %d seeds present" % min_seeds, n >= min_seeds, expect=True, note="n_seeds=%d" % n)
+    v.require("WALL is real: no-replay forgets on every seed (frac<0.5)", n_wall == n, expect=True,
+              note="%d/%d seeds noreplay<0.5" % (n_wall, n))
+    v.floor("acquisition preserved: REPLAY immediate acq >= 0.9 (min over seeds)",
+            min((r["acq"] for r in rows), default=0.0), floor=0.899)
+    v.reaches("arms differ (mean replay vs mean no-replay)", before=mean_noreplay, after=mean_replay)
+    v.require("(1) DIRECTION replay>noreplay on >=%d/%d seeds" % (direction_min, n), n_direction >= direction_min,
+              expect=True, note="%d/%d seeds" % (n_direction, n))
+    v.require("(2) CONTENT replay>scramble+%.2f on >=%d/%d seeds" % (content_margin, content_min, n),
+              n_content >= content_min, expect=True, note="%d/%d seeds" % (n_content, n))
+    v.require("(3) scramble NEVER rescues (scramble<=noreplay+0.10 ALL seeds)", n_scramble_ok == n, expect=True,
+              note="%d/%d seeds" % (n_scramble_ok, n))
+    v.floor("(4) mean effect: mean(replay-noreplay)", mean_rise, floor=mean_rise_floor)
+    v.floor("(5) not single-seed-driven: leave-one-out mean rise", loo_rise, floor=0.15)
+    go = (n >= min_seeds and n_wall == n and n_acq == n and mean_replay != mean_noreplay
+          and n_direction >= direction_min and n_content >= content_min and n_scramble_ok == n
+          and mean_rise > mean_rise_floor and loo_rise > 0.15)
+    decision = v.decide(go=go)
+    return {
+        "n_seeds": n, "per_seed": rows,
+        "mean_replay": mean_replay, "mean_noreplay": mean_noreplay, "mean_scramble": mean_scramble,
+        "mean_rise_replay_minus_noreplay": mean_rise, "leave_one_out_mean_rise": loo_rise,
+        "n_direction_replay_gt_noreplay": n_direction, "n_content_replay_gt_scramble_margin": n_content,
+        "n_scramble_near_noreplay": n_scramble_ok, "n_wall_noreplay_forgets": n_wall,
+        "n_acquisition_preserved": n_acq,
+        "thresholds": {"min_seeds": min_seeds, "mean_rise_floor": mean_rise_floor,
+                       "content_margin": content_margin, "direction_min": direction_min,
+                       "content_min": content_min},
+        **decision,
+    }
+
+
+def _aggregate_main(paths, out):
+    agg = _aggregate_verdict(paths)
+    summary = {"probe": "teacher_loop_sleep_replay_consolidation_aggregate",
+               "n_seeds": agg["n_seeds"], "aggregate_verdict": agg}
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    Path(out).write_text(json.dumps(summary, indent=2, default=str))
+    print("\n" + "=" * 100, flush=True)
+    print("[sleep-replay AGGREGATE] %d seeds | mean REPLAY %.2f | NOREPLAY %.2f | SCRAMBLE %.2f | chance %s"
+          % (agg["n_seeds"], agg["mean_replay"], agg["mean_noreplay"], agg["mean_scramble"],
+             agg.get("chance")), flush=True)
+    print("[sleep-replay AGGREGATE] mean rise %+.3f (LOO %+.3f) | direction %d/%d | content(>scr+0.15) %d/%d | "
+          "scramble<=noreplay+0.10 %d/%d | acq-preserved %d/%d | VERDICT %s"
+          % (agg["mean_rise_replay_minus_noreplay"], agg["leave_one_out_mean_rise"],
+             agg["n_direction_replay_gt_noreplay"], agg["n_seeds"],
+             agg["n_content_replay_gt_scramble_margin"], agg["n_seeds"],
+             agg["n_scramble_near_noreplay"], agg["n_seeds"],
+             agg["n_acquisition_preserved"], agg["n_seeds"], agg["status"]), flush=True)
+    for r in agg["per_seed"]:
+        print("    seed %-4s N=%s replay=%.2f noreplay=%.2f scramble=%.2f rise=%+.2f (per-seed %s)"
+              % (r["seed"], r["N"], r["replay"], r["noreplay"], r["scramble"],
+                 r["replay"] - r["noreplay"], r["per_seed_status"]), flush=True)
+    print("[sleep-replay AGGREGATE] wrote %s\n" % out + "=" * 100, flush=True)
+    return 0 if agg["status"] == "GO" else 1
+
+
 def main():
     ap = argparse.ArgumentParser(description="Teacher-loop SLEEP-REPLAY consolidation: self-replay the brain's "
                                              "own hippocampal engrams offline (teacher absent) to beat catastrophic "
@@ -290,8 +412,12 @@ def main():
     ap.add_argument("--d-p", type=int, default=12)
     ap.add_argument("--noise", type=float, default=0.12)
     ap.add_argument("--test-n", type=int, default=40)
+    ap.add_argument("--aggregate", nargs="+", default=None,
+                    help="AGGREGATE MODE: paths to >=6 per-seed artifacts -> emit ONE 6-seed aggregate verdict.")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
+    if a.aggregate:
+        return _aggregate_main(a.aggregate, a.out)
     t0 = time.time()
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
 

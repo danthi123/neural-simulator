@@ -1,0 +1,157 @@
+{
+  "probe": "teacher_loop_sleep_replay_consolidation_aggregate",
+  "n_seeds": 6,
+  "aggregate_verdict": {
+    "n_seeds": 6,
+    "per_seed": [
+      {
+        "seed": 42,
+        "path": "research/findings/raw/sleep_replay_n20_s42.json",
+        "per_seed_status": "GO",
+        "N": 20,
+        "replay": 0.65,
+        "noreplay": 0.05,
+        "scramble": 0.1,
+        "acq": 0.9937500000000001
+      },
+      {
+        "seed": 43,
+        "path": "research/findings/raw/sleep_replay_n20_s43.json",
+        "per_seed_status": "GO",
+        "N": 20,
+        "replay": 0.45,
+        "noreplay": 0.05,
+        "scramble": 0.05,
+        "acq": 1.0
+      },
+      {
+        "seed": 44,
+        "path": "research/findings/raw/sleep_replay_n20_s44.json",
+        "per_seed_status": "GO",
+        "N": 20,
+        "replay": 0.35,
+        "noreplay": 0.05,
+        "scramble": 0.05,
+        "acq": 0.99875
+      },
+      {
+        "seed": 100,
+        "path": "research/findings/raw/sleep_replay_n20_s100.json",
+        "per_seed_status": "GO",
+        "N": 20,
+        "replay": 0.35,
+        "noreplay": 0.05,
+        "scramble": 0.05,
+        "acq": 1.0
+      },
+      {
+        "seed": 101,
+        "path": "research/findings/raw/sleep_replay_n20_s101.json",
+        "per_seed_status": "NO-GO",
+        "N": 20,
+        "replay": 0.2,
+        "noreplay": 0.05,
+        "scramble": 0.05,
+        "acq": 0.97875
+      },
+      {
+        "seed": 102,
+        "path": "research/findings/raw/sleep_replay_n20_s102.json",
+        "per_seed_status": "GO",
+        "N": 20,
+        "replay": 0.6,
+        "noreplay": 0.05,
+        "scramble": 0.0,
+        "acq": 0.9962500000000002
+      }
+    ],
+    "mean_replay": 0.4333333333333334,
+    "mean_noreplay": 0.049999999999999996,
+    "mean_scramble": 0.049999999999999996,
+    "mean_rise_replay_minus_noreplay": 0.3833333333333333,
+    "leave_one_out_mean_rise": 0.33999999999999997,
+    "n_direction_replay_gt_noreplay": 6,
+    "n_content_replay_gt_scramble_margin": 5,
+    "n_scramble_near_noreplay": 6,
+    "n_wall_noreplay_forgets": 6,
+    "n_acquisition_preserved": 6,
+    "thresholds": {
+      "min_seeds": 6,
+      "mean_rise_floor": 0.25,
+      "content_margin": 0.15,
+      "direction_min": 5,
+      "content_min": 5
+    },
+    "label": "teacher-loop sleep-replay consolidation (6-seed aggregate)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": ">= 6 seeds present",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "n_seeds=6"
+      },
+      {
+        "kind": "require",
+        "name": "WALL is real: no-replay forgets on every seed (frac<0.5)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "6/6 seeds noreplay<0.5"
+      },
+      {
+        "kind": "floor",
+        "name": "acquisition preserved: REPLAY immediate acq >= 0.9 (min over seeds)",
+        "ok": true,
+        "detail": "0.97875 vs floor 0.899",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "arms differ (mean replay vs mean no-replay)",
+        "ok": true,
+        "detail": "before=0.05 after=0.433333 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(1) DIRECTION replay>noreplay on >=5/6 seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "6/6 seeds"
+      },
+      {
+        "kind": "require",
+        "name": "(2) CONTENT replay>scramble+0.15 on >=5/6 seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "5/6 seeds"
+      },
+      {
+        "kind": "require",
+        "name": "(3) scramble NEVER rescues (scramble<=noreplay+0.10 ALL seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "6/6 seeds"
+      },
+      {
+        "kind": "floor",
+        "name": "(4) mean effect: mean(replay-noreplay)",
+        "ok": true,
+        "detail": "0.383333 vs floor 0.25",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "(5) not single-seed-driven: leave-one-out mean rise",
+        "ok": true,
+        "detail": "0.34 vs floor 0.15",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": 0.05
+  }
+}
