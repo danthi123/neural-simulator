@@ -1762,6 +1762,31 @@ async def _periodic_orphan_scan() -> None:
 
 
 @app.on_event("startup")
+async def _continuous_state_tick() -> None:
+    """CONTINUOUS-STATE ENGINE (2026-08-19 reframe): the brain keeps FEELING between turns, not just per-request.
+
+    An always-on background tick — when a chat session goes idle, its felt mood RELAXES toward baseline and the
+    spiking affect ladder is re-read, so the state keeps evolving with no input ('unplug the conversation and it's
+    still changing'). Default-OFF behind `BRAIN_CONTINUOUS`; when off this loop is inert (byte-identical to today).
+    Host code is only the clock; every mood read reuses the existing spiking affect organ. See
+    webapp/continuous_engine.py. v1 = the mood seed; next rungs (self-init wander, idle consolidation) are own tasks."""
+    from webapp import continuous_engine as _CE
+
+    async def _loop():
+        while True:
+            await asyncio.sleep(_CE.IDLE_SEC)
+            if not _CE.continuous_enabled():
+                continue
+            try:
+                n = _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ)
+                if n:
+                    print("[webapp] continuous tick: evolved %d idle session(s)" % n, flush=True)
+            except Exception as e:
+                print(f"[webapp] continuous tick failed: {type(e).__name__}: {e}", flush=True)
+    asyncio.create_task(_loop())
+
+
+@app.on_event("startup")
 async def _warm_chat_brain() -> None:
     """Pre-build the off-bridge Qwen renderer (+ the default ChatBrain) ONCE at
     startup so the FIRST `/api/brain-chat` turn doesn't pay the ~58s Qwen-0.5B
@@ -3639,9 +3664,19 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # cupy/numpy-flip bug, 2026-06-24).
     _pin_bridge_backend()
     cache_key = (req.session, req.brain, renderer)
+    try:  # CONTINUOUS-STATE ENGINE: mark this session active so the idle tick doesn't run mid-conversation
+        from webapp import continuous_engine as _CE0
+        _CE0.mark_request(cache_key)
+    except Exception:
+        pass
     if req.reset:
         _BRAIN_CHATS.pop(cache_key, None)
         _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
+        try:
+            from webapp import continuous_engine as _CE1
+            _CE1.forget_session(cache_key)  # drop this session's between-turn inner-life + last-request
+        except Exception:
+            pass
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
@@ -4885,7 +4920,15 @@ def openai_chat_completions(req: OpenAIChatRequest):
     r = brain_chat(BrainChatRequest(session=session, message=user_msg))
     resp = _json.loads(bytes(r.body))
     reply = resp.get("answer") or resp.get("response") or ""
-    monologue = _OAS.format_internal_monologue(resp)
+    # CONTINUOUS-STATE ENGINE: this session's between-turn inner-life (mood evolution while idle), same cache_key
+    # brain_chat used = (session, brain, resolved renderer). Surfaced in the monologue's 'thinking' stream.
+    _il = None
+    try:
+        from webapp import continuous_engine as _CE
+        _il = _CE.inner_life((session, "tiny-demo", _default_brain_renderer()))
+    except Exception:
+        _il = None
+    monologue = _OAS.format_internal_monologue(resp, inner_life=_il)
     created = int(_t.time())
     if req.stream:
         return StreamingResponse(_OAS.stream_chunks(reply, monologue, req.model, created),

@@ -29,12 +29,21 @@ def _fmt_num(x, nd=2):
         return str(x)
 
 
-def format_internal_monologue(resp: dict) -> str:
+def format_internal_monologue(resp: dict, inner_life: list | None = None) -> str:
     """Turn brain_chat's response metadata into an honest functional internal-state read-out (the 'thinking' stream).
 
     Every line is a functional statement of a real internal signal, never a phenomenal claim. Missing faculties are
-    simply omitted (a faculty that did not fire this turn contributes nothing)."""
+    simply omitted (a faculty that did not fire this turn contributes nothing). `inner_life` (from the continuous-
+    state engine) is the between-turn activity that happened WHILE the user was away — surfaced first so you see the
+    brain was 'alive between questions'."""
     lines = []
+
+    # CONTINUOUS-STATE ENGINE: what happened between turns (the brain running while idle)
+    if inner_life:
+        last = inner_life[-1]
+        n = len(inner_life)
+        note = last.get("note") or "state evolved"
+        lines.append("while you were away (%d idle tick%s): %s" % (n, "" if n == 1 else "s", note))
 
     # AFFECT / mood (Gate-B affect ladder + the #84 tone drive)
     aff = resp.get("affect") or {}

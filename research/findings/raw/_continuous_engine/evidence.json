@@ -1,0 +1,10 @@
+{
+  "backend": "numpy (CPU) — the affect-ladder read + the homeostatic relaxation are host/numpy",
+  "device": "CPU (numpy)",
+  "provenance": {"runner": "hand-authored test test_continuous.py; unit test of webapp/continuous_engine.tick_session via the real _get_affect_organ spiking ladder", "seed": 42, "git_sha_parent": "125b761ef", "command": "SIM_BACKEND=numpy python test_continuous.py"},
+  "claim": "the felt mood keeps EVOLVING between turns with no input (the continual-state property), read through the spiking affect ladder each tick",
+  "evidence": {"start_valence": 0.8, "tick_valences": [0.680, 0.578, 0.491, 0.418, 0.355], "spiking_differential_reread": [0.051, 0.052, 0.040, 0.039, 0.039], "inner_life_entries": 5},
+  "byte_identical_off": "BRAIN_CONTINUOUS unset -> tick_idle_sessions returns 0 (loop inert)",
+  "no_regression": {"server_import": "OK", "determinism": "9 passed"},
+  "scope": "v1 = the MOOD seed (1 of 4 continuous properties). Host = the clock + the relaxation formula + the log; the mood VALUE is a spiking affect-ladder read. Next rungs (own tasks): self-init WANDER on the tick, idle BTSP CONSOLIDATION, generative attractor-wandering."
+}
