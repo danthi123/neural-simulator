@@ -1,0 +1,26 @@
+{
+ "run_id": "1787208149-722041",
+ "runner": "research/runners/_fluent_paraphrase_verify_suppress_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_fluent_paraphrase_verify_suppress_derisk.py"
+ ],
+ "git_sha": "bc7c8c4f5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T02:42:29",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 18397.7,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_fluent_paraphrase_verify_suppress_derisk.json"
+}
