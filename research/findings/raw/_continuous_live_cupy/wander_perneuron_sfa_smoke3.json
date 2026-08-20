@@ -1,0 +1,55 @@
+{
+  "runner": "research/runners/_continuous_wander_perneuron_sfa_derisk.py",
+  "seed": 42,
+  "backend": "numpy",
+  "n_wanders": 3,
+  "n_mem": 4,
+  "n_ca3": 200,
+  "rest_steps": 100,
+  "settle_steps": 50,
+  "sfa_strength_pA": 500.0,
+  "sfa_persist": 0.5,
+  "baseline": {
+    "sequence": [
+      "cat",
+      "cat",
+      "cat"
+    ],
+    "per_wander_s": [
+      39.2,
+      38.5,
+      38.7
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ]
+  },
+  "sfa": {
+    "sequence": [
+      "cat",
+      "cat",
+      "dog"
+    ],
+    "per_wander_s": [
+      38.9,
+      39.0,
+      39.2
+    ],
+    "n_distinct": 2,
+    "distinct": [
+      "cat",
+      "dog"
+    ],
+    "mean_fatigue_after_wander": [
+      0.3111,
+      0.2976,
+      0.2794
+    ]
+  },
+  "baseline_distinct": 1,
+  "sfa_distinct": 2,
+  "full_coverage": false,
+  "VERDICT": "GO",
+  "interpretation": "per-neuron SFA (a persisted hyperpolarizing current on cp_intrinsic_current_pA, sized by each neuron's OWN spike count in the prior wander) breaks the degenerate wander WITHOUT a host multiply on the curiosity neuromod drive -- replaces the 2026-08-20 IOR gain-scaffold with the faithful form the finding named next"
+}

@@ -1,0 +1,81 @@
+{
+  "runner": "research/runners/_continuous_wander_perneuron_sfa_derisk.py",
+  "seed": 42,
+  "backend": "cupy",
+  "n_wanders": 8,
+  "n_mem": 4,
+  "n_ca3": 2000,
+  "rest_steps": 4000,
+  "settle_steps": 600,
+  "sfa_strength_pA": 800.0,
+  "sfa_persist": 0.7,
+  "baseline": {
+    "sequence": [
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat"
+    ],
+    "per_wander_s": [
+      32.5,
+      32.2,
+      32.5,
+      32.6,
+      32.7,
+      32.1,
+      32.8,
+      32.0
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ]
+  },
+  "sfa": {
+    "sequence": [
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat"
+    ],
+    "per_wander_s": [
+      32.4,
+      31.8,
+      32.2,
+      32.1,
+      32.2,
+      32.3,
+      32.2,
+      32.6
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ],
+    "mean_fatigue_after_wander": [
+      0.3256,
+      0.3285,
+      0.3258,
+      0.3234,
+      0.3266,
+      0.3281,
+      0.3283,
+      0.3263
+    ]
+  },
+  "baseline_distinct": 1,
+  "sfa_distinct": 1,
+  "full_coverage": false,
+  "VERDICT": "UNDEFINED",
+  "interpretation": "per-neuron SFA at this strength/persistence did not yield more variety than baseline -- sweep SFA_STRENGTH_PA / SFA_PERSIST before concluding the mechanism itself is inert",
+  "seqs_byte_identical_to_baseline": true,
+  "verdict_corrected_note": "was NO-GO from the naive threshold; corrected to UNDEFINED (SFA arm byte-identical to baseline -> injection effect unconfirmed; needs an injection-effect diagnostic). Sequence data unchanged."
+}

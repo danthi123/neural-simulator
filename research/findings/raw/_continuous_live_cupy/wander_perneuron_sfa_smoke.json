@@ -1,0 +1,44 @@
+{
+  "runner": "research/runners/_continuous_wander_perneuron_sfa_derisk.py",
+  "seed": 42,
+  "backend": "numpy",
+  "n_wanders": 1,
+  "n_mem": 4,
+  "n_ca3": 200,
+  "rest_steps": 100,
+  "settle_steps": 50,
+  "sfa_strength_pA": 500.0,
+  "sfa_persist": 0.5,
+  "baseline": {
+    "sequence": [
+      "cat"
+    ],
+    "per_wander_s": [
+      44.4
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ]
+  },
+  "sfa": {
+    "sequence": [
+      "cat"
+    ],
+    "per_wander_s": [
+      38.0
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ],
+    "mean_fatigue_after_wander": [
+      0.3111
+    ]
+  },
+  "baseline_distinct": 1,
+  "sfa_distinct": 1,
+  "full_coverage": false,
+  "VERDICT": "NO-GO",
+  "interpretation": "per-neuron SFA at this strength/persistence did not yield more variety than baseline -- sweep SFA_STRENGTH_PA / SFA_PERSIST before concluding the mechanism itself is inert"
+}
