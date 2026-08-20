@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-08-19 — The brain's own signals now steer the live conversation; a production correctness fix; and an honest observe-vs-drive audit
+
+### The frontier moved from "wire it in" to "make it load-bearing"
+
+The integration arc's next question is stricter than "is the faculty wired and on by default?" — it is **does the brain's own internal state actually change what it says?** A neural verdict stashed as metadata beside an unchanged reply is a hollow checkbox, not integration. So the anti-hollow test used throughout this wave is: vary the internal signal, require the reply to differ, and require that difference to **vanish when the coupling is lesioned**. As before, affect and self-model read-outs are stated as **functional read-outs only** ("my decision-margin reads this as low-confidence") — never as feeling or phenomenal experience — and "GO" refers only to the exact six-seed test that passed, never a whole-faculty or consciousness claim.
+
+### The brain's internal signals now drive the conversation (default-on, lesion-load-bearing)
+
+- **Three internal signals now shape the actual reply (default-on, load-bearing).** The brain's own live spiking mood now colours **how** it phrases the answer (#84 affect→tone); its neural thought-swap decision now steers **which** topic the turn engages (#85 swap→topic); and its self-selected spiking dopamine mode now sets **how engaged** the reply is (#79 DA-mode→engagement). Each is verified by the anti-hollow test — vary the signal and the reply changes; lesion the coupling and the difference vanishes (ledger rows `swap-drives-response`, `da-mode-drives-response`, plus the affect drive; landed 2026-08-19).
+- **The mood signal is now caused by a simulated body-state (6-seed GO).** The affect signal that colours replies is now driven by a body-state read through dedicated spiking **interoceptive** neurons wiring into the mood system; cutting those synapses makes the feeling stop tracking the body entirely. This remains a functional interoceptive read-out, not a claim of felt sensation. Finding: `2026-08-19-embodied-affect-interoception-GO.md`.
+
+### Deliberation, metacognition, and self-initiated speech became more the brain's own
+
+- **The re-entrant deliberation loop's cycle count now emerges from the substrate (2026-08-18).** How many rounds of re-entrant deliberation the workspace runs is now read from the substrate's own spiking ignition/conflict signal rather than a host-fixed counter — the first time a spiking conflict signal *controls* deliberation depth. Honest scope: this is a GO with a documented caveat, not an unqualified close. Finding: `2026-08-18-gnw-reentrant-metacog-gated-deliberation-GO-caveat.md`.
+- **Self-organized metacognition (6-seed GO, 2026-08-18).** The confidence→correctness mapping behind the "my decision-margin reads this as low-confidence" hedge is now learned by a local reward-gated three-factor Hebbian rule instead of a host logistic fit (mean type-2 AUC 0.825, meta-d' 2.49).
+- **Self-initiated utterance wired into production (GO, 2026-08-18).** On an idle/empty turn the brain now selects a stored concept itself and speaks it as an unprompted remark or question — moat-safe, and byte-identical on every reactive turn (ledger row `self-initiated-utterance`, default-on).
+- **The GNW ignition bus became the default organ-combination (2026-08-13).** The spiking Global-Neuronal-Workspace ignition bus now authors the combine-and-decide step host Python used to do, on every live turn — byte-identical to the prior behaviour with a one-flag revert. It also gates deliberation that **abstains** when the workspace reads a genuine multi-answer conflict.
+
+### Rigour: a shipped-broken fix, an observe-vs-drive audit, an independent oracle, and a mapped boundary
+
+- **A "verified" faculty had been shipping broken on the GPU — found and fixed.** The production GPU chat had been silently returning a 400 error on every request (a onebrain parser handed GPU data to a CPU-only routine); every earlier check had exercised only the CPU path where the bug does not occur, so a faculty that read as "wired, on-by-default, verified" had in fact been broken on the GPU. Fixed and guarded by a GPU-free regression test. Finding: `2026-08-19-production-gpu-chat-was-400-crashing-onebrain-parser-tocoo-cupy.md`.
+- **An observe-vs-drive audit found zero dead observers.** All 31 default-on faculties were lesioned through the real chat handler to hunt "wired but inert" drift: 23 genuinely change the reply, 2 are shared-substrate plumbing (answer-preserving by design), 6 are not exercisable on the CPU/tiny-demo config, and **0 dead observers** were found. Finding: `2026-08-19-observe-vs-drive-faculty-audit.md`.
+- **An independent second simulator was added as a correctness oracle.** A Brian2-based simulator (sharing no code with our engine) is now a test-only oracle for the *vanilla* spiking core — Izhikevich/AdEx neurons, COBA synapses and pair-STDP agree to ~1e-11 mV. Honest scope: this validates the vanilla core only, not the project's custom mechanisms.
+- **Learning the "mouth" read-out from scratch is a mapped NO-GO boundary.** Learning the thought→words read-out from scratch plateaus at ~0.34 while a copied read reaches ~0.97; at 5× the data the spiking-read learner stays at ~0.34 (a host-arithmetic learner reaches ~0.86 on the same data), so data/coverage is excluded as the cause and the residual is the noisy few-spike **read** (the deep-credit "gap#4" limit). The decision is to keep the external language-model mouth for now. Finding: `2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md`.
+
+### Honest state of the whole (do not read the wins as more than they are)
+
+Against the project's own "done" bar — a faculty is done only when it is wired **and** on-by-default **and** its host scaffold is retired — the honest state is **~one integrated spiking family plus a bench of validated-but-unwired de-risks**. `scaffold_retired` is **0** across the whole ledger (the single scoped exception is the GNW-bus organ-combination, for its covered class). It is still **co-residency, not one true substrate**: organ routing is host Python and cross-region synaptic interaction is proven for one pathway.
+
+The open-prose "mouth" is still the external Qwen2.5-0.5B transformer scaffold. Many organ internals remain host/NumPy (the VSA recall algebra, hand-assigned assemblies, the appraisal seeding, the plausibility gate). The three properties the north-star still lacks are **fluid open-ended conversation, one true substrate, and emergent-not-hand-wired** structure. Honest negatives under strict biology are recorded as deliverables, not failures. The live per-cycle resume point remains `GAP_CLOSURE_MISSION.md`; `ROADMAP.md` is the plain-language skim.
+
 ## [Unreleased] — 2026-08-10 — The integration pivot: the validated faculties are wired into a LIVE conversation; and episodic memory is closed on a dendritic read-out
 
 ### The pivot — from "prove each mechanism in isolation" to continuous integration
