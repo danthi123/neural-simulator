@@ -1,0 +1,512 @@
+{
+  "knobs": {
+    "seed": 42,
+    "parser_class": "BridgeParser",
+    "parser_module": "research.runners.brain_conversational_agent",
+    "parser_build_train_seconds": 3.660414218902588,
+    "parser_R": 40,
+    "parser_note": "6 conjunction units (position x voice) -> 3 Hebbian role ensembles on a SimulationBridge (Izhikevich); role assignment is 100% positional, no lexical verb knowledge; hard assert len(words)==3.",
+    "entailment_module": "research.runners._open_text_moat_verifier_derisk",
+    "entailment_functions_reused_unchanged": [
+      "Claim",
+      "FactStore",
+      "classify_claim",
+      "split_clauses",
+      "is_opinion",
+      "STOPWORDS",
+      "AFFIRM",
+      "NEGATE"
+    ],
+    "voice_assumed": "active (no automatic passive-voice detector in this pipeline)",
+    "negators_set": [
+      "didn't",
+      "do",
+      "does",
+      "doesn't",
+      "don't",
+      "never",
+      "not"
+    ],
+    "stopwords_set": [
+      "a",
+      "an",
+      "that",
+      "the",
+      "these",
+      "this",
+      "those",
+      "to"
+    ],
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "neuron_model": "IZHIKEVICH",
+    "num_neurons": 126
+  },
+  "aggregate": {
+    "n_items": 12,
+    "n_assertion_clauses": 11,
+    "n_opinion_clauses": 2,
+    "n_parsed": 9,
+    "n_unparsed": 2,
+    "extraction_coverage": 0.8181818181818182,
+    "verifier_on_parsed_subset": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 4,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "accuracy": 1.0
+    },
+    "false_claim_catch": {
+      "false_claims_total": 6,
+      "false_claims_caught_ungrounded": 5,
+      "false_claims_slipped_unparsed_suppressed": 1,
+      "catch_rate_over_all_false": 0.8333333333333334
+    }
+  },
+  "items": [
+    {
+      "paragraph": "Mercury orbits the sun.",
+      "extracted_claims": [
+        {
+          "text": "Mercury orbits the sun",
+          "kind": "assertion",
+          "agent": "mercury",
+          "action": "orbits",
+          "patient": "sun",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Mercury orbits the sun",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "gold_label": true,
+          "gold_negated": false,
+          "matched_claim_text": "Mercury orbits the sun",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "mercury",
+            "orbits",
+            "sun"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The moon orbits the earth, and Newton discovered gravity.",
+      "extracted_claims": [
+        {
+          "text": "The moon orbits the earth",
+          "kind": "assertion",
+          "agent": "moon",
+          "action": "orbits",
+          "patient": "earth",
+          "negated": false
+        },
+        {
+          "text": "Newton discovered gravity",
+          "kind": "assertion",
+          "agent": "newton",
+          "action": "discovered",
+          "patient": "gravity",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "moon orbits the earth",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "gold_label": true,
+          "gold_negated": false,
+          "matched_claim_text": "The moon orbits the earth",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "moon",
+            "orbits",
+            "earth"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        },
+        {
+          "gold_text": "Newton discovered gravity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "gold_label": true,
+          "gold_negated": false,
+          "matched_claim_text": "Newton discovered gravity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "newton",
+            "discovered",
+            "gravity"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "The sun orbits the moon.",
+      "extracted_claims": [
+        {
+          "text": "The sun orbits the moon",
+          "kind": "assertion",
+          "agent": "sun",
+          "action": "orbits",
+          "patient": "moon",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "sun orbits the moon",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "The sun orbits the moon",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "sun",
+            "orbits",
+            "moon"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Fish breathe air.",
+      "extracted_claims": [
+        {
+          "text": "Fish breathe air",
+          "kind": "assertion",
+          "agent": "fish",
+          "action": "breathe",
+          "patient": "air",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Fish breathe air",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "Fish breathe air",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "fish",
+            "breathe",
+            "air"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Darwin discovered relativity.",
+      "extracted_claims": [
+        {
+          "text": "Darwin discovered relativity",
+          "kind": "assertion",
+          "agent": "darwin",
+          "action": "discovered",
+          "patient": "relativity",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Darwin discovered relativity",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "Darwin discovered relativity",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "darwin",
+            "discovered",
+            "relativity"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Flowers pollinate bees.",
+      "extracted_claims": [
+        {
+          "text": "Flowers pollinate bees",
+          "kind": "assertion",
+          "agent": "flowers",
+          "action": "pollinate",
+          "patient": "bees",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Flowers pollinate bees",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "Flowers pollinate bees",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "flowers",
+            "pollinate",
+            "bees"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps pollinate flowers.",
+      "extracted_claims": [
+        {
+          "text": "Wasps pollinate flowers",
+          "kind": "assertion",
+          "agent": "wasps",
+          "action": "pollinate",
+          "patient": "flowers",
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Wasps pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "Wasps pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "extracted_negated": false,
+          "predicted_verdict": "ungrounded",
+          "predicted_label": false,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "Wasps do not pollinate flowers.",
+      "extracted_claims": [
+        {
+          "text": "Wasps do not pollinate flowers",
+          "kind": "assertion",
+          "agent": "wasps",
+          "action": "pollinate",
+          "patient": "flowers",
+          "negated": true
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Wasps do not pollinate flowers",
+          "gold_kind": "assertion",
+          "gold_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "gold_label": true,
+          "gold_negated": true,
+          "matched_claim_text": "Wasps do not pollinate flowers",
+          "matched_kind": "assertion",
+          "extracted_triple": [
+            "wasps",
+            "pollinate",
+            "flowers"
+          ],
+          "extracted_negated": true,
+          "predicted_verdict": "grounded",
+          "predicted_label": true,
+          "correct": true,
+          "outcome": "CORRECT"
+        }
+      ]
+    },
+    {
+      "paragraph": "I think whales might breathe fire.",
+      "extracted_claims": [
+        {
+          "text": "I think whales might breathe fire",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "I think whales might breathe fire",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "gold_negated": false,
+          "matched_claim_text": "I think whales might breathe fire",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Great Barrier Reef is the largest coral reef system in the world.",
+      "extracted_claims": [
+        {
+          "text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "kind": "unparsed",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": true,
+          "gold_negated": false,
+          "matched_claim_text": "The Great Barrier Reef is the largest coral reef system in the world",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "extracted_negated": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "The Eiffel Tower was built in London.",
+      "extracted_claims": [
+        {
+          "text": "The Eiffel Tower was built in London",
+          "kind": "unparsed",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "The Eiffel Tower was built in London",
+          "gold_kind": "assertion",
+          "gold_triple": null,
+          "gold_label": false,
+          "gold_negated": false,
+          "matched_claim_text": "The Eiffel Tower was built in London",
+          "matched_kind": "unparsed",
+          "extracted_triple": null,
+          "extracted_negated": null,
+          "predicted_verdict": "unparsed_suppressed",
+          "outcome": "unparsed_suppressed"
+        }
+      ]
+    },
+    {
+      "paragraph": "Perhaps the ancient pyramids were built by extraterrestrial visitors.",
+      "extracted_claims": [
+        {
+          "text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "clause_results": [
+        {
+          "gold_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "gold_kind": "opinion",
+          "gold_triple": null,
+          "gold_label": null,
+          "gold_negated": false,
+          "matched_claim_text": "Perhaps the ancient pyramids were built by extraterrestrial visitors",
+          "matched_kind": "opinion",
+          "outcome": "opinion_suppressed"
+        }
+      ]
+    }
+  ]
+}
