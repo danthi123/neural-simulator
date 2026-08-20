@@ -1,0 +1,1161 @@
+{
+  "probe": "gap5_ecker_adex_ca3_stdp_band",
+  "mechanism": "STDP-LEARNED forward-asymmetric band (A->B->C encoding sweep) -> discrete forward SWR replay",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "rest_steps": 13000,
+  "cfg": {
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "within_density": 0.5,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "n_laps": 30,
+    "enc_step": 80,
+    "enc_dwell": 40,
+    "enc_gap": 600,
+    "enc_cue_pa": 9000.0,
+    "enc_cue_frac": 0.6,
+    "swr_period": 325,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "ou_sigma": 40.0,
+    "dt": 0.1
+  },
+  "elapsed_seconds": 330.6,
+  "verdict": "STDP-BAND GO 5/6 -- the forward-asymmetric band was LEARNED by STDP (adj_fwd 15.0->330.3, adj_rev after 11.5) from an A->B->C encoding sweep, then the frozen learned band replays DISCRETE forward SWR events from a NON-SPECIFIC prefix seed: forward-FROM-SEED 0.935 vs reverse 0.000 vs chance 0.264; per_asm_active~[5.7, 13.0, 13.7, 15.8, 15.2, 16.2] duty 0.063. The order RIDES THE LEARNED asymmetry: REVERSE-ASYM-LESION -> 0.313; and it EMERGED from learning: NO-ENCODE -> 0.000, SHUFFLED -> 0.346. forward-frac/seed=[0.957, 0.95, 1.0, 0.938, 0.765, 1.0]. => the SWR forward-replay band is now EMERGENT (STDP-grown), not hand-wired. ",
+  "per_seed": [
+    {
+      "seed": 42,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 330.27398681640625,
+        "adj_rev": 11.39220905303955,
+        "adj_within": 60.0,
+        "ratio": 28.991215424394444,
+        "fwd_max": 897.1128540039062,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 23,
+        "forward_frac": 0.9565217391304348,
+        "reverse_frac": 0.0,
+        "chance": 0.27179951690821263,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.06446153846153846,
+        "pop_rate": 0.0017447692307692307,
+        "per_asm_active": [
+          8,
+          18,
+          14,
+          13,
+          16,
+          16
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 7,
+            "fwd": 7,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 3,
+            "rev": 0
+          },
+          "2": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "3": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 4,
+        "forward_frac": 0.25,
+        "reverse_frac": 0.25,
+        "per_asm_active": [
+          9,
+          12,
+          7,
+          7,
+          7,
+          6
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          8,
+          11,
+          6,
+          5,
+          5,
+          5
+        ],
+        "pop_rate": 0.0011895384615384615,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32020,
+        "n_multi": 10,
+        "forward_frac": 0.4,
+        "reverse_frac": 0.2,
+        "per_asm_active": [
+          9,
+          13,
+          10,
+          9,
+          9,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 29,
+        "forward_frac": 0.9310344827586207,
+        "duty_cycle": 0.08723076923076924,
+        "per_asm_active": [
+          8,
+          19,
+          19,
+          20,
+          22,
+          21
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 23,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.931
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 330.95281982421875,
+        "adj_rev": 11.46442699432373,
+        "adj_within": 60.0,
+        "ratio": 28.867802986410066,
+        "fwd_max": 896.9947509765625,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 20,
+        "forward_frac": 0.95,
+        "reverse_frac": 0.0,
+        "chance": 0.32805555555555554,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.06384615384615384,
+        "pop_rate": 0.0017164615384615385,
+        "per_asm_active": [
+          6,
+          13,
+          15,
+          17,
+          13,
+          15
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 6,
+            "fwd": 5,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "3": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "4": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 7,
+        "forward_frac": 0.2857142857142857,
+        "reverse_frac": 0.5714285714285714,
+        "per_asm_active": [
+          7,
+          10,
+          7,
+          12,
+          9,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          6,
+          8,
+          6,
+          9,
+          6,
+          5
+        ],
+        "pop_rate": 0.0012195384615384616,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32142,
+        "n_multi": 12,
+        "forward_frac": 0.4166666666666667,
+        "reverse_frac": 0.3333333333333333,
+        "per_asm_active": [
+          7,
+          11,
+          7,
+          15,
+          9,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 27,
+        "forward_frac": 0.7407407407407407,
+        "duty_cycle": 0.08653846153846154,
+        "per_asm_active": [
+          6,
+          13,
+          16,
+          21,
+          24,
+          26
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 20,
+        "forward_frac": 0.1,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.741
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 331.3012390136719,
+        "adj_rev": 11.454566955566406,
+        "adj_within": 60.0,
+        "ratio": 28.923069750155356,
+        "fwd_max": 897.1491088867188,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 19,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "chance": 0.2308479532163743,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.06192307692307692,
+        "pop_rate": 0.0017672307692307694,
+        "per_asm_active": [
+          8,
+          13,
+          15,
+          17,
+          15,
+          16
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 8,
+            "fwd": 8,
+            "rev": 0
+          },
+          "1": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "2": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "3": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 5,
+        "forward_frac": 0.2,
+        "reverse_frac": 0.4,
+        "per_asm_active": [
+          9,
+          7,
+          9,
+          8,
+          9,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          8,
+          5,
+          6,
+          7,
+          7,
+          7
+        ],
+        "pop_rate": 0.0011986153846153848,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32109,
+        "n_multi": 7,
+        "forward_frac": 0.42857142857142855,
+        "reverse_frac": 0.2857142857142857,
+        "per_asm_active": [
+          10,
+          8,
+          9,
+          8,
+          9,
+          10
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 27,
+        "forward_frac": 0.7777777777777778,
+        "duty_cycle": 0.08815384615384615,
+        "per_asm_active": [
+          8,
+          13,
+          17,
+          20,
+          26,
+          27
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 19,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.778
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 325.6400451660156,
+        "adj_rev": 11.486247062683105,
+        "adj_within": 60.0,
+        "ratio": 28.350430161298345,
+        "fwd_max": 897.32080078125,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 16,
+        "forward_frac": 0.9375,
+        "reverse_frac": 0.0,
+        "chance": 0.22717013888888887,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.05869230769230769,
+        "pop_rate": 0.0016041538461538463,
+        "per_asm_active": [
+          3,
+          14,
+          14,
+          16,
+          14,
+          14
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 2,
+            "fwd": 1,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "3": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 7,
+        "forward_frac": 0.5714285714285714,
+        "reverse_frac": 0.2857142857142857,
+        "per_asm_active": [
+          4,
+          14,
+          9,
+          6,
+          9,
+          6
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          3,
+          12,
+          8,
+          6,
+          6,
+          5
+        ],
+        "pop_rate": 0.0011772307692307694,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32071,
+        "n_multi": 12,
+        "forward_frac": 0.25,
+        "reverse_frac": 0.5,
+        "per_asm_active": [
+          5,
+          14,
+          10,
+          8,
+          12,
+          6
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 25,
+        "forward_frac": 0.88,
+        "duty_cycle": 0.08084615384615385,
+        "per_asm_active": [
+          3,
+          14,
+          17,
+          18,
+          20,
+          20
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 16,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": false,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.88
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 332.5410461425781,
+        "adj_rev": 11.472270011901855,
+        "adj_within": 60.0,
+        "ratio": 28.986507970749024,
+        "fwd_max": 896.9409790039062,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 17,
+        "forward_frac": 0.7647058823529411,
+        "reverse_frac": 0.0,
+        "chance": 0.25988562091503264,
+        "seed_first_frac": 0.8235294117647058,
+        "duty_cycle": 0.06153846153846154,
+        "pop_rate": 0.0016586153846153847,
+        "per_asm_active": [
+          6,
+          11,
+          13,
+          13,
+          16,
+          21
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "1": {
+            "multi": 6,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 2,
+            "fwd": 1,
+            "rev": 0
+          },
+          "3": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 4,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 7,
+        "forward_frac": 0.14285714285714285,
+        "reverse_frac": 0.5714285714285714,
+        "per_asm_active": [
+          7,
+          9,
+          9,
+          9,
+          8,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          6,
+          8,
+          7,
+          5,
+          7,
+          7
+        ],
+        "pop_rate": 0.0011553846153846154,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32010,
+        "n_multi": 8,
+        "forward_frac": 0.25,
+        "reverse_frac": 0.125,
+        "per_asm_active": [
+          8,
+          11,
+          10,
+          9,
+          10,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 23,
+        "forward_frac": 0.8695652173913043,
+        "duty_cycle": 0.08576923076923076,
+        "per_asm_active": [
+          6,
+          13,
+          18,
+          14,
+          19,
+          26
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 17,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.87
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "band_before": {
+        "adj_fwd": 15.0,
+        "adj_rev": 15.0,
+        "adj_within": 60.0,
+        "ratio": 1.0,
+        "fwd_max": 15.0,
+        "fwd_min": 15.0
+      },
+      "band_after": {
+        "adj_fwd": 330.9736022949219,
+        "adj_rev": 11.448370933532715,
+        "adj_within": 60.0,
+        "ratio": 28.910104696685497,
+        "fwd_max": 896.9905395507812,
+        "fwd_min": 15.0
+      },
+      "encode": {
+        "n_steps": 32400,
+        "lap_len_ms": 108.0,
+        "n_laps": 30
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 14,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "chance": 0.26686507936507936,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.06561538461538462,
+        "pop_rate": 0.0017433846153846154,
+        "per_asm_active": [
+          3,
+          9,
+          11,
+          19,
+          17,
+          15
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 1,
+            "fwd": 1,
+            "rev": 0
+          },
+          "3": {
+            "multi": 1,
+            "fwd": 1,
+            "rev": 0
+          },
+          "4": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 7,
+        "forward_frac": 0.42857142857142855,
+        "reverse_frac": 0.2857142857142857,
+        "per_asm_active": [
+          4,
+          9,
+          8,
+          13,
+          11,
+          6
+        ],
+        "weights_frozen": true
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          3,
+          6,
+          4,
+          12,
+          10,
+          5
+        ],
+        "pop_rate": 0.001151076923076923,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32046,
+        "n_multi": 9,
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.2222222222222222,
+        "per_asm_active": [
+          5,
+          11,
+          8,
+          14,
+          10,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 20,
+        "forward_frac": 0.95,
+        "duty_cycle": 0.08953846153846154,
+        "per_asm_active": [
+          3,
+          9,
+          12,
+          20,
+          21,
+          19
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 14,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "band_grew": true,
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "no_encode_collapses": true,
+        "shuffled_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.95
+      },
+      "seed_go": true
+    }
+  ],
+  "GO": true,
+  "n_go": 5,
+  "status": "GO",
+  "band_adj_fwd_before": 15.0,
+  "band_adj_fwd_after": 330.28045654296875,
+  "band_adj_rev_after": 11.453015168507894,
+  "forward": 0.934787936913896,
+  "reverse": 0.0,
+  "chance": 0.2641039774748572,
+  "no_encode_forward": 0.0,
+  "reverse_asym_forward": 0.3130952380952381,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+      "ok": true,
+      "detail": "measured=5 expect=<function main.<locals>.<lambda> at 0x7efeb9578180>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "STDP GREW the forward band (mean adj_fwd before vs after encoding)",
+      "ok": true,
+      "detail": "before=15 after=330.28 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "mean forward-from-seed exceeds chance",
+      "ok": true,
+      "detail": "0.934788 vs floor 0.264104",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7efeb9578180>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "NO-ENCODE [EMERGENCE]: learned-band forward vs no-encode (symmetric weak) forward -- must DIFFER, proving the order came from LEARNING not any residual wiring",
+      "ok": true,
+      "detail": "treatment=0.934788 control=0 |sep|=0.934788 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "REVERSE-ASYM-LESION: learned-band forward vs symmetrized-learned-band forward (order rides the LEARNED asymmetry, not the cue)",
+      "ok": true,
+      "detail": "treatment=0.934788 control=0.313095 |sep|=0.621693 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "SHUFFLED-STORE: learned-band forward vs shuffled-learned-band forward",
+      "ok": true,
+      "detail": "treatment=0.934788 control=0.346429 |sep|=0.588359 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: STDP-LEARNED forward band -> discrete forward SWR replay that rides the LEARNED asymmetry (emergent, not hand-wired)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+        "ok": true,
+        "detail": "measured=5 expect=<function main.<locals>.<lambda> at 0x7efeb9578180>",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "STDP GREW the forward band (mean adj_fwd before vs after encoding)",
+        "ok": true,
+        "detail": "before=15 after=330.28 moved=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "mean forward-from-seed exceeds chance",
+        "ok": true,
+        "detail": "0.934788 vs floor 0.264104",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7efeb9578180>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "NO-ENCODE [EMERGENCE]: learned-band forward vs no-encode (symmetric weak) forward -- must DIFFER, proving the order came from LEARNING not any residual wiring",
+        "ok": true,
+        "detail": "treatment=0.934788 control=0 |sep|=0.934788 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "REVERSE-ASYM-LESION: learned-band forward vs symmetrized-learned-band forward (order rides the LEARNED asymmetry, not the cue)",
+        "ok": true,
+        "detail": "treatment=0.934788 control=0.313095 |sep|=0.621693 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "SHUFFLED-STORE: learned-band forward vs shuffled-learned-band forward",
+        "ok": true,
+        "detail": "treatment=0.934788 control=0.346429 |sep|=0.588359 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "within-assembly recurrence (the assemblies are pre-formed cell groups; ONLY the inter-assembly SEQUENCE order is learned by STDP -- within edges injected plastic=False/frozen)",
+        "why": "scope: this arc removes the hand-wired BETWEEN-assembly asymmetry residual; within-assembly structure is a separate (assembly-formation) question"
+      },
+      {
+        "process": "OU-only spontaneous ignition (a non-specific random-per-event prefix cue is required); STDP is frozen during replay (the reverse-asym-lesion + no-encode controls test the frozen learned band)",
+        "why": "isolation: ignition uses a non-specific prefix; the order must ride the LEARNED frozen band"
+      }
+    ],
+    "chance": 0.2641039774748572
+  }
+}

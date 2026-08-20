@@ -1,6 +1,7 @@
 ---
 type: finding
-status: live
+status: superseded
+superseded_by: research/findings/2026-08-20-ecker-ca3-forward-band-LEARNED-by-STDP-emergent-swr-replay-6seed-GO.md
 date: 2026-08-20
 mechanism: swr-sequence-replay
 lane: EPISODIC

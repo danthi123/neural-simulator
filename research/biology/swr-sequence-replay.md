@@ -4,7 +4,7 @@ id: swr-sequence-replay
 mechanism: Sharp-wave/ripple replay -- the waking spike SEQUENCE is re-emitted in the same temporal ORDER, time-compressed into the ripple
 status: established
 last_verified: 2026-07-31
-current_finding: research/findings/2026-07-25-gap5-ecker-nS-recurrent-model-SCAFFOLD-built-dt-fixed-recurrent-transmission-blocker.md
+current_finding: research/findings/2026-08-20-ecker-ca3-forward-band-LEARNED-by-STDP-emergent-swr-replay-6seed-GO.md
 current_status: "ON-SUBSTRATE 6/6: a cue-triggered localized traveling bump on a Gaussian near-diagonal CA3 band of AdEx neurons decodes as a directional trajectory, weighted-corr DECODE_r = 1.000 on all 6 seeds, bump_width 0.8 with width_growth ~ 0. Band REQUIRED (no-band 0.000); forward ASYMMETRY required (symmetric band + middle cue 0.139, width 23 and growing). Adaptation and the PVBC pool are INERT in this regime."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt
