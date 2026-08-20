@@ -1,0 +1,8 @@
+== gate on FIX (expect pass) ==
+..                                                                       [100%]
+2 passed in 0.41s
+== gate on OLD code (git stash sim/bridge.py; expect FAIL) ==
+tests/test_set_pathway_weights_backend_safe.py::test_..._survives_tocoo_hostile_container FAILED
+E   TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` ...
+1 failed, 1 passed   # fails in the failing direction -> registry-legitimate
+== no-regression: tests/test_determinism.py -> 9 passed ==

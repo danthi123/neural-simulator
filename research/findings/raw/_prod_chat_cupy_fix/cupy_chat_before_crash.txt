@@ -1,0 +1,14 @@
+# PRODUCTION default chat, cupy backend, PRE-FIX — reproduced twice:
+#  (1) via audit_affect_coloring.py, (2) via a pure-default brain_chat() repro.
+STATUS: CRASH -> HTTPException 400: failed to load brain 'tiny-demo' with renderer 'qwen':
+  TypeError: Implicit conversion to a NumPy array is not allowed. Please use `.get()` ...
+
+# Underlying stack (the 400 wraps this):
+sim/bridge.py:4823  set_pathway_weights  ->  self.cp_connections.tocoo(copy=False)
+scipy/sparse/_compressed.py:996  tocoo
+scipy/sparse/_sputils.py:147  getdata  ->  np.array(obj)   # obj = a cupy .data array
+cupy/_core/core.pyx:1760  __array__  ->  TypeError: Implicit conversion to a NumPy array is not allowed
+
+# Reached on EVERY production GPU chat build:
+#   tiny-demo -> BrainConversationalAgent -> make_pool1_onebrain_composer
+#     -> _bind_parser_onto_pool -> pool.set_pathway_weights("onebrain_parser", add_missing=True)

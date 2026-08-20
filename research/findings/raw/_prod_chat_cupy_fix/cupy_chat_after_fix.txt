@@ -1,0 +1,4 @@
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|██████████| 290/290 [00:00<00:00, 4279.41it/s]
+STATUS: OK  status_code= 200
+answer: The dog chased the cat. The cat eats fish.
+renderer_source: off-bridge Qwen-0.5B (spiking forward)

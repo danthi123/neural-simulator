@@ -64,7 +64,7 @@ def _check_text(log_text, modules):
         named = re.findall(r"`?([a-z_]+)`?", gate)
         if modules and not any(m in modules for m in named):
             # a gate elsewhere (hook, dispatcher, queue) is legitimate -- only flag when nothing resolves at all
-            if not re.search(r"dispatcher|hook|queue|pre-commit|heartbeat|experiment|claim|biology|lab|registry|gates/__init__|tools/[\w.-]+\.(?:sh|py)", gate, re.I):
+            if not re.search(r"dispatcher|hook|queue|pre-commit|heartbeat|experiment|claim|biology|lab|registry|gates/__init__|tools/[\w.-]+\.(?:sh|py)|tests/[\w.-]+\.py", gate, re.I):
                 problems.append("FAILURE_LOG %s: gate %r resolves to no module in tools/gates/ and names no "
                                 "other enforcement point." % (date, gate[:50]))
     return problems
@@ -106,6 +106,10 @@ def selftest():
         bad.append("FALSE POSITIVE: flagged a row naming a real module")
     if _check_text("| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | dispatcher exit-status |\n", mods):
         bad.append("FALSE POSITIVE: flagged a row naming a non-module enforcement point")
+    if _check_text("| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | `tests/test_foo.py` regression |\n", mods):
+        bad.append("FALSE POSITIVE: flagged a row naming a pytest regression test")
+    if not _check_text("| d | f | g |\n|---|---|---|\n| 2026-01-01 | x | fixed it somehow |\n", mods):
+        bad.append("did NOT catch a gate column naming no enforcement point at all")
     with tempfile.TemporaryDirectory():
         pass
     return bad

@@ -4820,10 +4820,26 @@ class SimulationBridge:
             new_post = np.array(new_post_list, dtype=np.int64)
             new_w = np.array(new_w_list, dtype=np.float32)
 
-            existing_coo = self.cp_connections.tocoo(copy=False)
-            all_pre = cp.concatenate([existing_coo.row, cp.asarray(new_pre)])
-            all_post = cp.concatenate([existing_coo.col, cp.asarray(new_post)])
-            all_w = cp.concatenate([existing_coo.data, cp.asarray(new_w)])
+            # Backend-safe COO of the existing CSR. On the cupy backend
+            # self.cp_connections can arrive here as a SciPy CSR whose .data is a
+            # cupy array (a hybrid container produced by the onebrain-parser pool
+            # bind). SciPy's pure-Python .tocoo() then calls np.array() on that cupy
+            # .data and raises "Implicit conversion to a NumPy array is not allowed",
+            # which 400'd every production GPU chat build (tiny-demo -> qwen ->
+            # make_pool1_onebrain_composer -> _bind_parser_onto_pool). Rebuild the COO
+            # from the host CSR arrays already decoded above (indptr/indices) and the
+            # current host `data`, then move to the backend explicitly — correct for
+            # both a SciPy-hybrid and a cupyx container, and equivalent (CSR order
+            # preserved) to the old .tocoo() on the numpy backend.
+            existing_row_host = np.repeat(
+                np.arange(n_rows, dtype=np.int64), np.diff(indptr).astype(np.int64))
+            existing_col_host = np.asarray(indices, dtype=np.int64)
+            existing_data_host = np.asarray(data)   # `data` = current (updated) host weights
+            existing_row_cp = cp.asarray(existing_row_host)
+            existing_col_cp = cp.asarray(existing_col_host)
+            all_pre = cp.concatenate([existing_row_cp, cp.asarray(new_pre)])
+            all_post = cp.concatenate([existing_col_cp, cp.asarray(new_post)])
+            all_w = cp.concatenate([cp.asarray(existing_data_host), cp.asarray(new_w)])
             n = self.core_config.num_neurons
             coo = csp.coo_matrix((all_w, (all_pre, all_post)), shape=(n, n))
             self.cp_connections = coo.tocsr()
@@ -4868,7 +4884,7 @@ class SimulationBridge:
                 _old_mask = getattr(self, "cp_plastic_mask", None)
                 _old_gain = getattr(self, "cp_plasticity_rate_gain", None)
                 self._remap_gate_indices_after_rebuild(
-                    existing_coo.row, existing_coo.col,
+                    existing_row_cp, existing_col_cp,
                     old_gain=_old_gain if (_old_gain is not None
                                            and _old_gain.shape[0] != new_nnz) else None,
                     old_mask=_old_mask if (_old_mask is not None

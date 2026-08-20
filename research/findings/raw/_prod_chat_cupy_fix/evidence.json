@@ -1,0 +1,19 @@
+{
+  "backend": "cupy (production repro on GPU) + numpy (gate + determinism suite)",
+  "device": "NVIDIA GeForce RTX 3090 (23.5 GB) for the cupy production-chat repro; CPU for the pytest gate",
+  "provenance": {
+    "runner": "hand-authored evidence; production repro = webapp.server.brain_chat(BrainChatRequest(session, message)) with pure defaults on SIM_BACKEND=cupy; gate = pytest tests/test_set_pathway_weights_backend_safe.py on SIM_BACKEND=numpy",
+    "seed": 42,
+    "git_sha_parent": "0706dfe96",
+    "command": "SIM_BACKEND=cupy CUDA_VISIBLE_DEVICES=0 PYTHONPATH=<worktree> python repro_prod_chat_cupy.py ; SIM_BACKEND=numpy pytest tests/test_set_pathway_weights_backend_safe.py"
+  },
+  "bug": "production default chat (tiny-demo + qwen) 400-crashes on the cupy backend",
+  "root_cause": "sim/bridge.py:4823 set_pathway_weights(add_missing=True) called self.cp_connections.tocoo() on a SciPy-CSR-holding-cupy-.data hybrid; SciPy's tocoo does np.array(cupy) -> TypeError",
+  "reached_via": "tiny-demo -> make_pool1_onebrain_composer -> _bind_parser_onto_pool -> set_pathway_weights('onebrain_parser', add_missing=True)",
+  "why_invisible": "the onebrain-parser bind (#43) + the whole faculty audit were verified on numpy only; the cupy production path was never executed",
+  "before": {"status_code": 400, "error": "TypeError: Implicit conversion to a NumPy array is not allowed"},
+  "after":  {"status_code": 200, "answer": "The dog chased the cat. The cat eats fish.", "renderer": "off-bridge Qwen-0.5B (spiking forward)"},
+  "fix": "rebuild the existing COO from the host CSR arrays (indptr/indices/data) the function already decodes; drop the fragile .tocoo(); equivalent on numpy (CSR order preserved), correct on cupy",
+  "gate": "tests/test_set_pathway_weights_backend_safe.py — passes on fix, fails on old code with the exact error (CPU-runnable via a tocoo-raising proxy)",
+  "no_regression": {"determinism": "9 passed", "preexisting_failures": "3 cupy-only .get() tests in test_set_pathway_weights.py, identical fail on pre-edit code"}
+}
