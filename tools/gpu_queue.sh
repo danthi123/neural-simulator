@@ -18,9 +18,15 @@ set -e
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 QDIR=research/queue; QUEUE=$QDIR/gpu.queue; PAUSE=$QDIR/GPU_PAUSE
 RUNNING=$QDIR/gpu.running; DPID=$QDIR/gpu_queue.dpid; LOG=$QDIR/gpu_queue.log
-mkdir -p "$QDIR"; touch "$QUEUE"
+QLOCK=$QDIR/.gpu_queue.lock
+mkdir -p "$QDIR"; touch "$QUEUE" "$QLOCK"
 MIN_FREE=${GPU_MIN_FREE_MIB:-3000}
-freevram() { nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1; }
+# `timeout` is load-bearing: when the 3090 falls off the bus (a known failure here) `nvidia-smi` HANGS rather than
+# erroring, which would block the dispatcher forever inside the contention guard (the "alive but not dequeuing" wedge,
+# hit twice 2026-08-20). With a timeout it returns empty -> the guard sleeps + retries until the GPU recovers.
+freevram() { timeout 8 nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits 2>/dev/null | head -1; }
+# Serialise every queue read-modify-write: `add` (>> append) racing the daemon's pop (tail>tmp;mv) could clobber a
+# concurrently-added job (the "queued job vanished without a START line" wedge). flock makes add + pop mutually exclusive.
 
 daemon() {
   set +e   # a long-running dispatcher must NOT die on a single non-zero (e.g. `[ -f PAUSE ] && continue`)
@@ -32,8 +38,8 @@ daemon() {
     # contention guard: wait for VRAM headroom (auto-yields to a game / another run) and respect pause
     while :; do [ -f "$PAUSE" ] && break; f=$(freevram); [ "${f:-0}" -ge "$MIN_FREE" ] && break; sleep 12; done
     [ -f "$PAUSE" ] && continue
-    # pop the job atomically
-    tail -n +2 "$QUEUE" > "$QUEUE.tmp" 2>/dev/null && mv "$QUEUE.tmp" "$QUEUE"
+    # pop the job atomically (flock so a concurrent `add` append is not clobbered by this rewrite)
+    ( flock 9; tail -n +2 "$QUEUE" > "$QUEUE.tmp" 2>/dev/null && mv "$QUEUE.tmp" "$QUEUE" ) 9>"$QLOCK"
     echo "$(date '+%F %T') START: $job" >> "$LOG"
     setsid bash -c "$job" >> "$LOG" 2>&1 & jpid=$!   # own process GROUP so pause --now can kill the whole job tree (frees VRAM)
     printf '%s\t%s\n' "$jpid" "$job" > "$RUNNING"
@@ -51,7 +57,7 @@ case "${1:-}" in
   __daemon) daemon ;;
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
-    printf '%s\n' "$2" >> "$QUEUE"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;
+    ( flock 9; printf '%s\n' "$2" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;
   pause)
     touch "$PAUSE"
     # --now: reclaim the GPU immediately. Retry the running-job lookup briefly (the daemon writes $RUNNING just
