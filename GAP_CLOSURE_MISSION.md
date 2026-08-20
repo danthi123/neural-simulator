@@ -13,7 +13,14 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-19 (CONTINUATION — READ FIRST; live resume point; supersedes the earlier 2026-08-19 header below)
+## ⭐ STATE OF THE PROJECT — 2026-08-20 (POST-OVERNIGHT — READ FIRST; live resume point; supersedes all headers below)
+
+> **North-star (unchanged):** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine. Near-term reframe = fluent open speech + surpass-LLM via a CONTINUOUS substrate (read the ⭐⭐ reframe block just below).
+> **DE-RISK work is COMPLETE across every frontier (2026-08-20 overnight, ~30 commits, all verified).** Continuous engine LIVE on cupy (feeling + trains-of-thought both load-bearing; wander fixed → inhibition-of-return + gain-floor → full 4/4, wired live). LEARN-THROUGH-USE = 6-seed GO (emergent pattern-completion replay closes specificity). FLUENCY moat de-risked end-to-end (extraction→entail→hedge→synonym→reporting all closed → COMPOSED, ready to wire live). Per-neuron-SFA diagnosed (wrong locus; gain-IOR is correct). gpu_queue dispatcher wedge FIXED. Mouth/deep-credit resolved.
+> **CURRENT FRONTIER = INTEGRATION (all de-risks done; what remains needs the live-brain-state connection or an owner UX call):** (1) port emergent-replay + idle consolidation to guarded default-off `sim/` kernels + wire under the continuous idle tick (connect to the D5 episodic organ — a NAIVE replay would be non-specific, so it MUST use the emergent-replay specificity mechanism); (2) wire the composed fluency verifier into the live moat + **widen Qwen** (owner UX: how far, given honesty=STATE-fidelity); (3) the continuous-default flip (owner UX).
+> **THE SINGLE NEXT COMMAND (recommended, unblocked, no owner input needed):** start the `sim/`-kernel port of the continuous mechanisms — `git -C /home/dant123/Projects/sim-worktrees/gate-b-v2-clean log --oneline -30` to see the overnight batch, then read `research/findings/2026-08-20-emergent-pattern-completion-replay-*` + `webapp/continuous_engine.py`, and add the emergent-replay's Hebbian-assembly + tag-and-capture + metaplastic-gate as guarded default-off `sim/` kernels. Everything else is on the board / `scratchpad/OVERNIGHT_STATE.md`.
+
+## ⭐ STATE OF THE PROJECT — 2026-08-19 (CONTINUATION — historical; superseded by the 2026-08-20 header above)
 
 > **⭐⭐ STRATEGIC REFRAME (2026-08-19, owner) — read the ⭐⭐ block atop `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` + the reframe in `ROADMAP.md`.** Long-term north-star UNCHANGED (onebrain, all crutches burned down, emergent).
 > Near-term LOOSENED to reach fluent open-ended speech sooner + lean into "surpass-LLM-limits":
