@@ -1,0 +1,34 @@
+{
+ "run_id": "1787260373-2207269",
+ "runner": "research/runners/_gap5_d5_latch_self_termination_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/d5-latch-selfterm/research/runners/_gap5_d5_latch_self_termination_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_d5_latch_selfterm/seed42.json"
+ ],
+ "git_sha": "2d9cf934d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T17:12:53",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d5_latch_selfterm/seed42.json"
+}
