@@ -1,0 +1,56 @@
+{
+  "seeds": [
+    42,
+    43,
+    100
+  ],
+  "n_go": 0,
+  "go_flags": [
+    false,
+    false,
+    false
+  ],
+  "backend": "cupy",
+  "per_seed": {
+    "42": {
+      "COFIRE": false,
+      "DISCRETE": true,
+      "SPECIFIC": false,
+      "TEETH": true,
+      "NOCUE_SILENT": true,
+      "dog_cofire": 0.0,
+      "cat_cofire": 0.0,
+      "dog_terminate_ratio": 0.0,
+      "lesion_cofire": 0.0,
+      "nocue_cofire": 0.0,
+      "dog_other_fire": 0.0
+    },
+    "43": {
+      "COFIRE": false,
+      "DISCRETE": true,
+      "SPECIFIC": false,
+      "TEETH": true,
+      "NOCUE_SILENT": true,
+      "dog_cofire": 0.0,
+      "cat_cofire": 0.0,
+      "dog_terminate_ratio": 0.0,
+      "lesion_cofire": 0.0,
+      "nocue_cofire": 0.0,
+      "dog_other_fire": 0.0
+    },
+    "100": {
+      "COFIRE": false,
+      "DISCRETE": true,
+      "SPECIFIC": false,
+      "TEETH": true,
+      "NOCUE_SILENT": true,
+      "dog_cofire": 0.0,
+      "cat_cofire": 0.0,
+      "dog_terminate_ratio": 0.0,
+      "lesion_cofire": 0.0,
+      "nocue_cofire": 0.0,
+      "dog_other_fire": 0.0
+    }
+  },
+  "note": "derived from the banked per-seed seed{42,43,100}.json (all cupy); regenerated to record backend"
+}

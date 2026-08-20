@@ -1,0 +1,31 @@
+{
+ "run_id": "1787257615-2128015",
+ "runner": "research/runners/_gap5_ecker_reactivates_REAL_d5_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gap5_ecker_reactivates_REAL_d5_derisk.py",
+  "--seed",
+  "42",
+  "--sweep",
+  "--out",
+  "research/findings/raw/_ecker_reactivates_real_d5/seed42.json"
+ ],
+ "git_sha": "510e47c30",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T16:26:55",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 67887.8,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_ecker_reactivates_real_d5/seed42.json"
+}
