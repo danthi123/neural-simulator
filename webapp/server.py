@@ -1769,20 +1769,39 @@ async def _continuous_state_tick() -> None:
     spiking affect ladder is re-read, so the state keeps evolving with no input ('unplug the conversation and it's
     still changing'). Default-OFF behind `BRAIN_CONTINUOUS`; when off this loop is inert (byte-identical to today).
     Host code is only the clock; every mood read reuses the existing spiking affect organ. See
-    webapp/continuous_engine.py. v1 = the mood seed; next rungs (self-init wander, idle consolidation) are own tasks."""
+    webapp/continuous_engine.py. v1 = the mood seed; next rungs (self-init wander, idle consolidation) are own tasks.
+
+    PRODUCTION CONCURRENCY (2026-08-20): the tick's self-initiation CA3 wander is ~55s on the cupy substrate (its full
+    4000-step operating point). So the tick is run OFF the event loop in a thread executor — a synchronous call here
+    would freeze every chat request for the whole wander — and an in-flight guard skips a new tick while the previous
+    one is still running (with a 55s wander and IDLE_SEC=20s, ticks would otherwise pile up). CuPy work from one
+    background thread serializes on the GPU with any concurrent chat turn (no correctness race — the affect organ's
+    read is a short forward read; the per-session self-init organ is only touched by the tick)."""
     from webapp import continuous_engine as _CE
+
+    _inflight = {"on": False}  # mutable holder: at most one heavy tick runs at a time (no per-20s pile-up)
 
     async def _loop():
         while True:
             await asyncio.sleep(_CE.IDLE_SEC)
             if not _CE.continuous_enabled():
                 continue
+            if _inflight["on"]:
+                continue  # previous tick (possibly a ~55s cupy wander) still running -> don't stack another
+            _inflight["on"] = True
             try:
-                n = _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ, selfinit_getter=_get_selfinit_organ)
+                loop = asyncio.get_event_loop()
+                n = await loop.run_in_executor(
+                    None,
+                    lambda: _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ,
+                                                   selfinit_getter=_get_selfinit_organ),
+                )
                 if n:
                     print("[webapp] continuous tick: evolved %d idle session(s)" % n, flush=True)
             except Exception as e:
                 print(f"[webapp] continuous tick failed: {type(e).__name__}: {e}", flush=True)
+            finally:
+                _inflight["on"] = False
     asyncio.create_task(_loop())
 
 
@@ -3618,6 +3637,44 @@ class BrainChatRequest(BaseModel):
     reset: bool = False
 
 
+def _json_safe(obj, _path="", _bad=None):
+    """Coerce a response payload to STRICT-JSON-safe values for Starlette's JSONResponse (which serializes with
+    allow_nan=False and REJECTS NaN/Inf with 'Out of range float values are not JSON compliant'). A non-finite float
+    -- e.g. a faculty metadata read that divided 0/0 on the cupy path -- becomes None, and its key-path is collected
+    so the caller can LOG which field was non-finite (a null with a breadcrumb, never a silent 500). numpy/cupy 0-d
+    scalars are coerced to python scalars. Host/transport boundary ONLY: it touches serialization, never cognition."""
+    import math
+    if _bad is None:
+        _bad = []
+    if hasattr(obj, "item") and not isinstance(obj, (str, bytes, dict, list, tuple, bool, int, float)):
+        try:
+            obj = obj.item()  # numpy/cupy 0-d scalar -> python scalar
+        except Exception:
+            _bad.append((_path or "<root>") + "(unserializable)")
+            return None
+    if isinstance(obj, float):
+        if not math.isfinite(obj):
+            _bad.append(_path or "<root>")
+            return None
+        return obj
+    if isinstance(obj, dict):
+        return {k: _json_safe(v, ("%s.%s" % (_path, k)) if _path else str(k), _bad) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_json_safe(v, "%s[%d]" % (_path, i), _bad) for i, v in enumerate(obj)]
+    return obj
+
+
+def _safe_json_response(resp, where):
+    """Sanitize a brain_chat response for strict JSON + log any non-finite fields ONCE, so a NaN/Inf from a faculty
+    read (notably on the cupy substrate) degrades to null-with-a-breadcrumb instead of 500-ing the whole turn."""
+    bad = []
+    safe = _json_safe(resp, _bad=bad)
+    if bad:
+        print("[webapp] brain_chat(%s): %d non-finite field(s) nulled for JSON: %s"
+              % (where, len(bad), ", ".join(str(b) for b in bad[:12])), flush=True)
+    return JSONResponse(safe)
+
+
 @app.post("/api/brain-chat")
 def brain_chat(req: BrainChatRequest) -> JSONResponse:
     """One turn talking to a DEVELOPED brain (the INTERACT centerpiece).
@@ -4775,7 +4832,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = resp["answer"] + da_drives_suffix
         if da_drives_info is not None:
             resp["da_drives"] = da_drives_info
-        return JSONResponse(resp)
+        return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
@@ -4923,7 +4980,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = _resp["answer"] + da_drives_suffix
     if da_drives_info is not None:
         _resp["da_drives"] = da_drives_info
-    return JSONResponse(_resp)
+    return _safe_json_response(_resp, "single-fact")
 
 
 # ── OpenAI-API-COMPATIBLE SHIM (2026-08-19 reframe: the two-surface UX) ────────────────────────────────────────
