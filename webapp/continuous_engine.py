@@ -71,6 +71,7 @@ def forget_session(cache_key) -> None:
     _LAST_REQUEST.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
     _WANDER_BUDGET.pop(cache_key, None)
+    _WANDER_ADAPT.pop(cache_key, None)
 
 
 def inner_life(cache_key) -> list:
@@ -97,6 +98,47 @@ def recent_wander(cache_key) -> str | None:
             rec["wandered"] = None  # consume -> surfaces on exactly the next turn, not every turn after
             return w
     return None
+
+
+IOR_STRENGTH = 0.15      # multiply the just-wandered basin's curiosity gain by this (inhibition-of-return fatigue)
+IOR_RECOVERY = 0.5       # fraction of each basin's adaptation deficit recovered per tick (the fatigue wears off)
+# per-session wander inhibition-of-return: cache_key -> {"base": [gains], "adapt": [multipliers]}
+_WANDER_ADAPT: dict = {}
+
+
+def _wander_ior_enabled() -> bool:
+    """Default-ON anti-fixation for the between-turn wander. Without it the wander is content-DEGENERATE (6/6 'cat',
+    finding 2026-08-20-continuous-wander-content-degenerate) — a load-bearing coupling to a constant. IOR (fatigue the
+    just-ignited basin so the next wander explores elsewhere; GO in 2026-08-20-inhibition-of-return-breaks-the-
+    degenerate-wander) makes trains-of-thought actually move. `BRAIN_WANDER_IOR=0` restores the pre-IOR behaviour."""
+    return os.environ.get("BRAIN_WANDER_IOR", "1").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _pre_wander_ior(cache_key, organ) -> None:
+    """Before the wander: bias this session's curiosity gains AWAY from recently-visited basins (apply the adaptation).
+    SCAFFOLD NOTE: this modulates the neuromod curiosity DRIVE host-side — the de-risked stand-in for a per-neuron CA3
+    spike-frequency-adaptation current (the faithful burn-down, reusing the 2026-08-14 SFA machinery). No-op on the
+    first tick (no adaptation captured yet) and whenever gains are unavailable."""
+    st = _WANDER_ADAPT.get(cache_key)
+    g = getattr(organ, "gains_on", None)
+    if st is not None and g:
+        organ.gains_on = [float(st["base"][j] * st["adapt"][j]) for j in range(len(st["base"]))]
+
+
+def _post_wander_ior(cache_key, organ, concept) -> None:
+    """After the wander: FATIGUE the basin that just won, then RECOVER all basins toward rest. Captures the pristine
+    base gains on the first call (before any pre-adaptation has run)."""
+    g = getattr(organ, "gains_on", None)
+    agents = getattr(organ, "agents", None)
+    if not g or not agents or concept not in agents:
+        return
+    st = _WANDER_ADAPT.get(cache_key)
+    if st is None:  # first post: gains_on is the pristine base (this tick's pre was a no-op)
+        st = {"base": list(g), "adapt": [1.0] * len(g)}
+        _WANDER_ADAPT[cache_key] = st
+    i = list(agents).index(concept)
+    st["adapt"][i] *= IOR_STRENGTH                                              # fatigue the just-won basin
+    st["adapt"] = [1.0 - (1.0 - a) * (1.0 - IOR_RECOVERY) for a in st["adapt"]]  # all basins recover toward rest
 
 
 def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
@@ -127,8 +169,13 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
     wandered = None
     if selfinit_organ is not None:
         try:
+            ior = _wander_ior_enabled()
+            if ior:
+                _pre_wander_ior(cache_key, selfinit_organ)   # bias away from recently-visited basins
             out = selfinit_organ.speak(lesion=False)
             wandered = out.get("concept")
+            if ior and wandered:
+                _post_wander_ior(cache_key, selfinit_organ, wandered)  # fatigue the just-won basin
             if wandered:
                 note += "; a thought wandered to ‘%s’" % wandered
         except Exception:
