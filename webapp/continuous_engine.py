@@ -101,7 +101,10 @@ def recent_wander(cache_key) -> str | None:
 
 
 IOR_STRENGTH = 0.15      # multiply the just-wandered basin's curiosity gain by this (inhibition-of-return fatigue)
-IOR_RECOVERY = 0.5       # fraction of each basin's adaptation deficit recovered per tick (the fatigue wears off)
+IOR_RECOVERY = 0.3       # fraction of each basin's adaptation deficit recovered per tick (slower = longer memory).
+                         # 0.3 verified best in a cupy coverage sweep (wander_ior_r0.30.json): reaches 3 of the 4
+                         # stored concepts vs 2/4 at the old 0.5. The 4th never wins under any recovery/strength —
+                         # a STORE-COVERAGE residual (that basin is too weakly encoded), not an IOR-recovery one.
 # per-session wander inhibition-of-return: cache_key -> {"base": [gains], "adapt": [multipliers]}
 _WANDER_ADAPT: dict = {}
 
