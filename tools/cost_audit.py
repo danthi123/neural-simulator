@@ -24,7 +24,10 @@ ROOT = "/home/dant123/Projects/sim"
 # ad-hoc workflow scripts persist here; committed reusable ones live in .claude/workflows/. The heartbeat cares
 # about LIVE burn (scripts run this session) + the durable committed workflows — NOT ancient history from other
 # projects. So the ad-hoc glob is filtered to recently-touched scripts; committed workflows are always scanned.
-RECENT_MIN = 180  # a script touched within this many minutes counts as "live" for the heartbeat
+# Ad-hoc scripts ALREADY RAN — their tokens are spent, so an un-tiered one is a transient "tier your NEXT one"
+# note that must age out fast (a persistent ⛔ on an unfixable historical script is a false alarm, and a false
+# alarm trains the reader to ignore the check). Committed workflows ARE fixable, so their violation is persistent.
+RECENT_MIN = 25   # ad-hoc scripts touched within this window are "just launched" (a brief note, then age out)
 _AD_HOC_GLOB = "/home/dant123/.claude/projects/*/*/workflows/scripts/*.js"
 _COMMITTED_GLOB = os.path.join(ROOT, ".claude", "workflows", "*.js")
 
@@ -87,22 +90,25 @@ def _scan_files(paths):
 def main():
     now = _now_via_mtime()
     cutoff = now - RECENT_MIN * 60
-    # ad-hoc scripts: only those touched within RECENT_MIN (this session's LIVE burn); committed workflows: always.
-    ad_hoc = [f for f in glob.glob(_AD_HOC_GLOB) if os.path.exists(f) and os.path.getmtime(f) >= cutoff]
     committed = [f for f in glob.glob(_COMMITTED_GLOB) if os.path.exists(f)]
-    recent = sorted(set(ad_hoc) | set(committed))
-    problems = _scan_files(recent)
-    print("─ COST AUDIT ─ workflow scripts scanned=%d | un-tiered agent() calls=%d"
-          % (len(recent), len(problems)))
-    if problems:
-        print("⛔ COST-ROUTING VIOLATION (a burn leak, not a note) — %d agent() call(s) declared NO model tier, so"
-              " they inherited OPUS by default:" % len(problems))
-        for path, ln, snip in problems[:8]:
+    ad_hoc_recent = [f for f in glob.glob(_AD_HOC_GLOB) if os.path.exists(f) and os.path.getmtime(f) >= cutoff]
+    # COMMITTED violations are FIXABLE (tier the file + recommit) -> persistent ⛔.
+    committed_probs = _scan_files(committed)
+    # AD-HOC-recent violations ALREADY RAN (spent) -> a transient "tier your NEXT one" note that ages out.
+    adhoc_probs = _scan_files(ad_hoc_recent)
+    print("─ COST AUDIT ─ committed workflows=%d (viol %d) | ad-hoc <%dm=%d (viol %d)"
+          % (len(committed), len(committed_probs), RECENT_MIN, len(ad_hoc_recent), len(adhoc_probs)))
+    if committed_probs:
+        print("⛔ COST-ROUTING VIOLATION (fixable, so it recurs until fixed) — a COMMITTED workflow has %d agent()"
+              " call(s) with NO model tier (inherits OPUS):" % len(committed_probs))
+        for path, ln, snip in committed_probs[:6]:
             print("     • %s:%d  %s…" % (path, ln, snip))
-        print("   FIX: give each agent() an explicit model — haiku (mechanical) / sonnet (moderate) / opus (hard"
-              " judgment). See .claude/skills/cost-routing/SKILL.md. Reserve opus for the ONE stage that needs it.")
-    else:
-        print("✓ COST-CLEAN (every scanned workflow agent declares its model tier).")
+        print("   FIX: tier each agent() (haiku/sonnet/opus) + recommit. See .claude/skills/cost-routing/SKILL.md.")
+    if adhoc_probs and not committed_probs:
+        print("   ⚠ note (already spent — informational, ages out): a recently-run ad-hoc workflow was un-tiered."
+              " TIER YOUR NEXT workflow's agents (haiku/sonnet/opus); do not default to Opus.")
+    if not committed_probs and not adhoc_probs:
+        print("✓ COST-CLEAN (committed workflows tiered; no recent un-tiered ad-hoc runs).")
     return 0
 
 
