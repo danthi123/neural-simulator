@@ -107,7 +107,7 @@ token = os.environ["TOKEN"]; api = os.environ["API_URL"]
 for p in json.load(sys.stdin):
     if p["id"] <= 0: continue
     try:
-        req = urllib.request.Request(api + "/projects/" + str(p["id"]) + "/tasks", headers={"Authorization": "Bearer " + token})
+        req = urllib.request.Request(api + "/projects/" + str(p["id"]) + "/tasks?per_page=250", headers={"Authorization": "Bearer " + token})
         tasks = json.load(urllib.request.urlopen(req))
     except Exception as e:
         print("  (error " + str(p.get("title")) + ": " + str(e) + ")"); continue
@@ -121,7 +121,7 @@ for p in json.load(sys.stdin):
         print(line)
 '
         else
-            curl -s "${API_URL}/projects/${PROJECT_ID}/tasks" -H "Authorization: Bearer $TOKEN" | format_tasks
+            curl -s "${API_URL}/projects/${PROJECT_ID}/tasks?per_page=250" -H "Authorization: Bearer $TOKEN" | format_tasks
         fi
         ;;
 
