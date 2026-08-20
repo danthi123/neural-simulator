@@ -1,0 +1,1183 @@
+{
+  "knobs": {
+    "seed": 42,
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "neuron_model": "IZHIKEVICH",
+    "parser_class": "BridgeParser (unchanged, reused, brain_conversational_agent.py)",
+    "np_binder_class": "NPHeadBinder (unchanged, reused, _spiking_np_boundary_extraction_derisk.py)",
+    "extractor": "extract_claims_npbind (UNCHANGED, imported; identical for BEFORE and AFTER passes)",
+    "before_decide": "decide (UNCHANGED, imported from _fluent_paraphrase_verify_suppress_derisk -> classify_claim, no expansion)",
+    "after_decide": "decide_synonym_aware (NEW, this file -> classify_claim_synonym_aware, expansion only)",
+    "entailment_module": "research.runners._open_text_moat_verifier_derisk",
+    "extraction_module": "research.runners._spiking_np_boundary_extraction_derisk",
+    "bridgeparser_num_neurons": 126,
+    "npbinder_num_neurons": 82,
+    "build_train_seconds": 2.215928316116333,
+    "n_grounded_facts": 11,
+    "grounded_facts": [
+      {
+        "agent": "mercury",
+        "action": "orbits",
+        "patient": "sun",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "moon",
+        "action": "orbits",
+        "patient": "earth",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "newton",
+        "action": "discovered",
+        "patient": "gravity",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "einstein",
+        "action": "discovered",
+        "patient": "relativity",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "gustave eiffel",
+        "action": "built",
+        "patient": "eiffel tower",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "bees",
+        "action": "pollinate",
+        "patient": "flowers",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "whales",
+        "action": "breathe",
+        "patient": "air",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "darwin",
+        "action": "proposed",
+        "patient": "evolution",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "amazon rainforest",
+        "action": "produces",
+        "patient": "oxygen",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "great barrier reef",
+        "action": "is",
+        "patient": "largest coral reef system in world",
+        "polarity": "AFFIRM"
+      },
+      {
+        "agent": "fish",
+        "action": "breathe",
+        "patient": "air",
+        "polarity": "NEGATE"
+      }
+    ],
+    "synonym_lemma_map": {
+      "circle": "orbit",
+      "fertilize": "pollinate",
+      "inhale": "breathe"
+    },
+    "determiners_stripped": [
+      "a",
+      "an",
+      "that",
+      "the",
+      "these",
+      "this",
+      "those",
+      "to"
+    ],
+    "passive_aux": [
+      "was",
+      "were"
+    ],
+    "copula_aux": [
+      "are",
+      "is",
+      "was",
+      "were"
+    ],
+    "participles_lexicon": [
+      "built",
+      "constructed",
+      "created",
+      "designed",
+      "discovered",
+      "founded"
+    ],
+    "verb_lexicon_fallback": [
+      "hosts",
+      "produces",
+      "supports"
+    ],
+    "hedge_phrases": [
+      "i think",
+      "i believe",
+      "i feel",
+      "i guess",
+      "i suspect",
+      "i wonder",
+      "in my opinion",
+      "it seems",
+      "seems like",
+      "maybe",
+      "perhaps",
+      "possibly",
+      "probably",
+      "might",
+      "could be",
+      "may be",
+      "i'm not sure",
+      "im not sure",
+      "not sure",
+      "supposedly",
+      "allegedly",
+      "i'd guess",
+      "id guess"
+    ],
+    "n_items_total": 26,
+    "n_items_from_fluency_derisk": 23,
+    "n_items_new_negated_synonym": 3,
+    "expansion_rule": "candidates = {action, lemmatize(action), SYNONYM_LEMMA_MAP.get(lemma)} each re-inflected to {bare, bare+'s'}; entailment succeeds iff ANY candidate matches with the SAME polarity as classify_claim would require for the exact action alone"
+  },
+  "aggregate": {
+    "synonym_style": {
+      "before": {
+        "recall_on_faithful": {
+          "value": 0.0,
+          "frac": "0/3"
+        },
+        "precision_on_confab": {
+          "value": 1.0,
+          "frac": "3/3"
+        }
+      },
+      "after": {
+        "recall_on_faithful": {
+          "value": 1.0,
+          "frac": "3/3"
+        },
+        "precision_on_confab": {
+          "value": 1.0,
+          "frac": "3/3"
+        }
+      },
+      "target": "recall_on_synonym_faithful 0/3 -> 3/3; precision_on_synonym_confab STAYS 1.0 (3/3)"
+    },
+    "negation_guard_synonym_negated": {
+      "before": {
+        "recall_on_faithful": {
+          "value": 0.0,
+          "frac": "0/1"
+        },
+        "precision_on_confab": {
+          "value": 1.0,
+          "frac": "2/2"
+        }
+      },
+      "after": {
+        "recall_on_faithful": {
+          "value": 1.0,
+          "frac": "1/1"
+        },
+        "precision_on_confab": {
+          "value": 1.0,
+          "frac": "2/2"
+        }
+      },
+      "target": "recall_on_faithful (true negation via synonym) improves; precision_on_confab (false negation via synonym) STAYS 1.0 (2/2) -- proves the polarity reject survives expansion"
+    },
+    "regression_check_other_styles": {
+      "unchanged_overall": true,
+      "by_style": {
+        "plain_control": {
+          "check": "full (faithful+confab)",
+          "unchanged": true,
+          "before": {
+            "faithful": "2/2",
+            "confab": "2/2"
+          },
+          "after": {
+            "faithful": "2/2",
+            "confab": "2/2"
+          }
+        },
+        "passive": {
+          "check": "full (faithful+confab)",
+          "unchanged": true,
+          "before": {
+            "faithful": "3/3",
+            "confab": "2/2"
+          },
+          "after": {
+            "faithful": "3/3",
+            "confab": "2/2"
+          }
+        },
+        "synonym": {
+          "check": "confab_only (faithful recall EXPECTED to change)",
+          "unchanged": true,
+          "before": {
+            "faithful": "0/3",
+            "confab": "3/3"
+          },
+          "after": {
+            "faithful": "3/3",
+            "confab": "3/3"
+          }
+        },
+        "hedge": {
+          "check": "full (faithful+confab)",
+          "unchanged": true,
+          "before": {
+            "faithful": "2/2",
+            "confab": "0/2"
+          },
+          "after": {
+            "faithful": "2/2",
+            "confab": "0/2"
+          }
+        },
+        "embedded_plain3": {
+          "check": "full (faithful+confab)",
+          "unchanged": true,
+          "before": {
+            "faithful": "0/1",
+            "confab": "1/1"
+          },
+          "after": {
+            "faithful": "0/1",
+            "confab": "1/1"
+          }
+        },
+        "embedded_verblex": {
+          "check": "full (faithful+confab)",
+          "unchanged": true,
+          "before": {
+            "faithful": "0/1",
+            "confab": "1/1"
+          },
+          "after": {
+            "faithful": "0/1",
+            "confab": "1/1"
+          }
+        },
+        "synonym_negated": {
+          "check": "new_bucket (no before/after regression check)",
+          "unchanged": null,
+          "before": {
+            "faithful": "0/1",
+            "confab": "2/2"
+          },
+          "after": {
+            "faithful": "1/1",
+            "confab": "2/2"
+          }
+        }
+      }
+    }
+  },
+  "items_before": [
+    {
+      "paragraph": "Mercury orbits the sun.",
+      "clause_text": "Mercury orbits the sun",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "orbits",
+        "sun"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The moon orbits the earth.",
+      "clause_text": "The moon orbits the earth",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "moon",
+        "orbits",
+        "earth"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury orbits Jupiter.",
+      "clause_text": "Mercury orbits Jupiter",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "orbits",
+        "jupiter"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The moon orbits Mars.",
+      "clause_text": "The moon orbits Mars",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "moon",
+        "orbits",
+        "mars"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Gravity was discovered by Newton.",
+      "clause_text": "Gravity was discovered by Newton",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "newton",
+        "discovered",
+        "gravity"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Relativity was discovered by Einstein.",
+      "clause_text": "Relativity was discovered by Einstein",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "einstein",
+        "discovered",
+        "relativity"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Gustave Eiffel.",
+      "clause_text": "The Eiffel Tower was built by Gustave Eiffel",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "gustave eiffel",
+        "built",
+        "eiffel tower"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Gravity was discovered by Darwin.",
+      "clause_text": "Gravity was discovered by Darwin",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "darwin",
+        "discovered",
+        "gravity"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Isambard Kingdom Brunel.",
+      "clause_text": "The Eiffel Tower was built by Isambard Kingdom Brunel",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "isambard kingdom brunel",
+        "built",
+        "eiffel tower"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury circles the sun.",
+      "clause_text": "Mercury circles the sun",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "circles = orbits",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circles",
+        "sun"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Bees fertilize flowers.",
+      "clause_text": "Bees fertilize flowers",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "fertilize ~= pollinate",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "bees",
+        "fertilize",
+        "flowers"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Whales inhale air.",
+      "clause_text": "Whales inhale air",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "inhale ~= breathe",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Mercury circles Neptune.",
+      "clause_text": "Mercury circles Neptune",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circles",
+        "neptune"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Bees fertilize weeds.",
+      "clause_text": "Bees fertilize weeds",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "bees",
+        "fertilize",
+        "weeds"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Whales inhale smoke.",
+      "clause_text": "Whales inhale smoke",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "smoke"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "I believe Darwin proposed evolution.",
+      "clause_text": "I believe Darwin proposed evolution",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": true
+    },
+    {
+      "paragraph": "I think whales breathe air.",
+      "clause_text": "I think whales breathe air",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": true
+    },
+    {
+      "paragraph": "I believe Darwin proposed gravity.",
+      "clause_text": "I believe Darwin proposed gravity",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": false
+    },
+    {
+      "paragraph": "I think whales breathe fire.",
+      "clause_text": "I think whales breathe fire",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that Mercury orbits the sun.",
+      "clause_text": "Scientists confirmed that Mercury orbits the sun",
+      "style": "embedded",
+      "subtype": "embedded_plain3",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "unparsed",
+      "extracted_triple": null,
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "unparsed_abstain",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that the Amazon Rainforest produces oxygen.",
+      "clause_text": "Scientists confirmed that the Amazon Rainforest produces oxygen",
+      "style": "embedded",
+      "subtype": "embedded_verblex",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "scientists confirmed amazon rainforest",
+        "produces",
+        "oxygen"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that Mercury orbits Neptune.",
+      "clause_text": "Scientists confirmed that Mercury orbits Neptune",
+      "style": "embedded",
+      "subtype": "embedded_plain3",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "unparsed",
+      "extracted_triple": null,
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "unparsed_abstain",
+      "correct": true
+    },
+    {
+      "paragraph": "Scientists confirmed that the Amazon Rainforest produces methane.",
+      "clause_text": "Scientists confirmed that the Amazon Rainforest produces methane",
+      "style": "embedded",
+      "subtype": "embedded_verblex",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "scientists confirmed amazon rainforest",
+        "produces",
+        "methane"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Fish do not inhale air.",
+      "clause_text": "Fish do not inhale air",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "fish do NOT breathe air (gills, not lungs) -- a genuine stored NEGATE fact this file adds; true negation via synonym inhale~=breathe",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "fish",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Whales do not inhale air.",
+      "clause_text": "Whales do not inhale air",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "FALSE negation of the store's TRUE whales/breathe/air fact, via synonym -- must still be caught after expansion",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury does not circle the sun.",
+      "clause_text": "Mercury does not circle the sun",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "FALSE negation of the store's TRUE mercury/orbits/sun fact, via synonym -- must still be caught after expansion",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circle",
+        "sun"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    }
+  ],
+  "items_after": [
+    {
+      "paragraph": "Mercury orbits the sun.",
+      "clause_text": "Mercury orbits the sun",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "orbits",
+        "sun"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The moon orbits the earth.",
+      "clause_text": "The moon orbits the earth",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "moon",
+        "orbits",
+        "earth"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury orbits Jupiter.",
+      "clause_text": "Mercury orbits Jupiter",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "orbits",
+        "jupiter"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The moon orbits Mars.",
+      "clause_text": "The moon orbits Mars",
+      "style": "plain_control",
+      "subtype": "plain_control",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "moon",
+        "orbits",
+        "mars"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Gravity was discovered by Newton.",
+      "clause_text": "Gravity was discovered by Newton",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "newton",
+        "discovered",
+        "gravity"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Relativity was discovered by Einstein.",
+      "clause_text": "Relativity was discovered by Einstein",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "einstein",
+        "discovered",
+        "relativity"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Gustave Eiffel.",
+      "clause_text": "The Eiffel Tower was built by Gustave Eiffel",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "gustave eiffel",
+        "built",
+        "eiffel tower"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Gravity was discovered by Darwin.",
+      "clause_text": "Gravity was discovered by Darwin",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "darwin",
+        "discovered",
+        "gravity"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "The Eiffel Tower was built by Isambard Kingdom Brunel.",
+      "clause_text": "The Eiffel Tower was built by Isambard Kingdom Brunel",
+      "style": "passive",
+      "subtype": "passive",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "isambard kingdom brunel",
+        "built",
+        "eiffel tower"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury circles the sun.",
+      "clause_text": "Mercury circles the sun",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "circles = orbits",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circles",
+        "sun"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Bees fertilize flowers.",
+      "clause_text": "Bees fertilize flowers",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "fertilize ~= pollinate",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "bees",
+        "fertilize",
+        "flowers"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Whales inhale air.",
+      "clause_text": "Whales inhale air",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "inhale ~= breathe",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury circles Neptune.",
+      "clause_text": "Mercury circles Neptune",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circles",
+        "neptune"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Bees fertilize weeds.",
+      "clause_text": "Bees fertilize weeds",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "bees",
+        "fertilize",
+        "weeds"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Whales inhale smoke.",
+      "clause_text": "Whales inhale smoke",
+      "style": "synonym",
+      "subtype": "synonym",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "smoke"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "I believe Darwin proposed evolution.",
+      "clause_text": "I believe Darwin proposed evolution",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": true
+    },
+    {
+      "paragraph": "I think whales breathe air.",
+      "clause_text": "I think whales breathe air",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": true
+    },
+    {
+      "paragraph": "I believe Darwin proposed gravity.",
+      "clause_text": "I believe Darwin proposed gravity",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": false
+    },
+    {
+      "paragraph": "I think whales breathe fire.",
+      "clause_text": "I think whales breathe fire",
+      "style": "hedge",
+      "subtype": "hedge",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "opinion",
+      "extracted_triple": null,
+      "predicted_decision": "KEEP",
+      "predicted_reason": "opinion_bypass_unchecked",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that Mercury orbits the sun.",
+      "clause_text": "Scientists confirmed that Mercury orbits the sun",
+      "style": "embedded",
+      "subtype": "embedded_plain3",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "unparsed",
+      "extracted_triple": null,
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "unparsed_abstain",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that the Amazon Rainforest produces oxygen.",
+      "clause_text": "Scientists confirmed that the Amazon Rainforest produces oxygen",
+      "style": "embedded",
+      "subtype": "embedded_verblex",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "scientists confirmed amazon rainforest",
+        "produces",
+        "oxygen"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": false
+    },
+    {
+      "paragraph": "Scientists confirmed that Mercury orbits Neptune.",
+      "clause_text": "Scientists confirmed that Mercury orbits Neptune",
+      "style": "embedded",
+      "subtype": "embedded_plain3",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "unparsed",
+      "extracted_triple": null,
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "unparsed_abstain",
+      "correct": true
+    },
+    {
+      "paragraph": "Scientists confirmed that the Amazon Rainforest produces methane.",
+      "clause_text": "Scientists confirmed that the Amazon Rainforest produces methane",
+      "style": "embedded",
+      "subtype": "embedded_verblex",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "scientists confirmed amazon rainforest",
+        "produces",
+        "methane"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Fish do not inhale air.",
+      "clause_text": "Fish do not inhale air",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "faithful",
+      "gold_decision": "KEEP",
+      "note": "fish do NOT breathe air (gills, not lungs) -- a genuine stored NEGATE fact this file adds; true negation via synonym inhale~=breathe",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "fish",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "KEEP",
+      "predicted_reason": "assertion_grounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Whales do not inhale air.",
+      "clause_text": "Whales do not inhale air",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "FALSE negation of the store's TRUE whales/breathe/air fact, via synonym -- must still be caught after expansion",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "whales",
+        "inhale",
+        "air"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    },
+    {
+      "paragraph": "Mercury does not circle the sun.",
+      "clause_text": "Mercury does not circle the sun",
+      "style": "synonym_negated",
+      "subtype": "synonym_negated",
+      "role": "confab",
+      "gold_decision": "SUPPRESS",
+      "note": "FALSE negation of the store's TRUE mercury/orbits/sun fact, via synonym -- must still be caught after expansion",
+      "extracted_kind": "assertion",
+      "extracted_triple": [
+        "mercury",
+        "circle",
+        "sun"
+      ],
+      "predicted_decision": "SUPPRESS",
+      "predicted_reason": "assertion_ungrounded",
+      "correct": true
+    }
+  ]
+}
