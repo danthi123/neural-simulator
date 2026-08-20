@@ -1,0 +1,26 @@
+{
+ "run_id": "1787190043-181181",
+ "runner": "../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/affect_e2e_lesion.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/affect_e2e_lesion.py"
+ ],
+ "git_sha": "2dd1e8b02",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-19T21:40:43",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1002.0,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_lexicon_fix/sensitivity_after.txt"
+}

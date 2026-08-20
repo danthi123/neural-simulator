@@ -1,0 +1,21 @@
+{
+  "backend": "numpy (CPU) — appraisal + neural ladder read + real-handler forthcomingness are host/numpy",
+  "device": "CPU (numpy); the affect ladder read + content_plan are backend-invariant host code",
+  "provenance": {
+    "runner": "hand-authored evidence for a lexicon fix; internal-signal map + e2e lesion A/B through webapp.server.brain_chat on SIM_BACKEND=numpy",
+    "seed": 42,
+    "git_sha_parent": "2dd1e8b02",
+    "command": "SIM_BACKEND=numpy python affect13_sensitivity.py ; SIM_BACKEND=numpy python affect_e2e_lesion.py ; pytest tests/test_determinism.py"
+  },
+  "bug": "the affect appraisal salience lexicon (WARRINER, 140 words, TinyStories-curated) missed common adult strong-emotion words, so strongly-worded emotion read valence 0.0 and BOTH affect faculties (#13 coloring + #84 tone lead) went dormant",
+  "fix": "added ~40 adult strong-emotion words with Warriner-approximate sign-correct (v9,a9) norms to the seed lexicon",
+  "internal_signal_before": {"strong_positive_valence": 0.0, "strong_negative_valence": 0.0, "note": "dormant — words not in lexicon"},
+  "internal_signal_after": {"strong_positive_valence": 0.79, "level": 3, "strong_negative_valence": -0.79, "neg_level": -2},
+  "neutral_regression": "PASS — 5 neutral factual/greeting queries stay valence 0.0 level 0 (incl. 'content of the book')",
+  "e2e_real_handler": {
+    "intact_pos": "Gladly! The dog chases cat. The cat eats fish. (2 sentences, warm)",
+    "intact_neg": "Honestly — The dog chases cat. (1 sentence, curt)",
+    "lesion_neg": "Honestly — The dog chases cat. The cat eats fish. (forthcomingness collapses 1->2 under BRAIN_AFFECT_LESION)"
+  },
+  "no_regression": {"determinism": "9 passed"}
+}

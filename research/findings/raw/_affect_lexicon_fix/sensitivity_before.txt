@@ -1,0 +1,11 @@
+# BEFORE (140-word TinyStories lexicon): strong emotion read valence 0.0 -> affect DORMANT.
+# instrument: appraise_text -> read_differential -> tone_level -> content_plan ; numpy ; LADDER_NEUTRAL_TOL=0.03
+message                                        | val   | diff    | lvl | forthcoming
+neutral factual                                | +0.00 | +0.0000 | 0   | {max_sentences:4, max_elaborations:2}
+mild positive                                  | +0.36 | +0.0211 | 0   | (below tol)
+moderate positive ("wonderful, I'm happy")     | +0.81 | +0.0606 | 3   | {4, 3}  <-- CROSSES (from "happy")
+strong positive ("thrilled, delighted...")     | +0.00 | +0.0000 | 0   | DORMANT (thrilled/delighted/wonderful all MISSING)
+extreme positive ("overjoyed, ecstatic...")    | +0.00 | +0.0000 | 0   | DORMANT
+moderate negative ("sad and upset")            | -0.68 | -0.0475 | -2  | {1, 0}  <-- CROSSES (from "sad")
+strong negative ("furious, devastated...")     | +0.00 | +0.0000 | 0   | DORMANT (furious/miserable/devastated/heartbroken all MISSING)
+extreme negative ("devastated, terrified...")  | +0.00 | +0.0000 | 0   | DORMANT

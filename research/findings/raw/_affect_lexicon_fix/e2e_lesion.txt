@@ -1,0 +1,15 @@
+# End-to-end through the REAL /api/brain-chat handler (numpy, forthcomingness surface).
+# Protocol: turn 1 induces a STRONG mood (previously read valence 0 -> dormant); turn 2 = "what does the dog chase?".
+# BEFORE THE FIX both strong-emotion inductions read valence 0.0 -> POS and NEG identical (affect dormant).
+
+=== INTACT (affect on) ===  mood now DRIVES the reply:
+  [POS strong: "thrilled, delighted, overjoyed, wonderful!"] -> 'Gladly! The dog chases cat. The cat eats fish.'   (2 sentences, warm lead)
+  [NEG strong: "furious, miserable, devastated, heartbroken"] -> 'Honestly — The dog chases cat.'                  (1 sentence,  curt lead)
+  => POS != NEG: forthcomingness (2 vs 1 sentence, #13) AND the tone lead (Gladly vs Honestly, #84) both fire.
+
+=== LESIONED (BRAIN_AFFECT_LESION=1 -> #13 affect_out gate cut) ===  the #13 forthcomingness effect COLLAPSES:
+  [NEG] -> 'Honestly — The dog chases cat. The cat eats fish.'   (1 -> 2 sentences: the neg-mood suppression is gone)
+  => the suppressed 2nd sentence returns under lesion -> #13 forthcomingness is load-bearing (collapses when cut).
+  (#84 tone lead is a SEPARATE faculty with its own flag, so "Gladly/Honestly" persist here — correct, not lesioned.)
+
+no-regression: tests/test_determinism.py 9/9; neutral factual/greeting queries stay valence 0.0 (sensitivity_after.txt).

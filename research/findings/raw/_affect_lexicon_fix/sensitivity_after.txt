@@ -1,0 +1,9 @@
+# AFTER (+~40 adult strong-emotion words): strong emotion now CROSSES; neutral stays neutral.
+=== STRONG emotion (now CROSSES) ===
+strong positive   | val +0.79 | diff +0.0622 | lvl 3  | {max_sentences:4, max_elaborations:3}  CROSSES
+extreme positive  | val +0.76 | diff +0.0619 | lvl 3  | {4, 3}  CROSSES
+strong negative   | val -0.79 | diff -0.0581 | lvl -2 | {max_sentences:1, max_elaborations:0}  CROSSES
+extreme negative  | val -0.78 | diff -0.0594 | lvl -2 | {1, 0}  CROSSES
+=== NEUTRAL factual (stays neutral — no regression) ===
+factual dog / eat / where / "content of the book" / greeting  | val +0.00 | diff 0.0000 | lvl 0 | default
+NEUTRAL-REGRESSION: PASS (all neutral stayed neutral)

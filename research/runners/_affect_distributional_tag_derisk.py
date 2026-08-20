@@ -110,6 +110,26 @@ WARRINER = {
     "hurt": (2.2, 5.8), "fight": (2.9, 6.4), "lost": (2.8, 5.0), "broken": (2.9, 5.0), "ugly": (2.5, 5.0),
     "sick": (2.3, 5.0), "lose": (2.5, 5.2), "die": (1.7, 6.0), "kill": (1.9, 6.6), "hungry": (3.2, 5.4),
     "pain": (2.0, 6.0), "cruel": (2.0, 5.9), "evil": (2.2, 6.3), "dead": (1.8, 5.7), "war": (2.1, 6.4),
+    # --- adult / strong-emotion conversational vocabulary (2026-08-19 depth fix) ---
+    # WHY: the seed above was curated for the TinyStories child corpus, so it MISSED the common
+    # adult emotion words a person actually uses when they feel strongly ("thrilled", "devastated").
+    # An instrument map found the appraisal read valence 0.0 for "I am furious, devastated" and only
+    # fired on moderate words like "sad"/"happy" -> both affect faculties (#13 coloring + #84 tone,
+    # same mood) went DORMANT exactly when emotion was strongest. These are Warriner-approximate seed
+    # norms (v9,a9), sign-correct + |v-5|>=_STRONG_MARGIN, calibrated to the entries above; all are
+    # unambiguously affective so they cannot color a neutral factual query.
+    # strongly positive:
+    "thrilled": (8.1, 7.0), "delighted": (8.2, 5.6), "excited": (7.9, 6.9), "ecstatic": (8.0, 7.2),
+    "overjoyed": (8.2, 6.4), "elated": (7.8, 6.1), "wonderful": (8.2, 5.6), "joyful": (8.1, 5.9),
+    "cheerful": (7.9, 5.5), "grateful": (7.9, 4.8), "pleased": (7.6, 5.0), "amazing": (8.0, 6.0),
+    "fantastic": (8.1, 6.1), "awesome": (8.0, 6.1), "relieved": (7.2, 4.4), "hopeful": (7.5, 5.0),
+    # strongly negative:
+    "devastated": (1.7, 5.6), "furious": (2.0, 7.0), "miserable": (1.9, 4.6), "heartbroken": (1.7, 4.8),
+    "despair": (1.9, 4.8), "terrified": (2.0, 7.1), "upset": (2.4, 5.0), "anxious": (2.9, 6.0),
+    "depressed": (1.8, 4.0), "frustrated": (2.6, 5.8), "disappointed": (2.6, 4.4), "hopeless": (1.9, 4.5),
+    "grief": (1.9, 4.8), "awful": (2.0, 5.4), "terrible": (1.9, 5.4), "horrible": (1.9, 5.7),
+    "nervous": (3.2, 5.8), "stressed": (2.8, 5.9), "annoyed": (3.0, 5.4), "guilty": (2.6, 5.0),
+    "ashamed": (2.4, 4.9), "jealous": (2.7, 5.6), "disgusted": (2.3, 5.4), "anger": (2.3, 6.3),
 }
 
 STOP = set(STOPLIST) | {"was", "with", "they", "you", "we", "this", "there", "then", "them", "were", "will",
