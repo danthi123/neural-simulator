@@ -1,0 +1,17 @@
+{
+  "runner": "research/runners/_continuous_drive_loadbearing_cupy.py",
+  "seed": 42,
+  "backend": "cupy",
+  "wander_tick_s": 55.0,
+  "wander_on_concept": "cat",
+  "wander_on_consumed_second_read_is_none": true,
+  "wander_off_recent_wander_is_none": true,
+  "PASS_wander_drive_loadbearing": true,
+  "feel_v_orig": 0.8,
+  "feel_v_relaxed": 0.68,
+  "feel_diff_at_orig": 0.059722222222222225,
+  "feel_diff_at_relaxed": 0.05,
+  "feel_relaxed_moved_toward_neutral": true,
+  "PASS_feeling_drive_loadbearing": true,
+  "VERDICT": "GO"
+}

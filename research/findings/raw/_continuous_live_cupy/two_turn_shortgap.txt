@@ -1,0 +1,12 @@
+=== TURN 1: "What is a cat?" ===
+  REPLY    : The dog chased the cat. The cat eats fish.
+  MONOLOGUE: · mood reads neutral (valence +0.00, arousal +0.00) [spiking differential +0.000]
+· recalled from my store: dog chase cat
+=== idle gap ~25s (let the continuous tick wander) ===
+=== TURN 2: "Tell me about dogs." (expect a "(I'd been mulling over X.)" lead) ===
+  REPLY    : I tell you about dogs.
+  MONOLOGUE: · mood reads neutral (valence +0.00, arousal +0.00) [spiking differential +0.000]
+· recalled from my store: tell about dogs
+=== done ===
+
+[exited with code 0]

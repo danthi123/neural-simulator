@@ -1,0 +1,33 @@
+{
+  "what": "Live end-to-end verification of the continuous-state engine on the cupy chat server (webapp/server.py, SIM_BACKEND=cupy BRAIN_CONTINUOUS=1 BRAIN_CONTINUOUS_DRIVES=1).",
+  "runner": "webapp/server.py + scratchpad two-turn + long-gap curl drivers (paths in finding)",
+  "seed": 42,
+  "server_pid_note": "warm renderer 129.6s; per-session organs build on first turn",
+  "turn1_reply": "The dog chased the cat. The cat eats fish.",
+  "turn1_monologue": "mood reads neutral (valence +0.00, arousal +0.00) [spiking differential +0.000]; recalled from my store: dog chase cat",
+  "turn1_http": 200,
+  "turn2_http": 200,
+  "errors_after_fix": 0,
+  "nonfinite_breadcrumbs_after_warm": 0,
+  "continuous_tick_fired_on_live_server": true,
+  "tick_log_line": "[webapp] continuous tick: evolved 1 idle session(s)",
+  "wander_duration_s_on_cupy": 55,
+  "shortgap_s": 25,
+  "shortgap_wander_lead_seen": false,
+  "shortgap_reason": "25s idle gap < ~55s cupy CA3 wander, so recent_wander() had no concept recorded yet at turn 2 (timing, not a drive failure)",
+  "longgap_s": 85,
+  "longgap_wander_lead_seen": true,
+  "fixes": [
+    "non-blocking tick via thread executor + in-flight guard (was a 55s event-loop freeze per idle session)",
+    "_json_safe sanitizer at both brain_chat returns (Starlette allow_nan=False 500 on NaN/Inf; unit-tested vs NaN/Inf/-Inf/numpy-nan/cupy-scalar)"
+  ],
+  "longgap_turn2_answer": "(I'd been mulling over cat.) I tell you about dogs.",
+  "longgap_wander_drives": {
+    "on": true,
+    "concept": "cat",
+    "lead": "(I'd been mulling over cat.) "
+  },
+  "shortgap_is_natural_lesion": "25s gap -> no wander recorded -> no lead (the drive vanishes without a wander)",
+  "backend": "cupy",
+  "device": "cuda:0 (RTX 3090)"
+}

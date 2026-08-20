@@ -29,10 +29,28 @@ RELAX = 0.85              # per-tick appraisal relaxation toward the neutral set
 NEUTRAL = 0.0            # the appraisal setpoint the mood relaxes toward
 _INNER_LIFE_MAX = 24     # keep the last N tick records per session (a short autobiographical trace)
 
+
+def _wander_budget_per_turn() -> int:
+    """How many heavy self-init WANDERs a session may run per idle period (refilled on each real turn).
+
+    PRODUCTION-SAFETY (2026-08-20): the wander is a ~55s CA3 run on cupy. Without a bound, an idle session
+    would fire one every IDLE_SEC forever -> an abandoned server pegs the GPU indefinitely, and N idle sessions
+    serialize into N*55s tick batches. Bounding it to a small budget per idle period keeps the ALIVE-between-turns
+    behaviour a returning user sees (the wander surfaces on the next turn) while the mind SETTLES when a
+    conversation is truly abandoned. The cheap mood relaxation still runs every tick regardless. Biologically:
+    mind-wandering during rest is ongoing but not maximal-intensity forever; an abandoned rest state settles."""
+    try:
+        return max(0, int(os.environ.get("BRAIN_WANDER_BUDGET", "1")))
+    except Exception:
+        return 1
+
+
 # per-session inner-life: cache_key -> list of {t, valence, arousal, differential, note}
 _INNER_LIFE: dict = {}
 # per-session last-request wall-clock (set by the handler); "idle" = now - last >= IDLE_SEC
 _LAST_REQUEST: dict = {}
+# per-session remaining heavy-wander budget for this idle period (refilled to _wander_budget_per_turn() each turn)
+_WANDER_BUDGET: dict = {}
 
 
 def continuous_enabled() -> bool:
@@ -41,14 +59,18 @@ def continuous_enabled() -> bool:
 
 
 def mark_request(cache_key) -> None:
-    """The handler calls this each turn so the tick knows a session is active (and not to tick mid-conversation)."""
+    """The handler calls this each turn so the tick knows a session is active (and not to tick mid-conversation).
+    Also REFILLS this session's heavy-wander budget: a real turn re-opens the mind to wander again during the next
+    idle period (so a returning user sees a fresh wandered thought), then the budget drains as it wanders."""
     _LAST_REQUEST[cache_key] = time.time()
+    _WANDER_BUDGET[cache_key] = _wander_budget_per_turn()
 
 
 def forget_session(cache_key) -> None:
     """On a session reset, drop its continuous state (mirrors _SESSION_MOOD/_SESSION_SELFINIT cleanup)."""
     _LAST_REQUEST.pop(cache_key, None)
     _INNER_LIFE.pop(cache_key, None)
+    _WANDER_BUDGET.pop(cache_key, None)
 
 
 def inner_life(cache_key) -> list:
@@ -135,14 +157,20 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
             continue  # still active -> don't tick mid-turn
         try:
             organ = affect_organ_getter()
+            # The cheap mood-relax runs every tick; the EXPENSIVE self-init wander only while this session has
+            # budget left for this idle period (refilled by mark_request each turn). Once drained, the mind keeps
+            # relaxing but stops wandering -> a truly idle server does not peg the GPU with endless ~55s wanders.
             siorg = None
-            if selfinit_getter is not None:
+            if selfinit_getter is not None and _WANDER_BUDGET.get(cache_key, 0) > 0:
                 try:
                     siorg = selfinit_getter(cache_key)
                 except Exception:
                     siorg = None
-            if tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg) is not None:
+            rec = tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg)
+            if rec is not None:
                 n += 1
+                if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
+                    _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
         except Exception:
             continue
     return n
