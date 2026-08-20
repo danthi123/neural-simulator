@@ -72,3 +72,18 @@ Adversarially verified through the REAL brain_chat: byte-identical-off (no key/l
 (abstained/recalled_svo/verified unchanged with the lead on), load-bearing (consumed -> no repeat; remove the wander
 -> the lead vanishes). So the continuous state is now the brain's FOURTH drive-coupling (after #84/#85/#79) — the
 first one carried by the always-on engine rather than the current turn.
+
+## Rung 2.9 (2026-08-20) — the whole between-turn tick VERIFIED on the CUPY (production) substrate
+
+Artifact: research/findings/raw/2026-08-20-continuous-tick-cupy-verify.json (VERDICT GO)
+
+The engine landed + was adversarially verified on numpy; this confirms it runs on the PRODUCTION cupy backend, which
+the cupy sim-step fix (commit 34bbdfd7) unblocked. One idle tick was run exactly as the server's background loop calls
+it (`tick_session` against cupy-backed affect + self-initiation organs, `SIM_BACKEND=cupy`): backend confirmed cupy;
+the felt mood relaxed 0.60→0.51 / 0.40→0.34 (homeostat); the spiking affect ladder RE-READ returned a real
+differential (0.038, not the None exception-fallback); and the self-initiation CA3 wander ran its FULL 4000-step
+operating point on cupy — the path most likely to still crash post-fix — surfacing the concept 'cat' with no
+scipy-hybrid matmul crash. So on the production substrate the brain genuinely keeps FEELING (spiking re-read) and a
+THOUGHT genuinely WANDERS (stochastic multibasin CA3) between turns. Tick cost 54.9s at the full op point
+(speed-secondary). Next: run it on the live cupy chat SERVER (BRAIN_CONTINUOUS + BRAIN_CONTINUOUS_DRIVES) so the
+continual state is experienceable end-to-end through the chat endpoint, then flip toward production-default.

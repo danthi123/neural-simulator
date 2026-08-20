@@ -1,0 +1,28 @@
+{
+  "what": "End-to-end verification that the continuous-state engine idle TICK runs on the CUPY (production) substrate after the cupy sim-step fix (commit 34bbdfd7).",
+  "produced_by": "research/runners/_continuous_tick_cupy_verify.py (replicates webapp/continuous_engine.tick_session against cupy-backed affect + self-initiation organs)",
+  "runner": "research/runners/_continuous_tick_cupy_verify.py",
+  "seed": 42,
+  "command": "SIM_BACKEND=cupy BRAIN_CONTINUOUS=1 BRAIN_SELF_INITIATE_STORE=1 .venv/bin/python -m research.runners._continuous_tick_cupy_verify",
+  "env": {"SIM_BACKEND": "cupy", "BRAIN_CONTINUOUS": "1", "BRAIN_SELF_INITIATE_STORE": "1"},
+  "backend_actual": "cupy",
+  "affect_build_s": 0.0,
+  "selfinit_build_s": 0.0,
+  "tick_s": 54.95,
+  "tick_returned": true,
+  "valence_relaxed_from_0.6_to": 0.51,
+  "arousal_relaxed_from_0.4_to": 0.34,
+  "affect_differential": 0.03833333333333333,
+  "wandered_concept": "cat",
+  "note": "idle: felt state relaxing toward neutral (was +0.60, now +0.51); a thought wandered to 'cat'",
+  "PASS_relax": true,
+  "PASS_affect_spiking_read_on_cupy": true,
+  "PASS_selfinit_ca3_wander_on_cupy": true,
+  "VERDICT": "GO",
+  "preconditions": {
+    "on_cupy": {"ok": true, "detail": "sim.backend.get_backend()[1] == 'cupy'"},
+    "affect_spiking_read_returned_number": {"ok": true, "detail": "differential 0.0383, not the None exception-fallback"},
+    "selfinit_ca3_wander_ran_full_4000_steps_on_cupy": {"ok": true, "detail": "surfaced concept 'cat'; no scipy-hybrid matmul crash (the crash the cupy fix removed)"}
+  },
+  "interpretation": "The between-turn continuous tick — homeostatic mood relaxation + spiking affect re-read + self-initiation CA3 wander — executes on the production cupy backend. The 4000-step CA3 wander (the path most likely to still crash post-fix) completed. Speed (54.9s/tick) is the full operating point; speed-secondary. STDP-inert notice is a pre-existing informational log about _run_one_simulation_step not advancing the clock, unrelated to the affect/wander reads."
+}
