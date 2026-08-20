@@ -1,0 +1,1059 @@
+{
+  "probe": "gap5_ecker_adex_ca3_replay",
+  "mechanism": "Ecker-2022 AdEx CA3 assembly banded recurrence -> discrete forward SWR replay",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "rest_steps": 13000,
+  "cfg": {
+    "w_within": 60.0,
+    "w_fwd": 800.0,
+    "w_rev": 15.0,
+    "b_override": 120.0,
+    "within_density": 0.5,
+    "swr_period": 325,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "ou_sigma": 40.0,
+    "n_pvbc": 0,
+    "dt": 0.1
+  },
+  "elapsed_seconds": 121.1,
+  "verdict": "ECKER-ADEX-CA3 GO 6/6 -- the Ecker AdEx CA3 assembly store replays DISCRETE forward SWR events A->B->C from a NON-SPECIFIC random-per-event prefix seed: forward-FROM-SEED 0.928 vs reverse 0.009 vs chance 0.227; per_asm_active~[5.7, 13.7, 15.5, 19.3, 19.0, 20.8] duty 0.090. The order RIDES THE WEIGHT ASYMMETRY: REVERSE-ASYM-LESION collapses forward to 0.219, SHUFFLED-STORE to 0.231, NO-BAND to 0.000. forward-frac/seed=[0.852, 0.955, 0.864, 0.952, 0.947, 1.0]. => closes the gap#5 SWR forward-replay wall the bistable store could not (it FAILED the reverse-asym-lesion). ",
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32020,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 27,
+        "forward_frac": 0.8518518518518519,
+        "reverse_frac": 0.0,
+        "chance": 0.21702674897119342,
+        "seed_first_frac": 0.9629629629629629,
+        "duty_cycle": 0.08261538461538462,
+        "pop_rate": 0.002818769230769231,
+        "per_asm_active": [
+          8,
+          19,
+          19,
+          22,
+          21,
+          24
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 8,
+            "fwd": 8,
+            "rev": 0
+          },
+          "1": {
+            "multi": 6,
+            "fwd": 6,
+            "rev": 0
+          },
+          "2": {
+            "multi": 6,
+            "fwd": 4,
+            "rev": 0
+          },
+          "3": {
+            "multi": 4,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 18,
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.3888888888888889,
+        "per_asm_active": [
+          14,
+          24,
+          15,
+          12,
+          10,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32020,
+        "n_multi": 21,
+        "forward_frac": 0.2857142857142857,
+        "reverse_frac": 0.42857142857142855,
+        "per_asm_active": [
+          14,
+          25,
+          16,
+          11,
+          12,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          8,
+          11,
+          6,
+          5,
+          5,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 35,
+        "forward_frac": 0.6571428571428571,
+        "duty_cycle": 0.13953846153846153,
+        "per_asm_active": [
+          8,
+          19,
+          23,
+          27,
+          33,
+          37
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 27,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.657,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32142,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 22,
+        "forward_frac": 0.9545454545454546,
+        "reverse_frac": 0.0,
+        "chance": 0.2154040404040404,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.08469230769230769,
+        "pop_rate": 0.0026376923076923083,
+        "per_asm_active": [
+          6,
+          13,
+          16,
+          21,
+          19,
+          21
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "1": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "2": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "3": {
+            "multi": 5,
+            "fwd": 4,
+            "rev": 0
+          },
+          "4": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 20,
+        "forward_frac": 0.2,
+        "reverse_frac": 0.2,
+        "per_asm_active": [
+          13,
+          16,
+          18,
+          19,
+          10,
+          13
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32142,
+        "n_multi": 20,
+        "forward_frac": 0.25,
+        "reverse_frac": 0.15,
+        "per_asm_active": [
+          13,
+          19,
+          18,
+          19,
+          9,
+          10
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          6,
+          8,
+          6,
+          9,
+          6,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 34,
+        "forward_frac": 0.7941176470588235,
+        "duty_cycle": 0.13607692307692307,
+        "per_asm_active": [
+          6,
+          14,
+          19,
+          26,
+          28,
+          28
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 22,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.794,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32109,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 22,
+        "forward_frac": 0.8636363636363636,
+        "reverse_frac": 0.0,
+        "chance": 0.21856060606060607,
+        "seed_first_frac": 0.9545454545454546,
+        "duty_cycle": 0.09276923076923077,
+        "pop_rate": 0.0028046153846153846,
+        "per_asm_active": [
+          8,
+          13,
+          15,
+          20,
+          19,
+          24
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 8,
+            "fwd": 7,
+            "rev": 0
+          },
+          "1": {
+            "multi": 2,
+            "fwd": 1,
+            "rev": 0
+          },
+          "2": {
+            "multi": 5,
+            "fwd": 5,
+            "rev": 0
+          },
+          "3": {
+            "multi": 3,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 19,
+        "forward_frac": 0.21052631578947367,
+        "reverse_frac": 0.42105263157894735,
+        "per_asm_active": [
+          13,
+          16,
+          14,
+          15,
+          15,
+          13
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32109,
+        "n_multi": 19,
+        "forward_frac": 0.2631578947368421,
+        "reverse_frac": 0.2631578947368421,
+        "per_asm_active": [
+          13,
+          16,
+          15,
+          15,
+          16,
+          12
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          8,
+          5,
+          6,
+          7,
+          7,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 34,
+        "forward_frac": 0.7352941176470589,
+        "duty_cycle": 0.14784615384615385,
+        "per_asm_active": [
+          8,
+          13,
+          18,
+          23,
+          31,
+          35
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 22,
+        "forward_frac": 0.045454545454545456,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.735,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32071,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 21,
+        "forward_frac": 0.9523809523809523,
+        "reverse_frac": 0.0,
+        "chance": 0.20198412698412702,
+        "seed_first_frac": 0.9523809523809523,
+        "duty_cycle": 0.08653846153846154,
+        "pop_rate": 0.002501846153846154,
+        "per_asm_active": [
+          3,
+          14,
+          17,
+          18,
+          18,
+          19
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "1": {
+            "multi": 7,
+            "fwd": 7,
+            "rev": 0
+          },
+          "2": {
+            "multi": 5,
+            "fwd": 4,
+            "rev": 0
+          },
+          "3": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 17,
+        "forward_frac": 0.11764705882352941,
+        "reverse_frac": 0.35294117647058826,
+        "per_asm_active": [
+          7,
+          17,
+          18,
+          18,
+          15,
+          9
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32071,
+        "n_multi": 20,
+        "forward_frac": 0.15,
+        "reverse_frac": 0.4,
+        "per_asm_active": [
+          7,
+          16,
+          20,
+          20,
+          16,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          3,
+          12,
+          8,
+          6,
+          6,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 33,
+        "forward_frac": 0.8787878787878788,
+        "duty_cycle": 0.12953846153846155,
+        "per_asm_active": [
+          3,
+          15,
+          22,
+          23,
+          26,
+          30
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 21,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.879,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32010,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 19,
+        "forward_frac": 0.9473684210526315,
+        "reverse_frac": 0.05263157894736842,
+        "chance": 0.23442982456140354,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.09592307692307692,
+        "pop_rate": 0.002620307692307693,
+        "per_asm_active": [
+          6,
+          14,
+          15,
+          15,
+          18,
+          21
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 6,
+            "fwd": 6,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "3": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "5": {
+            "multi": 1,
+            "fwd": 0,
+            "rev": 1
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 21,
+        "forward_frac": 0.14285714285714285,
+        "reverse_frac": 0.09523809523809523,
+        "per_asm_active": [
+          13,
+          17,
+          15,
+          16,
+          15,
+          17
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32010,
+        "n_multi": 20,
+        "forward_frac": 0.2,
+        "reverse_frac": 0.05,
+        "per_asm_active": [
+          14,
+          18,
+          16,
+          17,
+          13,
+          16
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          6,
+          8,
+          7,
+          5,
+          7,
+          7
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 33,
+        "forward_frac": 0.8484848484848485,
+        "duty_cycle": 0.148,
+        "per_asm_active": [
+          6,
+          14,
+          21,
+          25,
+          29,
+          28
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 19,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.848,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "seed_hash_ok": true,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32046,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 16,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "chance": 0.2730902777777778,
+        "seed_first_frac": 1.0,
+        "duty_cycle": 0.09446153846153846,
+        "pop_rate": 0.0025923076923076924,
+        "per_asm_active": [
+          3,
+          9,
+          11,
+          20,
+          19,
+          16
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "1": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "2": {
+            "multi": 2,
+            "fwd": 2,
+            "rev": 0
+          },
+          "3": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "4": {
+            "multi": 4,
+            "fwd": 4,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 16,
+        "forward_frac": 0.3125,
+        "reverse_frac": 0.1875,
+        "per_asm_active": [
+          7,
+          9,
+          12,
+          20,
+          21,
+          13
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32046,
+        "n_multi": 17,
+        "forward_frac": 0.23529411764705882,
+        "reverse_frac": 0.23529411764705882,
+        "per_asm_active": [
+          7,
+          9,
+          13,
+          21,
+          22,
+          13
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          3,
+          6,
+          4,
+          12,
+          10,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 28,
+        "forward_frac": 0.8214285714285714,
+        "duty_cycle": 0.12846153846153846,
+        "per_asm_active": [
+          3,
+          9,
+          13,
+          23,
+          29,
+          28
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 16,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.821,
+        "seed_hash_ok": true
+      },
+      "seed_go": true
+    }
+  ],
+  "GO": true,
+  "n_go": 6,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fdda5d8b2e0>",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "mean forward-from-seed exceeds chance",
+      "ok": true,
+      "detail": "0.928297 vs floor 0.226749",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+      "ok": true,
+      "detail": "measured=0.008771929824561403 expect=<function main.<locals>.<lambda> at 0x7fdda5d8b2e0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "REVERSE-ASYM-LESION: real-store forward vs symmetrized-store forward (must DIFFER -> the order rides the weight asymmetry, not the cue)",
+      "ok": true,
+      "detail": "treatment=0.928297 control=0.219477 |sep|=0.70882 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "SHUFFLED-STORE: real-store forward vs shuffled-store forward",
+      "ok": true,
+      "detail": "treatment=0.928297 control=0.230694 |sep|=0.697603 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "NO-BAND: real-store forward vs no-band forward",
+      "ok": true,
+      "detail": "treatment=0.928297 control=0 |sep|=0.928297 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: discrete forward SWR replay that RIDES the encoded weight asymmetry",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fdda5d8b2e0>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "mean forward-from-seed exceeds chance",
+        "ok": true,
+        "detail": "0.928297 vs floor 0.226749",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+        "ok": true,
+        "detail": "measured=0.008771929824561403 expect=<function main.<locals>.<lambda> at 0x7fdda5d8b2e0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "REVERSE-ASYM-LESION: real-store forward vs symmetrized-store forward (must DIFFER -> the order rides the weight asymmetry, not the cue)",
+        "ok": true,
+        "detail": "treatment=0.928297 control=0.219477 |sep|=0.70882 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "SHUFFLED-STORE: real-store forward vs shuffled-store forward",
+        "ok": true,
+        "detail": "treatment=0.928297 control=0.230694 |sep|=0.697603 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "NO-BAND: real-store forward vs no-band forward",
+        "ok": true,
+        "detail": "treatment=0.928297 control=0 |sep|=0.928297 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "STDP/Hebbian plasticity (weights frozen during replay)",
+        "why": "isolation: the band is hand-wired + frozen and ignition uses a non-specific random-per-event prefix; the order still must ride the frozen asymmetry (the reverse-asym-lesion control tests exactly that)"
+      },
+      {
+        "process": "OU-only spontaneous ignition (a prefix cue is required)",
+        "why": "isolation: the band is hand-wired + frozen and ignition uses a non-specific random-per-event prefix; the order still must ride the frozen asymmetry (the reverse-asym-lesion control tests exactly that)"
+      }
+    ],
+    "chance": 0.22674927079319138
+  }
+}

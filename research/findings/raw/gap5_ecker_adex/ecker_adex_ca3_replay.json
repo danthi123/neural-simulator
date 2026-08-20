@@ -1,0 +1,288 @@
+{
+  "probe": "gap5_ecker_adex_ca3_replay",
+  "mechanism": "Ecker-2022 AdEx CA3 assembly banded recurrence -> discrete forward SWR replay",
+  "seeds": [
+    42
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "rest_steps": 13000,
+  "cfg": {
+    "w_within": 60.0,
+    "w_fwd": 800.0,
+    "w_rev": 15.0,
+    "b_override": 120.0,
+    "within_density": 0.5,
+    "swr_period": 325,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "ou_sigma": 40.0,
+    "n_pvbc": 0,
+    "dt": 0.1
+  },
+  "elapsed_seconds": 20.6,
+  "verdict": "ECKER-ADEX-CA3 GO 1/1 -- the Ecker AdEx CA3 assembly store replays DISCRETE forward SWR events A->B->C from a NON-SPECIFIC random-per-event prefix seed: forward-FROM-SEED 0.852 vs reverse 0.000 vs chance 0.217; per_asm_active~[8.0, 19.0, 19.0, 22.0, 21.0, 24.0] duty 0.083. The order RIDES THE WEIGHT ASYMMETRY: REVERSE-ASYM-LESION collapses forward to 0.333, SHUFFLED-STORE to 0.286, NO-BAND to 0.000. forward-frac/seed=[0.852]. => closes the gap#5 SWR forward-replay wall the bistable store could not (it FAILED the reverse-asym-lesion). Run the full 6-seed confirm (bar >=5/6).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "store": {
+        "w_within": 60.0,
+        "w_fwd": 800.0,
+        "w_rev": 15.0,
+        "ratio": 53.333333333333336,
+        "n_between": 32020,
+        "m_asm": 6,
+        "asm_size": 80,
+        "n_pvbc": 0
+      },
+      "go": {
+        "n_events": 40,
+        "n_multi": 27,
+        "forward_frac": 0.8518518518518519,
+        "reverse_frac": 0.0,
+        "chance": 0.21702674897119342,
+        "seed_first_frac": 0.9629629629629629,
+        "duty_cycle": 0.08261538461538462,
+        "pop_rate": 0.002818769230769231,
+        "per_asm_active": [
+          8,
+          19,
+          19,
+          22,
+          21,
+          24
+        ],
+        "n_env": 40,
+        "weights_frozen": true,
+        "by_seedpos": {
+          "0": {
+            "multi": 8,
+            "fwd": 8,
+            "rev": 0
+          },
+          "1": {
+            "multi": 6,
+            "fwd": 6,
+            "rev": 0
+          },
+          "2": {
+            "multi": 6,
+            "fwd": 4,
+            "rev": 0
+          },
+          "3": {
+            "multi": 4,
+            "fwd": 2,
+            "rev": 0
+          },
+          "4": {
+            "multi": 3,
+            "fwd": 3,
+            "rev": 0
+          },
+          "5": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        }
+      },
+      "reverse_asym_lesion": {
+        "n_multi": 18,
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.3888888888888889,
+        "per_asm_active": [
+          14,
+          24,
+          15,
+          12,
+          10,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between": 32020,
+        "n_multi": 21,
+        "forward_frac": 0.2857142857142857,
+        "reverse_frac": 0.42857142857142855,
+        "per_asm_active": [
+          14,
+          25,
+          16,
+          11,
+          12,
+          8
+        ],
+        "weights_frozen": true
+      },
+      "no_band": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          8,
+          11,
+          6,
+          5,
+          5,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "no_seed": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "adapt_lesion": {
+        "n_multi": 35,
+        "forward_frac": 0.6571428571428571,
+        "duty_cycle": 0.13953846153846153,
+        "per_asm_active": [
+          8,
+          19,
+          23,
+          27,
+          33,
+          37
+        ]
+      },
+      "permuted_assembly": {
+        "n_multi": 27,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0
+      },
+      "checks": {
+        "forward_ordered": true,
+        "ignites": true,
+        "discrete": true,
+        "reverse_lesion_collapses": true,
+        "shuffled_collapses": true,
+        "no_band_collapses": true,
+        "permuted_chance": true,
+        "no_seed_silent": true,
+        "frozen_ok": true,
+        "adapt_lesion_fwd": 0.657,
+        "seed_hash_ok": null
+      },
+      "seed_go": true
+    }
+  ],
+  "GO": true,
+  "n_go": 1,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f4d6f98f2e0>",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "mean forward-from-seed exceeds chance",
+      "ok": true,
+      "detail": "0.851852 vs floor 0.217027",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f4d6f98f2e0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "REVERSE-ASYM-LESION: real-store forward vs symmetrized-store forward (must DIFFER -> the order rides the weight asymmetry, not the cue)",
+      "ok": true,
+      "detail": "treatment=0.851852 control=0.333333 |sep|=0.518519 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "SHUFFLED-STORE: real-store forward vs shuffled-store forward",
+      "ok": true,
+      "detail": "treatment=0.851852 control=0.285714 |sep|=0.566138 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "NO-BAND: real-store forward vs no-band forward",
+      "ok": true,
+      "detail": "treatment=0.851852 control=0 |sep|=0.851852 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: discrete forward SWR replay that RIDES the encoded weight asymmetry",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "forward events ignite + discrete + forward-ordered on >= bar of the seeds",
+        "ok": true,
+        "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f4d6f98f2e0>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "mean forward-from-seed exceeds chance",
+        "ok": true,
+        "detail": "0.851852 vs floor 0.217027",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "reverse replay is absent (mean reverse_frac < 0.05)",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f4d6f98f2e0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "REVERSE-ASYM-LESION: real-store forward vs symmetrized-store forward (must DIFFER -> the order rides the weight asymmetry, not the cue)",
+        "ok": true,
+        "detail": "treatment=0.851852 control=0.333333 |sep|=0.518519 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "SHUFFLED-STORE: real-store forward vs shuffled-store forward",
+        "ok": true,
+        "detail": "treatment=0.851852 control=0.285714 |sep|=0.566138 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "NO-BAND: real-store forward vs no-band forward",
+        "ok": true,
+        "detail": "treatment=0.851852 control=0 |sep|=0.851852 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "STDP/Hebbian plasticity (weights frozen during replay)",
+        "why": "isolation: the band is hand-wired + frozen and ignition uses a non-specific random-per-event prefix; the order still must ride the frozen asymmetry (the reverse-asym-lesion control tests exactly that)"
+      },
+      {
+        "process": "OU-only spontaneous ignition (a prefix cue is required)",
+        "why": "isolation: the band is hand-wired + frozen and ignition uses a non-specific random-per-event prefix; the order still must ride the frozen asymmetry (the reverse-asym-lesion control tests exactly that)"
+      }
+    ],
+    "chance": 0.21702674897119342
+  }
+}
