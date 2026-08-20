@@ -24,7 +24,8 @@ os.environ.setdefault("BRAIN_SELF_INITIATE_STORE", "1")
 N = int(os.environ.get("WANDER_N", "6"))
 IOR_STRENGTH = float(os.environ.get("IOR_STRENGTH", "0.15"))   # multiply the just-won basin's gain by this
 IOR_RECOVERY = float(os.environ.get("IOR_RECOVERY", "0.5"))    # fraction of the deficit recovered each step
-OUT = os.path.join("research", "findings", "raw", "_continuous_live_cupy", "wander_ior.json")
+_SUF = os.environ.get("IOR_OUT_SUFFIX", "")   # distinct artifact per sweep config (e.g. "_r0.2")
+OUT = os.path.join("research", "findings", "raw", "_continuous_live_cupy", "wander_ior%s.json" % _SUF)
 
 
 def _run_arm(ior: bool):
