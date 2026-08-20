@@ -1,0 +1,324 @@
+{
+  "cases": [
+    {
+      "paragraph": "The dog chases the cat, and the cat eats the fish.",
+      "extracted_claims": [
+        {
+          "text": "The dog chases the cat",
+          "kind": "assertion",
+          "agent": "dog",
+          "action": "chases",
+          "patient": "cat",
+          "negated": false
+        },
+        {
+          "text": "the cat eats the fish",
+          "kind": "assertion",
+          "agent": "cat",
+          "action": "eats",
+          "patient": "fish",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "dog chases the cat",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "The dog chases the cat"
+        },
+        {
+          "gold_text": "cat eats the fish",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "the cat eats the fish"
+        }
+      ]
+    },
+    {
+      "paragraph": "I think the dog chases the mailman, but the bird flies the sky.",
+      "extracted_claims": [
+        {
+          "text": "I think the dog chases the mailman",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        },
+        {
+          "text": "the bird flies the sky",
+          "kind": "assertion",
+          "agent": "bird",
+          "action": "flies",
+          "patient": "sky",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "dog chases the mailman",
+          "gold": "opinion",
+          "predicted": "opinion",
+          "claim_text": "I think the dog chases the mailman"
+        },
+        {
+          "gold_text": "bird flies the sky",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "the bird flies the sky"
+        }
+      ]
+    },
+    {
+      "paragraph": "The bird flies the ocean.",
+      "extracted_claims": [
+        {
+          "text": "The bird flies the ocean",
+          "kind": "assertion",
+          "agent": "bird",
+          "action": "flies",
+          "patient": "ocean",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "bird flies the ocean",
+          "gold": "ungrounded",
+          "predicted": "ungrounded",
+          "claim_text": "The bird flies the ocean"
+        }
+      ]
+    },
+    {
+      "paragraph": "The mouse eats the cheese, because it was hungry.",
+      "extracted_claims": [
+        {
+          "text": "The mouse eats the cheese",
+          "kind": "assertion",
+          "agent": "mouse",
+          "action": "eats",
+          "patient": "cheese",
+          "negated": false
+        },
+        {
+          "text": "it was hungry",
+          "kind": "unparsed",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "mouse eats the cheese",
+          "gold": "ungrounded",
+          "predicted": "ungrounded",
+          "claim_text": "The mouse eats the cheese"
+        }
+      ]
+    },
+    {
+      "paragraph": "Maybe the cat chases the dog, and the dog sees the bone.",
+      "extracted_claims": [
+        {
+          "text": "Maybe the cat chases the dog",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        },
+        {
+          "text": "the dog sees the bone",
+          "kind": "assertion",
+          "agent": "dog",
+          "action": "sees",
+          "patient": "bone",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "cat chases the dog",
+          "gold": "opinion",
+          "predicted": "opinion",
+          "claim_text": "Maybe the cat chases the dog"
+        },
+        {
+          "gold_text": "dog sees the bone",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "the dog sees the bone"
+        }
+      ]
+    },
+    {
+      "paragraph": "The dog sees the bone, but the bird eats the cat.",
+      "extracted_claims": [
+        {
+          "text": "The dog sees the bone",
+          "kind": "assertion",
+          "agent": "dog",
+          "action": "sees",
+          "patient": "bone",
+          "negated": false
+        },
+        {
+          "text": "the bird eats the cat",
+          "kind": "assertion",
+          "agent": "bird",
+          "action": "eats",
+          "patient": "cat",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "dog sees the bone",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "The dog sees the bone"
+        },
+        {
+          "gold_text": "bird eats the cat",
+          "gold": "ungrounded",
+          "predicted": "ungrounded",
+          "claim_text": "the bird eats the cat"
+        }
+      ]
+    },
+    {
+      "paragraph": "The cat sleeps the mat, and perhaps the mouse hides the barn.",
+      "extracted_claims": [
+        {
+          "text": "The cat sleeps the mat",
+          "kind": "assertion",
+          "agent": "cat",
+          "action": "sleeps",
+          "patient": "mat",
+          "negated": false
+        },
+        {
+          "text": "perhaps the mouse hides the barn",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "cat sleeps the mat",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "The cat sleeps the mat"
+        },
+        {
+          "gold_text": "mouse hides the barn",
+          "gold": "opinion",
+          "predicted": "opinion",
+          "claim_text": "perhaps the mouse hides the barn"
+        }
+      ]
+    },
+    {
+      "paragraph": "The mouse hides the hole, and the cat does not bite the mouse.",
+      "extracted_claims": [
+        {
+          "text": "The mouse hides the hole",
+          "kind": "assertion",
+          "agent": "mouse",
+          "action": "hides",
+          "patient": "hole",
+          "negated": false
+        },
+        {
+          "text": "the cat does not bite the mouse",
+          "kind": "assertion",
+          "agent": "cat",
+          "action": "bites",
+          "patient": "mouse",
+          "negated": true
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "mouse hides the hole",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "The mouse hides the hole"
+        },
+        {
+          "gold_text": "cat does not bite the mouse",
+          "gold": "grounded",
+          "predicted": "grounded",
+          "claim_text": "the cat does not bite the mouse"
+        }
+      ]
+    },
+    {
+      "paragraph": "The cat bites the mouse.",
+      "extracted_claims": [
+        {
+          "text": "The cat bites the mouse",
+          "kind": "assertion",
+          "agent": "cat",
+          "action": "bites",
+          "patient": "mouse",
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "cat bites the mouse",
+          "gold": "ungrounded",
+          "predicted": "ungrounded",
+          "claim_text": "The cat bites the mouse"
+        }
+      ]
+    },
+    {
+      "paragraph": "I believe the mouse hides the hole, probably in the evening.",
+      "extracted_claims": [
+        {
+          "text": "I believe the mouse hides the hole",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        },
+        {
+          "text": "probably in the evening",
+          "kind": "opinion",
+          "agent": null,
+          "action": null,
+          "patient": null,
+          "negated": false
+        }
+      ],
+      "predictions_vs_gold": [
+        {
+          "gold_text": "mouse hides the hole",
+          "gold": "opinion",
+          "predicted": "opinion",
+          "claim_text": "I believe the mouse hides the hole"
+        }
+      ]
+    }
+  ],
+  "score": {
+    "tp": 4,
+    "fp": 0,
+    "fn": 0,
+    "tn": 12,
+    "precision": 1.0,
+    "recall": 1.0,
+    "opinion_false_flags": 0,
+    "grounded_false_flags": 0
+  }
+}

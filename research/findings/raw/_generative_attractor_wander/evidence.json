@@ -1,0 +1,54 @@
+{
+ "backend": "numpy",
+ "device": "CPU",
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "provenance": {
+  "runner": "research/runners/_generative_attractor_wander_derisk.py; orchestrator independent re-run",
+  "seed": 42,
+  "command": "SIM_BACKEND=numpy python -m research.runners._generative_attractor_wander_derisk"
+ },
+ "claim": "a blended 3-pattern cue settles to a NOVEL stable state (not any single stored item) via a dynamic mean+std threshold, not a sharp WTA",
+ "aggregate_3seed": {
+  "novelty_max_overlap_any_stored": 0.611,
+  "blend_balance_min_ABC": 0.611,
+  "overlap_other_nonced_stored": 0.188,
+  "fixed_point": true
+ },
+ "anti_cheats": {
+  "single_cue_control_recovered": 1.0,
+  "single_cue_others": 0.158,
+  "untrained_blend_best_overlap": 0.0
+ },
+ "verdict": "GO (gated anti-cheats clean; noise caveat -> scale up n/n_mem before fully closed)",
+ "next": "port the blended cue onto the on-substrate CA3 harness (_riii_ca3_emergent_completion_derisk._recall) with a mean+std dynamic threshold, re-measure at larger scale, then wire the idle-tick wander to occasionally drive a multi-concept blended cue",
+ "preconditions": [
+  {
+   "name": "single_cue_control_recovers_specifically",
+   "ok": true,
+   "value": 1.0,
+   "note": "a single stored cue recovers at 1.000, others ~0.16 \u2014 completion works + is specific"
+  },
+  {
+   "name": "untrained_network_does_not_fake_completion",
+   "ok": true,
+   "value": 0.0,
+   "note": "W=0 + blended cue -> overlap 0.000 with every pattern"
+  },
+  {
+   "name": "blend_is_a_stable_fixed_point",
+   "ok": true,
+   "note": "the settled blended state is unchanged under another full sweep, every seed"
+  }
+ ],
+ "caveat_reported_not_gated": {
+  "noise_cue_best": 0.908,
+  "noise_2nd_best": 0.342,
+  "note": "at this small scale a pure-noise cue occasionally lands balanced by chance (capacity limit); ruled out as fake-completion by the untrained control",
+  "amit_even_order_balance": 0.732,
+  "amit_note": "the classical odd/even mixture-state theory does NOT hold under this threshold dynamics"
+ }
+}
