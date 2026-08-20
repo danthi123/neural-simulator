@@ -827,6 +827,19 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-20 (OVERNIGHT) — CONTINUOUS-SUBSTRATE arc advanced hard + fluency-moat hardened (parallel-agent batch, all verified).**
+CONTINUOUS ENGINE is LIVE on the cupy server (both between-turn drives load-bearing) + hardened (non-blocking tick,
+JSON-safe, wander-budget). The between-turn WANDER was caught DEGENERATE (6/6 'cat' — a hollow coupling to a constant)
+and FIXED with inhibition-of-return (wired live, tuned to 3/4 coverage; the faithful per-neuron-SFA form is UNDEFINED
+at production, injection-diagnostic queued; the 4th concept is a store-coverage residual). LEARN-THROUGH-USE (3rd
+continuous property): idle-replay stabilization went UNDEFINED (non-specific) → **6-seed GO** via EMERGENT
+pattern-completion replay + a metaplastic starting-weight gate (specificity closed). FLUENCY-MOAT: extraction reaches
+free prose (NPHeadBinder) → moat entails → the HEDGE-bypass safety gap CLOSED → SYNONYM brittleness CLOSED; only
+reporting-clause residual remains before Qwen-widening is safe+fluent. DEEP-CREDIT settled (mouth-readout re-verified,
+stale 'in flight' pruned). NEXT: port emergent-replay + IOR to sim/ kernels & wire under the idle tick; the
+per-neuron-SFA injection diagnostic; wire the fluency fixes into the LIVE verifier + reporting-clause; the
+continuous-default soak → flip. See the eight 2026-08-20 findings.
+
 **2026-08-19 (LATE) — THREE DRIVE-COUPLINGS NOW LIVE + the memory-separator and deep-credit frontiers moved.**
 (A) INTEGRATION (the observe→DRIVE reframe made real): three of the brain's OWN internal signals are now load-bearing
 on the live `/api/brain-chat`, each verified by lesioning the neural driver — #84 graded AFFECT → reply TONE

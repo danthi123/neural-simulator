@@ -1,0 +1,641 @@
+{
+  "probe": "emergent_replay_specificity",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "params": {
+    "n_pre": 64,
+    "write_steps": 150,
+    "pulse_onset": 20,
+    "pulse_steps": 15,
+    "pulse_pA": 120.0,
+    "encode_drive": 900.0,
+    "recall_steps": 200,
+    "recall_drive": 2000.0,
+    "bg_drive": 0.0,
+    "n_ticks": 3,
+    "replay_prime_steps": 180,
+    "replay_write_steps": 25,
+    "replay_pre_pA": 900.0,
+    "replay_pulse_pA": 125.0,
+    "replay_lr_scale": 1.0,
+    "replay_noise_frac": 0.18,
+    "decay_steps": 13,
+    "w0": 0.3,
+    "btsp_w_max": 10.0,
+    "btsp_lr": 0.04,
+    "barrier": 2.0,
+    "beta": 0.04,
+    "pre_internal_density": 1.0,
+    "pre_internal_w0": 0.01,
+    "pre_internal_jitter": 0.1,
+    "assembly_lr": 0.8,
+    "assembly_trace_decay": 0.95,
+    "assembly_w_max": 12.0,
+    "metaplastic_gate_frac": 0.3,
+    "metaplastic_gate_scale": 0.2
+  },
+  "backend": "numpy",
+  "recall_hi": 0.015,
+  "recall_lo": 0.008,
+  "contrast": 0.4,
+  "elapsed_seconds": 6.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 336.8545227050781,
+          "w_after_idle": 75.19528198242188,
+          "pre_internal_w0": 41.959014892578125,
+          "pre_internal_w_after_encode": 22982.62890625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.045,
+          "recall_after_target": 0.01375,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.005833333333333334,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 336.8545227050781,
+          "w_after_idle": 404.776611328125,
+          "pre_internal_w0": 41.959014892578125,
+          "pre_internal_w_after_encode": 22982.62890625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.045,
+          "recall_after_target": 0.055,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.03979166666666667,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 336.8545227050781,
+          "w_after_idle": 98.9680404663086,
+          "pre_internal_w0": 41.959014892578125,
+          "pre_internal_w_after_encode": 22982.62890625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.045,
+          "recall_after_target": 0.0175,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.005833333333333334,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 39.2651481628418,
+          "pre_internal_w0": 41.959014892578125,
+          "pre_internal_w_after_encode": 41.959014892578125,
+          "pre_internal_w_after_idle": 8.538921356201172,
+          "recall_t0_target": 0.0125,
+          "recall_after_target": 0.00875,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.022500000000000003,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.09875,
+        "recall_zero_weight": 0.00125,
+        "pre_internal_w_before": 41.959014892578125,
+        "pre_internal_w_after_encode_isolated": 22982.62890625
+      }
+    },
+    {
+      "seed": 43,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 310.797607421875,
+          "w_after_idle": 63.2492561340332,
+          "pre_internal_w0": 41.91453552246094,
+          "pre_internal_w_after_encode": 21543.693359375,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.004583333333333334,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 310.797607421875,
+          "w_after_idle": 415.48736572265625,
+          "pre_internal_w0": 41.91453552246094,
+          "pre_internal_w_after_encode": 21543.693359375,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.0425,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.04020833333333334,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 310.797607421875,
+          "w_after_idle": 80.72966766357422,
+          "pre_internal_w0": 41.91453552246094,
+          "pre_internal_w_after_encode": 21543.693359375,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.004583333333333334,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 39.280174255371094,
+          "pre_internal_w0": 41.91453552246094,
+          "pre_internal_w_after_encode": 41.91453552246094,
+          "pre_internal_w_after_idle": 8.529869079589844,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.022291666666666668,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08375,
+        "recall_zero_weight": 0.0025,
+        "pre_internal_w_before": 41.91453552246094,
+        "pre_internal_w_after_encode_isolated": 21543.693359375
+      }
+    },
+    {
+      "seed": 44,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 330.97052001953125,
+          "w_after_idle": 67.35456848144531,
+          "pre_internal_w0": 41.862464904785156,
+          "pre_internal_w_after_encode": 21486.8125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.003958333333333334,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 330.97052001953125,
+          "w_after_idle": 412.9298400878906,
+          "pre_internal_w0": 41.862464904785156,
+          "pre_internal_w_after_encode": 21486.8125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.03875,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.03895833333333333,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 330.97052001953125,
+          "w_after_idle": 83.66329956054688,
+          "pre_internal_w0": 41.862464904785156,
+          "pre_internal_w_after_encode": 21486.8125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03125,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.003958333333333334,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 37.95771026611328,
+          "pre_internal_w0": 41.862464904785156,
+          "pre_internal_w_after_encode": 41.862464904785156,
+          "pre_internal_w_after_idle": 8.519271850585938,
+          "recall_t0_target": 0.005,
+          "recall_after_target": 0.00125,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.021666666666666667,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.075,
+        "recall_zero_weight": 0.00125,
+        "pre_internal_w_before": 41.862464904785156,
+        "pre_internal_w_after_encode_isolated": 21486.8125
+      }
+    },
+    {
+      "seed": 100,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 302.12884521484375,
+          "w_after_idle": 61.485111236572266,
+          "pre_internal_w0": 41.93291091918945,
+          "pre_internal_w_after_encode": 21961.796875,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.02125,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.0031249999999999997,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 302.12884521484375,
+          "w_after_idle": 345.92578125,
+          "pre_internal_w0": 41.93291091918945,
+          "pre_internal_w_after_encode": 21961.796875,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.02125,
+          "recall_after_target": 0.02875,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.036041666666666666,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 302.12884521484375,
+          "w_after_idle": 70.34799194335938,
+          "pre_internal_w0": 41.93291091918945,
+          "pre_internal_w_after_encode": 21961.796875,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.02125,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.0031249999999999997,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 37.12248611450195,
+          "pre_internal_w0": 41.93291091918945,
+          "pre_internal_w_after_encode": 41.93291091918945,
+          "pre_internal_w_after_idle": 8.533608436584473,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.00375,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.02,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.0625,
+        "recall_zero_weight": 0.0,
+        "pre_internal_w_before": 41.93291091918945,
+        "pre_internal_w_after_encode_isolated": 21961.796875
+      }
+    },
+    {
+      "seed": 101,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 333.67510986328125,
+          "w_after_idle": 67.90495300292969,
+          "pre_internal_w0": 41.91070556640625,
+          "pre_internal_w_after_encode": 22017.58203125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03375,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.004583333333333333,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 333.67510986328125,
+          "w_after_idle": 468.42913818359375,
+          "pre_internal_w0": 41.91070556640625,
+          "pre_internal_w_after_encode": 22017.58203125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03375,
+          "recall_after_target": 0.04,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.04770833333333333,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 333.67510986328125,
+          "w_after_idle": 79.10498046875,
+          "pre_internal_w0": 41.91070556640625,
+          "pre_internal_w_after_encode": 22017.58203125,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.03375,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.004583333333333333,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 41.27375793457031,
+          "pre_internal_w0": 41.91070556640625,
+          "pre_internal_w_after_encode": 41.91070556640625,
+          "pre_internal_w_after_idle": 8.529088973999023,
+          "recall_t0_target": 0.0075,
+          "recall_after_target": 0.0025,
+          "recall_after_distr": 0.00125,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.024791666666666667,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08125,
+        "recall_zero_weight": 0.0025,
+        "pre_internal_w_before": 41.91070556640625,
+        "pre_internal_w_after_encode_isolated": 22017.58203125
+      }
+    },
+    {
+      "seed": 102,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 325.93194580078125,
+          "w_after_idle": 66.32917785644531,
+          "pre_internal_w0": 41.94237518310547,
+          "pre_internal_w_after_encode": 21585.025390625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.025,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 0,
+          "avg_pre_active_frac": 0.0027083333333333334,
+          "n_noise_driven": 12
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 325.93194580078125,
+          "w_after_idle": 441.7071228027344,
+          "pre_internal_w0": 41.94237518310547,
+          "pre_internal_w_after_encode": 21585.025390625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.025,
+          "recall_after_target": 0.03875,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.041666666666666664,
+          "n_noise_driven": 12
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 325.93194580078125,
+          "w_after_idle": 75.47022247314453,
+          "pre_internal_w0": 41.94237518310547,
+          "pre_internal_w_after_encode": 21585.025390625,
+          "pre_internal_w_after_idle": 20160.0,
+          "recall_t0_target": 0.025,
+          "recall_after_target": 0.00875,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.0027083333333333334,
+          "n_noise_driven": 12
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 41.06805419921875,
+          "pre_internal_w0": 41.94237518310547,
+          "pre_internal_w_after_encode": 41.94237518310547,
+          "pre_internal_w_after_idle": 8.535533905029297,
+          "recall_t0_target": 0.0025,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 3,
+          "avg_pre_active_frac": 0.025000000000000005,
+          "n_noise_driven": 12
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.06875,
+        "recall_zero_weight": 0.0,
+        "pre_internal_w_before": 41.94237518310547,
+        "pre_internal_w_after_encode_isolated": 21585.025390625
+      }
+    }
+  ],
+  "label": "emergent-content replay specificity (recall-after-delay)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "G1 headline: replay after-idle beats matched noreplay",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G2 lesion: replay_nopre does not rescue recall",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G3 specificity: moat_replay does not gain recall from identical replay dose",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PC pattern-completion: encoded assembly recruits more pre than unencoded, same dose",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "instrument (off byte-id / maint inert / readout distinguishes / assembly potentiates)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "replay-call counters match condition (branch reached)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "replay vs noreplay (recall-after)",
+      "ok": true,
+      "detail": "treatment=0.040625 control=0.00729167 |sep|=0.0333333 > 0.008",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "replay vs replay_nopre (recall-after)",
+      "ok": true,
+      "detail": "treatment=0.040625 control=0.00895833 |sep|=0.0316667 > 0.008",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "replay vs moat_replay (recall-after) -- THE SPECIFICITY CHECK",
+      "ok": true,
+      "detail": "treatment=0.040625 control=0.00395833 |sep|=0.0366667 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "pattern completion: replay vs moat_replay pre-activation (identical noise dose)",
+      "ok": true,
+      "detail": "treatment=0.0407292 control=0.0227083 |sep|=0.0180208 > 0",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "encode write moved the target weight",
+      "ok": true,
+      "detail": "before=76.8 after=323.393 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "encode potentiated the pre-internal assembly (vs never-encoded)",
+      "ok": true,
+      "detail": "before=41.9203 after=21929.6 moved=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "Hebbian (kernel-driven)",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "homeostasis",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "short-term plasticity",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "reward modulation",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "structural plasticity",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "NMDA",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    },
+    {
+      "process": "input divisive norm",
+      "why": "isolation: BTSP is the sole KERNEL-DRIVEN mover of pre->post-target; the pre-internal assembly potentiation is a separate runner-level model"
+    }
+  ],
+  "chance": null,
+  "GO": true,
+  "verdict": "GO -- making replay CONTENT emergent (plastic recurrent pre->pre assembly + untargeted noise-subset reactivation, 18% of pre driven directly) CLOSES the 2026-08-20 specificity residual. G1 holds (replay=0.0406 vs noreplay=0.0073); G2 holds (nopre lesion=0.0090); G3 SPECIFICITY now clears (moat_replay=0.0040 <= 40% of replay, vs 46-67% in the 2026-08-20 host-directed design) -- an encoded assembly's recurrent loop recruits more of `pre_idx` from the SAME noise dose than an unencoded one (PC: pre-activation replay=0.041 vs moat=0.023), so the moat's BTSP co-activation stays weak and does not fabricate a trace. 6-seed. Spiking WRITE + spiking assembly formation + spiking pattern-completion propagation + spiking RECALL all run on the real bridge; the Hebbian assembly-potentiation rule and the tag-and-capture maintenance are runner-level weight-update models (not yet sim/ kernels).",
+  "HONEST_NOTE": "Spiking ENCODE, spiking within-assembly Hebbian binding (a runner-level weight-update rule, like the precedents' tag-and-capture), spiking pattern-completion PROPAGATION (real recurrent synaptic transmission on the bridge -- NOT host-computed), spiking replay reactivation, and spiking RECALL all run on a real SimulationBridge. Recall is a BEHAVIOURAL read, not a weight read. Two runner-level (not yet sim/ kernel) weight- update models are used: (1) the pre-internal Hebbian assembly-potentiation rule (this runner's new mechanism) and (2) the tag-and-capture maintenance rule (reused unchanged from the 2026-08-12/2026-08-20 precedents). The pre-internal assembly weights are NOT decayed during idle ticks in this de-risk (scope limitation -- an assembly that persists indefinitely once formed is not yet tested for its own forgetting curve). The final GO configuration needs BOTH mechanisms (emergent pattern-completion replay AND the starting-weight-gated write) at once -- mechanism 1 alone held on a 3-seed pilot but NOT on the full 6 (seed 102's moat_replay reached 45% of replay, just over the 40% bar); mechanism 2 was switched on to buy margin. This is itself an honest finding: emergent content alone narrowed but did not by itself CLOSE the residual at this network's scale -- the starting-weight gate is still doing real work, not just insurance. NOT 'consolidation' in the docs/TERMS.md sense: no lesion of a SOURCE STRUCTURE / systems-level independence was tested. NO new sim/ edit; NO existing runner or webapp/ file was modified.",
+  "NEXT_RUNG": "If GO: port the Hebbian assembly-potentiation rule + the tag-and-capture maintenance + the metaplastic gate to guarded default-OFF sim/ kernels, model pre-internal assembly forgetting (a decay curve for the recurrent weights themselves, so an assembly that is never replayed also eventually stops being completable), and wire the whole idle-tick pass under the continuous engine's idle tick (webapp/continuous_engine.py). Also worth isolating: re-run with --metaplastic-gate-frac 0 to quantify exactly how much of the final margin is mechanism 1 (emergent content) vs mechanism 2 (starting-weight gate) -- the 6-seed run in this artifact already shows mechanism-1-alone's near-miss (see HONEST_NOTE). If still UNDEFINED at these settings: a harder floor on pre_internal_w0 (the baseline recurrent weight the moat condition starts from) relative to assembly_w_max (the potentiated ceiling), or a stronger metaplastic gate."
+}
