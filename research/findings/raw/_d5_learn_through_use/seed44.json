@@ -1,0 +1,278 @@
+{
+  "seed": 44,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "encode_train_events": 15,
+    "encode_wmax": 100.0,
+    "n_recalls": 8,
+    "recall_wmax": 100.0,
+    "btsp_lr": 0.02,
+    "btsp_elig_tau_ms": 1000.0,
+    "lesion_frac": 0.4,
+    "n_interfere": 120,
+    "interfere_steps": 200,
+    "b_adapt": 0.8,
+    "tau_w": 150.0,
+    "tau_apical": 15.0,
+    "cue_pa": 300.0,
+    "ignite_steps": 80,
+    "window_steps": 500,
+    "out": "research/findings/raw/_d5_learn_through_use/seed42.json"
+  },
+  "extract": {
+    "n_ca3": 2000,
+    "assembly_sizes": [
+      26,
+      12
+    ],
+    "dog_slot": 1,
+    "cat_slot": 0,
+    "dog_size": 12,
+    "cat_size": 26,
+    "baseline_within": 1.472,
+    "borderline": {
+      "w_dog": 56.487,
+      "w_cat": 1.67,
+      "w_between": 1.5
+    },
+    "n_cue_full": 6,
+    "d5_recall_dog": {
+      "topic": "dog",
+      "slot": 1,
+      "formed": true,
+      "in_memory": false,
+      "apical_cue": 0.16666666666666666,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": false,
+      "reason": "spiking-dap-completion"
+    },
+    "d5_recall_cat": {
+      "topic": "cat",
+      "slot": 0,
+      "formed": false,
+      "in_memory": false,
+      "apical_cue": 0.0,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": false,
+      "reason": "spiking-dap-completion"
+    },
+    "up_thresh": -20.0,
+    "v_hold": -35.0
+  },
+  "trajectory": {
+    "max_lesion": [
+      0.3,
+      0.6,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+    ],
+    "w_dog": [
+      56.487,
+      65.883,
+      70.436,
+      72.775,
+      73.867,
+      74.327,
+      74.518,
+      74.597,
+      74.63
+    ],
+    "dw_on": [
+      9.396,
+      4.553,
+      2.339,
+      1.092,
+      0.46,
+      0.191,
+      0.079,
+      0.033
+    ]
+  },
+  "stores": {
+    "borderline": {
+      "w_dog": 56.487,
+      "w_cat": 1.67,
+      "w_between": 1.5
+    },
+    "final": {
+      "w_dog": 74.63,
+      "w_cat": 1.787,
+      "w_between": 1.5
+    },
+    "baseline_within": 1.472
+  },
+  "robustness": {
+    "max_lesion_baseline": 0.3,
+    "max_lesion_final": 0.9,
+    "min_cue_current_baseline": 300.0,
+    "min_cue_current_final": 120.0,
+    "headline_lesion": 0.4,
+    "headline_win_peak_before": 0.3333,
+    "headline_win_peak_after": 0.5
+  },
+  "interference": {
+    "n_interf_syn": 5999,
+    "n_interf_cue": 120,
+    "adapt_ON": {
+      "interf_dw": 0.4003,
+      "isP_dogheld_after_dog": 3.859,
+      "isP_dogheld_phaseB_mean": 3.907
+    },
+    "adapt_OFF": {
+      "interf_dw": 1.099,
+      "isP_dogheld_after_dog": 14.326,
+      "isP_dogheld_phaseB_mean": 14.802
+    },
+    "attributable": 0.6357597816196542
+  },
+  "attributable_window": 1.0,
+  "attributable_specificity": 0.9935512318800639,
+  "verdict": {
+    "label": "USING a D5 memory strengthens it: plateau-gated BTSP write-back on the recall window (seed 44)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "d5-store-formed-dog",
+        "ok": true,
+        "detail": "measured=56.487 expect=<function run_one.<locals>.<lambda> at 0x7f7ce1e2f100>",
+        "note": "dog was BTSP-formed to a BORDERLINE within-weight (grew from baseline, headroom to strengthen)"
+      },
+      {
+        "kind": "require",
+        "name": "borderline-has-headroom",
+        "ok": true,
+        "detail": "measured=0.3 expect=<function run_one.<locals>.<lambda> at 0x7f7ce1e2f100>",
+        "note": "the store completes un-lesioned but does NOT survive the full lesion range (robustness to gain)"
+      },
+      {
+        "kind": "require",
+        "name": "window-opens-per-step2",
+        "ok": true,
+        "detail": "measured=0.5 expect=<function run_one.<locals>.<lambda> at 0x7f7ce1e2f100>",
+        "note": "the FULL-cue reactivation opens the apical-plateau completion window (step-2 property)"
+      },
+      {
+        "kind": "require",
+        "name": "instrument-deterministic",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "two identical max-lesion reads match -> snapshot/restore + weight-inject is deterministic"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled-baseline",
+        "ok": true,
+        "detail": "measured=1.67 expect=<function run_one.<locals>.<lambda> at 0x7f7ce1e2f100>",
+        "note": "cat is a genuine never-formed control (within stays at baseline)"
+      },
+      {
+        "kind": "reaches",
+        "name": "write-back-potentiates",
+        "ok": true,
+        "detail": "before=56.487 after=74.63 moved=True",
+        "note": "the plateau-gated BTSP write-back actually moved the dog within-assembly weight"
+      },
+      {
+        "kind": "reaches",
+        "name": "robustness-moves-with-use",
+        "ok": true,
+        "detail": "before=0.3 after=0.9 moved=True",
+        "note": "the max-lesion-survived robustness read-out changed across the recall loop"
+      },
+      {
+        "kind": "control",
+        "name": "window-vs-noWindow (clamp)",
+        "ok": true,
+        "detail": "treatment=18.143 control=0 |sep|=18.143 > 0",
+        "note": "the strengthening requires the plateau window, not the cue drive"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "hebbian/STDP/BDSP/structural plasticity",
+        "why": "ONLY the substrate's plateau-gated BTSP is live during the write-back; all other learning OFF"
+      },
+      {
+        "process": "soma-recurrence completion",
+        "why": "step-1 NO-GO at this scale; the read + the write-gate are the dendritic apical plateau (cp_v_apical), not the soma spike"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "checks": {
+    "STRENGTHENS": true,
+    "MONOTONE": true,
+    "BOUNDED": true,
+    "SPECIFIC": true,
+    "NOWINDOW_INERT": true,
+    "max_lesion_baseline": 0.3,
+    "max_lesion_final": 0.9,
+    "max_lesion_traj": [
+      0.3,
+      0.6,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9,
+      0.9
+    ],
+    "min_cue_current_baseline": 300.0,
+    "min_cue_current_final": 120.0,
+    "n_cue_full": 6,
+    "headline_lesion": 0.4,
+    "headline_wp_before": 0.3333,
+    "headline_wp_after": 0.5,
+    "survives_new_lesion": true,
+    "w_dog_borderline": 56.487,
+    "w_dog_final": 74.63,
+    "dw_dog_total": 18.143,
+    "dw_on": [
+      9.396,
+      4.553,
+      2.339,
+      1.092,
+      0.46,
+      0.191,
+      0.079,
+      0.033
+    ],
+    "self_limiting": true,
+    "dw_dog_nocue": 0.0,
+    "dw_dog_clamp": 0.0,
+    "w_cat_borderline": 1.67,
+    "w_cat_final": 1.787,
+    "cat_drift": 0.117,
+    "w_between_borderline": 1.5,
+    "w_between_final": 1.5,
+    "ml_cat_before": -1.0,
+    "ml_cat_after": -1.0,
+    "interf_dw_ON": 0.4003,
+    "interf_dw_OFF": 1.099,
+    "isP_dogheld_ON": 3.907,
+    "isP_dogheld_OFF": 14.802,
+    "full_open_win_peak": 0.5
+  },
+  "elapsed_s": 83.6
+}

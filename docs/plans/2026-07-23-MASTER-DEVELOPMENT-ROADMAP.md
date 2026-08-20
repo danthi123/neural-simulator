@@ -307,7 +307,15 @@ ledger: nothing yet meets the full DONE bar.** Four residuals temper even the wi
 
 ### 0.3 The de-risked bench (GO, unwired) and the mapped boundaries
 
-**Wireable GOs waiting (highest leverage first):** the GNW N-organ ignition BUS (T1-1, 6/6 GO, wiring design at
+**Wireable GOs waiting (highest leverage first):** the **D5 LEARN-THROUGH-USE arc — CLOSED on the real organ 2026-08-20
+(6/6, 3 rungs each adversarially verified)**: a memory the brain USES gets stronger via the substrate's own
+dendritic-plateau-gated BTSP (step-1 real-store soma-recurrence NO-GO → the dendritic latch is the read; step-2 the
+latch self-terminates into a discrete reactivation window; step-3 recall→window→BTSP strengthens the memory
+specifically, decisive no-window control = learn-through-use not re-encode; NO `sim/` edit, writes to the organ's own
+store). This SUPERSEDES the earlier "learn-through-use fix = SWR-envelope tuning sweep" pointer (that soma-recurrence
+path was measured NO-GO at real scale). Wiring rung = step-4 under `continuous_engine.py`'s idle tick, default-off,
+load-bearing-proven. Findings 2026-08-20 (ecker-real-d5-store-does-NOT-reactivate / d5-dendritic-latch-self-terminates
+/ d5-learn-through-use-...-arc1-closed). Then: the GNW N-organ ignition BUS (T1-1, 6/6 GO, wiring design at
 [`2026-08-13-gnw-norgan-bus-production-wiring.md`](2026-08-13-gnw-norgan-bus-production-wiring.md)) — the keystone; the
 LEARNED CAUSAL FORWARD-MODEL grounded in the real fact-store (T1-4, 6/6 GO); the INTUITIVE WORLD-MODEL / object-permanence
 rung (T1-7, VoE boundary surpassed 6/6); the autobiographical converse→sleep-replay→converse capstone (gap5, GO); E3 BTSP

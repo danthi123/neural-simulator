@@ -1,0 +1,34 @@
+{
+ "run_id": "1787264450-2320805",
+ "runner": "research/runners/_gap5_d5_learn_through_use_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/d5-learn-through-use/research/runners/_gap5_d5_learn_through_use_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_d5_learn_through_use/seed42.json"
+ ],
+ "git_sha": "3db9cc903",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T18:20:50",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d5_learn_through_use/seed42.json"
+}
