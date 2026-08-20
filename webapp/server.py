@@ -4852,6 +4852,47 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     return JSONResponse(_resp)
 
 
+# ── OpenAI-API-COMPATIBLE SHIM (2026-08-19 reframe: the two-surface UX) ────────────────────────────────────────
+# Expose the sim brain over `/v1/chat/completions` + `/v1/models` so ANY standard LLM client (Open WebUI, LibreChat,
+# …) talks to it with no custom UI. The REPLY rides `content` (the conversation surface); the brain's honest INTERNAL
+# MONOLOGUE rides `reasoning_content` (the 'thinking' panel, shown alongside the reply by default). Host TRANSPORT
+# only — it computes no cognition; it re-uses `brain_chat`'s existing spiking-faculty metadata. See webapp/openai_shim.py.
+class OpenAIChatRequest(BaseModel):
+    model: str = "sim-brain"
+    messages: list[dict] = []
+    stream: bool = False
+    session: str | None = None      # optional: pin a conversation; else a stable per-model default
+
+
+@app.get("/v1/models")
+def openai_models() -> JSONResponse:
+    """OpenAI-compatible model list (clients query this to select the sim brain)."""
+    from webapp import openai_shim as _OAS
+    return JSONResponse(_OAS.models_list())
+
+
+@app.post("/v1/chat/completions")
+def openai_chat_completions(req: OpenAIChatRequest):
+    """OpenAI-compatible chat: the brain's reply -> `content`, its honest internal monologue -> `reasoning_content`.
+    Delegates the actual turn to the existing `brain_chat` handler (same spiking faculties, same moat), then marshals
+    the response into the OpenAI shape. Supports streaming (SSE) since most clients default to it."""
+    import json as _json
+    import time as _t
+    from webapp import openai_shim as _OAS
+    from fastapi.responses import StreamingResponse
+    user_msg = _OAS._last_user_message(req.messages)
+    session = req.session or ("openai-%s" % (req.model or "sim-brain"))
+    r = brain_chat(BrainChatRequest(session=session, message=user_msg))
+    resp = _json.loads(bytes(r.body))
+    reply = resp.get("answer") or resp.get("response") or ""
+    monologue = _OAS.format_internal_monologue(resp)
+    created = int(_t.time())
+    if req.stream:
+        return StreamingResponse(_OAS.stream_chunks(reply, monologue, req.model, created),
+                                 media_type="text/event-stream")
+    return JSONResponse(_OAS.chat_completion_object(reply, monologue, req.model, created))
+
+
 class BrainChatResetRequest(BaseModel):
     """Reset a brain-chat session (no `message` required, unlike a turn)."""
     session: str = "default"
