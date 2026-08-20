@@ -3785,6 +3785,25 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception:
         pass
 
+    # GNW TWO-GENUINELY-DISTINCT-ORGANS coincidence bus — DEFAULT-ON (2026-08-20). The N-organ bus above combines three
+    # reads that ALL come from the composer (forward + VERIFY + reverse-binding); this layers the genuinely-distinct
+    # SECOND SPIKING ORGAN the `_gnw_two_distinct_organs_derisk` 6-seed GO closes caveat #1 with — the production
+    # `SurpriseProductionOrgan` (a spiking predictive-coding mismatch circuit, `cp_firing_states[surprise]`). The covered
+    # routable recall is authored by the COINCIDENCE of organ A (composer recall) + organ B (the surprise monitor
+    # corroborating against its OWN expectation): both agree -> ignite -> commit; organ B contradicts / is lesioned ->
+    # consensus-veto -> abstain. WORKS ON BOTH BACKENDS: the backend-neutral Izhikevich threshold init (default-on in
+    # build_expectation_circuit) makes the surprise organ discriminate on cupy too; the bus's own discrimination gate
+    # (`_organ_discriminates`) falls back to a safe inert (byte-identical) path if that fix is off, so it never runs a
+    # mis-discriminating organ. Escape: `BRAIN_GNW_2ORGAN=0`/`off` disables (byte-identical to the pre-bus path). Cleared
+    # the default-on gate: 6-seed GO + production wired end-to-end on cupy+numpy + zero regression off-vs-on. Load-bearing
+    # levers: BRAIN_GNW_2ORGAN_WS_LESION / _ORGANB_LESION. NO sim/ edit. See webapp/gnw_two_organ_bus.py.
+    if os.environ.get("BRAIN_GNW_2ORGAN", "on").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            from webapp import gnw_two_organ_bus as _gnw_2organ_mod
+            _gnw_2organ_mod.install_two_organ_gate(chat)
+        except Exception:
+            pass
+
     # GNW CONFIDENCE/CONFLICT-GATED DELIBERATION — THE KEYSTONE, WIRED (T1-1 rung d, 2026-08-18): after the bus commits,
     # the WORKSPACE's OWN spiking conflict read (n_ignited + the nmda_norm confidence balance) DECIDES commit-vs-abstain.
     # When the brain has >=2 genuinely-competing stored answers under the SAME (agent, action) (today's bus commits the

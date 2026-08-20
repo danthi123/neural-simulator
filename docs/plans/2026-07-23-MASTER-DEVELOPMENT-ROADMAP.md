@@ -827,6 +827,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-20 (AUTONOMOUS) — GNW two-organ bus DEFAULT-ON in production (both backends); gap#5 SWR forward-replay wall CLOSED (Ecker AdEx CA3 6/6).**
+GNW: the genuinely-distinct second organ (the surprise monitor) is now a LOAD-BEARING coincidence vote on the live chat
+BY DEFAULT, cupy+numpy, zero-regression off-vs-on — unblocked by the backend-neutral-Izh-threshold fix (a backend-RNG
+parity bug that can bite ANY GPU faculty; audit others). gap#5: the Ecker-2022 AdEx CA3 (self-terminating assemblies +
+strong forward links + adaptation) does DISCRETE forward replay that RIDES the weight asymmetry (REVERSE-ASYM-LESION
+collapses it 6/6) — the test the bistable store failed; closes the wall that stalled the D5 learn-through-use transfer +
+the brain-pure sleep-replay store. NEXT: (a) grow the Ecker forward band by STDP (the emergence version), then wire the
+discrete-forward-replay reactivation into the D5 episodic organ (learn-through-use) + the spiking-CA3 sleep-replay store
+(brain-pure consolidation); (b) the one-brain MERGE path needs the two backend-neutral lines if it goes cupy-production.
+See findings 2026-08-20 (gnw-two-organ-bus-DEFAULT-ON, backend-dependent-RNG-thresholds, ecker-adex-ca3-forward-replay-
+6seed-GO, + the SWR fwd-gain honest-negative in the gap5 SWR-state finding UPDATE-2).
+
 **2026-08-20 (LATER) — LEARN-THROUGH-USE ON THE PRODUCTION ORGAN CONVERGES ON THE gap#5 SWR-STATE WALL; the fix-runner already exists.**
 The 6-seed-GO emergent-replay (synthetic net) was pushed onto the REAL D5 `EpisodicDapMemory`. TWO probes: untargeted-CA3-noise
 UNDEFINED (0/0); content-blind DG/EC-afferent drive NO-GO (the one hit refuted by reproducibility 1/6, volley-robust 0/4,

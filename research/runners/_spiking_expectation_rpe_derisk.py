@@ -124,13 +124,31 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
                               expected_to_surprise_weight=14.0, gabab_prop=0.22,
                               gabab_tau_decay=150.0, hebbian_learning_rate=0.06,
                               hebbian_max_weight=45.0, enable_heterogeneity=False,
-                              region_suffix="", per_region_thresh=False):
+                              region_suffix="", per_region_thresh=False,
+                              backend_neutral_init=True, backend_neutral_arith=True):
     """Build cue -> patient_expected(FS, GABA_A) -> surprise <- patient_asserted(exc).
 
     cue->patient_expected is TOPOGRAPHIC + PLASTIC (Hebbian co-fire strengthens the recall).
     patient_asserted->surprise (exc) and patient_expected->surprise (inh, GABA_A) are FIXED and
     TOPOGRAPHIC (concept c -> surprise block c), installed block-diagonal after build. The
     surprise pool's firing IS the mismatch/surprise signal.
+
+    BACKEND-NEUTRAL NUMERICS (2026-08-20, the cupy-GNW unblock; default ON). The per-neuron
+    homeostatic firing thresholds are drawn at init; with `enable_homeostasis=True` (the config
+    default) they ARE the spike thresholds. The default draw uses the ACTIVE backend's RNG, so
+    CPU `np.random` and GPU `cp.random` give DIFFERENT thresholds for the same seed. A neuron's
+    threshold is a property of the neuron, not of the hardware — and the surprise organ's CONFIRM
+    case sits at a near-cancellation E/I operating point (the FS prediction pool must sustain
+    strong inhibition of the surprise pool), so the hardware-dependent thresholds shifted the
+    stiff FS firing rate ~3x on cupy (173 Hz numpy -> 55 Hz cupy), collapsing the inhibition and
+    making CONFIRM fire spuriously (confirm ~0.72 Hz vs numpy ~0.20 Hz; block-4 3.30 Hz vs 0.0).
+    `backend_neutral_izh_initialization`/`_arithmetic` route init + the Izhikevich Euler update
+    through a host RNG + explicit IEEE round-to-nearest ops that are IDENTICAL across backends.
+    This is a NUMERICAL-CONDITIONING fix only — the biology (the GABA_A subtractive prediction of
+    the surprise pool) is unchanged. VERIFIED byte-identical on numpy (threshold hash + confirm/
+    contradict/novel Hz unchanged: the flag is a no-op there — the host RNG reproduces numpy's own
+    draw) and cross-backend faithful on cupy (thresholds now match numpy byte-for-byte; confirm
+    0.72->0.20 Hz -> the organ discriminates confirm << threshold << contradict on the GPU too).
     """
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
@@ -141,6 +159,10 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     sfx = str(region_suffix)  # optional per-organ region-name suffix (default "" -> unchanged)
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
+    # Backend-neutral numerics: identical per-neuron thresholds + Izhikevich arithmetic on
+    # CPU (numpy) and GPU (cupy). Byte-identical no-op on numpy; the GPU-GNW unblock on cupy.
+    cfg.backend_neutral_izh_initialization = bool(backend_neutral_init)
+    cfg.backend_neutral_izh_arithmetic = bool(backend_neutral_arith)
     # Region-scoped threshold heterogeneity (opt-in): a region's per-neuron firing
     # thresholds are drawn from a name-keyed substream, so this organ's slice is
     # invariant to any co-residents when it is later merged onto a shared pool.
