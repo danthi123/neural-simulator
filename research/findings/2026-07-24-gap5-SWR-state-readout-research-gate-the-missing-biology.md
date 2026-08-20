@@ -77,3 +77,23 @@ amplifies them. So the next step is a BUILD: gain-amplify the forward links into
 envelope (or re-encode the store with stronger forward links), NOT another envelope sweep. This is the convergent
 unblock for the D5 learn-through-use transfer + the brain-pure sleep-replay store (both 2026-08-20). Blind envelope
 tuning is retired here by the research gate (4 rounds, 32 configs).
+
+## 2026-08-20 UPDATE-2 — the forward-link BUILD was TRIED (gain + directional cue): validated ingredients, but the wall is the STORE ARCHITECTURE, not link strength
+<!--derived-->
+The "next step: BUILD — gain-amplify the forward links" named just above was built + tested (two agents): a TRANSIENT
+`--fwd-gain` (amplify `adj_fwd` into the ~114–190 handoff band only within the envelope, byte-hash-verified restored)
++ a `--onset-cue-asm` directional PREFIX cue (depolarize chain-start assembly A at envelope onset). Both are correct,
+transient, reusable INGREDIENTS: the gain lifts `adj_fwd` 38→154 and SUPPRESSES reverse; the onset cue makes A ignite
+first 9–10/10 cycles. **But genuine directional replay is a NEGATIVE** — the decisive store-lesion anti-cheats fail:
+forward SURVIVES the REVERSE-ASYM-LESION (symmetrized store → forward 1.00), SHUFFLED-STORE (1.00), and
+PERMUTED-ASSEMBLY (1.00). So the order rides the cue + an intrinsic positional readout bias, NOT the encoded
+forward-asymmetric chain. Corrects UPDATE-1's framing: the residual is NOT weak forward-link strength — it is
+ARCHITECTURAL. Two localized substrate facts: (1) the decoupled store's strong within-attractors (~200) reverberate
+semi-continuously (pop never fully silences) so the net never SEGMENTS into discrete SWR events — bistable *completion*
+is antithetical to a moving-bump *hand-off*; (2) the forward weight asymmetry (38 vs 5) is not load-bearing on order.
+**NEXT MECHANISM (no-defer, named — this is the boundary's own long-standing pointer, now confirmed load-bearing):**
+the **Ecker-2022 AdEx CA3 model build** — weaker/self-terminating within-attractors + genuine synaptic hand-off + a
+ripple-generating interneuron circuit for discrete SWR events; the `--fwd-gain` + `--onset-cue-asm` machinery are
+validated ingredients to reuse in it. (Also corrected: the `--env-basket-drop 0 --sel-inhib-spare 20` op-point earlier
+called `[1,1,1]` is actually `[0,0,0]`; discreteness needs `env-basket-drop>0`. Runner edits compile, default
+byte-identical, uncommitted-ingredients.)

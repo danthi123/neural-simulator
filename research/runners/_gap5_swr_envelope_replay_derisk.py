@@ -74,8 +74,11 @@ from research.runners._gap5_sequence_replay_derisk import (  # noqa: E402
     _event_windows, _smooth,
 )
 from research.runners._gap5_decoupled_store_bistable_readout_derisk import DECOUPLED_CFG  # noqa: E402
-# the RANK-1 rest building blocks (freeze/silence/OU) reused verbatim
-from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence, _configure_ou  # noqa: E402
+# the RANK-1 rest building blocks (freeze/silence/OU) reused verbatim + the vectorized ca3->ca3 CSR extractor (used to
+# recompute the FORWARD-LINK flat indices for the transient SWR gain -- same classification as _prepare_sequence)
+from research.runners._gap5_spontaneous_reactivation_derisk import (  # noqa: E402
+    _hard_silence, _configure_ou, _extract_ca3ca3_vec,
+)
 
 OUT = _REPO / "research" / "findings" / "raw" / "gap5_r4" / "swr_envelope_replay.json"
 
@@ -169,14 +172,63 @@ def _option1_cued_ignition(prep, seed, *, recall_drive, recall_steps, self_regen
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+# FORWARD-LINK GAIN (2026-08-20 build): the missing SWR ingredient. Buzsaki Rhythms L14452 -- during the SWR envelope the
+# transient E>I imbalance GAIN-AMPLIFIES the learned forward-asymmetric links (a "three- to fivefold gain") so the ignited
+# assembly's now-strong forward links carry A->B->C, then it restores. The frozen decoupled store has adj_fwd~=38, but the
+# ordered-handoff band is ~114-190 (Section B of the 2026-07-24 finding) and NO prior knob lifted it there -- so the
+# ignited assembly ignited in isolation and never handed off (baseline: per_asm_active[1,1,1] but forward_frac 0).
+#
+# This helper recomputes the FLAT CSR-data indices of the between-assembly recurrent edges, split by DIRECTION/DISTANCE,
+# for a TRANSIENT multiplicative gain within the envelope (cached on prep). It reuses _prepare_sequence's EXACT edge
+# classification (coincidence-masked ca3->ca3 + asm_of_local positional labels). CRITICAL anti-cheat property: position
+# only SELECTS a scope; the AMOUNT is a multiplicative gain on the STORED weight (w -> w*g). So a symmetrized store
+# (REVERSE-ASYM-LESION, adj_fwd==adj_rev) or shuffled store carries NO direction even under the gain -> forward collapses.
+# The default scope "adjacent" is distance-1 BOTH directions (position-SYMMETRIC) -> the gain cannot manufacture direction
+# from a symmetrized store; the learned WEIGHT asymmetry is the sole source of order (exactly the lesion the gate demands).
+# ----------------------------------------------------------------------------------------------------------------------
+def _between_edge_classes(prep):
+    if prep.get("_edge_classes") is not None:
+        return prep["_edge_classes"]
+    cp, _ = get_backend()
+    bridge = prep["bridge"]
+    ca3_idx = prep["ca3_idx"]
+    ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
+    asm_of_local = np.full(len(ca3_idx), -1, dtype=np.int64)
+    for m, a in enumerate(prep["assemblies"]):
+        asm_of_local[np.asarray([ca3_pos[int(g)] for g in a], dtype=np.int64)] = m
+    flat_h, pre_l_h, post_l_h = _extract_ca3ca3_vec(bridge, ca3_idx, to_host)
+    a_pre = asm_of_local[pre_l_h]; a_post = asm_of_local[post_l_h]
+    between = (a_pre >= 0) & (a_post >= 0) & (a_pre != a_post)
+    adj_fwd = between & (a_post == a_pre + 1)
+    adj_rev = between & (a_post == a_pre - 1)
+
+    def _dev(mask):
+        f = flat_h[mask].astype(np.int64)
+        return cp.asarray(f, dtype=cp.int64) if f.size else None
+    classes = dict(
+        adjacent=_dev(adj_fwd | adj_rev),            # distance-1 BOTH directions (position-symmetric -> lesion-safe)
+        between=_dev(between),                        # all between edges (position-symmetric multiset -> lesion-safe)
+        forward=_dev(between & (a_post > a_pre)),     # forward-position ONLY (diagnostic; position-ASYMMETRIC -> the
+                                                      #   REVERSE-ASYM-LESION gate WILL catch it if it fabricates order)
+        adj_fwd=_dev(adj_fwd), adj_rev=_dev(adj_rev),
+        n_adj_fwd=int(adj_fwd.sum()), n_adj_rev=int(adj_rev.sum()), n_between=int(between.sum()))
+    prep["_edge_classes"] = classes
+    return classes
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 # OPTION 2 (the build): the SWR-state E/I-transient envelope readout. mode in {"swr","no_swr"}. noise as the self-
 # organized ignition SEED; the envelope as the transient E>I GAIN; SFA for the forward hand-off + self-termination.
 # NO host per-step per-assembly silence / argmax (numpy-reference guard: the loop only injects external current).
+# fwd_gain: the TRANSIENT forward-link gain (w->w*fwd_gain on the fwd_gain_scope edges, ONLY within the envelope window;
+#   restored to baseline in the inter-event rest AND -- guaranteed -- after the loop, so the byte-hash is unchanged).
 # ----------------------------------------------------------------------------------------------------------------------
 def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, env_basket_drop, env_basket_boost,
                        swr_period, env_dur, noise_rate, noise_pa, noise_dur, self_regen_read, recall_k_thresh,
                        d_abs, a_abs, adapt, self_regen_ignite=None, ignite_frac=0.4, env_exc_ramp=False,
-                       seed_assembly=False, seed_pa=0.0, seed_dur=0, seed_frac=0.5, verbose=False):
+                       fwd_gain=1.0, fwd_gain_scope="adjacent", env_exc_ramp_floor=0.5,
+                       seed_assembly=False, seed_pa=0.0, seed_dur=0, seed_frac=0.5, fixed_seed_asm=None,
+                       verbose=False):
     # MECHANISM #3 (per-envelope single-assembly SEED = Diba-Buzsaki SWR initiation): when seed_assembly, each envelope a
     # RANDOM assembly k (NOT always 0) gets a WEAK sub-detonator pulse (seed_pa to seed_frac of its cells) for the first
     # seed_dur steps -> k ignites FIRST; the LEARNED forward links + SFA must then carry k->k+1->k+2 (forward FROM the
@@ -225,6 +277,22 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
               f"k_thresh={recall_k_thresh} adapt={adapt} basket_n={h['basket_n']}]", flush=True)
 
     w_before = np.asarray(to_host(bridge.cp_connections.data)).copy()
+
+    # -- FORWARD-LINK GAIN setup (transient SWR weight amplification) -- captured AFTER w_before so the restore below is
+    # byte-exact. _amp_base holds the scope's baseline stored weights (on device); _amp_mult tracks the currently-applied
+    # multiplier so we write conn.data only at envelope boundaries (~2*n_env writes, not per step). In no_swr mode the
+    # gain is applied CONSTANTLY at its duty-averaged value (same amplification budget, NO transient window) -- so if
+    # NO-SWR collapses, the TRANSIENT (not merely the average gain) is load-bearing.
+    _amp_idx = None; _amp_base = None; _amp_mult = 1.0; _amp_base_mean = None
+    fwd_gain = float(fwd_gain)
+    if abs(fwd_gain - 1.0) > 1e-9:
+        _cls = _between_edge_classes(prep)
+        _amp_idx = _cls.get(fwd_gain_scope)
+        if _amp_idx is not None:
+            _amp_base = bridge.cp_connections.data[_amp_idx].copy()
+            _amp_base_mean = float(np.asarray(to_host(_amp_base)).mean())
+    _const_gain = 1.0 + (fwd_gain - 1.0) * duty       # no_swr constant (duty-averaged) multiplier
+
     F = np.zeros((rest_steps, len(ca3_arr_host)), dtype=bool)
     n_env = 0
     for t in range(rest_steps):
@@ -239,8 +307,15 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
                 if self_regen_ignite is not None:
                     bridge.core_config.coincidence_plateau_self_regen = (
                         float(self_regen_ignite) if phase_in < _ignite_steps else float(self_regen_read))
-                # env_exc: flat, or a 0->peak ramp across the window (mechanism #2)
-                _ee = float(env_exc_pa) * (float(phase_in + 1) / float(env_dur)) if env_exc_ramp else float(env_exc_pa)
+                # env_exc: flat, or a floor->peak ramp across the window (mechanism #2). BUGFIX 2026-08-20: the old ramp
+                # went 0->peak, so env-exc was subthreshold for most of the window and KILLED ignition (every ramp config
+                # -> [0,0,0]). Ramp now from env_exc_ramp_floor*peak (default 0.5) -> peak: still "most-excitable first"
+                # (a rising depolarization) but never subthreshold. (Default env_exc_ramp off -> flat, byte-identical.)
+                if env_exc_ramp:
+                    _frac = float(phase_in + 1) / float(env_dur)
+                    _ee = float(env_exc_pa) * (env_exc_ramp_floor + (1.0 - env_exc_ramp_floor) * _frac)
+                else:
+                    _ee = float(env_exc_pa)
                 if _ee != 0.0:
                     bridge.cp_external_input_current[exc_dev] += _ee                     # broad weak exc: raise E
                 if basket_glob is not None and env_basket_drop != 0.0:
@@ -248,7 +323,13 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
                 # MECHANISM #3: per-envelope single-assembly seed (random k, weak sub-detonator pulse for the first seed_dur)
                 if seed_assembly:
                     if phase_in == 0:
-                        _cur_seed_k = int(_choice_rng.integers(0, len(seed_cells_dev)))
+                        # DIRECTIONAL ONSET CUE (2026-08-20): a fixed_seed_asm (e.g. 0 = the chain-start A) makes the
+                        # onset prefix cue target the SAME assembly every envelope -> A ignites first -> its gain-amplified
+                        # forward links carry A->B->C (forward mode). fixed_seed_asm=None keeps the RANDOM per-envelope
+                        # choice (the rigorous forward-FROM-SEED anti-cheat: order that survives a random start rides the
+                        # WEIGHT asymmetry, not the cue). The cue targets A's CELLS (a recall prefix), never the output order.
+                        _cur_seed_k = (int(fixed_seed_asm) if fixed_seed_asm is not None
+                                       else int(_choice_rng.integers(0, len(seed_cells_dev))))
                         env_seed_log.append(_cur_seed_k)
                     if phase_in < seed_dur and _cur_seed_k is not None and seed_pa != 0.0:
                         bridge.cp_external_input_current[seed_cells_dev[_cur_seed_k]] += float(seed_pa)
@@ -271,14 +352,31 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
             if active.any():
                 bridge.cp_external_input_current[exc_dev[cp.asarray(np.nonzero(active)[0], dtype=cp.int64)]] += float(noise_pa)
             countdown[active] -= 1
+        # -- FORWARD-LINK GAIN (transient synaptic gain = the SWR E>I imbalance amplifying the learned forward chain).
+        # Multiplicative w->w*g on the STORED weights of the scope edges. swr: g during the env window, 1.0 in the rest.
+        # no_swr: the constant duty-averaged g throughout (no window). Written ONLY when the multiplier changes.
+        if _amp_idx is not None:
+            _want = (fwd_gain if (t % swr_period) < env_dur else 1.0) if mode == "swr" else _const_gain
+            if _want != _amp_mult:
+                bridge.cp_connections.data[_amp_idx] = _amp_base * _want
+                _amp_mult = _want
         bridge._run_one_simulation_step()      # NO external per-assembly silence / argmax (numpy-reference guard)
         F[t] = np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(bool)
 
+    # GUARANTEED transient restore: return the scope edges to their EXACT baseline before the byte-hash, regardless of
+    # whether the loop ended inside or outside an envelope window (anti-cheat #8 FROZEN-plasticity must stay byte-exact).
+    if _amp_idx is not None:
+        bridge.cp_connections.data[_amp_idx] = _amp_base
     w_after = np.asarray(to_host(bridge.cp_connections.data))
     frozen = bool(np.array_equal(w_before, w_after))
+    amp = dict(fwd_gain=fwd_gain, scope=fwd_gain_scope,
+               n_edges=(int(_amp_idx.size) if _amp_idx is not None else 0),
+               base_mean=_amp_base_mean,
+               peak_mean=(None if _amp_base_mean is None else _amp_base_mean * fwd_gain),
+               const_gain=(_const_gain if mode == "no_swr" else None))
     return dict(F=F, weights_frozen=frozen, apical_rest_max=h["apical_rest_max"],
                 apical_n_latched=h["apical_n_latched"], n_env=n_env, basket_n=h["basket_n"],
-                env_seed_log=env_seed_log)
+                env_seed_log=env_seed_log, amp=amp)
 
 
 def _score_forward_from_seed(F, assemblies_local, env_seed_log, swr_period, W=5, ev_floor=0.4, ev_k=4.0,
@@ -339,11 +437,43 @@ def _score_forward_from_seed(F, assemblies_local, env_seed_log, swr_period, W=5,
                 n_seed_envs=len(env_seed_log))
 
 
-def _permuted_assembly_score(F, assemblies_local, seed, det):
+def _seed_scored_to_std(sc, n_mem):
+    """Remap a _score_forward_from_seed result onto the _detect_sequence_events key contract (forward_frac=forward-FROM-
+    seed, reverse_frac=reverse-from-seed, chance_forward=per-event 1/n! chance) so the same verdict logic scores both the
+    absolute-forward (no onset cue) and the forward-from-seed (onset cue) regimes. n_full/mean_tau/per_asm_peak are not
+    defined for the seed scorer -> filled with neutral defaults (unused by the onset-cue verdict path)."""
+    return dict(n_events=sc["n_events"], n_multi=sc["n_multi"], n_full=0,
+                forward_frac=sc["forward_from_seed"], reverse_frac=sc["reverse_from_seed"],
+                forward_frac_full=0.0, reverse_frac_full=0.0, mean_tau=0.0,
+                chance_forward=sc["chance"], duty_cycle=sc["duty_cycle"], pop_rate=sc["pop_rate"],
+                per_asm_active=sc["per_asm_active"], per_asm_peak=[0.0] * n_mem,
+                seed_first_frac=sc["seed_first_frac"], by_seedpos=sc["by_seedpos"], n_seed_envs=sc["n_seed_envs"])
+
+
+def _score_arm(r, assemblies_local, det, swr_period, onset_on):
+    """Score one readout arm. With the DIRECTIONAL ONSET CUE on, forward = forward-FROM-SEED (each event scored relative
+    to the assembly the cue seeded that envelope, from env_seed_log) so a fixed-A cue reads A->B->C AND a random-start cue
+    reads k->k+1->k+2 -- both riding the learned forward links. With the cue off, forward = absolute 0->1->2."""
+    F = r["F"]
+    if onset_on:
+        sc = _score_forward_from_seed(F, assemblies_local, r["env_seed_log"], swr_period,
+                                      W=det["W"], ev_floor=det["ev_floor"], ev_k=det["ev_k"],
+                                      active_frac=det["active_frac"], onset_frac=det["onset_frac"])
+        return _seed_scored_to_std(sc, len(assemblies_local))
+    return _detect_sequence_events(F, assemblies_local, **det)
+
+
+def _permuted_assembly_score(F, assemblies_local, seed, det, env_seed_log=None, swr_period=None, onset_on=False):
     """PERMUTED-ASSEMBLY anti-cheat: re-score the SAME rest firing with a random permutation of the assembly LABELS ->
-    forward_frac collapses to chance (the ordered structure is real, not a labeling artifact). Deterministic per seed."""
+    forward_frac collapses to chance (the ordered structure is real, not a labeling artifact). Deterministic per seed.
+    In the onset-cue regime the SAME env_seed_log is kept while the labels are permuted, so the seeded position k now
+    points to a physically-unrelated assembly -> forward-from-seed contiguity breaks -> chance (the intended control)."""
     perm = np.random.default_rng(int(seed) * 5150 + 3).permutation(len(assemblies_local))
     relabeled = [assemblies_local[i] for i in perm]
+    if onset_on:
+        sc = _score_forward_from_seed(F, relabeled, env_seed_log, swr_period, W=det["W"], ev_floor=det["ev_floor"],
+                                      ev_k=det["ev_k"], active_frac=det["active_frac"], onset_frac=det["onset_frac"])
+        return _seed_scored_to_std(sc, len(relabeled))
     return _detect_sequence_events(F, relabeled, **det)
 
 
@@ -362,7 +492,11 @@ def one_seed(seed, cfg, a):
                   swr_period=a.swr_period, env_dur=a.env_dur, noise_rate=a.noise_rate, noise_pa=a.noise_pa,
                   noise_dur=a.noise_dur, self_regen_read=a.self_regen_read, recall_k_thresh=a.recall_k_thresh,
                   d_abs=a.d_abs, a_abs=a.a_abs, self_regen_ignite=a.self_regen_ignite, ignite_frac=a.ignite_frac,
-                  env_exc_ramp=a.env_exc_ramp)
+                  env_exc_ramp=a.env_exc_ramp, env_exc_ramp_floor=a.env_exc_ramp_floor,
+                  fwd_gain=a.fwd_gain, fwd_gain_scope=a.fwd_gain_scope,
+                  seed_assembly=a.seed_assembly, seed_pa=a.onset_cue_pa, seed_dur=a.onset_cue_dur,
+                  seed_frac=a.onset_cue_frac, fixed_seed_asm=a.fixed_seed_asm)
+    onset_on = a.onset_on
 
     # -- BUILD the DECOUPLED forward-asymmetric store (reused frozen across all readout arms) --
     prep = _prepare_sequence(seed, cfg, do_encode=True)
@@ -390,12 +524,27 @@ def one_seed(seed, cfg, a):
 
     # ================= OPTION 2 GO arm (SWR envelope) =================
     r_go = _rest_swr_envelope(prep, a.rest_steps, seed, mode="swr", noise_on=True, adapt=True, verbose=True, **env_kw)
-    s_go = _seq_detect(r_go["F"], al, det)
+    s_go = _score_arm(r_go, al, det, a.swr_period, onset_on)
     out["go"] = {**{k: s_go[k] for k in ("n_events", "n_multi", "n_full", "forward_frac", "reverse_frac", "mean_tau",
                                          "chance_forward", "duty_cycle", "pop_rate", "per_asm_active", "per_asm_peak")},
                  "weights_frozen": r_go["weights_frozen"], "apical_rest_max": r_go["apical_rest_max"],
-                 "apical_n_latched": r_go["apical_n_latched"], "n_env": r_go["n_env"], "basket_n": r_go["basket_n"]}
+                 "apical_n_latched": r_go["apical_n_latched"], "n_env": r_go["n_env"], "basket_n": r_go["basket_n"],
+                 "amp": r_go["amp"]}
+    if onset_on:
+        out["go"]["onset_cue"] = dict(asm=a.onset_cue_asm, pa=a.onset_cue_pa, dur=a.onset_cue_dur,
+                                      frac=a.onset_cue_frac, fixed=a.fixed_seed_asm)
+        out["go"]["seed_first_frac"] = s_go.get("seed_first_frac")
+        out["go"]["by_seedpos"] = s_go.get("by_seedpos")
+        out["go"]["n_seed_envs"] = s_go.get("n_seed_envs")
+        print(f"  [seed {seed}] ONSET-CUE: asm={a.onset_cue_asm} (fixed={a.fixed_seed_asm}) pa={a.onset_cue_pa} "
+              f"dur={a.onset_cue_dur} frac={a.onset_cue_frac} -> forward=forward-FROM-SEED; "
+              f"seed_first_frac={s_go.get('seed_first_frac')} by_seedpos={s_go.get('by_seedpos')}", flush=True)
     chance = max(s_go["chance_forward"], 1e-6)
+    _amp = r_go["amp"]
+    print(f"  [seed {seed}] FWD-GAIN: scope={_amp['scope']} gain={_amp['fwd_gain']}x on {_amp['n_edges']} edges "
+          f"(adj_fwd {_amp['base_mean'] if _amp['base_mean'] is None else round(_amp['base_mean'],1)}"
+          f"->{_amp['peak_mean'] if _amp['peak_mean'] is None else round(_amp['peak_mean'],1)} within the envelope; "
+          f"restored after)", flush=True)
     print(f"  [seed {seed}] GO (SWR envelope): ev={s_go['n_events']} multi={s_go['n_multi']} full={s_go['n_full']} "
           f"FWD={s_go['forward_frac']:.3f} REV={s_go['reverse_frac']:.3f} chance={chance:.3f} tau={s_go['mean_tau']:+.3f} "
           f"duty={s_go['duty_cycle']:.3f} act={s_go['per_asm_active']} pop={s_go['pop_rate']:.4f} n_env={r_go['n_env']} "
@@ -403,7 +552,7 @@ def one_seed(seed, cfg, a):
 
     # -- ANTI-CHEAT 1: NO-SWR (constant E/I, no transient) -> collapse --
     r_ns = _rest_swr_envelope(prep, a.rest_steps, seed, mode="no_swr", noise_on=True, adapt=True, **env_kw)
-    s_ns = _seq_detect(r_ns["F"], al, det)
+    s_ns = _score_arm(r_ns, al, det, a.swr_period, onset_on)
     out["no_swr"] = dict(n_multi=s_ns["n_multi"], forward_frac=s_ns["forward_frac"], reverse_frac=s_ns["reverse_frac"],
                          duty_cycle=s_ns["duty_cycle"], per_asm_active=s_ns["per_asm_active"], pop_rate=s_ns["pop_rate"],
                          weights_frozen=r_ns["weights_frozen"])
@@ -413,7 +562,7 @@ def one_seed(seed, cfg, a):
 
     # -- ANTI-CHEAT 5: NO-NOISE acid (envelope on, noise off) -> no specific forward events --
     r_nn = _rest_swr_envelope(prep, a.rest_steps, seed, mode="swr", noise_on=False, adapt=True, **env_kw)
-    s_nn = _seq_detect(r_nn["F"], al, det)
+    s_nn = _score_arm(r_nn, al, det, a.swr_period, onset_on)
     out["no_noise"] = dict(n_multi=s_nn["n_multi"], forward_frac=s_nn["forward_frac"], duty_cycle=s_nn["duty_cycle"],
                            per_asm_active=s_nn["per_asm_active"], pop_rate=s_nn["pop_rate"],
                            weights_frozen=r_nn["weights_frozen"])
@@ -423,7 +572,7 @@ def one_seed(seed, cfg, a):
 
     # -- ANTI-CHEAT 7: ADAPT-LESION (d_abs->0, no SFA) -> [3,3,3] co-fire (Ecker control) --
     r_al = _rest_swr_envelope(prep, a.rest_steps, seed, mode="swr", noise_on=True, adapt=False, **env_kw)
-    s_al = _seq_detect(r_al["F"], al, det)
+    s_al = _score_arm(r_al, al, det, a.swr_period, onset_on)
     out["adapt_lesion"] = dict(n_multi=s_al["n_multi"], forward_frac=s_al["forward_frac"], duty_cycle=s_al["duty_cycle"],
                                per_asm_active=s_al["per_asm_active"], pop_rate=s_al["pop_rate"],
                                weights_frozen=r_al["weights_frozen"])
@@ -432,7 +581,8 @@ def one_seed(seed, cfg, a):
           f"({time.time()-t0:.0f}s)", flush=True)
 
     # -- ANTI-CHEAT 4: PERMUTED-ASSEMBLY (re-score GO firing with random assembly labels) -> chance --
-    s_pa = _permuted_assembly_score(r_go["F"], al, seed, det)
+    s_pa = _permuted_assembly_score(r_go["F"], al, seed, det, env_seed_log=r_go["env_seed_log"],
+                                    swr_period=a.swr_period, onset_on=onset_on)
     out["permuted_assembly"] = dict(n_multi=s_pa["n_multi"], forward_frac=s_pa["forward_frac"],
                                     reverse_frac=s_pa["reverse_frac"], per_asm_active=s_pa["per_asm_active"])
     print(f"  [seed {seed}] PERMUTED-ASSEMBLY (relabel): multi={s_pa['n_multi']} FWD={s_pa['forward_frac']:.3f} "
@@ -441,7 +591,7 @@ def one_seed(seed, cfg, a):
     # -- ANTI-CHEAT 6: NO-ENCODE (fresh bridge, store skipped, same envelope+noise) -> no specific events --
     prep_ne = _prepare_sequence(seed, cfg, do_encode=False)
     r_ne = _rest_swr_envelope(prep_ne, a.rest_steps, seed, mode="swr", noise_on=True, adapt=True, **env_kw)
-    s_ne = _seq_detect(r_ne["F"], prep_ne["assemblies_local"], det)
+    s_ne = _score_arm(r_ne, prep_ne["assemblies_local"], det, a.swr_period, onset_on)
     out["no_encode"] = dict(n_multi=s_ne["n_multi"], forward_frac=s_ne["forward_frac"], w_within=prep_ne["w_within"],
                             per_asm_active=s_ne["per_asm_active"], pop_rate=s_ne["pop_rate"],
                             weights_frozen=r_ne["weights_frozen"])
@@ -452,7 +602,7 @@ def one_seed(seed, cfg, a):
     prep_sc = _prepare_sequence(seed, cfg, do_encode=True)
     n_sc = _scramble_between_weights(prep_sc, seed)
     r_sc = _rest_swr_envelope(prep_sc, a.rest_steps, seed, mode="swr", noise_on=True, adapt=True, **env_kw)
-    s_sc = _seq_detect(r_sc["F"], prep_sc["assemblies_local"], det)
+    s_sc = _score_arm(r_sc, prep_sc["assemblies_local"], det, a.swr_period, onset_on)
     out["shuffled_store"] = dict(n_between_shuffled=n_sc, n_multi=s_sc["n_multi"], forward_frac=s_sc["forward_frac"],
                                  reverse_frac=s_sc["reverse_frac"], per_asm_active=s_sc["per_asm_active"],
                                  weights_frozen=r_sc["weights_frozen"])
@@ -463,7 +613,7 @@ def one_seed(seed, cfg, a):
     prep_sym = _prepare_sequence(seed, cfg, do_encode=True)
     n_sym = _symmetrize_between_weights(prep_sym)
     r_sym = _rest_swr_envelope(prep_sym, a.rest_steps, seed, mode="swr", noise_on=True, adapt=True, **env_kw)
-    s_sym = _seq_detect(r_sym["F"], prep_sym["assemblies_local"], det)
+    s_sym = _score_arm(r_sym, prep_sym["assemblies_local"], det, a.swr_period, onset_on)
     out["reverse_asym_lesion"] = dict(n_between_symmetrized=n_sym, n_multi=s_sym["n_multi"],
                                       forward_frac=s_sym["forward_frac"], reverse_frac=s_sym["reverse_frac"],
                                       per_asm_active=s_sym["per_asm_active"], weights_frozen=r_sym["weights_frozen"])
@@ -539,7 +689,25 @@ def main():
     ap.add_argument("--self-regen-read", type=float, default=0.0, help="plateau self-regen during the READ (0 = transient de-latch -> discrete + able to hand off)")
     ap.add_argument("--self-regen-ignite", type=float, default=None, help="MECHANISM #1 latch-then-release: HIGH self-regen (e.g. 0.15) for the first ignite-frac of each envelope (selective ignition), then drops to self-regen-read (de-latch + forward hand-off). None = constant self-regen-read (byte-identical).")
     ap.add_argument("--ignite-frac", type=float, default=0.4, help="fraction of the envelope window held at self-regen-ignite (latch phase) before release")
-    ap.add_argument("--env-exc-ramp", action="store_true", help="MECHANISM #2: ramp env-exc-pa 0->peak across the envelope (most-excitable assembly crosses threshold FIRST -> sequences)")
+    ap.add_argument("--env-exc-ramp", action="store_true", help="MECHANISM #2: ramp env-exc-pa floor->peak across the envelope (most-excitable assembly crosses threshold FIRST -> sequences)")
+    ap.add_argument("--env-exc-ramp-floor", type=float, default=0.5, help="MECHANISM #2 ramp start as a fraction of peak (BUGFIX: was implicitly 0 -> subthreshold -> killed ignition). 0.5 = ramp 0.5*peak -> peak.")
+    # FORWARD-LINK GAIN (the missing SWR ingredient, 2026-08-20): transiently amplify the learned forward-asymmetric links
+    # INTO the ~114-190 handoff band DURING the envelope so the ignited assembly hands off A->B->C, then restore (transient).
+    ap.add_argument("--fwd-gain", type=float, default=1.0, help="TRANSIENT multiplicative gain (w->w*g) on the forward-link scope WITHIN the envelope (Buzsaki's 3-5x SWR E>I gain). 1.0 = off (byte-identical). adj_fwd~=38 -> band ~114-190 needs g~3-5.")
+    ap.add_argument("--fwd-gain-scope", choices=["adjacent", "between", "forward"], default="adjacent",
+                    help="which between-edges the gain multiplies. 'adjacent'=distance-1 BOTH directions (position-symmetric -> lesion-safe; the learned WEIGHT asymmetry carries order); 'between'=all between edges; 'forward'=forward-position only (DIAGNOSTIC/position-asymmetric -> the reverse-asym-lesion gate will flag it if it fabricates order).")
+    # DIRECTIONAL ONSET CUE (2026-08-20): a biological PREFIX cue at each SWR envelope onset that biases WHICH assembly
+    # ignites first, so the gain-amplified forward links carry the replay FORWARD (the residual after fwd-gain was: ordered
+    # but REVERSE, because non-specific noise let the last-seeded assembly dominate). The cue targets the chosen assembly's
+    # CELLS (a recall prefix) -- it is NOT a host reordering of the output; forward is then scored forward-FROM-SEED.
+    ap.add_argument("--onset-cue-asm", type=str, default=None,
+                    help="assembly to cue at each envelope onset: '0' = the chain-start A (fixed prefix -> forward A->B->C); "
+                         "an int index for a fixed prefix; 'rand' = a RANDOM assembly per envelope (the rigorous "
+                         "forward-FROM-SEED anti-cheat: order that survives a random start rides the WEIGHT asymmetry, not "
+                         "the cue -> the REVERSE-ASYM-LESION MUST then collapse it). None = off (non-specific ignition only).")
+    ap.add_argument("--onset-cue-pa", type=float, default=0.0, help="onset prefix cue amplitude (pA) onto the cued assembly's cells")
+    ap.add_argument("--onset-cue-dur", type=int, default=0, help="onset prefix cue duration (steps) from each envelope onset")
+    ap.add_argument("--onset-cue-frac", type=float, default=0.5, help="fraction of the cued assembly's cells the prefix drives")
     ap.add_argument("--recall-k-thresh", type=float, default=None, help="coincidence_k_threshold at read (None = the DECOUPLED store's own, 40)")
     ap.add_argument("--d-abs", type=float, default=40.0, help="Izhikevich per-spike u-kick on CA3-exc (SFA self-avoidance)")
     ap.add_argument("--a-abs", type=float, default=0.008, help="Izhikevich recovery rate a on CA3-exc")
@@ -567,6 +735,17 @@ def main():
     if a.option1_only:
         a.option1 = True
 
+    # -- parse the DIRECTIONAL ONSET CUE mode --
+    if a.onset_cue_asm is None or str(a.onset_cue_asm).strip() == "":
+        a.onset_on = False; a.seed_assembly = False; a.fixed_seed_asm = None
+    elif str(a.onset_cue_asm).strip().lower() in ("rand", "random", "-1"):
+        a.onset_on = True; a.seed_assembly = True; a.fixed_seed_asm = None
+    else:
+        a.onset_on = True; a.seed_assembly = True; a.fixed_seed_asm = int(a.onset_cue_asm)
+    if a.onset_on and (a.onset_cue_pa == 0.0 or a.onset_cue_dur <= 0):
+        print(f"[gap5-swr-envelope] WARNING: --onset-cue-asm set but onset-cue-pa={a.onset_cue_pa} "
+              f"onset-cue-dur={a.onset_cue_dur} -> the cue injects nothing (no directional bias).", flush=True)
+
     cfg = dict(DECOUPLED_CFG)
     cfg["n_ca3"] = int(a.n_ca3); cfg["n_mem"] = int(a.n_mem)
     if a.sel_inhib_spare is not None:
@@ -580,6 +759,8 @@ def main():
           f"env_dur={a.env_dur} env_exc={a.env_exc_pa} basket_drop={a.env_basket_drop} basket_boost={a.env_basket_boost} "
           f"| noise_rate={a.noise_rate} noise_pa={a.noise_pa} noise_dur={a.noise_dur} | self_regen={a.self_regen_read} "
           f"k_thresh={a.recall_k_thresh} d_abs={a.d_abs} a_abs={a.a_abs} sel_inhib_spare={cfg['sel_inhib_spare']} | "
+          f"fwd_gain={a.fwd_gain}x scope={a.fwd_gain_scope} | onset_cue_asm={a.onset_cue_asm} "
+          f"(pa={a.onset_cue_pa} dur={a.onset_cue_dur} frac={a.onset_cue_frac}) | "
           f"option1={a.option1} seeds={a.seeds} backend={backend}", flush=True)
 
     t0 = time.time(); per = []; err = None
@@ -636,7 +817,12 @@ def main():
                                env_basket_drop=a.env_basket_drop, env_basket_boost=a.env_basket_boost,
                                noise_rate=a.noise_rate, noise_pa=a.noise_pa, noise_dur=a.noise_dur,
                                self_regen_read=a.self_regen_read, recall_k_thresh=a.recall_k_thresh,
-                               d_abs=a.d_abs, a_abs=a.a_abs, sel_inhib_spare=cfg["sel_inhib_spare"]),
+                               d_abs=a.d_abs, a_abs=a.a_abs, sel_inhib_spare=cfg["sel_inhib_spare"],
+                               fwd_gain=a.fwd_gain, fwd_gain_scope=a.fwd_gain_scope,
+                               onset_cue_asm=a.onset_cue_asm, onset_cue_pa=a.onset_cue_pa,
+                               onset_cue_dur=a.onset_cue_dur, onset_cue_frac=a.onset_cue_frac,
+                               fixed_seed_asm=a.fixed_seed_asm,
+                               env_exc_ramp=a.env_exc_ramp, env_exc_ramp_floor=a.env_exc_ramp_floor),
                "elapsed_seconds": round(time.time() - t0, 1), "verdict": verdict, "per_seed": per, **summary_extra}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
