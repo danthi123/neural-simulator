@@ -7985,7 +7985,7 @@ class SimulationBridge:
             self._accumulated_spikes_gpu += spike_count_gpu
         self._stats_sync_counter += 1
         if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
-            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
+            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // max(1, self._stats_sync_counter)
             self._last_synced_spike_count = self._mock_num_spikes_this_step
             self._accumulated_spikes_gpu = None
             self._stats_sync_counter = 0
@@ -8205,7 +8205,7 @@ class SimulationBridge:
             self._accumulated_spikes_gpu += spike_count_gpu
         self._stats_sync_counter += 1
         if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
-            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
+            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // max(1, self._stats_sync_counter)
             self._last_synced_spike_count = self._mock_num_spikes_this_step
             self._accumulated_spikes_gpu = None
             self._stats_sync_counter = 0
@@ -8341,9 +8341,42 @@ class SimulationBridge:
             hh_executor(*hh_arguments)
         return self.cp_firing_states
 
+    def _ensure_connections_on_backend(self):
+        """Coerce self.cp_connections to the ACTIVE backend's sparse type (a byte-identical no-op when it
+        already is). A co-resident organ bridge built on the cupy backend can have cp_connections assigned a
+        plain scipy.sparse CSR — the surprise / comprehension organ homeostat + block-gain write paths do
+        `import scipy.sparse as sp; bridge.cp_connections = sp.csr_matrix(...)` (host data), and the onebrain
+        pool bind can leave a scipy container holding cupy .data (a 'hybrid'). Either way the step's
+        `effective_connections_matrix.T @ fired_2col` becomes a scipy @ cupy matmul and raises 'Implicit
+        conversion to a NumPy array is not allowed', hanging the full-faculty GPU chat turn. Rebuild it ONCE
+        here from its CSR arrays as a backend `csp` matrix; the stored result is backend-native, so every
+        later step sees the matching type and this returns immediately. On the numpy backend `csp` IS
+        scipy.sparse, so a scipy matrix already satisfies the isinstance guard and nothing is ever rebuilt —
+        the numpy path is untouched / byte-identical."""
+        M = self.cp_connections
+        if M is None or isinstance(M, csp.spmatrix):
+            return
+        # Foreign sparse matrix (scipy on the cupy backend, possibly hybrid). Move its arrays onto the
+        # backend. cp.asarray accepts a host OR a device source, so it handles both the host-data and the
+        # hybrid-cupy-data cases; dtypes are preserved.
+        if hasattr(M, "indptr") and hasattr(M, "indices") and hasattr(M, "data"):
+            self.cp_connections = csp.csr_matrix(
+                (cp.asarray(M.data), cp.asarray(M.indices), cp.asarray(M.indptr)),
+                shape=M.shape,
+            )
+        else:
+            coo = M.tocoo()
+            self.cp_connections = csp.coo_matrix(
+                (cp.asarray(coo.data), (cp.asarray(coo.row), cp.asarray(coo.col))),
+                shape=M.shape,
+            ).tocsr()
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
+        # Backend-normalize the connection matrix before any sparse op / megakernel dispatch below (no-op on
+        # numpy and once-per-foreign-assignment on cupy — see _ensure_connections_on_backend).
+        self._ensure_connections_on_backend()
         self._validate_inhibitory_stdp_composability()
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
@@ -9521,7 +9554,7 @@ class SimulationBridge:
 
             self._stats_sync_counter += 1
             if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
-                self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
+                self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // max(1, self._stats_sync_counter)
                 self._last_synced_spike_count = self._mock_num_spikes_this_step
                 self._accumulated_spikes_gpu = None
                 self._stats_sync_counter = 0
