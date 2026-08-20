@@ -175,6 +175,13 @@ a tool it never told you to install.
    SESSION-START heartbeat must emit recent-OUTPUT/progress, not just GPU + proc-count (CLAUDE.md already says
    "recent-output" — a proc-count-only heartbeat is under-built). Cheap probes: `ps -o time,pcpu,stat -p <pid>`;
    `stat -c %y <log>` / the agent's `subagents/agent-<id>.jsonl`.
+   **PREVENT it in the brief, not just detect it (recurred 2026-08-20):** a delegated agent whose task RUNS something
+   to completion must be told **"run it FOREGROUND (blocking) within your turn — do NOT launch it in the background and
+   end your turn waiting on a monitor."** An agent's turn can END before a backgrounded run notifies, stranding the task
+   half-done (the GNW-verify agent did exactly this — launched the numpy verify in the background, stopped, committed
+   nothing; a resume with "run foreground" then finished it AND found the real bug). Put the foreground instruction in
+   every build/verify brief; on hand-back, always trust-but-VERIFY the actual repo state (HEAD, files, pushes), because
+   an incomplete agent result reads the same as a complete one.
 9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
    cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
 10. **AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF* — check the default before claiming a cheat is closed.** A recorded
@@ -187,6 +194,13 @@ a tool it never told you to install.
    grep its own `.cmd.json` for the flag that closes it **and** read that flag's default. One-line check; would
    have caught this on day one. **Corollary — a claim inherited from a neighbouring config is not evidence:** the
    config that earns a claim and the config that quotes it are different experiments.
+   **Corollary — after you FLIP a feature's DEFAULT to ON, every off/baseline A/B that toggles it by UNSETTING the flag
+   is now on-vs-on** (2026-08-20, as the project ships default-on flips). The GNW two-organ default-on verify tested
+   "flag OFF" by UNSETTING `BRAIN_GNW_2ORGAN` — correct BEFORE the flip, but unset now RESOLVES to ON, so its
+   byte-identity-off baseline was silently the bus compared against ITSELF (the first hardened re-run read UNDEFINED
+   until it forced the flag to an explicit `"0"`/`"1"` in both arms). ⇒ When you flip a default on, grep every off/
+   baseline/byte-identity test that establishes its "off" arm by unsetting the env flag, and set it EXPLICITLY to `"0"`
+   in both arms — an unset "off" arm silently becomes the on-path and the A/B proves nothing.
    **The WRITING-SIDE half (same defect, other end): RECORD THE KNOB — a FILENAME IS NOT PROVENANCE.**
    `_onbridge_eprop_port_derisk.py` never writes `pool_k` into its output config (`:672-673`) and never prints it,
    while `--pool-k` **defaults to 1** and the whole arc runs at 8. So the ONLY provenance for the most load-bearing
