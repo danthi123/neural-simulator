@@ -61,3 +61,19 @@ under-drives→[0,0,0]; the envelope depth×duration×noise-σ sweep is the genu
 `_gap5_spontaneous_reactivation_derisk` (noise+bistable ignition); `consolidation_trainer.run_swr_replay_phase` (envelope
 timing); `_gap5_gamma_wta_replay_derisk` (ordering); the decoupled store builder. Every piece exists except the
 self-organized E/I-transient generator, buildable with no `sim/` edit.
+
+## 2026-08-20 UPDATE — discrete ignition is SOLVED; the residual is a weak-forward-link MECHANISM gap, not a tuning band
+<!--derived-->
+A 32-config seed-42 sweep of `_gap5_swr_envelope_replay_derisk.py` (on disk, `research/findings/raw/gap5_r4/swr_*`)
+REFINES the "Residual risk" above, and corrects it. The `per_asm_active~[1,1,1]` DISCRETE-ignition state — the
+sub-condition the theta-era readouts never reached — IS reachable, but NOT via the depth×duration×noise sweep this
+finding predicted: the lever is **`--sel-inhib-spare`** (spare the assembly members from the basket suppression), which
+turns the over-driven `[3,3,3]` co-fire into clean `[1,1,1]`. So "ignite + discrete" is no longer the wall.
+The FORWARD-SEQUENCING sub-condition (`forward_frac>0`, order A→B→C) is the true residual, and it is a MECHANISM gap,
+not an envelope tuning band: (a) the runner's `--env-exc-ramp` ramps env-exc from ~0, so it is subthreshold for most of
+the window and KILLS ignition (every ramp config → [0,0,0]); (b) more fundamentally, the store's forward-asymmetric
+links (`adj_fwd≈38`) are too weak to bias the order — the handoff band is ~114–190 (Section B above) and NO runner knob
+amplifies them. So the next step is a BUILD: gain-amplify the forward links into the handoff band DURING the SWR
+envelope (or re-encode the store with stronger forward links), NOT another envelope sweep. This is the convergent
+unblock for the D5 learn-through-use transfer + the brain-pure sleep-replay store (both 2026-08-20). Blind envelope
+tuning is retired here by the research gate (4 rounds, 32 configs).
