@@ -87,3 +87,10 @@ scipy-hybrid matmul crash. So on the production substrate the brain genuinely ke
 THOUGHT genuinely WANDERS (stochastic multibasin CA3) between turns. Tick cost 54.9s at the full op point
 (speed-secondary). Next: run it on the live cupy chat SERVER (BRAIN_CONTINUOUS + BRAIN_CONTINUOUS_DRIVES) so the
 continual state is experienceable end-to-end through the chat endpoint, then flip toward production-default.
+
+## Correction (2026-08-20) — the cupy wander is NOT varied at the production default store
+The rung-2 note above says "the stochastic multibasin CA3 wander (varied concepts) is the cupy path." A direct probe
+(2026-08-20-continuous-wander-content-degenerate, runner `_continuous_wander_variety_cupy.py`) FALSIFIES that for the
+production default store: six successive cupy wanders on one organ surfaced 'cat' 6/6. The wander-DRIVE coupling (#86)
+stays load-bearing, but its SOURCE is content-degenerate — the "trains-of-thought" property is scaffolded, not met.
+Next lever: inhibition-of-return (spike-frequency adaptation / short-term depression) on the just-ignited basin.

@@ -1,0 +1,28 @@
+{
+  "runner": "research/runners/_continuous_wander_variety_cupy.py",
+  "seed": 42,
+  "backend": "cupy",
+  "n_wanders": 6,
+  "concept_sequence": [
+    "cat",
+    "cat",
+    "cat",
+    "cat",
+    "cat",
+    "cat"
+  ],
+  "per_wander_s": [
+    65.6,
+    41.6,
+    42.5,
+    39.9,
+    38.0,
+    35.2
+  ],
+  "n_distinct": 1,
+  "distinct_concepts": [
+    "cat"
+  ],
+  "VERDICT": "DEGENERATE-single-concept",
+  "interpretation": "successive idle wanders surface ONE concept -> the wander is a fixed read, not wandering; residual: widen the CA3 wander's stochasticity / concept basin coverage"
+}
