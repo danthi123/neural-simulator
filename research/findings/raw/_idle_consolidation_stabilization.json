@@ -1,0 +1,475 @@
+{
+  "probe": "idle_consolidation_stabilization",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "params": {
+    "n_pre": 64,
+    "write_steps": 150,
+    "pulse_onset": 20,
+    "pulse_steps": 15,
+    "pulse_pA": 120.0,
+    "encode_drive": 900.0,
+    "recall_steps": 200,
+    "recall_drive": 2000.0,
+    "bg_drive": 0.0,
+    "n_ticks": 2,
+    "replay_steps": 15,
+    "replay_pre_pA": 900.0,
+    "replay_pulse_pA": 125.0,
+    "replay_lr_scale": 1.0,
+    "decay_steps": 13,
+    "w0": 0.3,
+    "btsp_w_max": 10.0,
+    "btsp_lr": 0.04,
+    "barrier": 2.0,
+    "beta": 0.04
+  },
+  "backend": "numpy",
+  "recall_hi": 0.015,
+  "recall_lo": 0.008,
+  "contrast": 0.4,
+  "elapsed_seconds": 2.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 309.9766845703125,
+          "w_after_idle": 107.24594116210938,
+          "recall_t0_target": 0.03625,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 309.9766845703125,
+          "w_after_idle": 170.2464141845703,
+          "recall_t0_target": 0.03625,
+          "recall_after_target": 0.01625,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 309.9766845703125,
+          "w_after_idle": 122.39214324951172,
+          "recall_t0_target": 0.03625,
+          "recall_after_target": 0.01,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 42,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 87.78568267822266,
+          "recall_t0_target": 0.0125,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.09875,
+        "recall_zero_weight": 0.00125
+      }
+    },
+    {
+      "seed": 43,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 290.50726318359375,
+          "w_after_idle": 100.5098876953125,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.0125,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 290.50726318359375,
+          "w_after_idle": 156.2736358642578,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.02,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 290.50726318359375,
+          "w_after_idle": 109.68049621582031,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.015,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 43,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 90.67414855957031,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.0125,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08375,
+        "recall_zero_weight": 0.0025
+      }
+    },
+    {
+      "seed": 44,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 305.8652038574219,
+          "w_after_idle": 105.82344055175781,
+          "recall_t0_target": 0.02375,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.00875,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 305.8652038574219,
+          "w_after_idle": 161.02392578125,
+          "recall_t0_target": 0.02375,
+          "recall_after_target": 0.01375,
+          "recall_after_distr": 0.00875,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 305.8652038574219,
+          "w_after_idle": 116.98521423339844,
+          "recall_t0_target": 0.02375,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.00875,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 44,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 89.058349609375,
+          "recall_t0_target": 0.005,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.00875,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.075,
+        "recall_zero_weight": 0.00125
+      }
+    },
+    {
+      "seed": 100,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 283.48736572265625,
+          "w_after_idle": 98.08113861083984,
+          "recall_t0_target": 0.01625,
+          "recall_after_target": 0.00375,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 283.48736572265625,
+          "w_after_idle": 153.39920043945312,
+          "recall_t0_target": 0.01625,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 283.48736572265625,
+          "w_after_idle": 114.62409210205078,
+          "recall_t0_target": 0.01625,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 100,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 85.45548248291016,
+          "recall_t0_target": 0.00625,
+          "recall_after_target": 0.005,
+          "recall_after_distr": 0.00625,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.06125,
+        "recall_zero_weight": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 308.1890563964844,
+          "w_after_idle": 106.62744903564453,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.0075,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 308.1890563964844,
+          "w_after_idle": 167.5523223876953,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.01125,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 308.1890563964844,
+          "w_after_idle": 119.6049575805664,
+          "recall_t0_target": 0.02625,
+          "recall_after_target": 0.00875,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 101,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 95.52103424072266,
+          "recall_t0_target": 0.0075,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.0025,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.08125,
+        "recall_zero_weight": 0.0025
+      }
+    },
+    {
+      "seed": 102,
+      "conditions": {
+        "noreplay": {
+          "condition": "noreplay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 301.1280517578125,
+          "w_after_idle": 104.18449401855469,
+          "recall_t0_target": 0.01875,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 0
+        },
+        "replay": {
+          "condition": "replay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 301.1280517578125,
+          "w_after_idle": 163.100830078125,
+          "recall_t0_target": 0.01875,
+          "recall_after_target": 0.0125,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        },
+        "replay_nopre": {
+          "condition": "replay_nopre",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 301.1280517578125,
+          "w_after_idle": 117.47466278076172,
+          "recall_t0_target": 0.01875,
+          "recall_after_target": 0.00875,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        },
+        "moat_replay": {
+          "condition": "moat_replay",
+          "seed": 102,
+          "w0_target": 76.80000305175781,
+          "w_after_encode": 76.80000305175781,
+          "w_after_idle": 93.19298553466797,
+          "recall_t0_target": 0.0025,
+          "recall_after_target": 0.00625,
+          "recall_after_distr": 0.00375,
+          "n_replay_calls": 2
+        }
+      },
+      "instrument": {
+        "off_dw": 0.0,
+        "maintenance_inert_beta0_delta": 0.0,
+        "recall_huge_weight": 0.06875,
+        "recall_zero_weight": 0.0
+      }
+    }
+  ],
+  "label": "idle-tick replay-driven trace stabilization (recall-after-delay)",
+  "status": "UNDEFINED",
+  "go": false,
+  "undefined_reasons": [
+    "unmet: G3 specificity: moat_replay (never encoded) does not gain recall from replay dose (measured=False expect=True)",
+    "unmet: replay vs noreplay (recall-after) (treatment=0.0135417 control=0.0075 |sep|=0.00604167 > 0.008)",
+    "unmet: replay vs replay_nopre (recall-after) (treatment=0.0135417 control=0.00916667 |sep|=0.004375 > 0.008)"
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "G1 headline: replay after-idle beats matched noreplay",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G2 lesion: replay_nopre does not rescue recall (needs presynaptic coactivity)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "G3 specificity: moat_replay (never encoded) does not gain recall from replay dose",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "instrument (off byte-id / maint inert / readout distinguishes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "replay-call counters match condition (branch reached)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "replay vs noreplay (recall-after)",
+      "ok": false,
+      "detail": "treatment=0.0135417 control=0.0075 |sep|=0.00604167 > 0.008",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "replay vs replay_nopre (recall-after)",
+      "ok": false,
+      "detail": "treatment=0.0135417 control=0.00916667 |sep|=0.004375 > 0.008",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "encode write moved the target weight",
+      "ok": true,
+      "detail": "before=76.8 after=299.859 moved=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "Hebbian",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "homeostasis",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "short-term plasticity",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "reward modulation",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "structural plasticity",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "NMDA",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    },
+    {
+      "process": "input divisive norm",
+      "why": "isolation: BTSP is the sole weight mover in both the encode and replay phases"
+    }
+  ],
+  "chance": null,
+  "GO": false,
+  "verdict": "BOUNDARY -- G3 specificity failed (moat_replay=0.007 recalled nearly as well as replay=0.014 despite never being encoded). Per THE LAW: tune replay_pre_pA/replay_pulse_pA/n_ticks/decay_steps/barrier/beta, NOT a stop. Name the residual, not a stop.",
+  "HONEST_NOTE": "Spiking ENCODE, spiking REPLAY reactivation, and spiking RECALL (post firing) all run on a real SimulationBridge via the real fused_btsp_update kernel; recall is a BEHAVIOURAL read, not a weight read. The tag-and-capture maintenance rule (decay sub-window) is a RUNNER-LEVEL MODEL applied to cp_connections.data (Frey&Morris 1997; Lisman 1985; Bittner&Magee 2017 for the plateau write) -- NOT yet a sim/ kernel, reused unchanged from the 2026-08-12 precedent. NOT 'consolidation' in the docs/TERMS.md sense: no lesion of a SOURCE STRUCTURE (systems-level hippocampus-cortex independence) was tested, and there is no second interfering episode -- this is SINGLE-TRACE episodic stabilization, deliberately scoped away from the compositional/semantic-generalization wall the 2026-05-20/2026-08-03 record already hit. The replay CONTENT (which cells to reactivate, i.e. post_target + pre_idx) is HOST-DIRECTED at reduced amplitude -- not an emergent recurrent pattern-completion from partial/noisy cues (that is the honest next rung, see NEXT RUNG). NO new sim/ edit; NO existing runner or webapp/ file was modified.",
+  "NEXT_RUNG": "Make the replay CONTENT emergent: give the pre population plastic recurrent internal connectivity (RegionPathway pre->pre) so encoding also forms a weak auto-associative assembly; drive idle-tick reactivation with UNTARGETED noise into a random subset of pre (not the host re-presenting pre_idx/post_target verbatim) and let pattern-completion recruit the rest of the assembly -- host then only supplies undirected noise, matching the 2026-08-03 replay-cortical-consolidation gate's 'episode-agnostic CA3 noise' design. Then wire this under the continuous engine's idle tick (webapp/continuous_engine.py, which already names 'idle BTSP consolidation' as its next rung) as a guarded, default-OFF pass, and port the tag-and-capture maintenance to a sim/ kernel."
+}
