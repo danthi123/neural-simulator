@@ -1,0 +1,24 @@
+{
+  "runner": "_gnw_coincidence_integrator_derisk",
+  "mode": "calibrate",
+  "seed": 42,
+  "D": 256,
+  "THR": 0.167,
+  "d_sub": 1400.0,
+  "knee_pA": 2400,
+  "solo_rate_by_drive": {
+    "600": 0.005,
+    "900": 0.047,
+    "1200": 0.037,
+    "1400": 0.027,
+    "1500": 0.024,
+    "1700": 0.03,
+    "1800": 0.028,
+    "2100": 0.007,
+    "2400": 0.333,
+    "2800": 0.333
+  },
+  "d_sub_solo_rate": 0.027,
+  "coincidence_rate_2xd_sub": 0.333,
+  "in_window": true
+}
