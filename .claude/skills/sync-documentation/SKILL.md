@@ -150,6 +150,37 @@ mis-aims the next session.
 **It does NOT check truth.** Six of the nine 2026-07-28 retractions were instrument failures that pass both rules.
 Truth is `.claude/skills/verify-go/SKILL.md`; term conditions are `docs/TERMS.md`.
 
+### Check K: USER-FACING doc freshness — README especially (Checks A–J do NOT cover it)
+
+**The gap this closes (owner-flagged 2026-08-19): Check I syncs the INTERNAL boards (roadmap / GAP_CLOSURE /
+ROADMAP.md); Checks A–H fix COUNTS in README/CONTRIBUTING. NOTHING checks the README's PROSE — the project
+tagline, the honest-status/capabilities table, the "what it can/can't do" narrative — so it drifts silently.** A
+workflow refresh on adoption found the README's entire honest-status table stale (the conversational-integration /
+language / emotion / memory rows all described pre-pivot state) while every mechanical check was green.
+
+The user-facing docs are `README.md`, `USER_GUIDE.md`, `CONTRIBUTING.md`, `CHANGELOG.md`. Reconcile their PROSE
+against ground truth (the same source Check I uses): `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` (what is actually
+wired + on-by-default), `ROADMAP.md` recent milestones, the latest findings. Look for: a stale project one-liner
+(must be the pivoted north-star, not an old fact-recall/RAG/nav-demo framing); an honest-status/capabilities section
+that omits shipped default-on faculties or lists retired scaffolds as current; stale runnable commands/flags in
+USER_GUIDE (VERIFY every command against the runner's argparse — a wrong command is the worst user-facing defect);
+a CHANGELOG missing recent milestones.
+
+**Two hard rules for any user-facing edit** (they are user-visible, so the bar is higher):
+- **Honesty boundary is load-bearing here too:** self-reports are FUNCTIONAL read-outs, never "felt"/"phenomenal"/
+  "conscious"/"sentient" claims, and a header/tagline reads STANDALONE (a disclaimer two sentences later does not
+  neutralise a "felt mood" heading). Do NOT overclaim: describe on-by-default behaviour as the product, research
+  de-risks as research, and keep the honest caveats (co-residency ≠ one substrate; the Qwen mouth is a scaffold;
+  scaffold_retired is 0).
+- **Trust-but-verify any agent-written user-facing doc** before landing: confirm each runnable command + cited
+  finding actually exists.
+
+**For a deep semantic pass, dispatch the `refresh-user-facing-docs` workflow** (ground-truth → per-doc grounded
+edit → an adversarial HONESTY-verify pass → you review the diff + flags, fix, gate, land). On adoption it rewrote
+the README honestly and its honesty pass caught a "felt mood" header the edit had introduced. This is the mechanism
+that stops the README from going stale between passes; run it when the README's prose is >~2 weeks behind the
+frontier or the owner asks.
+
 ## What to fix automatically vs flag for human
 
 ### Fix automatically (numerical drift, no judgement needed)
