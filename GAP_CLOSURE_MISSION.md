@@ -15,6 +15,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐ STATE OF THE PROJECT — 2026-08-19 (CONTINUATION — READ FIRST; live resume point; supersedes the earlier 2026-08-19 header below)
 
+> **⭐⭐ STRATEGIC REFRAME (2026-08-19, owner) — read the ⭐⭐ block atop `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` + the reframe in `ROADMAP.md`.** Long-term north-star UNCHANGED (onebrain, all crutches burned down, emergent).
+> Near-term LOOSENED to reach fluent open-ended speech sooner + lean into "surpass-LLM-limits":
+> (1) **Qwen = FORM scaffold** openly (Qwen wording; brain content+control — never let Qwen's content leak in).
+> (2) **Honesty = STATE-fidelity not truth-fidelity** — accept human-grade confabulation IFF errors are brain-mechanistic (confidence tracks the real spiking signal; gist-preserved / source-confusable / reconsolidation-correctable; lesion-tested to degrade faculty-specifically) — the moat softens from a hard gate to a signal.
+> (3) **⭐ PRIMARY next arc = "MAKE THE BRAIN CONTINUOUS"** — the LLM-surpassing properties (learn-through-use, feeling, trains-of-thought, novelty) live in the substrate's CONTINUOUS LIFE, are LESS blocked than fluency (need recurrent dynamics + local plasticity + neuromod, all on-substrate; NOT deep credit), and today are SEEDS not an ENGINE — build the always-on background loop (idle consolidation/replay, persistent affect, trains-of-thought between turns, generative attractor-wandering).
+> RAG-vs-brain guard: substrate stays plastic+learning, faculties load-bearing, content brain-originated, speech state-faithful; point crutch-removal at the substrate's ALIVENESS not its perfection; Qwen parks on the deep-credit wall AND doubles as the curriculum.
+>
 > **North-star unchanged:** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine.
 >
 > **⭐ KEY INSIGHT this session (reframes the integration path):** the recently "wired" live-chat faculties are **OBSERVE-ONLY** — they compute a genuine *neural* verdict each turn and stash it as response metadata, but do **NOT change what the brain says**. Flipping such a faculty "default-on" satisfies the ledger checkbox while the faculty does nothing to the conversation = **hollow checkbox-integration** (the drift the gate exists to stop). The mission bar is faculties that **DRIVE** the conversation (load-bearing on content/affect/pragmatics). ⇒ **priority is now DEPTH (make wired faculties drive), not breadth (more observers) or hollow default-on flips.**

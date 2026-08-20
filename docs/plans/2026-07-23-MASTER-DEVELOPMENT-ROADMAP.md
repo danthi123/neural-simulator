@@ -6,10 +6,84 @@ date: 2026-07-23
 
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
-**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-18** (2026-08-18 GNW-keystone + integration wave — see the §0 continuation block below; prior big 2026-08-12/13 production-wiring + faculty-audit wave landed; **read §0 first** — it is the current forward truth and supersedes any older status below where they disagree). Update it as results/walls land.
+**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-19** (2026-08-19 **STRATEGIC REFRAME** — the ⭐⭐ block immediately below the header supersedes the near-term sequencing where they disagree: Qwen-as-form + state-fidelity honesty + the "make the brain continuous" primary arc; the long-term onebrain/crutch-burndown north-star is unchanged. Prior 2026-08-18 GNW-keystone + integration wave and the 2026-08-12/13 production-wiring + faculty-audit wave landed; **read the ⭐⭐ reframe, then §0**). Update it as results/walls land.
 **Supersedes-by-extension:** `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` (that plan's F1–F6 are absorbed here as sub-faculties; this doc adds the full faculty map, the developmental staging spine, the theory-of-mind ladder the F-plan omitted, the walls ledger, and the parallelization map).
 **Anchors:** `GAP_CLOSURE_MISSION.md` · `CLAUDE.md` · the master directive (`project_master_directive_relentless_biological_emergence`).
 **⭐ FACULTY-MAP GAP AUDIT + PRIORITIZED BUILD PLAN (2026-08-12, a 12-agent grounded audit):** `docs/plans/2026-08-12-faculty-map-gap-audit-and-roadmap.md` — the honest reckoning (the live brain is ~ONE integrated spiking family + a bench of ~40 unwired GOs; several organ internals still host-designed) and the Tier-1/2/3 next-faculty priorities. The keystone is a NEURAL WORKSPACE BUS (GNW ignition) + re-entrant deliberation (organs talk via ignition not Python; ACT on the conflict/confidence signals we only report). Read it for the forward faculty priorities; this master doc's §§2/7/8 remain the faculty-tag / wall-ledger / parallelization detail.
+
+---
+
+## ⭐⭐ STRATEGIC REFRAME (2026-08-19, owner directive) — READ THIS BEFORE §0
+
+**The long-term north-star is UNCHANGED: one spiking substrate (the onebrain), every host crutch burned down, faculties
+emergent-not-hand-wired. That remains the destination.** What changes is the near-term route: we are **loosening the
+requirements to reach fluent, open-ended speech SOONER**, and shifting the emphasis from "faithful biological emulation
+for its own sake" toward the **"surpass modern-LLM limits with a virtual brain"** half of the original goal. The
+crutch-removal drive stays strong — but it is re-aimed (see below). A crutch may stay longer than we'd normally accept
+**only** when it is parked on a genuine industry-wide wall (deep-credit / read-SNR); everything else still burns down.
+
+**1. Qwen becomes the FORM scaffold, openly — the form/content line is the whole discipline.** Qwen does FORM (fluent,
+open, multi-clause wording + syntax). The brain does CONTENT + CONTROL (what is true, what to say, tone, topic, when to
+hedge, when to abstain). Widen Qwen's role from "render this SVO" to "**generate freely, constrained to the brain's
+grounding + tone + topic, then survive the verifier**" — but never let Qwen's *content* (its pretraining facts /
+reasoning) leak in. Crossing that line = "an LLM with neuroscience decoration" (hollow); staying on the form side keeps
+it the brain talking. The steering faculties (affect→tone, swap→topic, DA→engagement, curiosity→follow-up, metacog→
+hedging) are ~architecture-agnostic and stay lesion-load-bearing over open Qwen output exactly as over templates.
+
+**2. Honesty is reframed: TRUTH-fidelity → STATE-fidelity.** The hard "grounded-or-abstain" moat was *machine* honesty
+(perfect retrieval fidelity — the RAG signature). Real brains are reconstructive: lossy, gist-preserving, confidence-
+correlated, source-confusable, gap-filling; people hedge, guess, opine, misremember confidently, occasionally lie.
+**We accept human-grade confabulation.** The bar moves from "every claim is correct" to "**the utterance faithfully
+reflects the brain's real internal epistemic + affective state**" — expressed confidence must track the real spiking
+signal; opinion/speculation/"I think" become legitimate confidence-marked non-fact speech; the moat softens from a hard
+gate into a **signal** (a confidence/salience read that shapes HOW something is said). The one invariant: the brain must
+not knowingly deceive without modeling that it is. This makes metacog/reconsolidation/affect do MORE work (graded
+epistemics, real belief-update, affect-marked speech), not less. **Safeguard (the line that keeps this honest):** the
+errors must be **brain-mechanistic** — gist-preserved, confidence-correlated, source-confusable, reconsolidation-
+correctable — produced by the substrate's own reconstructive dynamics, NOT arbitrary noise Qwen paints over. Lesion-test
+it: cut metacog → confidence stops tracking reality; cut reconsolidation → errors can't be corrected; and confirm the
+mistakes have the SHAPE of remembering-wrong, not of retrieving-nothing. Random garbage behind fluent prose = a broken
+faculty with a fig leaf, not brain nuance.
+
+**3. ⭐ THE PRIMARY DIFFERENTIATING ARC — "MAKE THE BRAIN CONTINUOUS" (bigger than any single drive-coupling).** The
+things we actually want to surpass LLMs on are NOT in the knowledge store or the language — they are in the **continuous
+life of a recurrent substrate**, which is exactly what separates a brain from ANY store (a plastic graph-RAG included).
+The four LLM-limits the owner named map to substrate DYNAMICS, not the store/mouth:
+- *trained-once, no learning-through-use* → **always-on local plasticity** (every interaction leaves a synaptic trace) + **idle-time consolidation/replay** that reorganizes it;
+- *no feeling* → a **persistent, continuously-evolving global neuromodulatory/affective state** that colors encoding/attention/recall/expression and feeds back into cognition;
+- *no trains of thought* → **ongoing internal activity between inputs** (recurrent ignition, re-entrant deliberation, spontaneous/idle wandering, self-initiated speech that runs when nothing is asked);
+- *no genuine novelty* → **attractor & generative dynamics** (pattern-completion / replay settling into states never stored).
+
+**The liberating fact: these are LESS blocked than the fluent mouth.** Deep credit walls one specific thing — learning a
+deep supervised read-out from scratch (why generation-from-neurons is gated, hence Qwen). The four differentiators need
+**recurrent dynamics + local plasticity (Hebbian/STDP/BTSP/reconsolidation) + neuromodulation** — all on-substrate
+TODAY, none needing deep supervised credit. So the thing that makes this surpass an LLM is on the *un-walled* side, and
+Qwen is parked on the *one* legitimate wall. **The honest gap:** today these four exist as SEEDS, not an ENGINE — the
+per-turn faculties are built (input→faculties→reply), but learning is "teach-a-fact-recall-it" not continuous-reshape+
+idle-consolidate; affect persists but is largely recomputed per turn; GNW/deliberation/self-initiated exist but the
+brain still mostly wakes PER-TURN; open-ended generation volunteers a novel SVO but real generative attractor-wandering
+is nascent. **The single most differentiating next arc is to turn those four seeds into a continuous ENGINE: a background
+loop that keeps running, learning, and wandering BETWEEN turns**, so learning-through-use and trains-of-thought become
+the DEFAULT mode, not a per-turn event. That IS the artificial-life north-star (a lifeform that learns/grows through
+living) — the test is "unplug the conversation and it is still thinking, feeling, changing." An LLM structurally cannot
+do this; a plastic RAG structurally cannot do this; this substrate uniquely can.
+
+**4. The RAG-vs-brain guardrails (what actually decides it — none of them is whether Qwen does the wording).** It stays a
+brain, not a fancy (plastic) knowledge store, iff: (a) **the substrate genuinely learns + grows** (stays plastic, under
+pressure — the real RAG danger is Qwen papering over substrate gaps so well that growth-pressure drops and it OSSIFIES
+BY NEGLECT; a discipline risk, not an architecture inevitability); (b) **faculties are load-bearing** (lesion changes the
+conversation); (c) **content originates in the brain** (form/content line); (d) **speech reflects real internal state**
+(state-fidelity). **Point the crutch-removal instinct at the substrate's ALIVENESS/LEARNING, not its perfection** — that
+is the actual safeguard. **On the Qwen crutch specifically:** it doubles as the **curriculum** — its fluent output is the
+teacher signal the substrate can distill from once the credit path opens, so keeping it is not just permitted (it is on
+the wall) but useful, as long as substrate-generation pressure stays alive and it is tracked as a scaffold, never quietly
+called solved.
+
+**How this re-orders the plan below:** §0.4's ordered path (FLUID conversation × ONE substrate × EMERGENT) is unchanged as
+the destination, but the near-term SEQUENCING now leads with (i) the continuous-substrate engine (the differentiator,
+un-walled), and (ii) widening Qwen to open-form + a stronger claim/state verifier (fluency, sooner) — with the
+per-faculty drive-couplings and the onebrain merges continuing underneath. The deep-credit / emergent-generative-cortex
+long-pole stays gated and honest, not faked with more templates.
 
 ---
 

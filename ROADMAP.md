@@ -7,6 +7,36 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ Strategic reframe (2026-08-19) — the destination is the same, the near-term route changed
+
+The long-term goal is unchanged: **one spiking brain, every host crutch removed, abilities that emerge rather than being
+hand-built.** What changed is the near-term route — we are loosening a few requirements to reach **fluent, open-ended
+conversation sooner**, and leaning harder on the "**beat what today's LLMs can't do**" half of the goal.
+
+Three shifts:
+1. **The language model (Qwen) becomes the mouth, openly.** It does the *wording* — fluent, open, natural sentences. The
+   brain still decides the *content and control*: what is true, what to say, the tone, the topic, when to hedge, when to
+   stay quiet. As long as the wording is Qwen's but the substance is the brain's, it is still the brain talking. If the
+   language model's own knowledge starts supplying the substance, that is the failure to avoid ("an LLM with a
+   neuroscience costume").
+2. **Honesty means "true to its own state," not "only ever says verified facts."** Real brains misremember, hedge, guess,
+   and hold opinions — perfect recall is the hallmark of a database, not a mind. So the brain may be confidently wrong,
+   speculate, or fill a gap — *as long as* its expressed confidence tracks its real internal signal and its mistakes have
+   the shape of human memory error (correctable later by belief-revision), not random noise the mouth paints over. This
+   asks MORE of the confidence/emotion/belief-update faculties, not less.
+3. **The real prize is a brain that is ALIVE BETWEEN QUESTIONS.** The things an LLM (and even a plastic knowledge graph)
+   structurally cannot do — keep learning through use, carry a feeling that colors everything, hold a train of thought,
+   come up with something genuinely new — all come from a substrate that keeps *running* rather than a store that gets
+   *queried*. And these are **less blocked** than fluent speech (they need ongoing activity + local learning +
+   neuromodulation, which the substrate already supports; only fluent-generation-from-scratch hits the deep-credit wall).
+   So the single biggest next arc is **"make the brain continuous"**: a background loop that keeps learning, feeling, and
+   wandering between turns, so growth-through-use and trains-of-thought are the *default*, not a per-turn event. That is
+   the artificial-life goal, and it is what makes this categorically not a fancy knowledge store.
+
+The guard, in one line: keep the crutch-removal instinct, but point it at **the substrate staying alive and learning**,
+not at making it never wrong. Qwen-the-mouth is an allowed crutch (it sits on the one genuine industry wall, deep credit)
+and doubles as the eventual teacher signal the substrate learns to speak from.
+
 Short, medium, and long describe dependency horizons, not promised dates.
 Status below reflects the records available at the 2026-08-05 audit, with
 inline **2026-08-07 UPDATE** notes on items 2 (Gate B delayed-credit Stage-2j
