@@ -37,6 +37,17 @@ moat abstaining on both probes, and single-content mutual-exclusion 1.000. mean_
 ≤0.125) and is NOT a gate failure: the term is `coincidence >= spreading_floor + 0.5`, and coincidence 1.000 clears
 its per-seed bound (≤0.625) by a wide margin on every seed.
 
+### dsub-robustness — the GO is NOT threshold-tuned to d_sub=1400 (`raw/_gnw_coincidence_integrator/dsub_robust_{1300,1500,1700}_6seed.json`)
+<!--derived-->
+The clean 6/6 was re-run at three OTHER subthreshold drives spanning the coincidence window — **d_sub = 1300, 1500,
+1700 pA** — and holds identically at every point: **all_go=True, n_go=6/6** at each d_sub, mean coincidence_2hop_acc
+**1.000**, every anti-cheat (r_only, c_only, disagree, shuffle, onecycle, lesion) at **0.000**, all_moat_ok=True,
+single-hop reflex 1.000, mutual-exclusion 1.000. So the integration is a genuine subthreshold-coincidence bifurcation
+across the WHOLE window, not a knife-edge tuned to one d_sub — the last remaining "it's a fitted threshold" objection
+to the GO is closed. This does NOT re-open the d_sub calibration: the single-organ controls stay 0.000 at every d_sub
+in the window, so one read is subthreshold and the coincidence of two is suprathreshold throughout. (Pool-run 6-seed
+numpy; recovered from the mini-PC nodes 2026-08-20 via `tools/pool_sync.sh`.)
+
 ### The prior SEED-FRAGILE-3/6 was a MISDIAGNOSED CONTROL, not an operating-point wall
 The earlier write-up blamed the spreading-floor. That was wrong. Re-reading the gate against the per-seed data: the
 seed_go values matched the **shuffle** control EXACTLY (fail on 43/101/102, where shuffle read 1.000/0.125/1.000; pass
@@ -103,3 +114,4 @@ Today the production one-brain (`research/runners/brain_chat_tui.py::ChatBrain`,
 - Calibration (ignition knee): `research/findings/raw/_gnw_coincidence_integrator/calibration_seed42.json`.
 - Seed-42 GO (full per-seed gate): `research/findings/raw/_gnw_coincidence_integrator/smoke_seed42.json`.
 - 6-seed GO (backend cupy): `research/findings/raw/_gnw_coincidence_integrator/summary.json` (aggregate all_go=True, n_go=6) + run log `research/findings/raw/_gnw_coincidence_integrator/run6seed_fix.log`.
+- dsub-robustness 6-seed (backend numpy, pool): `research/findings/raw/_gnw_coincidence_integrator/dsub_robust_{1300,1500,1700}_6seed.json` (all_go=True, 6/6 at each d_sub; the GO is not threshold-tuned). Recovered from the mini-PC nodes 2026-08-20 via `tools/pool_sync.sh`.
