@@ -56,6 +56,27 @@ def inner_life(cache_key) -> list:
     return list(_INNER_LIFE.get(cache_key, []))
 
 
+def recent_wander(cache_key) -> str | None:
+    """Rung 2 (board #86, 2026-08-20): make the idle-wandered THOUGHT load-bearing on the NEXT real turn (drive, not
+    just observe -- mirrors the #84 affect-lead / #85 swap-lead pattern). Returns the most recent concept an idle
+    tick's self-initiation organ wandered to for this session, or None if continuous is off, no idle tick has run
+    yet, or no tick surfaced a concept. CONSUMES the record on read (sets it back to None) so the same wandered
+    concept is brought up exactly once -- on the next live turn after the tick that produced it -- not repeated on
+    every subsequent turn. Pure bookkeeping over the existing inner-life log; no new spiking read (the concept was
+    already produced by the selfinit organ's spiking selection at tick time, see tick_session)."""
+    if not continuous_enabled():
+        return None
+    lst = _INNER_LIFE.get(cache_key)
+    if not lst:
+        return None
+    for rec in reversed(lst):
+        w = rec.get("wandered")
+        if w:
+            rec["wandered"] = None  # consume -> surfaces on exactly the next turn, not every turn after
+            return w
+    return None
+
+
 def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
                  selfinit_organ=None) -> dict | None:
     """One idle tick for ONE session: (a) FEELING keeps evolving — relax the appraisal + RE-READ the spiking affect

@@ -58,3 +58,17 @@ both reusing existing spiking mechanisms, additive + default-off. Verified: over
 0.60→0.37 AND a concept surfaces each tick. Honest scope: the numpy light path surfaces the curiosity-top concept
 (stable); the stochastic multibasin CA3 wander (varied concepts) is the cupy path. Next rungs: idle BTSP
 CONSOLIDATION (learn while idle) + generative attractor-wandering.
+
+## Rung 2.5 (2026-08-20, board #86) — the idle-wandered thought now DRIVES the reply (not just observed)
+
+Artifact: research/findings/raw/_continuous_engine/wander_drives_evidence.json
+
+The between-turn wander was OBSERVE-only (shown in the monologue). Now it is LOAD-BEARING (drive-not-observe): on the
+next live turn, if an idle tick surfaced a concept, the brain brings it up — a lead `(I'd been mulling over X.)`
+prepended to the reply, mirroring the #84 affect-lead / #85 swap-lead pattern. `continuous_engine.recent_wander(key)`
+returns AND CONSUMES the most recent wandered concept (surfaces exactly once, on the next turn); `server.py` brain_chat
+prepends the lead when `BRAIN_CONTINUOUS_DRIVES` is on. Default-off + inert when the continuous engine is off.
+Adversarially verified through the REAL brain_chat: byte-identical-off (no key/lead, reply unchanged), moat-safe
+(abstained/recalled_svo/verified unchanged with the lead on), load-bearing (consumed -> no repeat; remove the wander
+-> the lead vanishes). So the continuous state is now the brain's FOURTH drive-coupling (after #84/#85/#79) — the
+first one carried by the always-on engine rather than the current turn.

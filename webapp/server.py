@@ -3975,6 +3975,31 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             da_drives_info = {"on": True, "error": f"{type(_dde).__name__}: {_dde}", "lead": ""}
             da_drives_suffix = ""
 
+    # ── THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, 2026-08-20) ─────────────────────────────────────
+    # The continuous engine's idle tick (webapp/continuous_engine.py) already lets a THOUGHT wander between turns
+    # (a curiosity-biased spiking selection off the self-initiation organ) — today that concept is only OBSERVED
+    # in the monologue. This makes it LOAD-BEARING: if this session has a recent idle-wandered concept, the NEXT
+    # real turn brings it up — a short lead PREPENDED to the reply, mirroring the #84 affect-lead / #85 swap-lead
+    # pattern ("(I'd been mulling over the cat.) <answer>"). Additive; the moat/recall/abstain verdict runs FIRST
+    # and unchanged — this DECORATES an already-matched surface, never a fact; the content fields
+    # (abstained/recalled_svo/verified) are byte-identical with it on or off. `recent_wander()` CONSUMES the
+    # record on read, so the concept surfaces once (the next turn after the tick that produced it), not on every
+    # turn after. Default-OFF (`BRAIN_CONTINUOUS_DRIVES` unset/0 -> no key, no lead -> byte-identical), and it is
+    # additionally inert whenever the continuous engine itself is off (`BRAIN_CONTINUOUS=0`, the anchor default) —
+    # no wander is ever recorded, so `recent_wander()` returns None regardless of this flag.
+    wander_drives_lead = ""
+    wander_drives_info = None
+    if os.environ.get("BRAIN_CONTINUOUS_DRIVES", "0").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            from webapp import continuous_engine as _CEW
+            _wander = _CEW.recent_wander(cache_key)
+            if _wander:
+                wander_drives_lead = "(I'd been mulling over %s.) " % _wander
+                wander_drives_info = {"on": True, "concept": _wander, "lead": wander_drives_lead}
+        except Exception as _cwe:  # never let the wander coupling crash a turn — degrade to the un-led answer
+            wander_drives_info = {"on": True, "error": f"{type(_cwe).__name__}: {_cwe}", "lead": ""}
+            wander_drives_lead = ""
+
     # ── PROSPECTIVE MEMORY (Gate-B, 2026-08-13) ──────────────────────────────────────────────────────────────
     # A co-resident spiking intention-LATCH + BA10 cue-MONITOR holds a deferred intention ("remind me to X when Y")
     # across intervening turns and RELEASES it only when the cue appears — reuse-by-import from
@@ -4735,6 +4760,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = swap_drives_lead + resp["answer"]
         if swap_drives_info is not None:
             resp["swap_drives"] = swap_drives_info
+        # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86): prepend the idle-wander lead OUTERMOST (what the
+        # brain was just thinking about, announced first) + attach the additive `wander_drives` trace. Empty lead /
+        # no key when disabled or no recent wander -> byte-identical.
+        if wander_drives_lead:
+            resp["answer"] = wander_drives_lead + resp["answer"]
+        if wander_drives_info is not None:
+            resp["wander_drives"] = wander_drives_info
         # DA-MODE DRIVES THE RESPONSE (board #79): APPEND the graded engagement SUFFIX (spoken last — the brain's
         # forthcomingness) + attach the additive `da_drives` trace. Empty suffix / no key when disabled or in
         # rest/neutral -> byte-identical. The content fields above are unchanged (the mode colors how forthcoming
@@ -4876,6 +4908,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = swap_drives_lead + _resp["answer"]
     if swap_drives_info is not None:
         _resp["swap_drives"] = swap_drives_info
+    # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, single-fact path): prepend the idle-wander lead
+    # OUTERMOST + attach the additive `wander_drives` trace. Empty lead / no key when disabled or no recent
+    # wander -> byte-identical.
+    if wander_drives_lead:
+        _resp["answer"] = wander_drives_lead + _resp["answer"]
+    if wander_drives_info is not None:
+        _resp["wander_drives"] = wander_drives_info
     # DA-MODE DRIVES THE RESPONSE (board #79, single-fact path): APPEND the graded engagement SUFFIX + attach the
     # additive `da_drives` trace. Empty suffix / no key when disabled or in rest/neutral -> byte-identical. The
     # content fields are unchanged (the mode colors forthcomingness, never a fact); the suffix VANISHES under the
