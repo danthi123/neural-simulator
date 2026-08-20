@@ -1,0 +1,485 @@
+{
+  "runner": "_gnw_two_organ_production_verify",
+  "go": true,
+  "status": "GO",
+  "verdict": {
+    "label": "GNW two-genuinely-distinct-organs bus \u2014 production verify (real ChatBrain.gate, rf/numpy)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "backend-recognized",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "get_backend() returned a known production backend for this invocation (this runner is invoked once per backend -- see the module docstring)"
+      },
+      {
+        "kind": "require",
+        "name": "production-chat-built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the real production ChatBrain (webapp.server._build_chat_brain) built with the composer + stored_facts surface this runner reads"
+      },
+      {
+        "kind": "require",
+        "name": "install-off-is-noop",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag OFF -> install_two_organ_gate is a no-op (proves the flag genuinely gates installation, a precondition for reading the flag-ON measurements below as attributable to the flag)"
+      },
+      {
+        "kind": "require",
+        "name": "install-on-installs",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag ON -> install_two_organ_gate actually wraps chat.gate on the real production chat (proves the ON-path teeth below were measured on an installed coincidence, not a no-op)"
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical-when-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "wrapper installed but flag runtime-flipped OFF delegates to the ORIGINAL gate -> HEAD bytes (the runtime safety escape actually works, not just the install-time no-op)"
+      },
+      {
+        "kind": "require",
+        "name": "organ-discriminates-on-this-backend",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the pre-flight _organ_discriminates() gate reads True on this backend -- otherwise the ON-path teeth below would be measuring the safe-inert fallback, not the coincidence"
+      },
+      {
+        "kind": "require",
+        "name": "discrimination-hz-recorded",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "agree/threshold/disagree Hz values were actually recorded (agree=0.4340277777777778 thr=1.3708043981481481 disagree=2.488425925925926) -- prerequisite for the discrimination teeth to mean anything"
+      },
+      {
+        "kind": "require",
+        "name": "safe-inert-fallback-works",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "(N) the bus's OWN safety branch, verified via a stub with _organ_discriminates forced False: install_two_organ_gate returns False and never runs a mis-discriminating organ -- an instrument-level property of the mechanism, independent of whether THIS backend discriminates"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full per-turn organ-stepping brain_chat handler",
+        "why": "tested at the ChatBrain.gate/combine level where the 2-organ wiring actually lives, not the heavy numpy-CPU per-turn handler that steps every default-on organ each turn; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME flag)"
+      }
+    ],
+    "chance": null
+  },
+  "backend": "numpy",
+  "byte_identical_when_off": {
+    "ok": true,
+    "install_noop_when_off": true,
+    "flag_on_matches_head": true,
+    "runtime_flip_off_matches_head": true,
+    "head_out": [
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      null,
+      null,
+      null
+    ],
+    "on_out": [
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      null,
+      null,
+      null
+    ],
+    "off_runtime_out": [
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      null,
+      null,
+      null
+    ]
+  },
+  "intact_ok": true,
+  "moat_ok": true,
+  "organb_lesion_ok": true,
+  "ws_lesion_ok": true,
+  "organ_discriminates_gate": true,
+  "inert_when_nondiscriminating": true,
+  "discrimination_wired": {
+    "ok": true,
+    "max_agree_hz": 0.4340277777777778,
+    "threshold_hz": 1.3708043981481481,
+    "min_disagree_hz": 2.488425925925926
+  },
+  "stored": [
+    {
+      "q": "what does dog chase?",
+      "svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "want": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "agrees_host": true,
+      "authored_by": "two_organ_bus",
+      "organ_b_confirmed": true,
+      "organ_b_surprise_hz": 0.4340277777777778,
+      "organ_b_threshold_hz": 1.3708043981481481,
+      "n_ignited": 1
+    },
+    {
+      "q": "what does cat eat?",
+      "svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "want": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "agrees_host": true,
+      "authored_by": "two_organ_bus",
+      "organ_b_confirmed": true,
+      "organ_b_surprise_hz": 0.0,
+      "organ_b_threshold_hz": 1.3708043981481481,
+      "n_ignited": 1
+    },
+    {
+      "q": "what does brain use?",
+      "svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "agrees_host": true,
+      "authored_by": "two_organ_bus",
+      "organ_b_confirmed": true,
+      "organ_b_surprise_hz": 0.0,
+      "organ_b_threshold_hz": 1.3708043981481481,
+      "n_ignited": 1
+    },
+    {
+      "q": "what does brain learn?",
+      "svo": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "want": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "agrees_host": true,
+      "authored_by": "two_organ_bus",
+      "organ_b_confirmed": true,
+      "organ_b_surprise_hz": 0.11574074074074074,
+      "organ_b_threshold_hz": 1.3708043981481481,
+      "n_ignited": 1
+    },
+    {
+      "q": "what does brain store?",
+      "svo": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "want": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "agrees_host": true,
+      "authored_by": "two_organ_bus",
+      "organ_b_confirmed": true,
+      "organ_b_surprise_hz": 0.0,
+      "organ_b_threshold_hz": 1.3708043981481481,
+      "n_ignited": 1
+    }
+  ],
+  "abstain": [
+    {
+      "q": "what does dog eat?",
+      "abstained": true,
+      "reason": "primary_recall_miss"
+    },
+    {
+      "q": "what does cat chase?",
+      "abstained": true,
+      "reason": "primary_recall_miss"
+    },
+    {
+      "q": "what does fish fly?",
+      "abstained": true,
+      "reason": "primary_recall_miss"
+    }
+  ],
+  "organb_lesion": [
+    {
+      "fact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "committed": null,
+      "organ_a_recall": "spikes",
+      "organ_b_surprise_hz": 2.5462962962962967,
+      "collapses": true
+    },
+    {
+      "fact": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "committed": null,
+      "organ_a_recall": "words",
+      "organ_b_surprise_hz": 2.6620370370370368,
+      "collapses": true
+    },
+    {
+      "fact": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "committed": null,
+      "organ_a_recall": "memory",
+      "organ_b_surprise_hz": 2.8067129629629632,
+      "collapses": true
+    },
+    {
+      "fact": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "committed": null,
+      "organ_a_recall": "cat",
+      "organ_b_surprise_hz": 2.604166666666667,
+      "collapses": true
+    },
+    {
+      "fact": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "committed": null,
+      "organ_a_recall": "fish",
+      "organ_b_surprise_hz": 2.488425925925926,
+      "collapses": true
+    }
+  ],
+  "ws_lesion": [
+    {
+      "fact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "committed": null,
+      "reflex": "spikes",
+      "collapses": true,
+      "reflex_survives": true
+    },
+    {
+      "fact": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "committed": null,
+      "reflex": "words",
+      "collapses": true,
+      "reflex_survives": true
+    },
+    {
+      "fact": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "committed": null,
+      "reflex": "memory",
+      "collapses": true,
+      "reflex_survives": true
+    },
+    {
+      "fact": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "committed": null,
+      "reflex": "cat",
+      "collapses": true,
+      "reflex_survives": true
+    },
+    {
+      "fact": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "committed": null,
+      "reflex": "fish",
+      "collapses": true,
+      "reflex_survives": true
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "backend-recognized",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "get_backend() returned a known production backend for this invocation (this runner is invoked once per backend -- see the module docstring)"
+    },
+    {
+      "kind": "require",
+      "name": "production-chat-built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the real production ChatBrain (webapp.server._build_chat_brain) built with the composer + stored_facts surface this runner reads"
+    },
+    {
+      "kind": "require",
+      "name": "install-off-is-noop",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag OFF -> install_two_organ_gate is a no-op (proves the flag genuinely gates installation, a precondition for reading the flag-ON measurements below as attributable to the flag)"
+    },
+    {
+      "kind": "require",
+      "name": "install-on-installs",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag ON -> install_two_organ_gate actually wraps chat.gate on the real production chat (proves the ON-path teeth below were measured on an installed coincidence, not a no-op)"
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical-when-off",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "wrapper installed but flag runtime-flipped OFF delegates to the ORIGINAL gate -> HEAD bytes (the runtime safety escape actually works, not just the install-time no-op)"
+    },
+    {
+      "kind": "require",
+      "name": "organ-discriminates-on-this-backend",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the pre-flight _organ_discriminates() gate reads True on this backend -- otherwise the ON-path teeth below would be measuring the safe-inert fallback, not the coincidence"
+    },
+    {
+      "kind": "require",
+      "name": "discrimination-hz-recorded",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "agree/threshold/disagree Hz values were actually recorded (agree=0.4340277777777778 thr=1.3708043981481481 disagree=2.488425925925926) -- prerequisite for the discrimination teeth to mean anything"
+    },
+    {
+      "kind": "require",
+      "name": "safe-inert-fallback-works",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "(N) the bus's OWN safety branch, verified via a stub with _organ_discriminates forced False: install_two_organ_gate returns False and never runs a mis-discriminating organ -- an instrument-level property of the mechanism, independent of whether THIS backend discriminates"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "full per-turn organ-stepping brain_chat handler",
+      "why": "tested at the ChatBrain.gate/combine level where the 2-organ wiring actually lives, not the heavy numpy-CPU per-turn handler that steps every default-on organ each turn; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME flag)"
+    }
+  ],
+  "undefined_reasons": [],
+  "attributable": {
+    "organb_lesion_vs_wired": 1.0,
+    "ws_lesion_vs_wired": 1.0,
+    "abstain_rate_wired": 0.0,
+    "abstain_rate_organb_lesion": 1.0,
+    "abstain_rate_ws_lesion": 1.0
+  }
+}

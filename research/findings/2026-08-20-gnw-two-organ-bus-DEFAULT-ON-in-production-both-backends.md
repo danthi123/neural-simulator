@@ -60,9 +60,20 @@ does not replace every host step. The one-brain MERGE path (`BRAIN_ONEBRAIN_MERG
 config-superset and would need the two `backend_neutral_izh_*` lines to inherit the cupy fix if it ever goes
 cupy-production — flagged, not a default blocker today. (Agent-wired + agent-verified; parent confirmed the cupy
 `go=True` + the discrimination + byte-identity from the artifacts, then flipped the default.) The raw production-verify
-JSONs (`research/findings/raw/_gnw_two_organ/production_verify_{cupy,numpy}.json`) + their verify runner are banked in a
-follow-up once the runner emits a `tools.verdict` preconditions block + an `attributable_to` call (the verify machinery,
-not the flip, needs that hardening); the flip itself rests on the committed 6-seed GO + this verified promotion gate.
+JSONs are now BANKED, per the deferral above: `research/findings/raw/_gnw_two_organ/production_verify_cupy.json` and
+`research/findings/raw/_gnw_two_organ/production_verify_numpy.json`, produced by the hardened
+`research/runners/_gnw_two_organ_production_verify.py` (a top-level `tools.verdict.Verdict` — 8/8 preconditions PASS on
+each backend, none unmeasured, none failed — plus an `attributable_to` call attributing the stored-fact abstain/commit
+behaviour to each lesion lever: 100% attributable to the organ-B lesion and 100% to the workspace lesion vs the wired
+baseline, on both backends). Both re-verify **GO**, matching the numbers above exactly — cupy discrimination
+0.434 ≪ thr 1.401 ≪ 2.488 Hz, numpy 0.434 ≪ thr 1.371 ≪ 2.488 Hz. Hardening the runner surfaced and fixed one real bug
+in the verify machinery itself (not the bus): the runner tested "flag OFF" by unsetting `BRAIN_GNW_2ORGAN`, correct
+back when the flag was default-off, but `two_organ_enabled()`'s default-on flip (this same finding) made an unset var
+mean ON — so the old runner's "HEAD" baseline was silently the two-organ bus comparing itself to itself. The runner now
+forces `BRAIN_GNW_2ORGAN` to an explicit `"0"`/`"1"` on every phase instead of relying on unset; the bus mechanism
+itself was never in question (every substantive teeth check — (A)/(B.i)/(B.ii)/(C)/(D2) — already read True before the
+fix, only the OFF-path self-comparison was vacuous). The flip itself rests on the committed 6-seed GO + this verified
+promotion gate.
 
 ## Sources
 - Dehaene, S. & Changeux, J.-P. (2011). "Experimental and theoretical approaches to conscious processing." *Neuron*

@@ -1,0 +1,26 @@
+{
+ "run_id": "1787259203-2173395",
+ "runner": "research/runners/_gnw_two_organ_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gnw_two_organ_production_verify.py"
+ ],
+ "git_sha": "2d9cf934d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T16:53:23",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 69694.4,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_two_organ/production_verify_numpy.json"
+}
