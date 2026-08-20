@@ -827,6 +827,24 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-20 (LATER) — LEARN-THROUGH-USE ON THE PRODUCTION ORGAN CONVERGES ON THE gap#5 SWR-STATE WALL; the fix-runner already exists.**
+The 6-seed-GO emergent-replay (synthetic net) was pushed onto the REAL D5 `EpisodicDapMemory`. TWO probes: untargeted-CA3-noise
+UNDEFINED (0/0); content-blind DG/EC-afferent drive NO-GO (the one hit refuted by reproducibility 1/6, volley-robust 0/4,
+non-collapsing lesion). Two diagnosed root causes: (a) the readout bridge's dg->ca3 mossy wiring is an INDEPENDENT RNG draw from
+the discarded selection bridge, so a content-blind afferent can't structurally target the store; (b) completion is
+arbitrary-phase-dependent — real reactivation is the SHARP-WAVE-RIPPLE STATE (the missing companion process). A RAG check
+confirmed this IS the §7 gap#5 wall's own named surpass (build the Ecker-2022 CA3 model + E/I-transient SWR state) and the runner
+ALREADY EXISTS: `_gap5_swr_envelope_replay_derisk.py`, at PARTIAL/NEGATIVE 0/1, stuck in the envelope depth×duration×noise-σ
+TUNING band (over-drive→[3,3,3], under-drive→[0,0,0]). Independent corroboration: SLEEP-REPLAY consolidation is 6-seed GO on the
+systems-consolidation PRINCIPLE (replay 0.10→0.55, holds at 2× load, content-specific) but on a HOST hippocampus scaffold — its
+brain-pure spiking-CA3 replacement is the SAME SWR-CA3 wall. So the two arcs converge on one mechanism.
+NEXT: tune `_gap5_swr_envelope_replay_derisk.py`'s SWR-envelope op-point toward per_asm_active~[1,1,1] (a mechanical GPU/pool
+sweep of env_exc_pa / env_basket_drop / swr_period / env_dur / noise_pa / self_regen_read + the mechanisms --self-regen-ignite /
+--env-exc-ramp / --sel-inhib-spare); on GO it unblocks BOTH the D5 learn-through-use transfer AND the brain-pure sleep-replay
+store. Also hardened this session: the GNW workspace two-reads GO is now dsub-robust (6/6 across 1300/1500/1700, closes
+threshold-tuning); pool result sync-back gap fixed (`tools/pool_sync.sh`). See findings 2026-08-20 (idle-replay-on-d5-episodic-
+transfer, idle-replay-dgec-afferent-on-real-D5-NO-GO) + boards #71/#106.
+
 **2026-08-20 (OVERNIGHT) — CONTINUOUS-SUBSTRATE arc advanced hard + fluency-moat hardened (parallel-agent batch, all verified).**
 CONTINUOUS ENGINE is LIVE on the cupy server (both between-turn drives load-bearing) + hardened (non-blocking tick,
 JSON-safe, wander-budget). The between-turn WANDER was caught DEGENERATE (6/6 'cat' — a hollow coupling to a constant)
