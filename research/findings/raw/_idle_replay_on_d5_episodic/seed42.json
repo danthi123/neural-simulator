@@ -1,0 +1,343 @@
+{
+  "probe": "idle_replay_on_d5_episodic_transfer",
+  "seed": 42,
+  "params": {
+    "quiet_steps": 100,
+    "noise_frac": 0.18,
+    "noise_pA": 900.0,
+    "pc_sample_every": 10
+  },
+  "backend": "numpy",
+  "run": {
+    "seed": 42,
+    "backend": "numpy",
+    "timing": {
+      "init_s": 33.5,
+      "store_s": 284.2,
+      "baseline_recall_s": 90.3,
+      "quiet_phase_s": 99.1,
+      "replay_phase_s": 19.3,
+      "after_recall_s": 91.0,
+      "lesion_recall_s": 44.2,
+      "total_s": 661.6
+    },
+    "n_ca3": 2000,
+    "assembly_sizes": [
+      27,
+      22
+    ],
+    "topic_slot": {
+      "cat": 0,
+      "dog": 1
+    },
+    "held_sizes": {
+      "dog": 11,
+      "cat": 14
+    },
+    "store_wrote": true,
+    "w_within_dog_poststore": 82.04368591308594,
+    "w_within_cat_poststore": 2.8416244983673096,
+    "baseline": {
+      "dog": {
+        "topic": "dog",
+        "slot": 1,
+        "formed": true,
+        "in_memory": true,
+        "apical_cue": 0.9090909090909091,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      },
+      "cat": {
+        "topic": "cat",
+        "slot": 0,
+        "formed": false,
+        "in_memory": false,
+        "apical_cue": 0.0,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      }
+    },
+    "quiet_instrument": {
+      "w_rec_before": 1.5098131895065308,
+      "w_rec_after": 1.5098131895065308,
+      "inert": true
+    },
+    "quiet": {
+      "dog": {
+        "topic": "dog",
+        "slot": 1,
+        "formed": true,
+        "in_memory": true,
+        "apical_cue": 1.0,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      },
+      "cat": {
+        "topic": "cat",
+        "slot": 0,
+        "formed": false,
+        "in_memory": false,
+        "apical_cue": 0.0,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      }
+    },
+    "replay_diagnostic": {
+      "n_noise_driven": 360,
+      "noise_frac": 0.18,
+      "noise_pA": 900.0,
+      "n_steps": 200,
+      "dog_apical_up_series": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cat_apical_up_series": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "dog_fire_series": [
+        0.0,
+        0.0,
+        0.09090909090909091,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cat_fire_series": [
+        0.0,
+        0.0,
+        0.07142857142857142,
+        0.14285714285714285,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.07142857142857142,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.07142857142857142,
+        0.0,
+        0.0,
+        0.07142857142857142,
+        0.0,
+        0.0
+      ],
+      "dog_apical_up_mean": 0.0,
+      "cat_apical_up_mean": 0.0,
+      "dog_apical_up_max": 0.0,
+      "cat_apical_up_max": 0.0,
+      "dog_fire_mean": 0.004329004329004329,
+      "cat_fire_mean": 0.020408163265306117,
+      "w_within_dog_before": 82.04368591308594,
+      "w_within_dog_after": 82.04368591308594,
+      "w_within_cat_before": 2.8416244983673096,
+      "w_within_cat_after": 2.8416244983673096,
+      "w_rec_before": 1.5098131895065308,
+      "w_rec_after": 1.5098131895065308
+    },
+    "after_replay": {
+      "dog": {
+        "topic": "dog",
+        "slot": 1,
+        "formed": true,
+        "in_memory": true,
+        "apical_cue": 1.0,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      },
+      "cat": {
+        "topic": "cat",
+        "slot": 0,
+        "formed": false,
+        "in_memory": false,
+        "apical_cue": 0.0,
+        "apical_perm": 0.0,
+        "apical_nocue": 0.0,
+        "lesioned": false,
+        "reason": "spiking-dap-completion"
+      }
+    },
+    "lesion_dog": {
+      "topic": "dog",
+      "slot": 1,
+      "formed": false,
+      "in_memory": false,
+      "apical_cue": 0.0,
+      "apical_perm": 0.0,
+      "apical_nocue": 0.0,
+      "lesioned": true,
+      "reason": "spiking-dap-completion"
+    }
+  },
+  "GO": false,
+  "verdict": "UNDEFINED -- an instrument precondition failed (see 'instrument' checks); the transfer claim is NOT cleanly attributable at this run. Re-check before re-running.",
+  "decided": {
+    "label": "idle-replay-on-D5-episodic transfer de-risk (untargeted-noise pattern completion + BTSP write, REAL production organ, n_ca3=2000)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: instrument: D5's own intact/unstored/lesion/quiet-inert/recall-reproducible all hold (measured=False expect=True)",
+      "unmet: KEY QUESTION -- PC: untargeted noise recruits dog's (formed) assembly's apical dAP state above cat's (never-formed), same noise dose (measured=False expect=True)",
+      "unmet: write-side: replay's BTSP write specifically potentiates dog's within-assembly weight, not cat's (measured=False expect=True)",
+      "unmet: PC: dog vs cat apical-UP fraction under identical untargeted-noise dose (treatment=0 control=0 |sep|=0 > 0)",
+      "unmet: write: dog vs cat within-assembly weight delta under identical replay dose (treatment=0 control=0 |sep|=0 > 0)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "instrument: D5's own intact/unstored/lesion/quiet-inert/recall-reproducible all hold",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "KEY QUESTION -- PC: untargeted noise recruits dog's (formed) assembly's apical dAP state above cat's (never-formed), same noise dose",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "write-side: replay's BTSP write specifically potentiates dog's within-assembly weight, not cat's",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "PC: dog vs cat apical-UP fraction under identical untargeted-noise dose",
+        "ok": false,
+        "detail": "treatment=0 control=0 |sep|=0 > 0",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "write: dog vs cat within-assembly weight delta under identical replay dose",
+        "ok": false,
+        "detail": "treatment=0 control=0 |sep|=0 > 0",
+        "note": ""
+      },
+      {
+        "kind": "reaches",
+        "name": "store() potentiates dog's within-assembly weight above the never-formed baseline (cat)",
+        "ok": true,
+        "detail": "before=2.84162 after=82.0437 moved=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "STDP",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "Hebbian (kernel-driven)",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "homeostasis",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "short-term plasticity",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "reward modulation",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "structural plasticity",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      },
+      {
+        "process": "BDSP learning (the tested-NEGATIVE hidden-credit rule)",
+        "why": "isolation: only the pathway's permanent coincidence-plateau routing + BTSP (toggled only during the replay window) are live; this is the SAME instrument D5's own dapB/btsp-forms precedents use"
+      }
+    ],
+    "chance": null
+  },
+  "instr_ok": false,
+  "PC": false,
+  "WRITE_SPECIFIC": false,
+  "G1_gain_after_replay": false,
+  "G2_no_spurious_quiet_gain": false,
+  "G3_specificity_cat_no_gain": true,
+  "pc_apical_gap": 0.0,
+  "pc_apical_max_gap": 0.0,
+  "pc_fire_gap": -0.01607915893630179,
+  "dw_dog": 0.0,
+  "dw_cat": 0.0,
+  "g1_gain_dog": 0.0,
+  "g3_gain_cat": 0.0,
+  "HONEST_NOTE": "This runner imports the REAL production D5 organ (research.runners._episodic_dap_dialogue_memory.EpisodicDapMemory / research.runners.d5_episodic_production_organ.EpisodicRecallOrgan) UNCHANGED -- no sim/ edit, no existing runner edit, single seed (a scoped CPU transfer de-risk, not a generalization claim; 6-seed is the natural next rung IF GO). The 'replay' pattern-completion + write mechanism reuses the bridge's OWN existing kernels (fused_coincidence_plateau for the per-cell dAP state, fused_btsp_update for the write) -- toggling only enable_btsp/btsp_learning_rate/btsp_w_max during the reactivation window and driving cp_external_input_current into an untargeted random CA3 subset; NO runner-level Hebbian model was needed here (unlike the synthetic emergent-replay precedent), because this bridge's ca3->ca3 pathway already permanently routes through the coincidence-plateau kernel. n_ca3=2000 is NOT reducible without editing research/runners/_gap5_emergent_end_to_end_episodic_loop_derisk.py's hardcoded R1 dict (out of scope: 'import UNCHANGED'). NOT 'consolidation' or 'stabilization' in the docs/TERMS.md sense -- no source-structure lesion / systems-level independence was tested, and no forgetting/decay curve was modeled; this is a single-tick transfer-mechanism probe.",
+  "NEXT_RUNG": "IF GO at this seed: re-run at 6 seeds (42 43 44 100 101 102) to confirm before calling it closed; add the starting-weight-gated metaplastic write suppression from the synthetic precedent if raw BTSP alone shows a moat leak at scale; wire under continuous_engine.py's idle tick, default-off first. IF HONEST-NEGATIVE (the expected outcome per the dapB precedent's own characterized SEAM -- a ~1%-of-population sparse assembly is very unlikely to be preferentially hit by population-blind noise at a dose sized for a 64-cell all-assembly toy net): the smallest bridging step is NOT 'a bigger noise dose' (that risks the SAME non-specificity dapB already found at the population-recurrent level -- more noise recruits cat's baseline connectivity too, just via raw excitability rather than genuine completion). The bridging step this runner's own architecture points to is TARGETED-BUT-CONTENT-BLIND replay: reactivate from a SPARSE-CODE-AWARE noise source (e.g. drive the DG/EC afferent layer, whose mossy-fiber detonator ALREADY concentrates activity onto whichever CA3 cells were originally selected for a stored pattern, per emergent_assemblies' own DG->CA3 detonation mechanism) rather than uniform CA3-wide noise -- this is closer to the biological SWR replay trigger (CA3-internal sharp-wave initiation via recurrent excitation concentrated near recently-potentiated synapses) than i.i.d. noise over 2000 cells, and does not require knowing which topic to replay (still untargeted at the TOPIC level, just not blind to the DG->CA3 pathway structure). A second, cheaper lever: raise noise_frac substantially while WATCHING cat's apical-UP for the onset of non-specific self-ignition (dapB's own failure mode) as the ceiling on how far that lever can go."
+}
