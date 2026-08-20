@@ -46,3 +46,15 @@ the log — legitimate world/body-timer infrastructure (it computes no cognition
 declared host homeostat (the appraisal drive is the body/appraisal boundary). This is 1 of 4 seeds: the next rungs
 (own tasks) are the self-initiated WANDER on the tick (a surfaced concept), idle BTSP CONSOLIDATION (learn/consolidate
 while idle), and generative attractor-wandering. Default-off until the wander/consolidation rungs make it richer.
+
+## Rung 2 (2026-08-20) — a THOUGHT now wanders between turns too
+
+Artifact: research/findings/raw/_continuous_engine/wander_evidence.json
+
+The idle tick now also runs the already-GO'd self-initiation organ`speak()` (curiosity-biased spiking selection): a
+CONCEPT surfaces while idle ("a thought wandered to ‘cat’"), recorded in the inner-life alongside the mood drift and
+surfaced in the monologue. So 2 of the 4 continuous properties now run between turns (FEELING + TRAINS-OF-THOUGHT),
+both reusing existing spiking mechanisms, additive + default-off. Verified: over 3 idle ticks the mood evolves
+0.60→0.37 AND a concept surfaces each tick. Honest scope: the numpy light path surfaces the curiosity-top concept
+(stable); the stochastic multibasin CA3 wander (varied concepts) is the cupy path. Next rungs: idle BTSP
+CONSOLIDATION (learn while idle) + generative attractor-wandering.

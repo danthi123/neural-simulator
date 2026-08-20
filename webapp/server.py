@@ -1778,7 +1778,7 @@ async def _continuous_state_tick() -> None:
             if not _CE.continuous_enabled():
                 continue
             try:
-                n = _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ)
+                n = _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ, selfinit_getter=_get_selfinit_organ)
                 if n:
                     print("[webapp] continuous tick: evolved %d idle session(s)" % n, flush=True)
             except Exception as e:

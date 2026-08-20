@@ -56,30 +56,41 @@ def inner_life(cache_key) -> list:
     return list(_INNER_LIFE.get(cache_key, []))
 
 
-def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None) -> dict | None:
-    """One idle tick for ONE session: relax the appraisal, RE-READ the spiking affect ladder, record the drift.
+def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
+                 selfinit_organ=None) -> dict | None:
+    """One idle tick for ONE session: (a) FEELING keeps evolving — relax the appraisal + RE-READ the spiking affect
+    ladder; (b) a THOUGHT wanders — if a self-initiation organ is given, its curiosity-biased spiking selection
+    surfaces a concept (the mind drifting to something while idle). Both are recorded to the inner-life.
 
-    Returns the tick record (or None if the session has no mood yet / the read fails). Pure w.r.t. the reply path —
-    it only mutates this session's mood EMA + the inner-life log; a live turn re-appraises from the message anyway."""
+    Returns the tick record (or None if the session has no mood yet). Pure w.r.t. the reply path — it only mutates
+    this session's mood EMA + the inner-life log; a live turn re-appraises from the message anyway."""
     now = time.time() if now is None else now
     m = session_mood.get(cache_key)
     if m is None:
         return None
     v0, a0 = float(m.get("valence", 0.0)), float(m.get("arousal", 0.0))
-    # (a) homeostatic relaxation of the felt state toward baseline (no new input)
+    # (a) FEELING: homeostatic relaxation of the felt state toward baseline, then the spiking read at the new point
     v1 = NEUTRAL + (v0 - NEUTRAL) * RELAX
     a1 = a0 * RELAX
     m["valence"], m["arousal"] = v1, a1
     session_mood[cache_key] = m
-    # (b) the spiking read: what the brain FEELS now, at the relaxed appraisal
     try:
-        read = affect_organ.read_differential(v1, lesion=False)
-        diff = float(read["differential"])
+        diff = float(affect_organ.read_differential(v1, lesion=False)["differential"])
     except Exception:
         diff = None
     trend = "toward neutral" if abs(v1) < abs(v0) else "steady"
-    rec = {"t": now, "valence": v1, "arousal": a1, "differential": diff,
-           "note": "idle: felt state relaxing %s (was %+.2f, now %+.2f)" % (trend, v0, v1)}
+    note = "idle: felt state relaxing %s (was %+.2f, now %+.2f)" % (trend, v0, v1)
+    # (b) THOUGHT: a curiosity-biased spiking selection surfaces a wandered concept (a thought drifting while idle)
+    wandered = None
+    if selfinit_organ is not None:
+        try:
+            out = selfinit_organ.speak(lesion=False)
+            wandered = out.get("concept")
+            if wandered:
+                note += "; a thought wandered to ‘%s’" % wandered
+        except Exception:
+            wandered = None
+    rec = {"t": now, "valence": v1, "arousal": a1, "differential": diff, "wandered": wandered, "note": note}
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
@@ -87,10 +98,12 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
     return rec
 
 
-def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None) -> int:
+def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None,
+                       selfinit_getter=None) -> int:
     """Run one tick over every session that is IDLE (no request for >= IDLE_SEC). Returns #sessions ticked.
 
-    Called by the server's background loop. Skips sessions mid-conversation (raced writes) and any with no mood yet."""
+    Called by the server's background loop. Skips sessions mid-conversation (raced writes) and any with no mood yet.
+    `selfinit_getter(cache_key)` (optional) supplies that session's self-initiation organ for the thought-wander."""
     if not continuous_enabled():
         return 0
     now = time.time() if now is None else now
@@ -101,7 +114,13 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
             continue  # still active -> don't tick mid-turn
         try:
             organ = affect_organ_getter()
-            if tick_session(cache_key, session_mood, organ, now) is not None:
+            siorg = None
+            if selfinit_getter is not None:
+                try:
+                    siorg = selfinit_getter(cache_key)
+                except Exception:
+                    siorg = None
+            if tick_session(cache_key, session_mood, organ, now, selfinit_organ=siorg) is not None:
                 n += 1
         except Exception:
             continue
