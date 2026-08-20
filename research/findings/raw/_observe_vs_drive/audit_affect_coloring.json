@@ -1,0 +1,103 @@
+{
+  "key": "affect-coloring",
+  "row": "affect-coloring",
+  "lesion_flag": "BRAIN_AFFECT_LESION",
+  "meta_key": "affect",
+  "probe": "what does the dog chase? (after a strong-negative mood induction)",
+  "by_path": {
+    "rich": {
+      "answer_intact": "The dog chases cat. The cat eats fish.",
+      "answer_lesion": "The dog chases cat. The cat eats fish.",
+      "answer_changed": false,
+      "n_int": 2,
+      "n_les": 2,
+      "affect_intact": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": -0.020277777777777777,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": -0.3198225,
+        "appraisal_arousal": 0.36592874999999997,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.020277777777777777
+      },
+      "affect_lesion": {
+        "on": true,
+        "lesioned": true,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": -0.3198225,
+        "appraisal_arousal": 0.36592874999999997,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      }
+    },
+    "single": {
+      "answer_intact": "The dog chases cat.",
+      "answer_lesion": "The dog chases cat.",
+      "answer_changed": false,
+      "n_int": null,
+      "n_les": null,
+      "affect_intact": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": -0.020833333333333332,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": -0.3198225,
+        "appraisal_arousal": 0.36592874999999997,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.020833333333333332
+      },
+      "affect_lesion": {
+        "on": true,
+        "lesioned": true,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": -0.3198225,
+        "appraisal_arousal": 0.36592874999999997,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      }
+    }
+  },
+  "answer_changed": false,
+  "classification": "NOT_CLEANLY_TESTABLE",
+  "final_class": "NOT_CLEANLY_TESTABLE",
+  "final_rationale": "no text change on numpy: forthcomingness did not cross a threshold and the Qwen manner surface falls back to a template stub without a GPU; ledger documents DRIVER on cupy (pos +0.039 -> 2 warm sentences vs neg -0.036 -> 1 terse) via BRAIN_AFFECT_LESION"
+}
