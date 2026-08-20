@@ -103,8 +103,12 @@ def recent_wander(cache_key) -> str | None:
 IOR_STRENGTH = 0.15      # multiply the just-wandered basin's curiosity gain by this (inhibition-of-return fatigue)
 IOR_RECOVERY = 0.3       # fraction of each basin's adaptation deficit recovered per tick (slower = longer memory).
                          # 0.3 verified best in a cupy coverage sweep (wander_ior_r0.30.json): reaches 3 of the 4
-                         # stored concepts vs 2/4 at the old 0.5. The 4th never wins under any recovery/strength —
-                         # a STORE-COVERAGE residual (that basin is too weakly encoded), not an IOR-recovery one.
+                         # stored concepts vs 2/4 at the old 0.5.
+IOR_GAIN_FLOOR = 1.6     # clamp each basin's base curiosity STEERING gain UP to this floor before IOR fatigue.
+                         # The 4th concept never surfaced at 3/4 because its steering gain was too LOW to win even when
+                         # the top 3 are IOR-fatigued (the winner is steering-dominated, 2026-08-20-per-neuron-SFA-
+                         # wrong-locus). A floor raises the tail's drive -> full 4/4 coverage, verified cupy GO
+                         # (wander_gainfloor.json: IOR-only 3/4 'cat,dog,bird' -> IOR+floor 4/4 'cat,dog,bird,fish').
 # per-session wander inhibition-of-return: cache_key -> {"base": [gains], "adapt": [multipliers]}
 _WANDER_ADAPT: dict = {}
 
@@ -137,7 +141,9 @@ def _post_wander_ior(cache_key, organ, concept) -> None:
         return
     st = _WANDER_ADAPT.get(cache_key)
     if st is None:  # first post: gains_on is the pristine base (this tick's pre was a no-op)
-        st = {"base": list(g), "adapt": [1.0] * len(g)}
+        # clamp the base steering gains up to the floor so the weakly-driven tail concept can win under IOR (4/4).
+        base = [max(float(x), IOR_GAIN_FLOOR) for x in g]
+        st = {"base": base, "adapt": [1.0] * len(g)}
         _WANDER_ADAPT[cache_key] = st
     i = list(agents).index(concept)
     st["adapt"][i] *= IOR_STRENGTH                                              # fatigue the just-won basin
