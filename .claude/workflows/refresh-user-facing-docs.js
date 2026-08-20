@@ -36,7 +36,7 @@ const ground = await agent(
   `  - run the count commands: wc -l ${WT}/sim/*.py ; find ${WT}/tests -maxdepth 1 -name 'test_*.py' | wc -l ; ls ${WT}/research/findings/*.md | wc -l ; grep -l 'def main' ${WT}/research/runners/*.py | grep -v aggregate | wc -l\n\n` +
   `Produce a compact, ACCURATE snapshot for doc-writers: the project one-liner (the pivoted north-star, NOT an old fact-recall framing), the current headline capabilities that are ON-BY-DEFAULT in production (from the ledger, not de-risks), the real status numbers, the honesty-boundary framing (self-reports are functional read-outs; never assert phenomenal experience), the recent milestones a user-facing doc should mention, and any OTHER user-facing docs you spotted (paths) beyond README/CONTRIBUTING/USER_GUIDE/CHANGELOG. ` +
   `Be precise and grounded — every capability you list must be traceable to the ledger or a finding. Do NOT overclaim.`,
-  { label: 'ground-truth', phase: 'Ground truth', schema: GROUND_SCHEMA }
+  { label: 'ground-truth', phase: 'Ground truth', schema: GROUND_SCHEMA, model: 'sonnet', effort: 'medium' }
 )
 
 const g = JSON.stringify(ground, null, 1)
@@ -88,7 +88,7 @@ const reports = await parallel(DOCS.map((d) => () =>
     `  5. Do not touch code, findings, or other docs. Only ${d.file}.\n\n` +
     `First READ the current ${WT}/${d.file} fully, identify what is stale/wrong/missing vs the ground truth, then make the edits in place. ` +
     `Return: whether you changed it, each stale item you fixed with its evidence (which ground-truth fact justifies it), lines touched, and a one-line summary. If nothing is genuinely stale, changed=false and say so honestly — do not churn.`,
-    { label: `edit:${d.file}`, phase: 'Audit + edit', schema: DOC_SCHEMA }
+    { label: `edit:${d.file}`, phase: 'Audit + edit', schema: DOC_SCHEMA, model: 'sonnet', effort: 'medium' }
   )
 ))
 
@@ -123,7 +123,7 @@ const verify = await agent(
   `  - any prose line > 800 chars (doc gate W2)\n\n` +
   `THE GROUND TRUTH (the only claims allowed):\n${g}\n\n` +
   `Return verdict 'clean' if the edited docs are honest + grounded + gate-safe, else 'issues' with a flag per problem (file, the exact quoted text, and the problem). Be strict: on user-facing docs, an overclaim is a real defect.`,
-  { label: 'honesty-verify', phase: 'Honesty verify', schema: VERIFY_SCHEMA }
+  { label: 'honesty-verify', phase: 'Honesty verify', schema: VERIFY_SCHEMA, model: 'opus', effort: 'high' }
 )
 
 return {

@@ -118,8 +118,18 @@ def main():
     else:
         print("✓ SATURATED (%d lanes cover the %d ready tasks)." % (total_lanes, n_open))
 
-    # COST-ROUTING — agent tokens count toward the Claude usage limit; mechanical work must go to non-Claude
-    # machinery. Fires whenever cheap idle compute exists, so the routing is enforced every cycle, not remembered.
+    # COST-ROUTING ENFORCEMENT (owner-flagged 2026-08-19: ~50% of the weekly limit in 1.5 days). Two halves:
+    # (1) the model-tiering check — every workflow agent must declare its model or it inherited OPUS by default;
+    # cost_audit scans the session's live workflow scripts + committed workflows and prints a ⛔ verdict here so
+    # the leak recurs until fixed (same enforcement philosophy as the parallelization check above).
+    try:
+        import cost_audit as _CA
+        _CA.main()
+    except Exception as _e:
+        print("─ COST AUDIT ─ (unavailable: %s)" % type(_e).__name__)
+
+    # (2) ENGINE-ROUTING — agent tokens count toward the Claude usage limit; mechanical compute must go to
+    # non-Claude machinery. Fires whenever cheap idle compute exists, so the routing is nudged every cycle.
     if idle_pool > 10 or idle_local > 6:
         print("   💸 COST-ROUTING (agent tokens burn the usage limit): put MECHANICAL work on non-Claude machinery —")
         print("      • CPU param grids / TUNING → `tools/sweep_pool.sh` (headless on the %d idle pool cores, 0 tokens)"
