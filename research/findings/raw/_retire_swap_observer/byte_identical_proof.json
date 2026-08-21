@@ -1,0 +1,12 @@
+{
+  "after_combined_md5": "92f157a1ac3911c75c994f7197406d5e",
+  "baseline_combined_md5": "92f157a1ac3911c75c994f7197406d5e",
+  "byte_identical": true,
+  "config": "REAL /api/brain-chat handler, numpy-CPU, swap-drives DEFAULT-ON (production default), BRAIN_GNW_SWAP unset (observer key off), heavy orthogonal organs isolated (held CONSTANT before+after).",
+  "conversation": "8 turns x 2 return paths (fast single-fact + rich): establish/hold/topic-change-SWAP/hold/SWAP/no-topic-hold/SWAP-back/abstain.",
+  "determinism_check": "two HEAD runs pre-edit produced identical combined_md5 92f157a1ac3911c75c994f7197406d5e.",
+  "note": "Each per-turn md5 hashes the FULL response dict (answer + all fields). combined_md5 hashes the ordered per-turn md5s. Identical => the retirement changed nothing on the live default turn (control-flow: the removed elif is unreachable while _swap_drives_on() is True).",
+  "per_turn_md5_mismatches": 0,
+  "turns_compared": 16,
+  "what": "Byte-identical-live proof for retiring the #77 swap OBSERVER elif-fallback from webapp/server.py brain_chat."
+}

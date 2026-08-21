@@ -1,0 +1,8 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "runner": "webapp.server brain_chat byte-identical-live verify (swap-observer retirement, agent-built)",
+  "argv": ["SIM_BACKEND=numpy", "webapp.server", "brain_chat", "16-turn fast+rich production panel"],
+  "seed": 42,
+  "note": "provenance sidecar added during post-crash recovery; SIM_BACKEND=numpy (CPU) per the finding; the byte-identical proof is combined_md5 92f157a1ac3911c75c994f7197406d5e across 16 turns"
+}

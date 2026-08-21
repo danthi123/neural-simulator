@@ -1,0 +1,1430 @@
+{
+  "backend": "numpy",
+  "combined_md5": "92f157a1ac3911c75c994f7197406d5e",
+  "ts": "2026-08-21T00:28:37",
+  "turns": [
+    {
+      "i": 0,
+      "kind": "establish",
+      "md5": "b803a82ad638eaba0ef8ae62d1b9b7a1",
+      "msg": "what does the dog chase?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 3,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6268.632749460725,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "dog",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "dog"
+            },
+            {
+              "asserted": "chase",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "chase"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "cat"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": null
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The dog chases cat.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.027777777777777776,
+          "evicted_topic": null,
+          "held_rate_post": 0.3333333333333333,
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": null,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.05555555555555555,
+          "n_ignited_post": 1,
+          "new_topic": null,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "first_thought",
+          "reason_lead": "first_thought",
+          "seed": 42,
+          "swapped": false,
+          "topic": "dog",
+          "turn": 1,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 1,
+      "kind": "hold",
+      "md5": "1c8f2ef84f1b451ddb61eae0b4d68ca6",
+      "msg": "what does the dog chase?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 3,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6268.632749460725,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "dog",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "dog"
+            },
+            {
+              "asserted": "chase",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "chase"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "cat"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": null
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The dog chases cat.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.03333333333333333,
+          "evicted_topic": null,
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": "dog",
+          "incumbent_slot": 0,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.06666666666666667,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": null,
+          "old_residual_post": 0.3333333333333333,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "same_topic_hold",
+          "reason_lead": "same_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": "dog",
+          "turn": 2,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 2,
+      "kind": "swap",
+      "md5": "d79dbb8ce91f61e4f9000f689d8923bb",
+      "msg": "what does the brain use?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 0,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6447.961201135246,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "brain",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "brain"
+            },
+            {
+              "asserted": "use",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "use"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "spikes"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": "river"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On brain, then \u2014 The brain uses spikes.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.16,
+          "evicted_topic": "dog",
+          "held_slot": 1,
+          "held_topic": "brain",
+          "held_topic_before": "dog",
+          "incumbent_slot": 0,
+          "lead": "On brain, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.3277777777777778,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "brain",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 1,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "brain",
+          "turn": 3,
+          "winner_slot": 1
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 3,
+      "kind": "hold",
+      "md5": "fe6800e3eb308d23fd4708f7f52ddccc",
+      "msg": "what does the brain store?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 2,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6410.7525057424555,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "brain",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "brain"
+            },
+            {
+              "asserted": "store",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "store"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "memory"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": null
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The brain stores memory.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "brain",
+          "store",
+          "memory"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.016666666666666666,
+          "evicted_topic": null,
+          "held_slot": 1,
+          "held_topic": "brain",
+          "held_topic_before": "brain",
+          "incumbent_slot": 1,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.03333333333333333,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": null,
+          "old_residual_post": 0.3333333333333333,
+          "on": true,
+          "proposed_slot": 1,
+          "reason": "same_topic_hold",
+          "reason_lead": "same_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": "brain",
+          "turn": 4,
+          "winner_slot": 1
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 4,
+      "kind": "swap",
+      "md5": "1c61f6ecef75a5e049b54867c7dda530",
+      "msg": "what does the cat eat?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 4,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6117.4138457350555,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "cat",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "cat"
+            },
+            {
+              "asserted": "eat",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "eat"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "fish"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": null
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On cat, then \u2014 The cat eats fish.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.15666666666666668,
+          "evicted_topic": "brain",
+          "held_slot": 2,
+          "held_topic": "cat",
+          "held_topic_before": "brain",
+          "incumbent_slot": 1,
+          "lead": "On cat, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.29444444444444445,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "cat",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 2,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "cat",
+          "turn": 5,
+          "winner_slot": 2
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 5,
+      "kind": "hold",
+      "md5": "9809cc06bbdb97bed6063d2e94cc47af",
+      "msg": "tell me more",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": null,
+        "affect": null,
+        "answer": "The tell mes more.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "tell",
+          "me",
+          "more"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": false,
+          "evicted_topic": null,
+          "held_topic": "cat",
+          "held_topic_before": "cat",
+          "lead": "",
+          "lesioned": false,
+          "new_topic": null,
+          "on": true,
+          "reason": "no_topic_hold",
+          "reason_lead": "no_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": null,
+          "turn": 6
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 6,
+      "kind": "swap",
+      "md5": "1c22c6f4f0db3bee1dd2b4f5753dcdf1",
+      "msg": "what does the dog chase?",
+      "path": "fast",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": false,
+          "composer": "onebrain",
+          "matched_fact_index": 3,
+          "n_facts_scanned": 6,
+          "rf": {
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 6268.632749460725,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "dog",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "agent",
+              "word": "dog"
+            },
+            {
+              "asserted": "chase",
+              "confidence": 1.0,
+              "cue": true,
+              "role": "action",
+              "word": "chase"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "patient",
+              "word": "cat"
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "attribute",
+              "word": null
+            },
+            {
+              "confidence": 1.0,
+              "cue": false,
+              "role": "polarity",
+              "word": "AFFIRM"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On dog, then \u2014 The dog chases cat.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.16,
+          "evicted_topic": "cat",
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": "cat",
+          "incumbent_slot": 2,
+          "lead": "On dog, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.26666666666666666,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "dog",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "dog",
+          "turn": 7,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 7,
+      "kind": "abstain",
+      "md5": "affacba97b82e5c7dfef9084934b9d84",
+      "msg": "what does a unicorn fly?",
+      "path": "fast",
+      "resp": {
+        "abstained": true,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 6,
+          "rf": {
+            "frac_fired": 0.00026168876482903,
+            "mean_magnitude": 0.8664412858935164,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "unicorn",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "unicorn"
+            },
+            {
+              "asserted": "fly",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "fly"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "I don't know about that.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "metacog": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": null,
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": false,
+        "source": "tiny-demo",
+        "surprise": null,
+        "swap_drives": {
+          "acted": false,
+          "evicted_topic": null,
+          "held_topic": "dog",
+          "held_topic_before": "dog",
+          "lead": "",
+          "lesioned": false,
+          "new_topic": null,
+          "on": true,
+          "reason": "no_topic_hold",
+          "reason_lead": "no_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": null,
+          "turn": 8
+        },
+        "verified": false,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 0,
+      "kind": "establish",
+      "md5": "fc79013d2e3f02c77283473cda04c2e9",
+      "msg": "what does the dog chase?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "fish",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "fish"
+            },
+            {
+              "asserted": "eat",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "eat"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The dog chases cat. The cat eats fish.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 2,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.027777777777777776,
+          "evicted_topic": null,
+          "held_rate_post": 0.3333333333333333,
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": null,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.05555555555555555,
+          "n_ignited_post": 1,
+          "new_topic": null,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "first_thought",
+          "reason_lead": "first_thought",
+          "seed": 42,
+          "swapped": false,
+          "topic": "dog",
+          "turn": 1,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 1,
+      "kind": "hold",
+      "md5": "41c1f30610939384771e3028667fc249",
+      "msg": "what does the dog chase?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "fish",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "fish"
+            },
+            {
+              "asserted": "eat",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "eat"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The dog chases cat.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 1,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.03333333333333333,
+          "evicted_topic": null,
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": "dog",
+          "incumbent_slot": 0,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.06666666666666667,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": null,
+          "old_residual_post": 0.3333333333333333,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "same_topic_hold",
+          "reason_lead": "same_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": "dog",
+          "turn": 2,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 2,
+      "kind": "swap",
+      "md5": "c9aeec74b354d87660a0162be9b22976",
+      "msg": "what does the brain use?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "spikes",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "spikes"
+            },
+            {
+              "asserted": "use",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "use"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On brain, then \u2014 The brain uses spikes. The brain stores memory. The brain learns words.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 3,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          [
+            "brain",
+            "store",
+            "memory"
+          ],
+          [
+            "brain",
+            "learn",
+            "words"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.16,
+          "evicted_topic": "dog",
+          "held_slot": 1,
+          "held_topic": "brain",
+          "held_topic_before": "dog",
+          "incumbent_slot": 0,
+          "lead": "On brain, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.3277777777777778,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "brain",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 1,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "brain",
+          "turn": 3,
+          "winner_slot": 1
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 3,
+      "kind": "hold",
+      "md5": "c491a9c57ccb531e58d966a4fdf3d2e6",
+      "msg": "what does the brain store?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "memory",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "memory"
+            },
+            {
+              "asserted": "store",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "store"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "The brain stores memory.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 1,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "brain",
+          "store",
+          "memory"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "brain",
+            "store",
+            "memory"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.016666666666666666,
+          "evicted_topic": null,
+          "held_slot": 1,
+          "held_topic": "brain",
+          "held_topic_before": "brain",
+          "incumbent_slot": 1,
+          "lead": "",
+          "lesioned": false,
+          "mm_peak": 0.03333333333333333,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": null,
+          "old_residual_post": 0.3333333333333333,
+          "on": true,
+          "proposed_slot": 1,
+          "reason": "same_topic_hold",
+          "reason_lead": "same_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": "brain",
+          "turn": 4,
+          "winner_slot": 1
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 4,
+      "kind": "swap",
+      "md5": "38abb8c96e8c4731dbe91680f3ff694c",
+      "msg": "what does the cat eat?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "fish",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "fish"
+            },
+            {
+              "asserted": "eat",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "eat"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On cat, then \u2014 The cat eats fish.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 1,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "cat",
+            "eat",
+            "fish"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.15666666666666668,
+          "evicted_topic": "brain",
+          "held_slot": 2,
+          "held_topic": "cat",
+          "held_topic_before": "brain",
+          "incumbent_slot": 1,
+          "lead": "On cat, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.29444444444444445,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "cat",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 2,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "cat",
+          "turn": 5,
+          "winner_slot": 2
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 5,
+      "kind": "hold",
+      "md5": "2ae129436bf358b192e2cbb79a56d908",
+      "msg": "tell me more",
+      "path": "rich",
+      "resp": {
+        "abstained": true,
+        "activity": null,
+        "affect": null,
+        "answer": "I don't have anything more to add on that.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": true,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 0,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": null,
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [],
+        "surprise": null,
+        "swap_drives": {
+          "acted": false,
+          "evicted_topic": null,
+          "held_topic": "cat",
+          "held_topic_before": "cat",
+          "lead": "",
+          "lesioned": false,
+          "new_topic": null,
+          "on": true,
+          "reason": "no_topic_hold",
+          "reason_lead": "no_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": null,
+          "turn": 6
+        },
+        "verified": false,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 6,
+      "kind": "swap",
+      "md5": "e88cea48fe905f784f505f80f8e5cd63",
+      "msg": "what does the dog chase?",
+      "path": "rich",
+      "resp": {
+        "abstained": false,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "fish",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "fish"
+            },
+            {
+              "asserted": "eat",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "eat"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "On dog, then \u2014 The dog chases cat.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 1,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [
+          [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        ],
+        "surprise": null,
+        "swap_drives": {
+          "acted": true,
+          "boost_max": 0.16,
+          "evicted_topic": "cat",
+          "held_slot": 0,
+          "held_topic": "dog",
+          "held_topic_before": "cat",
+          "incumbent_slot": 2,
+          "lead": "On dog, then \u2014 ",
+          "lesioned": false,
+          "mm_peak": 0.26666666666666666,
+          "n_ignited_post": 1,
+          "new_rate_post": 0.3333333333333333,
+          "new_topic": "dog",
+          "old_residual_post": 0.0,
+          "on": true,
+          "proposed_slot": 0,
+          "reason": "topic_change_swap",
+          "reason_lead": "topic_transition",
+          "seed": 42,
+          "swapped": true,
+          "topic": "dog",
+          "turn": 7,
+          "winner_slot": 0
+        },
+        "verified": true,
+        "worldmodel": null
+      }
+    },
+    {
+      "i": 7,
+      "kind": "abstain",
+      "md5": "678668276f62faa605b84cab8bcec5d6",
+      "msg": "what does a unicorn fly?",
+      "path": "rich",
+      "resp": {
+        "abstained": true,
+        "activity": {
+          "abstained": true,
+          "composer": "onebrain",
+          "matched_fact_index": null,
+          "n_facts_scanned": 5,
+          "rf": {
+            "frac_fired": 0.00023988136775994416,
+            "mean_magnitude": 0.7253335931464091,
+            "n_readout_neurons": 45856
+          },
+          "roles": [
+            {
+              "asserted": "unicorn",
+              "confidence": null,
+              "cue": true,
+              "role": "agent",
+              "word": "unicorn"
+            },
+            {
+              "asserted": "fly",
+              "confidence": null,
+              "cue": true,
+              "role": "action",
+              "word": "fly"
+            }
+          ]
+        },
+        "affect": null,
+        "answer": "I don't know about that.",
+        "brain": "tiny-demo",
+        "comprehension": null,
+        "curiosity": null,
+        "episodic": null,
+        "followup": false,
+        "metacog": null,
+        "multiref": null,
+        "n_sentences": 0,
+        "noncontradiction": null,
+        "pragmatic": null,
+        "recalled_svo": null,
+        "reconsolidation": null,
+        "renderer": "template-stub (GPU-free)",
+        "rich": true,
+        "source": "tiny-demo",
+        "supporting_facts": [],
+        "surprise": null,
+        "swap_drives": {
+          "acted": false,
+          "evicted_topic": null,
+          "held_topic": "dog",
+          "held_topic_before": "dog",
+          "lead": "",
+          "lesioned": false,
+          "new_topic": null,
+          "on": true,
+          "reason": "no_topic_hold",
+          "reason_lead": "no_topic_hold",
+          "seed": 42,
+          "swapped": false,
+          "topic": null,
+          "turn": 8
+        },
+        "verified": false,
+        "worldmodel": null
+      }
+    }
+  ]
+}

@@ -3032,10 +3032,15 @@ _GNW_DELIBERATE_DEFAULT_ON = True
 # Flipping this to False would turn the faculty OFF by default. See webapp/gnw_multistep_deliberation.py.
 _GNW_MULTISTEP_DEFAULT_ON = True
 
-# ─── GNW NEURAL THOUGHT-SWAP into the LIVE held-topic workspace (2026-08-19, board #77): the production-integration
-# anchor, DEFAULT-OFF (a reversible flag pending owner review). When False (the default) the swap block is gated on the
-# env flag alone (`BRAIN_GNW_SWAP=1` opts in for review); the response carries NO `gnw_swap` key by default -> byte-
-# identical. Flipping this to True would install the held-topic swap tracker by default. See webapp/gnw_thought_swap.py.
+# ─── GNW NEURAL THOUGHT-SWAP OBSERVER (2026-08-19, board #77) — SUPERSEDED + RETIRED from the default handler
+# (2026-08-20). This is the OLDER observe-only #77 swap tracker; board #85 `swap_drives_chat` (default-ON, below)
+# SUPERSEDES it and is now the SOLE swap path — it internally reuses the SAME #77 machinery AND additionally DRIVES the
+# response. The per-turn observer FALLBACK has been removed from `brain_chat` (it only ever ran when swap-drives was
+# turned OFF and BRAIN_GNW_SWAP was on — a review-only combo). `_GNW_SWAP_DEFAULT_ON` is retained (unchanged, False) as
+# the ledger's default-anchor (docs/PRODUCTION_INTEGRATION_LEDGER.yaml: row gnw-thought-swap, on_by_default:NO) and it
+# still gates the additive, DEFAULT-OFF `gnw_swap` observability key (`BRAIN_GNW_SWAP=1`, which now surfaces
+# swap-drives' own per-turn `_last_gnw_swap` read) -> no key by default -> byte-identical. See webapp/gnw_thought_swap.py
+# (kept on disk; still imported by webapp/swap_drives_chat.py).
 _GNW_SWAP_DEFAULT_ON = False
 
 
@@ -3895,14 +3900,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # SWAP); the SAME topic MATCHES -> the pred interneuron vetoes the detector -> the current thought persists (NO
     # swap). The swap-vs-hold VERDICT is the substrate's, not a host `if`. ONE neural swap runs per turn.
     #
-    # SWAP DRIVES THE RESPONSE (board #85): when the drives path is on (`_swap_drives_on()`, default-ON anchor) it runs
-    # that single neural swap (with the lesion threaded) AND maps the verdict to a topic-transition LEAD prepended to
-    # the answer OUTERMOST — on a SWAP the reply announces the shift ("On <newtopic>, then -- <answer>"); a HOLD stays
-    # silent. `BRAIN_SWAP_DRIVES=0` -> the block is fully skipped (no key, no lead -> byte-identical oracle). LESION
+    # SWAP DRIVES THE RESPONSE (board #85) — the SOLE swap path. When the drives path is on (`_swap_drives_on()`,
+    # default-ON anchor) it runs the single neural swap (with the lesion threaded) AND maps the verdict to a
+    # topic-transition LEAD prepended to the answer OUTERMOST — on a SWAP the reply announces the shift ("On
+    # <newtopic>, then -- <answer>"); a HOLD stays silent. `BRAIN_SWAP_DRIVES=0` -> the block is fully skipped (no key,
+    # no lead, and NO swap observe runs at all — the correct "off") -> byte-identical oracle. LESION
     # (`BRAIN_SWAP_DRIVES_LESION=1`): silence the mismatch detector -> the swap collapses -> the lead VANISHES (the
-    # load-bearing proof). When the drives path is OFF but the #77 observer is on (`BRAIN_GNW_SWAP`), the original
-    # observe runs instead (metadata-only, no lead). Never both (a double observe would double-advance the workspace).
-    # Reuse-by-import (NO sim/ edit). Guarded so a wiring failure can never crash a turn. See swap_drives_chat.py.
+    # load-bearing proof). The older #77 OBSERVER fallback (gnw_thought_swap.observe_turn, gated on BRAIN_GNW_SWAP) is
+    # RETIRED from the default handler (2026-08-20): swap-drives SUPERSEDES it and internally reuses the SAME #77
+    # machinery (swap_drives_chat imports gnw_thought_swap), so exactly one neural swap still runs per turn (never
+    # double-advancing the workspace). Reuse-by-import (NO sim/ edit). Guarded so a wiring failure can never crash a
+    # turn. See swap_drives_chat.py.
     swap_drives_info = None
     swap_drives_lead = ""
     if _swap_drives_on():
@@ -3913,12 +3921,6 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as _sde:  # never let the swap coupling crash a turn — degrade to the un-led answer
             swap_drives_info = {"on": True, "error": f"{type(_sde).__name__}: {_sde}", "lead": ""}
             swap_drives_lead = ""
-    elif _GNW_SWAP_DEFAULT_ON or _gnw_swap_flag_on():
-        try:
-            from webapp import gnw_thought_swap as _gnw_swap_mod
-            _gnw_swap_mod.observe_turn(chat, msg)
-        except Exception:
-            pass
 
     # ── SELF-INITIATED UTTERANCE — the first INTERNALLY-GENERATED turn class (2026-08-18) ────────────────────────
     # On an IDLE/EMPTY turn (an EMPTY message, or a bare "say something / what's on your mind" lead-in — a DISJOINT
