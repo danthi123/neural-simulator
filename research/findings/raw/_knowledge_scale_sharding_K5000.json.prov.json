@@ -1,0 +1,33 @@
+{
+ "run_id": "1787352376-629337",
+ "runner": "research/runners/_knowledge_scale_sharding_verdict.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/knowledge-scale/research/runners/_knowledge_scale_sharding_verdict.py",
+  "--K",
+  "5000",
+  "--S",
+  "16",
+  "--D",
+  "128",
+  "--out",
+  "research/findings/raw/_knowledge_scale_sharding_K5000.json"
+ ],
+ "git_sha": "a5f594749",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T18:46:16",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_knowledge_scale_sharding_K5000.json"
+}

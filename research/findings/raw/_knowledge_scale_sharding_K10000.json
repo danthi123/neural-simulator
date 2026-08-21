@@ -1,0 +1,75 @@
+{
+  "K": 10000,
+  "S": 16,
+  "D": 128,
+  "vocab": 20040,
+  "ref_build_s": 192.45152926445007,
+  "sharded_build_s": 194.26831769943237,
+  "unrouted_ms_per_query": 29351.90949837367,
+  "routed_ms_per_query": 1557.5661460558574,
+  "speedup": 18.844727443967603,
+  "ref_recall": 12,
+  "sharded_recall": 12,
+  "n_recall": 12,
+  "answer_mismatches_vs_unsharded": 0,
+  "ref_moat_abstain": 8,
+  "sharded_moat_abstain": 8,
+  "n_moat": 8,
+  "load_balance_min_max_mean_ratio": [
+    577,
+    698,
+    625.0,
+    1.1168
+  ],
+  "chance": 0.0001,
+  "verdict": {
+    "label": "sharded FHRR fact-store: capacity at tractable routed latency",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "control",
+        "name": "routed vs unrouted latency at same K",
+        "ok": true,
+        "detail": "treatment=29351.9 control=1557.57 |sep|=27794.3 > 14676",
+        "note": "routed must be >=2x faster than the full-K scan"
+      },
+      {
+        "kind": "require",
+        "name": "routing preserves the answer (byte-identical to unsharded)",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "recall preserved vs unsharded",
+        "ok": true,
+        "detail": "measured=12 expect=<function main.<locals>.<lambda> at 0x7f5fc1fa99e0>",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "sharded recall vs chance",
+        "ok": true,
+        "detail": "1 vs floor 0.0001",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no-confab moat: every unknown cue abstains",
+        "ok": true,
+        "detail": "measured=8 expect=8",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "learned/spiking cue->shard router",
+        "why": "host agent-hash router is a declared capacity-de-risk scaffold; recall+moat inside each shard remain the genuine RF/spiking reads"
+      }
+    ],
+    "chance": 0.0001
+  }
+}
