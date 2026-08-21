@@ -55,8 +55,12 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
   — engaged → more curious/asks follow-ups. (4) **GNW THREE-ORGAN ignition bus** wired+GO default-OFF (cae81dcb,
   WAVE-1) — the workspace commits only on recall ∧ ¬surprise ∧ COMPREHENDED (D4 voter, low-comprehension veto
   load-bearing). (5) **Trunk-B separator** — set-point makes assemblies disjoint; BOTH te=18 + te=40 confirms show the
-  "crosstalk" is INSTRUMENT-LIMITED (read-noise + te=40 saturation, not a leak) → next lever = a stabilized/graded
-  surfaced read (finding 7447d68e, branch `research/memory-separator-readout`; D5 flip stays blocked on the READ).
+  "crosstalk" is INSTRUMENT-LIMITED (read-noise + te=40 saturation, not a leak) → stabilized read DE-RISKED (finding
+  2026-08-21-d5-stabilized-read-NEGATIVE): the read-noise IS a period-2 limit cycle a snapshot-ISOLATED read removes
+  ENTIRELY (deterministic std=0, 6/6, moat byte-id) → the crosstalk read becomes DECIDABLE; but rise-to-6/6 is a
+  SEPARATE deterministic saturating-tail residual (NOT read noise). D5 flip stays blocked; next = the direct te=40
+  A-moves-B experiment with the isolated read + the saturating-tail rise fix. Prior: finding 7447d68e, branch
+  `research/memory-separator-readout`.
   (6) continuous ledger row + soak runner (64822b0c) + the 2026-08-21 resume anchor. Earlier today: open-ended chat /
   verify-post-filter / contradiction-filter / 100k tiered-knowledge. NEXT default-off de-risks awaiting an owner-UX
   soak to flip: DA-encoding, DA-curiosity, GNW-3organ (each needs a broad no-regression soak like the continuous flip earned).
