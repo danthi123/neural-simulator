@@ -1,0 +1,912 @@
+{
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "crosstalk_seeds": [
+    42,
+    43,
+    100
+  ],
+  "params": {
+    "sep_bias": 500.0,
+    "store_te": 40,
+    "consol_te": 40,
+    "n_patterns": 3
+  },
+  "results": {
+    "42": {
+      "seed": 42,
+      "layerA": {
+        "off_sizes": [
+          37,
+          12,
+          22
+        ],
+        "on_sizes": [
+          33,
+          14,
+          15
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0208
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 6,
+            "jaccard": 0.1132
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0303
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0217
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 6,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 14,
+        "on_not_dense": true
+      },
+      "layerB": {
+        "off": {
+          "separation": false,
+          "seed": 42,
+          "assembly_sizes": [
+            35,
+            16,
+            20
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 1,
+              "jaccard": 0.02
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 6,
+              "jaccard": 0.1224
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 1,
+              "jaccard": 0.0286
+            }
+          ],
+          "max_shared_cells": 6,
+          "shared_within_conn": 1,
+          "B_depth_before": 12.83311,
+          "B_depth_after": 7.26275,
+          "neighbor_shift_abs": 5.570362,
+          "neighbor_shift": -5.570362,
+          "A_depth_before": 30.3789,
+          "A_depth_after": 30.78374,
+          "A_rise": 0.404847,
+          "B_within_weights_byte_identical": false,
+          "Bw_before": "70f7d7d690b4f77f",
+          "Bw_after": "b09b0ff874e84c0e"
+        },
+        "on": {
+          "separation": true,
+          "seed": 42,
+          "assembly_sizes": [
+            32,
+            14,
+            18
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 1,
+              "jaccard": 0.0222
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            }
+          ],
+          "max_shared_cells": 1,
+          "shared_within_conn": 1,
+          "B_depth_before": 20.44635,
+          "B_depth_after": 17.7388,
+          "neighbor_shift_abs": 2.707553,
+          "neighbor_shift": -2.707553,
+          "A_depth_before": 30.44959,
+          "A_depth_after": 30.36041,
+          "A_rise": -0.089179,
+          "B_within_weights_byte_identical": false,
+          "Bw_before": "1a92a2853eae191f",
+          "Bw_after": "e22a2eb9bf5b72e0"
+        }
+      },
+      "elapsed_s": 101.7
+    },
+    "43": {
+      "seed": 43,
+      "layerA": {
+        "off_sizes": [
+          20,
+          26,
+          16
+        ],
+        "on_sizes": [
+          26,
+          24,
+          13
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 4,
+            "jaccard": 0.0952
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0588
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.05
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0204
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 4,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 13,
+        "on_not_dense": true
+      },
+      "layerB": {
+        "off": {
+          "separation": false,
+          "seed": 43,
+          "assembly_sizes": [
+            20,
+            24,
+            16
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 4,
+              "jaccard": 0.1
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 2,
+              "jaccard": 0.0588
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 2,
+              "jaccard": 0.0526
+            }
+          ],
+          "max_shared_cells": 4,
+          "shared_within_conn": 6,
+          "B_depth_before": 30.42444,
+          "B_depth_after": 30.56017,
+          "neighbor_shift_abs": 0.135726,
+          "neighbor_shift": 0.135726,
+          "A_depth_before": 29.60358,
+          "A_depth_after": 29.58247,
+          "A_rise": -0.021115,
+          "B_within_weights_byte_identical": false,
+          "Bw_before": "99c28bdcbcc5fc1b",
+          "Bw_after": "350ed75834882ff9"
+        },
+        "on": {
+          "separation": true,
+          "seed": 43,
+          "assembly_sizes": [
+            23,
+            20,
+            13
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 1,
+              "jaccard": 0.0238
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            }
+          ],
+          "max_shared_cells": 1,
+          "shared_within_conn": 0,
+          "B_depth_before": 28.36865,
+          "B_depth_after": 30.15663,
+          "neighbor_shift_abs": 1.787972,
+          "neighbor_shift": 1.787972,
+          "A_depth_before": 29.66313,
+          "A_depth_after": 29.42743,
+          "A_rise": -0.235703,
+          "B_within_weights_byte_identical": true,
+          "Bw_before": "0da5125638a3671b",
+          "Bw_after": "0da5125638a3671b"
+        }
+      },
+      "elapsed_s": 99.8
+    },
+    "44": {
+      "seed": 44,
+      "layerA": {
+        "off_sizes": [
+          35,
+          13,
+          16
+        ],
+        "on_sizes": [
+          34,
+          11,
+          14
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0435
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.02
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0357
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 2,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 11,
+        "on_not_dense": true
+      },
+      "elapsed_s": 8.1
+    },
+    "100": {
+      "seed": 100,
+      "layerA": {
+        "off_sizes": [
+          18,
+          24,
+          20
+        ],
+        "on_sizes": [
+          19,
+          23,
+          22
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.05
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0556
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0732
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 19,
+        "on_not_dense": true
+      },
+      "layerB": {
+        "off": {
+          "separation": false,
+          "seed": 100,
+          "assembly_sizes": [
+            19,
+            25,
+            25
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 2,
+              "jaccard": 0.0476
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 2,
+              "jaccard": 0.0476
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 3,
+              "jaccard": 0.0638
+            }
+          ],
+          "max_shared_cells": 3,
+          "shared_within_conn": 2,
+          "B_depth_before": 29.16547,
+          "B_depth_after": 27.32892,
+          "neighbor_shift_abs": 1.836547,
+          "neighbor_shift": -1.836547,
+          "A_depth_before": 29.43951,
+          "A_depth_after": 29.44908,
+          "A_rise": 0.009563,
+          "B_within_weights_byte_identical": true,
+          "Bw_before": "79287fcc71226a26",
+          "Bw_after": "79287fcc71226a26"
+        },
+        "on": {
+          "separation": true,
+          "seed": 100,
+          "assembly_sizes": [
+            23,
+            24,
+            18
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            },
+            {
+              "pair": [
+                0,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            },
+            {
+              "pair": [
+                1,
+                2
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            }
+          ],
+          "max_shared_cells": 0,
+          "shared_within_conn": 0,
+          "B_depth_before": 33.22038,
+          "B_depth_after": 33.79302,
+          "neighbor_shift_abs": 0.572642,
+          "neighbor_shift": 0.572642,
+          "A_depth_before": 30.2315,
+          "A_depth_after": 30.12193,
+          "A_rise": -0.109565,
+          "B_within_weights_byte_identical": true,
+          "Bw_before": "a89201f4e8e0efd0",
+          "Bw_after": "a89201f4e8e0efd0"
+        }
+      },
+      "elapsed_s": 100.9
+    },
+    "101": {
+      "seed": 101,
+      "layerA": {
+        "off_sizes": [
+          26,
+          24,
+          22
+        ],
+        "on_sizes": [
+          28,
+          22,
+          18
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0204
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0435
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0698
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0222
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 18,
+        "on_not_dense": true
+      },
+      "elapsed_s": 8.3
+    },
+    "102": {
+      "seed": 102,
+      "layerA": {
+        "off_sizes": [
+          32,
+          25,
+          22
+        ],
+        "on_sizes": [
+          31,
+          23,
+          16
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0556
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0588
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0444
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 16,
+        "on_not_dense": true
+      },
+      "elapsed_s": 8.2
+    }
+  },
+  "verdict": {
+    "label": "d5-pattern-separation-setpoint (crosstalk elimination)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: set-point drives assembly overlap -> DISJOINT on ALL 6 seeds (measured=False expect=True)",
+      "unmet: s42 ON neighbor crosstalk == 0 (eliminated) (measured=False expect=True)",
+      "unmet: s42 ON B within-weights BYTE-IDENTICAL after consolidating A (measured=False expect=True)",
+      "unmet: s42 ON A actually rises (dA>0, not merely moved) (measured=False expect=True)",
+      "unmet: s43 ON neighbor crosstalk == 0 (eliminated) (measured=False expect=True)",
+      "unmet: s43 ON A actually rises (dA>0, not merely moved) (measured=False expect=True)",
+      "unmet: s100 ON neighbor crosstalk == 0 (eliminated) (measured=False expect=True)",
+      "unmet: s100 ON A actually rises (dA>0, not merely moved) (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "OFF reproduces the crosstalk-capable overlap on >=1 build",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "OFF-overlapping seeds=[42, 43, 44, 100, 101, 102]"
+      },
+      {
+        "kind": "require",
+        "name": "set-point drives assembly overlap -> DISJOINT on ALL 6 seeds",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "on_max_shared==0 every seed"
+      },
+      {
+        "kind": "require",
+        "name": "ON assemblies stay non-empty & non-dense (faculty membership preserved)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical OFF (default path == unmodified emergent_assemblies)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "s42 OFF neighbor crosstalk is nonzero (reproduced)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "|dB|_off=5.570362 shared_conn=1"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON neighbor crosstalk == 0 (eliminated)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "|dB|_on=2.707553"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON B within-weights BYTE-IDENTICAL after consolidating A",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "disjoint => consolidating A cannot touch B's read weights"
+      },
+      {
+        "kind": "reaches",
+        "name": "s42 ON consolidated memory A's OWN strength still RISES",
+        "ok": true,
+        "detail": "before=30.4496 after=30.3604 moved=True",
+        "note": "the faculty is not fixed by disabling consolidation"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON A actually rises (dA>0, not merely moved)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "s43 OFF neighbor crosstalk is nonzero (reproduced)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "|dB|_off=0.135726 shared_conn=6"
+      },
+      {
+        "kind": "require",
+        "name": "s43 ON neighbor crosstalk == 0 (eliminated)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "|dB|_on=1.787972"
+      },
+      {
+        "kind": "require",
+        "name": "s43 ON B within-weights BYTE-IDENTICAL after consolidating A",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "disjoint => consolidating A cannot touch B's read weights"
+      },
+      {
+        "kind": "reaches",
+        "name": "s43 ON consolidated memory A's OWN strength still RISES",
+        "ok": true,
+        "detail": "before=29.6631 after=29.4274 moved=True",
+        "note": "the faculty is not fixed by disabling consolidation"
+      },
+      {
+        "kind": "require",
+        "name": "s43 ON A actually rises (dA>0, not merely moved)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "s100 OFF neighbor crosstalk is nonzero (reproduced)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "|dB|_off=1.836547 shared_conn=2"
+      },
+      {
+        "kind": "require",
+        "name": "s100 ON neighbor crosstalk == 0 (eliminated)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "|dB|_on=0.572642"
+      },
+      {
+        "kind": "require",
+        "name": "s100 ON B within-weights BYTE-IDENTICAL after consolidating A",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "disjoint => consolidating A cannot touch B's read weights"
+      },
+      {
+        "kind": "reaches",
+        "name": "s100 ON consolidated memory A's OWN strength still RISES",
+        "ok": true,
+        "detail": "before=30.2315 after=30.1219 moved=True",
+        "note": "the faculty is not fixed by disabling consolidation"
+      },
+      {
+        "kind": "require",
+        "name": "s100 ON A actually rises (dA>0, not merely moved)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full-scale cupy production organ over all 6 crosstalk seeds",
+        "why": "numpy proxy runs Layer B on the overlapping seed(s); the full 6-seed crosstalk confirm is QUEUED on gpu_queue (cupy) \u2014 see finding scope"
+      },
+      {
+        "process": "on-substrate intrinsic-plasticity conductance",
+        "why": "the winner-fatigue bias is a host-applied hyperpolarizing current; the selection (theta-crossing) is on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+      }
+    ],
+    "chance": null
+  },
+  "elapsed_s": 326.9
+}

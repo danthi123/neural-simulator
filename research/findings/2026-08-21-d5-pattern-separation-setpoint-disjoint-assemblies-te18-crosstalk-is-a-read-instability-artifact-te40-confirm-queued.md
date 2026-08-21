@@ -69,3 +69,19 @@ read-stability probe (its raw reads are in the run's diag log, summarized above)
 formation-time excitability set-point + a read probe). Parent-finalized + corrected from the artifact + the diagnostic
 after the build agent completed the runs. Supersedes the earlier same-day framing that called the te=18 shift a
 read-level leak.
+
+## te=40 CUPY CONFIRM ran — the crosstalk is INSTRUMENT-LIMITED at production encode too (D5 flip stays blocked)
+<!--derived-->
+The queued te=40 confirm (`research/findings/raw/_d5_separation/cupy_confirm_te40.json`, VERDICT UNDEFINED) does NOT
+cleanly resolve the crosstalk — but not because the te=18 read was uniquely bad. At te=40 the set-point still
+separates structurally (on_max_shared 6->1, 4->1, 2->0, 3->0, 3->1, 3->0 — ~3/6 fully disjoint at sep_bias=500), yet
+the neighbor shift is SMALL, NOISY, and inconsistent in DIRECTION: s42 |dB| 5.57->2.71 (down), s100 1.84->0.57 (down),
+but s43 0.14->**1.79 UP despite B's within-weights being BYTE-IDENTICAL** — a weight-untouched neighbor moving 1.79 mV
+is READ NOISE, not an A->B leak. And "A's own strength rises" is FALSE on all three (A_rise -0.089/-0.236/-0.110):
+te=40 SATURATES A (~30 mV, at the read ceiling), the exact limit the 2026-08-20 graded-read finding named — so the
+consolidation-strength signal cannot be read there either. CONCLUSION: the crosstalk question is INSTRUMENT-LIMITED at
+BOTH encodes (te=18 read-instability; te=40 saturation + mV-scale read noise) — the surfaced dendritic-depth read is
+too noisy relative to the effect to verify elimination. The load-bearing next lever CONVERGES with the 2026-08-20
+direction: a STABILIZED / GRADED surfaced read (lower-variance readout that both resolves the crosstalk AND lifts the
+conversation-visibility). A bias sweep for 6/6 disjoint is a secondary knob. The D5 default-on flip stays BLOCKED on
+the read, not the write-separation. NO sim/ edit.
