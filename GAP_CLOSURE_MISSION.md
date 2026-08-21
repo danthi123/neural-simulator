@@ -63,12 +63,23 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
   production uses is the open sub-question); board #125. gnw-three-organ — the composed check CONFIRMED its D4
   comprehension veto (toy cue-lexicon) regresses 2 legitimately-recalled facts (dog-chase-cat, cat-eat-fish); gate =
   a real-vocab/NLI comprehension read; board #126.
-  **IN-FLIGHT (background, monitored):** (i) D5 sep_bias sweep — knob 1 of the learn-through-use default-on flip,
-  finding which winner-fatigue bias drives 6/6 disjoint+healthy assemblies (sep_bias=500 gives ~3-4/6; sweeping
-  750→3000) on branch research/memory-separator-readout. (ii) knowledge-scale FHRR SHARDING GO (owner #1 / #66):
-  route by agent → one shard, K=2000 facts/S=16 shards, routed 291ms vs 4149ms = 14.2x speedup, byte-identical
-  answers (0 mismatches), moat 8/8, honest host-hash-router scaffold flag → faithful = learned/spiking cue-router;
-  UNCOMMITTED on branch research/knowledge-scale-sharding, re-verifying to bank.
+  **⭐ LANDED 2026-08-21 (LATER STILL — the D5 learn-through-use de-risk + owner-#1 sharding):**
+  (i) **knowledge-scale FHRR SHARDING GO** (owner #1 / #66, commit a5f594749 both remotes): route by agent → one
+  shard, K=2000/S=16, ~16x routed speedup, byte-identical (0 mismatches), moat 8/8, honest host-hash-router scaffold
+  → faithful = learned/spiking cue-router (hippocampal indexing, Teyler & Rudy 2007). Board #127. Next rung = wire the
+  sharded store into brain_chat recall + scale K.
+  (ii) **D5 learn-through-use KNOB 1 CLOSED** (commit e62113ef): winner-fatigue set-point sep_bias=1000 → 6/6 disjoint
+  + healthy assemblies (sweep 500→3/6, 750→5/6, 1000→6/6, holds to 2000); disjoint ⇒ 0 crosstalk structurally. #73 DONE.
+  (iii) **D5 learn-through-use KNOB 2 IMPROVED to 5/6** (commit 9496d72a): the pre-saturation read window (n-turns=2)
+  gives depth_rest/depth_hold 5/6 strict-monotone conversation-visible rise (clears the >4/6 bar, beats the 4/6
+  baseline) — but NOT a stable 6/6: seed 44 (a weak consolidator, ~1 mV rise) flips run-to-run (a first run scored 6/6;
+  the clean re-run 5/6 — the re-run CAUGHT the non-reproducible 6/6 before commit). Grounded in BTSP plateau saturation
+  (Bittner/Magee 2017: the plateau-depth read is linear only below the regenerative NMDA ceiling). Board #71.
+  **STATUS: learn-through-use (the reframe's PRIMARY continuous-substrate faculty) is de-risk-near-complete — knob 1
+  closed, knob 2 at 5/6.** Remaining before the production FLIP: either flip on the 5/6 result (owner UX call,
+  reversible) OR close seed 44 to a stable 6/6 (a per-seed store-strength floor / a relative-tolerance scaled to the
+  small move — an operating-point choice, not a substrate wall), THEN wire the pre-saturation read as the production
+  read + no-regression + flip the flag. A fresh context takes this (a delicate production integration).
 - **⭐ LANDED 2026-08-21 (this session, all on `main` both remotes):** (1) **THE CONTINUOUS-LIFE FLIP — `BRAIN_CONTINUOUS`
   +`BRAIN_CONTINUOUS_DRIVES` DEFAULT-ON** (commit 1bf65c4f, ledger on_by_default:YES, soak GO 0/7 no-regression + no
   pileup): the brain WANDERS + FEELS between turns by DEFAULT now. (2) **DA-gated encoding** wired+GO default-OFF
