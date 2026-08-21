@@ -761,6 +761,18 @@ Method banked; the residual is REMAPPED to a POPULATION-competitive set-point (a
 divisive-normalization on the dg_fs pool holding total DG activity ≈ k) and/or a developed competitive perforant
 projection (`2026-08-19-kwta-stability-homeostat-NOGO.md`, runner `_replay_dg_pattern_separation_homeostat.py`).
 
+**2026-08-21 — memory-separator CROSSTALK decidably CLOSED on the read side (board #73).** The long-open "does
+consolidating memory A move a neighbour B's surfaced recall?" question is DECIDED. Re-running the Layer-B crosstalk
+measurement with a DETERMINISTIC snapshot-isolated read (complete reset to clean-rest + inject the current weights —
+the biology's return-to-rest between recalls) makes it decidable where the production live read (a period-2 limit
+cycle, up to 9.69 mV of read noise) had buried it. On byte-identical (disjoint) neighbours |ΔB|_iso = 0.0 EXACTLY
+(5/5 at store20/consol40; 3/3 at the exact prior te=40 regime), and the true weight-mediated crosstalk on overlapping
+neighbours is ≤0.02 mV — so the prior multi-mV "crosstalk" (te=18 ~7.5, te=40 ~1.8) was ENTIRELY read noise, not an
+A→B leak. Consolidation is genuine (A rises at store20/consol40; te=40 saturates A, the read-ceiling limit already
+named). CLOSES the read-side crosstalk blocker for the D5 learn-through-use default-on flip; the REMAINING blocker is
+the SEPARATE saturating-tail read-window residual (the rise-to-6/6 the stabilized-read finding disentangled). Does NOT
+flip on_by_default. `2026-08-21-d5-crosstalk-isolated-read-CLOSED.md`, runner `_d5_crosstalk_isolated_read_derisk.py`.
+
 **⭐ 2026-08-13 — THE ORDERED NEXT ACTIONS ARE §0.4 (this supersedes the "real frontier now" list far below).** In
 priority order, matching the three missing properties: **(1)** WIRE the GNW N-organ bus into production `brain_chat` to
 REPLACE the host organ-orchestration (design at `2026-08-13-gnw-norgan-bus-production-wiring.md`) — the single biggest move

@@ -1,5 +1,13 @@
 # Roadmap
 
+> **⭐ 2026-08-21 (Trunk-B branch note; full project state is on `main`'s ROADMAP + GAP_CLOSURE_MISSION):** the D5
+> memory-separator crosstalk (#73) is **RESOLVED** — with the deterministic snapshot-isolated read (noise std 0.0 vs
+> the live period-2 read's 4.98 mV), consolidating a memory moves a disjoint neighbour's read by EXACTLY 0 and even an
+> overlapping neighbour by only 0.0016 mV; the old apparent 1.79–7.478 mV "crosstalk" was ALL read noise. The write-side
+> separation set-point works; the period-2 read-noise is cured by isolation. The ONLY remaining blocker before the D5
+> learn-through-use default-on flip is the separate rise-to-6/6 read-window residual (a bounded/soft read or a
+> pre-saturation window — not a substrate wall). Findings: 2026-08-21-d5-crosstalk-RESOLVED-*, 2026-08-21-d5-stabilized-read-NEGATIVE.
+
 This is the plain-language capability view of the simulator. It is downstream
 of the [2026-08-02 project charter](docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md),
 the [project handoff](HANDOFF.md), and the live state in

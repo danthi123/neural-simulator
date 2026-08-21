@@ -1,0 +1,455 @@
+{
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    100
+  ],
+  "ok_seeds": [
+    42,
+    43,
+    100
+  ],
+  "params": {
+    "sep_bias": 500.0,
+    "store_te": 40,
+    "consol_te": 40,
+    "n_patterns": 3,
+    "k_noise": 8,
+    "warm_reads": 4
+  },
+  "results": {
+    "42": {
+      "seed": 42,
+      "off": {
+        "separation": false,
+        "seed": 42,
+        "assembly_sizes": [
+          36,
+          16,
+          23
+        ],
+        "max_shared_cells": 6,
+        "shared_within_conn": 1,
+        "B_within_weights_byte_identical": false,
+        "Bw_before": "70f7d7d690b4f77f",
+        "Bw_after": "934f39d3135826d7",
+        "w_A_stored": 86.5454,
+        "w_A_consol": 86.5539,
+        "B_depth_before": 14.264959,
+        "B_depth_after": 14.266553,
+        "neighbor_shift_iso": 0.00159395,
+        "neighbor_shift_iso_abs": 0.00159395,
+        "A_depth_before": 30.888681,
+        "A_depth_after": 30.888681,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          14.26496,
+          14.26496,
+          14.26496,
+          14.26496,
+          14.26496,
+          14.26496,
+          14.26496,
+          14.26496
+        ],
+        "live_noise_std": 1.601387,
+        "live_noise_vals": [
+          7.26288,
+          10.60361,
+          7.8143,
+          7.18396,
+          7.29685,
+          10.52294,
+          10.5614,
+          10.60228
+        ]
+      },
+      "on": {
+        "separation": true,
+        "seed": 42,
+        "assembly_sizes": [
+          34,
+          13,
+          16
+        ],
+        "max_shared_cells": 1,
+        "shared_within_conn": 1,
+        "B_within_weights_byte_identical": false,
+        "Bw_before": "13c19f710142355a",
+        "Bw_after": "afcea3634baddd89",
+        "w_A_stored": 85.8017,
+        "w_A_consol": 85.8101,
+        "B_depth_before": 12.351752,
+        "B_depth_after": 12.351752,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 30.771941,
+        "A_depth_after": 30.771941,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          12.35175,
+          12.35175,
+          12.35175,
+          12.35175,
+          12.35175,
+          12.35175,
+          12.35175,
+          12.35175
+        ],
+        "live_noise_std": 2.75795,
+        "live_noise_vals": [
+          12.91178,
+          8.23748,
+          12.61768,
+          8.20701,
+          15.4987,
+          8.23775,
+          12.90992,
+          8.20679
+        ]
+      },
+      "elapsed_s": 214.9
+    },
+    "43": {
+      "seed": 43,
+      "off": {
+        "separation": false,
+        "seed": 43,
+        "assembly_sizes": [
+          20,
+          26,
+          16
+        ],
+        "max_shared_cells": 4,
+        "shared_within_conn": 6,
+        "B_within_weights_byte_identical": false,
+        "Bw_before": "860ca91e4c56c7af",
+        "Bw_after": "523b73b715479d91",
+        "w_A_stored": 80.9327,
+        "w_A_consol": 80.9287,
+        "B_depth_before": 27.696237,
+        "B_depth_after": 27.696237,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 29.635459,
+        "A_depth_after": 29.635459,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          27.69624,
+          27.69624,
+          27.69624,
+          27.69624,
+          27.69624,
+          27.69624,
+          27.69624,
+          27.69624
+        ],
+        "live_noise_std": 2.574408,
+        "live_noise_vals": [
+          26.21888,
+          22.72471,
+          30.29016,
+          22.76417,
+          26.34244,
+          22.78301,
+          23.50387,
+          22.69475
+        ]
+      },
+      "on": {
+        "separation": true,
+        "seed": 43,
+        "assembly_sizes": [
+          22,
+          24,
+          14
+        ],
+        "max_shared_cells": 1,
+        "shared_within_conn": 0,
+        "B_within_weights_byte_identical": true,
+        "Bw_before": "88e356050966f3e0",
+        "Bw_after": "88e356050966f3e0",
+        "w_A_stored": 80.7648,
+        "w_A_consol": 80.7648,
+        "B_depth_before": 27.2371,
+        "B_depth_after": 27.2371,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 30.143724,
+        "A_depth_after": 30.143724,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          27.2371,
+          27.2371,
+          27.2371,
+          27.2371,
+          27.2371,
+          27.2371,
+          27.2371,
+          27.2371
+        ],
+        "live_noise_std": 2.586934,
+        "live_noise_vals": [
+          28.73759,
+          24.32951,
+          28.97255,
+          24.29753,
+          29.14237,
+          24.57865,
+          30.82393,
+          24.31712
+        ]
+      },
+      "elapsed_s": 233.3
+    },
+    "100": {
+      "seed": 100,
+      "off": {
+        "separation": false,
+        "seed": 100,
+        "assembly_sizes": [
+          18,
+          23,
+          21
+        ],
+        "max_shared_cells": 2,
+        "shared_within_conn": 2,
+        "B_within_weights_byte_identical": true,
+        "Bw_before": "5a9b53b497166637",
+        "Bw_after": "5a9b53b497166637",
+        "w_A_stored": 81.1208,
+        "w_A_consol": 81.1208,
+        "B_depth_before": 21.869866,
+        "B_depth_after": 21.869866,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 29.948979,
+        "A_depth_after": 29.948979,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          21.86987,
+          21.86987,
+          21.86987,
+          21.86987,
+          21.86987,
+          21.86987,
+          21.86987,
+          21.86987
+        ],
+        "live_noise_std": 4.910091,
+        "live_noise_vals": [
+          26.73295,
+          19.12732,
+          27.28706,
+          19.0933,
+          31.78104,
+          19.12793,
+          28.34489,
+          19.11518
+        ]
+      },
+      "on": {
+        "separation": true,
+        "seed": 100,
+        "assembly_sizes": [
+          20,
+          23,
+          22
+        ],
+        "max_shared_cells": 0,
+        "shared_within_conn": 0,
+        "B_within_weights_byte_identical": true,
+        "Bw_before": "adf4065579c0a402",
+        "Bw_after": "adf4065579c0a402",
+        "w_A_stored": 81.6093,
+        "w_A_consol": 81.6093,
+        "B_depth_before": 24.447953,
+        "B_depth_after": 24.447953,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 29.809378,
+        "A_depth_after": 29.809378,
+        "A_rise_iso": 0.0,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          24.44795,
+          24.44795,
+          24.44795,
+          24.44795,
+          24.44795,
+          24.44795,
+          24.44795,
+          24.44795
+        ],
+        "live_noise_std": 4.97661,
+        "live_noise_vals": [
+          29.60699,
+          19.15182,
+          31.71393,
+          19.19515,
+          26.79314,
+          19.11497,
+          26.90347,
+          19.47189
+        ]
+      },
+      "elapsed_s": 161.9
+    }
+  },
+  "elapsed_s": 610.1,
+  "verdict": "GO",
+  "go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "isolated read is DETERMINISTIC (repeated-read noise ~0 on every build)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max iso_noise_std=0.00e+00 over 6 builds (NOISE_TOL=0.0001)"
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical-B builds exist (a neighbour whose read-path weights are untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "3 byte-identical-B builds (disjoint / saturated-shared)"
+    },
+    {
+      "kind": "require",
+      "name": "every byte-identical-B build gives |dB|_iso == 0 EXACTLY (read is WEIGHT-LOCAL)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max |dB|_iso on byte-identical-B builds = 0.00e+00 (the live read gave up to 4.977 mV of read noise on these)"
+    },
+    {
+      "kind": "require",
+      "name": "overlapping build(s) reproduced (B's read-path weights DO change) so the residual is quantifiable",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "3 overlapping builds; max |dB|_iso=0.0016 mV"
+    },
+    {
+      "kind": "control",
+      "name": "isolated vs live repeated-read noise floor (the decidability upgrade)",
+      "ok": true,
+      "detail": "treatment=4.97661 control=0 |sep|=4.97661 > 0",
+      "note": "the live read carries the period-2 noise the isolated read removes (iso std ~0)"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "host weight formula / plasticity on the read bridge",
+      "why": "the strengthening is the substrate's OWN plateau-gated BTSP (_form_one_assembly on a fresh formation bridge); the read bridge has plasticity FROZEN. Host code = encode selection + snapshot/restore guard."
+    },
+    {
+      "process": "live-bridge state carryover on the surfaced read",
+      "why": "the ISOLATED read completely resets to the clean-rest snapshot + injects the current weights before the read (the biology's return-to-rest between recalls) -> deterministic + weight-attributable"
+    },
+    {
+      "process": "on-substrate intrinsic-plasticity conductance for the ON set-point",
+      "why": "the winner-fatigue sparsity bias is a host-applied hyperpolarizing current; the theta-crossing selection stays on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+    }
+  ],
+  "verdict_full": {
+    "label": "D5 memory-separator crosstalk (#73): is 'consolidating A moves neighbour B' DECIDABLE with the deterministic snapshot-isolated read, where the period-2 live read left it UNDECIDABLE?",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "isolated read is DETERMINISTIC (repeated-read noise ~0 on every build)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max iso_noise_std=0.00e+00 over 6 builds (NOISE_TOL=0.0001)"
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical-B builds exist (a neighbour whose read-path weights are untouched)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "3 byte-identical-B builds (disjoint / saturated-shared)"
+      },
+      {
+        "kind": "require",
+        "name": "every byte-identical-B build gives |dB|_iso == 0 EXACTLY (read is WEIGHT-LOCAL)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max |dB|_iso on byte-identical-B builds = 0.00e+00 (the live read gave up to 4.977 mV of read noise on these)"
+      },
+      {
+        "kind": "require",
+        "name": "overlapping build(s) reproduced (B's read-path weights DO change) so the residual is quantifiable",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "3 overlapping builds; max |dB|_iso=0.0016 mV"
+      },
+      {
+        "kind": "control",
+        "name": "isolated vs live repeated-read noise floor (the decidability upgrade)",
+        "ok": true,
+        "detail": "treatment=4.97661 control=0 |sep|=4.97661 > 0",
+        "note": "the live read carries the period-2 noise the isolated read removes (iso std ~0)"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula / plasticity on the read bridge",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (_form_one_assembly on a fresh formation bridge); the read bridge has plasticity FROZEN. Host code = encode selection + snapshot/restore guard."
+      },
+      {
+        "process": "live-bridge state carryover on the surfaced read",
+        "why": "the ISOLATED read completely resets to the clean-rest snapshot + injects the current weights before the read (the biology's return-to-rest between recalls) -> deterministic + weight-attributable"
+      },
+      {
+        "process": "on-substrate intrinsic-plasticity conductance for the ON set-point",
+        "why": "the winner-fatigue sparsity bias is a host-applied hyperpolarizing current; the theta-crossing selection stays on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+      }
+    ],
+    "chance": null,
+    "_metrics": {
+      "n_builds": 6,
+      "n_byteid_builds": 3,
+      "n_overlap_builds": 3,
+      "max_iso_noise_std": 0.0,
+      "max_live_noise_std": 4.97661,
+      "max_byteid_shift_iso": 0.0,
+      "max_overlap_shift_iso": 0.001594,
+      "overlap_shifts_iso": [
+        0.001594,
+        0.0,
+        0.0
+      ],
+      "byteid_shifts_iso": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "metrics": {
+    "n_builds": 6,
+    "n_byteid_builds": 3,
+    "n_overlap_builds": 3,
+    "max_iso_noise_std": 0.0,
+    "max_live_noise_std": 4.97661,
+    "max_byteid_shift_iso": 0.0,
+    "max_overlap_shift_iso": 0.001594,
+    "overlap_shifts_iso": [
+      0.001594,
+      0.0,
+      0.0
+    ],
+    "byteid_shifts_iso": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

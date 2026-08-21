@@ -1,0 +1,239 @@
+{
+  "backend": "cupy",
+  "seeds": [
+    42
+  ],
+  "ok_seeds": [
+    42
+  ],
+  "params": {
+    "sep_bias": 500.0,
+    "store_te": 20,
+    "consol_te": 40,
+    "n_patterns": 3,
+    "k_noise": 4,
+    "warm_reads": 3
+  },
+  "results": {
+    "42": {
+      "seed": 42,
+      "off": {
+        "separation": false,
+        "seed": 42,
+        "assembly_sizes": [
+          36,
+          13,
+          25
+        ],
+        "max_shared_cells": 6,
+        "shared_within_conn": 1,
+        "B_within_weights_byte_identical": false,
+        "Bw_before": "559e4e53ea0b3b79",
+        "Bw_after": "592d83f00eae99a4",
+        "w_A_stored": 69.3294,
+        "w_A_consol": 86.4355,
+        "B_depth_before": 16.155944,
+        "B_depth_after": 16.155944,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 30.08179,
+        "A_depth_after": 30.887725,
+        "A_rise_iso": 0.805935,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          16.15594,
+          16.15594,
+          16.15594,
+          16.15594
+        ],
+        "live_noise_std": 3.389592,
+        "live_noise_vals": [
+          11.85471,
+          16.108,
+          7.9817,
+          16.13114
+        ]
+      },
+      "on": {
+        "separation": true,
+        "seed": 42,
+        "assembly_sizes": [
+          31,
+          15,
+          18
+        ],
+        "max_shared_cells": 1,
+        "shared_within_conn": 1,
+        "B_within_weights_byte_identical": false,
+        "Bw_before": "5c9db575ab256027",
+        "Bw_after": "554925b3593dbd29",
+        "w_A_stored": 70.5749,
+        "w_A_consol": 87.1434,
+        "B_depth_before": 3.469246,
+        "B_depth_after": 3.469246,
+        "neighbor_shift_iso": 0.0,
+        "neighbor_shift_iso_abs": 0.0,
+        "A_depth_before": 29.877367,
+        "A_depth_after": 30.573342,
+        "A_rise_iso": 0.695975,
+        "iso_noise_std": 0.0,
+        "iso_noise_vals": [
+          3.46925,
+          3.46925,
+          3.46925,
+          3.46925
+        ],
+        "live_noise_std": 0.970179,
+        "live_noise_vals": [
+          0.0,
+          2.24053,
+          0.0,
+          0.0
+        ]
+      },
+      "elapsed_s": 90.2
+    }
+  },
+  "elapsed_s": 90.2,
+  "verdict": "UNDEFINED",
+  "go": false,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "isolated read is DETERMINISTIC (repeated-read noise ~0 on every build)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max iso_noise_std=0.00e+00 over 2 builds (NOISE_TOL=0.0001)"
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical-B builds exist (a neighbour whose read-path weights are untouched)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "0 byte-identical-B builds (disjoint / saturated-shared)"
+    },
+    {
+      "kind": "require",
+      "name": "every byte-identical-B build gives |dB|_iso == 0 EXACTLY (read is WEIGHT-LOCAL)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max |dB|_iso on byte-identical-B builds = 0.00e+00 (the live read gave up to 3.390 mV of read noise on these)"
+    },
+    {
+      "kind": "require",
+      "name": "overlapping build(s) reproduced (B's read-path weights DO change) so the residual is quantifiable",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "2 overlapping builds; max |dB|_iso=0.0000 mV"
+    },
+    {
+      "kind": "control",
+      "name": "isolated vs live repeated-read noise floor (the decidability upgrade)",
+      "ok": true,
+      "detail": "treatment=3.38959 control=0 |sep|=3.38959 > 0",
+      "note": "the live read carries the period-2 noise the isolated read removes (iso std ~0)"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "host weight formula / plasticity on the read bridge",
+      "why": "the strengthening is the substrate's OWN plateau-gated BTSP (_form_one_assembly on a fresh formation bridge); the read bridge has plasticity FROZEN. Host code = encode selection + snapshot/restore guard."
+    },
+    {
+      "process": "live-bridge state carryover on the surfaced read",
+      "why": "the ISOLATED read completely resets to the clean-rest snapshot + injects the current weights before the read (the biology's return-to-rest between recalls) -> deterministic + weight-attributable"
+    },
+    {
+      "process": "on-substrate intrinsic-plasticity conductance for the ON set-point",
+      "why": "the winner-fatigue sparsity bias is a host-applied hyperpolarizing current; the theta-crossing selection stays on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+    }
+  ],
+  "verdict_full": {
+    "label": "D5 memory-separator crosstalk (#73): is 'consolidating A moves neighbour B' DECIDABLE with the deterministic snapshot-isolated read, where the period-2 live read left it UNDECIDABLE?",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: byte-identical-B builds exist (a neighbour whose read-path weights are untouched) (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "isolated read is DETERMINISTIC (repeated-read noise ~0 on every build)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max iso_noise_std=0.00e+00 over 2 builds (NOISE_TOL=0.0001)"
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical-B builds exist (a neighbour whose read-path weights are untouched)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "0 byte-identical-B builds (disjoint / saturated-shared)"
+      },
+      {
+        "kind": "require",
+        "name": "every byte-identical-B build gives |dB|_iso == 0 EXACTLY (read is WEIGHT-LOCAL)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "max |dB|_iso on byte-identical-B builds = 0.00e+00 (the live read gave up to 3.390 mV of read noise on these)"
+      },
+      {
+        "kind": "require",
+        "name": "overlapping build(s) reproduced (B's read-path weights DO change) so the residual is quantifiable",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "2 overlapping builds; max |dB|_iso=0.0000 mV"
+      },
+      {
+        "kind": "control",
+        "name": "isolated vs live repeated-read noise floor (the decidability upgrade)",
+        "ok": true,
+        "detail": "treatment=3.38959 control=0 |sep|=3.38959 > 0",
+        "note": "the live read carries the period-2 noise the isolated read removes (iso std ~0)"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula / plasticity on the read bridge",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (_form_one_assembly on a fresh formation bridge); the read bridge has plasticity FROZEN. Host code = encode selection + snapshot/restore guard."
+      },
+      {
+        "process": "live-bridge state carryover on the surfaced read",
+        "why": "the ISOLATED read completely resets to the clean-rest snapshot + injects the current weights before the read (the biology's return-to-rest between recalls) -> deterministic + weight-attributable"
+      },
+      {
+        "process": "on-substrate intrinsic-plasticity conductance for the ON set-point",
+        "why": "the winner-fatigue sparsity bias is a host-applied hyperpolarizing current; the theta-crossing selection stays on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+      }
+    ],
+    "chance": null,
+    "_metrics": {
+      "n_builds": 2,
+      "n_byteid_builds": 0,
+      "n_overlap_builds": 2,
+      "max_iso_noise_std": 0.0,
+      "max_live_noise_std": 3.389592,
+      "max_byteid_shift_iso": 0.0,
+      "max_overlap_shift_iso": 0.0,
+      "overlap_shifts_iso": [
+        0.0,
+        0.0
+      ],
+      "byteid_shifts_iso": []
+    }
+  },
+  "metrics": {
+    "n_builds": 2,
+    "n_byteid_builds": 0,
+    "n_overlap_builds": 2,
+    "max_iso_noise_std": 0.0,
+    "max_live_noise_std": 3.389592,
+    "max_byteid_shift_iso": 0.0,
+    "max_overlap_shift_iso": 0.0,
+    "overlap_shifts_iso": [
+      0.0,
+      0.0
+    ],
+    "byteid_shifts_iso": []
+  }
+}

@@ -1,0 +1,40 @@
+{
+ "run_id": "1787330719-41249",
+ "runner": "research/runners/_d5_crosstalk_isolated_read_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-sep-readout/research/runners/_d5_crosstalk_isolated_read_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "100",
+  "--store-te",
+  "40",
+  "--consol-te",
+  "40",
+  "--k-noise",
+  "8",
+  "--warm-reads",
+  "4",
+  "--json",
+  "research/findings/raw/_d5_crosstalk_iso/confirm_store40_consol40_3seed.json"
+ ],
+ "git_sha": "7447d68e0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T12:45:19",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 33828.8,
+ "corpus_check_query": "D5 episodic emergent-assembly readout crosstalk pattern separation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d5_crosstalk_iso/confirm_store40_consol40_3seed.json"
+}
