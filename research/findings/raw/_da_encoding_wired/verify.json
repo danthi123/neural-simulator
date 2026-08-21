@@ -1,0 +1,110 @@
+{
+  "runner": "_da_encoding_wired_verify",
+  "go": true,
+  "status": "GO",
+  "coupling": "DA-gated encoding (encoding_gain_fn <- live self-produced tonic DA), default-OFF, WAVE-0 Gap-4",
+  "gain_map": "g = clip(0.5, 3.0, 1 + 2.0*(DA - 0.5)) [reused: _burndown_I7_dopamine_encoding_deploy_derisk]",
+  "A_off_byte_identical": {
+    "no_da_encoding_key": true,
+    "encoding_gain_fn_is_None": true,
+    "recall_hash": "a2f9776b1a3ebed5",
+    "recalled_patient": "grass",
+    "GO": true
+  },
+  "B_on_load_bearing": {
+    "induce_high_pa": 1300.0,
+    "induce_low_pa": 100.0,
+    "da_high": 1.2386777669861797,
+    "da_low": 0.04616293556102311,
+    "g_high": 2.4773555339723594,
+    "g_low": 0.5,
+    "g_high_gt_g_low": true,
+    "recall_content_unchanged_vs_off": true,
+    "mechanism_stored_mag_high": 2.4773555339723594,
+    "mechanism_stored_mag_low": 0.5,
+    "mechanism_stored_ratio": 4.954711067944719,
+    "expected_ratio_g_high_over_g_low": 4.954711067944719,
+    "mechanism_stored_trace_differs": true
+  },
+  "C_lesion_severs": {
+    "g_lesion_high": 1.0,
+    "g_lesion_low": 1.0,
+    "differential_vanishes": true
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) OFF: no da_encoding key on the response (byte-identical trace)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the coupling adds nothing when the flag is unset"
+    },
+    {
+      "kind": "require",
+      "name": "(A) OFF: the live composer's encoding_gain_fn is None (the install never ran)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "=> the store is the byte-identical unit-magnitude write (g=1.0)"
+    },
+    {
+      "kind": "require",
+      "name": "(B) ON: da_encoding key present on both arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) ON, LOAD-BEARING: the live-DA write gain g_high > g_low",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "g_high=2.4773555339723594 (DA=1.2386777669861797) > g_low=0.5 (DA=0.04616293556102311)"
+    },
+    {
+      "kind": "require",
+      "name": "(B) MECHANISM: that g writes a measurably stronger trace on a magnitude store (ratio == g_high/g_low)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "stored |w|: high=2.4773555339723594 low=0.5 ratio=4.954711067944719 vs g-ratio 4.954711067944719"
+    },
+    {
+      "kind": "require",
+      "name": "(B) the recall CONTENT is unchanged vs OFF on the rf numpy store (coupling never corrupts a fact)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the gain colors trace STRENGTH (on a magnitude store), never WHICH fact"
+    },
+    {
+      "kind": "require",
+      "name": "(C) LESION: g pinned to 1.0 on the high-DA arm",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C) LESION: the high-vs-low differential VANISHES (attribution to the DA read)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "g_les_high=1.0 == g_les_low=1.0 == 1.0"
+    },
+    {
+      "kind": "control",
+      "name": "the write gain rides the LIVE DA read (on) and is severed by the lesion",
+      "ok": true,
+      "detail": "treatment=2.47736 control=1 |sep|=1.47736 > 0",
+      "note": "on: g scales with DA; lesion: g==1.0 regardless"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/surprise/... = 0) in the handler proofs",
+      "why": "disabled ONLY for speed/confound-isolation; they run identically on every flag arm"
+    },
+    {
+      "process": "the rf numpy fast-path store's MAGNITUDE effect (enable_substrate_store=False)",
+      "why": "the rf recall is magnitude-invariant -> the gain is a write-side reserve THERE; the WIRING (a differential live-DA write gain) is proven through the handler, the magnitude effect on the mech sub-check (== the production-default onebrain store) + the I-7-b GO"
+    }
+  ],
+  "undefined_reasons": []
+}

@@ -167,6 +167,8 @@ def main() -> int:
                     diverged.append({"round": rnd, "session": s, "msg": msg,
                                      "off": _core(off), "on": _core(on)})
         mem_samples.append((f"round{rnd}", _pool_used_bytes()))
+        print(f"[soak] round {rnd + 1}/{N_ROUNDS} done: {n_turns} OFF/ON pairs, {len(diverged)} diverged, "
+              f"free_vram={fv}MiB", flush=True)
     out["n_noregression_turn_pairs"] = n_turns
     out["n_diverged"] = len(diverged)
     out["diverged_examples"] = diverged[:8]
