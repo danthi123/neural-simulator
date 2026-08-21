@@ -190,9 +190,16 @@ class SpikingQwenFaculty:
         self.seed = int(seed)
 
         t0 = time.time()
+        # DTYPE by device: float16 on CUDA (the GPU path, byte-identical to before); float32 on CPU. Half-precision
+        # matmul/attention kernels are largely UNIMPLEMENTED on CPU in PyTorch ("addmm"/"baddbmm" for Half raise
+        # NotImplementedError), so a CPU load MUST be float32 or generation crashes on the first forward. float32 is
+        # slower but correct — the intended CPU trade (2026-08-21: enable a real Qwen render on GPU-less hosts). The
+        # spiking-op banks are already float32 and upcast internally, so they compose with either model dtype.
+        _is_cuda = str(device).startswith("cuda")
+        _dtype = torch.float16 if _is_cuda else torch.float32
         self.tok = AutoTokenizer.from_pretrained(B1.MODEL_ID)
         self.model = AutoModelForCausalLM.from_pretrained(
-            B1.MODEL_ID, dtype=torch.float16, attn_implementation="eager").to(device).eval()
+            B1.MODEL_ID, dtype=_dtype, attn_implementation="eager").to(device).eval()
         self.device = next(self.model.parameters()).device
         self.load_seconds = round(time.time() - t0, 2)
 

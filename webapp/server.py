@@ -3235,7 +3235,16 @@ def _default_brain_renderer() -> str:
     """Pick the out-of-box renderer: `qwen` only when a CUDA GPU is
     actually available AND the cupy backend is selected; else the GPU-free
     `stub`. Keeps the console GPU-light by default (another build may own
-    the GPU; the chat endpoint must not contend for it unasked)."""
+    the GPU; the chat endpoint must not contend for it unasked).
+
+    EXPLICIT OVERRIDE (2026-08-21): `BRAIN_CHAT_RENDERER={qwen,stub,raw}` forces
+    the renderer regardless of GPU/backend. This is how a GPU-LESS host opts INTO
+    the CPU-Qwen fluent mouth (the model now loads float32 on CPU — real prose,
+    just slower; see SpikingQwenFaculty). Unset -> the GPU-light auto-default
+    below (byte-identical to prior behavior)."""
+    _forced = os.environ.get("BRAIN_CHAT_RENDERER", "").strip().lower()
+    if _forced in ("qwen", "stub", "raw"):
+        return _forced
     backend = os.environ.get("SIM_BACKEND", "").lower()
     if backend and backend != "cupy":
         return "stub"
@@ -5041,6 +5050,42 @@ class OpenAIChatRequest(BaseModel):
     session: str | None = None      # optional: pin a conversation; else a stable per-model default
 
 
+def _shim_brain_selection(model_field: str | None) -> tuple[str, str]:
+    """Resolve WHICH brain + renderer the OpenAI shim serves for a request (2026-08-21: the shim now serves a
+    DEVELOPED knowledge brain, not only 'tiny-demo').
+
+    Brain precedence:
+      1. the OpenAI `model` field, IF it explicitly names a known brain ('tiny-demo'/'self-knowledge') or a
+         developed-brain bundle DIRECTORY (a dir with brain.json — absolute, or repo-relative);
+      2. else the `BRAIN_CHAT_BUNDLE` env — the deployment's configured default brain (a bundle path);
+      3. else 'tiny-demo' (the GPU-free built-in — byte-identical to the prior shim behavior).
+    A generic id ('sim-brain'/'sim'/'default'/'gpt-*'/empty) means "use the configured default", so ANY stock
+    OpenAI client works unchanged. `BRAIN_LTM_BUNDLE` (the bulk cortical LONG-TERM knowledge store) is honored
+    downstream in `_build_chat_brain` whenever the resolved brain is a developed bundle — so the 21k-fact LTM +
+    the no-confab moat flow through automatically. Renderer follows `_default_brain_renderer()` (GPU-light, or the
+    `BRAIN_CHAT_RENDERER` override)."""
+    m = (model_field or "").strip()
+    known = {"tiny-demo", "tiny", "demo", "self-knowledge", "self_knowledge", "self"}
+    brain = None
+    if m and m.lower() not in ("sim-brain", "sim", "default", "gpt-3.5-turbo", "gpt-4", "gpt-4o"):
+        if m.lower() in known:
+            brain = m
+        else:
+            # a bundle DIRECTORY path in the model field (absolute or repo-relative)
+            try:
+                from research.runners.developed_brain_io import is_developed_brain_bundle
+                cand_rel = m if Path(m).is_absolute() else str(REPO_ROOT / m)
+                if is_developed_brain_bundle(m):
+                    brain = m
+                elif is_developed_brain_bundle(cand_rel):
+                    brain = cand_rel
+            except Exception:
+                brain = None
+    if brain is None:
+        brain = os.environ.get("BRAIN_CHAT_BUNDLE", "").strip() or "tiny-demo"
+    return brain, _default_brain_renderer()
+
+
 @app.get("/v1/models")
 def openai_models() -> JSONResponse:
     """OpenAI-compatible model list (clients query this to select the sim brain)."""
@@ -5059,7 +5104,9 @@ def openai_chat_completions(req: OpenAIChatRequest):
     from fastapi.responses import StreamingResponse
     user_msg = _OAS._last_user_message(req.messages)
     session = req.session or ("openai-%s" % (req.model or "sim-brain"))
-    r = brain_chat(BrainChatRequest(session=session, message=user_msg))
+    # SERVE THE DEVELOPED KNOWLEDGE BRAIN (+ the cortical LTM via BRAIN_LTM_BUNDLE downstream), not only 'tiny-demo'.
+    brain_id, renderer = _shim_brain_selection(req.model)
+    r = brain_chat(BrainChatRequest(session=session, message=user_msg, brain=brain_id, renderer=renderer))
     resp = _json.loads(bytes(r.body))
     reply = resp.get("answer") or resp.get("response") or ""
     # CONTINUOUS-STATE ENGINE: this session's between-turn inner-life (mood evolution while idle), same cache_key
@@ -5067,7 +5114,7 @@ def openai_chat_completions(req: OpenAIChatRequest):
     _il = None
     try:
         from webapp import continuous_engine as _CE
-        _il = _CE.inner_life((session, "tiny-demo", _default_brain_renderer()))
+        _il = _CE.inner_life((session, brain_id, renderer))
     except Exception:
         _il = None
     monologue = _OAS.format_internal_monologue(resp, inner_life=_il)
