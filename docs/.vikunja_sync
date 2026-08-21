@@ -1,0 +1,16 @@
+# Vikunja board reconcile stamp — updated by the `vikunja` skill after each board reconcile.
+#
+# The vikunja-freshness gate (tools/gates/vikunja_freshness.py, CLASS VF) blocks a finding-adding
+# commit once THRESHOLD (6) findings have landed since this file was last touched. Stamping this file
+# (in the reconcile commit) = "the board at https://vikunja.dant123.com was reconciled" and resets the
+# budget. This is the mechanical enforcement the board previously lacked (the roadmap sync was gated,
+# the board sync was only remembered — so the board drifted while the docs stayed fresh, 2026-08-20).
+#
+# Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
+
+last_reconciled: 2026-08-20
+at_commit: b9265dac
+note: reconciled after the D5 learn-through-use arc (steps 1-5) + GNW two-organ default-on + the SWR
+  memory-replay arc + the knowledge-loading arc scoping. Board changes: #71 updated (de-risked, learn-through-use
+  advanced end-to-end + conversation-visible, still default-off); #76 marked done (dopamine-mode-in-chat, default-on);
+  #108 created (give the brain a real body of knowledge to talk about).
