@@ -1,0 +1,38 @@
+{
+ "run_id": "1787338604-262276",
+ "runner": "research/runners/_d5_pattern_separation_setpoint_derisk.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-sep-readout/research/runners/_d5_pattern_separation_setpoint_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--crosstalk-seeds",
+  "--sep-bias",
+  "1250",
+  "--json",
+  "research/findings/raw/_d5_sepbias_sweep/sb1250.json"
+ ],
+ "git_sha": "4f659d63e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T14:56:44",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 41912.1,
+ "corpus_check_query": "D5 episodic emergent-assembly readout crosstalk pattern separation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_d5_sepbias_sweep/sb1250.json"
+}

@@ -1,0 +1,508 @@
+{
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "crosstalk_seeds": [],
+  "params": {
+    "sep_bias": 500.0,
+    "store_te": 20,
+    "consol_te": 40,
+    "n_patterns": 3
+  },
+  "results": {
+    "42": {
+      "seed": 42,
+      "layerA": {
+        "off_sizes": [
+          27,
+          22,
+          28
+        ],
+        "on_sizes": [
+          27,
+          18,
+          21
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0652
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 4,
+            "jaccard": 0.0784
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0417
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 4,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 18,
+        "on_not_dense": true
+      },
+      "elapsed_s": 84.1
+    },
+    "43": {
+      "seed": 43,
+      "layerA": {
+        "off_sizes": [
+          22,
+          22,
+          14
+        ],
+        "on_sizes": [
+          22,
+          20,
+          10
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0476
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0588
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0909
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 10,
+        "on_not_dense": true
+      },
+      "elapsed_s": 80.4
+    },
+    "44": {
+      "seed": 44,
+      "layerA": {
+        "off_sizes": [
+          29,
+          10,
+          11
+        ],
+        "on_sizes": [
+          29,
+          10,
+          10
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0526
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0263
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 2,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 10,
+        "on_not_dense": true
+      },
+      "elapsed_s": 80.8
+    },
+    "100": {
+      "seed": 100,
+      "layerA": {
+        "off_sizes": [
+          38,
+          16,
+          34
+        ],
+        "on_sizes": [
+          38,
+          16,
+          30
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0189
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 5,
+            "jaccard": 0.0746
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0149
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 5,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 16,
+        "on_not_dense": true
+      },
+      "elapsed_s": 81.1
+    },
+    "101": {
+      "seed": 101,
+      "layerA": {
+        "off_sizes": [
+          31,
+          12,
+          22
+        ],
+        "on_sizes": [
+          31,
+          11,
+          15
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.075
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 6,
+            "jaccard": 0.1277
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 2,
+            "jaccard": 0.0625
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 6,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 11,
+        "on_not_dense": true
+      },
+      "elapsed_s": 81.9
+    },
+    "102": {
+      "seed": 102,
+      "layerA": {
+        "off_sizes": [
+          17,
+          18,
+          24
+        ],
+        "on_sizes": [
+          17,
+          19,
+          23
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0789
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0244
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              0,
+              2
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          },
+          {
+            "pair": [
+              1,
+              2
+            ],
+            "shared_cells": 1,
+            "jaccard": 0.0244
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 1,
+        "off_is_baseline": true,
+        "on_min_size": 17,
+        "on_not_dense": true
+      },
+      "elapsed_s": 80.7
+    }
+  },
+  "verdict": {
+    "label": "d5-pattern-separation-setpoint (crosstalk elimination)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: set-point drives assembly overlap -> DISJOINT on ALL 6 seeds (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "OFF reproduces the crosstalk-capable overlap on >=1 build",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "OFF-overlapping seeds=[42, 43, 44, 100, 101, 102]"
+      },
+      {
+        "kind": "require",
+        "name": "set-point drives assembly overlap -> DISJOINT on ALL 6 seeds",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "on_max_shared==0 every seed"
+      },
+      {
+        "kind": "require",
+        "name": "ON assemblies stay non-empty & non-dense (faculty membership preserved)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical OFF (default path == unmodified emergent_assemblies)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full-scale cupy production organ over all 6 crosstalk seeds",
+        "why": "numpy proxy runs Layer B on the overlapping seed(s); the full 6-seed crosstalk confirm is QUEUED on gpu_queue (cupy) \u2014 see finding scope"
+      },
+      {
+        "process": "on-substrate intrinsic-plasticity conductance",
+        "why": "the winner-fatigue bias is a host-applied hyperpolarizing current; the selection (theta-crossing) is on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+      }
+    ],
+    "chance": null
+  },
+  "elapsed_s": 488.9
+}
