@@ -1,0 +1,38 @@
+{
+ "run_id": "1787273143-2567078",
+ "runner": "research/runners/_d5_step5_conversation_visible_recall_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/d5-step5-visible/research/runners/_d5_step5_conversation_visible_recall_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-episodes",
+  "3",
+  "--n-turns",
+  "3",
+  "--out",
+  "research/findings/raw/_d5_step5_visible/seed42.json"
+ ],
+ "git_sha": "fb95d2729",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T20:45:43",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d5_step5_visible/seed42.json"
+}

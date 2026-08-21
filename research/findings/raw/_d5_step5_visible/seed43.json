@@ -1,0 +1,137 @@
+{
+  "seed": 43,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 8,
+    "te_grid": "5,6,7,8,10",
+    "n_episodes": 3,
+    "n_turns": 3,
+    "out": "research/findings/raw/_d5_step5_visible/seed42.json"
+  },
+  "attributable": 1.0,
+  "verdict": {
+    "label": "CONVERSATION-VISIBLE learn-through-use: the REAL org.recall apical_cue rises after the idle tick consolidates a USED memory (seed 43)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "weak-store-completes-T",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the weak encode still COMPLETES at turn T (a genuinely usable memory, in_memory=True)"
+      },
+      {
+        "kind": "require",
+        "name": "borderline-has-headroom",
+        "ok": true,
+        "detail": "measured=0.2857142857142857 expect=<function run_one.<locals>.<lambda> at 0x7fd4ff9ae480>",
+        "note": "the borderline full-cue apical_cue sits BELOW the ceiling (room to rise)"
+      },
+      {
+        "kind": "require",
+        "name": "handler-read-deterministic",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "two identical isolated handler recalls match \u2192 the read is deterministic"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cat is a genuine never-formed control (no completion, baseline weight)"
+      },
+      {
+        "kind": "reaches",
+        "name": "handler-apical-moves-with-use",
+        "ok": true,
+        "detail": "before=0.285714 after=0.5 moved=True",
+        "note": "the PRODUCTION org.recall apical_cue changed after consolidation (the conversation-visible read)"
+      },
+      {
+        "kind": "control",
+        "name": "consolidation-ON vs LESION-OFF (handler apical move)",
+        "ok": true,
+        "detail": "treatment=0.214286 control=0 |sep|=0.214286 > 0",
+        "note": "the handler-visible apical move requires the consolidation loop; the flag OFF is byte-identical"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (fused_btsp_update) via the ACTUAL continuous_engine.consolidate_used_memory"
+      },
+      {
+        "process": "robustness-reserve instrument",
+        "why": "the teeth are the PRODUCTION EpisodicRecallOrgan.recall() FULL-cue apical_cue the live handler quotes \u2014 NOT the arc's completion-margin reserve read (step-4's signal)"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "checks": {
+    "instrument_valid": true,
+    "te": 5,
+    "HANDLER_MOVES": true,
+    "LESION_VANISHES": true,
+    "SPECIFIC": true,
+    "STILL_USABLE": true,
+    "deterministic": true,
+    "headroom": true,
+    "cat_never": true,
+    "consolidated": true,
+    "byte_identical_off": true,
+    "lesion_flat": true,
+    "apical_cue_T": 0.2857,
+    "apical_cue_off": 0.2857,
+    "apical_cue_Tk": 0.5,
+    "apical_traj": [
+      0.2857,
+      0.5,
+      0.5,
+      0.5
+    ],
+    "wdog_traj": [
+      28.283,
+      51.703,
+      56.406,
+      57.504
+    ],
+    "n_turns": 3,
+    "consolidated_rounds": 3,
+    "apical_up": true,
+    "inmem_T": true,
+    "inmem_Tk": true,
+    "inmem_flip": false,
+    "w_dog_before": 28.283,
+    "w_dog_after": 57.504,
+    "dw_dog": 29.221,
+    "cat_apical_T": 0.0,
+    "cat_apical_Tk": 0.0,
+    "cat_apical_flat": true,
+    "cat_drift": 0.617,
+    "between_drift": 0.0,
+    "hash_before": "c72d058dcc502f04",
+    "hash_off": "c72d058dcc502f04",
+    "hash_after": "ac5b7508218fed11",
+    "w_within_before": 56.406,
+    "w_within_after": 57.504,
+    "n_episodes": 3,
+    "assembly_sizes": [
+      25,
+      28
+    ]
+  },
+  "elapsed_s": 99.6
+}
