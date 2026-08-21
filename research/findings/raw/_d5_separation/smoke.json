@@ -1,0 +1,203 @@
+{
+  "backend": "numpy",
+  "seeds": [
+    42
+  ],
+  "crosstalk_seeds": [
+    42
+  ],
+  "params": {
+    "sep_bias": 500.0,
+    "store_te": 3,
+    "consol_te": 6,
+    "n_patterns": 2
+  },
+  "results": {
+    "42": {
+      "seed": 42,
+      "layerA": {
+        "off_sizes": [
+          27,
+          22
+        ],
+        "on_sizes": [
+          27,
+          18
+        ],
+        "off_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 3,
+            "jaccard": 0.0652
+          }
+        ],
+        "on_overlaps": [
+          {
+            "pair": [
+              0,
+              1
+            ],
+            "shared_cells": 0,
+            "jaccard": 0.0
+          }
+        ],
+        "off_max_shared": 3,
+        "on_max_shared": 0,
+        "off_is_baseline": true,
+        "on_min_size": 18,
+        "on_not_dense": true
+      },
+      "layerB": {
+        "off": {
+          "separation": false,
+          "seed": 42,
+          "assembly_sizes": [
+            27,
+            22
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 3,
+              "jaccard": 0.0652
+            }
+          ],
+          "max_shared_cells": 3,
+          "shared_within_conn": 5,
+          "B_depth_before": 0.0,
+          "B_depth_after": 0.0,
+          "neighbor_shift_abs": 0.0,
+          "neighbor_shift": 0.0,
+          "A_depth_before": 0.0,
+          "A_depth_after": 8.12714,
+          "A_rise": 8.127136,
+          "B_within_weights_byte_identical": false,
+          "Bw_before": "ed008737098676f4",
+          "Bw_after": "b5bcf45b5c96f0c4"
+        },
+        "on": {
+          "separation": true,
+          "seed": 42,
+          "assembly_sizes": [
+            27,
+            18
+          ],
+          "overlaps": [
+            {
+              "pair": [
+                0,
+                1
+              ],
+              "shared_cells": 0,
+              "jaccard": 0.0
+            }
+          ],
+          "max_shared_cells": 0,
+          "shared_within_conn": 0,
+          "B_depth_before": 0.0,
+          "B_depth_after": 0.0,
+          "neighbor_shift_abs": 0.0,
+          "neighbor_shift": 0.0,
+          "A_depth_before": 0.0,
+          "A_depth_after": 8.12717,
+          "A_rise": 8.127175,
+          "B_within_weights_byte_identical": true,
+          "Bw_before": "fcb5c5786b7f37fb",
+          "Bw_after": "fcb5c5786b7f37fb"
+        }
+      },
+      "elapsed_s": 881.8
+    }
+  },
+  "verdict": {
+    "label": "d5-pattern-separation-setpoint (crosstalk elimination)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: s42 OFF neighbor crosstalk is nonzero (reproduced) (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "OFF reproduces the crosstalk-capable overlap on >=1 build",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "OFF-overlapping seeds=[42]"
+      },
+      {
+        "kind": "require",
+        "name": "set-point drives assembly overlap -> DISJOINT on ALL 6 seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "on_max_shared==0 every seed"
+      },
+      {
+        "kind": "require",
+        "name": "ON assemblies stay non-empty & non-dense (faculty membership preserved)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical OFF (default path == unmodified emergent_assemblies)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "s42 OFF neighbor crosstalk is nonzero (reproduced)",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "|dB|_off=0.0 shared_conn=5"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON neighbor crosstalk == 0 (eliminated)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "|dB|_on=0.0"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON B within-weights BYTE-IDENTICAL after consolidating A",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "disjoint => consolidating A cannot touch B's read weights"
+      },
+      {
+        "kind": "reaches",
+        "name": "s42 ON consolidated memory A's OWN strength still RISES",
+        "ok": true,
+        "detail": "before=0 after=8.12717 moved=True",
+        "note": "the faculty is not fixed by disabling consolidation"
+      },
+      {
+        "kind": "require",
+        "name": "s42 ON A actually rises (dA>0, not merely moved)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full-scale cupy production organ over all 6 crosstalk seeds",
+        "why": "numpy proxy runs Layer B on the overlapping seed(s); the full 6-seed crosstalk confirm is QUEUED on gpu_queue (cupy) \u2014 see finding scope"
+      },
+      {
+        "process": "on-substrate intrinsic-plasticity conductance",
+        "why": "the winner-fatigue bias is a host-applied hyperpolarizing current; the selection (theta-crossing) is on-substrate. The spiking granule intrinsic-plasticity version is the tracked next step."
+      }
+    ],
+    "chance": null
+  },
+  "elapsed_s": 881.8
+}
