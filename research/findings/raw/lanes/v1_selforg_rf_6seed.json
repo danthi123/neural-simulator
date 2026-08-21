@@ -1,0 +1,464 @@
+{
+  "summary": {
+    "overall_verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "discharge_bar": "(1) geometry preservation = downstream load-bearing output; (2) RF orientation tuning OSI = the discriminating control (controls collapse here, not on geometry)",
+    "geometry_preserved": {
+      "A_all_seeds": true,
+      "B_all_seeds": true
+    },
+    "which_mechanism_passes_GO": {
+      "A_all_seeds": true,
+      "B_all_seeds": true
+    },
+    "controls_unoriented_all_seeds": true,
+    "chance_orient_decode": 0.125,
+    "host_reference": {
+      "margin_mean": 0.7628,
+      "orient_decode_mean": 0.9766
+    },
+    "mechanism_A_learned": {
+      "margin_mean": 0.6963,
+      "margin_min": 0.6457,
+      "rsa_vs_host_mean": 0.9841,
+      "rsa_vs_host_min": 0.9772,
+      "orient_decode_mean": 0.9714,
+      "orient_decode_min": 0.9062,
+      "osi_frac_mean": 0.9271
+    },
+    "mechanism_B_devrandom": {
+      "margin_mean": 0.5941,
+      "margin_min": 0.5387,
+      "rsa_vs_host_mean": 0.9671,
+      "rsa_vs_host_min": 0.9617,
+      "orient_decode_mean": 0.974,
+      "orient_decode_min": 0.9062,
+      "osi_frac_mean": 0.974
+    },
+    "control_c_no_learning": {
+      "margin_mean": 0.5698,
+      "margin_min": 0.5095,
+      "rsa_vs_host_mean": 0.9734,
+      "rsa_vs_host_min": 0.9663,
+      "orient_decode_mean": 0.974,
+      "orient_decode_min": 0.9062,
+      "osi_frac_mean": 0.0
+    },
+    "control_d_noise_input": {
+      "margin_mean": 0.5622,
+      "margin_min": 0.5145,
+      "rsa_vs_host_mean": 0.9705,
+      "rsa_vs_host_min": 0.9627,
+      "orient_decode_mean": 0.9714,
+      "orient_decode_min": 0.8906,
+      "osi_frac_mean": 0.0
+    },
+    "per_seed_verdicts": [
+      "GO",
+      "GO",
+      "GO",
+      "GO",
+      "GO",
+      "GO"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.9052,
+        "between": 0.1479,
+        "margin": 0.7573,
+        "rsa_vs_pixels": 0.989,
+        "orient_decode": 0.9844
+      },
+      "mechanism_A_learned": {
+        "within": 0.7306,
+        "between": 0.0511,
+        "margin": 0.6794,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.985,
+        "rsa_vs_pixels": 0.9974,
+        "osi_mean": 0.8013,
+        "osi_frac_gt0.5": 0.8438
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.5908,
+        "between": 0.0521,
+        "margin": 0.5387,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9644,
+        "rsa_vs_pixels": 0.9898,
+        "osi_mean": 0.8341,
+        "osi_frac_gt0.5": 1.0
+      },
+      "control_c_no_learning": {
+        "within": 0.6298,
+        "between": 0.0889,
+        "margin": 0.5409,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9716,
+        "osi_mean": 0.1388,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.6267,
+        "between": 0.0883,
+        "margin": 0.5384,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9677,
+        "osi_mean": 0.1089,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    },
+    {
+      "seed": 43,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.933,
+        "between": 0.1614,
+        "margin": 0.7716,
+        "rsa_vs_pixels": 0.9898,
+        "orient_decode": 1.0
+      },
+      "mechanism_A_learned": {
+        "within": 0.7926,
+        "between": 0.0619,
+        "margin": 0.7307,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9858,
+        "rsa_vs_pixels": 0.9979,
+        "osi_mean": 0.8899,
+        "osi_frac_gt0.5": 0.9688
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.6982,
+        "between": 0.0524,
+        "margin": 0.6458,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9632,
+        "rsa_vs_pixels": 0.9894,
+        "osi_mean": 0.7945,
+        "osi_frac_gt0.5": 0.9688
+      },
+      "control_c_no_learning": {
+        "within": 0.7014,
+        "between": 0.095,
+        "margin": 0.6063,
+        "orient_decode": 0.9844,
+        "rsa_vs_host": 0.9722,
+        "osi_mean": 0.1425,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.6964,
+        "between": 0.1028,
+        "margin": 0.5936,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9732,
+        "osi_mean": 0.1356,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    },
+    {
+      "seed": 44,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.9578,
+        "between": 0.1413,
+        "margin": 0.8165,
+        "rsa_vs_pixels": 0.9926,
+        "orient_decode": 0.9688
+      },
+      "mechanism_A_learned": {
+        "within": 0.8536,
+        "between": 0.0493,
+        "margin": 0.8044,
+        "orient_decode": 0.9531,
+        "rsa_vs_host": 0.9927,
+        "rsa_vs_pixels": 0.999,
+        "osi_mean": 0.8236,
+        "osi_frac_gt0.5": 0.9062
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.767,
+        "between": 0.0475,
+        "margin": 0.7195,
+        "orient_decode": 0.9688,
+        "rsa_vs_host": 0.9824,
+        "rsa_vs_pixels": 0.9957,
+        "osi_mean": 0.8233,
+        "osi_frac_gt0.5": 0.9375
+      },
+      "control_c_no_learning": {
+        "within": 0.7802,
+        "between": 0.085,
+        "margin": 0.6952,
+        "orient_decode": 0.9688,
+        "rsa_vs_host": 0.9892,
+        "osi_mean": 0.1337,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.7576,
+        "between": 0.0918,
+        "margin": 0.6657,
+        "orient_decode": 0.9531,
+        "rsa_vs_host": 0.9868,
+        "osi_mean": 0.1101,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    },
+    {
+      "seed": 100,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.8959,
+        "between": 0.161,
+        "margin": 0.735,
+        "rsa_vs_pixels": 0.9858,
+        "orient_decode": 1.0
+      },
+      "mechanism_A_learned": {
+        "within": 0.7196,
+        "between": 0.0615,
+        "margin": 0.6581,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9772,
+        "rsa_vs_pixels": 0.9962,
+        "osi_mean": 0.8907,
+        "osi_frac_gt0.5": 0.9375
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.6223,
+        "between": 0.0592,
+        "margin": 0.5631,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.964,
+        "rsa_vs_pixels": 0.9907,
+        "osi_mean": 0.8203,
+        "osi_frac_gt0.5": 0.9688
+      },
+      "control_c_no_learning": {
+        "within": 0.6215,
+        "between": 0.1024,
+        "margin": 0.5192,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9663,
+        "osi_mean": 0.154,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.6261,
+        "between": 0.1022,
+        "margin": 0.5239,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9627,
+        "osi_mean": 0.1405,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    },
+    {
+      "seed": 101,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.891,
+        "between": 0.1371,
+        "margin": 0.7539,
+        "rsa_vs_pixels": 0.9861,
+        "orient_decode": 0.9219
+      },
+      "mechanism_A_learned": {
+        "within": 0.7063,
+        "between": 0.0469,
+        "margin": 0.6594,
+        "orient_decode": 0.9062,
+        "rsa_vs_host": 0.983,
+        "rsa_vs_pixels": 0.9975,
+        "osi_mean": 0.8756,
+        "osi_frac_gt0.5": 0.9375
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.6073,
+        "between": 0.0501,
+        "margin": 0.5572,
+        "orient_decode": 0.9062,
+        "rsa_vs_host": 0.9669,
+        "rsa_vs_pixels": 0.9912,
+        "osi_mean": 0.8275,
+        "osi_frac_gt0.5": 0.9688
+      },
+      "control_c_no_learning": {
+        "within": 0.6298,
+        "between": 0.0825,
+        "margin": 0.5474,
+        "orient_decode": 0.9062,
+        "rsa_vs_host": 0.972,
+        "osi_mean": 0.1407,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.6034,
+        "between": 0.0888,
+        "margin": 0.5145,
+        "orient_decode": 0.8906,
+        "rsa_vs_host": 0.9658,
+        "osi_mean": 0.1456,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    },
+    {
+      "seed": 102,
+      "n_categories": 4,
+      "n_exemplars": 4,
+      "N": 16,
+      "n_orient": 8,
+      "chance_decode": 0.125,
+      "margin_gate": 0.15,
+      "rsa_gate": 0.7,
+      "osi_self_gate": 0.5,
+      "osi_ctrl_ceiling": 0.2,
+      "host_reference": {
+        "within": 0.8853,
+        "between": 0.1428,
+        "margin": 0.7424,
+        "rsa_vs_pixels": 0.9853,
+        "orient_decode": 0.9844
+      },
+      "mechanism_A_learned": {
+        "within": 0.6972,
+        "between": 0.0515,
+        "margin": 0.6457,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9809,
+        "rsa_vs_pixels": 0.9976,
+        "osi_mean": 0.8568,
+        "osi_frac_gt0.5": 0.9688
+      },
+      "mechanism_B_devrandom": {
+        "within": 0.5862,
+        "between": 0.046,
+        "margin": 0.5402,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9617,
+        "rsa_vs_pixels": 0.9919,
+        "osi_mean": 0.8294,
+        "osi_frac_gt0.5": 1.0
+      },
+      "control_c_no_learning": {
+        "within": 0.5992,
+        "between": 0.0897,
+        "margin": 0.5095,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9693,
+        "osi_mean": 0.1185,
+        "osi_frac_gt0.5": 0.0
+      },
+      "control_d_noise_input": {
+        "within": 0.6196,
+        "between": 0.0824,
+        "margin": 0.5372,
+        "orient_decode": 1.0,
+        "rsa_vs_host": 0.9665,
+        "osi_mean": 0.1285,
+        "osi_frac_gt0.5": 0.0
+      },
+      "A_ok": true,
+      "B_ok": true,
+      "A_geom": true,
+      "B_geom": true,
+      "A_oriented": true,
+      "B_oriented": true,
+      "controls_unoriented": true,
+      "verdict": "GO"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+ "run_id": "1787297303-2629212",
+ "runner": "research/runners/_b1_v1_selforg_rf_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_b1_v1_selforg_rf_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/lanes/v1_selforg_rf_6seed.json"
+ ],
+ "git_sha": "f3d15f7f1f75bf48b29ba83c27415ead35e87209",
+ "git_dirty": false,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "238267ee7c75fa7f412fb2fb8cd8cef73a7ff5ceb2e0f0016358805247c61c6b",
+ "source_manifest_verified_at_start": false,
+ "source_manifest_start_error": "source file set differs from manifest; missing=[], extra=['autodispatch.out', 'dispatch_gap4_np3_ncol400.out', 'dispatch_perc_local_orient_z.out', 'job_status.log']",
+ "source_manifest_verified_at_exit": false,
+ "source_manifest_exit_error": "source file set differs from manifest; missing=[], extra=['autodispatch.out', 'dispatch_gap4_np3_ncol400.out', 'dispatch_perc_local_orient_z.out', 'job_status.log']",
+ "started": "2026-08-21T03:28:23",
+ "env": {
+  "POOL_CHECKED_REASON": "laneD vision: V1 self-organized Gabor RF 6seed \u2014 overnight result never synced, re-landing (mission faculty: vision)",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/v1_selforg_rf_6seed.json"
+}
