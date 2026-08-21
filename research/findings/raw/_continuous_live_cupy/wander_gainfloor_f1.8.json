@@ -1,0 +1,80 @@
+{
+  "runner": "research/runners/_continuous_wander_gainfloor_coverage_derisk.py",
+  "seed": 42,
+  "backend": "cupy",
+  "n_wanders": 10,
+  "n_mem": 4,
+  "ior_strength": 0.15,
+  "ior_recovery": 0.3,
+  "gain_floor": 1.8,
+  "ior_only": {
+    "sequence": [
+      "cat",
+      "dog",
+      "cat",
+      "bird",
+      "cat",
+      "dog",
+      "cat",
+      "dog",
+      "cat",
+      "bird"
+    ],
+    "per_wander_s": [
+      32.4,
+      31.7,
+      31.8,
+      32.2,
+      31.9,
+      31.5,
+      31.6,
+      31.7,
+      32.2,
+      31.7
+    ],
+    "n_distinct": 3,
+    "distinct": [
+      "bird",
+      "cat",
+      "dog"
+    ]
+  },
+  "ior_floor": {
+    "sequence": [
+      "cat",
+      "bird",
+      "fish",
+      "dog",
+      "cat",
+      "bird",
+      "cat",
+      "fish",
+      "dog",
+      "cat"
+    ],
+    "per_wander_s": [
+      31.8,
+      31.8,
+      31.8,
+      32.0,
+      32.0,
+      31.6,
+      31.8,
+      31.5,
+      31.9,
+      32.0
+    ],
+    "n_distinct": 4,
+    "distinct": [
+      "bird",
+      "cat",
+      "dog",
+      "fish"
+    ]
+  },
+  "ior_only_distinct": 3,
+  "ior_floor_distinct": 4,
+  "full_coverage": true,
+  "VERDICT": "GO",
+  "interpretation": "a curiosity-gain FLOOR raises the previously-dead tail concept's steering drive enough that, when the top basins are IOR-fatigued, it wins -> wider wander coverage"
+}

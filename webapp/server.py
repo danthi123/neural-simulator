@@ -4167,12 +4167,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # and unchanged — this DECORATES an already-matched surface, never a fact; the content fields
     # (abstained/recalled_svo/verified) are byte-identical with it on or off. `recent_wander()` CONSUMES the
     # record on read, so the concept surfaces once (the next turn after the tick that produced it), not on every
-    # turn after. Default-OFF (`BRAIN_CONTINUOUS_DRIVES` unset/0 -> no key, no lead -> byte-identical), and it is
-    # additionally inert whenever the continuous engine itself is off (`BRAIN_CONTINUOUS=0`, the anchor default) —
-    # no wander is ever recorded, so `recent_wander()` returns None regardless of this flag.
+    # turn after. Default-ON (flipped 2026-08-21 with BRAIN_CONTINUOUS): `BRAIN_CONTINUOUS_DRIVES=0` -> no key, no
+    # lead -> byte-identical escape; unset -> the default (ON). This block is byte-identical on any ORDINARY turn (no
+    # pending wander -> `recent_wander()` returns None -> no key, no lead), and is additionally inert whenever the
+    # continuous engine itself is off (`BRAIN_CONTINUOUS=0`) — no wander is ever recorded regardless of this flag.
     wander_drives_lead = ""
     wander_drives_info = None
-    if os.environ.get("BRAIN_CONTINUOUS_DRIVES", "0").strip().lower() in ("1", "true", "on", "yes"):
+    if os.environ.get("BRAIN_CONTINUOUS_DRIVES", "1").strip().lower() in ("1", "true", "on", "yes"):
         try:
             from webapp import continuous_engine as _CEW
             _wander = _CEW.recent_wander(cache_key)

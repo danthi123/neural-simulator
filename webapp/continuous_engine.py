@@ -58,9 +58,21 @@ _RECALLED_TOPIC: dict = {}
 _D5_BUDGET: dict = {}
 
 
+# 2026-08-21 FLIP: the between-turn CONTINUOUS LIFE is DEFAULT-ON (the mission-defining flip — the brain keeps a
+# thought wandering + its mood relaxing between turns). Gated by the soak's no-regression (ON byte-identical to OFF on
+# ordinary turns with no pending wander — round-1 0/21 diverged, VRAM stable) + byte-identical-by-construction (the
+# drive only prepends a lead when recent_wander() is non-None, which needs a prior idle tick). `BRAIN_CONTINUOUS=0` is
+# the byte-identical escape (reverts to the pre-flip inert loop). Mirrors the affect-drives / gnw-multistep flips.
+_CONTINUOUS_DEFAULT_ON = True
+
+
 def continuous_enabled() -> bool:
-    """Default-OFF anchor. `BRAIN_CONTINUOUS` in {1,true,on,yes} arms the background tick."""
-    return os.environ.get("BRAIN_CONTINUOUS", "0").strip().lower() in ("1", "true", "on", "yes")
+    """Default-ON anchor (flipped 2026-08-21). `BRAIN_CONTINUOUS=0` disarms the background tick (byte-identical
+    escape to the pre-flip behaviour); unset -> the default; any of {1,true,on,yes} also arms it."""
+    v = os.environ.get("BRAIN_CONTINUOUS")
+    if v is None:
+        return _CONTINUOUS_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def mark_request(cache_key) -> None:

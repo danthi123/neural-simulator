@@ -1,0 +1,66 @@
+{
+  "runner": "research/runners/_continuous_wander_ior_derisk.py",
+  "seed": 42,
+  "backend": "cupy",
+  "n_wanders": 8,
+  "ior_strength": 0.15,
+  "ior_recovery": 0.3,
+  "baseline": {
+    "sequence": [
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat",
+      "cat"
+    ],
+    "per_wander_s": [
+      32.0,
+      32.4,
+      32.7,
+      32.9,
+      33.0,
+      33.3,
+      32.7,
+      33.0
+    ],
+    "n_distinct": 1,
+    "distinct": [
+      "cat"
+    ]
+  },
+  "ior": {
+    "sequence": [
+      "cat",
+      "dog",
+      "cat",
+      "bird",
+      "cat",
+      "dog",
+      "cat",
+      "dog"
+    ],
+    "per_wander_s": [
+      32.9,
+      33.4,
+      32.0,
+      37.2,
+      34.3,
+      40.8,
+      33.1,
+      31.9
+    ],
+    "n_distinct": 3,
+    "distinct": [
+      "bird",
+      "cat",
+      "dog"
+    ]
+  },
+  "baseline_distinct": 1,
+  "ior_distinct": 3,
+  "VERDICT": "GO",
+  "interpretation": "inhibition-of-return breaks the degenerate wander: adapting the just-won basin's drive yields varied successive wanders (trains-of-thought now moves between concepts)"
+}

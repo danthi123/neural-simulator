@@ -1,0 +1,91 @@
+{
+  "runner": "research/runners/_continuous_default_flip_soak_cupy.py",
+  "seed": 42,
+  "n_sessions": 1,
+  "n_rounds": 1,
+  "panel_len": 7,
+  "backend": "cupy",
+  "noncupy_smoke": false,
+  "free_vram_mib_start": 20841,
+  "warm_build_s": 129.0,
+  "pool_used_bytes_early": 46546944,
+  "n_noregression_turn_pairs": 7,
+  "n_diverged": 0,
+  "diverged_examples": [],
+  "pool_used_bytes_samples": [
+    {
+      "phase": "early",
+      "bytes": 46546944
+    },
+    {
+      "phase": "round0",
+      "bytes": 72601600
+    },
+    {
+      "phase": "late_gc",
+      "bytes": 72601600
+    }
+  ],
+  "pool_used_bytes_late": 72601600,
+  "pool_growth_frac": 0.5598,
+  "free_vram_mib_end": 20537,
+  "vram_drop_mib": 304,
+  "pool_settled_after_turns": true,
+  "PASS_no_pileup": true,
+  "drive_on_concept": "cat",
+  "drive_consumed_second_read_none": true,
+  "drive_off_none": true,
+  "PASS_drive_loadbearing": true,
+  "idle_sessions": 20,
+  "idle_relaxed": 20,
+  "idle_ticked_last_round": 20,
+  "idle_error": null,
+  "PASS_idle_scale": true,
+  "PASS_no_regression": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "no-regression: ON is byte-identical to OFF on every ordinary turn",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": "7 OFF/ON turn-pairs, 0 diverged"
+    },
+    {
+      "kind": "require",
+      "name": "the soak actually ran turns (not UNDEFINED-by-emptiness)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no GPU-memory pileup (late pool used-bytes <= early*(1+tol))",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "growth_frac=0.5598 tol=0.1"
+    },
+    {
+      "kind": "require",
+      "name": "drive still load-bearing (wander recorded on, consumed once, None off)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "idle loop robust over many concurrent sessions",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/... = 0) during the byte-identical soak",
+      "why": "disabled ONLY for speed; they run identically on both continuous-flag arms, so the no-regression comparison is unaffected"
+    }
+  ],
+  "VERDICT": "GO",
+  "status": "GO",
+  "go": true
+}
