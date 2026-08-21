@@ -51,8 +51,11 @@ existed precisely to check reproducibility; it caught the non-reproducible 6/6 b
 The pre-saturation read window resolves the saturating-tail wobble for 5/6 seeds and clears the conversation-visibility
 bar. It does NOT reach a stable 6/6 (the project's production-flip standard): seed 44 consolidates too weakly for its
 rise to reliably clear the margin. Residual (a bounded operating-point choice, NOT a substrate wall): make seed-44-like
-weak-consolidators strengthen enough for a reliable rise — e.g. a per-seed store-strength floor, more use-rounds within
-the pre-saturation window, or a relative-tolerance margin scaled to the (small) total move. The learn-through-use flip
+weak-consolidators strengthen enough for a reliable rise. **The store-strength (te) lever is RULED OUT** — an extended
+te-grid (5,6,7,8,10,12,14) left seed 44 at NO-GO (depth_rest still 5/6, `research/findings/raw/_d5_step6_knob2_extte/`),
+so a stronger/weaker store does not fix it; seed 44's weak rise is intrinsic to its (smaller) assembly, not its store
+strength. The remaining lever is therefore a **relative-tolerance margin scaled to the (small) total move** (accept a
+sub-margin ripple on a genuinely-rising trace), not more te tuning. The learn-through-use flip
 can either proceed on the >4/6 bar (an owner UX call — a visible rise on 5/6, reversible) or wait for a stable 6/6 via
 that residual. NO `sim/` edit; additive; the binary moat gate is unchanged (a faithful spiking read, not a phenomenal
 claim).
