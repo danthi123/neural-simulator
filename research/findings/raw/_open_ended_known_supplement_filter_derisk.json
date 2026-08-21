@@ -1,0 +1,125 @@
+{
+ "probe": "open_ended_known_supplement_filter_derisk",
+ "backend": "numpy",
+ "source": "research/findings/raw/_open_ended_verify_postfilter_derisk.json",
+ "rows": [
+  {
+   "topic": "canada",
+   "n_kept": 1,
+   "n_dropped": 4,
+   "must_drop": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "caught_in_dropped": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "leaked_into_kept": [],
+   "kept_nonempty": true
+  },
+  {
+   "topic": "france",
+   "n_kept": 4,
+   "n_dropped": 1,
+   "must_drop": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "caught_in_dropped": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "leaked_into_kept": [],
+   "kept_nonempty": true
+  },
+  {
+   "topic": "morocco",
+   "n_kept": 6,
+   "n_dropped": 2,
+   "must_drop": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "caught_in_dropped": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "leaked_into_kept": [],
+   "kept_nonempty": true
+  }
+ ],
+ "wrong_supplements_total": 10,
+ "caught": 10,
+ "leaked": 0,
+ "catch_rate": 1.0,
+ "all_replies_kept_nonempty": true,
+ "verdict": {
+  "label": "contradiction filter catches known-topic wrong supplements on the saved open-ended replies",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "floor",
+    "name": "wrong-supplement catch rate (relation-object + numbers/dates)",
+    "ok": true,
+    "detail": "1 vs floor 0.8",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no wrong supplement leaks into the kept text",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "the filter never empties a reply (still conversational)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [
+   {
+    "process": "ungrounded-but-non-contradicting supplements + general (non-gazetteer) entity check",
+    "why": "v1 catches the CONTRADICTION class via a gazetteer + the topic's store facts; a store-backed entity check (any store-known entity != the stored object) or an NLI model is the general rung"
+   }
+  ],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "floor",
+   "name": "wrong-supplement catch rate (relation-object + numbers/dates)",
+   "ok": true,
+   "detail": "1 vs floor 0.8",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no wrong supplement leaks into the kept text",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "the filter never empties a reply (still conversational)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true
+}
