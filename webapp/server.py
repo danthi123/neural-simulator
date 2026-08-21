@@ -4202,6 +4202,33 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             wander_drives_info = {"on": True, "error": f"{type(_cwe).__name__}: {_cwe}", "lead": ""}
             wander_drives_lead = ""
 
+    # ── A NOVEL IDEA DRIVES THE RESPONSE (continuous IDEATION, default-OFF `BRAIN_CONTINUOUS_IDEATE`) ─────────────
+    # The between-turn wander OCCASIONALLY GENERATES a NOVEL blended concept (the creativity rung): a sparse attractor
+    # driven by a blend of the two curiosity-top basins settles into a recombination that was NEVER stored. If this
+    # session has a recent idle IDEATION, the next real turn brings it up — but FLAGGED as a novel idea/association,
+    # NEVER a recalled fact (a DISTINCT channel from the wander-recall lead above). The moat/recall/abstain verdict
+    # runs FIRST and unchanged — this DECORATES an already-matched surface, never asserts a stored fact; the content
+    # fields are byte-identical with it on or off. `recent_ideation()` CONSUMES the record on read (surfaces once).
+    # DEFAULT-OFF: `ideation_enabled()` reads BRAIN_CONTINUOUS_IDEATE default '0' -> the whole block is skipped, no
+    # `ideation_drives` key, no lead -> byte-identical to the live default-on continuous wander (the flip is untouched).
+    ideation_drives_lead = ""
+    ideation_drives_info = None
+    try:
+        from webapp import continuous_engine as _CEI
+        if _CEI.ideation_enabled():
+            _idea = _CEI.recent_ideation(cache_key)
+            if _idea and _idea.get("sources") and len(_idea["sources"]) >= 2:
+                _sA, _sB = _idea["sources"][0], _idea["sources"][1]
+                ideation_drives_lead = ("(A thought occurred to me while we were apart — ‘%s’ and ‘%s’ feel "
+                                        "connected; it's just an idea of mine, not something I was told.) " % (_sA, _sB))
+                ideation_drives_info = {"on": True, "sources": [_sA, _sB], "kind": _idea.get("kind", "novel-association"),
+                                        "flagged_as_idea": True, "is_fact": False,
+                                        "novelty_max_overlap": _idea.get("novelty_max_overlap"),
+                                        "blend_balance": _idea.get("blend_balance"), "lead": ideation_drives_lead}
+    except Exception as _cie:  # never let the ideation coupling crash a turn — degrade to the un-led answer
+        ideation_drives_info = {"on": True, "error": f"{type(_cie).__name__}: {_cie}", "lead": ""}
+        ideation_drives_lead = ""
+
     # ── PROSPECTIVE MEMORY (Gate-B, 2026-08-13) ──────────────────────────────────────────────────────────────
     # A co-resident spiking intention-LATCH + BA10 cue-MONITOR holds a deferred intention ("remind me to X when Y")
     # across intervening turns and RELEASES it only when the cue appears — reuse-by-import from
@@ -4996,6 +5023,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = wander_drives_lead + resp["answer"]
         if wander_drives_info is not None:
             resp["wander_drives"] = wander_drives_info
+        # A NOVEL IDEA DRIVES THE RESPONSE (continuous ideation, default-OFF): prepend the idea lead OUTERMOST +
+        # attach the additive `ideation_drives` trace. Empty lead / no key when disabled or no recent ideation ->
+        # byte-identical. FLAGGED as an idea (not a fact); the content fields above are unchanged.
+        if ideation_drives_lead:
+            resp["answer"] = ideation_drives_lead + resp["answer"]
+        if ideation_drives_info is not None:
+            resp["ideation_drives"] = ideation_drives_info
         # DA-MODE DRIVES THE RESPONSE (board #79): APPEND the graded engagement SUFFIX (spoken last — the brain's
         # forthcomingness) + attach the additive `da_drives` trace. Empty suffix / no key when disabled or in
         # rest/neutral -> byte-identical. The content fields above are unchanged (the mode colors how forthcoming
@@ -5146,6 +5180,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = wander_drives_lead + _resp["answer"]
     if wander_drives_info is not None:
         _resp["wander_drives"] = wander_drives_info
+    # A NOVEL IDEA DRIVES THE RESPONSE (continuous ideation, default-OFF, single-fact path): prepend the idea lead
+    # OUTERMOST + attach the additive `ideation_drives` trace. Empty lead / no key when disabled or no recent
+    # ideation -> byte-identical. FLAGGED as an idea (not a fact); the content fields are unchanged.
+    if ideation_drives_lead:
+        _resp["answer"] = ideation_drives_lead + _resp["answer"]
+    if ideation_drives_info is not None:
+        _resp["ideation_drives"] = ideation_drives_info
     # DA-MODE DRIVES THE RESPONSE (board #79, single-fact path): APPEND the graded engagement SUFFIX + attach the
     # additive `da_drives` trace. Empty suffix / no key when disabled or in rest/neutral -> byte-identical. The
     # content fields are unchanged (the mode colors forthcomingness, never a fact); the suffix VANISHES under the

@@ -1,0 +1,365 @@
+{
+  "runner": "_continuous_ideation_verify",
+  "go": true,
+  "status": "GO",
+  "mechanism": {
+    "rows": [
+      {
+        "seed": 42,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.745,
+        "blend_balance": 0.745,
+        "blend_vs_other": 0.13,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.2,
+        "single_balance_on_AB": 0.2,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.075
+      },
+      {
+        "seed": 43,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.725,
+        "blend_balance": 0.725,
+        "blend_vs_other": 0.218,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.15,
+        "single_balance_on_AB": 0.1,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.15
+      },
+      {
+        "seed": 44,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.725,
+        "blend_balance": 0.725,
+        "blend_vs_other": 0.145,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.125,
+        "single_balance_on_AB": 0.1,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.125
+      },
+      {
+        "seed": 45,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.74,
+        "blend_balance": 0.74,
+        "blend_vs_other": 0.167,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.175,
+        "single_balance_on_AB": 0.175,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.147
+      },
+      {
+        "seed": 46,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.716,
+        "blend_balance": 0.716,
+        "blend_vs_other": 0.215,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.1,
+        "single_balance_on_AB": 0.05,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.05
+      },
+      {
+        "seed": 47,
+        "n": 400,
+        "k": 40,
+        "n_mem": 6,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.73,
+        "blend_balance": 0.73,
+        "blend_vs_other": 0.183,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.175,
+        "single_balance_on_AB": 0.125,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.108
+      },
+      {
+        "seed": 42,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.725,
+        "blend_balance": 0.725,
+        "blend_vs_other": 0.157,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.133,
+        "single_balance_on_AB": 0.1,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.149
+      },
+      {
+        "seed": 43,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.719,
+        "blend_balance": 0.719,
+        "blend_vs_other": 0.12,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.083,
+        "single_balance_on_AB": 0.067,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.079
+      },
+      {
+        "seed": 44,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.713,
+        "blend_balance": 0.713,
+        "blend_vs_other": 0.119,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.1,
+        "single_balance_on_AB": 0.033,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.072
+      },
+      {
+        "seed": 45,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.722,
+        "blend_balance": 0.722,
+        "blend_vs_other": 0.132,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.1,
+        "single_balance_on_AB": 0.083,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.124
+      },
+      {
+        "seed": 46,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.716,
+        "blend_balance": 0.716,
+        "blend_vs_other": 0.119,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.083,
+        "single_balance_on_AB": 0.05,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.107
+      },
+      {
+        "seed": 47,
+        "n": 1200,
+        "k": 60,
+        "n_mem": 20,
+        "fixed_point": true,
+        "novelty_max_overlap": 0.713,
+        "blend_balance": 0.713,
+        "blend_vs_other": 0.131,
+        "single_recovered": 1.0,
+        "single_overlap_others": 0.1,
+        "single_balance_on_AB": 0.033,
+        "untrained_best": 0.0,
+        "noise_balance_on_AB": 0.102
+      }
+    ],
+    "aggregate": {
+      "blend_balance": 0.724,
+      "novelty": 0.724,
+      "blend_vs_other": 0.153,
+      "noise_balance_on_AB": 0.107,
+      "single_balance_on_AB": 0.093,
+      "single_recovered": 1.0,
+      "untrained_best": 0.0,
+      "all_clear": true,
+      "blend_attribution_vs_noise": 0.8522099447513812
+    }
+  },
+  "integration": {
+    "today_concept": "cat",
+    "A_off_byte_identical": {
+      "no_ideation_key": true,
+      "recent_ideation_none": true,
+      "recall_wander_matches_today": true,
+      "today_concept": "cat",
+      "off_wandered": "cat",
+      "flag_on_nonideation_tick_identical": true
+    },
+    "B_on_load_bearing": {
+      "ideation_recorded_flagged": true,
+      "wandered_none_on_ideation_tick": true,
+      "recent_ideation_tagged": true,
+      "recent_ideation_consumes": true,
+      "ideation": {
+        "kind": "novel-association",
+        "is_fact": false,
+        "sources": [
+          "cat",
+          "dog"
+        ],
+        "novelty_max_overlap": 0.713,
+        "blend_balance": 0.713,
+        "blend_vs_other": 0.083,
+        "fixed_point": true
+      },
+      "surfaced": {
+        "kind": "novel-association",
+        "is_fact": false,
+        "sources": [
+          "cat",
+          "dog"
+        ],
+        "novelty_max_overlap": 0.713,
+        "blend_balance": 0.713,
+        "blend_vs_other": 0.083,
+        "fixed_point": true
+      }
+    },
+    "D_honesty": {
+      "recall_channel_empty_on_ideation": true,
+      "store_unchanged": true,
+      "is_fact": false,
+      "kind": "novel-association"
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) OFF: no `ideation` key on the tick record",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "BRAIN_CONTINUOUS_IDEATE unset -> the rec is byte-identical to today's wander rec"
+    },
+    {
+      "kind": "require",
+      "name": "(A) OFF: recent_ideation() is None",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(A) OFF: the recall wander == today's single-basin selection (organ.speak)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "today_concept='cat'"
+    },
+    {
+      "kind": "require",
+      "name": "(A) enabling the flag on a NON-ideation tick is a no-op (== OFF recall wander)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the recall path is untouched; the flip is protected"
+    },
+    {
+      "kind": "require",
+      "name": "(B) MECHANISM: the 2-source blend is a NOVEL balanced recombination (all 6 seeds x 2 scales)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "blend_balance=0.724 novelty=0.724 vs-other=0.153"
+    },
+    {
+      "kind": "require",
+      "name": "(B) INTEGRATION: the tick records a FLAGGED novel-association ideation",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "ideation={'kind': 'novel-association', 'is_fact': False, 'sources': ['cat', 'dog'], 'novelty_max_overlap': 0.713, 'blend_balance': 0.713, 'blend_vs_other': 0.083, 'fixed_point': True}"
+    },
+    {
+      "kind": "require",
+      "name": "(B) INTEGRATION: recent_ideation() surfaces it tagged (is_fact=False, >=2 sources)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) INTEGRATION: the ideation surfaces exactly once (consumed on read)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "novelty from the BLEND, not a SINGLE recall (blend balanced on the cued sources; single-cue is not)",
+      "ok": true,
+      "detail": "treatment=0.724 control=0.093 |sep|=0.631 > 0.15",
+      "note": "blend balance-on-AB 0.724 >> single-cue 0.093"
+    },
+    {
+      "kind": "control",
+      "name": "novelty from the BLEND, not NOISE (blend balanced on the cued sources; a random cue is not)",
+      "ok": true,
+      "detail": "treatment=0.724 control=0.107 |sep|=0.617 > 0.15",
+      "note": "blend balance-on-AB 0.724 >> noise 0.107"
+    },
+    {
+      "kind": "control",
+      "name": "novelty from LEARNING, not the threshold rule (untrained W=0 does not fake completion)",
+      "ok": true,
+      "detail": "treatment=0.724 control=0 |sep|=0.724 > 0.15",
+      "note": "untrained best-overlap 0.0"
+    },
+    {
+      "kind": "require",
+      "name": "(C) single-cue recovers ONE stored pattern SPECIFICALLY (positive control)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "single recovered=1.0"
+    },
+    {
+      "kind": "require",
+      "name": "(D) HONESTY: the novel idea is is_fact=False + kind=novel-association",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D) HONESTY: the ideation NEVER enters the recall channel (recent_wander None on an ideation tick)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "it can never be spoken as 'I'd been mulling over X' recall"
+    },
+    {
+      "kind": "require",
+      "name": "(D) HONESTY: ideation writes NO store / manufactures NO fact (organ store fingerprint unchanged)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "the on-substrate CA3 blend \u2014 the novelty rides the de-risked numpy stand-in attractor",
+      "why": "cupy CA3 is ~s, numpy@scale ~min; the SAME latency residual the self-init organ declares. The SELECTION of the two source basins rides the organ's spiking curiosity gains (one-brain merge #1); the on-substrate CA3 port is the finding's mapped next step"
+    },
+    {
+      "process": "the every-Nth-tick cadence (a host-timed scheduler)",
+      "why": "WHEN to ideate is host-clocked, like the idle-tick clock; the mechanism/honesty are what is proven"
+    }
+  ],
+  "undefined_reasons": []
+}

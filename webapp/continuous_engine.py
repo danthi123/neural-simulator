@@ -91,6 +91,7 @@ def forget_session(cache_key) -> None:
     _WANDER_ADAPT.pop(cache_key, None)
     _RECALLED_TOPIC.pop(cache_key, None)
     _D5_BUDGET.pop(cache_key, None)
+    _IDEATE_TICK.pop(cache_key, None)
 
 
 # ── D5 LEARN-THROUGH-USE: consolidate a memory the brain USED, between turns ─────────────────────────────────────
@@ -322,6 +323,153 @@ def _post_wander_ior(cache_key, organ, concept) -> None:
     st["adapt"] = [1.0 - (1.0 - a) * (1.0 - IOR_RECOVERY) for a in st["adapt"]]  # all basins recover toward rest
 
 
+# ── IDEATION: an OCCASIONAL between-turn wander that GENERATES a NOVEL blended concept (creativity rung) ──────────
+# Rung of the continuous-substrate frontier: today the idle wander SELECTS one stored basin and speaks its concept
+# (recall). IDEATION makes the wander OCCASIONALLY *generate* instead — it drives a BLENDED cue of the TWO most
+# curiosity-active basins into a sparse associative-attractor, which settles into a NOVEL recombination that was
+# NEVER stored (novelty from the DYNAMICS, not the nodes). Reuse-by-import of the GO de-risk
+# (research/runners/_generative_attractor_wander_derisk: Tsodyks-Feigelman sparse-Hopfield + the ca3_ff_inhib
+# MEAN+std dynamic-threshold settle — a fixed feedforward-inhibition threshold, not a forced top-k, is what lets a
+# blend stay balanced instead of collapsing onto one source; finding 2026-08-20-generative-attractor-wander-derisk).
+#
+# STRICTLY ADDITIVE + DEFAULT-OFF behind `BRAIN_CONTINUOUS_IDEATE`. Unset -> the wander is EXACTLY today's
+# single-basin recall selection (byte-identical to the live default-on continuous wander); the ideation branch is
+# never entered and no `ideation` key is recorded. The live continuous default (BRAIN_CONTINUOUS) is untouched.
+#
+# HONESTY BOUNDARY (load-bearing): a novel-ideation wander is TAGGED as a novel idea/association (kind=
+# "novel-association", is_fact=False), surfaced via `recent_ideation()` on a DISTINCT channel from `recent_wander()`
+# (recalled concepts). The next turn frames it as "a thought that occurred to me", NEVER as a stored fact, and it
+# NEVER enters the recall/abstain moat as an assertion (it only decorates an already-matched surface, like the
+# other between-turn leads). FUNCTIONAL creativity correlate, NOT a phenomenal claim.
+#
+# DECLARED SCAFFOLDS (named, not hidden): (1) the every-Nth-tick cadence is a host-timed scheduler (WHEN to ideate,
+# like the idle-tick clock); (2) the fast standalone numpy attractor is the de-risked stand-in for the on-substrate
+# CA3 blend (the SAME latency residual the self-init organ declares — cupy CA3 is ~seconds, numpy@scale is minutes);
+# (3) the SELECTION of the two source basins rides the organ's spiking curiosity gains (one-brain merge #1).
+
+IDEATE_NOVELTY_MAX = 0.85    # the settled state's max-overlap with ANY single stored basin must be BELOW this (it is
+                             #  not any single stored item; a single recall reads 1.0). A 2-source blend sits ~0.72.
+IDEATE_BALANCE_MIN = 0.50    # both cued sources genuinely represented: min(overlap A, overlap B) ABOVE this.
+IDEATE_BLEND_MARGIN = 0.15   # the balanced blend must exceed any OTHER (non-cued) stored basin by this margin (the
+                             #  novelty is a RECOMBINATION of the two cued sources, not arbitrary drift).
+_IDEATE_N, _IDEATE_K, _IDEATE_THRESH_C = 1200, 60, 0.7   # de-risk operating point (clean 6-seed x 2-scale)
+
+# per-session ideation-tick counter (advanced ONLY while ideation is enabled -> untouched, byte-identical, when off)
+_IDEATE_TICK: dict = {}
+
+
+def ideation_enabled() -> bool:
+    """Default-OFF anchor. `BRAIN_CONTINUOUS_IDEATE` in {1,true,on,yes} arms the between-turn IDEATION mode. Unset/0
+    -> the wander is EXACTLY today's single-basin recall selection (byte-identical to the live continuous wander)."""
+    return os.environ.get("BRAIN_CONTINUOUS_IDEATE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _ideate_every_n() -> int:
+    """How often an idle wander IDEATES instead of recalling (a host-timed scaffold, like the idle-tick clock): every
+    Nth wander drives the novel blend. Default 3 (occasional). `BRAIN_CONTINUOUS_IDEATE_EVERY` overrides (1 = every)."""
+    try:
+        return max(1, int(os.environ.get("BRAIN_CONTINUOUS_IDEATE_EVERY", "3")))
+    except Exception:
+        return 3
+
+
+def _is_ideation_tick(cache_key) -> bool:
+    """True on every Nth wander for this session (the host-timed ideation cadence). Advances a per-session counter;
+    called ONLY when ideation_enabled() (short-circuited), so the OFF path never touches this state."""
+    c = _IDEATE_TICK.get(cache_key, 0) + 1
+    _IDEATE_TICK[cache_key] = c
+    return (c % _ideate_every_n()) == 0
+
+
+def _ideation_blend_settle(seed: int, n_mem: int, iA: int, iB: int) -> dict | None:
+    """Drive a sparse associative-attractor with a BLENDED cue of two stored basins -> settle into a NOVEL
+    recombination. Reuse-by-import of the GO de-risk's mechanism (Tsodyks-Feigelman sparse-Hopfield + the
+    ca3_ff_inhib MEAN+std dynamic-threshold settle). DECLARED SCAFFOLD: a fast standalone numpy attractor is the
+    de-risked stand-in for the on-substrate CA3 blend. Returns the settled-state metrics, or None on any failure."""
+    try:
+        import numpy as _np
+        from research.runners._generative_attractor_wander_derisk import (
+            _sparse_pattern, _train_weights, _threshold_settle, _overlap)
+    except Exception:
+        return None
+    if n_mem < 2 or not (0 <= iA < n_mem) or not (0 <= iB < n_mem) or iA == iB:
+        return None
+    n, k, c = _IDEATE_N, _IDEATE_K, _IDEATE_THRESH_C
+    # a deterministic ideation stream disjoint from the wander RNG (the patterns REPRESENT the fixed basins; WHICH
+    # two are blended shifts with the curiosity gains, so trains-of-thought move while the substrate stays fixed).
+    rng = _np.random.default_rng(int(seed) * 100003 + 17)
+    pats = [_sparse_pattern(rng, n, k) for _ in range(n_mem)]
+    W, a = _train_weights(pats, n)
+    idxA = _np.flatnonzero(pats[iA]).copy(); idxB = _np.flatnonzero(pats[iB]).copy()
+    rng.shuffle(idxA); rng.shuffle(idxB)
+    hk = k // 2
+    cue = _np.zeros(n); cue[idxA[:hk]] = 1.0; cue[idxB[:hk]] = 1.0
+    settled, fixed, _ = _threshold_settle(W, a, cue, n_iters=12, c=c)
+    ov = [_overlap(settled, p) for p in pats]
+    novelty = max(ov)
+    balance = min(ov[iA], ov[iB])
+    others = max([ov[m] for m in range(n_mem) if m not in (iA, iB)], default=0.0)
+    return {"novelty_max_overlap": round(float(novelty), 3),
+            "blend_balance": round(float(balance), 3),
+            "blend_vs_other": round(float(others), 3),
+            "fixed_point": bool(fixed)}
+
+
+def _ideation_wander(cache_key, organ) -> dict | None:
+    """OCCASIONAL between-turn IDEATION: drive a BLENDED cue of the TWO most curiosity-active basins into the
+    attractor -> it settles into a NOVEL recombination that was never stored (the creativity/novelty rung). Returns
+    a record TAGGED as a novel idea/association (never a recalled fact), or None if the two-source blend did NOT
+    settle into a genuine novel balanced state (honest: no novel idea surfaced this tick). SELECTION of the two
+    source basins rides the organ's spiking curiosity gains; the novelty rides the attractor DYNAMICS."""
+    agents = getattr(organ, "agents", None)
+    if not agents or len(agents) < 2:
+        return None
+    n_mem = len(agents)
+    gains = getattr(organ, "gains_on", None)
+    if gains and len(gains) == n_mem:
+        order = sorted(range(n_mem), key=lambda i: (-float(gains[i]), i))  # the two most curiosity-active basins
+    else:
+        order = list(range(n_mem))
+    iA, iB = order[0], order[1]
+    res = _ideation_blend_settle(getattr(organ, "seed", 42), n_mem, iA, iB)
+    if res is None:
+        return None
+    novel = bool(res["fixed_point"]
+                 and res["novelty_max_overlap"] < IDEATE_NOVELTY_MAX
+                 and res["blend_balance"] > IDEATE_BALANCE_MIN
+                 and (res["blend_balance"] - res["blend_vs_other"]) > IDEATE_BLEND_MARGIN)
+    if not novel:
+        return None
+    return {
+        "kind": "novel-association",   # the HONESTY TAG — an IDEA, not a recalled fact
+        "is_fact": False,
+        "sources": [agents[iA], agents[iB]],
+        "novelty_max_overlap": res["novelty_max_overlap"],
+        "blend_balance": res["blend_balance"],
+        "blend_vs_other": res["blend_vs_other"],
+        "fixed_point": res["fixed_point"],
+    }
+
+
+def recent_ideation(cache_key) -> dict | None:
+    """The most recent between-turn IDEATION (a NOVEL blended association the attractor settled into while idle),
+    TAGGED as an idea/association — NOT a recalled fact. CONSUMES on read (surfaces exactly once, on the next live
+    turn), a DISTINCT channel from recent_wander() (recalled concepts). Returns None if continuous or ideation is
+    off, or none is pending. The caller frames it as 'a thought that occurred to me'; it NEVER enters the
+    recall/abstain moat as an assertion. Off (BRAIN_CONTINUOUS_IDEATE unset) -> returns None without touching state."""
+    if not (continuous_enabled() and ideation_enabled()):
+        return None
+    lst = _INNER_LIFE.get(cache_key)
+    if not lst:
+        return None
+    for rec in reversed(lst):
+        idea = rec.get("ideation")
+        if idea and not rec.get("_ideation_consumed"):
+            rec["_ideation_consumed"] = True   # consume -> surfaces on exactly the next turn, not every turn after
+            return dict(idea)
+    return None
+
+
 def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None = None,
                  selfinit_organ=None) -> dict | None:
     """One idle tick for ONE session: (a) FEELING keeps evolving — relax the appraisal + RE-READ the spiking affect
@@ -346,22 +494,42 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
         diff = None
     trend = "toward neutral" if abs(v1) < abs(v0) else "steady"
     note = "idle: felt state relaxing %s (was %+.2f, now %+.2f)" % (trend, v0, v1)
-    # (b) THOUGHT: a curiosity-biased spiking selection surfaces a wandered concept (a thought drifting while idle)
+    # (b) THOUGHT: a curiosity-biased spiking selection surfaces a wandered concept (a thought drifting while idle).
+    # OCCASIONALLY (default-OFF `BRAIN_CONTINUOUS_IDEATE`, every Nth wander) the wander instead GENERATES a NOVEL
+    # blended concept — the ideation/creativity rung — surfaced on a distinct, honestly-flagged channel. When
+    # ideation is off, or this is not an ideation tick, or the blend did not settle novel, the DEFAULT recall wander
+    # runs EXACTLY as today (byte-identical): the `ideation` key is then absent from `rec`.
     wandered = None
+    ideation = None
     if selfinit_organ is not None:
         try:
-            ior = _wander_ior_enabled()
-            if ior:
-                _pre_wander_ior(cache_key, selfinit_organ)   # bias away from recently-visited basins
-            out = selfinit_organ.speak(lesion=False)
-            wandered = out.get("concept")
-            if ior and wandered:
-                _post_wander_ior(cache_key, selfinit_organ, wandered)  # fatigue the just-won basin
-            if wandered:
-                note += "; a thought wandered to ‘%s’" % wandered
+            if ideation_enabled() and _is_ideation_tick(cache_key):
+                try:
+                    selfinit_organ._ensure_mouth()   # need agents + curiosity gains (idempotent, cheap)
+                except Exception:
+                    pass
+                ideation = _ideation_wander(cache_key, selfinit_organ)
+            if ideation is not None:
+                sA, sB = ideation["sources"][0], ideation["sources"][1]
+                note += ("; an idea occurred — a novel association linked ‘%s’ and ‘%s’ (a thought, not a "
+                         "recalled fact)" % (sA, sB))
+            else:
+                # DEFAULT WANDER PATH — UNCHANGED (byte-identical when ideation is off / not an ideation tick /
+                # the blend didn't surface): today's single-basin curiosity-biased recall selection.
+                ior = _wander_ior_enabled()
+                if ior:
+                    _pre_wander_ior(cache_key, selfinit_organ)   # bias away from recently-visited basins
+                out = selfinit_organ.speak(lesion=False)
+                wandered = out.get("concept")
+                if ior and wandered:
+                    _post_wander_ior(cache_key, selfinit_organ, wandered)  # fatigue the just-won basin
+                if wandered:
+                    note += "; a thought wandered to ‘%s’" % wandered
         except Exception:
             wandered = None
     rec = {"t": now, "valence": v1, "arousal": a1, "differential": diff, "wandered": wandered, "note": note}
+    if ideation is not None:   # additive: absent when ideation is off -> rec is byte-identical to today
+        rec["ideation"] = ideation
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
