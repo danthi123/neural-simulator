@@ -15,7 +15,7 @@ artifacts:
   - research/findings/raw/_emerge64_mine_slot_inventory.json
   - research/findings/raw/_emerge63_corpus_taught_slot_order.json
 ---
-# The spiking-Broca producer's sentence-FRAME structure self-organizes from experience — slot INVENTORY 6-seed GO, slot ORDER signal (with the function-word win, the whole frame is now learned)
+# The spiking-Broca producer's sentence-FRAME structure self-organizes from experience — slot INVENTORY + slot ORDER both 6-seed GO (with the function-word win, the whole frame is now learned)
 
 Two emergence rungs that, together with the function-word-inventory GO ([[2026-08-21-recovered-overnight-pool-de-risks-function-word-discovery-V1-RF-curiosity-GO]]),
 move the spiking-Broca producer's sentence-frame structure from HOST-DESIGNED to LEARNED-FROM-CORPUS: what words are
@@ -28,9 +28,10 @@ per-construction slot INVENTORY (which thematic roles/slots each frame licenses)
 token's ROLE is mined from its distributional context rather than a host-supplied frame template. 6-seed GO with the
 input-destruction controls collapsing. ⇒ S1a self-organized: the frame's slot set is learned, not hand-declared.
 
-## Slot ORDER self-organizes (S1b) — GO signal, 1 seed (6-seed pool confirm pending)
+## Slot ORDER self-organizes (S1b) — GO, 6 seeds
 <!--derived-->
-Artifact: research/findings/raw/_emerge63_corpus_taught_slot_order.json (go: True, seed 42). The per-frame slot ORDER
+Artifact: research/findings/raw/_emerge63_corpus_taught_slot_order.json (go: True, seeds 42/43/44/100/101/102 — the
+6-seed pool confirm landed). The per-frame slot ORDER
 self-organizes from the corpus's actual WORD-ORDER statistics (pairwise role precedence; Dominey-Hinaut: grammar = the
 statistics of element order): the host template order-teacher (EMERGE-59's `LR*(n-1-pool)`) is REMOVED, the order read
 purely from where each role's token sits in the example sentences, and that corpus-taught order reorders the slots fed
@@ -39,7 +40,7 @@ to the EMERGE-59 spiking producer (rendered ON SPIKES via the per-pool rate rank
 (det<subj<func<verb) recovers 1.000. HONEST RESIDUAL (named, not a wall): the internal order of a held-out
 MULTI-function-word frame (does<not) is not learnable from the other two frames alone (only F_NEGMOD attests two
 adjacent function words) → held-out F_NEGMOD sits at 0.850; the next single signal is one attestation of the does<not
-bigram. The 6-seed pool run is queued to confirm; the 1-seed GO is banked as the signal.
+bigram. The 6-seed pool confirm LANDED (go True on all of 42/43/44/100/101/102), upgrading the earlier 1-seed signal.
 
 ## Scope
 Pool CPU emergence de-risks (structure-from-experience — the standing emergence bar), default-off research results,
