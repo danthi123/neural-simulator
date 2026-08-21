@@ -13,7 +13,83 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-20 (POST-OVERNIGHT — READ FIRST; live resume point; supersedes all headers below)
+## ⭐ STATE OF THE PROJECT — 2026-08-21 (READ FIRST; LIVE resume anchor; supersedes the 2026-08-20 header below, which is now base/history)
+
+**NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
+continuity → the emergentist bet. Non-negotiables: brain-based-only (host = world/body/clock only), ONE brain,
+emergent-not-hand-built, NO-DEFER (a wall defers a METHOD not a CAPABILITY), SPEED-SECONDARY-to-faithfulness,
+honesty-boundary-as-deliverable (never assert phenomenal experience), 6-seed (42/43/44/100/101/102), gates
+AUTHORITATIVE, commit BOTH remotes via `tools/push_both.sh`, NEVER `--no-verify`.
+
+**OWNER DIRECTIVE (2026-08-21, went to bed): work autonomously ALL NIGHT at the fastest pace within constraints,
+following the workflows/parallelism/goals, WITHOUT relying on chat context (compaction-safe).** This section + the
+Vikunja board + `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` + the findings ARE the durable state — read them, act, update
+every cycle. See memory `project-overnight-autonomous-2026-08-21`.
+
+**CURRENT ARC = the CONSCIOUSNESS-CORRELATE SPEED-RUN:** drive the already-BUILT faculties to PRODUCTION-DEFAULT on
+the one substrate, in parallel, flipping default-on as each verifies; defer only the true field walls. A faculty is
+DONE only at wired + on_by_default + scaffold-retired (the ledger is authoritative). The 2026-08-20 base below already
+took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODAY's job is the FLIPS + the couplings.
+
+**⛔ HARD OPERATING CONSTRAINTS (the PC was OOM-killed TWICE on 2026-08-21):**
+- **ONE brain-loading GPU process at a time** — ALL GPU work through `tools/gpu_queue.sh` (sequential, VRAM-safe).
+  NEVER two cupy brain loads at once. CPU-pool + agents + doc-wiring run concurrent with it.
+- **COST-ROUTING (agent tokens burn the usage limit — must last the night):** mechanical CPU → `tools/pool_queue.sh`/`sweep_pool.sh` (mini-PC pool, 0 tokens); GPU sweeps/long runs → `tools/gpu_queue.sh` (0 tokens); multi-seed →
+  controller `--seeds`; AGENTS only for genuine builds/wiring. Ultracode is ON (workflows for judgment-heavy
+  design/verify; adversarially verify GO headlines) — raises THOROUGHNESS, NOT a license to burn usage on mechanical
+  compute the pool does free.
+- On EVERY landing: `push_both.sh` + `sync-documentation` (roadmap+this board+ledger+ROADMAP) + Vikunja board, SAME cycle.
+
+**LIVE LANES (2026-08-21 ~03:45 EDT — do NOT double-launch; check the state file before relaunching):**
+- **Heartbeat:** persistent `Monitor` (state + parallel_audit + cost + memory every ~15 min). If a continuation finds
+  NONE live, RE-ARM per "SESSION START" below (persistent=true) — the #1 failure is stalling on a dead heartbeat.
+- **GPU (single slot):** `tools/gpu_queue.sh` dispatcher live; CURRENT JOB = the continuous-life default-flip SOAK
+  `research/runners/_continuous_default_flip_soak_cupy.py` → `research/findings/raw/_continuous_live_cupy/default_flip_soak.json`
+  (the flip's gate: no-regression + no GPU-pileup). Check `tools/gpu_queue.sh status` + that JSON.
+- **Agent (numpy):** DA-GATED ENCODING wiring — `encoding_gain_fn` from the live self-produced DA
+  (`chat._last_da_drives["da_level"]`) into the production store, default-OFF `BRAIN_DA_ENCODING`. Deliverable:
+  server.py/brain_chat_tui.py wiring + `_da_encoding_wired_verify.py` + finding + a `da-gated-encoding` ledger row.
+- **Agent (numpy; cupy-confirm QUEUED):** Trunk-B MEMORY-SEPARATOR (board #73/#71) on branch
+  `research/memory-separator-readout` — the intrinsic-excitability SPARSITY HOMEOSTAT that stops one memory-assembly
+  going dense + swallowing another. Deliverable: `_d5_pattern_separation_setpoint_derisk.py` + finding.
+- **Pool:** `pool_autodispatch.sh` draining `research/queue/pool.queue`; 4 faculty de-risks (language/vision/curiosity/
+  affect) re-landing (NOTE: sync-back gap #56 may drop them — peripheral).
+- **Landed 2026-08-21:** continuous-state-engine ledger row (faculty #39) + the soak runner (commit 64822b0c, both
+  remotes) + the open-ended chat mode / verify-post-filter / contradiction-filter / 100k tiered-knowledge store
+  (earlier today). PRIMARY work-worktree = `/home/dant123/Projects/sim-worktrees/gate-b-v2-clean` on `main`
+  (the plain `/home/dant123/Projects/sim` checkout is on a STALE branch — do NOT edit governed docs/code there).
+
+**PRE-DECIDED NEXT ACTIONS (act on each notification; NEVER idle — pull the next backlog item when a lane frees):**
+1. **Soak → GO** ⇒ flip `BRAIN_CONTINUOUS`(+`BRAIN_CONTINUOUS_DRIVES`) DEFAULT-ON: in `webapp/continuous_engine.py`
+   `continuous_enabled`, replace `os.environ.get("BRAIN_CONTINUOUS","0")` with a `_CONTINUOUS_DEFAULT_ON=True` +
+   `=0` byte-identical escape (mirror affect-drives/gnw-multistep), re-run the soak as the flip no-regression, set the
+   ledger row on_by_default:YES, finding, push_both, sync docs+board. **NO-GO/UNDEFINED** ⇒ read the divergence/abort,
+   fix the real regression or runner (no-defer), re-queue (a memory-abort just means re-queue when VRAM is free).
+2. **DA-encoding agent done** ⇒ verify finding+ledger row; then wire the NEXT Gap-4 coupling (curiosity crave-threshold
+   from the same DA dict) — SERIALIZE server.py edits AFTER the agent's server.py commit (avoid a same-file race).
+3. **Trunk-B agent done** ⇒ read the separator verdict; ensure the cupy confirm is queued; on cupy GO, flip
+   `BRAIN_D5_CONSOLIDATE` default-on (unblocks learn-through-use consolidation, #71/#73).
+4. Then the ORDERED BACKLOG, keeping all lanes saturated (GPU serial, pool, ≤~2 build-agents, workflows for design/verify).
+
+**ORDERED OVERNIGHT BACKLOG (each rung: de-risk → wire default-OFF → soak/no-regression → FLIP default-ON → sync):**
+- **WAVE-0 Gap-4 couplings (numpy, cheap):** (a) DA-gated encoding [agent]; (b) curiosity crave-threshold from the DA
+  dict; (c) attention-gain; (d) episodic-salience (affect-gated D5 store salience).
+- **WAVE-1 CPU de-risks (pool/agent):** LC-NE gain on the GNW thought-swap eviction (reuse the WTA suppression); GNW
+  three-organ bus adding the D4 comprehension-monitor.
+- **WAVE-2 GPU ports (SERIALIZED on gpu_queue):** emergent pattern-completion replay
+  (`_emergent_replay_specificity_derisk`, 6-seed GO) → wire under `consolidate_used_memory`; generative-attractor-
+  wander (`_generative_attractor_wander_derisk`, GO) as an occasional blended-cue tick = the novelty/ideation rung.
+- **WAVE-3 one-brain merges (last, CPU→GPU):** Gap-3 organ merges → the recall-composer bridge merge (45,730 readout
+  neurons, hardest, serial) → composer spikes → GNW workspace slots.
+- **FLIP ORDER:** BRAIN_CONTINUOUS → BRAIN_D5_CONSOLIDATE → GNW three-organ bus → the Gap-4 couplings.
+- **TRUE WALLS TO DEFER (owner-sanctioned):** #3 brain-native open-ended generation (retire Qwen for a learned
+  generative cortex) + #4 symbol grounding; and the ONE genuine field-wall inside these gaps = valence/DA-weighted
+  SELECTION among multiple genuinely-competing equally-valid recall candidates (needs true lateral-inhibition/WTA;
+  shades into #3). Everything else is NO-DEFER — surpass with a biological mechanism.
+
+---
+
+## ⭐ STATE OF THE PROJECT — 2026-08-20 (POST-OVERNIGHT — base for the 2026-08-21 header above; history)
 
 > **North-star (unchanged):** one all-spiking substrate that genuinely converses → consciousness via faithful emulation; INTEGRATION-to-production-default is the spine. Near-term reframe = fluent open speech + surpass-LLM via a CONTINUOUS substrate (read the ⭐⭐ reframe block just below).
 > **DE-RISK work is COMPLETE across every frontier (2026-08-20 overnight, ~30 commits, all verified).** Continuous engine LIVE on cupy (feeling + trains-of-thought both load-bearing; wander fixed → inhibition-of-return + gain-floor → full 4/4, wired live). LEARN-THROUGH-USE = 6-seed GO (emergent pattern-completion replay closes specificity). FLUENCY moat de-risked end-to-end (extraction→entail→hedge→synonym→reporting all closed → COMPOSED, ready to wire live). Per-neuron-SFA diagnosed (wrong locus; gain-IOR is correct). gpu_queue dispatcher wedge FIXED. Mouth/deep-credit resolved.
