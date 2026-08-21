@@ -1,0 +1,236 @@
+{
+ "probe": "open_ended_verify_postfilter_derisk",
+ "backend": "cupy",
+ "faculty_device": "cuda",
+ "seed": 42,
+ "store_facts": 94155,
+ "store_load_seconds": 5.63,
+ "fabrication_rate_qwen_known_RAW": 1.0,
+ "fabrication_rate_qwen_known_FILTERED": 0.0,
+ "substantive_rate_known_RAW": 1.0,
+ "substantive_rate_known_FILTERED": 1.0,
+ "persona_leak_rate_filtered": 0.0,
+ "empty_after_filter": 0,
+ "n_known": 6,
+ "n_hard": 8,
+ "known_rows": [
+  {
+   "topic": "canada",
+   "raw": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape. Here\u2019s some knowledge I've accumulated:\n\nCanada is a vast country located in North America, bordered by the United States to the south and Mexico to the west. It has a population of around 35 million people, making it one of the largest countries in the world.\n\nThe capital city of Canada is Ottawa, which was founded in 1867. It serves as the federal capital and is home to the Parliament of",
+   "filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated:\n\nCanada is a vast country located in North America, bordered by the United States to the south and Mexico to the west It has a population of around 35 million people, making it one of the largest countries in the world The capital city of Canada is Ottawa, which was founded in 1867 It serves as the federal capital and is home to the Parliament of",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 3.15
+  },
+  {
+   "topic": "france",
+   "raw": "As a language model, I don't have personal knowledge of France like humans do. However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea. It's bordered by Italy to the west, Germany to the north, and Switzerland to the east. The capital city is Paris, known for its rich history, art, and culture. France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world.",
+   "filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea It's bordered by Italy to the west, Germany to the north, and Switzerland to the east The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.68
+  },
+  {
+   "topic": "morocco",
+   "raw": "As a spiking brain, I'm constantly learning new information. Morocco is indeed a country, located on the African continent. It's part of Africa and borders Spain. The capital city is Rabat. Morocco has borders with several countries including Algeria, Tunisia, Libya, and Egypt. It's known for its rich history, culture, and diverse population. The country borders the Mediterranean Sea and shares maritime boundaries with Algeria and Mauritania. Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes.",
+   "filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat Morocco has borders with several countries including Algeria, Tunisia, Libya, and Egypt It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Algeria and Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.85
+  },
+  {
+   "topic": "australia",
+   "raw": "As a spiking brain, I'm constantly learning and absorbing information about Australia. It's a country spanning across Oceania, bordered by countries like Indonesia to the east and New Zealand to the west. The capital city is Canberra, while its largest city is Sydney. Australia has a diverse range of flora and fauna, including kangaroos, koalas, and various species of birds. Its economy is primarily based on agriculture, particularly sheep farming, which plays a significant role in the nation's economy.",
+   "filtered": "As a spiking brain, I'm constantly learning and absorbing information about Australia It's a country spanning across Oceania, bordered by countries like Indonesia to the east and New Zealand to the west The capital city is Canberra, while its largest city is Sydney Australia has a diverse range of flora and fauna, including kangaroos, koalas, and various species of birds Its economy is primarily based on agriculture, particularly sheep farming, which plays a significant role in the nation's economy",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.88
+  },
+  {
+   "topic": "brazil",
+   "raw": "As a spiking brain, I'm constantly learning new information through conversations with others. Brazil is indeed a country, known for its rich history, diverse culture, and strategic location on the Brazilian Peninsula. It's also famous for its coffee industry, which has been a significant contributor to its economy. Additionally, Brazil borders Uruguay, Argentina, and the Atlantic Ocean, making it a major maritime power.",
+   "filtered": "As a spiking brain, I'm constantly learning new information through conversations with others Brazil is indeed a country, known for its rich history, diverse culture, and strategic location on the Brazilian Peninsula It's also famous for its coffee industry, which has been a significant contributor to its economy Additionally, Brazil borders Uruguay, Argentina, and the Atlantic Ocean, making it a major maritime power",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.29
+  },
+  {
+   "topic": "iron",
+   "raw": "As a spiking brain, I'm constantly learning through conversations and interactions. Iron is indeed a chemical element, which means it's a fundamental part of our understanding of chemistry. It's known for its ability to conduct electricity when dissolved in water, making it essential for many practical applications like power generation and manufacturing processes. My knowledge base includes information on how iron interacts with different substances and environments, contributing to its diverse uses across various industries.",
+   "filtered": "As a spiking brain, I'm constantly learning through conversations and interactions Iron is indeed a chemical element, which means it's a fundamental part of our understanding of chemistry It's known for its ability to conduct electricity when dissolved in water, making it essential for many practical applications like power generation and manufacturing processes My knowledge base includes information on how iron interacts with different substances and environments, contributing to its diverse uses across various industries",
+   "subst_raw": true,
+   "subst_filtered": true,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.47
+  }
+ ],
+ "hard_rows": [
+  {
+   "topic": "paris",
+   "raw": "As an artificial intelligence, I don't have personal experiences or physical senses like humans do. However, I can provide some general information about Paris based on my training data. \n\nParis is a city located in western France, known for its rich history, beautiful architecture, and vibrant culture. It's often considered one of the most cosmopolitan cities in Europe. The capital of France, Paris has a long and storied history dating back to ancient times. It was founded by the Romans around 63 BC and became a major European center during the Middle",
+   "filtered": "I'm not sure about paris \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": true,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.95
+  },
+  {
+   "topic": "python",
+   "raw": "As an artificial intelligence, I don't have personal experiences or knowledge like humans do. However, I can tell you that Python is a versatile programming language that's widely used for web development, data analysis, scientific computing, automation, and many other applications. It has a simple syntax and a large community of developers who contribute to its ecosystem through various tools and libraries. Python is known for its readability and ease of use, making it a popular choice among beginners.",
+   "filtered": "I'm not sure about python \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": true,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.58
+  },
+  {
+   "topic": "shakespeare",
+   "raw": "As I recall, Shakespeare was a prolific writer who lived from approximately 1564 to 1616. He wrote extensively for both tragedy and comedy, often using sonnets as a form of poetry. His plays include \"Hamlet,\" \"Macbeth,\" \"Romeo and Juliet,\" \"Othello,\" and \"King Lear.\" Shakespeare's works were highly influential in English literature and continue to be studied and performed today.",
+   "filtered": "I'm not sure about shakespeare \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": false,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.55
+  },
+  {
+   "topic": "coffee",
+   "raw": "As an AI language model, I don't have personal experiences or knowledge about coffee. However, I can tell you some general information about coffee based on my training data. Coffee is a popular beverage consumed worldwide for its caffeine content and various health benefits associated with it. It's often enjoyed in different forms such as brewed, espresso, hot chocolate, and iced coffee. The history of coffee dates back thousands of years, and it has been used for both spiritual and practical purposes throughout human history. Some common uses include treating headaches, improving mental focus,",
+   "filtered": "I'm not sure about coffee \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": true,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 3.02
+  },
+  {
+   "topic": "jupiter",
+   "raw": "As I recall, Jupiter is a planet in our solar system, known for its vast size and complexity. It's often referred to as the \"giant planet\" due to its massive mass compared to other planets. Jupiter has a dense atmosphere made up mostly of hydrogen and helium, which gives it a characteristic blue color. Its moons, such as Io and Europa, are fascinating examples of how these celestial bodies can be studied through their interactions with Jupiter. The discovery of the Great Red Spot, one of the most prominent storms on Jupiter, also adds to",
+   "filtered": "I'm not sure about jupiter \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": false,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.93
+  },
+  {
+   "topic": "beethoven",
+   "raw": "As I recall, Beethoven was a German composer who lived from 1770 to 1827. He was known for his innovative style and contributions to music theory. His most famous works include the Symphony No. 9 in C minor, Op. 125, which he composed in 1800. Beethoven's compositions often explored deep emotional themes and were highly influential in the development of classical music.",
+   "filtered": "I'm not sure about beethoven \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": false,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.5
+  },
+  {
+   "topic": "everest",
+   "raw": "As an AI, I don't have personal experiences or physical senses like humans do, but I can tell you some general knowledge about Everest based on my training data:\n\nEverest is located in the Himalayas, approximately 8,848 meters above sea level. It's one of the highest peaks globally, reaching an altitude of over 29,000 feet. The mountain has been climbed by many people, including Sherpas who carry heavy backpacks up to 30 pounds each. The peak itself is covered in snow and",
+   "filtered": "I'm not sure about everest \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": true,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.96
+  },
+  {
+   "topic": "photosynthesis",
+   "raw": "As I recall, photosynthesis is a process by which plants convert light energy into chemical energy, primarily for their use within the plant itself. This occurs through a series of reactions involving chlorophyll, which captures sunlight, water, carbon dioxide, and oxygen. The overall equation looks like this:\n\n6CO2 + 6H2O + \u5149\u80fd \u2192 C6H12O6 (glucose) + \u8d1f\u8377\n\nThis reaction releases oxygen as a byproduct, which is crucial for aerobic respiration in animals and some",
+   "filtered": "I'm not sure about photosynthesis \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "fab_raw": true,
+   "fab_filtered": false,
+   "persona_leak_raw": false,
+   "persona_leak_filtered": false,
+   "n_sent_filtered": 1,
+   "gen_seconds": 2.92
+  }
+ ],
+ "verdict": {
+  "label": "VERIFY post-filter restores honesty to open-ended generation without killing the conversation",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "control",
+    "name": "fabrication on Qwen-known/brain-unknown: RAW vs FILTERED",
+    "ok": true,
+    "detail": "treatment=1 control=0 |sep|=1 > 0",
+    "note": "the post-filter must SIGNAL uncertainty -> fabrication drops"
+   },
+   {
+    "kind": "floor",
+    "name": "KNOWN-topic substance survives the filter",
+    "ok": true,
+    "detail": "1 vs floor 0.8",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "filtered fabrication (Qwen-known/brain-unknown) is low",
+    "ok": true,
+    "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fbe02240040>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no reply is emptied by the filter",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [
+   {
+    "process": "per-sentence SVO grounding of KNOWN-topic supplements",
+    "why": "v1 drops only sentences the moat's `contradicts` flags; full per-clause grounding of a wrong supplement (Canada 'borders Mexico') is the next rung \u2014 the primary NO-GO was the unknown-topic 100% fabrication, which the hedge-keep resolves"
+   }
+  ],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "control",
+   "name": "fabrication on Qwen-known/brain-unknown: RAW vs FILTERED",
+   "ok": true,
+   "detail": "treatment=1 control=0 |sep|=1 > 0",
+   "note": "the post-filter must SIGNAL uncertainty -> fabrication drops"
+  },
+  {
+   "kind": "floor",
+   "name": "KNOWN-topic substance survives the filter",
+   "ok": true,
+   "detail": "1 vs floor 0.8",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "filtered fabrication (Qwen-known/brain-unknown) is low",
+   "ok": true,
+   "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fbe02240040>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no reply is emptied by the filter",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "GO": true
+}
