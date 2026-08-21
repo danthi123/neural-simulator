@@ -361,7 +361,10 @@ _IDEATE_TICK: dict = {}
 def ideation_enabled() -> bool:
     """Default-OFF anchor. `BRAIN_CONTINUOUS_IDEATE` in {1,true,on,yes} arms the between-turn IDEATION mode. Unset/0
     -> the wander is EXACTLY today's single-basin recall selection (byte-identical to the live continuous wander)."""
-    return os.environ.get("BRAIN_CONTINUOUS_IDEATE", "0").strip().lower() in ("1", "true", "on", "yes")
+    # 2026-08-21 FLIPPED default-ON (owner-approved; composed no-regression GO — byte-identical on out-of-scope
+    # turns since ideation only fires on an IDLE tick, never during a live recall/self turn). BRAIN_CONTINUOUS_IDEATE=0
+    # is the byte-identical escape.
+    return os.environ.get("BRAIN_CONTINUOUS_IDEATE", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def _ideate_every_n() -> int:

@@ -74,7 +74,10 @@ def da_curiosity_enabled() -> bool:
     """The master flag. `BRAIN_CURIOSITY_DA` truthy (1/true/on/yes) enables the DA-gated curiosity crave-threshold;
     anything else (the default UNSET) leaves it OFF -> the organ's calibrated threshold decides `curious` unchanged
     and no `curiosity_da` key is attached -> byte-identical to HEAD."""
-    return os.environ.get("BRAIN_CURIOSITY_DA", "0").strip().lower() in ("1", "true", "on", "yes")
+    # 2026-08-21 FLIPPED default-ON (owner-approved; composed no-regression GO — byte-identical on out-of-scope
+    # confident-recall/self turns since the DA modulation only shifts the crave-threshold on an ABSTAIN, never on a
+    # recall). BRAIN_CURIOSITY_DA=0 is the byte-identical escape.
+    return os.environ.get("BRAIN_CURIOSITY_DA", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def da_curiosity_lesioned() -> bool:
