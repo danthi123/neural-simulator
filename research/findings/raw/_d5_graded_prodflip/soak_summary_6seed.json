@@ -1,0 +1,724 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 4,
+  "go": [
+    false,
+    true,
+    true,
+    true,
+    true,
+    false
+  ],
+  "backend": "cupy",
+  "results": {
+    "42": {
+      "seed": 42,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": false,
+      "no_regression": false,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": false,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": false,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "b469f4d6f38f5589",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.96309,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.96309,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.77444,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.8 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "2ac0b41a5e723eab",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.96309,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.98195,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 31.0 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.6361,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.6 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "b469f4d6f38f5589",
+        "hash_post": "b469f4d6f38f5589",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        33,
+        14,
+        23
+      ],
+      "elapsed_s": 44.8
+    },
+    "43": {
+      "seed": 43,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": true,
+      "no_regression": true,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": true,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": true,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "2db60c2e8779cb3b",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.35964,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.4 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.15385,
+          "depth_hold": 4.45478,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.35964,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.4 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.44224,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.4 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.15385,
+          "depth_hold": 4.45478,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "1ae7f17a60c09813",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.35964,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.4 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.15385,
+          "depth_hold": 4.45478,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.85956,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.9 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.44224,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.4 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.15385,
+          "depth_hold": 4.45478,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "2db60c2e8779cb3b",
+        "hash_post": "2db60c2e8779cb3b",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        28,
+        25,
+        16
+      ],
+      "elapsed_s": 46.2
+    },
+    "44": {
+      "seed": 44,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": true,
+      "no_regression": true,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": true,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": true,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "8f7e8721e8fc0279",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.74124,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.7 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.125,
+          "depth_hold": 3.54311,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.74124,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.7 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.88189,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.9 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.125,
+          "depth_hold": 3.54311,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "80d48f59bc5387bc",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.74124,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.7 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.125,
+          "depth_hold": 3.54311,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.2433,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.2 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.88189,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.9 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.125,
+          "depth_hold": 3.54311,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "8f7e8721e8fc0279",
+        "hash_post": "8f7e8721e8fc0279",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        34,
+        15,
+        16
+      ],
+      "elapsed_s": 44.0
+    },
+    "100": {
+      "seed": 100,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": true,
+      "no_regression": true,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": true,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": true,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "3a2fea9a16786237",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.93007,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.9 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.93007,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.9 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.95419,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "9cd1bf5a368ea942",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.93007,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.9 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.85591,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.9 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.95419,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "3a2fea9a16786237",
+        "hash_post": "3a2fea9a16786237",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        18,
+        26,
+        24
+      ],
+      "elapsed_s": 47.4
+    },
+    "101": {
+      "seed": 101,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": true,
+      "no_regression": true,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": true,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": true,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "74147bd63f3608c8",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.09252,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.1 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.09252,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.1 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.14656,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.1 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "5f3c8a75ea0cf04d",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.09252,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.1 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.65554,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.7 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.14656,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.1 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "74147bd63f3608c8",
+        "hash_post": "74147bd63f3608c8",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        25,
+        23,
+        21
+      ],
+      "elapsed_s": 43.4
+    },
+    "102": {
+      "seed": 102,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "out": "research/findings/raw/_d5_graded_prodflip/soak_seed42.json"
+      },
+      "GO": false,
+      "no_regression": false,
+      "on_dog_rose": false,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": false,
+      "dog_inmem_same": false,
+      "off_store_flat": true,
+      "only_dog_differs": false,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "c075faa6375e9991",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.0153,
+          "reply": "I don't recall us discussing dog \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.07143,
+          "depth_hold": 2.01802,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.0153,
+          "reply": "I don't recall us discussing dog \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.79819,
+          "reply": "I don't recall us discussing bird \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.07143,
+          "depth_hold": 2.01802,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": null,
+        "store_hash": "c075faa6375e9991",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.0153,
+          "reply": "I don't recall us discussing dog \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.07143,
+          "depth_hold": 2.01802,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.0153,
+          "reply": "I don't recall us discussing dog \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": false,
+          "apical_cue": 1.0,
+          "depth_hold": 30.79819,
+          "reply": "I don't recall us discussing bird \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.07143,
+          "depth_hold": 2.01802,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "c075faa6375e9991",
+        "hash_post": "c075faa6375e9991",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        30,
+        28,
+        22
+      ],
+      "elapsed_s": 42.4
+    }
+  }
+}

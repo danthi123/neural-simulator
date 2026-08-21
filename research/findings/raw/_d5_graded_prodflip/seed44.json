@@ -1,0 +1,160 @@
+{
+  "seed": 44,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 40,
+    "n_episodes": 1,
+    "n_turns": 3,
+    "out": "research/findings/raw/_d5_graded_prodflip/seed42.json"
+  },
+  "verdict": {
+    "label": "PRODUCTION-path learn-through-use is conversation-visible via the graded depth_hold read: the REAL EpisodicRecallOrgan.recall + recall_disclosure surface a recall strength that RISES after consolidation (seed 44, production encode te=40)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "weak-store-completes-T",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the production-encoded 'dog' COMPLETES at turn T via the BINARY gate"
+      },
+      {
+        "kind": "require",
+        "name": "binary-byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the dual read's apical_cue == a direct _apical_up_read (the moat gate is unchanged)"
+      },
+      {
+        "kind": "require",
+        "name": "handler-read-deterministic",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "two identical isolated production recalls match on binary AND graded"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cat is a genuine never-formed control"
+      },
+      {
+        "kind": "require",
+        "name": "graded-read-faithful",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cue-specific AND collapses under the formation-lesion -> the moat is preserved"
+      },
+      {
+        "kind": "require",
+        "name": "reply-changes-and-vanishes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the recall_disclosure STRING rises with use AND is byte-flat under the consolidation lesion"
+      },
+      {
+        "kind": "reaches",
+        "name": "graded-strength-rises-with-use",
+        "ok": true,
+        "detail": "before=29.0923 after=30.0272 moved=True",
+        "note": "the PRODUCTION recall strength (depth_hold mV) rose after consolidation"
+      },
+      {
+        "kind": "control",
+        "name": "consolidation-ON vs LESION-OFF (depth_hold move)",
+        "ok": true,
+        "detail": "treatment=0.934827 control=0 |sep|=0.934827 > 0",
+        "note": "the graded move requires the consolidation loop; the flag OFF is byte-identical"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP via continuous_engine.consolidate_used_memory"
+      },
+      {
+        "process": "binary UP-fraction as the conversation-visible read",
+        "why": "quantised (step-5 flat-5/6); the graded depth_hold is the surfaced magnitude, the binary still gates in_memory (moat)"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "attributable": 1.0,
+  "checks": {
+    "te": 40,
+    "n_episodes": 1,
+    "n_turns": 3,
+    "GO": true,
+    "STILL_USABLE": true,
+    "BINARY_BYTE_ID": true,
+    "up_direct": 1.0,
+    "GRADED_MOVES": true,
+    "MONOTONE": true,
+    "FAITHFUL": true,
+    "faithful_specific": true,
+    "faithful_lesion": true,
+    "MOAT": true,
+    "weight_specific": true,
+    "SPECIFIC": true,
+    "BYTE_ID_OFF": true,
+    "LESION_VANISHES": true,
+    "REPLY_CHANGES": true,
+    "deterministic": true,
+    "cat_never": true,
+    "consolidated": true,
+    "consolidated_rounds": 3,
+    "apical_cue_T": 1.0,
+    "apical_cue_Tk": 1.0,
+    "binary_moves": false,
+    "depth_hold_T": 29.0923,
+    "depth_hold_Tk": 30.0272,
+    "depth_hold_traj": [
+      29.09235,
+      29.4853,
+      29.66066,
+      30.02718
+    ],
+    "depth_hold_perm_T": 0.0,
+    "depth_hold_nocue_T": 0.0,
+    "depth_hold_lesion_T": 0.0,
+    "depth_hold_cat_T": 0.0,
+    "depth_hold_cat_Tk": 0.0,
+    "wdog_traj": [
+      78.228,
+      84.127,
+      86.926,
+      88.059
+    ],
+    "w_dog_before": 78.228,
+    "w_dog_after": 88.059,
+    "dw_dog": 9.831,
+    "cat_drift": 0.0,
+    "between_drift": 0.0,
+    "hash_before": "4568a7141abe3e9e",
+    "hash_off": "4568a7141abe3e9e",
+    "hash_after": "c8fad2dee6de4e8f",
+    "reply_T": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.1 mV).",
+    "reply_off": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.1 mV).",
+    "reply_Tk": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV).",
+    "assembly_sizes": [
+      26,
+      13
+    ],
+    "move_treat": 0.93483,
+    "move_ctrl": 0.0
+  },
+  "elapsed_s": 31.4
+}

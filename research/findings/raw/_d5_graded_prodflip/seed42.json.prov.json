@@ -1,0 +1,41 @@
+{
+ "run_id": "1787284267-2893836",
+ "runner": "research/runners/_d5_graded_production_flip_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_d5_graded_production_flip_verify.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--train-events",
+  "40",
+  "--n-episodes",
+  "1",
+  "--n-turns",
+  "3",
+  "--out",
+  "research/findings/raw/_d5_graded_prodflip/seed42.json"
+ ],
+ "git_sha": "a8df74c33",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T23:51:07",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 94710.5,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_d5_graded_prodflip/seed42.json"
+}

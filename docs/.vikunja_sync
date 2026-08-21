@@ -8,7 +8,7 @@
 #
 # Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
 
-last_reconciled: 2026-08-20
+last_reconciled: 2026-08-21
 at_commit: ec5b9f96
 note: reconciled after the D5 learn-through-use arc (steps 1-5) + GNW two-organ default-on + the SWR
   memory-replay arc + the knowledge-loading arc scoping. Board changes: #71 updated (de-risked, learn-through-use
@@ -17,3 +17,4 @@ note: reconciled after the D5 learn-through-use arc (steps 1-5) + GNW two-organ 
   Follow-up 2026-08-20: #108 advanced — first real knowledge bundle built (2413 Wikidata facts, loads+answers+abstains); still de-risked (standalone, not in the always-on chat).
   Follow-up 2026-08-20b: #71 -> learn-through-use now RELIABLY conversation-visible (graded read, step-6); #109 -> knowledge-scale sharding de-risked GO (sub-second at any K). Both banked.
   Follow-up 2026-08-20c: #109 -> knowledge-scale sharding now WIRED into the live chat (tiered hippocampal-buffer/cortical-LTM split, opt-in default-off; 3/3 GO drop-in through the real agent + end-to-end with the real 2413-fact Wikidata bundle). de-risked label set; remaining before default-on = a 100k+ real-fact bundle (rate-limited fetch in flight) + a soak. New ledger row tiered-knowledge-ltm (wired=YES on_by_default=NO).
+  Follow-up 2026-08-21: #71 -> D5 graded apical read WIRED into the production recall (EpisodicDapMemory.recall emits depth_hold beside the byte-identical binary gate; recall_disclosure surfaces it gated behind BRAIN_D5_CONSOLIDATE so the default reply is byte-identical). Conversation-visibility now VERIFIED at the production encode (te=40) through the real recall+disclosure (5/5 completing seeds rise, faithful+moat+byte-id-off+crash-rollback). Flip NOT taken: the soak found a real no-regression violation on ~1/6 overlapping-emergent-assembly builds (consolidating one memory shifts a neighbor's surfaced strength); clean on the 4/5 disjoint builds. Ledger d5-live-consolidation stays on_by_default=NO with the flatness-resolved + crosstalk-blocker note; remaining before default-on = disjoint emergent membership (pattern-separation #73) or a crosstalk-robust read. finding 2026-08-21-d5-graded-apical-read-conversation-visible-...-flip-blocked-on-emergent-assembly-crosstalk.

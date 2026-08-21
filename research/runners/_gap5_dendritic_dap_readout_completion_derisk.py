@@ -127,6 +127,56 @@ def _apical_up_read(bridge, R, held_pos_by_asm, cue_by_asm, up_thresh):
     return float(np.mean(fracs)) if fracs else 0.0
 
 
+# The three GRADED apical reads (all from the SAME cp_v_apical the binary read thresholds). Names match the validated
+# step-6 instrument (research/runners/_d5_step6_graded_apical_read_derisk.py); `depth_hold` is the recommended
+# production read (it IS the substrate's own BTSP instructive signal IS_post = max(cp_v_apical − v_hold, 0)).
+GRADED_READS = ("depth_rest", "depth_hold", "soft")
+
+
+def _apical_dual_read(bridge, R, held_pos_by_asm, cue_by_asm, up_thresh, v_hold, t_soft=4.0):
+    """Mirror of `_apical_up_read` (byte-identical drive / reset / step machinery, byte-identical binary UP-fraction)
+    that ALSO returns the three GRADED reads from the SAME apical state, in ONE sim pass:
+        up          binary UP-fraction (== _apical_up_read; the moat gate)
+        depth_rest  mean_held max(cp_v_apical − apical_E_rest, 0)   [mV above rest]
+        depth_hold  mean_held max(cp_v_apical − v_hold, 0)          [mV above hold == BTSP IS_post]
+        soft        mean_held sigmoid((cp_v_apical − up_thresh)/t_soft)  [soft binary, on 0..1]
+    Averaged over the (here single) assembly. NO sim/ edit — this is the read-out only. Copied verbatim from the
+    step-6 GO instrument so the binary UP-fraction is byte-identical to `_apical_up_read` and the graded reads match
+    the 6-seed-validated de-risk (research/findings/2026-08-20-d5-graded-apical-read-makes-learn-through-use-*)."""
+    cp = R.cp; to_host = R.to_host; ca3_idx = R.ca3_idx
+    cfg = bridge.core_config
+    E_rest = float(getattr(cfg, "apical_E_rest", -65.0))
+    ups, d_rest, d_hold, softs = [], [], [], []
+    for held_pos, cue_g in zip(held_pos_by_asm, cue_by_asm):
+        R.hard_silence(); _reset_apical_latch(bridge)
+        if cue_g is not None and len(cue_g) > 0:
+            darr = cp.asarray(np.asarray(cue_g, dtype=np.int64), dtype=cp.int64)
+            bridge.cp_external_input_current[darr] = cp.float32(R._drive_pA)
+        else:
+            darr = None
+        for _ in range(R._warm + R._read):
+            bridge._run_one_simulation_step(); bridge.runtime_state.current_time_step += 1
+        if getattr(bridge, "cp_v_apical", None) is None:
+            ups.append(0.0); d_rest.append(0.0); d_hold.append(0.0); softs.append(0.0)
+        else:
+            va = to_host(bridge.cp_v_apical)
+            held_global = [int(ca3_idx[p]) for p in held_pos]
+            if held_global:
+                vv = np.asarray([float(va[g]) for g in held_global], dtype=np.float64)
+                ups.append(float(np.mean((vv > up_thresh).astype(np.float64))))
+                d_rest.append(float(np.mean(np.maximum(vv - E_rest, 0.0))))
+                d_hold.append(float(np.mean(np.maximum(vv - v_hold, 0.0))))
+                softs.append(float(np.mean(1.0 / (1.0 + np.exp(-(vv - up_thresh) / t_soft)))))
+            else:
+                ups.append(0.0); d_rest.append(0.0); d_hold.append(0.0); softs.append(0.0)
+        if darr is not None:
+            bridge.cp_external_input_current[darr] = 0.0
+    return dict(up=float(np.mean(ups)) if ups else 0.0,
+                depth_rest=float(np.mean(d_rest)) if d_rest else 0.0,
+                depth_hold=float(np.mean(d_hold)) if d_hold else 0.0,
+                soft=float(np.mean(softs)) if softs else 0.0)
+
+
 def _held_cue_perm(R, seed):
     """Return (soma held_cue, soma held_perm, held_pos_by_asm, cue_by_asm, perm_by_asm) reusing make_readout's
     eval_assembly geometry so the SOMA read is identical to the committed instrument."""

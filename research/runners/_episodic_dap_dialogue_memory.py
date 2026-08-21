@@ -32,7 +32,7 @@ import numpy as np
 
 from sim.backend import get_backend
 from research.runners._gap5_dendritic_dap_readout_completion_derisk import (
-    _build_dap_readout, _apical_up_read, _held_cue_perm)
+    _build_dap_readout, _apical_up_read, _apical_dual_read, _held_cue_perm, GRADED_READS)
 from research.runners._gap5_btsp_forms_nmda_slow_reverberatory_derisk import (
     make_readout, _form_one_assembly, _build_bridge as _formation_build_bridge)
 from research.runners._gap5_emergent_end_to_end_episodic_loop_derisk import emergent_assemblies
@@ -134,6 +134,8 @@ class EpisodicDapMemory:
 
     # ---- RECALL (episodic READ): drive the topic-slot cue, read the dendritic dAP apical completion -------------
     def _apical(self, slot, cue_kind, lesion):
+        """The BINARY-only UP-fraction read (the historical moat gate). Retained as the byte-identity oracle the
+        graded read is verified against; `recall` now uses `_apical_dual` (which returns the identical `up`)."""
         cue = {"cue": self.cue_by_asm, "perm": self.perm_by_asm}.get(cue_kind)
         drive = [cue[slot]] if cue is not None else [None]
         if lesion:
@@ -144,21 +146,48 @@ class EpisodicDapMemory:
             if lesion:
                 self.R.C.data[:] = saved
 
+    def _apical_dual(self, slot, cue_kind, lesion):
+        """One-pass dual read: the BINARY UP-fraction (`up`, byte-identical to `_apical_up_read` = the moat gate) AND
+        the three GRADED magnitudes (depth_rest / depth_hold / soft) from the SAME cp_v_apical. Mirrors the
+        6-seed-validated `GradedEpisodicDapMemory._apical_dual` (finding
+        2026-08-20-d5-graded-apical-read-makes-learn-through-use-reliably-conversation-visible)."""
+        cue = {"cue": self.cue_by_asm, "perm": self.perm_by_asm}.get(cue_kind)
+        drive = [cue[slot]] if cue is not None else [None]
+        if lesion:
+            saved = self.R.C.data.copy(); self.R.C.data[:] = self.baseline_weights
+        try:
+            return _apical_dual_read(self.bridge, self.R, [self.held_pos_by_asm[slot]], drive,
+                                     self.p["up_thresh"], self.p["v_hold"])
+        finally:
+            if lesion:
+                self.R.C.data[:] = saved
+
     def recall(self, topic, *, lesion=False):
         """Return the SPIKING recall record for `topic`: apical UP completion for cue/perm/nocue + a cue-specific
-        completion verdict. lesion=True reads through the UNFORMED baseline weights (the load-bearing teeth)."""
+        completion verdict, PLUS the GRADED apical magnitude (the conversation-visible recall STRENGTH that rises with
+        learn-through-use, where the quantised binary UP-fraction is flat). lesion=True reads through the UNFORMED
+        baseline weights (the load-bearing teeth). The BINARY UP-fraction + specificity gates STILL decide `in_memory`
+        (the moat is unchanged, byte-identical to `_apical_up_read`); the graded magnitude is surfaced BESIDE it and is
+        only meaningful when in_memory=True."""
         slot = self.topic_slot.get(topic)
         if slot is None:
             return {"topic": topic, "slot": None, "formed": False, "in_memory": False,
-                    "apical_cue": 0.0, "apical_perm": 0.0, "apical_nocue": 0.0, "reason": "no-slot"}
-        cue = self._apical(slot, "cue", lesion)
-        perm = self._apical(slot, "perm", lesion)
-        nocue = self._apical(slot, "nocue", lesion)
+                    "apical_cue": 0.0, "apical_perm": 0.0, "apical_nocue": 0.0,
+                    "graded_cue": {r: 0.0 for r in GRADED_READS},
+                    "graded_perm": {r: 0.0 for r in GRADED_READS},
+                    "graded_nocue": {r: 0.0 for r in GRADED_READS}, "reason": "no-slot"}
+        c = self._apical_dual(slot, "cue", lesion)
+        p = self._apical_dual(slot, "perm", lesion)
+        n = self._apical_dual(slot, "nocue", lesion)
+        cue, perm, nocue = c["up"], p["up"], n["up"]
         completes = bool(cue >= COMPLETE_MIN and cue >= CUE_OVER_CTRL * (perm + 1e-6)
                          and cue >= CUE_OVER_CTRL * (nocue + 1e-6) and nocue <= CTRL_MAX)
         return {"topic": topic, "slot": slot, "formed": bool(slot in self.formed and not lesion),
                 "in_memory": completes, "apical_cue": float(cue), "apical_perm": float(perm),
-                "apical_nocue": float(nocue), "lesioned": bool(lesion), "reason": "spiking-dap-completion"}
+                "apical_nocue": float(nocue), "lesioned": bool(lesion), "reason": "spiking-dap-completion",
+                "graded_cue": {r: float(c[r]) for r in GRADED_READS},
+                "graded_perm": {r: float(p[r]) for r in GRADED_READS},
+                "graded_nocue": {r: float(n[r]) for r in GRADED_READS}}
 
     def discussed_topics(self, *, lesion=False):
         """Topics whose CA3 assembly COMPLETES via the dendritic dAP read = what the brain spiking-recalls as

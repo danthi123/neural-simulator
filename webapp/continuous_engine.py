@@ -88,9 +88,14 @@ def forget_session(cache_key) -> None:
 # store, so a used memory becomes measurably more robust for a LATER turn (learn-through-use). Default-OFF behind
 # `BRAIN_D5_CONSOLIDATE`; byte-identical to HEAD when off. The arc: steps 1-3 are 6/6-GO
 # (research/findings/2026-08-20-d5-learn-through-use-*-arc1-closed.md); this wires them under the idle tick.
-_D5_EPISODES = 3          # recall→strengthen episodes per consolidation call. Step-3 used 8; the robustness gain is
-                          # front-loaded (max-lesion-survived moves by episode 1-2, dw_on strictly shrinks), so a few
-                          # suffice for a between-turn tick while keeping the GPU cost bounded (~580 steps/episode).
+_D5_EPISODES = 1          # recall→strengthen episodes per consolidation call. CORRECTED 3→1 (2026-08-20, the graded-read
+                          # flip): the surfaced GRADED recall strength (depth_hold) rises SMOOTHLY + monotonically at
+                          # n_episodes=1 (the conversation-visible learn-through-use signal) but SATURATES on the first
+                          # tick at n_episodes=3 (step-6 de-risk: depth_hold GO 5/6 @ n_ep=1 vs 2/6 @ n_ep=3). The
+                          # robustness gain is front-loaded (max-lesion-survived moves by episode 1-2), so one episode
+                          # per tick still strengthens the used memory (it accumulates across turns) while keeping the
+                          # graded read climbing gradually. GPU cost ~580 steps/episode. Finding
+                          # 2026-08-20-d5-learn-through-use-DEFAULT-ON-graded-apical-read.
 # The step-3 GO knobs (the recall→self-terminating-window→BTSP loop). up_thresh / v_hold are read from the organ.
 _D5_RK = dict(tau_w=150.0, tau_apical=15.0, cue_pa=300.0, ignite_steps=80, window_steps=500,
               btsp_lr=0.02, btsp_w_max=100.0, btsp_elig_tau_ms=1000.0, b_adapt=0.8)

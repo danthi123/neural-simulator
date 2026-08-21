@@ -50,7 +50,13 @@ from __future__ import annotations
 import os
 import re
 
-from research.runners._episodic_dap_dialogue_memory import EpisodicDapMemory
+from research.runners._episodic_dap_dialogue_memory import EpisodicDapMemory, GRADED_READS
+
+# The graded apical read surfaced as the conversation-visible recall STRENGTH. `depth_hold` = mean-held
+# max(cp_v_apical − v_hold, 0) — the substrate's own BTSP instructive signal IS_post, and the 6-seed-validated
+# read that rises reliably with learn-through-use where the quantised binary UP-fraction is flat (finding
+# 2026-08-20-d5-graded-apical-read-makes-learn-through-use-reliably-conversation-visible).
+SURFACED_GRADED_READ = "depth_hold"
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -110,7 +116,10 @@ class EpisodicRecallOrgan:
         if self.mem is None:
             # nothing stored this conversation yet -> genuinely not in memory (no assembly formed)
             return {"topic": topic, "slot": None, "formed": False, "in_memory": False,
-                    "apical_cue": 0.0, "apical_perm": 0.0, "apical_nocue": 0.0, "reason": "no-store-yet"}
+                    "apical_cue": 0.0, "apical_perm": 0.0, "apical_nocue": 0.0,
+                    "graded_cue": {r: 0.0 for r in GRADED_READS},
+                    "graded_perm": {r: 0.0 for r in GRADED_READS},
+                    "graded_nocue": {r: 0.0 for r in GRADED_READS}, "reason": "no-store-yet"}
         return self.mem.recall(topic, lesion=lesion)
 
     def discussed(self, *, lesion: bool = False):
@@ -180,14 +189,40 @@ def extract_referent(text: str, topics) -> str | None:
 # The honest disclosure text. The GATE (in_memory) is spiking; `content` (the recalled fact sentence) is the host
 # oracle. NEVER asserts content for a topic whose assembly did not complete.
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+def _d5_strength_visible() -> bool:
+    """The GRADED recall-strength magnitude is surfaced in the reply ONLY when the D5 learn-through-use consolidation
+    is armed (`BRAIN_D5_CONSOLIDATE`). Rationale: the strength number is meaningful as a CONVERSATION-VISIBLE signal
+    only when consolidation can make it RISE with use; with consolidation off it is a static constant, so surfacing it
+    would just change the default reply for no functional gain. Gating it here keeps the DEFAULT recall reply
+    byte-identical to HEAD and couples the surfacing to the single flip flag (flipping BRAIN_D5_CONSOLIDATE on then
+    both runs the consolidation AND surfaces the strength that it makes rise). Lazy import avoids any import-order
+    coupling (continuous_engine does not import this module at load time)."""
+    try:
+        from webapp.continuous_engine import d5_consolidate_enabled
+        return bool(d5_consolidate_enabled())
+    except Exception:
+        return False
+
+
 def recall_disclosure(record: dict, content: str | None = None) -> str:
     """Compose the honest recall line from a spiking recall record. in_memory (a spiking completion) gates whether
-    any content is surfaced at all — a completion failure is an honest abstain, never a confabulation."""
+    any content is surfaced at all — a completion failure is an honest abstain, never a confabulation.
+
+    When the D5 learn-through-use consolidation is armed (`BRAIN_D5_CONSOLIDATE`), the reply ALSO surfaces the GRADED
+    apical magnitude (recall STRENGTH, mV above the latch hold) — the conversation-visible number that RISES as a used
+    memory is consolidated, where the binary completion fraction saturates. It is surfaced BESIDE the binary gate
+    (which already decided in_memory=True), so the moat is unchanged. With consolidation OFF (the default) the strength
+    is NOT shown -> the default recall reply is byte-identical to HEAD."""
     topic = record.get("topic", "that")
     if record.get("in_memory"):
         cue = float(record.get("apical_cue", 0.0))
-        lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
-                f"(dendritic dAP completion {cue:.2f}).")
+        if _d5_strength_visible():
+            strength = float((record.get("graded_cue") or {}).get(SURFACED_GRADED_READ, 0.0))
+            lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
+                    f"(dendritic dAP completion {cue:.2f}, recall strength {strength:.1f} mV).")
+        else:
+            lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
+                    f"(dendritic dAP completion {cue:.2f}).")
         if content:
             return f"{lead} {content}"
         return lead
