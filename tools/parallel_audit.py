@@ -81,6 +81,23 @@ def open_tasks():
     return len(act), [(t.get("priority") or 0, t.get("title", "")) for t in act]
 
 
+def mem_state():
+    """(avail_mb, total_mb, pct_avail) from /proc/meminfo. THE CEILING THE CPU/GPU AUDIT IS BLIND TO: on
+    2026-08-21 ~5 agents + 2 workflows + 3 sim-builds ran at once; each sim-loading job holds ~1-4 GB (bridges +
+    Qwen mouth + co-resident organs), the 46 GB box ran OUT OF RAM, and the whole Claude process CRASHED and took
+    the background work down. So RAM gates 'launch more' — an idle core is cheap, an OOM crash is not."""
+    try:
+        info = {}
+        for line in open("/proc/meminfo"):
+            k, _, v = line.partition(":")
+            info[k.strip()] = int(v.split()[0])  # kB
+        avail = info.get("MemAvailable", 0) // 1024
+        total = info.get("MemTotal", 1) // 1024
+        return avail, total, (100 * avail // total if total else 0)
+    except Exception:
+        return -1, -1, -1
+
+
 def main():
     nproc, load1, idle_local, lanes_local = local_idle()
     gpu = gpu_state()
@@ -96,21 +113,34 @@ def main():
     if idle_pool > 10: cap.append("%d pool cores (%d/3 nodes up)" % (idle_pool, pool_up))
     if gpu_free: cap.append("GPU idle(%d%%)" % gpu)
 
+    avail_mb, total_mb, mem_pct = mem_state()
+    # MEMORY CEILING (2026-08-21 crash): RAM gates 'launch more'. Heavy = sim-loading jobs (each ~1-4 GB) +
+    # agents + workflow sub-agents. Keep a headroom so a burst of them cannot OOM the box. When constrained,
+    # HOLDING IS CORRECT even with idle cores + ready tasks — an OOM crash loses all in-flight work.
+    MEM_FLOOR_MB = 8000
+    mem_constrained = (avail_mb >= 0 and (avail_mb < MEM_FLOOR_MB or mem_pct < 15))
+
     have_capacity = bool(cap)
     have_ready = (n_open is not None and n_open > 0)
-    # under-parallelized: idle capacity AND ready independent work AND not already many lanes
-    under = have_capacity and have_ready and (n_open > total_lanes)
+    # under-parallelized: idle capacity AND ready independent work AND not already many lanes AND RAM headroom
+    under = have_capacity and have_ready and (n_open > total_lanes) and not mem_constrained
 
-    print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | open-tasks=%s"
+    print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | mem=%s | open-tasks=%s"
           % (total_lanes, lanes_local, lanes_pool, agents, ("%d%%" % gpu if gpu >= 0 else "n/a"),
+             ("%dMB/%d%% free" % (avail_mb, mem_pct) if avail_mb >= 0 else "n/a"),
              (str(n_open) if n_open is not None else "?")))
-    if under:
+    if mem_constrained:
+        print("⛔ MEMORY-CONSTRAINED (only %dMB / %d%% free) — do NOT launch more heavy jobs (sim-builds/agents/"
+              "workflows); an OOM crash loses ALL in-flight work + is worse than an idle core. Let running work"
+              " drain first, then reassess. (This is the ceiling the CPU/GPU lanes are blind to — 2026-08-21.)"
+              % (avail_mb, mem_pct))
+    elif under:
         print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — idle: %s ; %d ready board tasks vs %d lanes."
               % (", ".join(cap), n_open, total_lanes))
         print("   LAUNCH now (independent, from the board — agents for build/research, pool for CPU, GPU for the big run):")
         for pr, title in top[:6]:
             print("     • p%d  %s" % (pr, title))
-        print("   Holding is NOT earned until this reads SATURATED.")
+        print("   Holding is NOT earned until this reads SATURATED (and RAM has headroom).")
     elif not have_ready:
         print("✓ SATURATED (no ready board tasks — restock the board or hold).")
     elif not have_capacity:
