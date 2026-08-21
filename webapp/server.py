@@ -4796,7 +4796,25 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             j = _get_curiosity_organ().judge(novelty=_CU.NOVEL_SIGNAL, lesion=_CU.curiosity_lesioned())
             info = dict(j)
             info["topic"] = topic
-            if j["curious"]:
+            curious = bool(j["curious"])
+            # ── DA/ENGAGEMENT-GATED crave-threshold (WAVE-0 Gap-4 coupling (b)), default-OFF ──────────────────────
+            # When the brain is ENGAGED (self-produced tonic DA above baseline, read off chat._last_da_drives set by
+            # the DA-mode block earlier this turn), LOWER the effective crave-threshold so the ASK pool crosses it
+            # more readily (ask a follow-up on a topic it would otherwise let pass); disengaged -> raise it. It only
+            # changes WHETHER the honest follow-up QUESTION is appended — never manufactures a fact or flips the
+            # abstain (moat preserved). Default-OFF: BRAIN_CURIOSITY_DA unset -> block skipped -> the organ's
+            # calibrated threshold decides `curious` unchanged and NO curiosity_da key -> byte-identical to HEAD.
+            # LESION (BRAIN_CURIOSITY_DA_LESION=1): the DA modulation is pinned to 0 (gain 1.0) -> the DA-dependence
+            # vanishes. See webapp/da_curiosity_drives_chat.py.
+            try:
+                from webapp import da_curiosity_drives_chat as _DAC
+                if _DAC.da_curiosity_enabled():
+                    curious, _da_trace = _DAC.crave_decision(chat, j["want_hz"], j["threshold"])
+                    info["curious"] = curious
+                    info["curiosity_da"] = _da_trace
+            except Exception as _dce:   # additive trace only; never let it change the organ's own decision on error
+                info["curiosity_da"] = {"on": True, "error": f"{type(_dce).__name__}: {_dce}"}
+            if curious:
                 return _CU.followup_question(topic), info
             return "", info
         except Exception as _cue:  # never let the curiosity read crash a turn — degrade to the bare abstain
