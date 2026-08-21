@@ -48,6 +48,27 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
   — the decider for whether the sparsity set-point closes the D5 crosstalk at production encode. Check `gpu_queue.sh status`.
 - **Pool:** `pool_autodispatch.sh` draining `research/queue/pool.queue`; 4 faculty de-risks (language/vision/curiosity/
   affect) re-landing (NOTE: sync-back gap #56 may drop them — peripheral).
+- **⭐⭐ LANDED 2026-08-21 (LATER — the WAVE default-on flip cycle, commit c7654d52 on `main` both remotes):**
+  the composed no-regression (`_wave4_composed_flip_noregression.py`, 4-turn out-of-scope panel: NO-GO diverged:2,
+  BOTH divergences GNW's veto) isolated GNW-3organ as the SOLE regressor — the other three spuriously-fire on ZERO
+  normal turns.
+  **FLIPPED default-ON:** da-gated-curiosity-threshold (`webapp/da_curiosity_drives_chat.py:80`, =0 escape) +
+  continuous-ideation (`webapp/continuous_engine.py:364`, =0 escape) — content-neutral BY CONSTRUCTION (curiosity
+  only appends an honest follow-up on an abstain; ideation only prepends a FLAGGED non-fact on an idle tick).
+  Ledger on_by_default:YES; board #123/#124 DONE. finding 2026-08-21-three-wave-faculties-flip-decision.
+  **HELD default-OFF with SHARP gates (not defers):** da-gated-encoding — it changes STORED magnitude, and the
+  composed check ran on the rf fast-path where its lever moves 0 variables (no evidence); gate = a store_conns-floor
+  no-regression soak at calibrated knee sigmas (`_da_encoding_noregression_soak.py`; NOTE the RFPhasorComposer
+  cleanup path is magnitude-INSENSITIVE up to sigma=32, so the knee needs stored-WEIGHT damage, and WHICH read path
+  production uses is the open sub-question); board #125. gnw-three-organ — the composed check CONFIRMED its D4
+  comprehension veto (toy cue-lexicon) regresses 2 legitimately-recalled facts (dog-chase-cat, cat-eat-fish); gate =
+  a real-vocab/NLI comprehension read; board #126.
+  **IN-FLIGHT (background, monitored):** (i) D5 sep_bias sweep — knob 1 of the learn-through-use default-on flip,
+  finding which winner-fatigue bias drives 6/6 disjoint+healthy assemblies (sep_bias=500 gives ~3-4/6; sweeping
+  750→3000) on branch research/memory-separator-readout. (ii) knowledge-scale FHRR SHARDING GO (owner #1 / #66):
+  route by agent → one shard, K=2000 facts/S=16 shards, routed 291ms vs 4149ms = 14.2x speedup, byte-identical
+  answers (0 mismatches), moat 8/8, honest host-hash-router scaffold flag → faithful = learned/spiking cue-router;
+  UNCOMMITTED on branch research/knowledge-scale-sharding, re-verifying to bank.
 - **⭐ LANDED 2026-08-21 (this session, all on `main` both remotes):** (1) **THE CONTINUOUS-LIFE FLIP — `BRAIN_CONTINUOUS`
   +`BRAIN_CONTINUOUS_DRIVES` DEFAULT-ON** (commit 1bf65c4f, ledger on_by_default:YES, soak GO 0/7 no-regression + no
   pileup): the brain WANDERS + FEELS between turns by DEFAULT now. (2) **DA-gated encoding** wired+GO default-OFF
