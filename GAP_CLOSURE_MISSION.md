@@ -43,33 +43,34 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
 **LIVE LANES (2026-08-21 ~03:45 EDT — do NOT double-launch; check the state file before relaunching):**
 - **Heartbeat:** persistent `Monitor` (state + parallel_audit + cost + memory every ~15 min). If a continuation finds
   NONE live, RE-ARM per "SESSION START" below (persistent=true) — the #1 failure is stalling on a dead heartbeat.
-- **GPU (single slot):** `tools/gpu_queue.sh` dispatcher live; CURRENT JOB = the continuous-life default-flip SOAK
-  `research/runners/_continuous_default_flip_soak_cupy.py` → `research/findings/raw/_continuous_live_cupy/default_flip_soak.json`
-  (the flip's gate: no-regression + no GPU-pileup). Check `tools/gpu_queue.sh status` + that JSON.
-- **Agent (numpy):** DA-GATED ENCODING wiring — `encoding_gain_fn` from the live self-produced DA
-  (`chat._last_da_drives["da_level"]`) into the production store, default-OFF `BRAIN_DA_ENCODING`. Deliverable:
-  server.py/brain_chat_tui.py wiring + `_da_encoding_wired_verify.py` + finding + a `da-gated-encoding` ledger row.
-- **Agent (numpy; cupy-confirm QUEUED):** Trunk-B MEMORY-SEPARATOR (board #73/#71) on branch
-  `research/memory-separator-readout` — the intrinsic-excitability SPARSITY HOMEOSTAT that stops one memory-assembly
-  going dense + swallowing another. Deliverable: `_d5_pattern_separation_setpoint_derisk.py` + finding.
+- **GPU (single slot):** `tools/gpu_queue.sh` dispatcher live; CURRENT JOB = the Trunk-B **te=40 D5 cupy confirm**
+  (`_d5_pattern_separation_setpoint_derisk --store-te 40 --consol-te 40`) → `research/findings/raw/_d5_separation/cupy_confirm_te40.json`
+  — the decider for whether the sparsity set-point closes the D5 crosstalk at production encode. Check `gpu_queue.sh status`.
 - **Pool:** `pool_autodispatch.sh` draining `research/queue/pool.queue`; 4 faculty de-risks (language/vision/curiosity/
   affect) re-landing (NOTE: sync-back gap #56 may drop them — peripheral).
-- **Landed 2026-08-21:** continuous-state-engine ledger row (faculty #39) + the soak runner (commit 64822b0c, both
-  remotes) + the open-ended chat mode / verify-post-filter / contradiction-filter / 100k tiered-knowledge store
-  (earlier today). PRIMARY work-worktree = `/home/dant123/Projects/sim-worktrees/gate-b-v2-clean` on `main`
-  (the plain `/home/dant123/Projects/sim` checkout is on a STALE branch — do NOT edit governed docs/code there).
+- **⭐ LANDED 2026-08-21 (this session, all on `main` both remotes):** (1) **THE CONTINUOUS-LIFE FLIP — `BRAIN_CONTINUOUS`
+  +`BRAIN_CONTINUOUS_DRIVES` DEFAULT-ON** (commit 1bf65c4f, ledger on_by_default:YES, soak GO 0/7 no-regression + no
+  pileup): the brain WANDERS + FEELS between turns by DEFAULT now. (2) **DA-gated encoding** wired+GO default-OFF
+  (d5c67f7c, WAVE-0 Gap-4 (a)). (3) **Trunk-B separator** — set-point makes assemblies disjoint but the te=18
+  "crosstalk" was a read-instability ARTIFACT (corrected finding ed34300a, branch `research/memory-separator-readout`);
+  the te=40 cupy confirm (running) is the decider. (4) continuous ledger row + soak runner (64822b0c) + the 2026-08-21
+  resume anchor. Earlier today: open-ended chat / verify-post-filter / contradiction-filter / 100k tiered-knowledge.
+  PRIMARY work-worktree = `/home/dant123/Projects/sim-worktrees/gate-b-v2-clean` on `main` (the plain
+  `/home/dant123/Projects/sim` checkout is on a STALE branch — do NOT edit governed docs/code there).
 
 **PRE-DECIDED NEXT ACTIONS (act on each notification; NEVER idle — pull the next backlog item when a lane frees):**
-1. **Soak → GO** ⇒ flip `BRAIN_CONTINUOUS`(+`BRAIN_CONTINUOUS_DRIVES`) DEFAULT-ON: in `webapp/continuous_engine.py`
-   `continuous_enabled`, replace `os.environ.get("BRAIN_CONTINUOUS","0")` with a `_CONTINUOUS_DEFAULT_ON=True` +
-   `=0` byte-identical escape (mirror affect-drives/gnw-multistep), re-run the soak as the flip no-regression, set the
-   ledger row on_by_default:YES, finding, push_both, sync docs+board. **NO-GO/UNDEFINED** ⇒ read the divergence/abort,
-   fix the real regression or runner (no-defer), re-queue (a memory-abort just means re-queue when VRAM is free).
-2. **DA-encoding agent done** ⇒ verify finding+ledger row; then wire the NEXT Gap-4 coupling (curiosity crave-threshold
-   from the same DA dict) — SERIALIZE server.py edits AFTER the agent's server.py commit (avoid a same-file race).
-3. **Trunk-B agent done** ⇒ read the separator verdict; ensure the cupy confirm is queued; on cupy GO, flip
-   `BRAIN_D5_CONSOLIDATE` default-on (unblocks learn-through-use consolidation, #71/#73).
-4. Then the ORDERED BACKLOG, keeping all lanes saturated (GPU serial, pool, ≤~2 build-agents, workflows for design/verify).
+1. **te=40 D5 cupy confirm → done** (`research/findings/raw/_d5_separation/cupy_confirm_te40.json`) ⇒ if the neighbor
+   surfaced-shift is ≈0 with byte-identical B-weights ⇒ the sparsity set-point CLOSES the D5 crosstalk ⇒ flip
+   `BRAIN_D5_CONSOLIDATE` default-on (unblocks learn-through-use consolidation, #71/#73), finding+ledger+push+sync. If a
+   residual shift REMAINS at te=40 ⇒ the read-isolation lever (normalization/competition-isolated surfaced read) is the
+   warranted next build (no-defer). NOTE sep_bias=500 reached disjoint on 3/6 seeds — a higher bias may be needed for 6/6.
+2. **WAVE-0 Gap-4 couplings (DO THESE MYSELF, main loop — cheaper than an agent; server.py is now free after the
+   DA-encoding commit):** (b) curiosity crave-threshold sourced from the `da_mode_drives_chat` DA dict; (c) attention-gain;
+   (d) episodic-salience (affect-gated D5 store salience). Each additive/default-off → verify → flip after its soak.
+3. **WAVE-1 CPU de-risks (pool or a build-agent):** LC-NE gain on the GNW thought-swap eviction (reuse the WTA
+   suppression); GNW three-organ bus adding the D4 comprehension-monitor.
+4. **WAVE-2 GPU ports (SERIALIZED on gpu_queue):** emergent pattern-completion replay → wire under
+   `consolidate_used_memory`; generative-attractor-wander (the novelty/ideation rung). Keep all lanes saturated.
 
 **ORDERED OVERNIGHT BACKLOG (each rung: de-risk → wire default-OFF → soak/no-regression → FLIP default-ON → sync):**
 - **WAVE-0 Gap-4 couplings (numpy, cheap):** (a) DA-gated encoding [agent]; (b) curiosity crave-threshold from the DA
