@@ -3836,6 +3836,24 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception:
             pass
 
+    # GNW THREE-GENUINELY-DISTINCT-ORGANS consensus bus — DEFAULT-OFF (2026-08-21). Extends the DEFAULT-ON 2-organ bus
+    # (organ A = composer recall + organ B = the spiking surprise monitor) with a THIRD genuinely-distinct spiking
+    # organ: organ C = the production COMPREHENSION monitor (`ComprehensionProductionOrgan`, the 6/6-GO D4 faculty — a
+    # Wong-Wang `SpikingRoleCompetition` sel-pool WTA read off `cp_firing_states`). Organ C reads whether the RECALLED
+    # PROPOSITION (agent, action, cand) is role-RESOLVABLE; on a LOW comprehension margin (role-ambiguous) it WITHHOLDS,
+    # so the Q=3 consensus (all three must vote for the workspace to ignite) ABSTAINS instead of committing a recall the
+    # brain did not comprehend — a consensus-veto the 2-organ bus could not make. DEFAULT-OFF (unset -> this block is
+    # skipped, the module is never imported, the turn is BYTE-IDENTICAL to the 2-organ-bus production path). Escape: the
+    # flag simply unset. Load-bearing lever: `BRAIN_GNW_3ORGAN_ORGANC_LESION=1` silences organ C's veto (it corroborates
+    # unconditionally) -> the consensus collapses to the 2-organ decision (the low-comprehension abstain reverts to
+    # commit). Guarded so a wiring failure can never crash a turn. NO sim/ edit. See webapp/gnw_three_organ_bus.py.
+    if os.environ.get("BRAIN_GNW_3ORGAN", "").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            from webapp import gnw_three_organ_bus as _gnw_3organ_mod
+            _gnw_3organ_mod.install_three_organ_gate(chat)
+        except Exception:
+            pass
+
     # GNW CONFIDENCE/CONFLICT-GATED DELIBERATION — THE KEYSTONE, WIRED (T1-1 rung d, 2026-08-18): after the bus commits,
     # the WORKSPACE's OWN spiking conflict read (n_ignited + the nmda_norm confidence balance) DECIDES commit-vs-abstain.
     # When the brain has >=2 genuinely-competing stored answers under the SAME (agent, action) (today's bus commits the
