@@ -661,6 +661,30 @@ class ChatBrain:
             return None                                       # degenerate/lesioned parse -> let the caller fall back
         return a, v
 
+    def _definitional_copula_route(self, question):
+        """A DEFINITIONAL copula question -- 'what is X?', "what's a X?", 'who is X?', 'define X' -- asks for X's
+        CATEGORY. English lexicalizes that relation as the copula 'is', which the stopword strip removes as a
+        function word, leaving ONLY the subject X; so the normal (agent, action) extraction finds no action and the
+        turn wrongly abstains. Knowledge stores (Wikidata's 'instance of') lexicalize the same relation as 'isa'
+        (e.g. 'canada isa country'), so map such a question to (X, 'isa'). Returns [subject, 'isa'] or None. This is
+        COMPREHENSION only (the same lexical-variant job as the inflection map + the router synonyms) -- the recall
+        itself stays on the composer/substrate (`what_does`), so the no-confab MOAT is untouched: an unknown subject
+        -> `what_does` returns nothing -> honest abstain. Relational 'what is the capital of X' is NOT definitional
+        (it carries a relation word + ' of '), so it is deliberately excluded and left to the normal parse."""
+        import re as _re
+        m = _re.match(r"^\s*(?:what(?:'s|s| is| are)|who(?:'s|s| is| are)|define)\s+"
+                      r"(?:an?\s+|the\s+)?(.+?)\s*\??\s*$", question.lower())
+        if not m:
+            return None
+        subj = m.group(1).strip().strip(".,!?").strip()
+        # a SINGLE-ENTITY subject only: reject a relational question ('... of ...') or an empty/self subject. A
+        # multi-word entity (e.g. 'north america', 'united states') is allowed -- the store keys on the phrase.
+        if not subj or " of " in (" %s " % subj):
+            return None
+        if subj in self.router.self_aliases:
+            return None
+        return [subj, "isa"]
+
     def _extract_route(self, question):
         """COMPREHENSION-ONLY phase of `_substrate_recall`: resolve the routable (agent, action) of a factual SVO query
         WITHOUT recalling the patient (no `what_does`). Returns [a, v] for a routable factual query (the caller — the
@@ -673,6 +697,14 @@ class ChatBrain:
                  "to", "it", "that", "this", "they", "them", "of", "about"}
         toks = [t.lower().strip(".,!?") for t in question.split()]
         content = [t for t in toks if t and t not in _STOP]
+        # DEFINITIONAL COPULA question ('what is X?') -> the instance-of relation 'isa'. Fires ONLY when the copula
+        # strip left <=1 content word (i.e. the normal (agent, action) parse has NO verb to work with), so a question
+        # that already carries two content words is untouched -> byte-identical for every previously-routable query.
+        # The subject must not be a self-alias (identity questions stay the host router's job).
+        if len(content) <= 1:
+            _defo = self._definitional_copula_route(question)
+            if _defo is not None:
+                return _defo
         # CHOOSE (#1): the on-brain parser OWNS a factual-SVO-shaped question (>=2 content words, none a self-alias).
         # When it comprehends -> (agent, action) on FIRING neurons; when it DECLINES on such a question -> "__DECLINE__"
         # (do NOT fall to the host router's role-blind keyword confab). This makes the comprehension genuinely on the
