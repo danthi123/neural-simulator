@@ -9,8 +9,9 @@
 # Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
 
 last_reconciled: 2026-08-20
-at_commit: b9265dac
+at_commit: 27b162fc
 note: reconciled after the D5 learn-through-use arc (steps 1-5) + GNW two-organ default-on + the SWR
   memory-replay arc + the knowledge-loading arc scoping. Board changes: #71 updated (de-risked, learn-through-use
   advanced end-to-end + conversation-visible, still default-off); #76 marked done (dopamine-mode-in-chat, default-on);
   #108 created (give the brain a real body of knowledge to talk about).
+  Follow-up 2026-08-20: #108 advanced — first real knowledge bundle built (2413 Wikidata facts, loads+answers+abstains); still de-risked (standalone, not in the always-on chat).

@@ -1,0 +1,37 @@
+{
+ "run_id": "1787274761-2614963",
+ "runner": "research/runners/_knowledge_bundle_build_and_demo.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/knowledge-bundle/research/runners/_knowledge_bundle_build_and_demo.py",
+  "--cap",
+  "3000",
+  "--recall-n",
+  "50",
+  "--moat-n",
+  "25",
+  "--demo-answer",
+  "10",
+  "--demo-abstain",
+  "5",
+  "--seed",
+  "42"
+ ],
+ "git_sha": "fb95d2729",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T21:12:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_knowledge_bundle_wikidata/bundle/brain.json"
+}

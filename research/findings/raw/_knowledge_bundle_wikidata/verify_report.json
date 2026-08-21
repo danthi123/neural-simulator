@@ -1,0 +1,353 @@
+{
+  "source": "wikidata_live",
+  "n_facts_fetched_before_cap": 2413,
+  "n_facts_loaded": 2413,
+  "D": 128,
+  "seed": 42,
+  "vocab_size": 2252,
+  "build_seconds": 46.82561230659485,
+  "n_distinct_cues": 2183,
+  "n_cue_collisions": 168,
+  "cue_collision_example": {
+    "cue": [
+      "rat",
+      "isa"
+    ],
+    "patients": [
+      "mammal",
+      "rodent",
+      "rattus"
+    ]
+  },
+  "recall": {
+    "n": 50,
+    "correct": 50,
+    "accuracy": 1.0,
+    "sec_per_query": 5.1378474521636965,
+    "total_seconds": 256.8923726081848,
+    "wrong_examples": [],
+    "examples": [
+      {
+        "agent": "garumna",
+        "relation": "isa",
+        "expected": "planet",
+        "got": "planet",
+        "ok": true
+      },
+      {
+        "agent": "dwarf",
+        "relation": "isa",
+        "expected": "celestial body",
+        "got": "celestial body",
+        "ok": true
+      },
+      {
+        "agent": "koothu",
+        "relation": "isa",
+        "expected": "art form",
+        "got": "art form",
+        "ok": true
+      },
+      {
+        "agent": "mineral",
+        "relation": "isa",
+        "expected": "minerals",
+        "got": "minerals",
+        "ok": true
+      },
+      {
+        "agent": "matelote",
+        "relation": "isa",
+        "expected": "dance",
+        "got": "dance",
+        "ok": true
+      },
+      {
+        "agent": "counter",
+        "relation": "isa",
+        "expected": "furniture",
+        "got": "furniture",
+        "ok": true
+      },
+      {
+        "agent": "somaliland",
+        "relation": "has",
+        "expected": "hargeisa",
+        "got": "hargeisa",
+        "ok": true
+      },
+      {
+        "agent": "nicaragua",
+        "relation": "isa",
+        "expected": "country",
+        "got": "country",
+        "ok": true
+      },
+      {
+        "agent": "leben",
+        "relation": "isa",
+        "expected": "dairy product",
+        "got": "dairy product",
+        "ok": true
+      },
+      {
+        "agent": "lighter",
+        "relation": "isa",
+        "expected": "tool",
+        "got": "tool",
+        "ok": true
+      },
+      {
+        "agent": "singularity",
+        "relation": "isa",
+        "expected": "weather",
+        "got": "weather",
+        "ok": true
+      },
+      {
+        "agent": "caryhuang",
+        "relation": "isa",
+        "expected": "planet",
+        "got": "planet",
+        "ok": true
+      },
+      {
+        "agent": "danup",
+        "relation": "isa",
+        "expected": "dairy product",
+        "got": "dairy product",
+        "ok": true
+      },
+      {
+        "agent": "tanzania",
+        "relation": "has",
+        "expected": "dodoma",
+        "got": "dodoma",
+        "ok": true
+      },
+      {
+        "agent": "omeiensis",
+        "relation": "isa",
+        "expected": "shrub",
+        "got": "shrub",
+        "ok": true
+      }
+    ]
+  },
+  "moat": {
+    "n": 33,
+    "abstain_ok": 33,
+    "moat_rate": 1.0,
+    "false_accepts": [],
+    "examples": [
+      {
+        "agent": "zorblaxi",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "fnargleth",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "quixotronn",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "blipwoodx",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "snarklebee",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "glimmerfoxx",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "thundrakex",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "wobblenite",
+        "relation": "isa",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "never_seen_word"
+      },
+      {
+        "agent": "iolite",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "angle",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "bowl",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "halo",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "papilla",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "bombus",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      },
+      {
+        "agent": "ockels",
+        "relation": "has",
+        "got": null,
+        "abstain_ok": true,
+        "kind": "known_agent_unstored_relation"
+      }
+    ]
+  },
+  "demo_turns": [
+    {
+      "kind": "abstain_unknown_word",
+      "agent": "snarklebee",
+      "relation": "isa",
+      "answer": null
+    },
+    {
+      "kind": "abstain_unknown_word",
+      "agent": "quixotronn",
+      "relation": "isa",
+      "answer": null
+    },
+    {
+      "kind": "answer",
+      "agent": "amasi",
+      "relation": "isa",
+      "expected": "yogurt",
+      "answer": "yogurt"
+    },
+    {
+      "kind": "answer",
+      "agent": "hardy",
+      "relation": "isa",
+      "expected": "planet",
+      "answer": "planet"
+    },
+    {
+      "kind": "answer",
+      "agent": "bagel",
+      "relation": "isa",
+      "expected": "food",
+      "answer": "food"
+    },
+    {
+      "kind": "answer",
+      "agent": "yttrium",
+      "relation": "isa",
+      "expected": "chemical element",
+      "answer": "chemical element"
+    },
+    {
+      "kind": "abstain_unknown_word",
+      "agent": "blipwoodx",
+      "relation": "isa",
+      "answer": null
+    },
+    {
+      "kind": "abstain_unstored_relation",
+      "agent": "jackhammer",
+      "relation": "has",
+      "answer": null
+    },
+    {
+      "kind": "answer",
+      "agent": "chamber",
+      "relation": "isa",
+      "expected": "container",
+      "answer": "container"
+    },
+    {
+      "kind": "abstain_unstored_relation",
+      "agent": "chifforobe",
+      "relation": "has",
+      "answer": null
+    },
+    {
+      "kind": "answer",
+      "agent": "palladium",
+      "relation": "isa",
+      "expected": "chemical element",
+      "answer": "chemical element"
+    },
+    {
+      "kind": "answer",
+      "agent": "zimbabwe",
+      "relation": "has",
+      "expected": "harare",
+      "answer": "harare"
+    },
+    {
+      "kind": "answer",
+      "agent": "tennyo",
+      "relation": "isa",
+      "expected": "planet",
+      "answer": "planet"
+    },
+    {
+      "kind": "answer",
+      "agent": "lamella",
+      "relation": "isa",
+      "expected": "body part",
+      "answer": "body part"
+    },
+    {
+      "kind": "answer",
+      "agent": "gratus",
+      "relation": "isa",
+      "expected": "temnospondyli",
+      "answer": "temnospondyli"
+    }
+  ],
+  "bundle_dir": "/home/dant123/Projects/sim-worktrees/knowledge-bundle/research/findings/raw/_knowledge_bundle_wikidata/bundle"
+}

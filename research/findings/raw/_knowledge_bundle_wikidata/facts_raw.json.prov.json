@@ -1,0 +1,27 @@
+{
+ "run_id": "1787272953-2561435",
+ "runner": "research/runners/_knowledge_bundle_wikidata_fetch.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/knowledge-bundle/research/runners/_knowledge_bundle_wikidata_fetch.py",
+  "--max-seconds",
+  "1200"
+ ],
+ "git_sha": "fb95d2729",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T20:42:33",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_knowledge_bundle_wikidata/facts_raw.json"
+}

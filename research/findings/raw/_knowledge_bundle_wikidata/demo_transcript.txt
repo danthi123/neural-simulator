@@ -1,0 +1,45 @@
+Turn  1 [UNKNOWN -> MOAT ABSTAIN]
+  Q: What is a snarklebee?
+  A: I don't know.
+Turn  2 [UNKNOWN -> MOAT ABSTAIN]
+  Q: What is a quixotronn?
+  A: I don't know.
+Turn  3 [LOADED FACT]
+  Q: What is a amasi?
+  A: A amasi is a yogurt.
+Turn  4 [LOADED FACT]
+  Q: What is a hardy?
+  A: A hardy is a planet.
+Turn  5 [LOADED FACT]
+  Q: What is a bagel?
+  A: A bagel is a food.
+Turn  6 [LOADED FACT]
+  Q: What is a yttrium?
+  A: A yttrium is a chemical element.
+Turn  7 [UNKNOWN -> MOAT ABSTAIN]
+  Q: What is a blipwoodx?
+  A: I don't know.
+Turn  8 [UNKNOWN -> MOAT ABSTAIN]
+  Q: What does a jackhammer have?
+  A: I don't know.
+Turn  9 [LOADED FACT]
+  Q: What is a chamber?
+  A: A chamber is a container.
+Turn 10 [UNKNOWN -> MOAT ABSTAIN]
+  Q: What does a chifforobe have?
+  A: I don't know.
+Turn 11 [LOADED FACT]
+  Q: What is a palladium?
+  A: A palladium is a chemical element.
+Turn 12 [LOADED FACT]
+  Q: What does Zimbabwe have?
+  A: Zimbabwe has Harare.
+Turn 13 [LOADED FACT]
+  Q: What is a tennyo?
+  A: A tennyo is a planet.
+Turn 14 [LOADED FACT]
+  Q: What is a lamella?
+  A: A lamella is a body part.
+Turn 15 [LOADED FACT]
+  Q: What is a gratus?
+  A: A gratus is a temnospondyli.
