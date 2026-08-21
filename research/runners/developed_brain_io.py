@@ -457,11 +457,24 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     # was stored in). See tiered_fact_store.py + the sharded-fact-store finding (2026-08-20).
     if ltm_bundle is not None:
         from research.runners.tiered_fact_store import (TieredFactStore, build_ltm_from_facts, auto_n_shards)
-        ltm_facts = _load_facts_json(ltm_bundle)
-        if ltm_facts:
-            ns = int(ltm_n_shards) if ltm_n_shards is not None else auto_n_shards(len(ltm_facts))
-            ltm = build_ltm_from_facts(ltm_facts, n_shards=ns,
-                                       seed=int(ltm_seed) if ltm_seed is not None else seed, D=int(ltm_D))
+        from research.runners.sharded_phasor_store import ShardedPhasorStore
+        ltm = None
+        # FAST PATH: a persisted sharded store (build ONCE offline, reload in seconds — no per-fact resonate).
+        if (Path(ltm_bundle) / "manifest.json").exists():
+            try:
+                mani = json.load(open(Path(ltm_bundle) / "manifest.json"))
+            except Exception:
+                mani = {}
+            if isinstance(mani, dict) and "n_shards" in mani:
+                ltm = ShardedPhasorStore.load(str(ltm_bundle))
+        # BUILD PATH: a facts bundle -> build (+ resonate) the sharded LTM.
+        if ltm is None:
+            ltm_facts = _load_facts_json(ltm_bundle)
+            if ltm_facts:
+                ns = int(ltm_n_shards) if ltm_n_shards is not None else auto_n_shards(len(ltm_facts))
+                ltm = build_ltm_from_facts(ltm_facts, n_shards=ns,
+                                           seed=int(ltm_seed) if ltm_seed is not None else seed, D=int(ltm_D))
+        if ltm is not None:
             inner = _inner_agent(agent)
             inner.composer = TieredFactStore(inner.composer, ltm)
     return agent, manifest

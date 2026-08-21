@@ -176,3 +176,61 @@ class ShardedPhasorStore:
             return (0, 0, 0.0, 0.0)
         mean = sum(sizes) / len(sizes)
         return (min(sizes), max(sizes), mean, (max(sizes) / mean if mean else 0.0))
+
+    # --- persistence (build ONCE, reload FAST) -------------------------------------------------------------
+    # A 100k-fact LTM is ~30 min to BUILD (one RF resonate per fact at store time), but should reload in seconds
+    # for a live chat server. Mirroring developed_brain_io's kb_composites speedup: save each fact's already-bound
+    # COMPOSITE, and on load reconstruct the shards (the codebook regenerates byte-identically from seed+vocab --
+    # the LTM is a bulk store that is never runtime-grown, so no growth diverges the codes) and set kb DIRECTLY,
+    # skipping the resonate. Numpy fast path only (enable_substrate_store=False, the LTM default).
+    def save(self, path):
+        """Persist to `path/` (manifest.json + facts.json + composites.npz) so `ShardedPhasorStore.load(path)`
+        reloads WITHOUT the per-fact RF resonate. Returns the number of facts saved."""
+        import json
+        import os
+        import numpy as np
+        os.makedirs(path, exist_ok=True)
+        base = self.shards[0]
+        manifest = {
+            "n_shards": self.n_shards, "seed": self.seed, "D": self.D,
+            "share_codebook": self._shared_codebook, "composer_kwargs": self._composer_kwargs,
+            "vocab": list(base.words), "n_facts": self.total_facts(),
+        }
+        facts = []            # [{shard, fact}] preserving the store's shard placement
+        comp_arrays = {}
+        for i, sh in enumerate(self.shards):
+            comps = []
+            for fact, handle in sh.kb:
+                facts.append({"shard": i, "fact": fact})
+                comps.append(np.asarray(handle))
+            if comps:
+                comp_arrays[f"sh{i}"] = np.stack(comps)
+        with open(os.path.join(path, "manifest.json"), "w") as f:
+            json.dump(manifest, f)
+        with open(os.path.join(path, "facts.json"), "w") as f:
+            json.dump(facts, f)
+        np.savez(os.path.join(path, "composites.npz"), **comp_arrays)
+        return manifest["n_facts"]
+
+    @classmethod
+    def load(cls, path):
+        """Reconstruct a store saved by `save()` WITHOUT re-resonating (codebook regenerates from seed+vocab; each
+        fact's composite is set directly into its shard's kb)."""
+        import json
+        import os
+        import numpy as np
+        with open(os.path.join(path, "manifest.json")) as f:
+            m = json.load(f)
+        store = cls(n_shards=m["n_shards"], seed=m["seed"], D=m["D"], vocab=m["vocab"],
+                    share_codebook=m.get("share_codebook", True), **(m.get("composer_kwargs") or {}))
+        with open(os.path.join(path, "facts.json")) as f:
+            facts = json.load(f)
+        comps = np.load(os.path.join(path, "composites.npz"))
+        per_shard_idx = {}
+        for rec in facts:
+            i = int(rec["shard"])
+            arr = comps[f"sh{i}"]
+            j = per_shard_idx.get(i, 0)
+            store.shards[i].kb.append((rec["fact"], arr[j]))
+            per_shard_idx[i] = j + 1
+        return store
