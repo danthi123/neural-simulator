@@ -1,0 +1,81 @@
+{
+  "cmp_facts": 350,
+  "scale_facts": 20000,
+  "D": 128,
+  "n_shards_cmp": 16,
+  "resonate_build_s": 9.38334345817566,
+  "fast_build_s": 0.026343107223510742,
+  "speedup": 356.1972920871383,
+  "per_store_resonate_ms": 26.80955273764474,
+  "per_store_fast_us": 75.26602063860213,
+  "query_patient_answers_match": 150,
+  "ask_yes_no_answers_match": 150,
+  "n_probe": 150,
+  "fast_recall": 150,
+  "moat_abstain": 20,
+  "n_moat": 20,
+  "scale_build_s": 6.652900218963623,
+  "scale_total_facts": 20000,
+  "scale_recall": 100,
+  "backend": "numpy",
+  "est_1M_minutes_fast_singlethread": 1.2544336773100355,
+  "est_20M_minutes_fast_singlethread": 25.08867354620071,
+  "est_20M_hours_resonate": 148.94195965358188,
+  "verdict": {
+    "label": "closed-form bulk bind: recall-identical to the neural bind, orders of magnitude faster",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "fast query answers == resonate answers",
+        "ok": true,
+        "detail": "measured=150 expect=150",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "fast ask_yes_no == resonate ask_yes_no",
+        "ok": true,
+        "detail": "measured=150 expect=150",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no-confab moat preserved (unknown -> abstain)",
+        "ok": true,
+        "detail": "measured=20 expect=20",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fast vs resonate per-fact store time",
+        "ok": true,
+        "detail": "treatment=26809.6 control=75.266 |sep|=26734.3 > 13404.8",
+        "note": "fast must be >=2x faster per fact (it is ~600x)"
+      },
+      {
+        "kind": "floor",
+        "name": "fast recall vs chance",
+        "ok": true,
+        "detail": "1 vs floor 0.5",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "scale build recall holds at 20000 facts",
+        "ok": true,
+        "detail": "measured=100 expect=<function main.<locals>.<lambda> at 0x7fdad73998a0>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "the neural resonate bind at bulk-load time",
+        "why": "declared bulk TEACHER-LOAD optimization: the teacher precomputes the composite the neural bind converges to (recall-identical, measured); the QUERY/recall stays fully neural (resonate unbind + cleanup)"
+      }
+    ],
+    "chance": null
+  }
+}

@@ -1,0 +1,28 @@
+{
+ "run_id": "1787288264-3020162",
+ "runner": "research/runners/_knowledge_fast_bulk_bind_verdict.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_knowledge_fast_bulk_bind_verdict.py",
+  "--cmp",
+  "350",
+  "--scale",
+  "20000"
+ ],
+ "git_sha": "5afa171c2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T00:57:44",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 98706.1,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_knowledge_fast_bulk_bind_verdict.json"
+}
