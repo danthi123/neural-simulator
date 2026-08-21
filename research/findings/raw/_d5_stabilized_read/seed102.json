@@ -1,0 +1,379 @@
+{
+  "seed": 102,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "k_noise": 8,
+    "n_turns": 5,
+    "n_episodes": 1,
+    "warm_reads": 4,
+    "train_events": 8,
+    "te_grid": "5,6,7,8,10",
+    "snr_min": 2.0,
+    "out": "research/findings/raw/_d5_stabilized_read/seed42.json"
+  },
+  "verdict": {
+    "label": "A snapshot-ISOLATED surfaced read makes the D5 recall-strength effect DECIDABLE (SNR\u22652.0) AND monotone-rising, where the LIVE read (period-2) is undecidable \u2014 best 'depth_rest.iso' (seed 102)",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: best-isolated-monotone (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "weak-store-completes-T",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the weak encode COMPLETES via the BINARY moat gate (a genuinely usable memory with rise headroom)"
+      },
+      {
+        "kind": "require",
+        "name": "moat-byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the surfaced isolated read is ADDITIVE: the binary gate apical_cue stays the live read == production _apical_up_read"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cat is a genuine never-formed control (no completion, baseline weight)"
+      },
+      {
+        "kind": "require",
+        "name": "consolidation-ran",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the between-turn D5 consolidation actually potentiated dog's within-assembly weight"
+      },
+      {
+        "kind": "require",
+        "name": "best-isolated-faithful",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the isolated read is cue-specific AND collapses under the formation-lesion (moat preserved)"
+      },
+      {
+        "kind": "require",
+        "name": "best-isolated-decidable",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the isolated read's repeated-read noise is <= 1/2.0 of the effect (\u22480 \u2192 decidable)"
+      },
+      {
+        "kind": "require",
+        "name": "best-isolated-monotone",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": "the isolated read rises monotonically with use (conversation-visible)"
+      },
+      {
+        "kind": "reaches",
+        "name": "best-isolated-rises",
+        "ok": true,
+        "detail": "before=31.4544 after=47.1933 moved=True",
+        "note": "the stabilized read rises after consolidation"
+      },
+      {
+        "kind": "control",
+        "name": "isolated noise_std vs live noise_std (depth_rest)",
+        "ok": true,
+        "detail": "treatment=0.42292 control=0 |sep|=0.42292 > 0",
+        "note": "the live read carries the period-2 noise the isolated read removes"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (fused_btsp_update) via continuous_engine.consolidate_used_memory"
+      },
+      {
+        "process": "live-bridge state carryover on the surfaced read",
+        "why": "the ISOLATED read completely resets to the clean-rest baseline (the return-to-rest the incomplete reset approximated) before the read \u2014 the biology's own companion process, so the read is deterministic + weight-attributable"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "UNDEFINED",
+  "attributable": 1.0,
+  "checks": {
+    "instrument_valid": true,
+    "moat_byte_id": true,
+    "inmem_T": true,
+    "cat_never": true,
+    "te": 8,
+    "apical_cue_sel": 0.5385,
+    "consolidated": true,
+    "consolidated_rounds": 5,
+    "best_isolated": "depth_rest.iso",
+    "best_read_go": false,
+    "best_snr": Infinity,
+    "live_depth_hold": {
+      "noise_std": 0.42292,
+      "effect": 23.65291,
+      "snr": 55.928,
+      "rises": true,
+      "monotone": false,
+      "decidable": true,
+      "read_go": false
+    },
+    "iso_depth_hold": {
+      "noise_std": 0.0,
+      "effect": 8.8159,
+      "snr": Infinity,
+      "rises": true,
+      "monotone": false,
+      "decidable": true,
+      "read_go": false
+    },
+    "per_read": {
+      "depth_rest.live": {
+        "read": "depth_rest",
+        "source": "live",
+        "noise_mean": 0.80792,
+        "noise_std": 1.42031,
+        "noise_vals": [
+          1.5077,
+          4.351,
+          0.1721,
+          0.089,
+          0.3435,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "effect": 45.22211,
+        "snr": 31.84,
+        "rises": true,
+        "monotone": false,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          1.5077,
+          37.3243,
+          42.5945,
+          46.6046,
+          47.932,
+          46.7298
+        ],
+        "read_go": false
+      },
+      "depth_rest.iso": {
+        "read": "depth_rest",
+        "source": "iso",
+        "noise_mean": 31.45436,
+        "noise_std": 0.0,
+        "noise_vals": [
+          31.4544,
+          31.4544,
+          31.4544,
+          31.4544,
+          31.4544,
+          31.4544,
+          31.4544,
+          31.4544
+        ],
+        "effect": 15.73897,
+        "snr": Infinity,
+        "rises": true,
+        "monotone": false,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          31.4544,
+          41.5468,
+          46.6138,
+          45.9279,
+          47.6985,
+          47.1933
+        ],
+        "read_go": false
+      },
+      "depth_hold.live": {
+        "read": "depth_hold",
+        "source": "live",
+        "noise_mean": 0.15985,
+        "noise_std": 0.42292,
+        "noise_vals": [
+          0.0,
+          1.2788,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "effect": 23.65291,
+        "snr": 55.928,
+        "rises": true,
+        "monotone": false,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          0.0,
+          18.8628,
+          21.8253,
+          23.5277,
+          24.8551,
+          23.6529
+        ],
+        "read_go": false
+      },
+      "depth_hold.iso": {
+        "read": "depth_hold",
+        "source": "iso",
+        "noise_mean": 15.30051,
+        "noise_std": 0.0,
+        "noise_vals": [
+          15.3005,
+          15.3005,
+          15.3005,
+          15.3005,
+          15.3005,
+          15.3005,
+          15.3005,
+          15.3005
+        ],
+        "effect": 8.8159,
+        "snr": Infinity,
+        "rises": true,
+        "monotone": false,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          15.3005,
+          20.7776,
+          23.5368,
+          22.8509,
+          24.6215,
+          24.1164
+        ],
+        "read_go": false
+      },
+      "soft.live": {
+        "read": "soft",
+        "source": "live",
+        "noise_mean": 0.00578,
+        "noise_std": 0.01527,
+        "noise_vals": [
+          0.0,
+          0.0462,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "effect": 0.75334,
+        "snr": 49.337,
+        "rises": true,
+        "monotone": true,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          0.0,
+          0.6028,
+          0.6801,
+          0.7521,
+          0.7579,
+          0.7534
+        ],
+        "read_go": true
+      },
+      "soft.iso": {
+        "read": "soft",
+        "source": "iso",
+        "noise_mean": 0.5201,
+        "noise_std": 0.0,
+        "noise_vals": [
+          0.5201,
+          0.5201,
+          0.5201,
+          0.5201,
+          0.5201,
+          0.5201,
+          0.5201,
+          0.5201
+        ],
+        "effect": 0.2359,
+        "snr": Infinity,
+        "rises": true,
+        "monotone": false,
+        "decidable": true,
+        "faithful": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "perm": 0.0,
+        "nocue": 0.0,
+        "lesion": 0.0,
+        "traj": [
+          0.5201,
+          0.6757,
+          0.7533,
+          0.7386,
+          0.7564,
+          0.756
+        ],
+        "read_go": false
+      }
+    },
+    "wdog_traj": [
+      38.225,
+      51.118,
+      59.977,
+      63.177,
+      64.686,
+      65.183
+    ],
+    "w_dog_before": 38.225,
+    "w_dog_after": 65.183,
+    "cat_drift": 0.0,
+    "assembly_sizes": [
+      32,
+      25
+    ],
+    "warm_reads": 4,
+    "k_noise": 8,
+    "n_turns": 5,
+    "n_episodes": 1,
+    "snr_min": 2.0
+  },
+  "elapsed_s": 119.0
+}
