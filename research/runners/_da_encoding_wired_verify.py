@@ -164,6 +164,16 @@ def main():
 
     go = bool(go_a and go_b_wiring and go_c)
 
+    # ── ATTRIBUTION: what fraction of the write-gain DIFFERENTIAL is owed to the LIVE DA read? The lesion is the
+    #    control (DA pinned -> g=1.0 both). (treatment - control)/treatment == 1.0 means the DA read owns the whole
+    #    differential (the coupling is not a residual host effect). Measuring both arms is not asking whose it was. ──
+    from tools.lab import attributable_to
+    diff_live = (g_high or 0.0) - (g_low or 0.0)              # the high-vs-low write-gain gap with the DA read live
+    diff_lesion = (g_les_high or 0.0) - (g_les_low or 0.0)    # the same gap under the encoding lesion (DA pinned)
+    lesion_attribution = attributable_to(
+        "the high-vs-low write-gain differential owed to the LIVE self-produced DA read (control = BRAIN_DA_ENCODING_LESION)",
+        diff_live, diff_lesion)
+
     # ── EARN the verdict — preconditions travel with the result. ──
     from tools.verdict import Verdict
     v = Verdict("DA-gated encoding wired into the production chat store (WAVE-0 Gap-4 coupling), default-OFF")
@@ -214,6 +224,8 @@ def main():
         },
         "C_lesion_severs": {
             "g_lesion_high": g_les_high, "g_lesion_low": g_les_low, "differential_vanishes": go_c,
+            "differential_live": diff_live, "differential_lesion": diff_lesion,
+            "attribution_to_live_DA_read": lesion_attribution,
         },
         "preconditions": decided["preconditions"],
         "disabled_processes": decided["disabled_processes"],

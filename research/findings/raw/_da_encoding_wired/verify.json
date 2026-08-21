@@ -29,7 +29,10 @@
   "C_lesion_severs": {
     "g_lesion_high": 1.0,
     "g_lesion_low": 1.0,
-    "differential_vanishes": true
+    "differential_vanishes": true,
+    "differential_live": 1.9773555339723594,
+    "differential_lesion": 0.0,
+    "attribution_to_live_DA_read": 1.0
   },
   "preconditions": [
     {
