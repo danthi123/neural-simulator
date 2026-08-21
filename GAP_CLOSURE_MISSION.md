@@ -51,10 +51,15 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
 - **⭐ LANDED 2026-08-21 (this session, all on `main` both remotes):** (1) **THE CONTINUOUS-LIFE FLIP — `BRAIN_CONTINUOUS`
   +`BRAIN_CONTINUOUS_DRIVES` DEFAULT-ON** (commit 1bf65c4f, ledger on_by_default:YES, soak GO 0/7 no-regression + no
   pileup): the brain WANDERS + FEELS between turns by DEFAULT now. (2) **DA-gated encoding** wired+GO default-OFF
-  (d5c67f7c, WAVE-0 Gap-4 (a)). (3) **Trunk-B separator** — set-point makes assemblies disjoint but the te=18
-  "crosstalk" was a read-instability ARTIFACT (corrected finding ed34300a, branch `research/memory-separator-readout`);
-  the te=40 cupy confirm (running) is the decider. (4) continuous ledger row + soak runner (64822b0c) + the 2026-08-21
-  resume anchor. Earlier today: open-ended chat / verify-post-filter / contradiction-filter / 100k tiered-knowledge.
+  (d5c67f7c, WAVE-0 Gap-4 (a)). (3) **DA-gated CURIOSITY crave-threshold** wired+GO default-OFF (3d855330, WAVE-0 (b))
+  — engaged → more curious/asks follow-ups. (4) **GNW THREE-ORGAN ignition bus** wired+GO default-OFF (cae81dcb,
+  WAVE-1) — the workspace commits only on recall ∧ ¬surprise ∧ COMPREHENDED (D4 voter, low-comprehension veto
+  load-bearing). (5) **Trunk-B separator** — set-point makes assemblies disjoint; BOTH te=18 + te=40 confirms show the
+  "crosstalk" is INSTRUMENT-LIMITED (read-noise + te=40 saturation, not a leak) → next lever = a stabilized/graded
+  surfaced read (finding 7447d68e, branch `research/memory-separator-readout`; D5 flip stays blocked on the READ).
+  (6) continuous ledger row + soak runner (64822b0c) + the 2026-08-21 resume anchor. Earlier today: open-ended chat /
+  verify-post-filter / contradiction-filter / 100k tiered-knowledge. NEXT default-off de-risks awaiting an owner-UX
+  soak to flip: DA-encoding, DA-curiosity, GNW-3organ (each needs a broad no-regression soak like the continuous flip earned).
   PRIMARY work-worktree = `/home/dant123/Projects/sim-worktrees/gate-b-v2-clean` on `main` (the plain
   `/home/dant123/Projects/sim` checkout is on a STALE branch — do NOT edit governed docs/code there).
 
