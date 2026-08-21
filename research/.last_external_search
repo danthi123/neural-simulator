@@ -1,1 +1,1 @@
-2026-08-20T06:05:51Z	spike-frequency adaptation / inhibition-of-return preventing fixation in spontaneous attractor wandering
+2026-08-21T22:43:08Z	the dendritic plateau-depth read saturates as the potentiated synaptic weight grows (NMDA plateau is a regenerative, ceiling-bounded event), so the learn-through-use strength-rise is monotone only in the PRE-saturation window
