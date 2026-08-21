@@ -1,0 +1,113 @@
+{
+  "runner": "_curiosity_da_threshold_verify",
+  "go": true,
+  "status": "GO",
+  "coupling": "DA/engagement-gated curiosity crave-threshold (scale ASK-pool want by a DA gain), default-OFF, WAVE-0 Gap-4",
+  "gain_map": "da_crave_gain = clip(0.2, 3.0, 1 + 1.5*(DA - 0.5)); curious = (want_hz*gain) >= threshold",
+  "novel_message": "what do you know about wombats",
+  "A_off_byte_identical": {
+    "novel_no_curiosity_da_key": true,
+    "novel_followup_fired": true,
+    "familiar_no_key": true,
+    "familiar_abstained": false,
+    "familiar_followup_fired": false,
+    "GO": true
+  },
+  "B_on_load_bearing": {
+    "induce_high_pa": 1300.0,
+    "induce_low_pa": 100.0,
+    "da_high": 1.2386777669861797,
+    "da_low": 0.04616293556102311,
+    "gain_high": 2.1080166504792697,
+    "gain_low": 0.3192444033415347,
+    "eff_threshold_high": 31.25469462097808,
+    "eff_threshold_low": 206.37923790376047,
+    "want_high": 126.9097222222222,
+    "want_low": 126.9097222222222,
+    "base_threshold": 65.88541666666666,
+    "high_fired": true,
+    "low_fired": false,
+    "GO": true
+  },
+  "C_lesion_severs": {
+    "lesion_gain_high": 1.0,
+    "lesion_gain_low": 1.0,
+    "lesion_high_fired": true,
+    "lesion_low_fired": true,
+    "decision_identical": true,
+    "gains_pinned_to_one": true,
+    "GO": true,
+    "differential_live": 1.0,
+    "differential_lesion": 0.0,
+    "attribution_to_live_DA_read": 1.0
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) OFF: no curiosity_da key on the novel-abstain turn (byte-identical trace)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the coupling adds nothing when BRAIN_CURIOSITY_DA is unset"
+    },
+    {
+      "kind": "require",
+      "name": "(A) OFF: the organ's calibrated threshold still fires the follow-up on a novel abstain",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the un-modulated curiosity decision is preserved"
+    },
+    {
+      "kind": "require",
+      "name": "(A) OFF: the FAMILIAR recall is not an abstain -> no follow-up + no curiosity_da key",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "curiosity is out of scope on a confident recall (byte-identical)"
+    },
+    {
+      "kind": "require",
+      "name": "(B) ON: curiosity_da key present on both DA arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) ON, LOAD-BEARING: HIGH-DA appends the follow-up where LOW-DA does NOT (novelty held fixed)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "high(DA=1.2386777669861797,gain=2.1080166504792697,eff_thr=31.25469462097808,want=126.9097222222222) fired=True | low(DA=0.04616293556102311,gain=0.3192444033415347,eff_thr=206.37923790376047,want=126.9097222222222) fired=False | base_threshold=65.88541666666666"
+    },
+    {
+      "kind": "require",
+      "name": "(C) LESION: the gain is pinned to 1.0 on both arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "gain_high=1.0 gain_low=1.0"
+    },
+    {
+      "kind": "require",
+      "name": "(C) LESION: the high-vs-low follow-up decision is IDENTICAL (DA-dependence vanishes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "lesion high fired=True == low fired=True"
+    },
+    {
+      "kind": "control",
+      "name": "the crave decision rides the LIVE DA read (on: high!=low) and is severed by the lesion (high==low)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "note": "on: DA flips the follow-up; lesion: the follow-up is DA-invariant"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "heavy Gate-B organs (affect/worldmodel/surprise/metacog/multiref/... = 0) in the handler proofs",
+      "why": "disabled ONLY for speed/confound-isolation; they run identically on every flag arm"
+    },
+    {
+      "process": "the ENGAGEMENT->SNc afferent + the NOVELTY=abstain (host sensory/comprehension boundaries)",
+      "why": "the DA LEVEL (SNc spikes off the bus) + the spiking ASK-pool WANT are the neural parts this coupling rides; the afferent/novelty derivation are the declared #79/curiosity-organ residuals"
+    }
+  ],
+  "undefined_reasons": []
+}
