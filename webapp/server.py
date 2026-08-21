@@ -4035,6 +4035,61 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "rich": False, "activity": None, "affect": affect_info, "inner_state_readout": True,
         })
 
+    # ── OPEN-ENDED STATE-DRIVEN GENERATION + VERIFY POST-FILTER (default-OFF: BRAIN_OPEN_ENDED, 2026-08-21) ────────
+    # The owner reframe (2026-08-19): Qwen = a FORM scaffold, honesty = STATE-FIDELITY. Two de-risks are GO on main:
+    # open-ended state-driven generation READS conversational (V1 GO), and a VERIFY POST-FILTER on the free reply
+    # restores honesty (fabrication 1.0 -> 0.0, known substance kept). This branch wires them as the LIVE reply path:
+    # extract the topic -> retrieve the grounded facts the brain holds (the LTM / chat bundle facts.json `by_agent`,
+    # the SAME source the de-risk retrieves from) -> assemble a StateContext from the LIVE affect read (valence off
+    # the real affect organ's differential, computed just above) + familiarity/novelty/curiosity grounded in whether
+    # the store knows the topic -> free spiking-Qwen reply (FORM) -> `post_filter` (HONESTY) -> return it. ONE Qwen:
+    # the generator REUSES the server's already-warm SpikingQwenFaculty (`_get_warm_qwen_renderer()._fac`), never a
+    # second model. DEFAULT-OFF: `BRAIN_OPEN_ENDED` unset/0 -> the block is fully skipped -> the strict/rich path
+    # below runs byte-identically. When ON this REPLACES the strict/rich reply (the mission's conversational path,
+    # behind the no-confab post-filter moat). Reuse-by-import (NO sim/ edit). See webapp/open_ended_chat.py.
+    # Cheap env read FIRST so the DEFAULT-OFF path imports NOTHING (the open_ended_chat module pulls in the de-risk
+    # modules, one of which disables INFO logging process-wide at import) -> off is truly byte-identical + side-effect-free.
+    if os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            from webapp import open_ended_chat as _OE
+            # the ONE warm Qwen faculty the server already loaded for the `qwen` renderer (builds it once if the
+            # host defaulted to a non-qwen renderer — still exactly one Qwen in the process).
+            _warm_faculty = getattr(_get_warm_qwen_renderer(), "_fac", None)
+            if _warm_faculty is None:
+                raise RuntimeError("no warm Qwen faculty available for open-ended mode")
+            # LIVE affect: valence off the real organ's signed differential (computed above), neutral fallback.
+            if affect_info is not None and "error" not in affect_info:
+                _oe_val = _OE.valence_from_affect(affect_info.get("differential", 0.0))
+                _oe_aro = float(affect_info.get("appraisal_arousal", 0.3))
+            else:
+                _oe_val, _oe_aro = 0.0, 0.3
+            _oe = _OE.answer_turn(
+                msg, _warm_faculty, _oe_val, _oe_aro,
+                ltm_bundle=os.environ.get("BRAIN_LTM_BUNDLE", "").strip() or None,
+                brain_bundle=(os.environ.get("BRAIN_CHAT_BUNDLE", "").strip() or None),
+            )
+        except HTTPException:
+            raise
+        except Exception as e:  # surface the failure like the rich path (never mask a broken mode as strict output)
+            raise HTTPException(500, f"open-ended chat turn failed: {type(e).__name__}: {e}")
+        _oe_resp = {
+            "answer": _oe["answer"],
+            # an unknown topic (empty retrieval) is the honest abstain; a known topic is grounded + verified.
+            "abstained": (not _oe["known"]),
+            "recalled_svo": (_oe["facts"][0] if _oe["facts"] else None),
+            "verified": bool(_oe["known"]),
+            "renderer": rname, "brain": req.brain, "source": source,
+            "rich": False, "mode": "open_ended", "activity": None, "affect": affect_info,
+            # the open-ended trace: the raw free reply, the VERIFY-filtered reply, topic/known, retrieved facts,
+            # the assembled state, and the generation latency. The moat lives in `filtered` vs `raw`.
+            "open_ended": {
+                "raw": _oe["raw"], "filtered": _oe["filtered"], "topic": _oe["topic"],
+                "known": _oe["known"], "facts": _oe["facts"], "n_sentences": _oe["n_sentences"],
+                "state": _oe["state"], "gen_seconds": _oe["gen_seconds"],
+            },
+        }
+        return _safe_json_response(_oe_resp, "open_ended")
+
     # ── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19) ────────────────────────────────────────────────────
     # Read the brain's felt valence x arousal off the #81 graded-affect LADDER (the interoceptive graded read,
     # NEURAL off cp_firing_states — reuse-by-import, NO sim/ edit) and turn it into (a) an AFFECTIVE EXPRESSION the
