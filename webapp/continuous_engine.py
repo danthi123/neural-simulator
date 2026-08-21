@@ -51,6 +51,11 @@ _INNER_LIFE: dict = {}
 _LAST_REQUEST: dict = {}
 # per-session remaining heavy-wander budget for this idle period (refilled to _wander_budget_per_turn() each turn)
 _WANDER_BUDGET: dict = {}
+# per-session topic the last live turn RECALLED (set by the handler on an in_memory referential recall); the next
+# idle tick CONSOLIDATES it (D5 learn-through-use). None/absent until a genuine spiking recall happens.
+_RECALLED_TOPIC: dict = {}
+# per-session remaining D5-consolidation budget for this idle period (refilled by mark_recall on each real recall)
+_D5_BUDGET: dict = {}
 
 
 def continuous_enabled() -> bool:
@@ -72,6 +77,156 @@ def forget_session(cache_key) -> None:
     _INNER_LIFE.pop(cache_key, None)
     _WANDER_BUDGET.pop(cache_key, None)
     _WANDER_ADAPT.pop(cache_key, None)
+    _RECALLED_TOPIC.pop(cache_key, None)
+    _D5_BUDGET.pop(cache_key, None)
+
+
+# ── D5 LEARN-THROUGH-USE: consolidate a memory the brain USED, between turns ─────────────────────────────────────
+# Rung 3 of the continuous-substrate frontier (arc-1 step-4, board: the production-integration rung). A memory the
+# brain RECALLED during a live turn is CONSOLIDATED during the following idle period: the arc-1 recall → step-2
+# self-terminating apical-plateau window → the substrate's OWN plateau-gated BTSP loop runs on the organ's real
+# store, so a used memory becomes measurably more robust for a LATER turn (learn-through-use). Default-OFF behind
+# `BRAIN_D5_CONSOLIDATE`; byte-identical to HEAD when off. The arc: steps 1-3 are 6/6-GO
+# (research/findings/2026-08-20-d5-learn-through-use-*-arc1-closed.md); this wires them under the idle tick.
+_D5_EPISODES = 3          # recall→strengthen episodes per consolidation call. Step-3 used 8; the robustness gain is
+                          # front-loaded (max-lesion-survived moves by episode 1-2, dw_on strictly shrinks), so a few
+                          # suffice for a between-turn tick while keeping the GPU cost bounded (~580 steps/episode).
+# The step-3 GO knobs (the recall→self-terminating-window→BTSP loop). up_thresh / v_hold are read from the organ.
+_D5_RK = dict(tau_w=150.0, tau_apical=15.0, cue_pa=300.0, ignite_steps=80, window_steps=500,
+              btsp_lr=0.02, btsp_w_max=100.0, btsp_elig_tau_ms=1000.0, b_adapt=0.8)
+
+
+def d5_consolidate_enabled() -> bool:
+    """Default-OFF anchor. `BRAIN_D5_CONSOLIDATE` in {1,true,on,yes} arms the between-turn D5 consolidation. When off
+    the tick's consolidation step is inert and a later recall is byte-identical to HEAD (nothing is strengthened)."""
+    return os.environ.get("BRAIN_D5_CONSOLIDATE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _d5_budget_per_recall() -> int:
+    """How many heavy consolidation calls a session may run per idle period (refilled by mark_recall on each real
+    recall). PRODUCTION-SAFETY (mirrors the wander budget): each call is a ~few-second cupy run; bounding it means an
+    idle server does not peg the GPU re-consolidating the same memory forever, while a returning user still gets the
+    used memory strengthened on the next turn. Biologically: post-encoding replay is repeated but not unbounded."""
+    try:
+        return max(0, int(os.environ.get("BRAIN_D5_CONSOLIDATE_BUDGET", "1")))
+    except Exception:
+        return 1
+
+
+def mark_recall(cache_key, topic) -> None:
+    """The live handler calls this when a referential turn RECALLED a topic via a genuine spiking completion
+    (in_memory=True). The next idle tick CONSOLIDATES that memory (learn-through-use). Refills this session's
+    consolidation budget (a real recall re-opens between-turn consolidation), which then drains as it consolidates.
+    Pure bookkeeping (a dict write) — no cognition, no spiking here; the strengthening runs in the tick."""
+    if topic:
+        _RECALLED_TOPIC[cache_key] = str(topic).lower()
+        _D5_BUDGET[cache_key] = _d5_budget_per_recall()
+
+
+def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None = None) -> dict | None:
+    """BETWEEN-TURN D5 CONSOLIDATION (learn-through-use). For the topic the last live turn RECALLED, run the arc-1
+    step-3 loop on the organ's REAL store: re-activate the assembly (a sustained cue → the dendritic apical latch
+    COMPLETES it), the step-2 self-terminating apical-plateau window opens, and the substrate's OWN plateau-gated
+    BTSP (`sim/bridge.py` `fused_btsp_update`, gated by `IS_post = max(cp_v_apical − v_hold, 0)`) potentiates the
+    co-active within-assembly recurrence — written back to `mem.R.C.data` BY OBJECT IDENTITY (the same array
+    `recall()` reads). So a memory the brain USED becomes more robust for the NEXT turn.
+
+    BRAIN-BASED: the weight change is the substrate's own plasticity kernel (no host `dw` formula); host code here
+    is only the clock, the episode budget, and the snapshot/restore determinism guard (the step-2/3 runners' guard).
+    BYTE-IDENTITY: every `cfg` field and BTSP transient the reactivate loop mutates is saved and restored, so the
+    ONLY lasting change to the organ is the strengthened within-assembly weights — a later recall differs from HEAD
+    in nothing else. Returns a record, or None (disabled / no recalled topic / no store yet / topic not formed)."""
+    if not d5_consolidate_enabled():
+        return None
+    topic = _RECALLED_TOPIC.get(cache_key)
+    if not topic or episodic_organ is None:
+        return None
+    mem = getattr(episodic_organ, "mem", None)
+    if mem is None:
+        return None
+    slot = mem.topic_slot.get(topic)
+    if slot is None or slot not in getattr(mem, "formed", set()):
+        return None  # a completion-failure recall (or an unformed topic) leaves no store to consolidate
+
+    # Heavy imports kept lazy so the OFF path stays byte-identical + import-light (reuse-by-import; NO sim/ edit).
+    import numpy as _np
+    from research.runners._gap5_dendritic_dap_readout_completion_derisk import _reset_apical_latch
+    from research.runners._gap5_d5_latch_self_termination_derisk import snapshot_state, restore_state
+    from research.runners._gap5_d5_learn_through_use_derisk import reactivate
+
+    bridge = mem.bridge
+    cp = mem.R.cp
+    cfg = bridge.core_config
+    n_ep = int(_D5_EPISODES if n_episodes is None else n_episodes)
+    rk = dict(_D5_RK)
+    rk["up_thresh"] = mem.p["up_thresh"]
+    rk["v_hold"] = mem.p["v_hold"]
+    cue_full = _np.asarray(mem.cue_by_asm[slot], dtype=_np.int64)
+
+    # SAVE the cfg fields + BTSP transients that `reactivate` mutates, so nothing but the weights persists.
+    _cfg_keys = (
+        "enable_hebbian_learning", "enable_stdp", "enable_structural_plasticity", "enable_bdsp", "enable_btsp",
+        "btsp_learning_rate", "btsp_w_max", "btsp_w_min", "btsp_elig_tau_ms", "btsp_hetero_dep",
+        "btsp_milstein_k_dep", "btsp_mean_subtract", "btsp_dog_a_dep", "btsp_elig_tau_slow_ms",
+        "btsp_win_gate_theta", "btsp_elig_exponent", "btsp_elig_hard_thresh", "coincidence_plateau_v_hold")
+    cfg_saved = {k: getattr(cfg, k, None) for k in _cfg_keys}
+    btsp_saved = {a: getattr(bridge, a, None)
+                  for a in ("cp_btsp_pre_elig", "cp_btsp_pre_elig_slow", "cp_btsp_win_count", "cp_btsp_wmax")}
+
+    w0 = float(cp.mean(bridge.cp_connections.data[mem.R.withinA_masks[slot]]))
+    # ROLLBACK anchor: a full copy of the pre-consolidation weights. `reactivate` mutates the organ's PERSISTENT store
+    # (bridge.cp_connections.data == mem.R.C.data) IN PLACE across episodes, so a crash mid-loop -- e.g. the RTX 3090
+    # falling off the bus mid-load -- would otherwise leave the store corrupted with no rollback (and the armed topic
+    # un-drained, so the next idle tick re-runs from the half-mutated weights, compounding drift).
+    W_pre = bridge.cp_connections.data.copy()
+    try:
+        # WARM the apical latch if it was never allocated (a fresh bridge has cp_v_apical=None; the reactivate loop's
+        # plateau-gated BTSP then never fires -> zero potentiation). In the live flow the recall that ARMED this
+        # consolidation already warmed it, so this is a cheap no-op there; it self-heals the cold-start case.
+        if getattr(bridge, "cp_v_apical", None) is None:
+            try:
+                mem.recall(topic)
+            except Exception:
+                pass
+        # a clean transient rest holding the CURRENT weights, snapshotted (the reactivate loop restores it each ep)
+        mem.R.hard_silence()
+        _reset_apical_latch(bridge)
+        snap = snapshot_state(bridge)
+        W = bridge.cp_connections.data.copy()
+        for _i in range(n_ep):
+            W = reactivate(mem, slot, snap, W, cue_indices=cue_full, strengthen=True,
+                           clamp_apical=False, adapt_on=True, **rk)["W_out"]
+        # leave the bridge at CLEAN REST with only the strengthened weights persisting
+        restore_state(bridge, snap)
+        bridge.cp_connections.data[:] = W
+        wN = float(cp.mean(bridge.cp_connections.data[mem.R.withinA_masks[slot]]))
+    except Exception:
+        # ON-PATH SAFETY: on ANY failure mid-consolidation, roll the PERSISTENT store back to its pre-consolidation
+        # state and DRAIN the armed topic, then re-raise so the caller LOGS it (never silently corrupts + retries).
+        try:
+            bridge.cp_connections.data[:] = W_pre
+        except Exception:
+            pass
+        _RECALLED_TOPIC.pop(cache_key, None)
+        raise
+    finally:
+        for k, v in cfg_saved.items():
+            try:
+                setattr(cfg, k, v)
+            except Exception:
+                pass
+        for a, v in btsp_saved.items():
+            setattr(bridge, a, v)
+
+    _RECALLED_TOPIC.pop(cache_key, None)  # consolidate a given recall once (drained; a new recall re-arms it)
+    rec = {"t": time.time(), "consolidated": topic, "slot": int(slot), "n_episodes": n_ep,
+           "w_within_before": round(w0, 3), "w_within_after": round(wN, 3),
+           "note": "idle: consolidated the used memory ‘%s’ (within-assembly weight %.1f → %.1f)" % (topic, w0, wN)}
+    lst = _INNER_LIFE.setdefault(cache_key, [])
+    lst.append(rec)
+    if len(lst) > _INNER_LIFE_MAX:
+        del lst[:-_INNER_LIFE_MAX]
+    return rec
 
 
 def inner_life(cache_key) -> list:
@@ -198,15 +353,18 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
 
 
 def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None,
-                       selfinit_getter=None) -> int:
+                       selfinit_getter=None, episodic_getter=None) -> int:
     """Run one tick over every session that is IDLE (no request for >= IDLE_SEC). Returns #sessions ticked.
 
     Called by the server's background loop. Skips sessions mid-conversation (raced writes) and any with no mood yet.
-    `selfinit_getter(cache_key)` (optional) supplies that session's self-initiation organ for the thought-wander."""
+    `selfinit_getter(cache_key)` (optional) supplies that session's self-initiation organ for the thought-wander.
+    `episodic_getter(cache_key)` (optional) supplies that session's ALREADY-BUILT episodic organ for the D5
+    learn-through-use consolidation (default-OFF behind `BRAIN_D5_CONSOLIDATE`; never builds an organ just to tick)."""
     if not continuous_enabled():
         return 0
     now = time.time() if now is None else now
     n = 0
+    _d5_on = d5_consolidate_enabled()
     for cache_key in list(session_mood.keys()):
         last = _LAST_REQUEST.get(cache_key)
         if last is not None and (now - last) < IDLE_SEC:
@@ -227,6 +385,22 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 n += 1
                 if rec.get("wandered"):  # a heavy wander actually fired -> spend one unit of budget
                     _WANDER_BUDGET[cache_key] = max(0, _WANDER_BUDGET.get(cache_key, 0) - 1)
+            # D5 LEARN-THROUGH-USE: consolidate the memory this session USED, bounded by the per-recall budget.
+            # Runs independently of the mood tick (a recalled-but-mood-less session still consolidates), and only
+            # while a genuine recall has armed the budget for this idle period -> a truly idle server does not
+            # re-consolidate forever. Never builds an organ (episodic_getter returns None if none exists yet).
+            if _d5_on and episodic_getter is not None and _D5_BUDGET.get(cache_key, 0) > 0 \
+                    and _RECALLED_TOPIC.get(cache_key):
+                try:
+                    eorg = episodic_getter(cache_key)
+                    if eorg is not None and consolidate_used_memory(cache_key, eorg) is not None:
+                        _D5_BUDGET[cache_key] = max(0, _D5_BUDGET.get(cache_key, 0) - 1)
+                except Exception:
+                    # consolidate_used_memory already rolled the store back + drained the topic on failure; LOG so a
+                    # mid-consolidation crash is VISIBLE (never silently swallowed), then move on to the next session.
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning(
+                        "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
         except Exception:
             continue
     return n

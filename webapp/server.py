@@ -1794,7 +1794,8 @@ async def _continuous_state_tick() -> None:
                 n = await loop.run_in_executor(
                     None,
                     lambda: _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ,
-                                                   selfinit_getter=_get_selfinit_organ),
+                                                   selfinit_getter=_get_selfinit_organ,
+                                                   episodic_getter=_get_episodic_organ_existing),
                 )
                 if n:
                     print("[webapp] continuous tick: evolved %d idle session(s)" % n, flush=True)
@@ -3128,6 +3129,17 @@ def _get_selfinit_organ(cache_key):
     return org
 
 
+def _get_episodic_organ_existing(cache_key):
+    """The session's D5 episodic organ IF one was already built this conversation (do NOT build one just to
+    consolidate — between-turn D5 learn-through-use only strengthens a store the live turns already formed).
+    Used by the continuous tick's `consolidate_used_memory`. Returns None if no organ exists for this session."""
+    try:
+        import research.runners.d5_episodic_production_organ as _EP
+        return _EP._ORGANS.get(cache_key)
+    except Exception:
+        return None
+
+
 def _get_multiref_organ(cache_key):
     """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
     process singleton: the organ's own get_organ() shares a referent codebook across sessions, which would leak
@@ -4165,6 +4177,15 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 eorg = _EP.get_episodic_organ(cache_key, 42, _ep_topics)
                 rec = eorg.recall(ref, lesion=_EP.episodic_lesioned())
                 episodic_info = dict(rec)
+                # D5 LEARN-THROUGH-USE (continuous engine, default-OFF behind BRAIN_D5_CONSOLIDATE): mark the topic
+                # this turn RECALLED (a genuine spiking completion) so the NEXT idle tick consolidates it — the used
+                # memory becomes more robust for a later turn. Guarded so the OFF path is byte-identical to HEAD.
+                try:
+                    from webapp import continuous_engine as _CEc
+                    if _CEc.d5_consolidate_enabled() and rec.get("in_memory"):
+                        _CEc.mark_recall(cache_key, ref)
+                except Exception:
+                    pass
                 # CONTENT (a DECLARED host-oracle residual): surface a fact the brain holds about `ref`, rendered
                 # through the SAME governed render path the moat covers — ONLY when the spiking assembly COMPLETED.
                 content = None

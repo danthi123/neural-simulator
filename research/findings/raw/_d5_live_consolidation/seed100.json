@@ -1,0 +1,136 @@
+{
+  "seed": 100,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 15,
+    "out": "research/findings/raw/_d5_live_consolidation/seed42.json"
+  },
+  "attributable": 1.0,
+  "verdict": {
+    "label": "LIVE learn-through-use: a used memory is more robust in a later turn via the idle tick (seed 100)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "d5-store-formed-dog",
+        "ok": true,
+        "detail": "measured=61.161903381347656 expect=<function run_one.<locals>.<lambda> at 0x7f6d494edbc0>",
+        "note": "'dog' BTSP-formed to a borderline within-weight (headroom to strengthen)"
+      },
+      {
+        "kind": "require",
+        "name": "handler-recall-completes-T",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the live handler recall COMPLETES the assembly before consolidation (a real memory to use)"
+      },
+      {
+        "kind": "require",
+        "name": "borderline-has-headroom",
+        "ok": true,
+        "detail": "measured=0.5 expect=<function run_one.<locals>.<lambda> at 0x7f6d494edbc0>",
+        "note": "the store completes un-lesioned but is fragile to lesion (robustness headroom)"
+      },
+      {
+        "kind": "require",
+        "name": "handler-read-deterministic",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "two identical handler recalls match \u2192 the instrument read is deterministic"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cat is a genuine never-formed control (no completion, baseline weight)"
+      },
+      {
+        "kind": "reaches",
+        "name": "robustness-moves-with-use",
+        "ok": true,
+        "detail": "before=0.5 after=0.9 moved=True",
+        "note": "the later-turn max-lesion-survived robustness read changed after consolidation"
+      },
+      {
+        "kind": "control",
+        "name": "consolidation-ON vs LESION-OFF (later-turn robustness gain)",
+        "ok": true,
+        "detail": "treatment=440 control=0 |sep|=440 > 0",
+        "note": "the later-turn robustness gain requires the consolidation loop; the flag OFF is byte-identical"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (fused_btsp_update), written back to the organ's store by object identity"
+      },
+      {
+        "process": "standalone probe",
+        "why": "the T and T+k reads are the PRODUCTION EpisodicRecallOrgan.recall() the live handler calls; consolidation is the ACTUAL continuous_engine tick function"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "checks": {
+    "LIVE_STRENGTHENS": true,
+    "LESION_VANISHES": true,
+    "SPECIFIC": true,
+    "deterministic": true,
+    "headroom": true,
+    "recall_completes": true,
+    "cat_never": true,
+    "consolidated": true,
+    "byte_identical_off": true,
+    "lesion_flat": true,
+    "apical_cue_T": 1.0,
+    "apical_cue_off": 1.0,
+    "apical_cue_Tk": 1.0,
+    "apical_up": false,
+    "max_lesion_before": 0.5,
+    "max_lesion_after": 0.9,
+    "lesion_up": true,
+    "min_cue_before": 160.0,
+    "min_cue_after": 120.0,
+    "cue_down": true,
+    "max_lesion_off": 0.5,
+    "min_cue_off": 160.0,
+    "rob_before": 340.0,
+    "rob_after": 780.0,
+    "rob_off": 340.0,
+    "rob_treat": 440.0,
+    "rob_ctrl": 0.0,
+    "w_dog_before": 61.162,
+    "w_dog_after": 77.278,
+    "dw_dog": 16.116,
+    "cat_apical_T": 0.0,
+    "cat_apical_Tk": 0.0,
+    "cat_apical_flat": true,
+    "cat_drift": 0.0,
+    "between_drift": 0.0,
+    "hash_before": "1002322cdf787b8a",
+    "hash_off": "1002322cdf787b8a",
+    "hash_after": "08111937104bb75b",
+    "w_within_before": 61.162,
+    "w_within_after": 77.278,
+    "n_episodes": 3,
+    "n_cue_full": 12,
+    "assembly_sizes": [
+      21,
+      25
+    ]
+  },
+  "elapsed_s": 55.8
+}
