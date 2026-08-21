@@ -4135,6 +4135,29 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             da_drives_info = {"on": True, "error": f"{type(_dde).__name__}: {_dde}", "lead": ""}
             da_drives_suffix = ""
 
+    # ── DA-GATED ENCODING (board WAVE-0, Gap-4 write-side coupling) ──────────────────────────────────────────
+    # The brain's OWN self-produced tonic DA (the DA-mode read just above — chat._last_da_drives["da_level"]) scales
+    # the WRITE MAGNITUDE of a taught fact AT STORE TIME (Lisman-Grace hippocampal-VTA loop; Kandel D.16 — dopamine
+    # gates entry into LONG-TERM memory: a salient / engaged utterance is encoded STRONGER + more stable). This
+    # installs composer.encoding_gain_fn (read inside chat.gate's _maybe_acquire, which runs LATER this turn), so it
+    # MUST be set here — after the DA-mode read (level fresh), before the gate. Default-OFF (`BRAIN_DA_ENCODING`
+    # unset): the block is skipped, encoding_gain_fn stays None -> the store is BYTE-IDENTICAL to pre-wiring (g=1.0
+    # unit-magnitude write) and no `da_encoding` key is attached. g == 1.0 at tonic (an unengaged turn is neutral)
+    # and on a missing DA read. LESION (`BRAIN_DA_ENCODING_LESION=1`): pin g=1.0 regardless of DA -> the write no
+    # longer rides the DA read (the coupling is severed — the load-bearing proof; distinct from BRAIN_DA_DRIVES_LESION
+    # which collapses the LEVEL). The gain bites the STORED trace on a magnitude-carrying composer (the production-
+    # default onebrain store_conns / rf substrate store); the rf numpy fast-path recall is magnitude-invariant. NO
+    # sim/ edit (a composer-layer callable). See webapp/da_encoding_drives_chat.py.
+    da_encoding_info = None
+    try:
+        from webapp import da_encoding_drives_chat as _DAE
+        if _DAE.da_encoding_enabled():
+            _g_now = _DAE.install_encoding_gain(chat)
+            da_encoding_info = {"on": True, "g": _g_now, "da_level": _DAE.da_level_of(chat),
+                                "lesioned": _DAE.da_encoding_lesioned()}
+    except Exception as _dee:  # never let the encoding coupling crash a turn — degrade to the unit-magnitude write
+        da_encoding_info = {"on": True, "error": f"{type(_dee).__name__}: {_dee}"}
+
     # ── THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, 2026-08-20) ─────────────────────────────────────
     # The continuous engine's idle tick (webapp/continuous_engine.py) already lets a THOUGHT wander between turns
     # (a curiosity-biased spiking selection off the self-initiation organ) — today that concept is only OBSERVED
@@ -4944,6 +4967,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = resp["answer"] + da_drives_suffix
         if da_drives_info is not None:
             resp["da_drives"] = da_drives_info
+        if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
+            resp["da_encoding"] = da_encoding_info
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -5092,6 +5117,8 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = _resp["answer"] + da_drives_suffix
     if da_drives_info is not None:
         _resp["da_drives"] = da_drives_info
+    if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
+        _resp["da_encoding"] = da_encoding_info
     return _safe_json_response(_resp, "single-fact")
 
 
