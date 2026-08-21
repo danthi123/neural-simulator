@@ -1,0 +1,34 @@
+{
+ "run_id": "1787281548-2809489",
+ "runner": "research/runners/_knowledge_tiered_livechat_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_knowledge_tiered_livechat_derisk.py",
+  "--N",
+  "5000",
+  "--n-recall",
+  "50",
+  "--seed",
+  "43",
+  "--out",
+  "research/findings/raw/_knowledge_tiered_livechat/seed43.json"
+ ],
+ "git_sha": "ec5b9f967",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-20T23:05:48",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 91982.3,
+ "corpus_check_query": "affect appraisal lexicon misses strong-emotion words so affect faculties go dormant on strongly-worded emotion",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_knowledge_tiered_livechat/seed43.json"
+}

@@ -365,7 +365,8 @@ def _restore_facts(agent, facts, composites=None):
 def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_render=False,
                          referent_nouns=None, wm_n=600, wm_pattern_size=40, composer_kind=None,
                          grounded_codes_override=None, defer_parser=True,
-                         communicable_mode=False, communicable_draw="spiking"):
+                         communicable_mode=False, communicable_draw="spiking",
+                         ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -446,6 +447,23 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
                                          speak_value_Q=(speak_value_Q or None))
     _restore_facts(agent, facts, composites=composites)
+
+    # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
+    # hold + query bulk KNOWLEDGE (100k-1M facts) beyond the small conversation working-set (the k_max=32 co-resident
+    # cap). `ltm_bundle` is a path to a SEPARATE bundle (or any dir with a facts.json) whose facts become a routed
+    # ShardedPhasorStore. The developed brain's own composer stays the recent-conversation BUFFER; a read checks the
+    # buffer, then the routed LTM shard (sub-second at any K). No LTM -> the plain flat composer, byte-for-byte. The
+    # tiers self-consistently encode by WORD, so a separate LTM codebook is correct (a fact is read from the tier it
+    # was stored in). See tiered_fact_store.py + the sharded-fact-store finding (2026-08-20).
+    if ltm_bundle is not None:
+        from research.runners.tiered_fact_store import (TieredFactStore, build_ltm_from_facts, auto_n_shards)
+        ltm_facts = _load_facts_json(ltm_bundle)
+        if ltm_facts:
+            ns = int(ltm_n_shards) if ltm_n_shards is not None else auto_n_shards(len(ltm_facts))
+            ltm = build_ltm_from_facts(ltm_facts, n_shards=ns,
+                                       seed=int(ltm_seed) if ltm_seed is not None else seed, D=int(ltm_D))
+            inner = _inner_agent(agent)
+            inner.composer = TieredFactStore(inner.composer, ltm)
     return agent, manifest
 
 

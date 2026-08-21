@@ -3390,10 +3390,16 @@ def _build_chat_brain(brain: str, renderer: str):
         source = "self-knowledge"
     elif is_developed_brain_bundle(_resolve_bundle(brain)):
         bundle = _resolve_bundle(brain)
+        # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF) BRAIN_LTM_BUNDLE points at a separate bundle of bulk KNOWLEDGE
+        # (100k-1M facts) that becomes a routed cortical LONG-TERM store beside the developed brain's small
+        # conversation working-set -- so the brain can answer over an LLM-scale body of facts at sub-second latency,
+        # beyond the k_max=32 co-resident cap. Unset -> the plain flat composer, byte-for-byte. See tiered_fact_store.py.
+        _ltm_bundle = os.environ.get("BRAIN_LTM_BUNDLE", "").strip() or None
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
-                                               enable_neural_render=False)
+                                               enable_neural_render=False,
+                                               ltm_bundle=_ltm_bundle)
         aliases = set(manifest.get("self_aliases") or []) | set(DEFAULT_SELF_ALIASES)
-        source = f"developed-brain:{brain}"
+        source = f"developed-brain:{brain}" + (" +LTM" if _ltm_bundle else "")
     else:
         raise HTTPException(
             400,

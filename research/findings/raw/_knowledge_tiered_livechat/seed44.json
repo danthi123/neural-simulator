@@ -1,0 +1,116 @@
+{
+  "N": 5000,
+  "D": 128,
+  "n_shards": 25,
+  "vocab": 5418,
+  "ltm_build_s": 133.5981752872467,
+  "ltm_total_facts": 5000,
+  "buffer_size_after_teach": 2,
+  "recall_hits": 50,
+  "n_recall": 50,
+  "recall_frac": 1.0,
+  "routed_ms_per_query": 446.2617540359497,
+  "chance": 0.0004,
+  "teach_answer": "clam",
+  "teach_in_buffer": true,
+  "ltm_untouched_by_teach": true,
+  "recency_shadows_ltm": true,
+  "moat_abstain": 20,
+  "n_moat": 20,
+  "yesno_unknown_abstains": true,
+  "yesno_known_yes": true,
+  "k_max_lifted": true,
+  "degrade_identical_to_buffer": true,
+  "load_balance_min_max_mean_ratio": [
+    168,
+    237,
+    200.0,
+    1.185
+  ],
+  "backend": "numpy",
+  "verdict": {
+    "label": "tiered hippocampal-buffer / cortical-LTM fact store: a live-chat drop-in that scales knowledge",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "bulk-knowledge recall through agent.what_does (LTM tier)",
+        "ok": true,
+        "detail": "1 vs floor 0.95",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "routed LTM query is sub-second at N facts",
+        "ok": true,
+        "detail": "measured=446.2617540359497 expect=<function main.<locals>.<lambda> at 0x7f6b2b9eab60>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "teach-in-conversation answers",
+        "ok": true,
+        "detail": "measured=clam expect=clam",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "taught fact landed in the BUFFER (not the LTM)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "recent buffer fact shadows a contradicting LTM fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no-confab moat: every unknown subject abstains",
+        "ok": true,
+        "detail": "measured=20 expect=20",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ask_yes_no abstains ('unknown') on an unknown fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "ask_yes_no affirms a known LTM fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "k_max lifted: N>>32 knowledge queryable while the buffer stays tiny",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "degrades to the plain buffer when ltm=None (byte-safe default)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "learned/spiking cue->shard router",
+        "why": "the ShardedPhasorStore's host agent-hash router is a declared capacity-de-risk scaffold; recall + moat inside each shard are the genuine RF reads"
+      }
+    ],
+    "chance": 0.0004
+  }
+}
