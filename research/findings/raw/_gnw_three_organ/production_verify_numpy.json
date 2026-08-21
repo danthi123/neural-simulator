@@ -1,0 +1,365 @@
+{
+  "runner": "_gnw_three_organ_bus_verify",
+  "go": true,
+  "status": "GO",
+  "verdict": {
+    "label": "GNW three-distinct-organs consensus bus \u2014 production verify (real ChatBrain.gate, rf/numpy)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "backend-recognized",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "production-chat-built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the real production ChatBrain built + the well-formed high-comprehension fact taught"
+      },
+      {
+        "kind": "require",
+        "name": "install-off-is-noop",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag OFF -> install_three_organ_gate is a no-op (the flag genuinely gates installation)"
+      },
+      {
+        "kind": "require",
+        "name": "install-on-installs",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag ON -> install_three_organ_gate wraps chat.gate on the real production chat"
+      },
+      {
+        "kind": "require",
+        "name": "q3-unanimity-window",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "on the shared workspace bridge 2*d_sub=2000->rate=0.030 < THR=0.167 <= 3*d_sub=3000->rate=0.333 (the consensus-veto needs exactly this window)"
+      },
+      {
+        "kind": "require",
+        "name": "organ-c-margin-separates-high-from-low",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "organ C's cp_firing_states sel-pool margin: min HIGH=0.3375 >= thr=0.24861111111111112 > max LOW=0.13819444444444445 (a graded spiking read, not a binary host flag)"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full per-turn organ-stepping brain_chat handler",
+        "why": "tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME BRAIN_GNW_3ORGAN flag, unset by default -> never imported)"
+      }
+    ],
+    "chance": null
+  },
+  "backend": "numpy",
+  "byte_identical_when_off": {
+    "install_noop_when_off": true,
+    "runtime_flip_off_matches_two_organ": true,
+    "two_organ_out": [
+      [
+        "dog",
+        "eat",
+        "apple"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      null,
+      null,
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "dog",
+        "eat",
+        "cat"
+      ]
+    ],
+    "three_organ_off_out": [
+      [
+        "dog",
+        "eat",
+        "apple"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      null,
+      null,
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "dog",
+        "eat",
+        "cat"
+      ]
+    ],
+    "panel": [
+      "what does dog eat?",
+      "what does brain use?",
+      "what does brain learn?",
+      "what does brain store?",
+      "what does dog chase?",
+      "what does cat eat?",
+      "what does fish fly?",
+      "what does cat chase?",
+      "what are you",
+      "what might a dog do"
+    ]
+  },
+  "stored_unchanged": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does dog eat?",
+        "tag": "high_comp",
+        "two_organ": "apple",
+        "three_organ": "apple",
+        "unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_margin": 0.3375,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_deferred": false,
+        "organ_c_comprehended": true,
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain use?",
+        "tag": "deferred",
+        "two_organ": "spikes",
+        "three_organ": "spikes",
+        "unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_margin": null,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_deferred": true,
+        "organ_c_comprehended": null,
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain learn?",
+        "tag": "deferred",
+        "two_organ": "words",
+        "three_organ": "words",
+        "unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_margin": null,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_deferred": true,
+        "organ_c_comprehended": null,
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain store?",
+        "tag": "deferred",
+        "two_organ": "memory",
+        "three_organ": "memory",
+        "unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_margin": null,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_deferred": true,
+        "organ_c_comprehended": null,
+        "n_votes": 3,
+        "n_ignited": 1
+      }
+    ]
+  },
+  "low_comprehension_probes": {
+    "veto_ok": true,
+    "reverts_under_lesion_ok": true,
+    "rows": [
+      {
+        "q": "what does dog chase?",
+        "tag": "ambig_2animate",
+        "two_organ": "cat",
+        "three_organ_on": null,
+        "three_organ_lesion": "cat",
+        "veto": true,
+        "reverts_under_lesion": true,
+        "organ_c_margin": 0.10833333333333334,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_comprehended": false,
+        "organ_b_confirmed": true,
+        "n_votes_on": 2,
+        "n_ignited_on": 0,
+        "abstain_reason": "consensus_veto_organ_c_low_comprehension",
+        "n_votes_lesion": 3,
+        "n_ignited_lesion": 1
+      },
+      {
+        "q": "what does cat eat?",
+        "tag": "verbfit_confl",
+        "two_organ": "fish",
+        "three_organ_on": null,
+        "three_organ_lesion": "fish",
+        "veto": true,
+        "reverts_under_lesion": true,
+        "organ_c_margin": 0.13819444444444445,
+        "organ_c_threshold": 0.24861111111111112,
+        "organ_c_comprehended": false,
+        "organ_b_confirmed": true,
+        "n_votes_on": 2,
+        "n_ignited_on": 0,
+        "abstain_reason": "consensus_veto_organ_c_low_comprehension",
+        "n_votes_lesion": 3,
+        "n_ignited_lesion": 1
+      }
+    ]
+  },
+  "moat": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does fish fly?",
+        "two_organ": null,
+        "three_organ": null,
+        "both_abstain": true,
+        "organ_a_recall": null,
+        "reason": "primary_recall_miss"
+      },
+      {
+        "q": "what does cat chase?",
+        "two_organ": null,
+        "three_organ": null,
+        "both_abstain": true,
+        "organ_a_recall": null,
+        "reason": "primary_recall_miss"
+      }
+    ]
+  },
+  "q3_unanimity_window": {
+    "ok": true,
+    "d_sub": 1000.0,
+    "rate_2votes": 0.030303030303030304,
+    "rate_3votes": 0.3333333333333333,
+    "THR": 0.16666666666666666
+  },
+  "organ_c_margin_separates": {
+    "ok": true,
+    "high_margins": [
+      0.3375
+    ],
+    "low_margins": [
+      0.10833333333333334,
+      0.13819444444444445
+    ],
+    "threshold": 0.24861111111111112
+  },
+  "attributable": {
+    "low_comp_abstain_intact_vs_organc_lesion": 1.0,
+    "intact_abstain_rate": 1.0,
+    "lesion_abstain_rate": 0.0
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "backend-recognized",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "production-chat-built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the real production ChatBrain built + the well-formed high-comprehension fact taught"
+    },
+    {
+      "kind": "require",
+      "name": "install-off-is-noop",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag OFF -> install_three_organ_gate is a no-op (the flag genuinely gates installation)"
+    },
+    {
+      "kind": "require",
+      "name": "install-on-installs",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag ON -> install_three_organ_gate wraps chat.gate on the real production chat"
+    },
+    {
+      "kind": "require",
+      "name": "q3-unanimity-window",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "on the shared workspace bridge 2*d_sub=2000->rate=0.030 < THR=0.167 <= 3*d_sub=3000->rate=0.333 (the consensus-veto needs exactly this window)"
+    },
+    {
+      "kind": "require",
+      "name": "organ-c-margin-separates-high-from-low",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "organ C's cp_firing_states sel-pool margin: min HIGH=0.3375 >= thr=0.24861111111111112 > max LOW=0.13819444444444445 (a graded spiking read, not a binary host flag)"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "full per-turn organ-stepping brain_chat handler",
+      "why": "tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME BRAIN_GNW_3ORGAN flag, unset by default -> never imported)"
+    }
+  ],
+  "undefined_reasons": []
+}

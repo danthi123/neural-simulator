@@ -1,0 +1,26 @@
+{
+ "run_id": "1787311054-3692243",
+ "runner": "research/runners/_gnw_three_organ_bus_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/gate-b-v2-clean/research/runners/_gnw_three_organ_bus_verify.py"
+ ],
+ "git_sha": "3d855330b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T07:17:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1415.3,
+ "corpus_check_query": "GNW three-organ ignition bus D4 comprehension voter",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_gnw_three_organ/production_verify_numpy.json"
+}
