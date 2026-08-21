@@ -86,7 +86,7 @@ OUT_DEFAULT = _REPO / "research" / "findings" / "raw" / "_knowledge_bundle_wikid
 # Robust SPARQL: polite delay + exponential backoff with jitter + Retry-After honoring.
 # ===============================================================================================================
 class SparqlClient:
-    def __init__(self, polite_delay=1.0, timeout=60, max_retries=6, base_backoff=2.0, max_backoff=120.0):
+    def __init__(self, polite_delay=1.0, timeout=90, max_retries=4, base_backoff=3.0, max_backoff=45.0):
         self.polite_delay = float(polite_delay)
         self.timeout = int(timeout)
         self.max_retries = int(max_retries)
@@ -221,31 +221,33 @@ SHAPEB = [
 # ===============================================================================================================
 # Query builders. Each returns (sparql_string). Runner turns rows -> facts.
 # ===============================================================================================================
-def _q_object_anchored(prop, obj_qid, ordered, limit, offset):
+# CRITICAL (2026-08-20 fix): these queries deliberately carry NO `ORDER BY`. An `ORDER BY ?s` on a huge result set
+# (rivers/cities/films/occupations...) forces WDQS to MATERIALISE + SORT the entire set before LIMIT, which 504/times-
+# out the socket read (the exact bug that stuck the first launch on `isa:Q4022:p0`). Plain LIMIT/OFFSET reads only the
+# page (measured: rivers no-order LIMIT 1500 OFFSET 1500 -> 1500 rows in 5.4s, 0% overlap with page 0), so pagination
+# is both fast AND yields distinct pages. This is the LIMIT/OFFSET small-page pattern that scales toward millions.
+def _q_object_anchored(prop, obj_qid, limit, offset):
     """`?s wdt:<prop> wd:<obj>` -> rows of (?sLabel, constant ?oLabel). Subject class/edge-constrained; object is the
     fixed entity's own label. Used for is-a (P31), taxonomy (P279), occupation (P106), citizenship (P27)."""
-    order = "ORDER BY ?s " if ordered else ""
     return (f"SELECT ?s ?sLabel ?oLabel WHERE {{ BIND(wd:{obj_qid} AS ?o) ?s wdt:{prop} ?o . "
             f'SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }} }} '
-            f"{order}LIMIT {limit} OFFSET {offset}")
+            f"LIMIT {limit} OFFSET {offset}")
 
 
-def _q_free_object(subj_class, prop, ordered, limit, offset):
+def _q_free_object(subj_class, prop, limit, offset):
     """`?s wdt:P31 wd:<class> ; wdt:<prop> ?o` -> rows of (?sLabel, ?oLabel). Subject constrained to a clean class;
     object label from the label service (bare-QID skipped). Used for capital/continent/borders/country/director/..."""
-    order = "ORDER BY ?s " if ordered else ""
     return (f"SELECT ?s ?sLabel ?oLabel WHERE {{ ?s wdt:P31 wd:{subj_class} ; wdt:{prop} ?o . "
             f'SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }} }} '
-            f"{order}LIMIT {limit} OFFSET {offset}")
+            f"LIMIT {limit} OFFSET {offset}")
 
 
-def _q_city_of_country(country_qid, ordered, limit, offset):
+def _q_city_of_country(country_qid, limit, offset):
     """`?c wdt:P31 wd:Q515 ; wdt:P17 wd:<country>` -> (?cLabel, constant ?countryLabel). city -> country."""
-    order = "ORDER BY ?c " if ordered else ""
     return (f"SELECT ?c ?cLabel ?countryLabel WHERE {{ BIND(wd:{country_qid} AS ?country) "
             f"?c wdt:P31 wd:Q515 ; wdt:P17 ?country . "
             f'SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }} }} '
-            f"{order}LIMIT {limit} OFFSET {offset}")
+            f"LIMIT {limit} OFFSET {offset}")
 
 
 # ===============================================================================================================
@@ -262,42 +264,42 @@ def build_task_list(limits):
 
     # --- Tier 1: small, ultra-clean, high-value (single page each) ---
     # country isa + capital + continent + borders
-    add("isa:Q6256", "objanchor", "isa", prop="P31", obj="Q6256", ordered=False,
-        limit=limits["isa_small"], offset=0)
+    add("isa:Q6256", "objanchor", "isa", prop="P31", obj="Q6256", limit=limits["isa_small"], offset=0)
     for subj, prop, rel in SHAPEB[:3]:  # capital, continent, borders (all on country Q6256)
-        add(f"shapeb:{subj}:{prop}", "freeobj", rel, subj=subj, prop=prop, ordered=False,
-            limit=limits["shapeb"], offset=0)
+        add(f"shapeb:{subj}:{prop}", "freeobj", rel, subj=subj, prop=prop, limit=limits["shapeb"], offset=0)
     # chemical elements, planets
-    add("isa:Q11344", "objanchor", "isa", prop="P31", obj="Q11344", ordered=False, limit=500, offset=0)
-    add("isa:Q634", "objanchor", "isa", prop="P31", obj="Q634", ordered=False, limit=1000, offset=0)
+    add("isa:Q11344", "objanchor", "isa", prop="P31", obj="Q11344", limit=500, offset=0)
+    add("isa:Q634", "objanchor", "isa", prop="P31", obj="Q634", limit=1000, offset=0)
     # taxonomy (animals & plants): child isa parent
     for parent in TAXO_PARENTS:
-        add(f"taxo:{parent}", "objanchor", "isa", prop="P279", obj=parent, ordered=False,
-            limit=limits["taxo"], offset=0)
-    # geography free-object (rivers/mountains/lakes -> country) + films/books
+        add(f"taxo:{parent}", "objanchor", "isa", prop="P279", obj=parent, limit=limits["taxo"], offset=0)
+    # geography / creative free-object (rivers/mountains/lakes -> country; films -> director; books -> author) -- PAGED
+    # (these can return huge sets; small no-order pages keep every read under the socket timeout)
     for subj, prop, rel in SHAPEB[3:]:
-        add(f"shapeb:{subj}:{prop}", "freeobj", rel, subj=subj, prop=prop, ordered=False,
-            limit=limits["shapeb"], offset=0)
-    # cities of each major country
+        for pg in range(limits["shapeb_pages"]):
+            add(f"shapeb:{subj}:{prop}:p{pg}", "freeobj", rel, subj=subj, prop=prop,
+                limit=limits["shapeb"], offset=pg * limits["shapeb"])
+    # cities of each major country (paged)
     for cq in COUNTRIES:
-        add(f"city:{cq}", "cityofcountry", "country", country=cq, ordered=False,
-            limit=limits["city"], offset=0)
+        for pg in range(limits["city_pages"]):
+            add(f"city:{cq}:p{pg}", "cityofcountry", "country", country=cq,
+                limit=limits["city"], offset=pg * limits["city"])
 
     # --- Tier 2: is-a of high-instance classes (paged) ---
     for cls in ISA_CLASSES:
         for pg in range(limits["isa_pages"]):
             add(f"isa:{cls}:p{pg}", "objanchor", "isa", prop="P31", obj=cls,
-                ordered=(limits["isa_pages"] > 1), limit=limits["isa"], offset=pg * limits["isa"])
+                limit=limits["isa"], offset=pg * limits["isa"])
 
     # --- Tier 3: people breadth -- occupations (P106) then citizenship (P27), paged to fill to target ---
     for occ_qid in OCCUPATIONS:
         for pg in range(limits["occ_pages"]):
             add(f"occ:{occ_qid}:p{pg}", "objanchor", "occupation", prop="P106", obj=occ_qid,
-                ordered=(limits["occ_pages"] > 1), limit=limits["occ"], offset=pg * limits["occ"])
+                limit=limits["occ"], offset=pg * limits["occ"])
     for cq in COUNTRIES:
         for pg in range(limits["cit_pages"]):
             add(f"cit:{cq}:p{pg}", "objanchor", "citizen", prop="P27", obj=cq,
-                ordered=(limits["cit_pages"] > 1), limit=limits["cit"], offset=pg * limits["cit"])
+                limit=limits["cit"], offset=pg * limits["cit"])
 
     return tasks
 
@@ -324,11 +326,11 @@ def rows_to_facts(task, rows):
 def task_sparql(task):
     kind = task["kind"]
     if kind == "objanchor":
-        return _q_object_anchored(task["prop"], task["obj"], task["ordered"], task["limit"], task["offset"])
+        return _q_object_anchored(task["prop"], task["obj"], task["limit"], task["offset"])
     if kind == "freeobj":
-        return _q_free_object(task["subj"], task["prop"], task["ordered"], task["limit"], task["offset"])
+        return _q_free_object(task["subj"], task["prop"], task["limit"], task["offset"])
     if kind == "cityofcountry":
-        return _q_city_of_country(task["country"], task["ordered"], task["limit"], task["offset"])
+        return _q_city_of_country(task["country"], task["limit"], task["offset"])
     raise ValueError(f"unknown task kind {kind!r}")
 
 
@@ -354,7 +356,9 @@ def write_state(out_dir, **fields):
 
 
 def load_checkpoint(out_dir):
-    """Return (fact_set, completed_task_ids). fact_set is a set of (a, rel, p) tuples reloaded from facts.jsonl."""
+    """Return (fact_set, completed_task_ids, skipped_task_ids). fact_set is a set of (a, rel, p) tuples reloaded from
+    facts.jsonl; skipped = tasks that FAILED past max-retries on a prior run and must never be re-issued (the honest
+    ceiling)."""
     out_dir = Path(out_dir)
     fact_set = set()
     jsonl = out_dir / "facts.jsonl"
@@ -369,14 +373,16 @@ def load_checkpoint(out_dir):
                     fact_set.add((a, rel, p))
                 except Exception:
                     continue
-    completed = set()
+    completed, skipped = set(), set()
     prog = out_dir / "progress.json"
     if prog.exists():
         try:
-            completed = set(json.loads(prog.read_text()).get("completed_tasks", []))
+            d = json.loads(prog.read_text())
+            completed = set(d.get("completed_tasks", []))
+            skipped = set(d.get("skipped_tasks", []))
         except Exception:
-            completed = set()
-    return fact_set, completed
+            completed, skipped = set(), set()
+    return fact_set, completed, skipped
 
 
 # ===============================================================================================================
@@ -388,14 +394,20 @@ def fetch(out_dir, target, limits, client, pid, resume=True):
     jsonl_path = out_dir / "facts.jsonl"
     prog_path = out_dir / "progress.json"
 
-    fact_set, completed = (load_checkpoint(out_dir) if resume else (set(), set()))
+    fact_set, completed, skipped = (load_checkpoint(out_dir) if resume else (set(), set(), set()))
     t0 = time.time()
-    print(f"[kb-v2] resume: {len(fact_set)} facts + {len(completed)} tasks already done", flush=True)
+    print(f"[kb-v2] resume: {len(fact_set)} facts + {len(completed)} tasks done + {len(skipped)} skipped", flush=True)
 
     tasks = build_task_list(limits)
+
+    def _ckpt():
+        _atomic_write_json(prog_path, {"completed_tasks": sorted(completed), "skipped_tasks": sorted(skipped),
+                                       "count": len(fact_set)})
+
     write_state(out_dir, pid=pid, target=target, count_so_far=len(fact_set), status="running",
                 started_note=f"started {time.strftime('%Y-%m-%d %H:%M:%S')}; {len(tasks)} tasks queued",
-                last_update_note="init", n_tasks_total=len(tasks), n_tasks_done=len(completed))
+                last_update_note="init", n_tasks_total=len(tasks), n_tasks_done=len(completed),
+                n_tasks_skipped=len(skipped))
 
     jsonl = open(jsonl_path, "a", encoding="utf-8", buffering=1)  # line-buffered append (survives kill)
     n_done = len(completed)
@@ -404,14 +416,20 @@ def fetch(out_dir, target, limits, client, pid, resume=True):
             if len(fact_set) >= target:
                 print(f"[kb-v2] target {target} reached ({len(fact_set)} facts); stopping early.", flush=True)
                 break
-            if task["id"] in completed:
+            if task["id"] in completed or task["id"] in skipped:
                 continue
             try:
                 rows = client.query(task_sparql(task))
             except Exception as ex:
-                # a failed task is NON-fatal: log, record it NOT-completed (so a later resume retries it), keep going.
-                print(f"  [task {task['id']}] FAILED {type(ex).__name__}: {ex}", flush=True)
-                write_state(out_dir, last_update_note=f"task {task['id']} failed: {type(ex).__name__}")
+                # SKIP-AND-CONTINUE: past max-retries this task is un-completable AS ISSUED (e.g. a result set too
+                # large to read within the socket timeout). Mark it SKIPPED in the checkpoint so it is NEVER re-issued
+                # -- not even on a later resume -- and move on. This is the honest ceiling; the run does not stall.
+                skipped.add(task["id"])
+                _ckpt()
+                print(f"  [task {task['id']}] FAILED past retries ({type(ex).__name__}: {ex}) -> SKIPPED "
+                      f"(total skipped {len(skipped)})", flush=True)
+                write_state(out_dir, count_so_far=len(fact_set), n_tasks_skipped=len(skipped),
+                            last_update_note=f"task {task['id']} SKIPPED: {type(ex).__name__}")
                 continue
             new = 0
             for fact in rows_to_facts(task, rows):
@@ -428,8 +446,8 @@ def fetch(out_dir, target, limits, client, pid, resume=True):
                       f"+{new} new  (total {len(fact_set)}, reqs {client.n_requests}, 429s {client.n_429})",
                       flush=True)
             # checkpoint the progress + state every task (cheap; makes resume exact)
-            _atomic_write_json(prog_path, {"completed_tasks": sorted(completed), "count": len(fact_set)})
-            write_state(out_dir, count_so_far=len(fact_set), n_tasks_done=n_done,
+            _ckpt()
+            write_state(out_dir, count_so_far=len(fact_set), n_tasks_done=n_done, n_tasks_skipped=len(skipped),
                         last_update_note=f"task {task['id']}: +{new} (elapsed {int(time.time() - t0)}s)")
     finally:
         jsonl.close()
@@ -446,6 +464,8 @@ def fetch(out_dir, target, limits, client, pid, resume=True):
         "n_requests": client.n_requests,
         "n_retries": client.n_retries,
         "n_429": client.n_429,
+        "n_tasks_skipped": len(skipped),
+        "skipped_tasks": sorted(skipped),
         "relations": sorted({f[1] for f in all_facts}),
         "facts": all_facts,
     }
@@ -557,14 +577,15 @@ def validate_bundle(bundle_dir, n_recall=60, seed=42):
 # CLI.
 # ===============================================================================================================
 def _default_limits():
+    # ALL page sizes <= 1500 so no single no-order read exceeds the 90s socket timeout (rivers no-order @1500 ~= 31s).
     return {
-        "isa_small": 300,   # country isa (single page)
-        "shapeb": 3000,     # free-object relations (capital/continent/borders/river/mountain/lake/film/book)
-        "taxo": 300,        # subclasses per taxonomy parent
-        "city": 1500,       # cities per country
-        "isa": 2500, "isa_pages": 3,   # is-a of high-instance classes
-        "occ": 1800, "occ_pages": 3,   # people by occupation
-        "cit": 1500, "cit_pages": 2,   # people by citizenship
+        "isa_small": 300,                      # country isa (single page)
+        "shapeb": 1500, "shapeb_pages": 4,     # capital/continent/borders (p0 only matters) + paged geo/film/book
+        "taxo": 300,                           # subclasses per taxonomy parent
+        "city": 1500, "city_pages": 3,         # cities per country
+        "isa": 1500, "isa_pages": 3,           # is-a of high-instance classes
+        "occ": 1500, "occ_pages": 4,           # people by occupation (main volume backstop)
+        "cit": 1500, "cit_pages": 3,           # people by citizenship (second volume backstop)
     }
 
 
@@ -588,7 +609,7 @@ def main():
 
     if a.smoke and a.smoke > 0:
         # SMOKE: fetch ~N facts (small per-domain limits, no people-paging), build the bundle, load + assert.
-        limits = {"isa_small": 250, "shapeb": 400, "taxo": 200, "city": 300,
+        limits = {"isa_small": 250, "shapeb": 400, "shapeb_pages": 1, "taxo": 200, "city": 300, "city_pages": 1,
                   "isa": 400, "isa_pages": 1, "occ": 300, "occ_pages": 1, "cit": 250, "cit_pages": 1}
         print(f"[kb-v2 SMOKE] target={a.smoke} facts into {out_dir}", flush=True)
         all_facts, elapsed = fetch(out_dir, a.smoke, limits, client, pid, resume=not a.no_resume)
