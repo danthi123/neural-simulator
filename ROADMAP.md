@@ -7,6 +7,19 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ 2026-08-21 — the "make the brain continuous" arc's crux LANDED (the brain is now alive between turns by default)
+
+The single biggest next arc named below ("make the brain continuous") had its **mission-defining flip land 2026-08-21**:
+the between-turn CONTINUOUS LIFE is now **on by default** — the brain keeps a thought wandering and its mood settling
+between your messages, and the next turn leads with what it was mulling. Verified safe (byte-identical to before on
+ordinary turns, no memory leak). Enriching rungs added the same session, built + verified but **default-off pending an
+owner-reviewed soak** (they change some replies): the brain forms **stronger memories when engaged** (dopamine-gated
+encoding), gets **more curious when engaged** (asks follow-ups), has **original ideas between turns** (a novel blended
+"a thought occurred to me…", never faked as a fact), and its "conscious workspace" now **cross-checks three
+independent signals** (recall ∧ not-surprised ∧ comprehended) before committing an answer. The memory-separator (#73)
+was honestly banked: the write-side separation works; the residual is a quieter/graded way to READ a memory's
+strength. See [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) (live resume anchor) + `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`.
+
 ## ⭐ Strategic reframe (2026-08-19) — the destination is the same, the near-term route changed
 
 The long-term goal is unchanged: **one spiking brain, every host crutch removed, abilities that emerge rather than being
