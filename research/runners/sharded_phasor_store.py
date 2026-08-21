@@ -63,23 +63,30 @@ class ShardedPhasorStore:
         self.seed = int(seed)
         self.D = int(D)
         self._composer_kwargs = dict(composer_kwargs)
-        # Build the shards. Same seed+vocab -> byte-identical codebooks in every shard.
-        self.shards = [
-            RFPhasorComposer(seed=self.seed, D=self.D, vocab=vocab, **composer_kwargs)
-            for _ in range(self.n_shards)
-        ]
-        # Point every shard at ONE shared codebook object (memory: 1 codebook, not S). The codebooks are already
-        # value-identical (same seed); sharing the OBJECT means a runtime-grown word (see RFPhasorComposer.
-        # _filler_phases) allocated in ANY shard is visible to ALL shards -> a concept stays global. Grafting the
-        # SAME dict/list references is safe because the composer only ever reads or appends to them.
+        # Build the shards. share_codebook: build the FULL {word:[D]} codebook ONCE (shard 0); the rest get a
+        # 1-word vocab then GRAFT shard 0's codebook. Building all S shards with the full vocab FIRST allocated S
+        # transient copies of a large codebook -> 500 shards x a 100k-word dict (~100 MB each) OOM-crashed a 46 GB
+        # box (2026-08-21). Sharing the OBJECT is what the design always intended; do it DURING construction so peak
+        # memory is ONE codebook, not S. Grafting the SAME dict/list references is safe (read/append only), and a
+        # runtime-grown word (RFPhasorComposer._filler_phases) allocated in ANY shard stays visible to ALL.
         if share_codebook and self.n_shards > 0:
-            base = self.shards[0]
-            for sh in self.shards[1:]:
+            base = RFPhasorComposer(seed=self.seed, D=self.D, vocab=vocab, **composer_kwargs)
+            self.shards = [base]
+            minimal = list(vocab[:1]) if vocab else None   # a 1-word codebook the graft immediately replaces
+            for _ in range(self.n_shards - 1):
+                sh = RFPhasorComposer(seed=self.seed, D=self.D, vocab=minimal, **composer_kwargs)
                 sh.concepts = base.concepts
                 sh.roles = base.roles
                 sh.pol_words = base.pol_words
                 sh.words = base.words          # SAME list object -> bisect.insort in one shard grows all
                 sh._growth_rng = base._growth_rng
+                self.shards.append(sh)
+        else:
+            # same seed+vocab -> byte-identical codebooks in every shard (no sharing = S independent copies).
+            self.shards = [
+                RFPhasorComposer(seed=self.seed, D=self.D, vocab=vocab, **composer_kwargs)
+                for _ in range(self.n_shards)
+            ]
         self._shared_codebook = bool(share_codebook)
 
     # --- routing -------------------------------------------------------------------------------------------
@@ -226,11 +233,19 @@ class ShardedPhasorStore:
         with open(os.path.join(path, "facts.json")) as f:
             facts = json.load(f)
         comps = np.load(os.path.join(path, "composites.npz"))
+        # Read each shard's composite array ONCE (npz access re-decompresses a NEW array every call), and store each
+        # fact's composite as a COPY of its row -- a bare `arr[j]` VIEW pins the whole shard array alive, so
+        # re-reading per-fact + keeping the view retained ~one full-shard array PER FACT (94k x ~200 KB ~= 18 GB,
+        # the 2026-08-21 load OOM). One read per shard + a 1-KB row copy per fact -> peak ~a few hundred MB.
+        shard_arrays = {}
         per_shard_idx = {}
         for rec in facts:
             i = int(rec["shard"])
-            arr = comps[f"sh{i}"]
+            arr = shard_arrays.get(i)
+            if arr is None:
+                arr = comps[f"sh{i}"]
+                shard_arrays[i] = arr
             j = per_shard_idx.get(i, 0)
-            store.shards[i].kb.append((rec["fact"], arr[j]))
+            store.shards[i].kb.append((rec["fact"], np.array(arr[j])))
             per_shard_idx[i] = j + 1
         return store
