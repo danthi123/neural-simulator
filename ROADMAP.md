@@ -7,6 +7,29 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ 2026-08-21 (late) — the "conscious workspace" now cross-checks comprehension by default; a self-maintaining project OS landed; two memory-flip gates came back honest
+
+Four things landed later the same day.
+1. **The brain's "conscious workspace" now cross-checks THREE independent signals by default** before committing an
+   answer: it recalls the fact, it isn't surprised, AND it comprehended the question (a real-vocabulary comprehension
+   read replaced the toy one that had been over-vetoing legitimate answers). This is now ON by default.
+2. **A self-maintaining "project OS" landed.** Machinery that keeps the work-board, the compute lanes, and the
+   tool-health checks current on their own: a work-backlog generator, an auto-dispatcher that fills idle compute, and
+   re-injection of the durable state after the assistant's context is compacted. Honest finding: the dispatch plumbing
+   is now closed, so the real bottleneck is SUPPLY — the ready work is written in prose that still has to be turned into
+   runnable commands, and the safeguards correctly refuse to invent them. (Tool check: the experiment engine is healthy;
+   the GPU job-queue's recurring wedge was cleared.)
+3. **"Learn through use" default-on flip is HELD — a NO-GO, honestly.** Making a memory the brain USES get stronger
+   works, but turning it on by default still slightly disturbs a neighbouring memory through a quieter read channel; the
+   separator fixed the loud channel, and a second fix (surface the stable graded read) is in flight.
+4. **"Stronger memory when engaged" (dopamine-gated encoding) flip is UNDEFINED.** The default-on test came back
+   inconclusive: over the realistic range of engagement it HELPS recall of heavily-degraded memories but slightly HURTS
+   low-engagement ones (it redistributes salience rather than lifting everything), and one edge case where an untaught
+   cue is wrongly completed needs its measuring instrument re-checked. The named fix is a self-tuning set-point that
+   normalises the effect to the running engagement level (homeostatic scaling). Both flips stay OFF until clean.
+
+See [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) (live resume anchor) + `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7 (walls) / §8 (next actions).
+
 ## ⭐ 2026-08-21 — the "make the brain continuous" arc's crux LANDED (the brain is now alive between turns by default)
 
 The single biggest next arc named below ("make the brain continuous") had its **mission-defining flip land 2026-08-21**:

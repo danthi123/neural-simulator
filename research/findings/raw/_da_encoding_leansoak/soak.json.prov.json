@@ -1,0 +1,25 @@
+{
+ "run_id": "1787361492-891698",
+ "runner": "research/runners/_da_encoding_leansoak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9643c8645f947069/research/runners/_da_encoding_leansoak.py"
+ ],
+ "git_sha": "9b64475d6",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T21:18:12",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_da_encoding_leansoak/soak.json"
+}
