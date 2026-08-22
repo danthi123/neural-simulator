@@ -24,6 +24,7 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | 10 | single-axis-sweep-as-absolute | 3 | `gates/conditional_sweep` | registry, reporting | 🟡 REPORTS |
 | 11 | terminology-overclaim | 3 | `gates/terminology` | registry, reporting | 🟡 REPORTS |
 | 12 | board-drift-unenforced (Vikunja) | 1 | `gates/vikunja_freshness` (+ marker `docs/.vikunja_sync`) | pre-commit (registry) | ✅ BLOCKS |
+| 13 | compaction-loss / attention-dilution | — | `gates/live_state_reinjection` (+ hooks `live_state_inject` / `live_state_nudge`, `tools/live_state.py`) | pre-commit (registry) + SessionStart/UserPromptSubmit hooks | ✅ BLOCKS (over-cap dilution guard + re-injection wiring) |
 | P | artifact-provenance | — | `runners/__init__` capture + `gates/artifact_provenance` | execution path + registry | ✅ BLOCKS |
 | D | doc-type / placement | — | `gates/doc_type` | registry | ✅ BLOCKS |
 | C | claim-not-traced-to-artifact | — | `claim_check.py` | pre-commit G2 | ✅ BLOCKS |
