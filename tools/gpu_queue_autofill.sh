@@ -41,3 +41,18 @@ add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners.persistent_living_loo
 add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners._vision_rstdp_readout_derisk --seeds 42 43 44 100 101 102 --n-s2 96 --epochs 150 --out $OUT/vrstdp_ns296_ep150_c${cycle}.json"
 
 echo "$(date '+%F %T') cycle=$cycle depth_was=$depth enqueued 5 long jobs (seed base $base)" >> "$LOG"
+
+# --- POOL refill: keep the 5 disjoint CPU lanes served (they drain in minutes; lane_check gate blocks on empty) ---
+POOL_QUEUE=$MAIN/research/queue/pool.queue
+pdepth=$(awk 'NF>1 && $0 !~ /^[[:space:]]*#/' "$POOL_QUEUE" 2>/dev/null | wc -l)
+if [ "${pdepth:-0}" -lt 3 ]; then
+  PQ="$WT/tools/pool_queue.sh"
+  PS="$base $((base+1)) $((base+2)) $((base+3)) $((base+4)) $((base+5))"
+  padd() { bash "$PQ" add "SIM_BACKEND=numpy OMP_NUM_THREADS=4 .venv/bin/python -u -m research.runners.$1" --checked "$2" >/dev/null 2>&1; }
+  padd "_affect_state_region_derisk --seeds $PS --out research/findings/raw/four_day/affect_c${cycle}.json" "laneA affect: multi-seed robustness (continuous-substrate faculty), autofill c$cycle"
+  padd "_laneB_curiosity_learning_progress_slope_derisk --seeds $PS --out research/findings/raw/four_day/curiosity_c${cycle}.json" "laneB curiosity: LP-slope drive multi-seed, autofill c$cycle"
+  padd "_gnw_coincidence_integrator_derisk --seeds $PS --json research/findings/raw/four_day/gnw_c${cycle}.json" "laneC self/workspace: GNW coincidence integrator multi-seed, autofill c$cycle"
+  padd "_b1_v1_selforg_rf_derisk --seeds $PS --out research/findings/raw/four_day/b1_c${cycle}.json" "laneD perception: V1 self-org RF multi-seed, autofill c$cycle"
+  padd "_emerge63_corpus_taught_slot_order_derisk --derisk --seeds $PS" "laneE language: slot-order emergence multi-seed, autofill c$cycle"
+  echo "$(date '+%F %T') cycle=$cycle pool refill: staged 5 lane jobs (seeds ${base}..)" >> "$LOG"
+fi
