@@ -1,0 +1,117 @@
+{
+  "label": "knowledge-scale sharded fact-store -> live brain_chat recall wiring (board #66/#127)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "part A: routing byte-identical (mismatches)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "part A: facts re-homed == source",
+      "ok": true,
+      "detail": "measured=38 expect=38",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "part A: moat abstains identically",
+      "ok": true,
+      "detail": "measured=11 expect=11",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "part A: recall actually checked (>0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap fn: available",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap fn: composer swapped to ShardedPhasorStore",
+      "ok": true,
+      "detail": "measured=ShardedPhasorStore expect=ShardedPhasorStore",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap fn: recall byte-identical (mismatches)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap fn: moat identical",
+      "ok": true,
+      "detail": "measured=8 expect=8",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap fn: kb drop-in surface == source",
+      "ok": true,
+      "detail": "measured=38 expect=38",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "part B live-brain end-to-end",
+      "why": "SKIP_LIVE_BRAIN set (brain-load gated to tools/gpu_queue.sh)"
+    },
+    {
+      "process": "learned/spiking cue->shard router",
+      "why": "router hash(agent) mod S is a declared host scaffold; the in-shard FHRR recall + the no-confab moat are the genuine reads"
+    }
+  ],
+  "chance": null,
+  "arc": "knowledge-scale sharded fact-store -> live brain_chat recall wiring (board #66/#127)",
+  "backend": "numpy",
+  "part_a_store_level": {
+    "n_facts_single": 38,
+    "n_facts_sharded": 38,
+    "n_shards": 16,
+    "load_balance_max_over_mean": 3.368,
+    "mismatches": [],
+    "recall_checked": 37,
+    "yesno_checked": 37,
+    "render_checked": 37,
+    "chain_checked": 6,
+    "moat_checked": 11,
+    "moat_abstain_ok": 11,
+    "GO": true
+  },
+  "part_b_swap_fn": {
+    "available": true,
+    "before_composer_type": "RFPhasorComposer",
+    "after_composer_type": "ShardedPhasorStore",
+    "swap_took_effect": true,
+    "recall_checked": 37,
+    "recall_mismatches": [],
+    "moat_checked": 8,
+    "moat_ok": 8,
+    "kb_property_len": 38,
+    "words_property_len": 73,
+    "GO": true
+  },
+  "part_b_live_brain": {
+    "available": false,
+    "skipped": "SKIP_LIVE_BRAIN set (brain-load gated to tools/gpu_queue.sh)"
+  },
+  "live_brain_available": false,
+  "elapsed_s": 21.4
+}

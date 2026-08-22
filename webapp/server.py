@@ -3341,6 +3341,57 @@ def _get_warm_qwen_renderer():
         return _WARM_QWEN_RENDERER
 
 
+def _sharded_store_enabled() -> bool:
+    """`BRAIN_SHARDED_STORE` opt-in (a lightweight env read so the DISABLED default path imports nothing / does no
+    work). Truthy: 1/true/on/yes."""
+    return os.environ.get("BRAIN_SHARDED_STORE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _maybe_shard_composer(agent):
+    """OPT-IN (`BRAIN_SHARDED_STORE`, DEFAULT-OFF = byte-identical): route this brain's FACT RECALL through the
+    de-risked agent-routed sharded fact-store (`research/runners/sharded_phasor_store.py`) so recall stays tractable
+    as the store scales toward LLM-scale knowledge (the single-store recall is an O(K) scan -- ~5 s/query at
+    K=2413, minutes/query at 1e5-1e6). UNSET -> return `agent` UNTOUCHED (imports nothing, does no work: the current
+    single-store composer path is byte-unchanged).
+
+    When set, the BrainConversationalAgent's `.composer` is replaced by a `ShardedPhasorStore` built FROM that same
+    composer (`from_existing_composer`): it shares the composer's codebook (identical phasor codes) and re-homes the
+    already-stored facts routed by `hash(agent) mod S`, so every agent-cued read (query_patient / ask_yes_no /
+    render_fact / chain_of_thought) is byte-identical to the single-store answer while scanning ~K/S facts. The
+    router hash(agent) is a DECLARED host scaffold; the in-shard FHRR recall + the no-confab moat are the genuine
+    reads. Shards default to the numpy RF fast-path (the de-risked, scale-capable store); the spiking OneBrainComposer
+    the live default uses is itself byte-identical to that RF numpy oracle, so routing preserves the production answer.
+    Finding: research/findings/2026-08-21-knowledge-scale-fhrr-fact-store-sharding-routed-capacity-GO.md.
+
+    Never breaks chat: any failure to shard leaves the single-store composer in place (logged)."""
+    if not _sharded_store_enabled():
+        return agent
+    inner = getattr(agent, "agent", agent)          # the BrainConversationalAgent (its `.composer` is the recall engine)
+    src = getattr(inner, "composer", None)
+    if src is None:
+        return agent
+    try:
+        n_shards = int(os.environ.get("BRAIN_SHARDED_STORE_SHARDS", "16"))
+    except ValueError:
+        n_shards = 16
+    try:
+        from research.runners.sharded_phasor_store import ShardedPhasorStore
+        sharded = ShardedPhasorStore.from_existing_composer(src, n_shards=max(1, n_shards))
+        inner.composer = sharded
+        # The agent caches whether its composer carries its own parser (`hear`); the sharded store does not, so a
+        # post-swap teach re-parses with the agent's own parser. Keep the cached flag honest.
+        try:
+            inner._composer_has_hear = hasattr(sharded, "hear")
+        except Exception:
+            pass
+        print("[webapp] BRAIN_SHARDED_STORE on: routed fact recall through %d-shard store "
+              "(%d facts re-homed, load-balance max/mean=%.2f)"
+              % (sharded.n_shards, sharded.total_facts(), sharded.load_balance()[3]))
+    except Exception as e:   # never let an opt-in capacity substrate break the chat -> fall back to single store
+        print("[webapp] BRAIN_SHARDED_STORE requested but sharding failed (%r); keeping single-store composer" % (e,))
+    return agent
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -3410,6 +3461,10 @@ def _build_chat_brain(brain: str, renderer: str):
         rend = _get_warm_qwen_renderer()    # shared warm model (loaded once); needs cupy + CUDA torch
     else:
         rend = StubRenderer()               # GPU-free default
+
+    # opt-in capacity substrate: route fact recall through the sharded (scale-capable) store when
+    # BRAIN_SHARDED_STORE is set. Default-OFF -> no-op (byte-identical). Applies to every brain source above.
+    agent = _maybe_shard_composer(agent)
     return ChatBrain(agent, self_aliases=aliases, renderer=rend), source
 
 

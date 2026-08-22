@@ -51,6 +51,25 @@ def _stable_hash(s: str) -> int:
     return int.from_bytes(h, "big")
 
 
+def _fact_to_store_args(fact):
+    """Reconstruct the (agent, action, patient, polarity) `store()` arguments from a composer's stored fact-dict
+    (the shape `RFPhasorComposer.store`/`OneBrainComposer.store` write). Handles a plain-string patient, an
+    attributed patient ('big red apple' -> (adjs, noun)), a recursive Clause filler (passed through unchanged),
+    and a bound AFFIRM/NEGATE polarity. Used to RE-HOME a source composer's facts into the shards (re-encoded with
+    the SHARED codebook -> byte-identical composite)."""
+    agent = fact.get("agent")
+    action = fact.get("action")
+    polarity = fact.get("polarity")
+    if "attribute" in fact:
+        adjs = [fact["attribute"]]
+        if "attribute2" in fact:
+            adjs.append(fact["attribute2"])
+        patient = (adjs, fact.get("patient"))
+    else:
+        patient = fact.get("patient")   # a plain string OR a Clause namedtuple -> store() handles both
+    return agent, action, patient, polarity
+
+
 class ShardedPhasorStore:
     """S independent RFPhasorComposer shards with agent-hash routing + a shared codebook.
 
@@ -58,14 +77,20 @@ class ShardedPhasorStore:
     / query_chain / chain_of_thought), so it is a drop-in capacity upgrade behind the same reads.
     """
 
-    def __init__(self, n_shards=64, seed=42, D=128, vocab=None, share_codebook=True, **composer_kwargs):
+    def __init__(self, n_shards=64, seed=42, D=128, vocab=None, share_codebook=True,
+                 composer_factory=None, **composer_kwargs):
         self.n_shards = int(n_shards)
         self.seed = int(seed)
         self.D = int(D)
         self._composer_kwargs = dict(composer_kwargs)
+        # composer_factory (default RFPhasorComposer -- the de-risk is UNCHANGED): the per-shard recall engine. It
+        # stays the genuine FHRR/RF composer; only the hash(agent) router is a host scaffold. Kept a parameter so the
+        # live-integration path can build shards whose class + codebook match the production composer (see
+        # `from_existing_composer`).
+        self._composer_factory = composer_factory or RFPhasorComposer
         # Build the shards. Same seed+vocab -> byte-identical codebooks in every shard.
         self.shards = [
-            RFPhasorComposer(seed=self.seed, D=self.D, vocab=vocab, **composer_kwargs)
+            self._composer_factory(seed=self.seed, D=self.D, vocab=vocab, **composer_kwargs)
             for _ in range(self.n_shards)
         ]
         # Point every shard at ONE shared codebook object (memory: 1 codebook, not S). The codebooks are already
@@ -176,3 +201,87 @@ class ShardedPhasorStore:
             return (0, 0, 0.0, 0.0)
         mean = sum(sizes) / len(sizes)
         return (min(sizes), max(sizes), mean, (max(sizes) / mean if mean else 0.0))
+
+    # --- drop-in composer surface (read-only) --------------------------------------------------------------
+    # The live chat treats its composer as a duck: it reads `.kb` (ChatBrain._refresh_facts, agent.elaborate),
+    # `.words` (agent vocab), and the recall/store methods above. Expose those so a ShardedPhasorStore is a drop-in
+    # replacement for the single-store composer. `.kb` AGGREGATES every shard's kb (read-only concatenation, in
+    # shard order); nothing in the live path mutates `composer.kb` directly (writes go through `store()`), so a
+    # computed aggregate is safe.
+    @property
+    def kb(self):
+        out = []
+        for sh in self.shards:
+            out.extend(sh.kb)
+        return out
+
+    def _base(self):
+        return self.shards[0] if self.shards else None
+
+    @property
+    def words(self):
+        b = self._base()
+        return getattr(b, "words", []) if b is not None else []
+
+    @property
+    def concepts(self):
+        b = self._base()
+        return getattr(b, "concepts", {}) if b is not None else {}
+
+    @property
+    def roles(self):
+        b = self._base()
+        return getattr(b, "roles", {}) if b is not None else {}
+
+    @property
+    def pol_words(self):
+        b = self._base()
+        return getattr(b, "pol_words", []) if b is not None else []
+
+    # --- live-integration constructor ----------------------------------------------------------------------
+    @classmethod
+    def from_existing_composer(cls, composer, n_shards=16, composer_factory=None, share_codebook=True):
+        """Build a sharded store that is BYTE-IDENTICAL to `composer` for every agent-cued read, by (a) SHARING the
+        source composer's codebook object -- so a concept/role/word (incl. any grounded-code override or
+        runtime-grown word) means the exact same phasor in every shard -- and (b) RE-HOMING each stored fact into
+        the shard its AGENT routes to. First-match WITHIN an agent's shard == first-match over the source store for
+        that agent (agent co-location), so the routed answer is byte-identical. Only `hash(agent) mod S` is a host
+        scaffold; the in-shard FHRR recall + no-confab moat are the genuine reads.
+
+        Works for a bare `RFPhasorComposer` OR a `OneBrainComposer` (whose codebook lives on its inner `.comp` and
+        whose `kb` carries the fact-dicts). Shards default to `RFPhasorComposer` (the de-risked, scale-capable
+        numpy fast-path); because RFPhasorComposer is the validated numpy ORACLE the spiking OneBrainComposer is
+        itself byte-identical to, routing a OneBrain source's facts through RF shards preserves the source's recall
+        answer (verify before flipping) while removing the O(K) scan wall. Pass `composer_factory=type(composer)`
+        to shard the exact production class instead (faithful but S-fold build/VRAM cost)."""
+        cb = getattr(composer, "comp", composer)   # OneBrainComposer wraps an inner RFPhasorComposer as `.comp`
+        D = int(getattr(cb, "D", getattr(composer, "D", 128)))
+        seed = int(getattr(cb, "seed", getattr(composer, "seed", 42)))
+        vocab = list(getattr(cb, "words", []))
+        store = cls(n_shards=n_shards, seed=seed, D=D, vocab=vocab,
+                    composer_factory=composer_factory, share_codebook=True)
+        # Graft the SOURCE codebook objects into EVERY shard (identical concepts/roles/pol_words/words incl.
+        # grounded overrides + any runtime-grown words), so a re-encoded composite is byte-identical to the source.
+        if store.shards:
+            for sh in store.shards:
+                if hasattr(cb, "concepts"):
+                    sh.concepts = cb.concepts
+                if hasattr(cb, "roles"):
+                    sh.roles = cb.roles
+                if hasattr(cb, "pol_words"):
+                    sh.pol_words = cb.pol_words
+                if hasattr(cb, "words"):
+                    sh.words = cb.words
+                if hasattr(cb, "_growth_rng"):
+                    sh._growth_rng = cb._growth_rng
+        # Re-home every stored fact into its agent's shard, IN ORDER (preserves per-agent first-match), by replaying
+        # store() -> re-encode with the shared codebook -> byte-identical composite.
+        for entry in getattr(composer, "kb", []):
+            fact = entry[0] if isinstance(entry, (tuple, list)) else entry
+            if not isinstance(fact, dict):
+                continue
+            agent, action, patient, polarity = _fact_to_store_args(fact)
+            if agent is None or action is None:
+                continue
+            store.store(agent, action, patient, polarity=polarity)
+        return store
