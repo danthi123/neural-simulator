@@ -13,9 +13,14 @@ THE AUTONOMY DESIGN — the auto-vs-confirm question is resolved by COST, not by
 
   • FREE lanes (pool-cpu, gpu-queue) — ~0 tokens, safe → AUTO-dispatch, UNCONSTRAINED. Fill every idle free
     slot with the top-ranked dep-met dispatchable items, in rank order. `pool-cpu` → tools/pool_queue.sh add
-    (or tools/sweep_pool.sh for a grid); `gpu-queue` → tools/gpu_queue.sh add (sequential, VRAM-safe,
-    singleton daemon — this tool NEVER starts it, only `add`s). Continuous refill: designed to run every
-    heartbeat, so on a completion the freed slot pulls the next item next cycle.
+    (the shared pool.queue; tools/sweep_pool.sh is for GRID sweeps, not single commands); `gpu-queue` →
+    tools/gpu_queue.sh add (sequential, VRAM-safe, singleton daemon — this tool NEVER starts it, only `add`s).
+    Dispatch ALWAYS invokes the SHARED (main-checkout) queue scripts (resolved via the git common-dir, same
+    as the queue reads), so a job never lands in a dead per-worktree queue no daemon consumes (_shared_tool).
+    Continuous refill: designed to run every heartbeat, so on a completion the freed slot pulls the next item
+    next cycle. DEPS are respected two ways: the item's PROSE `deps` heuristic AND its STRUCTURED
+    `dependencies` (backlog ids) — an item waits until every dependency id has completed (left the backlog) or
+    gone in-flight; then it dispatches.
 
   • AGENT lane — tokens count toward the usage limit → GENERATE-AND-CONFIRM, BUDGETED. This tool does NOT
     auto-spawn agents. It EMITS a ranked launch-list (each entry: the exact agent-prompt seed + a suggested
@@ -132,6 +137,23 @@ def is_blocked(deps: str) -> bool:
     return bool(_BLOCKED_RE.search(deps or ""))
 
 
+# STRUCTURED deps: the backlog now also emits `dependencies` = a list of backlog ids this item is blocked
+# on. A dep id is SATISFIED iff it is no longer an open, un-dispatched backlog item — i.e. it has completed
+# (absent from the current backlog) OR it has already been dispatched (in the in-flight/ledger set). An item
+# with any UNSATISFIED structured dep must not be dispatched; when the dep clears, the item becomes ready.
+def structured_deps_unmet(item: dict, open_ids: set, satisfied_ids: set) -> list:
+    unmet = []
+    for d in item.get("dependencies", []) or []:
+        if d in open_ids and d not in satisfied_ids:
+            unmet.append(d)
+    return unmet
+
+
+def item_blocked(item: dict, open_ids: set, satisfied_ids: set) -> bool:
+    """An item cannot START if its PROSE deps say so OR any STRUCTURED dependency is unmet."""
+    return is_blocked(item.get("deps", "")) or bool(structured_deps_unmet(item, open_ids, satisfied_ids))
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # command resolution — a free-lane item is only AUTO-dispatchable if it carries a
 # runnable command. NEVER fabricate one (pool_queue.sh refuses prose; the GPU
@@ -184,6 +206,16 @@ def _shared_queue_root() -> str:
 
 def _queue_dir() -> str:
     return os.path.join(_shared_queue_root(), "research", "queue")
+
+
+def _shared_tool(name: str) -> str:
+    """Resolve a dispatch script to the SHARED (main-checkout) tools/ dir — NEVER the per-worktree copy.
+
+    A worktree-relative gpu_queue.sh / pool_queue.sh resolves ITS OWN ROOT to the worktree and writes to a
+    per-worktree queue that NO daemon consumes (a real fragmentation bug — the persistent GPU daemon + the
+    pool dispatcher consume the MAIN checkout's queues). So every live dispatch must invoke the main-checkout
+    script, whose ROOT resolves to the one shared queue/pool. Same resolution as _queue_dir()."""
+    return os.path.join(_shared_queue_root(), "tools", name)
 
 
 def _queue_lines(name: str):
@@ -345,9 +377,11 @@ class Plan:
         self.deferred_free = []       # free-lane dispatchable items over this cycle's capacity (refill later)
         self.agent_launch_list = []   # [{id, tier, why, prompt, item}] — EMIT-ONLY, budgeted
         self.agent_deferred = []      # ready agent items beyond the token budget
-        self.skipped_blocked = []     # items whose deps are unmet
+        self.skipped_blocked = []     # items whose deps are unmet (prose OR structured)
         self.skipped_inflight = []    # items already dispatched/queued/running
         self.capacity = {}
+        self.open_ids = set()         # ids of all backlog items this cycle (for structured-dep resolution)
+        self.satisfied_ids = set()    # dep ids treated as cleared (already dispatched/in-flight)
         self.verdict = ""
         self.verdict_kind = ""        # UNDER-PARALLELIZED | READY-NO-CMD | SATURATED
 
@@ -355,6 +389,11 @@ class Plan:
 def build_plan(items, capacity, inflight_ids, inflight_cmds, cfg: Config) -> Plan:
     p = Plan()
     p.capacity = dict(capacity)
+    # structured-dep resolution sets: every id in this backlog is "open"; already-dispatched ids (this
+    # ratchet's ledger + anything already queued/running by id) count as satisfied so a dependent unblocks
+    # once its prerequisite is in flight or has completed (dropped out of the backlog).
+    p.open_ids = {it.get("id") for it in items}
+    p.satisfied_ids = set(inflight_ids)
     items = sorted(items, key=lambda it: (-it.get("leverage", 0), it.get("rank", 1_000_000)))
 
     remaining = dict(capacity)      # free slots left per lane this cycle
@@ -362,7 +401,7 @@ def build_plan(items, capacity, inflight_ids, inflight_cmds, cfg: Config) -> Pla
         lane = it.get("lane")
         iid = it.get("id")
         if lane in FREE_LANES:
-            if is_blocked(it.get("deps", "")):
+            if item_blocked(it, p.open_ids, p.satisfied_ids):
                 p.skipped_blocked.append(it)
                 continue
             cmd = command_for(it)
@@ -378,7 +417,7 @@ def build_plan(items, capacity, inflight_ids, inflight_cmds, cfg: Config) -> Pla
             else:
                 p.deferred_free.append(it)          # dispatchable but no free slot this cycle (refill next)
         elif lane == "agent":
-            if is_blocked(it.get("deps", "")):
+            if item_blocked(it, p.open_ids, p.satisfied_ids):
                 p.skipped_blocked.append(it)
                 continue
             if iid in inflight_ids:
@@ -447,10 +486,14 @@ def plan_invariants(plan: Plan, capacity, inflight_ids, inflight_cmds) -> list:
         seen_ids.add(d["id"])
         seen_cmds.add(_norm(d["command"]))
 
-    # (3) respect deps: never dispatch a dep-blocked item.
+    # (3) respect deps: never dispatch a dep-blocked item — PROSE or STRUCTURED.
     for d in plan.dispatches:
         if is_blocked(d["item"].get("deps", "")):
             problems.append("dispatched a dep-BLOCKED item: %s (deps=%r)" % (d["id"], d["item"].get("deps")))
+        unmet = structured_deps_unmet(d["item"], plan.open_ids, plan.satisfied_ids)
+        if unmet:
+            problems.append("dispatched an item with UNMET structured deps: %s (waiting on %s)"
+                            % (d["id"], unmet))
 
     # (4) never exceed a lane's idle capacity.
     for lane in FREE_LANES:
@@ -492,7 +535,8 @@ def execute(plan: Plan, cfg: Config, capacity, inflight_ids, inflight_cmds, live
     # Build the concrete side-effect list. Free-lane dispatches → queue-add actions. Agents → NOT added
     # (emit-only). If a future build enabled auto-spawn it would append kind="spawn-agent" here; the guard
     # below would then catch it, which is exactly the confirm-rule enforcement.
-    actions = [{"kind": "queue-add", "lane": d["lane"], "id": d["id"], "command": d["command"]}
+    actions = [{"kind": "queue-add", "lane": d["lane"], "id": d["id"], "command": d["command"],
+                "anchor": d["item"].get("anchor", "auto-dispatched")}
                for d in plan.dispatches]
     if cfg.auto_agents:
         # Reserved flag, unimplemented on purpose: we DO NOT append spawn actions. Announce and stay emit-only.
@@ -525,12 +569,15 @@ def _enqueue(a: dict) -> dict:
         return {"id": iid, "lane": lane, "status": "REFUSED (command names no research.runners module)",
                 "command": cmd}
     try:
+        # ALWAYS the SHARED (main-checkout) script so the job lands in the ONE queue the live daemon/pool
+        # dispatcher consume — never a dead per-worktree queue (see _shared_tool).
         if lane == "gpu-queue":
-            r = subprocess.run(["bash", GPU_QUEUE_SH, "add", cmd],
+            r = subprocess.run(["bash", _shared_tool("gpu_queue.sh"), "add", cmd],
                                capture_output=True, text=True, timeout=30)
-        else:  # pool-cpu
+        else:  # pool-cpu — pool_queue.sh add stages to the shared pool.queue (sweep_pool.sh is for GRID
+               # sweeps, not single commands); the --checked record-gate is satisfied with the item's anchor.
             checked = "ratchet: backlog item %s (%s)" % (iid, a.get("anchor", "auto-dispatched"))
-            r = subprocess.run(["bash", POOL_QUEUE_SH, "add", cmd, "--checked", checked],
+            r = subprocess.run(["bash", _shared_tool("pool_queue.sh"), "add", cmd, "--checked", checked],
                                capture_output=True, text=True, timeout=180)
         ok = (r.returncode == 0)
         return {"id": iid, "lane": lane, "status": "queued" if ok else "FAILED",
@@ -780,6 +827,37 @@ def selftest() -> list:
     _actions, _results, refusal2 = execute(invalid, cfg, capacity, inflight_ids, inflight_cmds, live=False)
     if not refusal2 or _results:
         problems.append("FAIL-DIR: execute() did NOT refuse an invariant-violating plan")
+
+    # ---- STRUCTURED DEPENDENCIES (ids) — blocked until the dep CLEARS, both clear-paths, + failing dir ----
+    def _fcmd(x):
+        return "SIM_BACKEND=numpy .venv/bin/python -u -m research.runners.%s --out raw/%s.json" % (x, x)
+    dep_items = [
+        {"id": "Y", "lane": "pool-cpu", "leverage": 50, "rank": 1, "deps": "", "cmd": _fcmd("y"),
+         "dependencies": []},
+        {"id": "X", "lane": "pool-cpu", "leverage": 60, "rank": 2, "deps": "", "cmd": _fcmd("x"),
+         "dependencies": ["Y"]},   # X is blocked on Y
+    ]
+    cap2 = {"gpu-queue": 0, "pool-cpu": 2}      # room for BOTH by capacity — only the dep may hold X back
+    pd = build_plan(dep_items, cap2, set(), set(), cfg)
+    disp = {d["id"] for d in pd.dispatches}
+    if "Y" not in disp:
+        problems.append("STRUCT-DEP: the prerequisite Y was not dispatched")
+    if "X" in disp:
+        problems.append("STRUCT-DEP: dispatched X while its structured dep Y was still open (must wait)")
+    if not any(it.get("id") == "X" for it in pd.skipped_blocked):
+        problems.append("STRUCT-DEP: X (blocked on Y) was not recorded as skipped_blocked")
+    # dep CLEARS by completion (Y drops out of the backlog) → X becomes dispatchable
+    if "X" not in {d["id"] for d in build_plan([dep_items[1]], cap2, set(), set(), cfg).dispatches}:
+        problems.append("STRUCT-DEP: X did NOT dispatch after its dependency Y cleared (completed/absent)")
+    # dep CLEARS by going in-flight (Y already dispatched) → X becomes dispatchable
+    if "X" not in {d["id"] for d in build_plan(dep_items, cap2, {"Y"}, set(), cfg).dispatches}:
+        problems.append("STRUCT-DEP: X did NOT dispatch after its dependency Y went in-flight")
+    # FAIL-DIR: forcibly dispatching a structured-dep-blocked item MUST be caught by the invariants
+    badd = build_plan(dep_items, cap2, set(), set(), cfg)
+    xitem = next(i for i in dep_items if i["id"] == "X")
+    badd.dispatches.append({"id": "X", "lane": "pool-cpu", "command": xitem["cmd"], "item": xitem})
+    if not plan_invariants(badd, cap2, set(), set()):
+        problems.append("FAIL-DIR: dispatching a STRUCTURED-dep-blocked item was NOT caught")
 
     return problems
 

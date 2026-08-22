@@ -22,12 +22,24 @@ SOURCES — one scanner FUNCTION each, so adding a source is one function + one 
   (5) scan_vikunja          open Vikunja board tasks + their stated next-rungs (the live board)
   (6) scan_ledger_scaffolds ledger rows on_by_default==YES but scaffold_retired!=YES (host shortcuts to
                             convert — the burn-down-to-one-brain backlog)
+  (7) scan_next_actions     GAP_CLOSURE_MISSION.md forward-looking EXACT-NEXT lines that spell out a
+                            genuinely-runnable command (the richest source of ready FREE-LANE work)
+
+FREE-LANE `cmd` (the seam this generator closes). For the SUBSET of items that are genuinely runnable on a
+free lane (a real runner + args exists — de-risk sweeps, verifications, soaks, param sweeps) the generator
+emits `cmd` (the exact runnable command), a free `lane` (gpu-queue | pool-cpu), and structured
+`dependencies` (ids this item is blocked on). Items that need a mind (builds/wiring/design) carry NO cmd →
+they route to the agent lane. Until this existed, NO item carried a cmd, so the ratchet's free-lane
+auto-dispatch was a known no-op; now the pool + GPU queue AUTO-FILL from the backlog.
 
 ANTI-FABRICATION (the one hard guardrail). Every emitted item MUST trace to a real source line/anchor
-(a file:line, a finding path, a vikunja #id). A scanner that finds nothing emits nothing — this tool
-NEVER invents filler to inflate the count. `--selftest` proves both directions: that it surfaces the
-KNOWN current backlog, AND that a scanner returning empty while its source clearly has items FAILS
-LOUDLY (the failing direction that makes a silent-broken scanner impossible to trust).
+(a file:line, a finding path, a vikunja #id). A `cmd` is minted ONLY when it names a research.runners
+module that EXISTS on disk, carries no unresolved placeholder ($VAR / <X> / ellipsis), and — if it declares
+an output artifact — that artifact is not already present; a command that cannot be derived truthfully is
+left off (the item stays cmd-less). A scanner that finds nothing emits nothing — this tool NEVER invents
+filler to inflate the count. `--selftest` proves both directions: that it surfaces the KNOWN current
+backlog + mints a real cmd, AND that a scanner returning empty (or a cmd naming a fabricated module / a
+placeholder template / an already-done run) FAILS LOUDLY.
 
 OUTPUT: research/coordination/backlog.json (machine) + a compact human table (stdout). Items not already
 represented on the Vikunja board are flagged `on_board=false` — a clearly-labelled "new (not on board)"
@@ -57,6 +69,7 @@ LEDGER = os.path.join(ROOT, "docs", "PRODUCTION_INTEGRATION_LEDGER.yaml")
 ROADMAP = os.path.join(ROOT, "docs", "plans", "2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md")
 FAILURE_LOG = os.path.join(ROOT, "research", "FAILURE_LOG.md")
 FINDINGS_DIR = os.path.join(ROOT, "research", "findings")
+MISSION = os.path.join(ROOT, "GAP_CLOSURE_MISSION.md")
 VIKUNJA = os.path.join(ROOT, "tools", "vikunja.sh")
 OUT_JSON = os.path.join(ROOT, "research", "coordination", "backlog.json")
 
@@ -65,6 +78,7 @@ OUT_JSON = os.path.join(ROOT, "research", "coordination", "backlog.json")
 # are real but lower-yield. Per-item boosts (below) refine within a source.
 BASE_LEVERAGE = {
     "ledger-flip":      100,
+    "next-action":       82,   # a live board EXACT-NEXT that carries a genuinely-runnable command (free-lane)
     "vikunja":           80,
     "walls-ledger":      65,
     "ledger-scaffold":   45,
@@ -100,6 +114,106 @@ def _slug(*parts: str) -> str:
     s = "-".join(p for p in parts if p)
     s = re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
     return s[:64] or "item"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# runnable-command extraction — THE SEAM this change closes. A backlog item is only
+# free-lane AUTO-dispatchable if it carries a `cmd`; until now none did, so the
+# ratchet's free-lane dispatch was a known no-op. ANTI-FABRICATION (hard rule): a
+# `cmd` is minted ONLY when it (1) names a research.runners module that EXISTS on
+# disk, (2) carries NO unresolved placeholder ($VAR / <X> / ellipsis / TODO), and
+# (3) — when it declares an output artifact — that artifact is not already present
+# (a completed run is not "ready"). A command we cannot derive truthfully is left
+# off and the item stays cmd-less (→ agent lane, or NEEDS-COMMAND). We NEVER invent
+# seeds/args to make an item look dispatchable.
+# ─────────────────────────────────────────────────────────────────────────────
+RUNNERS_DIR = os.path.join(ROOT, "research", "runners")
+
+# a full command: optional leading ENV=val, the SANCTIONED interpreter (.venv/bin/python — the pool
+# guard refuses a bare `python`), then `-m research.runners.MODULE ...`, non-greedily up to the next
+# command-start or end-of-span (so multiple commands in one fenced block split cleanly).
+_CMD_RE = re.compile(
+    r"((?:[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*(?:\S*\.venv/bin/python\S*)\s+(?:-u\s+)?"
+    r"-m\s+research\.runners\.[A-Za-z0-9_.]+.*?)"
+    r"(?=\s+(?:[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*\S*\.venv/bin/python|$)")
+_PLACEHOLDER_RE = re.compile(r"\$\w|\$\{|<[A-Za-z]|\.\.\.|\bTODO\b|\{\{")
+
+
+def _code_spans(text: str):
+    """Inline-code / fenced-code spans, fence-aware (``` is consumed atomically so it cannot mis-pair
+    the single-backtick scan). Every governed source embeds commands inside code spans."""
+    spans, i, n = [], 0, len(text)
+    while i < n:
+        if text.startswith("```", i):
+            j = text.find("```", i + 3)
+            if j < 0:
+                break
+            spans.append(text[i + 3:j]); i = j + 3; continue
+        if text[i] == "`":
+            j = text.find("`", i + 1)
+            if j < 0:
+                break
+            spans.append(text[i + 1:j]); i = j + 1; continue
+        i += 1
+    return spans
+
+
+def _clean_cmd_span(s: str) -> str:
+    s = re.sub(r"\n\s*>?\s*", " ", s)      # join blockquote-wrapped continuation lines (`> ...`)
+    s = re.sub(r"\\\s+", " ", s)           # drop shell line-continuation backslashes
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _runner_module(cmd: str):
+    m = re.search(r"-m\s+research\.runners\.([A-Za-z0-9_]+)", cmd or "")
+    return m.group(1) if m else None
+
+
+def _runner_exists(mod: str) -> bool:
+    return bool(mod) and os.path.isfile(os.path.join(RUNNERS_DIR, mod + ".py"))
+
+
+def _cmd_output_exists(cmd: str) -> bool:
+    m = re.search(r"--(?:out|json|emit-map)\s+(\S+)", cmd or "")
+    if not m:
+        return False
+    p = m.group(1)
+    return os.path.exists(p if os.path.isabs(p) else os.path.join(ROOT, p))
+
+
+def _lane_for_cmd(cmd: str) -> str:
+    """Route by EXPLICIT backend signal only. Default to the GPU queue (a runner's native backend here
+    is CuPy; the singleton GPU queue serialises it safely) — pool-cpu is chosen only for commands the
+    author explicitly marked numpy, so a CuPy-only runner is never mis-routed onto a GPU-less pool node."""
+    t = (cmd or "").lower()
+    if "sim_backend=cupy" in t or "--backend cupy" in t or "--backend rf" in t or "--ckpt" in t:
+        return "gpu-queue"
+    if "sim_backend=numpy" in t or "--backend numpy" in t:
+        return "pool-cpu"
+    return "gpu-queue"
+
+
+def extract_runnable_cmd(text: str):
+    """Return (cmd, lane) for the FIRST genuinely-runnable command in `text`, else (None, None).
+
+    This is the ONLY place a cmd is minted; every step is an anti-fabrication / anti-stale gate."""
+    if not text or "research.runners." not in text:
+        return None, None
+    for s in _code_spans(text):
+        if "research.runners." not in s:
+            continue
+        for m in _CMD_RE.finditer(_clean_cmd_span(s)):
+            cmd = m.group(1).strip().rstrip("`").strip()
+            cmd = re.split(r"\s+(?:;|&&|\|\||#)\s+", cmd)[0].strip()   # stop at a shell separator/comment
+            mod = _runner_module(cmd)
+            if not _runner_exists(mod):
+                continue     # anti-fabrication: names no real module → not a real command
+            if _PLACEHOLDER_RE.search(cmd):
+                continue     # a template ($s / <S> / ...) is not runnable as-is → don't fabricate args
+            if _cmd_output_exists(cmd):
+                continue     # its declared artifact exists → run is DONE, not ready
+            return cmd, _lane_for_cmd(cmd)
+    return None, None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -326,15 +440,22 @@ _RESID_INLINE_RE = re.compile(
     r"remaining\s*[:=])", re.I)
 
 
+def _filename_date(path: str) -> str:
+    m = re.match(r"(\d{4}-\d{2}-\d{2})-", os.path.basename(path))
+    return m.group(1) if m else "0000-00-00"
+
+
 def scan_findings(findings_dir: str = None, max_recent: int = 45, days: int = 45):
     findings_dir = findings_dir or FINDINGS_DIR
     files = [p for p in glob.glob(os.path.join(findings_dir, "*.md"))
              if re.match(r"\d{4}-\d{2}-\d{2}-", os.path.basename(p))]
     if not files:
         return []
-    files.sort(key=lambda p: os.path.getmtime(p), reverse=True)
-    cutoff = time.time() - days * 86400
-    files = [p for p in files if os.path.getmtime(p) >= cutoff][:max_recent]
+    # recency by the FILENAME date, not mtime — a git checkout / worktree resets every mtime to now, which
+    # would make "recent" arbitrary. The filename date is the finding's real date and is deterministic.
+    files.sort(key=_filename_date, reverse=True)
+    cutoff = time.strftime("%Y-%m-%d", time.localtime(time.time() - days * 86400))
+    files = [p for p in files if _filename_date(p) >= cutoff][:max_recent]
     items = []
     seen_mech = set()
     for p in files:
@@ -376,6 +497,15 @@ def scan_findings(findings_dir: str = None, max_recent: int = 45, days: int = 45
             continue
         seen_mech.add(mech)
         rel = os.path.relpath(p, ROOT)
+        # if the next-lever SECTION (from the residual header to the next header) spells out a genuinely
+        # runnable command, attach it → this item becomes free-lane AUTO-dispatchable, not agent-only.
+        sect_end = len(lines)
+        for k in range(hit_line, min(hit_line + 40, len(lines))):
+            if lines[k].startswith("#") and k > hit_line:
+                sect_end = k
+                break
+        section = "\n".join(lines[hit_line - 1:sect_end])
+        cmd, cmd_lane = extract_runnable_cmd(section)
         items.append(_item(
             source="finding-residual",
             key="resid-" + _slug(mech),
@@ -385,7 +515,9 @@ def scan_findings(findings_dir: str = None, max_recent: int = 45, days: int = 45
             target="research/runners/ (per the finding's named next lever)",
             verify="run the named next lever with anti-cheats + like-for-like control; 6-seed if a claim",
             deps="mechanism: " + mech,
-            lane=suggest_lane(hit_text),
+            lane=cmd_lane if cmd else suggest_lane(hit_text),
+            cmd=cmd,
+            dependencies=[],
             boost=0,
         ))
     return items
@@ -431,6 +563,10 @@ def scan_vikunja(timeout: int = 25, project: int = 2):
                        desc, re.I)
         if rm:
             rung = rm.group(0).strip()
+        # an open board task whose body carries a genuinely-runnable command is free-lane work (open ⇒ not
+        # yet done). The task description is HTML-stripped above, but code spans usually survive as backticked
+        # text — pass the original description too so fenced/inline commands are seen.
+        cmd, cmd_lane = extract_runnable_cmd((t.get("description") or "") + "\n" + desc)
         items.append(_item(
             source="vikunja",
             key="vik-%s" % t.get("id"),
@@ -440,7 +576,9 @@ def scan_vikunja(timeout: int = 25, project: int = 2):
             target="(see task) — production wiring / de-risk per the task body",
             verify="per the task's acceptance; production faculties need the lesion probe + 6-seed",
             deps="",
-            lane=lane,
+            lane=cmd_lane if cmd else lane,
+            cmd=cmd,
+            dependencies=[],
             boost=pr * 4 + (10 if "parked" not in low else -30),
             on_board=True,
         ))
@@ -448,9 +586,63 @@ def scan_vikunja(timeout: int = 25, project: int = 2):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# (7) live board NEXT-ACTIONS — forward-looking runnable commands on the working board
+# (GAP_CLOSURE_MISSION.md). This is the richest source of genuinely-ready FREE-LANE work:
+# the owner writes the exact command to run next. Each emitted item carries a `cmd`
+# (subject to the same anti-fabrication gates as everywhere else) so the ratchet can
+# auto-dispatch it with zero agent tokens.
+# ─────────────────────────────────────────────────────────────────────────────
+_NEXT_SIGNPOST_RE = re.compile(
+    r"NEXT|to run|run cheap|cheap-first|queue this|kick off|launch|when GPU|should run|TODO|next lever|"
+    r"next rung|EXACT NEXT", re.I)
+
+
+def scan_next_actions(mission_text: str = None):
+    if mission_text is None:
+        mission_text = _read(MISSION)
+    if not mission_text:
+        return []
+    lines = mission_text.split("\n")
+    items, seen = [], set()
+    for i, ln in enumerate(lines):
+        if "research.runners." not in ln:
+            continue
+        # forward-looking gate: a runnable command counts as a NEXT-ACTION only near a forward signpost
+        # (so a past-tense "we ran X" results line is not mistaken for ready work). Look at a small window.
+        ctx = " ".join(lines[max(0, i - 3):i + 1])
+        if not _NEXT_SIGNPOST_RE.search(ctx):
+            continue
+        # the command can wrap across several blockquote lines — scan from here to the closing backtick
+        block = "\n".join(lines[i - 1:i + 8]) if i > 0 else "\n".join(lines[i:i + 8])
+        cmd, lane = extract_runnable_cmd(block)
+        if not cmd:
+            continue
+        mod = _runner_module(cmd)
+        if mod in seen:                     # one item per runner module (dedup near-duplicate next-actions)
+            continue
+        seen.add(mod)
+        items.append(_item(
+            source="next-action",
+            key="next-" + _slug(mod),
+            what="Run next-action (%s): %s" % (lane, mod),
+            detail=cmd[:240],
+            anchor="GAP_CLOSURE_MISSION.md:%d" % (i + 1),
+            target="research/findings/raw/ (the command's declared output)",
+            verify="the command completes and writes its artifact; read the verdict per the board's acceptance",
+            deps="",
+            lane=lane,
+            cmd=cmd,
+            dependencies=[],
+            boost=0,
+        ))
+    return items
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # item construction, dedup, reconciliation, ranking
 # ─────────────────────────────────────────────────────────────────────────────
-def _item(source, key, what, detail, anchor, target, verify, deps, lane, boost=0, on_board=False):
+def _item(source, key, what, detail, anchor, target, verify, deps, lane, boost=0, on_board=False,
+          cmd=None, dependencies=None):
     return {
         "id": key,
         "source": source,
@@ -459,7 +651,9 @@ def _item(source, key, what, detail, anchor, target, verify, deps, lane, boost=0
         "anchor": anchor,
         "target": target,
         "verify": verify,
-        "deps": deps,
+        "deps": deps,                     # PROSE dependency note (human + the ratchet's prose heuristic)
+        "dependencies": list(dependencies or []),  # STRUCTURED: backlog ids this item is blocked on
+        "cmd": cmd,                       # a genuinely-runnable command (free-lane) or None (agent lane)
         "lane": lane,
         "leverage": BASE_LEVERAGE.get(source, 20) + boost,
         "on_board": on_board,
@@ -519,6 +713,14 @@ def dedup(items):
                 home["sources"].append(it["source"])
             home["related_anchors"].append("%s(%s)" % (it["anchor"], it["source"]))
             home["on_board"] = home["on_board"] or it["on_board"]
+            # never lose a real runnable command: if the survivor has none but a merged sibling does,
+            # inherit it (and the sibling's free lane) so the merged item stays AUTO-dispatchable.
+            if not home.get("cmd") and it.get("cmd"):
+                home["cmd"] = it["cmd"]
+                home["lane"] = it["lane"]
+            for d in it.get("dependencies", []):
+                if d not in home["dependencies"]:
+                    home["dependencies"].append(d)
             continue
         survivors.append(it)
         for tk in toks:
@@ -543,6 +745,35 @@ def reconcile_board(items, board_items):
     return items
 
 
+# a real prerequisite in the PROSE deps (mirrors the ratchet's is_blocked vocabulary): an item that
+# "must ... first / reach parity / requires / is blocked / pending / not yet" cannot START yet.
+_PROSE_BLOCKED_RE = re.compile(
+    r"\bfirst\b|must (reach|be|land|pass|exist|complete)|reach parity|\brequires?\b|depends on|"
+    r"\bblocked\b|\bpending\b|\bawait|not yet|prerequisite", re.I)
+
+
+def link_dependencies(items):
+    """Populate STRUCTURED `dependencies` (backlog ids) — conservatively. A dependency id is added ONLY
+    for an item whose PROSE deps already say it is blocked, and ONLY when an OPEN WALL for the SAME faculty
+    (its biological surpass — the thing that must be built first) is present in this backlog. This never
+    invents a block on a ready item, never contradicts the prose, and cannot cycle (walls are the sole
+    upstream). It refines a prose block into concrete ids the ratchet can wait on; free-lane runnable
+    items (a cmd, no prose block) stay independent (dependencies == [])."""
+    upstream = {}   # canonical faculty token -> [wall ids] (the prerequisite to build first)
+    for it in items:
+        if it["source"] == "walls-ledger":
+            for tk in _canon(it["what"] + " " + it["detail"]):
+                upstream.setdefault(tk, []).append(it["id"])
+    for it in items:
+        if not _PROSE_BLOCKED_RE.search(it.get("deps") or ""):
+            continue
+        for tk in _canon(it["what"] + " " + it["detail"]):
+            for dep_id in upstream.get(tk, []):
+                if dep_id != it["id"] and dep_id not in it["dependencies"]:
+                    it["dependencies"].append(dep_id)
+    return items
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # driver
 # ─────────────────────────────────────────────────────────────────────────────
@@ -559,6 +790,7 @@ SCANNERS = [
     ("walls-ledger", scan_walls_ledger),
     ("failure-log", scan_failure_log),
     ("finding-residual", scan_findings),
+    ("next-action", scan_next_actions),
 ]
 
 
@@ -577,6 +809,7 @@ def generate(use_vikunja=True):
     items += board_items
     items = dedup(items)
     items = reconcile_board(items, board_items)
+    items = link_dependencies(items)      # structured deps (ids) derived after the full set + merges exist
     items = sorted(items, key=lambda x: (-x["leverage"], x["source"], x["id"]))
     for rank, it in enumerate(items, 1):
         it["rank"] = rank
@@ -689,6 +922,66 @@ def selftest():
     # the real scanner over an emptied source must return [] (no fabrication)
     if scan_ledger_flips(ledger_text="") != []:
         problems.append("FAIL-DIR: flip scanner FABRICATED items from empty source text")
+
+    # ---- RUNNABLE-COMMAND EXTRACTION (the seam) — pass + anti-fabrication failing direction ----
+    real_mod = None
+    try:
+        for f in sorted(os.listdir(RUNNERS_DIR)):
+            if f.endswith(".py") and not f.startswith("__"):
+                real_mod = f[:-3]
+                break
+    except OSError:
+        pass
+    if not real_mod:
+        problems.append("PASS-DIR(cmd): no runner module found on disk to test extraction against")
+    else:
+        # PASS: a real module, explicit numpy, no output artifact → a pool-cpu cmd is minted
+        c, lane = extract_runnable_cmd(
+            "run `SIM_BACKEND=numpy .venv/bin/python -m research.runners.%s --seed 1`" % real_mod)
+        if not c or ("research.runners." + real_mod) not in c or lane != "pool-cpu":
+            problems.append("PASS-DIR(cmd): a real numpy runner command was not extracted as a pool-cpu cmd")
+        # PASS: a cupy/GPU command routes to the GPU queue
+        _, glane = extract_runnable_cmd(
+            "`SIM_BACKEND=cupy .venv/bin/python -m research.runners.%s --seed 1`" % real_mod)
+        if glane != "gpu-queue":
+            problems.append("PASS-DIR(cmd): a cupy command did not route to gpu-queue (got %r)" % glane)
+        # FAIL-DIR anti-fabrication: a nonexistent module yields NO command (never invented)
+        if extract_runnable_cmd(
+                "`.venv/bin/python -m research.runners._NOT_A_REAL_MODULE_ZZZ99 --seed 1`") != (None, None):
+            problems.append("FAIL-DIR(cmd): a command naming a NONEXISTENT runner module was minted (fabrication)")
+        # FAIL-DIR: a placeholder template is not runnable-as-is → NO command
+        if extract_runnable_cmd(
+                "`.venv/bin/python -m research.runners.%s --seed $s`" % real_mod) != (None, None):
+            problems.append("FAIL-DIR(cmd): a placeholder ($s) template was minted as a runnable command")
+        # FAIL-DIR anti-stale: a command whose declared output already exists is DONE, not ready
+        if extract_runnable_cmd(
+                "`.venv/bin/python -m research.runners.%s --out tools/backlog.py`" % real_mod) != (None, None):
+            problems.append("FAIL-DIR(cmd): a command whose output artifact already exists was minted as ready")
+
+    # every cmd the scanners actually emit over the LIVE record must name a real module (no fabrication)
+    live_items, _meta = generate(use_vikunja=False)
+    for it in live_items:
+        if it.get("cmd") and not _runner_exists(_runner_module(it["cmd"])):
+            problems.append("FAIL-DIR(cmd): item %s emitted a cmd naming a non-existent module: %s"
+                            % (it["id"], it["cmd"][:80]))
+        if it.get("cmd") and it["lane"] not in ("gpu-queue", "pool-cpu"):
+            problems.append("FAIL-DIR(cmd): item %s has a cmd but a non-free lane %r" % (it["id"], it["lane"]))
+
+    # ---- STRUCTURED DEPENDENCIES — derived, never invented on a ready item ----
+    wall = _item("walls-ledger", "wall-gap4", "Open wall: gap#4 deep credit", "gap#4 deep-credit surpass",
+                 "roadmap:1", "t", "v", "", "gpu-queue")
+    blocked_scaffold = _item("ledger-scaffold", "scaffold-x", "Retire host scaffold for gap#4 deep credit",
+                             "gap#4 deep-credit host shortcut", "led:1", "t", "v",
+                             "the spiking replacement must reach parity", "agent")
+    ready_flip = _item("ledger-flip", "flip-y", "Flip faculty vision to on-by-default", "object-anywhere",
+                       "led:2", "t", "v", "none (de_risked=YES)", "agent")
+    linked = link_dependencies([wall, blocked_scaffold, ready_flip])
+    bs = next(i for i in linked if i["id"] == "scaffold-x")
+    rf = next(i for i in linked if i["id"] == "flip-y")
+    if "wall-gap4" not in bs["dependencies"]:
+        problems.append("PASS-DIR(deps): a prose-blocked scaffold sharing gap#4 did NOT get the wall id as a dep")
+    if rf["dependencies"]:
+        problems.append("FAIL-DIR(deps): a READY (non-blocked) item was given a structured dependency (invented)")
 
     return problems
 
