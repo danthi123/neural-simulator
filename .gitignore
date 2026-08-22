@@ -167,3 +167,4 @@ research/experiment-runtime/
 
 # Uncommitted-finding drafts parked out of the prose scan (need artifact/citation cleanup before commit)
 .preserved-findings/
+research/coordination/backlog.json
