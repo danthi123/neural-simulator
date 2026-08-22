@@ -8,6 +8,21 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
+## ⭐ 2026-08-22 — 4-DAY HEADLESS QUEUE IS LIVE; HARVEST AT THE TUE 2026-08-26 ~11:00 EST USAGE RESET
+
+**Read [`research/coordination/FOUR_DAY_QUEUE.md`](research/coordination/FOUR_DAY_QUEUE.md) FIRST at the harvest
+(it is on branch `research/four-day-autonomous-queue`, pushed to origin+gitea; this primary checkout is on the
+STALE `research/gap4-axon-capd-derisk` — do NOT `git checkout`/`reset` it).** While the weekly Claude limit is
+spent down, the 3090 + mini-PC pool run a deep headless queue at ZERO agent tokens. Loaded: (1) crash-resilience —
+`gpu-queue-dispatch.service` (boot-start + Restart=always, verified) + `gpu-queue-refill.timer` + pool-dispatch
+linger, so a GPU-off-bus reboot auto-resumes the queue; (2) TASK-2 curated wikidata knowledge CORE bundle built
+(`/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k`, 15k facts, genuine bind) + a 6-seed
+no-regression soak gating the `BRAIN_LTM_BUNDLE` default-on flip (flip deferred to owner/harvest); (3) a deep GPU
+queue (vision #75 R-STDP op-point sweep + memory/source/binder 6-seed de-risks) + a pool source-monitoring
+mechanism compare. The HARVEST CHECKLIST in that file says which verdicts to read + which flips to attempt.
+
+---
+
 ## STATE OF THE PROJECT - 2026-08-03 13:45 EDT (read first; below this is history)
 
 **The active goal is whole-brain capability, not the old five-gap checklist.** The
