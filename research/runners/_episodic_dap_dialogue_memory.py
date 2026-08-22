@@ -74,17 +74,33 @@ class EpisodicDapMemory:
     referent never spoken still reads through the SPIKING completion (unformed -> no completion), not a host flag.
     """
 
-    def __init__(self, seed, topics, *, verbose=False, **overrides):
+    def __init__(self, seed, topics, *, verbose=False, sep_bias=0.0, **overrides):
         self.seed = int(seed)
         self.topics = sorted(set(topics))
         self.p = dict(GO_DEFAULTS); self.p.update(overrides)
         self.verbose = verbose
+        self.sep_bias = float(sep_bias)
         self.cp, _ = get_backend()
         self.backend = os.environ.get("SIM_BACKEND", "(unset)")
 
         n_slots = max(len(self.topics), 1)
         # ---- emergent DG-selected membership (anti-cheat #1 of the GO) at the GO scale --------------------------
-        self.assemblies, r1 = emergent_assemblies(self.seed, n_patterns=n_slots)
+        # D5 PATTERN-SEPARATION SET-POINT (board #73, knob-1 of the learn-through-use default-ON flip): when
+        # sep_bias > 0, form the assemblies through a DG winner-fatigue set-point (a per-CA3 intrinsic-excitability
+        # depression accrued as each pattern recruits cells; Turrigiano 2011 / Marr 1971 / O'Reilly-McClelland 1994)
+        # so later patterns recruit DISJOINT cells. Disjoint membership removes the shared-cell path that lets the
+        # D5 consolidation of one memory shift a NEIGHBOR's surfaced recall strength (the crosstalk residual that
+        # blocked the flip). ADDITIVE: sep_bias <= 0 (the default) calls the UNMODIFIED emergent_assemblies ->
+        # byte-identical to HEAD. HOST-SCAFFOLD RESIDUAL (declared): the winner-fatigue bias is a host-applied
+        # intrinsic current; the SELECTION (which cells cross theta) stays on-substrate spiking. The on-substrate
+        # spiking intrinsic-plasticity form (a real conductance on the granule region) is the tracked next step.
+        # Lazy import: keep the de-risk module's import-time SIM_BACKEND default out of the load path (it only runs
+        # when the separator is actually armed, by which point SIM_BACKEND is already set).
+        if self.sep_bias > 0.0:
+            from research.runners._d5_pattern_separation_setpoint_derisk import _emergent_assemblies_setpoint
+            self.assemblies, r1 = _emergent_assemblies_setpoint(self.seed, n_slots, self.sep_bias)
+        else:
+            self.assemblies, r1 = emergent_assemblies(self.seed, n_patterns=n_slots)
         self.n_ca3 = int(r1[2])
         self.assembly_sizes = [int(len(a)) for a in self.assemblies]
 
@@ -110,7 +126,7 @@ class EpisodicDapMemory:
         self.store_log = []                                            # ordered topics stored (for the record)
         if self.verbose:
             print(f"[episodic-dap] n_ca3={self.n_ca3} slots={self.topic_slot} sizes={self.assembly_sizes} "
-                  f"backend={self.backend}", flush=True)
+                  f"sep_bias={self.sep_bias} backend={self.backend}", flush=True)
 
     # ---- STORE (episodic WRITE): a spoken topic BTSP-forms its assembly on the readout bridge -------------------
     def store(self, topic):

@@ -88,16 +88,17 @@ class EpisodicRecallOrgan:
     WRITE); `recall` drives the referential cue and reads the dendritic dAP completion (episodic READ); `discussed`
     decodes the set of topics whose assemblies complete. Built lazily on the first store (the bridge is expensive)."""
 
-    def __init__(self, seed: int, topics, *, verbose: bool = False):
+    def __init__(self, seed: int, topics, *, verbose: bool = False, sep_bias: float = 0.0):
         self.seed = int(seed)
         self.topics = sorted(set(str(t).lower() for t in topics))
         self.verbose = bool(verbose)
+        self.sep_bias = float(sep_bias)     # D5 pattern-separation set-point (board #73); 0 -> byte-identical to HEAD
         self.mem: EpisodicDapMemory | None = None
         self._store_order: list[str] = []          # host store-order (the declared recency residual — NOT spiking)
 
     def _ensure_built(self):
         if self.mem is None:
-            self.mem = EpisodicDapMemory(self.seed, self.topics, verbose=self.verbose)
+            self.mem = EpisodicDapMemory(self.seed, self.topics, verbose=self.verbose, sep_bias=self.sep_bias)
 
     # ---- episodic WRITE: a spoken topic BTSP-forms its assembly (the plasticity rule's output is the weight) ----
     def note_topic(self, topic: str) -> bool:
@@ -144,13 +145,39 @@ class EpisodicRecallOrgan:
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 _ORGANS: dict = {}
 
+# The D5 pattern-separation set-point strength (pA) — winner-fatigue intrinsic-excitability bias applied per CA3 cell
+# during emergent assembly formation so that memberships stay DISJOINT. 6/6 disjoint + healthy (non-empty, non-dense)
+# at 1000 (finding 2026-08-21-d5-pattern-separation-set-point-sepbias1000-closes-6of6-disjoint-knob1). Coupled to the
+# D5 learn-through-use flag: armed exactly when the consolidation is (so a flip gets DISJOINT assemblies + strengthen
+# together, and the OFF escape is byte-identical to HEAD).
+D5_SEP_BIAS = 1000.0
 
-def get_episodic_organ(cache_key, seed: int, topics, *, verbose: bool = False) -> EpisodicRecallOrgan:
+
+def _default_sep_bias() -> float:
+    """sep_bias for a NEW organ: D5_SEP_BIAS when the D5 learn-through-use consolidation is armed, else 0.0 (the
+    UNMODIFIED emergent assemblies -> byte-identical to HEAD). Lazy import avoids an import-order coupling with
+    continuous_engine (which does not import this module at load time)."""
+    try:
+        from webapp.continuous_engine import d5_consolidate_enabled
+        return D5_SEP_BIAS if d5_consolidate_enabled() else 0.0
+    except Exception:
+        return 0.0
+
+
+def get_episodic_organ(cache_key, seed: int, topics, *, verbose: bool = False,
+                       sep_bias: float | None = None) -> EpisodicRecallOrgan:
     """The conversation-scoped episodic organ for cache_key (built on first use; topics = the known agent vocabulary
-    of this conversation). NOT a process singleton: each conversation accumulates its own stored turns."""
+    of this conversation). NOT a process singleton: each conversation accumulates its own stored turns.
+
+    sep_bias=None (the default) reads the D5-coupled set-point (`_default_sep_bias`): the separator is armed exactly
+    when the D5 learn-through-use consolidation is (BRAIN_D5_CONSOLIDATE), so the first-built organ forms DISJOINT
+    assemblies under the default-ON flip and byte-identical HEAD assemblies under the OFF escape. Pass an explicit
+    sep_bias to override (the soak/de-risk pin it directly)."""
     org = _ORGANS.get(cache_key)
     if org is None:
-        org = EpisodicRecallOrgan(seed, topics, verbose=verbose)
+        if sep_bias is None:
+            sep_bias = _default_sep_bias()
+        org = EpisodicRecallOrgan(seed, topics, verbose=verbose, sep_bias=sep_bias)
         _ORGANS[cache_key] = org
     return org
 
