@@ -159,6 +159,10 @@ attic/
 research/coordination/status.json
 research/coordination/heartbeats.jsonl
 research/coordination/HANDOFF.md
+# LIVE-STATE re-injection file (spec §5): regenerated every SessionStart / landing by
+# tools/live_state.py; runtime state, not a tracked artifact. The mechanism (generator, hooks,
+# gate) is tracked; the timestamped output is not.
+research/coordination/live_state.md
 research/queue/.corpus_checks.jsonl
 
 # Regenerable authenticated experiment campaigns. Source manifests and final
