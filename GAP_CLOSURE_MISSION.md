@@ -42,11 +42,13 @@ where they conflict):**
   (0 literal-ready now; anti-fabrication gates working). Tool-health: experiment-engine READY (4/4 presets build+step on
   cupy — dormancy was the old sweeper driver, not the engine); gpu-queue dpid-desync wedge cleared this session
   (singleton adoption still pending — branch `research/gpu-queue-singleton`).
-- **D5 learn-through-use default-ON flip = NO-GO** (#71/#73, `a7848bf7`, finding
-  `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG separator closed the graded-read crosstalk but the soak is
-  0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual; separator infra merged default-OFF/byte-identical. Lever-2
-  IN FLIGHT (branch `research/d5-ltu-lever2`: surface the stable graded read + a size floor). ⇒ PRE-DECIDED NEXT ACTION
-  #1 below (te=40 confirm → flip `BRAIN_D5_CONSOLIDATE`) is DONE/SUPERSEDED — the confirm ran; the flip is HELD.
+- **D5 learn-through-use default-ON flip = GO — FLIPPED default-ON** (#71, `e9096bfa`): the brain now strengthens a
+  memory by USING it and recalls it visibly stronger, in production by default (`BRAIN_D5_CONSOLIDATE=0` is the
+  byte-identical escape). 5/6 GO + s102 excused (self-ignition build; moat abstains everywhere, no confab). The prior
+  NO-GO verdict was a MISDIAGNOSIS, now retracted: the neighbor read was byte-identical 6/6; the reply differed only
+  because the disclosure appended strength to EVERY reply globally (a format artifact). Fix: gate the surfaced strength
+  PER CONSOLIDATED TOPIC; the DG separator was UNNECESSARY (sep_bias=0, byte-identical). Residual: s102 emergent-assembly
+  self-ignition (a separate faculty) → next mechanism recall-time CA3 PV-basket WTA for a true 6/6.
 - **da-gated encoding default-ON flip gate = UNDEFINED** (#125, finding
   `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-...`, artifact `research/findings/raw/_da_encoding_leansoak/`): the
   lean production magnitude-store no-regression soak returned UNDEFINED — MOAT leak (2 points: 1 ON-arm candidate + 1

@@ -4324,9 +4324,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 eorg = _EP.get_episodic_organ(cache_key, 42, _ep_topics)
                 rec = eorg.recall(ref, lesion=_EP.episodic_lesioned())
                 episodic_info = dict(rec)
-                # D5 LEARN-THROUGH-USE (continuous engine, default-OFF behind BRAIN_D5_CONSOLIDATE): mark the topic
-                # this turn RECALLED (a genuine spiking completion) so the NEXT idle tick consolidates it — the used
-                # memory becomes more robust for a later turn. Guarded so the OFF path is byte-identical to HEAD.
+                # D5 LEARN-THROUGH-USE (continuous engine, DEFAULT-ON since 2026-08-21, BRAIN_D5_CONSOLIDATE=0 is the
+                # byte-identical escape): mark the topic this turn RECALLED (a genuine spiking completion) so the NEXT
+                # idle tick consolidates it — the used memory becomes more robust AND recalls VISIBLY STRONGER next
+                # turn. The strength is surfaced per-consolidated-topic, so a neighbour's reply is never perturbed.
                 try:
                     from webapp import continuous_engine as _CEc
                     if _CEc.d5_consolidate_enabled() and rec.get("in_memory"):
@@ -4347,7 +4348,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     except Exception:
                         content = None
                 return JSONResponse({
-                    "answer": _EP.recall_disclosure(rec, content),
+                    "answer": _EP.recall_disclosure(rec, content, cache_key=cache_key),
                     "abstained": (not bool(rec.get("in_memory"))),
                     "recalled_svo": None, "verified": bool(rec.get("in_memory")),
                     "renderer": rname, "brain": req.brain, "source": source,

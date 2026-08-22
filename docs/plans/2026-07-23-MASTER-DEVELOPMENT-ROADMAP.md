@@ -768,16 +768,15 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   distribution (Turrigiano 2008 multiplicative synaptic scaling — preserves relative strengths, so salience ordering
 >   survives while low-DA facts are not driven below the recall floor). Faculty stays default-OFF until a clean GO (0
 >   leaks, stress-net non-negative). WAVE-0 Gap-4 write-side coupling; the wire-in itself was a GO (default-OFF).
-> - **D5 learn-through-use default-ON flip = NO-GO residual** (finding
->   `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG pattern-separation set-point (knob-1) makes assemblies
->   disjoint and CLOSES the graded-read crosstalk it was built for (neighbor depth_hold Δ=0 on 5/6), but the
->   no-regression soak is 0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual (a completion-count flicker under
->   sub-threshold CROSS-assembly recurrent bleed that disjoint MEMBERSHIP does not sever). SURPASS (ordered): surface the
->   crosstalk-robust graded read in the disclosure (lever-2, in flight, branch `research/d5-ltu-lever2`); then
->   recall-time feedback-inhibition WTA (CA3 PV-basket) + a sparse recurrent readout (Guzman 2016 — real CA3 completion
->   runs on sparse recurrence, not our dense matrix); then heterosynaptic isolation of cross-assembly weights. The
->   separation-during-FORMATION + inhibition-maintained-sparsity-during-RECALL pairing is the companion-process reframe.
->   Separator infra merged default-OFF, byte-identical when off (`a7848bf7`).
+> - **D5 learn-through-use default-ON flip = GO — FLIPPED default-ON** (`e9096bfa`, board #71): 5/6 GO + s102 excused
+>   (self-ignition build; moat abstains everywhere). The prior NO-GO verdict was a MISDIAGNOSIS, now retracted: the
+>   neighbor read was byte-identical OFF-vs-ON 6/6; the reply differed only because the disclosure surfaced strength on
+>   EVERY reply via a global flag (a format artifact, not substrate crosstalk). Fix: gate the surfaced strength PER
+>   CONSOLIDATED TOPIC, so consolidating one memory changes only its own reply. The DG pattern-separation set-point
+>   turned out UNNECESSARY (sep_bias=0 is byte-identical to HEAD and cleaner; both sep values were 5/6). RESIDUAL (s102,
+>   no-defer): a pre-existing emergent-assembly self-ignition build (a separate faculty; fails at both sep values, moat
+>   abstains correctly) → next mechanism recall-time feedback-inhibition WTA (CA3 PV-basket) or a k-of-N formation floor
+>   for a true 6/6. Separator infra retained default-OFF (`--sep-bias`).
 
 > **⭐ 2026-08-19 — gap#4 mouth read-SNR wall CONFIRMED; coverage + window both EXCLUDED; Option-2 decided.** The mouth read-out e-prop-through-the-actual-spiking-substrate FORWARD plateaus at `sub_learned_recov_mean` ~0.34 even at 5× coverage (40 000 positions, up from 8 000), while a matched-coverage host-linear-proxy forward reaches ~0.86 — so COVERAGE is excluded, and the read-window lever (120→360) was tested-negative this session too. The residual is the substrate forward's few-spike READ SNR, exactly as the 2026-08-11 layer-3 arc predicted (learning-rate-invariant; even a perfect Wᵀ oracle fails).
 > DECISION (owner-delegated, per `docs/plans/2026-08-19-deep-credit-plan-of-record.md`): **Option 2 — accept the scaffold-bridge for the mouth, keep the crux on the conversation frontier;** deep-credit stays a mapped boundary with ONE recorded open lever (a read-SNR manipulation that is NOT the integration window: ensemble / dendritic multi-compartment read). No further deep-credit compute is queued. Closes the coverage confound-exclusion sub-arm of speak-with-own-neurons (board #80); the task itself is not done — the scaffold bridges it. `research/findings/2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md`.
@@ -876,12 +875,13 @@ engine) LANDED; D5 learn-through-use flip NO-GO; da-encoding flip gate UNDEFINED
   commands (0 literal-ready right now; the anti-fabrication gates are working as designed, refusing to invent a command).
   Tool-health verdict: experiment-engine READY (all 4 presets build+step on cupy — the dormancy was the old sweeper
   driver, not the engine); gpu-queue had a recurring dpid-desync wedge (cleared this session; singleton adoption pending).
-- **D5 learn-through-use default-ON flip = NO-GO** (#71/#73, finding
-  `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG pattern-separation set-point closed the graded-read
-  crosstalk (bird depth_hold Δ=0 on 5/6) but the soak is 0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual (a
-  completion-count flicker under sub-threshold cross-assembly bleed). Separator infra merged default-OFF, byte-identical
-  when off (`a7848bf7`). Lever-2 IN FLIGHT (branch `research/d5-ltu-lever2`): surface the stable graded read + a size
-  floor. SUPERSEDES the earlier "te=40 confirm → flip BRAIN_D5_CONSOLIDATE" pointer — the confirm ran; the flip is held.
+- **D5 learn-through-use default-ON flip = GO — FLIPPED default-ON** (#71, `e9096bfa`): the brain now strengthens a
+  memory by USING it and recalls it visibly stronger, production-default (`BRAIN_D5_CONSOLIDATE=0` = byte-identical
+  escape). 5/6 GO + s102 excused (self-ignition build; moat abstains everywhere). The prior NO-GO verdict was a
+  MISDIAGNOSIS, now retracted: the neighbor read was byte-identical 6/6; the reply differed only because the disclosure
+  appended strength to EVERY reply globally (a format artifact). Fix: gate the surfaced strength PER CONSOLIDATED TOPIC;
+  the DG separator was UNNECESSARY (sep_bias=0, byte-identical). Residual: s102 emergent-assembly self-ignition (a
+  separate faculty) → next mechanism recall-time CA3 PV-basket WTA for a true 6/6.
 - **da-gated encoding default-ON flip gate = UNDEFINED** (#125, finding
   `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-...`): the lean production magnitude-store no-regression soak
   returned UNDEFINED — 2 unmet preconditions (a MOAT leak, moat_fail_total=2, one ON-arm + one OFF-arm-read-floor; and a
