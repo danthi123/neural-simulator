@@ -41,7 +41,7 @@ import numpy as np  # noqa: E402
 
 from sim.backend import get_backend  # noqa: E402
 from research.runners.d5_episodic_production_organ import (  # noqa: E402
-    EpisodicRecallOrgan, recall_disclosure, SURFACED_GRADED_READ)
+    EpisodicRecallOrgan, recall_disclosure, SURFACED_GRADED_READ, D5_SEP_BIAS)
 from research.runners._gap5_dendritic_dap_readout_completion_derisk import _reset_apical_latch  # noqa: E402
 from research.runners._gap5_d5_latch_self_termination_derisk import snapshot_state, restore_state  # noqa: E402
 from webapp import continuous_engine as CE  # noqa: E402
@@ -129,7 +129,11 @@ def run_one(seed, a, backend):
     try:
         cp, _ = get_backend()
         # turn 1: form dog + bird (cat is never discussed). Production encode strength (te=40).
-        org = EpisodicRecallOrgan(seed, ["cat", "dog", "bird"], verbose=False)
+        # sep_bias>0 forms the assemblies through the D5 pattern-separation set-point (board #73, knob-1): DISJOINT
+        # memberships so consolidating one memory (ON) cannot shift a neighbor's surfaced strength — the crosstalk
+        # residual that blocked the default-ON flip. This mirrors the production organ under the default-ON flip
+        # (get_episodic_organ auto-arms sep_bias=D5_SEP_BIAS when BRAIN_D5_CONSOLIDATE is on).
+        org = EpisodicRecallOrgan(seed, ["cat", "dog", "bird"], verbose=False, sep_bias=a.sep_bias)
         org._ensure_built()
         mem = org.mem
         assert org.note_topic("dog") and org.note_topic("bird"), "note_topic failed"
@@ -195,6 +199,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--seeds", type=int, nargs="*", default=None)
+    ap.add_argument("--sep-bias", dest="sep_bias", type=float, default=D5_SEP_BIAS,
+                    help="D5 pattern-separation set-point (board #73). Default D5_SEP_BIAS -> separator ACTIVE "
+                         "(disjoint assemblies); 0 -> the pre-separator overlapping-assembly baseline.")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     seeds = a.seeds if a.seeds else [a.seed]

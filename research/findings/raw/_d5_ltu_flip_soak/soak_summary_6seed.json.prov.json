@@ -1,0 +1,20 @@
+{
+ "run_id": "1787307165-990965",
+ "runner": "research/runners/_d5_graded_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/d5-ltu-flip/research/runners/_d5_graded_flip_soak.py",
+  "--seeds", "42", "43", "44", "100", "101", "102",
+  "--sep-bias", "1000",
+  "--out", "research/findings/raw/_d5_ltu_flip_soak/soak.json"
+ ],
+ "git_sha": "e2d428d48",
+ "git_dirty": true,
+ "started": "2026-08-21T22:12:45",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "note": "Ported separator ACTIVE (sep_bias=1000). Ran via main shared gpu_queue daemon (dispatcher pid 988692, job pid 990965). Sidecar written by hand (the auto-provenance door did not fire for the worktree --out path); values are the true run parameters.",
+ "artifact": "research/findings/raw/_d5_ltu_flip_soak/soak_summary_6seed.json"
+}
