@@ -1,0 +1,10 @@
+[Unit]
+Description=GPU-queue refill/heartbeat — ensure the dispatcher is up so a queued job never idles the GPU
+
+[Service]
+Type=oneshot
+User=dant123
+Group=dant123
+WorkingDirectory=/home/dant123/Projects/sim
+# idempotent: `start` is a no-op if already active; revives it if Restart= gave up / it was stopped.
+ExecStart=/bin/systemctl start gpu-queue-dispatch.service

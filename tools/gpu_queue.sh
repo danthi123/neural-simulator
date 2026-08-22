@@ -33,6 +33,15 @@ daemon() {
   echo "$(date '+%F %T') dispatcher up (min_free=${MIN_FREE}MiB)" >> "$LOG"
   while true; do
     if [ -f "$PAUSE" ]; then sleep 8; continue; fi
+    # RESTART-SAFETY (2026-08-22): never run two GPU jobs at once. A job launched by a PREVIOUS daemon survives
+    # that daemon dying (own process group via setsid) — after a crash + systemd Restart=, or a stop+restart
+    # migration. If $RUNNING names a still-alive pid, WAIT for it; only clear $RUNNING once its pid is gone.
+    # Without this, a daemon restart double-starts a job while the old one is still on the GPU.
+    if [ -f "$RUNNING" ]; then
+      rpid=$(cut -f1 "$RUNNING" 2>/dev/null)
+      if [ -n "$rpid" ] && kill -0 "$rpid" 2>/dev/null; then sleep 12; continue; fi
+      rm -f "$RUNNING"
+    fi
     job=$(head -1 "$QUEUE" 2>/dev/null || true)
     if [ -z "$job" ]; then sleep 12; continue; fi
     # contention guard: wait for VRAM headroom (auto-yields to a game / another run) and respect pause
@@ -54,7 +63,7 @@ case "${1:-}" in
     if [ -f "$DPID" ] && kill -0 "$(cat "$DPID")" 2>/dev/null; then echo "already running (pid $(cat "$DPID"))"; exit 0; fi
     setsid bash "$0" __daemon </dev/null >>"$LOG" 2>&1 & echo $! > "$DPID"; disown 2>/dev/null || true
     echo "gpu_queue dispatcher started (pid $(cat "$DPID")); log=$LOG" ;;
-  __daemon) daemon ;;
+  __daemon) echo $$ > "$DPID"; daemon ;;   # record pid so `status`/`stop` work even when launched by systemd
   add)
     [ -z "${2:-}" ] && { echo 'usage: add "<full gpu command incl. --json out>"' >&2; exit 1; }
     ( flock 9; printf '%s\n' "$2" >> "$QUEUE" ) 9>"$QLOCK"; echo "queued (depth $(wc -l < "$QUEUE")): ${2:0:80}" ;;

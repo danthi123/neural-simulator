@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the GPU-queue refill/heartbeat every 10 min (belt-and-suspenders vs a wedged/stopped dispatcher)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

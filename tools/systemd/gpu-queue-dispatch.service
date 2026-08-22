@@ -1,0 +1,23 @@
+[Unit]
+Description=GPU job-queue dispatcher (headless single-3090 queue; resumes research/queue/gpu.queue on boot)
+After=multi-user.target
+Wants=multi-user.target
+# generous restart budget: the daemon is an infinite loop and should never exit; if it does, always come back.
+StartLimitIntervalSec=300
+StartLimitBurst=20
+
+[Service]
+Type=simple
+User=dant123
+Group=dant123
+WorkingDirectory=/home/dant123/Projects/sim
+Environment=HOME=/home/dant123
+Environment=PATH=/home/dant123/Projects/sim/.venv/bin:/usr/local/bin:/usr/bin:/bin
+# wait for the GPU/driver to come up after a (re)boot before the dispatcher starts polling VRAM
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 30); do /usr/bin/nvidia-smi -L >/dev/null 2>&1 && exit 0; sleep 5; done; echo "[gpu-queue] GPU not ready after 150s, starting anyway (contention guard will wait)"'
+ExecStart=/bin/bash /home/dant123/Projects/sim/tools/gpu_queue.sh __daemon
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
