@@ -9,6 +9,36 @@ first at the Tuesday harvest, then act on the HARVEST CHECKLIST at the bottom.
 > were caught and fixed (`--json` vs `--out`) before commit. Nothing here is fabricated; a job that still fails at
 > runtime logs `DONE(rc!=0)` and the dispatcher moves on.
 
+## ⚠️ RESTOCK 2026-08-22 ~11:45 EDT — the first queue drained in ~2h; now AUTO-REFILLING (no-drain guaranteed)
+
+The initial 22 de-risks were 30–180 s each (small networks), so the queue cleared by ~05:48 and the GPU idled.
+Fixed:
+
+- **AUTO-REFILL ENQUEUER** — `tools/gpu_queue_autofill.sh` + `gpu-queue-autofill.timer` (system, every 15 min).
+  When `gpu.queue` drops below 8 it ENQUEUES a fresh batch of genuine LONG jobs (the old `gpu-queue-refill.timer`
+  only *restarted* the dispatcher — that is why it stayed idle). This makes wall-clock prediction unnecessary: the
+  GPU cannot sit idle more than ~15 min before it is refilled, at any job speed. Verified firing (cycles 1–2 auto).
+  Check: `tail research/queue/autofill.log`; `systemctl list-timers gpu-queue-autofill`.
+- **Backbone = the LONGITUDINAL CONTINUOUS-LIFE loop** (`_longitudinal_develop_loop_gpu --n-days 60`, fresh seed
+  each cycle) — the owner's #1 strategic priority (make the brain CONTINUOUS), and genuinely long: ~50 s/day
+  steady-state (brain plateaus) ⇒ ~1.5–1.7 h per loop, and it is **crash-RESUMABLE** (resumes on reboot). Each
+  refill cycle adds 3 such loops + a `persistent_living_loop_derisk` soak + a vision #75 cell ≈ ~3 h of GPU work.
+  The autofill ALSO tops up the pool (5 CPU lanes) each cycle.
+- **Wall-clock:** at restock the queue held 13 jobs (~8 longitudinal loops @ ~1.7 h + persistent/vision/order/gap2
+  ≈ 15–20 h queued), and the autofill adds ~3 h whenever depth < 8. Net: **self-sustaining until the Tue reset.**
+- **15k knowledge core soak came back `go: True` (6/6 seeds, 0 byte-identity mismatches, 0 confab)** — the curated
+  bundle is a proven no-regression `BRAIN_LTM_BUNDLE`; the default-on flip is the owner/harvest call (step 3 below).
+- **Fixed the 3 rc=1 failures** (were open-wall de-risks): `_replay_cortical_consolidation_gate_v6_order_stdp`
+  (#130) is SEED-LOCKED → re-queued at its CALIBRATION seeds `412 413`; `_laneC_source_monitor_competitive_encoding_gate`
+  (#129) is seed-locked AND its cupy path has a non-scalar-fill bug → re-staged on the POOL (numpy) at its DECISIVE
+  seeds `700–705`; `_gap2_spiking_deltarule_binder_derisk` (#132) hard-coded a missing `scale787` codes path →
+  added `--codes-path` + recursive fallback + `--out` verdict, verified `go=True`, re-queued 6-seed.
+- **Knowledge 100k build** launched detached (`sim-data/knowledge_bundles/wikidata_100k`, log `build100k.log`) —
+  a real 100k-fact wikidata bundle + reduced soak; the O(V·D) latency-at-scale follow-on to the 15k core.
+- **Still DEFERRED to the harvest** (were not tractable to add safely this pass): the gap5 self-ignition
+  DECOUPLED-store next rung (needs the igniting config read from `gap5_ignition_sweep_6seed.json`), and the
+  DA-encoding on-substrate spiking synaptic-scaling rule (a new runner to build). Both are noted in step 5.
+
 ## 0. WHERE THE CODE + STATE LIVES (read this before anything else)
 
 The **primary checkout `/home/dant123/Projects/sim` is on the STALE branch `research/gap4-axon-capd-derisk`**
