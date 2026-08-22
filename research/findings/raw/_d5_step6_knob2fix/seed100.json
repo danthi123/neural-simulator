@@ -1,0 +1,234 @@
+{
+  "seed": 100,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 8,
+    "te_grid": "5,6,7,8,10",
+    "n_episodes": 3,
+    "n_turns": 2,
+    "primary_read": "depth_rest",
+    "self_test": false,
+    "out": "research/findings/raw/_d5_step6_knob2fix/seed.json"
+  },
+  "attributable": 1.0,
+  "verdict": {
+    "label": "RELIABLE conversation-visible learn-through-use via a GRADED apical read (depth_rest): the REAL org.recall graded completion rises monotonically after consolidation (seed 100)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "weak-store-completes-T",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the weak encode still COMPLETES at turn T via the BINARY gate (a genuinely usable memory)"
+      },
+      {
+        "kind": "require",
+        "name": "borderline-has-headroom",
+        "ok": true,
+        "detail": "measured=0.6153846153846154 expect=<function run_one.<locals>.<lambda> at 0x7f50869b1940>",
+        "note": "the borderline BINARY apical_cue sits BELOW ceiling (the step-5 op-point)"
+      },
+      {
+        "kind": "require",
+        "name": "handler-read-deterministic",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "two identical isolated handler recalls match on binary AND graded reads"
+      },
+      {
+        "kind": "require",
+        "name": "cat-never-recalled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "cat is a genuine never-formed control (no completion, baseline weight)"
+      },
+      {
+        "kind": "require",
+        "name": "graded-read-faithful",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the graded read is cue-specific AND collapses under the formation-lesion (carried by the FORMED assembly, not a weight-blind depolarization) \u2192 the moat is preserved"
+      },
+      {
+        "kind": "reaches",
+        "name": "graded-read-moves-with-use",
+        "ok": true,
+        "detail": "before=36.0373 after=42.8184 moved=True",
+        "note": "the PRODUCTION org.recall GRADED read rose after consolidation (the reliable conversation-visible move)"
+      },
+      {
+        "kind": "control",
+        "name": "consolidation-ON vs LESION-OFF (depth_rest graded move)",
+        "ok": true,
+        "detail": "treatment=6.78115 control=0 |sep|=6.78115 > 0",
+        "note": "the graded move requires the consolidation loop; the flag OFF is byte-identical"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "host weight formula",
+        "why": "the strengthening is the substrate's OWN plateau-gated BTSP (fused_btsp_update) via continuous_engine.consolidate_used_memory"
+      },
+      {
+        "process": "binary UP-fraction as the conversation-visible read",
+        "why": "the quantised per-held-cell UP-fraction has structural dead-steps (the step-5 4/6 limit); the graded plateau read replaces it as the magnitude (binary still gates in_memory=moat)"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "checks": {
+    "instrument_valid": true,
+    "te": 6,
+    "primary_read": "depth_rest",
+    "GO": true,
+    "LESION_VANISHES": true,
+    "SPECIFIC": true,
+    "STILL_USABLE": true,
+    "deterministic": true,
+    "headroom": true,
+    "cat_never": true,
+    "consolidated": true,
+    "byte_identical_off": true,
+    "consolidated_rounds": 2,
+    "apical_cue_T": 0.6154,
+    "apical_cue_off": 0.6154,
+    "apical_cue_Tk": 0.6923,
+    "binary_traj": [
+      0.6154,
+      0.6923,
+      0.6923
+    ],
+    "binary_moves": true,
+    "binary_flat_at_ceiling": false,
+    "inmem_T": true,
+    "inmem_Tk": true,
+    "per_read": {
+      "depth_rest": {
+        "cue_T": 36.03729,
+        "cue_Tk": 42.81844,
+        "perm_T": 0.0,
+        "nocue_T": 0.0,
+        "lesion_T": 0.0,
+        "cat_T": 0.0,
+        "cat_Tk": 0.0,
+        "traj": [
+          36.03729,
+          42.4493,
+          42.81844
+        ],
+        "MOVES": true,
+        "MONOTONE": true,
+        "MONOTONE_STRICT": true,
+        "no_dead_steps": true,
+        "graded_dead_steps": 0,
+        "binary_dead_steps": 1,
+        "LESION_VANISHES": true,
+        "FAITHFUL": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "SPECIFIC": true,
+        "cat_small": true,
+        "read_go": true,
+        "move_treat": 6.78115,
+        "move_ctrl": 0.0,
+        "attributable": 1.0
+      },
+      "depth_hold": {
+        "cue_T": 17.57576,
+        "cue_Tk": 22.04921,
+        "perm_T": 0.0,
+        "nocue_T": 0.0,
+        "lesion_T": 0.0,
+        "cat_T": 0.0,
+        "cat_Tk": 0.0,
+        "traj": [
+          17.57576,
+          21.68007,
+          22.04921
+        ],
+        "MOVES": true,
+        "MONOTONE": true,
+        "MONOTONE_STRICT": true,
+        "no_dead_steps": true,
+        "graded_dead_steps": 0,
+        "binary_dead_steps": 1,
+        "LESION_VANISHES": true,
+        "FAITHFUL": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "SPECIFIC": true,
+        "cat_small": true,
+        "read_go": true,
+        "move_treat": 4.47345,
+        "move_ctrl": 0.0,
+        "attributable": 1.0
+      },
+      "soft": {
+        "cue_T": 0.5953,
+        "cue_Tk": 0.68176,
+        "perm_T": 0.0,
+        "nocue_T": 0.0,
+        "lesion_T": 0.0,
+        "cat_T": 0.0,
+        "cat_Tk": 0.0,
+        "traj": [
+          0.5953,
+          0.68075,
+          0.68176
+        ],
+        "MOVES": true,
+        "MONOTONE": true,
+        "MONOTONE_STRICT": true,
+        "no_dead_steps": true,
+        "graded_dead_steps": 0,
+        "binary_dead_steps": 1,
+        "LESION_VANISHES": true,
+        "FAITHFUL": true,
+        "faithful_specific": true,
+        "faithful_lesion": true,
+        "SPECIFIC": true,
+        "cat_small": true,
+        "read_go": true,
+        "move_treat": 0.08646,
+        "move_ctrl": 0.0,
+        "attributable": 1.0
+      }
+    },
+    "wdog_traj": [
+      33.235,
+      59.699,
+      63.511
+    ],
+    "w_dog_before": 33.235,
+    "w_dog_after": 63.511,
+    "dw_dog": 30.276,
+    "cat_drift": 0.288,
+    "between_drift": 0.0,
+    "weight_specific": true,
+    "moat_cat": true,
+    "hash_before": "41f8ab59c73a6479",
+    "hash_off": "41f8ab59c73a6479",
+    "hash_after": "1e13e9bddb197713",
+    "n_turns": 2,
+    "n_episodes": 3,
+    "assembly_sizes": [
+      20,
+      26
+    ],
+    "w_within_after": 63.511
+  },
+  "elapsed_s": 95.6
+}
