@@ -146,22 +146,21 @@ class EpisodicRecallOrgan:
 _ORGANS: dict = {}
 
 # The D5 pattern-separation set-point strength (pA) — winner-fatigue intrinsic-excitability bias applied per CA3 cell
-# during emergent assembly formation so that memberships stay DISJOINT. 6/6 disjoint + healthy (non-empty, non-dense)
-# at 1000 (finding 2026-08-21-d5-pattern-separation-set-point-sepbias1000-closes-6of6-disjoint-knob1). Coupled to the
-# D5 learn-through-use flag: armed exactly when the consolidation is (so a flip gets DISJOINT assemblies + strengthen
-# together, and the OFF escape is byte-identical to HEAD).
+# during emergent assembly formation so that memberships stay DISJOINT. 6/6 disjoint + healthy at 1000 (finding
+# 2026-08-21-d5-pattern-separation-set-point-sepbias1000-closes-6of6-disjoint-knob1). Retained as the strength IF the
+# separator is explicitly armed (pass sep_bias>0 / --sep-bias 1000); NOT armed by default — see _default_sep_bias.
 D5_SEP_BIAS = 1000.0
 
 
 def _default_sep_bias() -> float:
-    """sep_bias for a NEW organ: D5_SEP_BIAS when the D5 learn-through-use consolidation is armed, else 0.0 (the
-    UNMODIFIED emergent assemblies -> byte-identical to HEAD). Lazy import avoids an import-order coupling with
-    continuous_engine (which does not import this module at load time)."""
-    try:
-        from webapp.continuous_engine import d5_consolidate_enabled
-        return D5_SEP_BIAS if d5_consolidate_enabled() else 0.0
-    except Exception:
-        return 0.0
+    """sep_bias for a NEW organ: 0.0 (the DG pattern-separation set-point is NOT armed by default -> UNMODIFIED emergent
+    assemblies, byte-identical to HEAD formation). RATIONALE (finding 2026-08-21-d5-learn-through-use-flip-GO-per-topic-
+    strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact): the separator was built to close a GRADED-read
+    crosstalk, but the recall STRENGTH is now surfaced PER CONSOLIDATED TOPIC (recall_disclosure), so a neighbour's
+    graded read is never surfaced and that crosstalk is moot; the separator's winner-fatigue only SHRINKS assemblies (a
+    cost), and both sep_bias=0 and sep_bias=1000 soak 5/6 (s102 self-ignites either way — not shrink-caused). The
+    mechanism is retained (pass sep_bias>0) but off by default."""
+    return 0.0
 
 
 def get_episodic_organ(cache_key, seed: int, topics, *, verbose: bool = False,
@@ -169,10 +168,10 @@ def get_episodic_organ(cache_key, seed: int, topics, *, verbose: bool = False,
     """The conversation-scoped episodic organ for cache_key (built on first use; topics = the known agent vocabulary
     of this conversation). NOT a process singleton: each conversation accumulates its own stored turns.
 
-    sep_bias=None (the default) reads the D5-coupled set-point (`_default_sep_bias`): the separator is armed exactly
-    when the D5 learn-through-use consolidation is (BRAIN_D5_CONSOLIDATE), so the first-built organ forms DISJOINT
-    assemblies under the default-ON flip and byte-identical HEAD assemblies under the OFF escape. Pass an explicit
-    sep_bias to override (the soak/de-risk pin it directly)."""
+    sep_bias=None (the default) reads `_default_sep_bias()` = 0.0 -> the DG pattern-separation set-point is NOT armed by
+    default (unmodified emergent assemblies, byte-identical to HEAD formation); no-regression is instead delivered by the
+    PER-CONSOLIDATED-TOPIC strength gate in recall_disclosure. Pass an explicit sep_bias>0 to arm the (retained)
+    separator (the soak/de-risk pin it directly)."""
     org = _ORGANS.get(cache_key)
     if org is None:
         if sep_bias is None:
@@ -217,13 +216,12 @@ def extract_referent(text: str, topics) -> str | None:
 # oracle. NEVER asserts content for a topic whose assembly did not complete.
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 def _d5_strength_visible() -> bool:
-    """The GRADED recall-strength magnitude is surfaced in the reply ONLY when the D5 learn-through-use consolidation
-    is armed (`BRAIN_D5_CONSOLIDATE`). Rationale: the strength number is meaningful as a CONVERSATION-VISIBLE signal
-    only when consolidation can make it RISE with use; with consolidation off it is a static constant, so surfacing it
-    would just change the default reply for no functional gain. Gating it here keeps the DEFAULT recall reply
-    byte-identical to HEAD and couples the surfacing to the single flip flag (flipping BRAIN_D5_CONSOLIDATE on then
-    both runs the consolidation AND surfaces the strength that it makes rise). Lazy import avoids any import-order
-    coupling (continuous_engine does not import this module at load time)."""
+    """FLAG half of the strength-surfacing gate (the TOPIC half is `_topic_consolidated`). The GRADED recall-strength is
+    surfaced ONLY when the D5 learn-through-use consolidation is enabled (`BRAIN_D5_CONSOLIDATE`; default-ON since
+    2026-08-21) AND the specific topic has actually been consolidated. This flag half is the byte-identical escape: with
+    `BRAIN_D5_CONSOLIDATE=0` nothing consolidates and no strength is ever shown -> the recall reply is byte-identical to
+    HEAD. The per-topic half is what keeps the DEFAULT-ON flip no-regression: consolidating one memory surfaces a
+    strength for ONLY that memory, never a neighbour. Lazy import avoids any import-order coupling."""
     try:
         from webapp.continuous_engine import d5_consolidate_enabled
         return bool(d5_consolidate_enabled())
@@ -231,19 +229,37 @@ def _d5_strength_visible() -> bool:
         return False
 
 
-def recall_disclosure(record: dict, content: str | None = None) -> str:
+def _topic_consolidated(cache_key, topic: str) -> bool:
+    """True iff `topic` was actually D5-consolidated (learn-through-use) THIS conversation (a per-session set in
+    continuous_engine). The recall strength is surfaced ONLY for such a topic, so consolidating one memory changes ONLY
+    its own reply — a neighbour that was never consolidated keeps its byte-identical reply (the no-regression property).
+    A None cache_key (a read with no session) never surfaces strength. Lazy import (no import-order coupling)."""
+    if cache_key is None:
+        return False
+    try:
+        from webapp.continuous_engine import topic_consolidated
+        return bool(topic_consolidated(cache_key, topic))
+    except Exception:
+        return False
+
+
+def recall_disclosure(record: dict, content: str | None = None, *, cache_key=None) -> str:
     """Compose the honest recall line from a spiking recall record. in_memory (a spiking completion) gates whether
     any content is surfaced at all — a completion failure is an honest abstain, never a confabulation.
 
-    When the D5 learn-through-use consolidation is armed (`BRAIN_D5_CONSOLIDATE`), the reply ALSO surfaces the GRADED
-    apical magnitude (recall STRENGTH, mV above the latch hold) — the conversation-visible number that RISES as a used
-    memory is consolidated, where the binary completion fraction saturates. It is surfaced BESIDE the binary gate
-    (which already decided in_memory=True), so the moat is unchanged. With consolidation OFF (the default) the strength
-    is NOT shown -> the default recall reply is byte-identical to HEAD."""
+    When the D5 learn-through-use consolidation is armed (`BRAIN_D5_CONSOLIDATE`) AND this specific topic has actually
+    been consolidated this conversation (`_topic_consolidated`), the reply ALSO surfaces the GRADED apical magnitude
+    (recall STRENGTH, mV above the latch hold) — the conversation-visible number that RISES as a used memory is
+    consolidated, where the binary completion fraction saturates. It is surfaced BESIDE the binary gate (which already
+    decided in_memory=True), so the moat is unchanged. The strength is gated PER TOPIC (not merely on the flag): a
+    neighbour that was recalled but never consolidated keeps a reply byte-identical to HEAD, so consolidating one memory
+    can only ever change ITS OWN reply — the no-regression property the default-ON flip needs. With consolidation OFF
+    (the default) nothing is ever consolidated, so no topic surfaces a strength and every recall reply is byte-identical
+    to HEAD."""
     topic = record.get("topic", "that")
     if record.get("in_memory"):
         cue = float(record.get("apical_cue", 0.0))
-        if _d5_strength_visible():
+        if _d5_strength_visible() and _topic_consolidated(cache_key, topic):
             strength = float((record.get("graded_cue") or {}).get(SURFACED_GRADED_READ, 0.0))
             lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
                     f"(dendritic dAP completion {cue:.2f}, recall strength {strength:.1f} mV).")

@@ -56,6 +56,12 @@ _WANDER_BUDGET: dict = {}
 _RECALLED_TOPIC: dict = {}
 # per-session remaining D5-consolidation budget for this idle period (refilled by mark_recall on each real recall)
 _D5_BUDGET: dict = {}
+# per-session SET of topics that have actually been D5-CONSOLIDATED (learn-through-use) this conversation. The recall
+# reply surfaces the graded recall STRENGTH only for a topic in this set (see recall_disclosure) — so consolidating one
+# memory can only change ITS OWN reply, never a neighbour's (the no-regression property). Populated on a successful
+# consolidate_used_memory; cleared on forget_session. Empty whenever BRAIN_D5_CONSOLIDATE is off (nothing consolidates),
+# so the OFF reply stays byte-identical to HEAD.
+_CONSOLIDATED_TOPICS: dict = {}
 
 
 # 2026-08-21 FLIP: the between-turn CONTINUOUS LIFE is DEFAULT-ON (the mission-defining flip — the brain keeps a
@@ -91,6 +97,7 @@ def forget_session(cache_key) -> None:
     _WANDER_ADAPT.pop(cache_key, None)
     _RECALLED_TOPIC.pop(cache_key, None)
     _D5_BUDGET.pop(cache_key, None)
+    _CONSOLIDATED_TOPICS.pop(cache_key, None)
     _IDEATE_TICK.pop(cache_key, None)
 
 
@@ -114,10 +121,34 @@ _D5_RK = dict(tau_w=150.0, tau_apical=15.0, cue_pa=300.0, ignite_steps=80, windo
               btsp_lr=0.02, btsp_w_max=100.0, btsp_elig_tau_ms=1000.0, b_adapt=0.8)
 
 
+# 2026-08-21 FLIP: D5 learn-through-use consolidation is DEFAULT-ON. The idle tick re-activates the memory the last turn
+# RECALLED and the substrate's OWN plateau-gated BTSP strengthens it, so a used memory recalls VISIBLY STRONGER next
+# turn. GATED by the 6-seed no-regression soak (research/runners/_d5_graded_flip_soak.py, sep_bias=0): 5/6 GO + 1
+# moat-abstaining self-ignition build (s102), OFF byte-identical to HEAD, crash-rollback 6/6. The default-ON flip is
+# safe BECAUSE the surfaced recall strength is gated PER CONSOLIDATED TOPIC (recall_disclosure + _CONSOLIDATED_TOPICS):
+# consolidating one memory changes ONLY its own reply. `BRAIN_D5_CONSOLIDATE=0` is the byte-identical escape to HEAD.
+# finding 2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact.
+_D5_CONSOLIDATE_DEFAULT_ON = True
+
+
 def d5_consolidate_enabled() -> bool:
-    """Default-OFF anchor. `BRAIN_D5_CONSOLIDATE` in {1,true,on,yes} arms the between-turn D5 consolidation. When off
-    the tick's consolidation step is inert and a later recall is byte-identical to HEAD (nothing is strengthened)."""
-    return os.environ.get("BRAIN_D5_CONSOLIDATE", "0").strip().lower() in ("1", "true", "on", "yes")
+    """Default-ON anchor (flipped 2026-08-21). Unset -> the default (on); `BRAIN_D5_CONSOLIDATE=0` (or false/no/off) is
+    the byte-identical escape: the tick's consolidation step is inert AND no recall surfaces a strength -> a later recall
+    is byte-identical to HEAD. Any of {1,true,on,yes} also arms it."""
+    v = os.environ.get("BRAIN_D5_CONSOLIDATE")
+    if v is None:
+        return _D5_CONSOLIDATE_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "on", "yes")
+
+
+def topic_consolidated(cache_key, topic) -> bool:
+    """True iff `topic` has actually been D5-CONSOLIDATED (learn-through-use) this conversation. Gates whether the recall
+    reply surfaces the risen graded strength for it (recall_disclosure). Because a memory is added to the set only on a
+    SUCCESSFUL consolidation (which requires BRAIN_D5_CONSOLIDATE on), a topic never consolidated — including EVERY topic
+    when the flag is off — reads False, so the reply is byte-identical to HEAD. Pure bookkeeping (a set lookup)."""
+    if not topic:
+        return False
+    return str(topic).lower() in _CONSOLIDATED_TOPICS.get(cache_key, ())
 
 
 def _d5_budget_per_recall() -> int:
@@ -237,6 +268,11 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
             setattr(bridge, a, v)
 
     _RECALLED_TOPIC.pop(cache_key, None)  # consolidate a given recall once (drained; a new recall re-arms it)
+    # LEARN-THROUGH-USE SURFACING GATE: record that THIS topic has been consolidated this conversation, so its later
+    # recall reply surfaces the risen graded strength — and ONLY its reply (a neighbour that was never consolidated is
+    # not in this set, so its reply is untouched). Reached only on the SUCCESS path (a crash re-raises above, before
+    # this line, so a rolled-back consolidation never surfaces a strength).
+    _CONSOLIDATED_TOPICS.setdefault(cache_key, set()).add(topic)
     rec = {"t": time.time(), "consolidated": topic, "slot": int(slot), "n_episodes": n_ep,
            "w_within_before": round(w0, 3), "w_within_after": round(wN, 3),
            "note": "idle: consolidated the used memory ‘%s’ (within-assembly weight %.1f → %.1f)" % (topic, w0, wN)}

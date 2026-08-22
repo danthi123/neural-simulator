@@ -1,0 +1,123 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "go": [
+    false
+  ],
+  "backend": "cupy",
+  "results": {
+    "42": {
+      "seed": 42,
+      "backend": "cupy",
+      "params": {
+        "seed": 42,
+        "seeds": null,
+        "sep_bias": 1000.0,
+        "out": "research/findings/raw/_d5_ltu_lever2/reproduce_s42.json"
+      },
+      "GO": false,
+      "no_regression": false,
+      "on_dog_rose": true,
+      "crash_ok": true,
+      "cat_abstain_same": true,
+      "bird_unchanged": false,
+      "dog_inmem_same": true,
+      "off_store_flat": true,
+      "only_dog_differs": false,
+      "off": {
+        "consolidate_ret": null,
+        "store_hash": "68483adfd8964126",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.47663,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.47663,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.76491,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "on": {
+        "consolidate_ret": "record",
+        "store_hash": "b16d706148c11535",
+        "t2_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.47663,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.5 mV)."
+        },
+        "t3_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        },
+        "t4_dog": {
+          "topic": "dog",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 29.98903,
+          "reply": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+        },
+        "t4_bird": {
+          "topic": "bird",
+          "in_memory": true,
+          "apical_cue": 1.0,
+          "depth_hold": 30.76491,
+          "reply": "Earlier you brought up bird \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.8 mV)."
+        },
+        "t4_cat": {
+          "topic": "cat",
+          "in_memory": false,
+          "apical_cue": 0.0,
+          "depth_hold": 0.0,
+          "reply": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up)."
+        }
+      },
+      "crash": {
+        "raised": true,
+        "rolled_back": true,
+        "topic_drained": true,
+        "hash_pre": "68483adfd8964126",
+        "hash_post": "68483adfd8964126",
+        "episodes_attempted": 2
+      },
+      "assembly_sizes": [
+        36,
+        14,
+        14
+      ],
+      "elapsed_s": 46.9
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ---
 type: finding
-status: negative
+status: superseded
 date: 2026-08-21
 mechanism: d5-pattern-separation-setpoint-knob1
 lane: integration
@@ -22,6 +22,8 @@ external: Guzman, Schlögl, Frotscher & Jonas (2016), "Synaptic mechanisms of pa
 artifacts:
   - research/findings/raw/_d5_ltu_flip_soak/soak_summary_6seed.json
 ---
+> ⛔ **SUPERSEDED (2026-08-21)** by `research/findings/2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact-not-substrate-crosstalk.md`. **The central MECHANISM claim below is a MISDIAGNOSIS.** The neighbour 'bird' read BYTE-IDENTICAL OFF-vs-ON on 6/6 (apical_cue Δ0.0 on 6/6; depth_hold Δ0.0 on 5/6, ~0.02 on s44 — below display resolution): there was NO "quantized binary-readout residual" and NO cross-assembly bleed in the surfaced read. The 0/6 was a SURFACING ARTIFACT — `recall_disclosure` appended ", recall strength X mV" to EVERY in_memory reply whenever the flag was on, so the neighbour's REPLY differed by format, not substrate. Gating the strength PER CONSOLIDATED TOPIC makes the flip a GO (5/6 + 1 moat-abstaining self-ignition build), and the separator (sep_bias) is unnecessary. **The MEASUREMENTS here remain valid** (on_dog_rose 5/6, crash-rollback 6/6, bird in_memory preserved, disjoint-membership at sep1000); only the NO-GO verdict + the crosstalk mechanism are superseded.
+
 # D5 learn-through-use default-ON flip is NO-GO — the DG pattern-separation set-point (knob-1) makes assemblies DISJOINT and closes the GRADED-read crosstalk, but a QUANTIZED binary-readout residual still fails the no-regression soak (0/6)
 
 ## Verdict
