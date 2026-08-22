@@ -1,0 +1,20 @@
+{
+ "runner": "research/runners/_wave4_composed_flip_noregression.py",
+ "flags": [
+  "BRAIN_GNW_3ORGAN"
+ ],
+ "panel_len": 8,
+ "n_turns": 8,
+ "n_diverged": 0,
+ "diverged": [],
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "no out-of-scope turn diverges with all four ON vs all four OFF",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "8 out-of-scope turns, 0 diverged"
+  }
+ ],
+ "VERDICT": "GO"
+}

@@ -3847,12 +3847,18 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # flag simply unset. Load-bearing lever: `BRAIN_GNW_3ORGAN_ORGANC_LESION=1` silences organ C's veto (it corroborates
     # unconditionally) -> the consensus collapses to the 2-organ decision (the low-comprehension abstain reverts to
     # commit). Guarded so a wiring failure can never crash a turn. NO sim/ edit. See webapp/gnw_three_organ_bus.py.
-    if os.environ.get("BRAIN_GNW_3ORGAN", "").strip().lower() in ("1", "true", "on", "yes"):
+    # 2026-08-21 FLIPPED default-ON (real-vocab comprehension read fixed the over-veto: composed re-verify GO,
+    # diverged:0 on the out-of-scope panel with BRAIN_GNW_3ORGAN isolated; genuine non-comprehension still vetoes,
+    # lesion severs). BRAIN_GNW_3ORGAN=0 is the byte-identical escape (delegates to the 2-organ bus).
+    if os.environ.get("BRAIN_GNW_3ORGAN", "1").strip().lower() in ("1", "true", "on", "yes"):
         try:
             from webapp import gnw_three_organ_bus as _gnw_3organ_mod
             _gnw_3organ_mod.install_three_organ_gate(chat)
-        except Exception:
-            pass
+        except Exception as _gnw3_exc:
+            # fail-SAFE (degrade to the 2-organ path, never crash a turn) but NOT silent — a default-on faculty that
+            # silently no-installs is the exact silent-failure class; log the catch so a wiring break is observable.
+            print(f"[webapp] GNW three-organ install failed; degrading to 2-organ bus: "
+                  f"{type(_gnw3_exc).__name__}: {_gnw3_exc}", flush=True)
 
     # GNW CONFIDENCE/CONFLICT-GATED DELIBERATION — THE KEYSTONE, WIRED (T1-1 rung d, 2026-08-18): after the bus commits,
     # the WORKSPACE's OWN spiking conflict read (n_ignited + the nmda_norm confidence balance) DECIDES commit-vs-abstain.
