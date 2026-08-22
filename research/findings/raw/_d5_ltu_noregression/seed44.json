@@ -1,0 +1,214 @@
+{
+  "seed": 44,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 40,
+    "n_episodes": 1,
+    "n_turns": 3,
+    "self_test": false,
+    "out": "research/findings/raw/_d5_ltu_noregression/seed42.json"
+  },
+  "surfaced_read": "depth_hold",
+  "verdict": {
+    "label": "PRODUCTION no-regression for the BRAIN_D5_CONSOLIDATE flip at the production encode (seed 44): OFF byte-identical | ON moat-unchanged | ON graded rise conversation-visible",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "A: OFF consolidate disabled",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "d5_consolidate_enabled() is False when the flag is unset (the default anchor)"
+      },
+      {
+        "kind": "require",
+        "name": "A: OFF disclosure has no strength clause",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the default recall reply is byte-identical to HEAD (no 'recall strength' text)"
+      },
+      {
+        "kind": "require",
+        "name": "A: OFF consolidate returns None",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "consolidate_used_memory short-circuits when disabled"
+      },
+      {
+        "kind": "require",
+        "name": "A: OFF store byte-identical",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "a full mark+consolidate cycle leaves the store weights hash-identical"
+      },
+      {
+        "kind": "require",
+        "name": "B: binary gate flag-independent",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the in_memory gate is identical off vs on (recall never reads the flag) -> moat unchanged"
+      },
+      {
+        "kind": "require",
+        "name": "B: moat truth-table",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "formed dog completes, never-formed cat abstains, formation-lesion collapses"
+      },
+      {
+        "kind": "require",
+        "name": "B: abstain line identical off vs on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the honest-abstain reply for a never-formed topic is byte-identical off vs on"
+      },
+      {
+        "kind": "require",
+        "name": "B: ON completion text preserved",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "ON only APPENDS the strength; the moat-carrying completion text is unchanged"
+      },
+      {
+        "kind": "require",
+        "name": "B: ON surfaced strength == record read",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the surfaced number is the real graded depth_hold, not an invented value"
+      },
+      {
+        "kind": "require",
+        "name": "C: consolidation ran",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the ON arm actually consolidated (mark_recall -> consolidate_used_memory ticked)"
+      },
+      {
+        "kind": "reaches",
+        "name": "C: first use raises surfaced depth_hold",
+        "ok": true,
+        "detail": "before=28.7693 after=29.3927 moved=True",
+        "note": "one production consolidation tick (the budget) raised the conversation-visible recall strength"
+      },
+      {
+        "kind": "require",
+        "name": "C: first-use rises",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "depth_hold(T+1) > depth_hold(T) \u2014 the production single-tick learn-through-use signal"
+      },
+      {
+        "kind": "require",
+        "name": "C: first-use reply STRING changed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the surfaced strength mV rose in the recall_disclosure reply itself after one tick (anti-hollow)"
+      },
+      {
+        "kind": "require",
+        "name": "C: in_memory held through consolidation",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the binary moat gate never drops out while the strength rises"
+      },
+      {
+        "kind": "control",
+        "name": "C: ON first-use rise vs OFF flat",
+        "ok": true,
+        "detail": "treatment=0.6234 control=-2.53565e-05 |sep|=0.623425 > 0.001",
+        "note": "the rise is DRIVEN by consolidation; the OFF cycle is a byte-identical no-op (read+reply flat)"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "BRAIN_D5_CONSOLIDATE (default)",
+        "why": "the OFF arm is the HEAD default path \u2014 no sim/ or OFF-path edit"
+      },
+      {
+        "process": "neighbor-crosstalk (out of scope)",
+        "why": "this guard is the RECALLED-topic no-regression; the overlapping-assembly crosstalk is _d5_graded_flip_soak + knob-1 (separator, board #73)"
+      }
+    ],
+    "chance": null
+  },
+  "verdict_status": "GO",
+  "checks": {
+    "instrument_valid": true,
+    "te": 40,
+    "surfaced_read": "depth_hold",
+    "claim_A_off_byte_identical": true,
+    "claim_B_on_moat_unchanged": true,
+    "claim_C_graded_rise_visible": true,
+    "GO": true,
+    "deterministic": true,
+    "off_disabled": true,
+    "off_no_strength": true,
+    "off_consolidate_none": true,
+    "off_store_byte_identical": true,
+    "hash_pre": "1a80c345af530455",
+    "hash_post_off": "1a80c345af530455",
+    "disc_dog_off": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00).",
+    "disc_cat_off": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up).",
+    "on_enabled": true,
+    "gate_flag_independent": true,
+    "on_has_strength": true,
+    "abstain_unchanged": true,
+    "completion_text_preserved": true,
+    "strength_matches_record": true,
+    "moat_truth_table": true,
+    "inmem_dog": true,
+    "inmem_cat": false,
+    "inmem_dog_les": false,
+    "cat_never": true,
+    "surfaced_strength": 28.7693,
+    "disc_dog_on": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 28.8 mV).",
+    "disc_cat_on": "I don't recall us discussing cat \u2014 no assembly completes for that cue (a genuine spiking completion failure, so I won't make something up).",
+    "depth_traj": [
+      28.7693,
+      29.3927,
+      29.8535,
+      30.0433
+    ],
+    "inmem_traj": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "first_use_move": 0.6234,
+    "first_use_rises": true,
+    "first_use_reply_changed": true,
+    "graded_monotone": true,
+    "net_move": 1.274,
+    "peak_move": 1.274,
+    "inmem_held": true,
+    "consolidated": true,
+    "consolidated_rounds": 3,
+    "off_flat": true,
+    "off_ctrl_store_identical": true,
+    "reply_flat_off": true,
+    "move_off": -0.0,
+    "disc_traj": [
+      "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 28.8 mV).",
+      "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.4 mV).",
+      "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 29.9 mV).",
+      "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00, recall strength 30.0 mV)."
+    ],
+    "disc_off_ctrl": "Earlier you brought up dog \u2014 my hippocampal readout completes its assembly for it (dendritic dAP completion 1.00).",
+    "n_turns": 3,
+    "n_episodes": 1,
+    "w_dog_before": 74.286
+  },
+  "elapsed_s": 41.6
+}

@@ -1,0 +1,34 @@
+{
+ "run_id": "1787362298-916866",
+ "runner": "research/runners/_d5_learn_through_use_noregression.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-acdc1a6a32458e059/research/runners/_d5_learn_through_use_noregression.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_d5_ltu_noregression/seed42.json"
+ ],
+ "git_sha": "cd10264f4",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-21T21:31:38",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_d5_ltu_noregression/seed102.json"
+}

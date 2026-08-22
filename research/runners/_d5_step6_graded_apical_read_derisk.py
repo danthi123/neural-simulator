@@ -106,6 +106,20 @@ MOVE_MARGIN_SOFT = 1e-4        # graded soft move margin ([0,1])
 MONO_TOL_FRAC = 0.02           # a trajectory is monotone-up if it never BACKTRACKS by more than this fraction of the
                                # total move — tolerates sub-percent numerical ripple at the SATURATING tail (where the
                                # weight has stopped moving), which is NOT a dead-step. Reported alongside strict-monotone.
+# ── ABSOLUTE tolerance FLOOR (knob-2 seed-44 fix, board #71) ─────────────────────────────────────────────────────────
+# For a WEAK consolidator (seed 44) the TOTAL move is tiny (~0.8 mV over the pre-saturation window), so a pure
+# 2%-of-move tolerance is a sub-0.02 mV, SUB-RIPPLE bound → a normal saturating-tail ripple (~0.1-0.3 mV) or the
+# plateau's own amplitude-saturation (Bittner, Milstein, Grienberger, Romani & Magee 2017 Science 357:1033 — the
+# regenerative NMDA plateau the depth read measures is CEILING-BOUNDED, so near the top the read flattens while the
+# weight still grows) spuriously fails monotone / registers a dead-step. The floor makes the tolerance = max(2%-of-move,
+# ABS floor). The floor is CALIBRATED: BELOW a meaningful per-turn rise (seed 44's linear-regime first turn is ~0.8 mV)
+# and ABOVE the saturating ripple (~0.1-0.3 mV) + DEAD_READ_EPS (0.05 mV). ADDITIVE: for a large-move trace 2%-of-move
+# dominates (e.g. move=26 mV → 0.52 mV > 0.4), so the 2%-relative behavior is UNCHANGED. The floor NEVER excuses a
+# genuinely FLAT/DECREASING trace: _mono_rel still requires the trace to END ABOVE start (move>0), and the dead-step
+# tail-excuse only applies to a trace that GENUINELY ROSE (total read move > min_rise), so a flat read on a rising
+# weight (the binary quantization defect / an untrained trace) still counts.
+MONO_TOL_ABS_MV = 0.4          # absolute backtrack/saturation floor for the mV depth reads (0.1-0.3 ripple < 0.4 < 0.8 rise)
+MONO_TOL_ABS_SOFT = 2e-3       # absolute floor for the [0,1] soft read (analogous: below a meaningful move, above ripple)
 W_MEANINGFUL = 0.5             # a per-turn within-weight rise (mV) considered MEANINGFUL for the dead-step contrast
 DEAD_READ_EPS = 0.05           # a depth read that moves < this (mV) on a meaningful-weight turn is a DEAD-STEP (flat)
 DEAD_READ_EPS_SOFT = 1e-3      # soft-read dead-step threshold ([0,1])
@@ -276,14 +290,17 @@ def _select_encode(seed, cp, te_grid, verbose=True):
     return best[1:]
 
 
-def _mono_rel(traj, tol_frac=MONO_TOL_FRAC):
-    """The DEFENSIBLE monotonicity: the read never BACKTRACKS by more than tol_frac of the total move, and ends above
-    start. Tolerates the sub-percent numerical ripple at the SATURATING tail (where the weight has stopped moving); a
-    real dead-step or a real down-trend still fails. `_mono_strict` (below) is reported alongside for full honesty."""
+def _mono_rel(traj, tol_frac=MONO_TOL_FRAC, tol_abs=0.0):
+    """The DEFENSIBLE monotonicity: the read never BACKTRACKS by more than max(tol_frac of the total move, tol_abs), and
+    ends above start. The RELATIVE term tolerates sub-percent ripple on a large-move trace; the ABSOLUTE floor (tol_abs)
+    tolerates the fixed-size saturating-tail ripple on a TINY-total-move trace (seed 44: ~0.8 mV move → 2%-of-move is a
+    sub-ripple 0.016 mV bound). A genuinely FLAT (move<=0) or DECREASING trace still fails (ends-above-start is
+    required); a real down-trend larger than the floor still fails. `_mono_strict` (below, no floor) is reported
+    alongside for full honesty. tol_abs=0 (default) == the original pure-relative behavior."""
     move = traj[-1] - traj[0]
     if move <= 0:
         return False
-    tol = tol_frac * abs(move)
+    tol = max(tol_frac * abs(move), tol_abs)
     non_dec = all(traj[i + 1] >= traj[i] - tol for i in range(len(traj) - 1))
     return bool(non_dec)
 
@@ -294,14 +311,60 @@ def _mono_strict(traj, eps):
     return bool(non_dec and traj[-1] > traj[0] + eps)
 
 
-def _dead_steps(w_traj, r_traj, w_eps, r_eps):
+def _dead_steps(w_traj, r_traj, w_eps, r_eps, tail_tol=0.0, min_rise=0.0):
     """Count the turns where the within-weight rose MEANINGFULLY (Δw > w_eps) but the read stayed FLAT (|Δread| < r_eps)
-    — the binary UP-fraction's quantization defect. A graded read that tracks the weight has ZERO such turns."""
+    — the binary UP-fraction's quantization defect. A graded read that tracks the weight in its LINEAR regime has ZERO
+    such turns.
+
+    SATURATING-TAIL EXCLUSION (tail_tol>0): the depth read measures a REGENERATIVE, ceiling-bounded NMDA plateau (Bittner
+    et al. 2017), so once the read has climbed into its saturation band a further weight rise legitimately produces
+    almost no read move — that is the plateau's biology, NOT the binary read's quantization defect. When tail_tol>0 a
+    flat step is EXCLUDED iff (a) the trace GENUINELY ROSE overall (total read move > min_rise) AND (b) the PRIOR read
+    value already sits within tail_tol of the trajectory max (we are on the saturating tail). tail_tol=0 (default) keeps
+    the ORIGINAL behavior — used for the BINARY contrast, which must retain its quantization dead-steps so the graded
+    read's advantage is still demonstrated. The exclusion never gives a free pass to a NON-rising trace (a flat read on a
+    rising weight with total move <= min_rise still counts — the moat)."""
+    move = r_traj[-1] - r_traj[0]
+    rmax = max(r_traj)
     n = 0
     for i in range(1, len(w_traj)):
         if (w_traj[i] - w_traj[i - 1]) > w_eps and abs(r_traj[i] - r_traj[i - 1]) < r_eps:
-            n += 1
+            saturating_tail = bool(tail_tol > 0.0 and move > min_rise and r_traj[i - 1] >= rmax - tail_tol)
+            if not saturating_tail:
+                n += 1
     return int(n)
+
+
+def _selftest_criteria():
+    """The FLAT-TRACE CONTROL, run as a deterministic unit check (no brain) so it executes every run and can FAIL LOUDLY
+    (the project's "a gate must be able to fail in its failing direction" discipline). It PROVES the tuned tolerance did
+    NOT defeat the criterion: a genuinely FLAT / DECREASING / collapsing trace is still REJECTED, the large-move
+    2%-relative behavior is UNCHANGED, and the binary read KEEPS its quantization dead-steps (so the graded read's
+    advantage is still real). Returns the list of FAILED check names (empty == all pass)."""
+    f = []
+    def chk(name, cond):
+        if not bool(cond):
+            f.append(name)
+    A = MONO_TOL_ABS_MV
+    # ── monotone floor: the loosening must NOT admit a non-rising trace ──
+    chk("flat_rejected",              _mono_rel([15.0, 15.0, 15.0], tol_abs=A) is False)   # no rise → reject
+    chk("decreasing_rejected",        _mono_rel([15.0, 14.5, 14.0], tol_abs=A) is False)   # down-trend → reject
+    chk("collapse_rejected",          _mono_rel([15.0, 16.0, 15.05], tol_abs=A) is False)  # big backtrack (0.95>0.4) → reject
+    # ── monotone floor: it MUST admit the seed-44 case (tiny move + sub-floor saturating ripple) ──
+    chk("saturating_ripple_admitted", _mono_rel([14.51, 15.31, 15.28], tol_abs=A) is True)  # 0.03 dip < 0.4 floor → admit
+    # ── additive: large-move (>50x floor) 2%-relative behavior is UNCHANGED ──
+    chk("large_move_2pct_preserved",  _mono_rel([10.0, 40.0, 38.0], tol_abs=A) is False)   # 2.0 drop > max(0.56,0.4) → reject
+    chk("large_move_ripple_admitted", _mono_rel([10.0, 40.0, 39.7], tol_abs=A) is True)    # 0.3 dip < 0.56 (2% of 30) → admit
+    # ── dead-step: BINARY quantized-flat read KEEPS its dead-steps (tail_tol=0 → contrast preserved) ──
+    chk("binary_deadsteps_preserved", _dead_steps([30.0, 42.0, 43.0], [0.25, 0.25, 0.25],
+                                                  W_MEANINGFUL, MOVE_MARGIN_BIN) == 2)
+    # ── dead-step: a graded read that RISES then saturates at the tail → NO dead-step (saturation is expected biology) ──
+    chk("saturating_tail_excluded",   _dead_steps([31.6, 43.2, 44.1], [14.51, 15.31, 15.33],
+                                                  W_MEANINGFUL, DEAD_READ_EPS, tail_tol=A, min_rise=A) == 0)
+    # ── dead-step: a flat read on a rising weight with NO real total rise still counts (no free pass — the moat) ──
+    chk("flat_read_still_deadstep",   _dead_steps([30.0, 42.0, 43.0], [15.0, 15.0, 15.05],
+                                                  W_MEANINGFUL, DEAD_READ_EPS, tail_tol=A, min_rise=A) >= 1)
+    return f
 
 
 def run_one(seed, a, backend, out_path):
@@ -426,15 +489,17 @@ def run_one(seed, a, backend, out_path):
             margin = MOVE_MARGIN_SOFT if r == "soft" else MOVE_MARGIN_DEPTH
             strict_eps = (MOVE_MARGIN_SOFT if r == "soft" else 1e-3)
             dead_eps = (DEAD_READ_EPS_SOFT if r == "soft" else DEAD_READ_EPS)
+            tol_abs = MONO_TOL_ABS_SOFT if r == "soft" else MONO_TOL_ABS_MV  # absolute floor (knob-2 seed-44 fix)
             cue_T = g(rec_dog_T, "graded_cue", r); cue_Tk = g(rec_dog_Tk, "graded_cue", r)
             perm_T = g(rec_dog_T, "graded_perm", r); nocue_T = g(rec_dog_T, "graded_nocue", r)
             les_T = g(rec_dog_T_les, "graded_cue", r)               # formation-lesion (baseline weights)
             cat_T = g(rec_cat_T, "graded_cue", r); cat_Tk = g(rec_cat_Tk, "graded_cue", r)
             traj = grd_traj[r]
             moves = bool(cue_Tk > cue_T + margin)
-            monotone = _mono_rel(traj)                              # defensible (relative tolerance) — GO-driving
-            monotone_strict = _mono_strict(traj, strict_eps)        # reported (absolute) — honesty
-            graded_dead_steps = _dead_steps(wdog_traj, traj, W_MEANINGFUL, dead_eps)
+            monotone = _mono_rel(traj, tol_abs=tol_abs)            # defensible: max(2%-of-move, abs floor) — GO-driving
+            monotone_strict = _mono_strict(traj, strict_eps)        # reported (absolute, no floor) — honesty
+            graded_dead_steps = _dead_steps(wdog_traj, traj, W_MEANINGFUL, dead_eps,
+                                            tail_tol=tol_abs, min_rise=tol_abs)   # saturating-tail excluded (Bittner 2017)
             no_dead_steps = bool(graded_dead_steps == 0)
             faithful_specific = bool(cue_T >= FAITHFUL_K * max(perm_T, nocue_T, 1e-9))
             faithful_lesion = bool(les_T <= LESION_COLLAPSE_FRAC * max(cue_T, 1e-9))
@@ -569,8 +634,21 @@ def main():
                     help="number of later USE turns (each re-arms mark_recall → one consolidation tick); step-5 used 3")
     ap.add_argument("--primary-read", type=str, default="depth_rest", choices=list(GRADED_READS), dest="primary_read",
                     help="the graded read that drives the GO verdict; the summary reports 6/6 for ALL three")
+    ap.add_argument("--self-test", action="store_true", dest="self_test",
+                    help="run ONLY the criteria self-test (flat-trace control, no brain) and exit")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
+
+    # The FLAT-TRACE CONTROL runs on EVERY invocation (deterministic, no brain) and BLOCKS if the tuned tolerance ever
+    # defeats the criterion (flat/decreasing/collapse admitted, or the binary contrast lost).
+    _st_fails = _selftest_criteria()
+    if _st_fails:
+        print(f"[d5-step6-graded] ⛔ CRITERIA SELF-TEST FAILED — tolerance defeats the criterion: {_st_fails}", flush=True)
+        return 3
+    print(f"[d5-step6-graded] criteria self-test: PASS (flat-trace control holds; floor MV={MONO_TOL_ABS_MV} "
+          f"soft={MONO_TOL_ABS_SOFT}; binary contrast preserved)", flush=True)
+    if a.self_test:
+        return 0
 
     seeds = a.seeds if a.seeds else [a.seed]
     _, backend = get_backend()

@@ -1,0 +1,30 @@
+{
+  "seed": 43,
+  "backend": "cupy",
+  "params": {
+    "seed": 42,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "train_events": 40,
+    "n_episodes": 1,
+    "n_turns": 3,
+    "self_test": false,
+    "out": "research/findings/raw/_d5_ltu_noregression/seed42.json"
+  },
+  "surfaced_read": "depth_hold",
+  "verdict_status": "UNDEFINED",
+  "checks": {
+    "instrument_valid": false,
+    "inmem_dog": true,
+    "cat_never": false,
+    "deterministic": true,
+    "apical_cue_dog": 1.0,
+    "reason": "dog did not complete at the production encode (self-ignition/moat-abstain) or cat/determinism control failed \u2014 recalled-topic test N/A this build"
+  }
+}
