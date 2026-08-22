@@ -56,7 +56,10 @@ def _is_structural_record(obj):
     # deliberately records lanes, agents, and resource observations separately;
     # forcing it to pretend it has a completed backend/cost receipt would make
     # the provenance gate less precise, not more protective.
-    if schema == "sim-autonomous-workboard-v1":
+    if schema in ("sim-autonomous-workboard-v1", "board-sync-v1", "tool-health-v1"):
+        # board-sync-v1 (tools/vikunja.sh receipt) + tool-health-v1 (tools/tool_health.py smoke) are
+        # coordination/state files under research/coordination/, not scientific runs; a backend/cost receipt
+        # would be meaningless for them (the same rationale as the workboard above).
         return True
     if obj.get("execution") == "not_executed" and isinstance(obj.get("argv"), list):
         return True
@@ -189,4 +192,11 @@ def selftest():
         if _check_one(w("workboard.json", {"schema": "sim-autonomous-workboard-v1", "lanes": {}}),
                       "research/coordination/workboard.json"):
             bad.append("FALSE POSITIVE: treated coordinator state as a completed result")
+        # 11b. NEGATIVE CONTROL — the board-sync receipt + tool-health smoke are coordination state, not runs.
+        if _check_one(w("board_sync.json", {"schema": "board-sync-v1", "entries": []}),
+                      "research/coordination/board_sync.json"):
+            bad.append("FALSE POSITIVE: treated the board-sync receipt as a completed result")
+        if _check_one(w("tool_health.json", {"schema": "tool-health-v1", "results": []}),
+                      "research/coordination/tool_health.json"):
+            bad.append("FALSE POSITIVE: treated the tool-health smoke as a completed result")
     return bad
