@@ -11,17 +11,23 @@ default-off flag, so the owner can review before any flip.
   organ B — spiking EXPECTATION-VIOLATION monitor (`SurpriseProductionOrgan`, NON-COMPOSER): confirms `cand` against
             its OWN learned expectation e_B[(agent,action)] by reading `cp_firing_states[surprise]` (a genuinely
             different Izhikevich substrate). CONFIRM (~0 Hz < threshold) -> vote; SURPRISE (> threshold) -> withhold.
-  organ C — spiking COMPREHENSION monitor (`ComprehensionProductionOrgan`, the 6/6-GO D4 faculty, a THIRD genuinely
-            different substrate — a Wong-Wang `SpikingRoleCompetition` whose `sel_agent`/`sel_patient` WTA pools are
-            read off `cp_firing_states`): it reads whether the RECALLED PROPOSITION `(agent, action, cand)` has
-            role-RESOLVABLE thematic structure. It reconstructs the transitive from the recall candidate (the question
-            "what does {agent} {action}?" is a WH-gap the D4 monitor cannot score directly, so organ C scores the full
-            proposition the brain is about to commit) and reads the SEMANTIC-cue-driven sel-pool margin
-            |agentEv(agent) - agentEv(cand)|. HIGH (>= the D4 organ's calibrated threshold, roles decisively separate)
-            -> organ C CORROBORATES (votes slot(cand)); LOW (role-ambiguous — two same-animacy nouns / verbfit
-            conflict) -> organ C WITHHOLDS (a live comprehension VETO). Out of the monitor's cue-lexicon COMPETENCE
-            (a real-but-untabled word the brain knows, e.g. "brain use spikes") -> organ C DEFERS (corroborates), so
-            it never false-vetoes a recall it is not competent to judge (the D4 declared vocab-ceiling residual).
+  organ C — COMPREHENSION monitor of the RECALLED PROPOSITION `(agent, action, cand)`, reconstructed from the recall
+            candidate (the question "what does {agent} {action}?" is a WH-gap, so organ C scores the full proposition
+            the brain is about to commit). VETO AUTHORITY = a REAL-VOCAB entity/role COMPETENCE read (2026-08-21 fix,
+            replaces the toy cue-lexicon margin that was the false-veto source): a RECALLED fact's thematic roles are
+            already RESOLVED by its stored engram (the brain knows dog is the agent / cat the patient BECAUSE it
+            stored that fact), so comprehension of a RECALL is "are all its entities/roles KNOWN in the brain's own
+            learned vocabulary" (the engram-derived agents/actions/patients the recall composer itself binds), NOT
+            "can bottom-up animacy/verbfit cues separate the roles" (the toy-competition question — right for a NOVEL
+            incoming assertion, but false-vetoing a known two-animate fact like `dog chase cat`). KNOWN (agent, action
+            + the patient head all in the brain's learned vocab) -> organ C CORROBORATES (votes slot(cand)); a content
+            entity/role OUTSIDE the learned vocab (genuine non-comprehension) -> the spiking D4 `SpikingRoleCompetition`
+            sel-pool WTA (`cp_firing_states` margin |agentEv(agent) - agentEv(cand)|) is consulted as its correct
+            "does this UNKNOWN proposition's roles resolve?" instrument: margin >= threshold -> CORROBORATE, else
+            organ C WITHHOLDS (a live comprehension VETO). So the spiking read stays load-bearing exactly where it is
+            the right tool (an unknown proposition / an ungrounded recalled token), while a legitimately-recalled
+            common fact reads HIGH-comprehension by real vocab and is never false-vetoed. HOST RESIDUAL: the
+            membership test is host code, but the vocabulary it reads is the brain's OWN learned concept inventory.
 
 THE CONSENSUS (a 3-way AND = a consensus-veto). Each organ writes a SUBTHRESHOLD drive `d_sub` into the shared K-slot
 GNW workspace via `norgan_hop`. AGREEING organs ACCUMULATE their drive on slot(cand); `d_sub` is the calibrated
@@ -30,8 +36,8 @@ does). So slot(cand) crosses the ignition knee ONLY when ALL THREE organs vote �
 it RECALLS it (organ A), is NOT surprised by it (organ B), AND actually COMPREHENDED the proposition (organ C). Any one
 organ withholding leaves slot(cand) at <= 2*d_sub -> subthreshold -> the workspace ABSTAINS. The AND-over-three-distinct
 -organs is the neuronal ignition THRESHOLD (WTA + NMDA sustain), not host control flow. This is the load-bearing new
-capability over the 2-organ bus: a LOW-comprehension recall (recall ∧ ¬surprise would commit) is VETOED by organ C —
-a decision the 2-organ bus could not make.
+capability over the 2-organ bus: a NON-COMPREHENDED recall (recall ∧ ¬surprise would commit, but a content entity/role
+lies OUTSIDE the brain's learned vocabulary) is VETOED by organ C — a decision the 2-organ bus could not make.
 
 DISCIPLINE (the #1 requirement): ADDITIVE + DEFAULT-OFF + BYTE-IDENTICAL-WHEN-OFF. With `BRAIN_GNW_3ORGAN` unset/off
 this module installs NOTHING (the server hook does not even import it), so the turn is byte-identical to today's
@@ -39,13 +45,14 @@ production (the DEFAULT-ON 2-organ bus authors it). Only when the flag is ON doe
 
 LESION-LOAD-BEARING (the honest-negative deliverable):
   * `BRAIN_GNW_3ORGAN_ORGANC_LESION=1` — organ C's comprehension VETO is silenced: organ C corroborates
-    UNCONDITIONALLY (its `cp_firing_states` read is bypassed). With organ C always voting, the Q=3 consensus reduces
-    to organ A + organ B (the guaranteed organ-C vote + organ A means the deciding third vote is organ B's
-    confirmation) — i.e. EXACTLY the 2-organ decision. So the low-comprehension abstain REVERTS to the 2-organ commit,
-    attributing the veto to organ C's active spiking participation (a host `if margin < x` would NOT revert when the
-    organ is lesioned). Distinct from the D4 SYNAPTIC lesion (`BRAIN_COMPREHENSION_LESION=1`), which zeroes organ C's
-    learned cue->role weights and collapses the well-vs-ill DISCRIMINATION (both propositions read margin ~0) — that
-    attributes the SELECTIVITY of the veto to the learned spiking competition.
+    UNCONDITIONALLY (both its real-vocab read AND its `cp_firing_states` read are bypassed). With organ C always
+    voting, the Q=3 consensus reduces to organ A + organ B (the guaranteed organ-C vote + organ A means the deciding
+    third vote is organ B's confirmation) — i.e. EXACTLY the 2-organ decision. So a non-comprehension abstain REVERTS
+    to the 2-organ commit, attributing the veto to organ C's active participation (a host `if known` outside the organ
+    would NOT revert when the organ is lesioned). For the spiking sub-read that decides UNKNOWN propositions, the D4
+    SYNAPTIC lesion (`BRAIN_COMPREHENSION_LESION=1`) additionally zeroes organ C's learned cue->role weights and
+    collapses the well-vs-ill margin DISCRIMINATION (both read margin ~0), attributing that sub-read's SELECTIVITY to
+    the learned spiking competition.
   * The 2-organ bus's own levers still apply on the covered path: `BRAIN_GNW_2ORGAN_WS_LESION=1` (workspace self-
     recurrence zeroed -> even a full consensus cannot sustain -> abstain, while the forward-recall reflex survives)
     and `BRAIN_GNW_2ORGAN_ORGANB_LESION=1` (organ B withholds even on a match -> the consensus collapses).
@@ -95,31 +102,63 @@ def organc_lesion_on() -> bool:
     return os.environ.get("BRAIN_GNW_3ORGAN_ORGANC_LESION", "").strip().lower() in ("1", "true", "on", "yes")
 
 
-# ── organ C: the spiking comprehension read on the RECALLED PROPOSITION (agent, action, cand) ────────────────────
+# ── organ C: the comprehension read on the RECALLED PROPOSITION (agent, action, cand) ────────────────────────────
+def _real_vocab_competence(agent: str, action: str, cand: str, brain_vocab) -> tuple:
+    """REAL-VOCAB entity/role competence over the RECALLED PROPOSITION (agent, action, cand): every content
+    entity/role is KNOWN when it is in the brain's OWN learned vocabulary — the engram-derived agents/actions/patients
+    the recall composer itself binds (`_chat_concepts`), NOT a hand-authored toy lexicon. A multi-word attributed
+    patient ('big apple') is reduced to its HEAD entity ('apple') so a learned attribute modifies a known entity and
+    never false-vetoes. Returns (known: bool, unknown: list[str]). This is the 2026-08-21 FIX: it replaces the toy
+    animacy/verbfit cue-competition margin as the organ-C VETO AUTHORITY (the margin false-vetoed known two-animate /
+    verbfit-conflict recalls). HOST RESIDUAL: the membership test is host code, but the vocabulary it reads is the
+    brain's own learned concept inventory (the same vocab the recall uses)."""
+    vocab = brain_vocab or set()
+    cand_str = str(cand).strip()
+    toks = cand_str.split()
+    cand_head = toks[-1] if toks else cand_str            # entity head; leading tokens are learned attributes
+    checks = [str(agent), str(action), cand_head]
+    unknown = [t for t in checks if t and t not in vocab]
+    return (len(unknown) == 0), unknown
+
+
 def _comprehension_vote(agent: str, action: str, cand: str, brain_vocab, *, seed: int, lesion: bool) -> dict:
-    """Organ C's vote on committing `cand`: read whether the reconstructed transitive (agent, action, cand) is
-    role-RESOLVABLE by the spiking `SpikingRoleCompetition` sel-pool WTA (a `cp_firing_states` margin, NOT a host
-    formula). Returns a dict with `votes` (bool) + the diagnostic reads. Decision rule (parallels organ B's spiking
-    threshold): CORROBORATE iff the substrate comprehends OR is out of competence; WITHHOLD iff competent AND the
-    spiking margin is below the D4 organ's calibrated threshold.
-      lesion=True (organc_lesion) -> the comprehension read is BYPASSED and organ C corroborates unconditionally
-        (the veto is silenced -> the consensus reduces to the 2-organ decision)."""
+    """Organ C's vote on committing `cand`. VETO AUTHORITY = a REAL-VOCAB competence read over the recalled
+    proposition (agent, action, cand): a RECALLED fact's roles are already RESOLVED by its stored engram, so
+    comprehension of a recall is "are all its entities/roles KNOWN in the brain's learned vocab", NOT "can bottom-up
+    cues separate the roles" (the toy-competition question that false-vetoed known two-animate recalls). Decision:
+      * lesion=True (organc_lesion) -> the whole read is BYPASSED, organ C corroborates unconditionally (veto silenced
+        -> the consensus reduces to the 2-organ decision).
+      * KNOWN (agent, action + the patient head all in the brain's learned vocab) -> COMPREHENDED -> corroborate.
+        [THE FIX: `dog chase cat`, `cat eat fish` are all real-vocab-known -> vote, never false-vetoed.]
+      * NOT known (a content entity/role OUTSIDE the learned vocab) -> genuine non-comprehension -> consult the spiking
+        D4 `SpikingRoleCompetition` sel-pool WTA (`cp_firing_states` margin, its correct "does this UNKNOWN
+        proposition's roles resolve?" instrument): competent AND margin >= threshold -> corroborate; else WITHHOLD
+        (the comprehension VETO). Keeps the spiking read load-bearing exactly where it is the right tool."""
     info = {"organ_c_competent": None, "organ_c_margin": None, "organ_c_threshold": None,
-            "organ_c_comprehended": None, "organ_c_deferred": False, "organ_c_lesioned": bool(lesion)}
+            "organ_c_comprehended": None, "organ_c_deferred": False, "organ_c_lesioned": bool(lesion),
+            "organ_c_real_vocab_known": None, "organ_c_unknown_tokens": None}
     if lesion:                                        # the veto is silenced -> unconditional corroboration
         info["votes"] = True
         return info
+    # ── THE FIX: real-vocab competence is the veto authority (replaces the toy cue-lexicon margin). ──────────────
+    known, unknown = _real_vocab_competence(agent, action, cand, brain_vocab)
+    info["organ_c_real_vocab_known"] = bool(known)
+    info["organ_c_unknown_tokens"] = list(unknown)
+    if known:
+        info["organ_c_comprehended"] = True
+        info["votes"] = True
+        return info
+    # ── NOT real-vocab-known: the proposition carries an entity/role OUTSIDE the brain's learned vocab -> the spiking
+    #    D4 monitor's correct domain. Read the cp_firing_states sel-pool margin: CORROBORATE only if the substrate
+    #    competently comprehends the (now genuinely unknown) proposition, else VETO (genuine non-comprehension). ────
     corg = _get_comprehension_organ(seed)
     corg.ensure_built()
     info["organ_c_threshold"] = float(corg.threshold)
-    # COMPETENCE gate (the D4 declared vocab-ceiling residual): organ C reads a reliable margin only for a FULLY
-    # cue-covered or FULLY-OOV transitive. A real-but-untabled word the brain knows (e.g. "brain use spikes") is OUT
-    # of competence -> organ C DEFERS (corroborates) rather than false-veto a recall it cannot judge.
     competent = bool(corg.competent(str(agent), str(action), str(cand), brain_vocab=brain_vocab))
     info["organ_c_competent"] = competent
-    if not competent:
-        info["organ_c_deferred"] = True
-        info["votes"] = True
+    if not competent:                                 # cannot reliably judge an unknown proposition -> genuine veto
+        info["organ_c_comprehended"] = False
+        info["votes"] = False
         return info
     margin = float(corg.read_margin(str(agent), str(action), str(cand)))   # cp_firing_states sel-pool WTA margin
     comprehended = bool(margin >= corg.threshold)
@@ -173,7 +212,7 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
     c = _comprehension_vote(agent, action, cand, brain_vocab, seed=seed, lesion=bool(organc_lesion))
     votes_c = bool(c["votes"])
     for k in ("organ_c_competent", "organ_c_margin", "organ_c_threshold", "organ_c_comprehended",
-              "organ_c_deferred", "organ_c_lesioned"):
+              "organ_c_deferred", "organ_c_lesioned", "organ_c_real_vocab_known", "organ_c_unknown_tokens"):
         info[k] = c[k]
     info["organ_c_votes"] = votes_c
 
@@ -197,7 +236,7 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
         if not confirmed_b:
             info["abstain_reason"] = "consensus_veto_organ_b_withheld"
         elif not votes_c:
-            info["abstain_reason"] = "consensus_veto_organ_c_low_comprehension"
+            info["abstain_reason"] = "consensus_veto_organ_c_non_comprehension"
         else:
             info["abstain_reason"] = "no_ignition"
     return info

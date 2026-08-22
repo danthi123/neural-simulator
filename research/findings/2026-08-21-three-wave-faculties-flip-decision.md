@@ -79,6 +79,32 @@ LOW-margin and vetoes a correct recall. The FLIP GATE is a real fix — replace 
 real-vocab-backed entity/role competence check (or an NLI-style comprehension read) so the veto fires only on genuine
 non-comprehension — NOT owner-acceptance of a regression.
 
+## UPDATE 2026-08-21 — gnw-three-organ held-reason RESOLVED by the real-vocab fix (re-verify queued)
+
+The named fix is applied (`webapp/gnw_three_organ_bus.py::_real_vocab_competence` + reworked `_comprehension_vote`).
+Organ C's VETO AUTHORITY is now a REAL-VOCAB entity/role competence read over the recalled proposition, NOT the toy
+cue-lexicon margin. RATIONALE: a RECALLED fact's thematic roles are already RESOLVED by its stored engram (the brain
+knows dog is the agent / cat the patient because it STORED that fact), so comprehension of a recall is "are all its
+entities/roles KNOWN in the brain's own learned vocab" (the engram-derived agents/actions/patients the recall composer
+binds), NOT "can bottom-up animacy/verbfit cues separate the roles" (the toy-competition question — right for a NOVEL
+incoming assertion, wrong for a known two-animate recall). A content entity/role OUTSIDE the learned vocab (genuine
+non-comprehension) still routes to the spiking D4 sel-pool WTA as its correct "does this UNKNOWN proposition's roles
+resolve?" instrument, so the spiking read stays load-bearing exactly where it is the right tool. HOST RESIDUAL: the
+membership test is host code, but the vocabulary it reads is the brain's OWN learned concept inventory.
+
+LOGIC-VALIDATED (deterministic, no brain load): `_real_vocab_competence` reads `dog chase cat`, `cat eat fish`,
+`dog eat apple`, `brain use spikes` all as real-vocab-KNOWN → organ C corroborates (votes True) → NO false veto;
+`big apple` (attributed patient) reads KNOWN by its entity head; `wizard chase cat` / `dragon eat apple` (OOV agent)
+read real-vocab-UNKNOWN → the spiking branch (competent=False) → VETO (votes False); lesion → votes True (reverts).
+
+END-TO-END RE-VERIFY QUEUED (gpu_queue was PAUSED at check time; NOT resumed — owner's lever):
+- `research/runners/_gnw_three_organ_bus_verify.py` (updated) → `research/findings/raw/_gnw_three_organ/production_verify_realvocab_numpy.json` — OFF byte-identical + NO-REGRESSION (dog-chase / cat-eat now COMMIT) + genuine OOV veto (load-bearing + lesion-severable) + moat + Q=3 window.
+- `research/runners/_wave4_composed_flip_noregression.py` with `WAVE4_FLAGS=BRAIN_GNW_3ORGAN WAVE4_PANEL_N=8` → `research/findings/raw/_wave_flip_soak/composed_noregression.json` — expect `diverged:0` through the REAL brain_chat handler (the two GNW-regressed recalls no longer abstain).
+
+RECOMMENDATION: the regression is fixed and logic-validated; the default-ON flip is GATED on the queued end-to-end
+re-verify returning GO (diverged:0 + veto load-bearing). Flip remains the OWNER's step; `BRAIN_GNW_3ORGAN` stays
+default-OFF here.
+
 ## Artifacts
 
 - runner: `research/runners/_wave4_composed_flip_noregression.py`

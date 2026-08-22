@@ -2,29 +2,36 @@
 wired into `webapp/server.py::brain_chat` behind the NEW DEFAULT-OFF flag `BRAIN_GNW_3ORGAN`.
 
 The 2-organ bus (`gnw_two_organ_bus.py`, DEFAULT-ON) commits a recall by the COINCIDENCE of organ A (spiking recall)
-+ organ B (the spiking surprise/expectation-violation monitor). This bus adds a THIRD genuinely-distinct spiking
-organ — organ C, the production COMPREHENSION monitor (`ComprehensionProductionOrgan`, the 6/6-GO D4 faculty, a
-Wong-Wang `SpikingRoleCompetition` sel-pool WTA read off `cp_firing_states`). Organ C reads whether the RECALLED
-PROPOSITION (agent, action, cand) is role-RESOLVABLE and CORROBORATES (votes) only when it comprehended it; on a LOW
-comprehension margin (role-ambiguous) it WITHHOLDS. The consensus is Q=3 UNANIMITY (`norgan_hop`, d_sub calibrated so
-2*d_sub < the ignition knee <= 3*d_sub): the workspace ignites — the brain commits — ONLY when it RECALLS ∧ is NOT
-surprised ∧ COMPREHENDED. Any organ withholding leaves slot(cand) subthreshold -> ABSTAIN.
++ organ B (the spiking surprise/expectation-violation monitor). This bus adds a THIRD genuinely-distinct organ —
+organ C, the COMPREHENSION monitor of the RECALLED PROPOSITION (agent, action, cand).
+
+2026-08-21 D4 REAL-VOCAB FIX (this runner re-verifies it). Organ C's veto AUTHORITY is now a REAL-VOCAB entity/role
+COMPETENCE read over the recalled proposition, NOT the toy animacy/verbfit cue-competition margin. WHY: a RECALLED
+fact's thematic roles are already RESOLVED by its stored engram (the brain knows dog is the agent / cat the patient
+BECAUSE it stored that fact), so comprehension of a RECALL is "are all its entities/roles KNOWN in the brain's own
+learned vocab", NOT "can bottom-up cues separate the roles" (the toy-competition question — right for a NOVEL
+assertion, but which false-vetoed the LEGITIMATELY-recalled two-animate `dog chase cat` and verbfit-conflict
+`cat eat fish`, the regression that HELD the flip). A content entity/role OUTSIDE the learned vocab (genuine
+non-comprehension) still routes to the spiking D4 sel-pool WTA as its correct "does this UNKNOWN proposition's roles
+resolve?" instrument, so the spiking read stays load-bearing exactly where it is the right tool.
 
 Proven here on the REAL production tiny-demo ChatBrain (numpy-CPU, `BRAIN_COMPOSER_KIND=rf`), SYNCHRONOUS/foreground:
 
   (A) OFF (`BRAIN_GNW_3ORGAN` unset) -> BYTE-IDENTICAL to the current bus (the DEFAULT-ON 2-organ bus) on every query
-      — install is a no-op AND a runtime flag-flip-off makes the wrapper delegate to the 2-organ gate, turn for turn,
-      across covered + out-of-scope (self / open-ended) classes.
-  (B) ON, LOAD-BEARING. On a HIGH-comprehension / out-of-competence stored query the 3-organ decision == the 2-organ
-      decision (organ C corroborates or defers -> no behaviour change). On a LOW-comprehension probe (a role-ambiguous
-      stored proposition — two-animate symmetric verb / verbfit conflict — where recall ∧ ¬surprise WOULD commit) the
-      3-organ bus ABSTAINS (organ C withholds), a decision the 2-organ bus CANNOT make. Per-organ votes reported.
-  (C) LESION (`BRAIN_GNW_3ORGAN_ORGANC_LESION=1`) -> organ C corroborates unconditionally -> the consensus collapses
-      to the 2-organ decision -> the low-comprehension abstain REVERTS to the 2-organ commit (the veto is attributed
-      to organ C's spiking participation, not a host `if margin < x`).
+      — install is a no-op AND a runtime flag-flip-off makes the wrapper delegate to the 2-organ gate.
+  (B) NO REGRESSION (the FIX). Every LEGITIMATELY-recalled fact — including the two the toy-margin veto used to
+      wrongly abstain (`dog chase cat`, `cat eat fish`) — now COMMITS on the 3-organ arm EXACTLY as the 2-organ bus
+      does (organ C reads them real-vocab-KNOWN -> corroborates). This is the regression fix.
+  (C) GENUINE NON-COMPREHENSION VETO, load-bearing + lesion-severable. A proposition carrying an entity/role OUTSIDE
+      the brain's learned vocab (a `wizard` the brain never learned) reads real-vocab-UNKNOWN -> organ C WITHHOLDS
+      (votes False); under `organc_lesion` it corroborates (votes True). By the proven Q=3 UNANIMITY window (2 votes
+      subthreshold, 3 votes supra) a withheld organ C -> ABSTAIN, a corroborating one -> commit — so the veto is a
+      real consensus-veto the 2-organ bus cannot make, attributable to organ C's participation. A real-vocab-KNOWN
+      proposition votes True (the discrimination).
   (D) MOAT preserved: no unstored / inconsistent query is turned into an assertion on ANY arm.
 
-GO = OFF byte-identical AND organ C adds a genuine load-bearing veto AND the lesion severs it AND the moat holds.
+GO = OFF byte-identical AND no legitimate recall regresses AND organ C adds a genuine load-bearing veto AND the
+lesion severs it AND the moat holds.
 
 Run (numpy-CPU, fast rf recall path; ~5-10 min, SYNCHRONOUS):
   SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf python -u -m research.runners._gnw_three_organ_bus_verify
@@ -60,23 +67,28 @@ def _svo_eq(x, y) -> bool:
 
 
 # ── the panel (through the REAL production ChatBrain) ─────────────────────────────────────────────────────────────
-# Covered recall queries. `tag` records WHY organ C votes/withholds. `want2` is the 2-organ (current-bus) decision.
-#   high_comp     : a well-formed transitive (animate agent + asymmetric verb + inanimate patient) -> margin HIGH ->
-#                   organ C VOTES -> 3-organ == 2-organ (commit). (taught this turn: "dog eat apple")
-#   deferred      : real-but-untabled words the brain knows (out of the D4 cue lexicon) -> organ C DEFERS -> commit.
-#   ambig_2animate: two animate nouns + a symmetric verb ("dog chase cat") -> roles genuinely un-resolvable from
-#                   content -> margin LOW -> organ C WITHHOLDS -> 3-organ ABSTAINS while 2-organ commits.
-#   verbfit_confl : an asymmetric verb whose patient is animate in the toy lexicon ("cat eat fish") -> verbfit fights
-#                   animacy -> margin LOW -> organ C WITHHOLDS. (A declared cue-lexicon-ceiling case.)
-STORED_UNCHANGED = [
-    ("what does dog eat?",    "dog",   "eat",   ["dog", "eat", "apple"],    "high_comp"),
-    ("what does brain use?",  "brain", "use",   ["brain", "use", "spikes"], "deferred"),
-    ("what does brain learn?", "brain", "learn", ["brain", "learn", "words"], "deferred"),
-    ("what does brain store?", "brain", "store", ["brain", "store", "memory"], "deferred"),
+# NO-REGRESSION recall queries. `want` is the taught patient; the 3-organ bus MUST commit it exactly as the 2-organ
+# bus does (organ C reads the proposition real-vocab-KNOWN -> corroborates). The last two are the fix's headline:
+# `dog chase cat` (two-animate + symmetric verb) and `cat eat fish` (toy lexicon marks fish animate) — both were
+# WRONGLY vetoed by the old toy-margin monitor, and must now COMMIT.
+NO_REGRESSION = [
+    ("what does dog eat?",     "dog",   "eat",   ["dog", "eat", "apple"],     "high_comp"),
+    ("what does brain use?",   "brain", "use",   ["brain", "use", "spikes"],  "untabled_known"),
+    ("what does brain learn?", "brain", "learn", ["brain", "learn", "words"], "untabled_known"),
+    ("what does brain store?", "brain", "store", ["brain", "store", "memory"], "untabled_known"),
+    ("what does dog chase?",   "dog",   "chase", ["dog", "chase", "cat"],     "was_falsely_vetoed_2animate"),
+    ("what does cat eat?",     "cat",   "eat",   ["cat", "eat", "fish"],      "was_falsely_vetoed_verbfit"),
 ]
-LOW_COMP_PROBES = [
-    ("what does dog chase?", "dog", "chase", ["dog", "chase", "cat"],  "ambig_2animate"),
-    ("what does cat eat?",   "cat", "eat",   ["cat", "eat", "fish"],   "verbfit_confl"),
+# GENUINE NON-COMPREHENSION probes (organ-C vote level). The proposition carries an entity the brain never learned
+# (`wizard` / `dragon` -> real-vocab-UNKNOWN) -> organ C WITHHOLDS; under organc_lesion it corroborates. A known
+# proposition (drawn from the recalled facts) is the positive control (organ C votes True).
+NONCOMP_VETO = [
+    ("wizard", "chase", "cat",   "oov_agent"),
+    ("dragon", "eat",   "apple", "oov_agent"),
+]
+KNOWN_CONTROL = [
+    ("dog", "chase", "cat",   "known_2animate"),
+    ("cat", "eat",   "fish",  "known_verbfit"),
 ]
 MOAT = [
     ("what does fish fly?",  "fish", "fly"),    # unstored agent/action -> organ A misses -> abstain
@@ -96,8 +108,7 @@ def _production_chat():
     gbs.install_bus_gate(chat)                         # HEAD: the N-organ (composer-only) bus
     os.environ["BRAIN_GNW_2ORGAN"] = "1"
     g2.install_two_organ_gate(chat)                    # HEAD default-on: the 2-organ coincidence authors the combine
-    # teach a well-formed transitive so organ C has a HIGH-comprehension covered query that it ACTIVELY corroborates
-    # (dog=animate, eat=asymmetric, apple=inanimate -> the roles decisively separate -> margin >> threshold).
+    # teach a well-formed transitive so organ C has a HIGH-comprehension covered query it ACTIVELY corroborates.
     chat.gate("dog eat apple")
     return chat, g2
 
@@ -109,6 +120,10 @@ def run():
     from sim.backend import get_backend
     backend = get_backend()[1]
 
+    # the brain's learned vocab (the same real vocab organ C's competence read uses).
+    _a, _v, all_concepts, _e_b, _sp = g2._chat_concepts(chat)
+    brain_vocab = set(all_concepts)
+
     chat_built_ok = bool(hasattr(chat, "inner") and hasattr(chat.inner, "composer")
                          and hasattr(chat, "stored_facts")
                          and ("dog", "eat", "apple") in [tuple(f) for f in getattr(chat, "stored_facts", [])])
@@ -117,9 +132,7 @@ def run():
     os.environ.pop("BRAIN_GNW_3ORGAN", None)
     installed_off = g3.install_three_organ_gate(chat)                       # expect False (no-op)
     off_noop = (installed_off is False) and (not getattr(chat, "_three_organ_installed", False))
-    # the CURRENT bus (2-organ) gate decisions over the whole panel (covered + moat + out-of-scope).
-    off_panel = [q for (q, *_r) in STORED_UNCHANGED] + [q for (q, *_r) in LOW_COMP_PROBES] \
-        + [q for (q, *_r) in MOAT] + OUT_OF_SCOPE
+    off_panel = [q for (q, *_r) in NO_REGRESSION] + [q for (q, *_r) in MOAT] + OUT_OF_SCOPE
     head_out = [_svo(chat.gate(q)) for q in off_panel]                     # HEAD == the 2-organ bus decision
 
     # ── (A) phase 2 — install the 3-organ wrapper, runtime-flip OFF -> delegates to the 2-organ gate == HEAD. ──────
@@ -129,50 +142,58 @@ def run():
     off_runtime_out = [_svo(chat.gate(q)) for q in off_panel]
     off_runtime_matches_head = (off_runtime_out == head_out)
 
-    # ── combine-level teeth (read-only, deterministic) — the 2-organ vs 3-organ vs 3-organ-lesion decisions. ───────
+    # ── combine-level teeth (read-only, deterministic) — the 2-organ vs 3-organ decisions. ────────────────────────
     def dec2(a, v):
         return g2.two_organ_combine(chat, a, v).get("committed")
 
     def dec3(a, v, organc_lesion=False):
         return g3.three_organ_combine(chat, a, v, organc_lesion=organc_lesion)
 
-    # (B) STORED_UNCHANGED: 3-organ ON commits the SAME patient the 2-organ bus commits (organ C votes / defers).
-    unchanged_rows, unchanged_ok = [], True
-    for (q, a, v, want, tag) in STORED_UNCHANGED:
+    # (B) NO REGRESSION: every legitimately-recalled fact commits on the 3-organ arm EXACTLY as the 2-organ bus does
+    # (organ C reads it real-vocab-KNOWN -> corroborates). Includes the two the old toy-margin veto wrongly abstained.
+    noreg_rows, noreg_ok = [], True
+    for (q, a, v, want, tag) in NO_REGRESSION:
         c2 = dec2(a, v)
         i3 = dec3(a, v)
         c3 = i3.get("committed")
         same = _svo_eq([a, v, c2] if c2 is not None else None,
                        [a, v, c3] if c3 is not None else None) and (c2 is not None) and (c3 is not None)
-        unchanged_ok = unchanged_ok and same
-        unchanged_rows.append({"q": q, "tag": tag, "two_organ": c2, "three_organ": c3, "unchanged": same,
-                               "organ_c_votes": i3.get("organ_c_votes"), "organ_c_margin": i3.get("organ_c_margin"),
-                               "organ_c_threshold": i3.get("organ_c_threshold"),
-                               "organ_c_deferred": i3.get("organ_c_deferred"),
-                               "organ_c_comprehended": i3.get("organ_c_comprehended"),
-                               "n_votes": i3.get("n_votes"), "n_ignited": i3.get("n_ignited")})
+        noreg_ok = noreg_ok and same
+        noreg_rows.append({"q": q, "tag": tag, "two_organ": c2, "three_organ": c3, "commits_unchanged": same,
+                           "organ_c_votes": i3.get("organ_c_votes"),
+                           "organ_c_real_vocab_known": i3.get("organ_c_real_vocab_known"),
+                           "organ_c_unknown_tokens": i3.get("organ_c_unknown_tokens"),
+                           "n_votes": i3.get("n_votes"), "n_ignited": i3.get("n_ignited")})
 
-    # (B)+(C) LOW_COMP_PROBES: 2-organ COMMITS, 3-organ ON ABSTAINS (organ C veto), 3-organ LESION REVERTS to commit.
-    probe_rows, probe_veto_ok, probe_revert_ok = [], True, True
-    for (q, a, v, want, tag) in LOW_COMP_PROBES:
-        c2 = dec2(a, v)
-        i3 = dec3(a, v, organc_lesion=False)
-        c3 = i3.get("committed")
-        i3l = dec3(a, v, organc_lesion=True)
-        c3l = i3l.get("committed")
-        veto = (c2 is not None) and (c3 is None) and (i3.get("organ_c_votes") is False)
-        revert = _svo_eq([a, v, c2] if c2 is not None else None,
-                         [a, v, c3l] if c3l is not None else None) and (c3l is not None)
-        probe_veto_ok = probe_veto_ok and veto
-        probe_revert_ok = probe_revert_ok and revert
-        probe_rows.append({"q": q, "tag": tag, "two_organ": c2, "three_organ_on": c3, "three_organ_lesion": c3l,
-                           "veto": veto, "reverts_under_lesion": revert,
-                           "organ_c_margin": i3.get("organ_c_margin"), "organ_c_threshold": i3.get("organ_c_threshold"),
-                           "organ_c_comprehended": i3.get("organ_c_comprehended"),
-                           "organ_b_confirmed": i3.get("organ_b_confirmed"),
-                           "n_votes_on": i3.get("n_votes"), "n_ignited_on": i3.get("n_ignited"),
-                           "abstain_reason": i3.get("abstain_reason"),
-                           "n_votes_lesion": i3l.get("n_votes"), "n_ignited_lesion": i3l.get("n_ignited")})
+    # (C) GENUINE NON-COMPREHENSION VETO (organ-C vote level, through the real _comprehension_vote):
+    #   * an OOV-entity proposition -> organ C WITHHOLDS (votes False, real_vocab_known False); organc_lesion -> True.
+    #   * a real-vocab-KNOWN proposition -> organ C VOTES True (the discrimination).
+    def vote(a, v, p, lesion=False):
+        return g3._comprehension_vote(a, v, p, brain_vocab, seed=42, lesion=lesion)
+
+    veto_rows, veto_ok, revert_ok = [], True, True
+    for (a, v, p, tag) in NONCOMP_VETO:
+        c = vote(a, v, p, lesion=False)
+        cl = vote(a, v, p, lesion=True)
+        vetoed = (c.get("votes") is False) and (c.get("organ_c_real_vocab_known") is False)
+        reverts = (cl.get("votes") is True)
+        veto_ok = veto_ok and vetoed
+        revert_ok = revert_ok and reverts
+        veto_rows.append({"prop": [a, v, p], "tag": tag, "votes": c.get("votes"),
+                          "real_vocab_known": c.get("organ_c_real_vocab_known"),
+                          "unknown_tokens": c.get("organ_c_unknown_tokens"),
+                          "competent": c.get("organ_c_competent"), "margin": c.get("organ_c_margin"),
+                          "vetoed": vetoed, "votes_under_lesion": cl.get("votes"), "reverts_under_lesion": reverts})
+
+    known_rows, known_ok = [], True
+    for (a, v, p, tag) in KNOWN_CONTROL:
+        c = vote(a, v, p, lesion=False)
+        ok = (c.get("votes") is True) and (c.get("organ_c_real_vocab_known") is True)
+        known_ok = known_ok and ok
+        known_rows.append({"prop": [a, v, p], "tag": tag, "votes": c.get("votes"),
+                           "real_vocab_known": c.get("organ_c_real_vocab_known"), "corroborates": ok})
+    # the discrimination: KNOWN corroborates AND UNKNOWN vetoes (real-vocab separates them cleanly).
+    real_vocab_discriminates = bool(known_ok and veto_ok)
 
     # (D) MOAT: no unstored/inconsistent query is committed on EITHER the 2-organ or the 3-organ arm.
     moat_rows, moat_ok = [], True
@@ -186,7 +207,8 @@ def run():
                           "organ_a_recall": i3.get("organ_a_recall"), "reason": i3.get("abstain_reason")})
 
     # ── instrument precondition: the Q=3 UNANIMITY window on the SHARED production workspace bridge. The consensus
-    #    claim needs (N-1)*d_sub < the ignition knee <= N*d_sub (2 votes subthreshold, 3 votes suprathreshold). ─────
+    #    claim needs (N-1)*d_sub < the ignition knee <= N*d_sub (2 votes subthreshold, 3 votes suprathreshold) — so a
+    #    withheld organ C (2 votes) -> ABSTAIN and a corroborating one (3 votes) -> commit. ─────────────────────────
     from research.runners._p1_2_workspace_deliberation_loop_derisk import _ignite_and_read
     from research.runners._gnw_norgan_bus_derisk import THR as _NORGAN_THR
     b_i, xp_i, slots_i, snap_i = g2._get_bridge(42, False)
@@ -195,25 +217,19 @@ def run():
     rate_3 = float(_ignite_and_read(b_i, xp_i, slots_i, snap_i, [3 * d_sub] + [0.0] * (len(slots_i) - 1))[0])
     unanimity_window_ok = bool(rate_2 < _NORGAN_THR <= rate_3)
 
-    # ── organ C read-provenance: the D4 margin is a cp_firing_states sel-pool read (the host _semantic_contrast is
-    #    never called for it — the 6/6-GO D4 de-risk asserts read_from_firing_states / host_semantic_contrast_used
-    #    False). Record the organ's own claim + a distinct HIGH vs LOW margin so the veto is a graded spiking read. ──
-    comp_margins = ([r["organ_c_margin"] for r in unchanged_rows if r.get("organ_c_margin") is not None]
-                    + [r["organ_c_margin"] for r in probe_rows if r.get("organ_c_margin") is not None])
-    high_margins = [r["organ_c_margin"] for r in unchanged_rows
-                    if r.get("organ_c_margin") is not None and r.get("organ_c_votes")]
-    low_margins = [r["organ_c_margin"] for r in probe_rows if r.get("organ_c_margin") is not None]
-    thr = next((r["organ_c_threshold"] for r in (unchanged_rows + probe_rows)
-                if r.get("organ_c_threshold") is not None), None)
-    margin_separates = bool(high_margins and low_margins and thr is not None
-                            and min(high_margins) >= thr > max(low_margins))
-
     # ── Verdict: preconditions (UNDEFINED, not NO-GO, on failure) + the plain-boolean teeth that drive go=. ────────
-    vd = Verdict(f"GNW three-distinct-organs consensus bus — production verify (real ChatBrain.gate, rf/{backend})")
+    vd = Verdict(f"GNW three-distinct-organs consensus bus — production verify, D4 real-vocab fix (rf/{backend})")
     vd.disabled("full per-turn organ-stepping brain_chat handler",
                 why="tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy "
                     "numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the "
                     "server hook is gated by the SAME BRAIN_GNW_3ORGAN flag, unset by default -> never imported)")
+    vd.disabled("a full-combine (three_organ_combine) OOV-recall veto",
+                why="the recall composer (both rf and onebrain) is EXACT-MATCH: organ A returns a cand ONLY for a "
+                    "stored (agent, action), so on this path a recalled proposition's entities are always in-vocab "
+                    "and the moat independently abstains on an unknown (agent, action). Organ C's genuine "
+                    "non-comprehension veto is therefore exercised at the _comprehension_vote level (the real vote "
+                    "fn the combine calls) + mapped to abstain via the proven Q=3 window; it becomes a live "
+                    "full-combine guard only when a noisier composer path returns an ungrounded recalled token")
     vd.require("backend-recognized", backend in ("numpy", "cupy"), expect=True)
     vd.require("production-chat-built", chat_built_ok, expect=True,
                note="the real production ChatBrain built + the well-formed high-comprehension fact taught")
@@ -223,66 +239,69 @@ def run():
                note="flag ON -> install_three_organ_gate wraps chat.gate on the real production chat")
     vd.require("q3-unanimity-window", unanimity_window_ok, expect=True,
                note=f"on the shared workspace bridge 2*d_sub={2*d_sub:.0f}->rate={rate_2:.3f} < THR={_NORGAN_THR:.3f} "
-                    f"<= 3*d_sub={3*d_sub:.0f}->rate={rate_3:.3f} (the consensus-veto needs exactly this window)")
-    vd.require("organ-c-margin-separates-high-from-low", margin_separates, expect=True,
-               note=f"organ C's cp_firing_states sel-pool margin: min HIGH={min(high_margins) if high_margins else None} "
-                    f">= thr={thr} > max LOW={max(low_margins) if low_margins else None} (a graded spiking read, not "
-                    f"a binary host flag)")
+                    f"<= 3*d_sub={3*d_sub:.0f}->rate={rate_3:.3f} (a withheld organ C -> abstain; corroborating -> commit)")
+    vd.require("real-vocab-discriminates-known-from-unknown", real_vocab_discriminates, expect=True,
+               note="organ C corroborates every real-vocab-KNOWN proposition (incl. dog-chase-cat / cat-eat-fish) "
+                    "and vetoes an OOV-entity proposition (wizard/dragon) — the veto fires ONLY on genuine "
+                    "non-comprehension, not on a role-ambiguous surface form")
 
     # TEETH (plain booleans -> a genuine failure reads NO-GO, not UNDEFINED).
-    go = bool(off_noop and off_runtime_matches_head and unchanged_ok and probe_veto_ok and probe_revert_ok and moat_ok)
+    go = bool(off_noop and off_runtime_matches_head and noreg_ok and veto_ok and revert_ok and known_ok and moat_ok)
     decided = vd.decide(go=go)
 
-    # attribution: the low-comprehension abstain is owed to organ C's spiking veto (intact) vs its lesion (silenced).
-    intact_abstain_rate = (sum(1 for r in probe_rows if r["three_organ_on"] is None) / len(probe_rows)) if probe_rows else 0.0
-    lesion_abstain_rate = (sum(1 for r in probe_rows if r["three_organ_lesion"] is None) / len(probe_rows)) if probe_rows else 0.0
-    attr_organc = attributable_to("low-comprehension abstain: intact organ C veto vs organ-C-lesion",
-                                  intact_abstain_rate, lesion_abstain_rate)
+    # attribution: the non-comprehension veto is owed to organ C's participation (intact veto vs its lesion).
+    intact_veto_rate = (sum(1 for r in veto_rows if r["votes"] is False) / len(veto_rows)) if veto_rows else 0.0
+    lesion_veto_rate = (sum(1 for r in veto_rows if r["votes_under_lesion"] is False) / len(veto_rows)) if veto_rows else 0.0
+    attr_organc = attributable_to("non-comprehension veto: intact organ C vs organ-C-lesion",
+                                  intact_veto_rate, lesion_veto_rate)
 
     print("\n" + "=" * 110, flush=True)
-    print(f"  GNW THREE-DISTINCT-ORGANS CONSENSUS BUS — PRODUCTION VERIFY (real ChatBrain.gate, rf/{backend})", flush=True)
+    print(f"  GNW THREE-DISTINCT-ORGANS CONSENSUS BUS — PRODUCTION VERIFY (D4 REAL-VOCAB FIX, rf/{backend})", flush=True)
     print("=" * 110, flush=True)
     print(f"  (A) BYTE-IDENTICAL-WHEN-OFF: install no-op={off_noop} | runtime-flip-off == 2-organ bus="
           f"{off_runtime_matches_head}", flush=True)
     for q, h, o in zip(off_panel, head_out, off_runtime_out):
         print(f"      {q:26s} 2ORGAN={h} 3ORGAN_OFF={o} match={h == o}", flush=True)
-    print(f"  (B) STORED UNCHANGED (organ C votes / defers -> 3-organ == 2-organ): {unchanged_ok}", flush=True)
-    for r in unchanged_rows:
-        print(f"      {r['q']:24s} [{r['tag']:9s}] 2organ={r['two_organ']!r} 3organ={r['three_organ']!r} "
-              f"C_votes={r['organ_c_votes']} margin={r['organ_c_margin']} thr={r['organ_c_threshold']} "
-              f"deferred={r['organ_c_deferred']} n_votes={r['n_votes']} n_ign={r['n_ignited']}", flush=True)
-    print(f"  (B/C) LOW-COMPREHENSION VETO: veto_ok={probe_veto_ok} reverts_under_lesion={probe_revert_ok}", flush=True)
-    for r in probe_rows:
-        print(f"      {r['q']:24s} [{r['tag']:13s}] 2organ={r['two_organ']!r} -> 3organ_ON={r['three_organ_on']!r} "
-              f"(margin={r['organ_c_margin']} < thr={r['organ_c_threshold']}, b_confirm={r['organ_b_confirmed']}, "
-              f"n_votes={r['n_votes_on']}, reason={r['abstain_reason']}) -> 3organ_LESION={r['three_organ_lesion']!r} "
-              f"(n_votes={r['n_votes_lesion']})", flush=True)
+    print(f"  (B) NO REGRESSION (every legitimate recall commits, incl. the 2 the old toy veto abstained): {noreg_ok}",
+          flush=True)
+    for r in noreg_rows:
+        print(f"      {r['q']:24s} [{r['tag']:27s}] 2organ={r['two_organ']!r} 3organ={r['three_organ']!r} "
+              f"C_votes={r['organ_c_votes']} real_vocab_known={r['organ_c_real_vocab_known']} "
+              f"n_votes={r['n_votes']} n_ign={r['n_ignited']}", flush=True)
+    print(f"  (C) GENUINE NON-COMPREHENSION VETO: veto_ok={veto_ok} reverts_under_lesion={revert_ok} "
+          f"known_control_ok={known_ok}", flush=True)
+    for r in veto_rows:
+        print(f"      {r['prop']!r:26s} [{r['tag']:9s}] votes={r['votes']} real_vocab_known={r['real_vocab_known']} "
+              f"unknown={r['unknown_tokens']} competent={r['competent']} -> vetoed={r['vetoed']} "
+              f"lesion_votes={r['votes_under_lesion']} reverts={r['reverts_under_lesion']}", flush=True)
+    for r in known_rows:
+        print(f"      {r['prop']!r:26s} [{r['tag']:14s}] votes={r['votes']} real_vocab_known={r['real_vocab_known']} "
+              f"corroborates={r['corroborates']}", flush=True)
     print(f"  (D) MOAT (no unstored/inconsistent committed on either arm): {moat_ok}", flush=True)
     for r in moat_rows:
         print(f"      {r['q']:24s} 2organ={r['two_organ']!r} 3organ={r['three_organ']!r} "
               f"a_recall={r['organ_a_recall']!r} reason={r['reason']}", flush=True)
-    print(f"  ATTRIBUTABLE: low-comprehension abstain owed to organ C veto (intact vs lesion) = {attr_organc}", flush=True)
+    print(f"  ATTRIBUTABLE: non-comprehension veto owed to organ C (intact vs lesion) = {attr_organc}", flush=True)
     print(f"\n  VERDICT: {decided['status']}\n" + "=" * 110, flush=True)
 
     out = {"runner": "_gnw_three_organ_bus_verify", "go": decided["go"], "status": decided["status"],
-           "verdict": decided, "backend": backend,
+           "verdict": decided, "backend": backend, "fix": "d4-real-vocab-competence-veto",
            "byte_identical_when_off": {"install_noop_when_off": off_noop,
                                        "runtime_flip_off_matches_two_organ": off_runtime_matches_head,
                                        "two_organ_out": head_out, "three_organ_off_out": off_runtime_out,
                                        "panel": off_panel},
-           "stored_unchanged": {"ok": unchanged_ok, "rows": unchanged_rows},
-           "low_comprehension_probes": {"veto_ok": probe_veto_ok, "reverts_under_lesion_ok": probe_revert_ok,
-                                        "rows": probe_rows},
+           "no_regression": {"ok": noreg_ok, "rows": noreg_rows},
+           "non_comprehension_veto": {"veto_ok": veto_ok, "reverts_under_lesion_ok": revert_ok,
+                                      "known_control_ok": known_ok, "real_vocab_discriminates": real_vocab_discriminates,
+                                      "veto_rows": veto_rows, "known_rows": known_rows},
            "moat": {"ok": moat_ok, "rows": moat_rows},
            "q3_unanimity_window": {"ok": unanimity_window_ok, "d_sub": d_sub, "rate_2votes": rate_2,
                                    "rate_3votes": rate_3, "THR": float(_NORGAN_THR)},
-           "organ_c_margin_separates": {"ok": margin_separates, "high_margins": high_margins,
-                                        "low_margins": low_margins, "threshold": thr},
-           "attributable": {"low_comp_abstain_intact_vs_organc_lesion": attr_organc,
-                            "intact_abstain_rate": intact_abstain_rate, "lesion_abstain_rate": lesion_abstain_rate},
+           "attributable": {"noncomp_veto_intact_vs_organc_lesion": attr_organc,
+                            "intact_veto_rate": intact_veto_rate, "lesion_veto_rate": lesion_veto_rate},
            "preconditions": decided["preconditions"], "disabled_processes": decided["disabled_processes"],
            "undefined_reasons": decided["undefined_reasons"]}
-    op = f"research/findings/raw/_gnw_three_organ/production_verify_{backend}.json"
+    op = f"research/findings/raw/_gnw_three_organ/production_verify_realvocab_{backend}.json"
     os.makedirs(os.path.dirname(op), exist_ok=True)
     with open(op, "w") as f:
         json.dump(out, f, indent=2, default=str)
