@@ -31,6 +31,30 @@ the one substrate, in parallel, flipping default-on as each verifies; defer only
 DONE only at wired + on_by_default + scaffold-retired (the ledger is authoritative). The 2026-08-20 base below already
 took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODAY's job is the FLIPS + the couplings.
 
+**⚡ LATE-2026-08-21 LANDINGS (post-18:45, on `main`; these SUPERSEDE the LIVE LANES + PRE-DECIDED NEXT ACTIONS below
+where they conflict):**
+- **GNW three-organ bus FLIPPED DEFAULT-ON** (#126, `e2d428d4`) — real-vocab comprehension read fixed the D4 over-veto
+  (GO). ⇒ the "HELD default-OFF with sharp gates: … gnw-three-organ" note below is STALE (it is now on by default).
+- **Enforcement engine (self-maintaining project OS) LANDED** (design `docs/plans/2026-08-21-enforcement-layer-...`):
+  backlog gen + ratchet w/ cmd-field + real shared-queue dispatch (`8868326b`); LIVE-STATE re-injection + class-13 gate
+  (`1b6acd98`); Vikunja single-pane + tool-health + CLASS BS/TH gates (`a82890fc`). KEY: the free-lane dispatch SEAM is
+  CLOSED (mechanical); the limiter is now SUPPLY — ready work lives in prose that must be authored into runnable commands
+  (0 literal-ready now; anti-fabrication gates working). Tool-health: experiment-engine READY (4/4 presets build+step on
+  cupy — dormancy was the old sweeper driver, not the engine); gpu-queue dpid-desync wedge cleared this session
+  (singleton adoption still pending — branch `research/gpu-queue-singleton`).
+- **D5 learn-through-use default-ON flip = NO-GO** (#71/#73, `a7848bf7`, finding
+  `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG separator closed the graded-read crosstalk but the soak is
+  0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual; separator infra merged default-OFF/byte-identical. Lever-2
+  IN FLIGHT (branch `research/d5-ltu-lever2`: surface the stable graded read + a size floor). ⇒ PRE-DECIDED NEXT ACTION
+  #1 below (te=40 confirm → flip `BRAIN_D5_CONSOLIDATE`) is DONE/SUPERSEDED — the confirm ran; the flip is HELD.
+- **da-gated encoding default-ON flip gate = UNDEFINED** (#125, finding
+  `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-...`, artifact `research/findings/raw/_da_encoding_leansoak/`): the
+  lean production magnitude-store no-regression soak returned UNDEFINED — MOAT leak (2 points: 1 ON-arm candidate + 1
+  OFF-arm read-floor artifact) + a sigma-dependent STRESS-net regression (14/54; DA-gating hurts recall at low
+  read-damage sigma, helps at high). Surpass = homeostatic gain-map scaling to the running DA distribution (Turrigiano
+  2008). Faculty stays default-OFF; next = verify the instrument at the 2 leak points, then the homeostatic set-point.
+- **knowledge-scale (#66) flip IN FLIGHT** (another agent): wire the sharded FHRR store into brain_chat recall + scale K.
+
 **⛔ HARD OPERATING CONSTRAINTS (the PC was OOM-killed TWICE on 2026-08-21):**
 - **ONE brain-loading GPU process at a time** — ALL GPU work through `tools/gpu_queue.sh` (sequential, VRAM-safe).
   NEVER two cupy brain loads at once. CPU-pool + agents + doc-wiring run concurrent with it.
@@ -62,7 +86,9 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
   cleanup path is magnitude-INSENSITIVE up to sigma=32, so the knee needs stored-WEIGHT damage, and WHICH read path
   production uses is the open sub-question); board #125. gnw-three-organ — the composed check CONFIRMED its D4
   comprehension veto (toy cue-lexicon) regresses 2 legitimately-recalled facts (dog-chase-cat, cat-eat-fish); gate =
-  a real-vocab/NLI comprehension read; board #126.
+  a real-vocab/NLI comprehension read; board #126. **[SUPERSEDED 2026-08-21: gnw-three-organ is now FLIPPED default-ON
+  (e2d428d4) — the real-vocab comprehension read fixed the D4 over-veto; see LATE LANDINGS above. da-encoding remains
+  HELD, its flip gate now UNDEFINED — see LATE LANDINGS.]**
   **⭐ LANDED 2026-08-21 (LATER STILL — the D5 learn-through-use de-risk + owner-#1 sharding):**
   (i) **knowledge-scale FHRR SHARDING GO** (owner #1 / #66, commit a5f594749 both remotes): route by agent → one
   shard, K=2000/S=16, ~16x routed speedup, byte-identical (0 mismatches), moat 8/8, honest host-hash-router scaffold
@@ -100,7 +126,9 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
   `/home/dant123/Projects/sim` checkout is on a STALE branch — do NOT edit governed docs/code there).
 
 **PRE-DECIDED NEXT ACTIONS (act on each notification; NEVER idle — pull the next backlog item when a lane frees):**
-1. **te=40 D5 cupy confirm → done** (`research/findings/raw/_d5_separation/cupy_confirm_te40.json`) ⇒ if the neighbor
+1. **[DONE/SUPERSEDED 2026-08-21 — see LATE LANDINGS: the confirm ran; the D5 learn-through-use default-ON flip is a
+   NO-GO (soak 0/6 on a recall-time quantized-binary residual); lever-2 in flight, branch `research/d5-ltu-lever2`.]**
+   **te=40 D5 cupy confirm → done** (`research/findings/raw/_d5_separation/cupy_confirm_te40.json`) ⇒ if the neighbor
    surfaced-shift is ≈0 with byte-identical B-weights ⇒ the sparsity set-point CLOSES the D5 crosstalk ⇒ flip
    `BRAIN_D5_CONSOLIDATE` default-on (unblocks learn-through-use consolidation, #71/#73), finding+ledger+push+sync. If a
    residual shift REMAINS at te=40 ⇒ the read-isolation lever (normalization/competition-isolated surfaced read) is the

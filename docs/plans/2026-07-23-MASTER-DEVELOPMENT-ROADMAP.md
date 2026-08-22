@@ -315,7 +315,11 @@ specifically, decisive no-window control = learn-through-use not re-encode; NO `
 store). This SUPERSEDES the earlier "learn-through-use fix = SWR-envelope tuning sweep" pointer (that soma-recurrence
 path was measured NO-GO at real scale). Wiring rung = step-4 under `continuous_engine.py`'s idle tick, default-off,
 load-bearing-proven. Findings 2026-08-20 (ecker-real-d5-store-does-NOT-reactivate / d5-dendritic-latch-self-terminates
-/ d5-learn-through-use-...-arc1-closed). Then: the GNW N-organ ignition BUS (T1-1, 6/6 GO, wiring design at
+/ d5-learn-through-use-...-arc1-closed). **2026-08-21 UPDATE: the de-risk is closed but the production default-ON FLIP is
+NO-GO** — the DG pattern-separation set-point closes the graded-read crosstalk, yet the no-regression soak is 0/6 on a
+recall-time QUANTIZED-BINARY read residual (cross-assembly bleed disjoint MEMBERSHIP does not sever); lever-2 (surface
+the stable graded read + a size floor) is IN FLIGHT (`research/d5-ltu-lever2`); the flag stays default-OFF (§7).
+Then: the GNW N-organ ignition BUS (T1-1, 6/6 GO, wiring design at
 [`2026-08-13-gnw-norgan-bus-production-wiring.md`](2026-08-13-gnw-norgan-bus-production-wiring.md)) — the keystone; the
 LEARNED CAUSAL FORWARD-MODEL grounded in the real fact-store (T1-4, 6/6 GO); the INTUITIVE WORLD-MODEL / object-permanence
 rung (T1-7, VoE boundary surpassed 6/6); the autobiographical converse→sleep-replay→converse capstone (gap5, GO); E3 BTSP
@@ -476,7 +480,7 @@ The reward/value + homeostatic-drive halves are essentially **DONE**; the affect
 |---|---|---|---|
 | **Reward / value / RPE (actor-critic)** | HAVE | spiking SNc RPE 6/6 (`2026-06-18-limbic-core-rpe-battery-GO.md`, GABA_B/GIRK membrane subtraction); neural reward source N5 CLOSED; TD critic (`sim/td_value_critic.py`); **value-driven CHOICE RANK-1 GO 6/6 today** (`2026-07-23-value-critic-closure-RANK1-GO.md`, untrained-critic anti-cheat) | value is cue-value only; no forward model → gap#4 (bridge with teacher) |
 | **"Liking" (hedonic)** | MISSING → BUILDABLE-NOW | wanting exists (incentive-salience drift) | Berridge wanting≠liking → **µ-opioid `liking` modulator** fired by *consummation* only, read separately from predictive DA |
-| **Neuromodulator affect axes (4-basis)** | MISSING → BUILDABLE-NOW | declarative subsystem (`sim/neuromodulators.py`): `from_reward`/`from_surprise`/`pause_on_reward`/`from_region_firing_signed`; DA instantiated. **A neuromodulator RECONFIGURES the effective circuit (not just gains it) — board #64 6-seed GO (`2026-08-19-neuromod-reconfiguration-GO.md`); and the DA LEVEL is now SELF-DRIVEN by the spiking `snc` nucleus reading reward/context (board #76 6-seed GO, `2026-08-19-neuromod-spiking-da-mode-GO.md`) — de-risk, not yet production-default** | **no 5-HT/mood, no NE/arousal, `from_novelty` empty stub** → instantiate **`mood`(5-HT, long-tau, avg-δ = Eldar-Niv mood), `arousal`(NA, from_surprise+tonic), `learning_eagerness`(ACh, fill from_novelty)**; 5-HT sets TD discount (Doya); wire `dopamine_mode`+snc-read into the live default brain (mode-per-context) |
+| **Neuromodulator affect axes (4-basis)** | MISSING → BUILDABLE-NOW | declarative subsystem (`sim/neuromodulators.py`): `from_reward`/`from_surprise`/`pause_on_reward`/`from_region_firing_signed`; DA instantiated. **A neuromodulator RECONFIGURES the effective circuit (not just gains it) — board #64 6-seed GO (`2026-08-19-neuromod-reconfiguration-GO.md`); and the DA LEVEL is now SELF-DRIVEN by the spiking `snc` nucleus reading reward/context (board #76 6-seed GO, `2026-08-19-neuromod-spiking-da-mode-GO.md`) — de-risk, not yet production-default** | **no 5-HT/mood, no NE/arousal, `from_novelty` empty stub** → instantiate **`mood`(5-HT, long-tau, avg-δ = Eldar-Niv mood), `arousal`(NA, from_surprise+tonic), `learning_eagerness`(ACh, fill from_novelty)**; 5-HT sets TD discount (Doya); wire `dopamine_mode`+snc-read into the live default brain (mode-per-context). **2026-08-21: the WRITE-side counterpart — DA-gated ENCODING (self-produced DA scales fact write-magnitude, Lisman-Grace / Kandel D.16) is WIRED (GO, default-OFF); the default-ON flip gate is UNDEFINED** (moat leak + a sigma-dependent recall regression — see §7; surpass = homeostatic gain-map scaling, Turrigiano 2008) |
 | **Amygdala valence tagging** | MISSING → BUILDABLE-NOW | tagging *engine* (DA-gated 3-factor, engram tags) | no BLA/CeA region → **opponent V+/V− populations** per code (Namburi-Tye opposite-sign; Redondo-Tonegawa re-writable tag on fixed identity); VAD-seed ~1k words + 2-hop spread over co-occurrence graph (Bestgen-Vincze); arousal→consolidation gain (McGaugh) via Route-B |
 | **Core affect + standing affect-STATE region** | **QUALIFIED-GO / BOUNDARY** (P0.3, the keystone) | **6-seed on-bridge (`2026-07-24-P0.3-affect-state-region-6seed-GO.md`, commit e402a732):** slow-NMDA opponent attractor holds persistent state that causally biases recall/speak; the spiking `quench_fs` pathway clears and restarts it. A fresh two-seed recurrent-weight ladder retained persistence and clearing but selected no graded operating point (`2026-08-04-laneA-graded-affect-quench-v1-DIAGNOSTIC-RESULT.md`). | The state remains a **bistable good/bad latch, not a graded circumplex**: every tested weight had poor sign accuracy, no sign crossings, insufficient magnitude range, and excessive residual state near neutral. Replace the mechanism under a fresh preregistration; do not tune or promote the consumed diagnostic seeds. |
 | **Appraisal (OCC/Scherer) + discrete emotion** | shallow BUILDABLE-NOW / deep FRONTIER | shallow worth-appraisal (`_value_salience_appraisal_derisk.py`) | no structured map → **OCC rule-checks over parsed SVO** (goal-conducive? agency? liked?) + Barrett conceptual-act discrete-emotion read-out over (V,A,context) with **learned emotion concepts**; deep learned appraisal = gap#4 (teacher evaluative-conditioning) |
@@ -515,7 +519,7 @@ The four mechanism GOs (bundle/bind/faithful-spiking-bind/arity-3) survived the 
 
 | Faculty | Tag | HAVE (cite) | WALL → SURPASS |
 |---|---|---|---|
-| **GNW ignition/broadcast/access** | **HAVE (P1.2 workspace region DONE)** | `_gnw_rung1..4` + **P1.2: one persistent GNW workspace region + deliberation loop, 6-seed GO** (`2026-07-24-P1.2-GNW-workspace-deliberation-6seed-GO-adversarially-verified.md`); affect-directed (real P0.3 affect drives directedness, b30981b5) | **EVICTION WALL CLOSED — thought-swap 6/6 GO (2026-08-19, `3c2797ce`):** Rung-2d STD drains the incumbent's OWN E→E loop below its sustain knee → self-collapse → vacancy-gated IN-gate admits the challenger (`old_residual_post`=0.000 vs the 0.333 quench wall; reversible A→B→A; ungated-control fails 0/6 so the eviction not the drive clears the slot). Reached the wall from 4 failed inhibition/gate levers first — the surpass is "weaken its own recurrence, don't fight it." **Multi-step re-entrant deliberation now LIVE in `/api/brain-chat` 6/6 GO** (`2026-08-19-gnw-multistep-reentrant-deliberation-GO.md`, cycle count emerges from `n_ignited`). **THE THOUGHT-SWAP IS NOW FULLY SELF-DRIVEN (trigger + evict + admit all neural), 6/6 GO:** admission is a spiking dis-inhibitory VACANCY GATE (`2026-08-19-gnw-neural-vacancy-gate-GO.md`, occ→gate disinhibition admits on the substrate's own vacancy read, no host trigger), and the swap DECISION (WHEN) is now a spiking MISMATCH+SALIENCE detector (`2026-08-19-gnw-neural-swap-intention-GO.md`): mm_k fires on a salient proposal that mismatches the held content (a pred interneuron vetoes a match), and its rate sets the eviction boost (no host `if`). SPECIFICITY is the crux — swap rate 1.00 salient-mismatch / 0.00 non-salient / 0.00 match; silence the detector → a salient input does NOT swap. Remaining: emergent (not hand-wired) coalitions + production-wire the swap |
+| **GNW ignition/broadcast/access** | **HAVE (P1.2 workspace region DONE)** | `_gnw_rung1..4` + **P1.2: one persistent GNW workspace region + deliberation loop, 6-seed GO** (`2026-07-24-P1.2-GNW-workspace-deliberation-6seed-GO-adversarially-verified.md`); affect-directed (real P0.3 affect drives directedness, b30981b5) | **EVICTION WALL CLOSED — thought-swap 6/6 GO (2026-08-19, `3c2797ce`):** Rung-2d STD drains the incumbent's OWN E→E loop below its sustain knee → self-collapse → vacancy-gated IN-gate admits the challenger (`old_residual_post`=0.000 vs the 0.333 quench wall; reversible A→B→A; ungated-control fails 0/6 so the eviction not the drive clears the slot). Reached the wall from 4 failed inhibition/gate levers first — the surpass is "weaken its own recurrence, don't fight it." **Multi-step re-entrant deliberation now LIVE in `/api/brain-chat` 6/6 GO** (`2026-08-19-gnw-multistep-reentrant-deliberation-GO.md`, cycle count emerges from `n_ignited`). **THE THOUGHT-SWAP IS NOW FULLY SELF-DRIVEN (trigger + evict + admit all neural), 6/6 GO:** admission is a spiking dis-inhibitory VACANCY GATE (`2026-08-19-gnw-neural-vacancy-gate-GO.md`, occ→gate disinhibition admits on the substrate's own vacancy read, no host trigger), and the swap DECISION (WHEN) is now a spiking MISMATCH+SALIENCE detector (`2026-08-19-gnw-neural-swap-intention-GO.md`): mm_k fires on a salient proposal that mismatches the held content (a pred interneuron vetoes a match), and its rate sets the eviction boost (no host `if`). SPECIFICITY is the crux — swap rate 1.00 salient-mismatch / 0.00 non-salient / 0.00 match; silence the detector → a salient input does NOT swap. Remaining: emergent (not hand-wired) coalitions + production-wire the swap. **2026-08-21: the THREE-organ ignition bus (commit only on recall ∧ ¬surprise ∧ COMPREHENDED, the D4 comprehension voter) is FLIPPED DEFAULT-ON** (#126, `e2d428d4`) — a real-vocab comprehension read fixed the D4 over-veto that had held the flip |
 | **Higher-order representation** | FRONTIER | = the meta-schema region (satisfied as a property once S1/M2 built) | HOT-vs-GNW = a lesion dissociation (an in-silico adjudication deliverable) |
 | **Self-schema (attention/agency, AST)** | **GO** (DR-3) | **6-seed on spikes (`2026-07-23-DR3-self-schema-region-6seed-GO.md`, commit d3d482ba):** the brain reads+reports its own attention/confidence/authorship — attn 0.974, conf Spearman +0.98, **self-lesion collapses**, schema ⟂ content (Graziano/Wilterson AST); adversarially verified SOLID | the reusable meta-schema region class → instantiate for M2 (meta-d′) + W3 (ToM) |
 | **Narrative/autobiographical self (DMN)** | BUILDABLE-NOW / FRONTIER | BridgeLineage self-code; lived-fact store | no self-reference tag → **SELF/OTHER encoding tag + prospection via SWR self-projection**; interpreter confabulation gated by the moat |
@@ -751,6 +755,30 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-21 — two INTEGRATION-lane flip walls, each with its named companion-process surpass (no-defer).**
+> - **da-gated-encoding default-ON flip = UNDEFINED** (finding
+>   `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-moat-leak-and-sigma-dependent-benefit`, artifact
+>   `research/findings/raw/_da_encoding_leansoak/soak.json`, 6-seed cupy): the lean production magnitude-store
+>   no-regression soak returns UNDEFINED — instrument bites (aggregate OFF recall 54→…→2 across sigma), but 2
+>   preconditions fail. (1) MOAT leak (moat_fail_total=2): the control-arm decomposition shows one leak is on the ON-arm
+>   (candidate encoding manufacture) and one is an OFF-arm read-floor artifact of the unstored-cue probe — verify the
+>   instrument at each leak first. (2) STRESS-net regression (14/54): the DA write-gain REGRESSES recall at low
+>   read-damage sigma (low-DA facts written at the g=0.5 floor) and only IMPROVES it at high sigma — salience
+>   redistribution, not a uniform lift. SURPASS = a homeostatic set-point normalizing the gain map to the running DA
+>   distribution (Turrigiano 2008 multiplicative synaptic scaling — preserves relative strengths, so salience ordering
+>   survives while low-DA facts are not driven below the recall floor). Faculty stays default-OFF until a clean GO (0
+>   leaks, stress-net non-negative). WAVE-0 Gap-4 write-side coupling; the wire-in itself was a GO (default-OFF).
+> - **D5 learn-through-use default-ON flip = NO-GO residual** (finding
+>   `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG pattern-separation set-point (knob-1) makes assemblies
+>   disjoint and CLOSES the graded-read crosstalk it was built for (neighbor depth_hold Δ=0 on 5/6), but the
+>   no-regression soak is 0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual (a completion-count flicker under
+>   sub-threshold CROSS-assembly recurrent bleed that disjoint MEMBERSHIP does not sever). SURPASS (ordered): surface the
+>   crosstalk-robust graded read in the disclosure (lever-2, in flight, branch `research/d5-ltu-lever2`); then
+>   recall-time feedback-inhibition WTA (CA3 PV-basket) + a sparse recurrent readout (Guzman 2016 — real CA3 completion
+>   runs on sparse recurrence, not our dense matrix); then heterosynaptic isolation of cross-assembly weights. The
+>   separation-during-FORMATION + inhibition-maintained-sparsity-during-RECALL pairing is the companion-process reframe.
+>   Separator infra merged default-OFF, byte-identical when off (`a7848bf7`).
+
 > **⭐ 2026-08-19 — gap#4 mouth read-SNR wall CONFIRMED; coverage + window both EXCLUDED; Option-2 decided.** The mouth read-out e-prop-through-the-actual-spiking-substrate FORWARD plateaus at `sub_learned_recov_mean` ~0.34 even at 5× coverage (40 000 positions, up from 8 000), while a matched-coverage host-linear-proxy forward reaches ~0.86 — so COVERAGE is excluded, and the read-window lever (120→360) was tested-negative this session too. The residual is the substrate forward's few-spike READ SNR, exactly as the 2026-08-11 layer-3 arc predicted (learning-rate-invariant; even a perfect Wᵀ oracle fails).
 > DECISION (owner-delegated, per `docs/plans/2026-08-19-deep-credit-plan-of-record.md`): **Option 2 — accept the scaffold-bridge for the mouth, keep the crux on the conversation frontier;** deep-credit stays a mapped boundary with ONE recorded open lever (a read-SNR manipulation that is NOT the integration window: ensemble / dendritic multi-compartment read). No further deep-credit compute is queued. Closes the coverage confound-exclusion sub-arm of speak-with-own-neurons (board #80); the task itself is not done — the scaffold bridges it. `research/findings/2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md`.
 
@@ -834,6 +862,36 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-08-21 (AUTONOMOUS, LATE) — GNW THREE-organ bus FLIPPED DEFAULT-ON; the SELF-MAINTAINING PROJECT OS (enforcement
+engine) LANDED; D5 learn-through-use flip NO-GO; da-encoding flip gate UNDEFINED; knowledge-scale flip in flight.**
+- **GNW three-organ bus DEFAULT-ON** (#126, `e2d428d4`): the workspace commits only on recall ∧ ¬surprise ∧
+  COMPREHENDED (the D4 comprehension voter). A real-vocab comprehension read fixed the D4 over-veto that had blocked the
+  flip. GO; supersedes the earlier "HELD default-OFF with sharp gates" status for this faculty.
+- **The enforcement engine (self-maintaining project OS) LANDED on `main`** (design
+  `docs/plans/2026-08-21-enforcement-layer-...`): backlog generator + ratchet with a cmd-field / real shared-queue
+  dispatch (`8868326b`); LIVE-STATE re-injection hooks + a class-13 gate (`1b6acd98`); Vikunja single-pane-of-glass +
+  tool-health smoke + CLASS BS/TH gates (`a82890fc`). KEY INSIGHT: the free-lane dispatch SEAM is now CLOSED
+  (mechanical); the current limiter is SUPPLY — ready work is described in PROSE that must be authored into runnable
+  commands (0 literal-ready right now; the anti-fabrication gates are working as designed, refusing to invent a command).
+  Tool-health verdict: experiment-engine READY (all 4 presets build+step on cupy — the dormancy was the old sweeper
+  driver, not the engine); gpu-queue had a recurring dpid-desync wedge (cleared this session; singleton adoption pending).
+- **D5 learn-through-use default-ON flip = NO-GO** (#71/#73, finding
+  `2026-08-21-d5-learn-through-use-flip-NO-GO-...`): the DG pattern-separation set-point closed the graded-read
+  crosstalk (bird depth_hold Δ=0 on 5/6) but the soak is 0/6 on a recall-time QUANTIZED-BINARY `apical_cue` residual (a
+  completion-count flicker under sub-threshold cross-assembly bleed). Separator infra merged default-OFF, byte-identical
+  when off (`a7848bf7`). Lever-2 IN FLIGHT (branch `research/d5-ltu-lever2`): surface the stable graded read + a size
+  floor. SUPERSEDES the earlier "te=40 confirm → flip BRAIN_D5_CONSOLIDATE" pointer — the confirm ran; the flip is held.
+- **da-gated encoding default-ON flip gate = UNDEFINED** (#125, finding
+  `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-...`): the lean production magnitude-store no-regression soak
+  returned UNDEFINED — 2 unmet preconditions (a MOAT leak, moat_fail_total=2, one ON-arm + one OFF-arm-read-floor; and a
+  sigma-dependent STRESS-net regression, measured=14: DA-gating regresses recall at low read-damage sigma and only
+  improves it at high sigma). Named companion-process surpass = homeostatic scaling of the gain map to the running DA
+  distribution (Turrigiano 2008). Faculty stays default-OFF; see §7.
+- **knowledge-scale (#66) flip IN FLIGHT** (another agent): wire the sharded FHRR store into brain_chat recall + scale K.
+NEXT: (1) D5 lever-2 (stable graded read + size floor) → re-soak → flip; (2) da-encoding homeostatic set-point →
+re-soak; (3) the enforcement engine's SUPPLY gap — author the prose backlog into runnable commands so the ratchet can
+dispatch; (4) gpu-queue singleton adoption.
 
 **2026-08-20 (AUTONOMOUS) — GNW two-organ bus DEFAULT-ON in production (both backends); gap#5 SWR forward-replay wall CLOSED (Ecker AdEx CA3 6/6).**
 GNW: the genuinely-distinct second organ (the surprise monitor) is now a LOAD-BEARING coincidence vote on the live chat
