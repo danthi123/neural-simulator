@@ -39,6 +39,14 @@ Fixed:
   DECOUPLED-store next rung (needs the igniting config read from `gap5_ignition_sweep_6seed.json`), and the
   DA-encoding on-substrate spiking synaptic-scaling rule (a new runner to build). Both are noted in step 5.
 
+## ⚠️ STDP-INERT FIX 2026-08-22 (`d8e817bd1`) — split the loop runs into pre-fix vs post-fix at the harvest
+
+The develop loop logged `⛔ STDP IS INERT` once per simulated day: its CONVERSE-stage `MultiTurnAgent` builds a `SpikingLoopContextBuffer` whose cortico-PFC loop bridge defaults to `enable_stdp=True` but stepped via `_run_one_simulation_step()` without advancing `runtime_state.current_time_ms`, so `delta_t==0` for every pair and STDP was silently inert. `d8e817bd1` (worktree `research/four-day-autonomous-queue`, `content_selection_spiking.py`) routes every buffer step through a `_step()` that advances the clock by `dt_ms`, so the real STDP rule fires on valid timing (applied-count 544k–575k/turn; clock 0→55–65 ms). Verified NO REGRESSION: recall 0.833, corr(M,C) 0.813, retention 1.00, moat 0-FA, vocab/facts trends byte-identical pre/post (3-day CPU smoke, seed 920).
+
+**HARVEST BOOKKEEPING.** Loop runs whose process started BEFORE `d8e817bd1` (incl. the still-running `--n-days 120 --seed 920`, pid ~3340324, which imported the module pre-edit) are STDP-inert in the WM buffer — their substrate learning is the StreamCortex Hebbian (corr≈0.81) + composer fact-store/BTSP (both fine); only the WM-buffer STDP was dead, so they are not corrupt, just not STDP-faithful there.
+Autofill (`gpu_queue_autofill.sh`) enqueues `cd $WT && … -m research.runners._longitudinal_develop_loop_gpu …` from the worktree, so every loop launched AFTER the current one drains picks up the fix automatically — those are STDP-faithful.
+NOTE: the WM loop synapses are non-plastic by design (hand-set attractors) so net weight-change stays 0 even post-fix; genuine WM-attractor STDP-consolidation-through-use is a de-risked follow-on. Merge `d8e817bd1` to `main` at the harvest.
+
 ## 0. WHERE THE CODE + STATE LIVES (read this before anything else)
 
 The **primary checkout `/home/dant123/Projects/sim` is on the STALE branch `research/gap4-axon-capd-derisk`**
