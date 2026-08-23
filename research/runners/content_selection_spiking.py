@@ -129,6 +129,18 @@ class SpikingContextBuffer:
         self.idx = self.xp.asarray(idx)
         self.n = len(idx)
 
+    def _step(self):
+        """Advance ONE simulation step AND the simulation clock (2026-08-22 STDP-inert fix).
+        `_run_one_simulation_step()` does NOT advance `runtime_state.current_time_ms` (only
+        `step_simulation()` does), so a buffer that drives it in its own loop leaves the clock
+        pinned at 0.0 -- every spike then shares one timestamp, STDP `delta_t==0` for every pair,
+        and any enabled STDP is silently inert (the `⛔ STDP IS INERT` guard, bridge.py). Advancing
+        the clock by `dt_ms` per step gives STDP valid, monotonically-increasing spike times so the
+        REAL timing-dependent rule operates on genuine pre/post latencies. Additive: pure time
+        bookkeeping, no weight write."""
+        self.bridge._run_one_simulation_step()
+        self.bridge.runtime_state.current_time_ms += self.bridge.core_config.dt_ms
+
     def drive(self, concept_id):
         xp = self.xp
         full = self.bridge.cp_external_input_current
@@ -136,17 +148,17 @@ class SpikingContextBuffer:
         for _ in range(self.stim_steps):
             full[:] = 0.0
             full[pat] = self.drive_pA
-            self.bridge._run_one_simulation_step()
+            self._step()
         full[:] = 0.0
         for _ in range(self.settle_steps):   # let the drive stop and NMDA recurrence take over
-            self.bridge._run_one_simulation_step()
+            self._step()
 
     def read(self, window=20):
         xp = self.xp
         acc = xp.zeros(self.n, dtype=xp.float32)
         for _ in range(window):
             self.bridge.cp_external_input_current[:] = 0.0
-            self.bridge._run_one_simulation_step()
+            self._step()
             acc += self.bridge.cp_firing_states[self.idx].astype(xp.float32)
         return self.B.to_host(acc)
 
@@ -225,6 +237,18 @@ class SpikingLoopContextBuffer:
         self._psize = pattern_size
         self._segsum_cache = {}   # ordered-concept-tuple -> (concat_idx_device, reduceat_starts_device)
 
+    def _step(self):
+        """Advance ONE simulation step AND the simulation clock (2026-08-22 STDP-inert fix).
+        `_run_one_simulation_step()` does NOT advance `runtime_state.current_time_ms` (only
+        `step_simulation()` does). This loop bridge is built with the default `enable_stdp=True`, so
+        with the clock pinned at 0.0 every spike shared one timestamp, `delta_t==0` for every pair,
+        and STDP was silently inert (the `⛔ STDP IS INERT` guard fired once per fresh bridge -- e.g.
+        once per develop-loop day). Advancing the clock by `dt_ms` per step gives STDP valid,
+        monotonically-increasing spike times so the REAL timing-dependent rule operates on genuine
+        pre/post latencies. Additive: pure time bookkeeping, no weight write."""
+        self.bridge._run_one_simulation_step()
+        self.bridge.runtime_state.current_time_ms += self.bridge.core_config.dt_ms
+
     def _segsum_layout(self, concepts):
         """Cache + return the flat segment-sum layout for an ORDERED list of concepts: a single device
         array concatenating each concept's attractor indices (`self._cpat[c]`) in order, plus the
@@ -256,10 +280,10 @@ class SpikingLoopContextBuffer:
             for _ in range(stim):
                 self.bridge.cp_external_input_current[:] = 0.0
                 self.bridge.cp_external_input_current[drv] = drive_pA
-                self.bridge._run_one_simulation_step()
+                self._step()
             self.bridge.cp_external_input_current[:] = 0.0
             for _ in range(settle):
-                self.bridge._run_one_simulation_step()
+                self._step()
 
     def read(self, window=20):
         """Decode the held set: per-neuron firing of each concept's attractor over a no-drive window.
@@ -275,7 +299,7 @@ class SpikingLoopContextBuffer:
         acc = xp.zeros(len(self.concepts), dtype=xp.float64)
         for _ in range(window):
             self.bridge.cp_external_input_current[:] = 0.0
-            self.bridge._run_one_simulation_step()
+            self._step()
             fs = self.bridge.cp_firing_states
             acc += xp.add.reduceat(fs[concat].astype(xp.float64), starts)   # per-concept integer sums, on-device
         acc_host = self.B.to_host(acc)                                      # ONE sync for the whole window
@@ -487,7 +511,7 @@ class SpikingSpreadingController:
             cur = self.ctx.bridge.cp_external_input_current
             cur[:] = 0.0
             cur[drv] = drive_pA
-            self.ctx.bridge._run_one_simulation_step()
+            self.ctx._step()
             if n_open == 0:
                 continue   # all concepts have fired; the spread is still driven but nothing left to record
             fs = self.ctx.bridge.cp_firing_states
