@@ -634,15 +634,26 @@ def _smooth(x, W):
     return np.convolve(x.astype(float), np.ones(W), mode="same") if W > 1 else x.astype(float)
 
 
-def _event_windows(F, W=5, ev_floor=0.4, ev_k=4.0, asize_ref=1, ev_mean_smooth=False):
+def _event_windows(F, W=5, ev_floor=0.4, ev_k=4.0, asize_ref=1, ev_mean_smooth=False, ev_baseline_q=None):
     """Detect event windows from the smoothed TOTAL CA3 co-firing (unbiased: on ALL CA3, then classified per-assembly).
     gap#5 RUNG-B (2026-08-25): ev_mean_smooth=True uses a running MEAN (per-step rate) instead of the running SUM so a
     TRANSIENT single-assembly burst crosses the per-step floor ev_floor*asize_ref (the SUM under-counts transient bursts
-    by ~W relative to sustained activity). Default False => byte-identical."""
+    by ~W relative to sustained activity). Default False => byte-identical.
+
+    gap#5 RUNG-B ROOT FIX (2026-08-25): ev_baseline_q -- compute the robust med/mad from ONLY the quietest fraction of
+    S (S <= quantile(S, ev_baseline_q)), not the whole trace. When the readout has SUSTAINED / repeated firing (many
+    detonation cycles + latching), med+ev_k*mad computed over ALL of S is inflated by the SIGNAL (measured: 1268 vs the
+    ev_floor*asize floor of 120), so the discrete per-detonation FORWARD SWEEP (pop~150-285) never crosses and the
+    detector reports NO ordered event even though the sweep is present (strict a0<a1<a2 onset, all 6 seeds). Taking the
+    baseline from the quiet inter-sweep steps de-inflates the threshold so the sweep is counted, while a truly silent
+    no-detonator trace still yields ~0 events (its whole S is quiet). Default None => byte-identical (whole-trace med/mad)."""
     T, _ = F.shape
     pop = F.sum(1).astype(float)
     S = (np.convolve(pop, np.ones(W) / float(W), mode="same") if (ev_mean_smooth and W > 1) else _smooth(pop, W))
-    med = float(np.median(S)); mad = float(np.median(np.abs(S - med))) * 1.4826
+    _base = S[S <= np.quantile(S, float(ev_baseline_q))] if (ev_baseline_q is not None and S.size) else S
+    if _base.size == 0:
+        _base = S
+    med = float(np.median(_base)); mad = float(np.median(np.abs(_base - med))) * 1.4826
     thr = max(med + ev_k * mad, ev_floor * asize_ref)
     inev = S > thr
     events, t = [], 0
@@ -679,16 +690,17 @@ def _order_stat(onsets):
 
 
 def _detect_sequence_events(F, assemblies_local, W=5, ev_floor=0.4, ev_k=4.0, active_frac=0.12, onset_frac=0.08,
-                            min_ev_len=4, ev_mean_smooth=False):
+                            min_ev_len=4, ev_mean_smooth=False, ev_baseline_q=None):
     """Detect ordered replay. For each event, per-assembly smoothed firing fraction over time; an assembly is ACTIVE if
     its peak fraction >= active_frac; its ONSET = first step its smoothed fraction crosses onset_frac (tie-break by peak
     time then center-of-mass). Score forward/reverse strict order + Kendall tau over multi-assembly (>=2 active) events.
-    gap#5 RUNG-B: ev_mean_smooth threads to _event_windows (transient-burst detection). Default False => byte-identical."""
+    gap#5 RUNG-B: ev_mean_smooth + ev_baseline_q thread to _event_windows (transient-burst + baseline-threshold
+    detection -- the latter is the root fix for the signal-inflated threshold). Default (None/False) => byte-identical."""
     T, nca3 = F.shape
     asizes = [max(1, len(a)) for a in assemblies_local]
     asize_ref = float(np.mean(asizes))
     events, duty, pop_rate = _event_windows(F, W=W, ev_floor=ev_floor, ev_k=ev_k, asize_ref=asize_ref,
-                                            ev_mean_smooth=ev_mean_smooth)
+                                            ev_mean_smooth=ev_mean_smooth, ev_baseline_q=ev_baseline_q)
 
     per_asm_active = [0] * len(assemblies_local)
     per_asm_peak = [[] for _ in assemblies_local]

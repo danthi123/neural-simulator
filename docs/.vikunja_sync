@@ -19,3 +19,5 @@ note: HARVEST of the four-day free-compute window. Board changes — #133 DONE (
   (self-ignition re-ignite-from-partial-cue rung — 1/6 but ignition sweep IGNITES-YES 26/96, a positive
   operating-point lead; labels Memory + de-risked). Continuous-life longitudinal loop GO across 43 seeds
   (8x120-day + 35x60-day, corr(M,C) ~0.85, recall/retention 1.0). DA-encoding lever-2 UNDEFINED.
+
+# 2026-08-25 reconcile (research/gap5-encode-detector-retest): #134 a1-exclusion RESOLVED (BDSP clamp) + forward sweep real, progress noted; next-rung #139 (readout discreteness) created. Finding 2026-08-25-gap5-a1-exclusion-is-BDSP-clamp-...
