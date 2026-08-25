@@ -1,4 +1,4 @@
-"""DA-GATED ENCODING wired into the LIVE chat store (board WAVE-0, Gap-4 coupling), default-OFF.
+"""DA-GATED ENCODING wired into the LIVE chat store (board WAVE-0, Gap-4 coupling), DEFAULT-ON (flipped 2026-08-25).
 
 WHAT THIS IS. The composer's fact-ENCODING strength AT STORE TIME is scaled by the brain's OWN self-produced tonic
 dopamine (Lisman-Grace hippocampal-VTA loop; Kandel D.16 — dopamine gates entry into LONG-TERM memory: a fact heard
@@ -25,8 +25,9 @@ DA at baseline (tonic 0.5) => g = 1 (the no-modulation knob = byte-identical wri
 (a stronger, more-stable encoding); clamped both ways (g_min keeps a low-DA turn from erasing a fact, g_max is the
 saturation ceiling). k_DA = 2.0 == the I-7-b / consolidation-probe2 default.
 
-CONTRACT (additive, reversible, byte-identical-off).
-  * `da_encoding_enabled()` gates the whole coupling. When DISABLED the server skips it entirely: `encoding_gain_fn`
+CONTRACT (additive, reversible, byte-identical-off). DEFAULT-ON: unset arms the coupling; `BRAIN_DA_ENCODING=0` is the
+byte-identical escape.
+  * `da_encoding_enabled()` gates the whole coupling. When DISABLED (`=0`) the server skips it entirely: `encoding_gain_fn`
     stays None (never touched) -> the store is BYTE-IDENTICAL to pre-wiring, and no `da_encoding` key is attached.
   * When ENABLED, `install_encoding_gain(chat)` sets `chat.inner.composer.encoding_gain_fn` to a fresh closure that
     reads the live DA at store time. g == 1.0 at tonic (an unengaged turn is neutral) and on a missing DA read.
@@ -113,17 +114,35 @@ def _gain_map():
     return _GAIN_MAP
 
 
-def da_encoding_enabled() -> bool:
-    """The master flag. `BRAIN_DA_ENCODING` truthy (1/true/on/yes) enables the DA-gated encoding coupling; anything else
-    (the default UNSET) leaves it OFF -> `encoding_gain_fn` untouched -> the store is byte-identical to HEAD.
+# 2026-08-25 FLIP: DA-gated encoding is DEFAULT-ON (the coupling arms; a taught fact's WRITE MAGNITUDE rides the brain's
+# own self-produced tonic dopamine — Lisman-Grace hippocampal-VTA loop, Kandel D.16). Gated by the 6-seed substrate-
+# scaling flip-gate soak GO (research/findings 2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP) + the two prep
+# rungs (the OFF-arm verifiers pinned to explicit BRAIN_DA_ENCODING=0; the substrate-homeostasis consolidation trigger
+# wired into the idle tick). `BRAIN_DA_ENCODING=0` is the BYTE-IDENTICAL ESCAPE. The named constant is the ledger anchor
+# (docs/PRODUCTION_INTEGRATION_LEDGER.yaml row da-gated-encoding default_anchor); flipping it back to False blocks.
+_DA_ENCODING_DEFAULT_ON = True
 
-    FLIP GATE STATUS 2026-08-25: the magnitude-store no-regression flip gate is now GO (research/findings
-    2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP: 6-seed soak GO with the on-substrate Turrigiano
+
+def da_encoding_enabled() -> bool:
+    """The master flag. DEFAULT-ON (flipped 2026-08-25). `BRAIN_DA_ENCODING` unset -> the default (`_DA_ENCODING_DEFAULT_ON`
+    == ON): the DA-gated encoding coupling arms and a taught fact's WRITE MAGNITUDE rides the brain's own self-produced
+    tonic dopamine. `BRAIN_DA_ENCODING=0` (or false/no/off) is the BYTE-IDENTICAL ESCAPE: the coupling is skipped
+    entirely -> `encoding_gain_fn` untouched -> the store is byte-identical to pre-flip HEAD, and no `da_encoding` key is
+    attached. Any of {1,true,on,yes} also arms it.
+
+    FLIP GATE STATUS 2026-08-25 (CLEARED -> FLIPPED default-ON): the magnitude-store no-regression flip gate is GO
+    (2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP: 6-seed soak GO with the on-substrate Turrigiano
     synaptic-scaling homeostat + target-block instrument fix -- moat_introduced=0, clean=0, genuine stress-net=0,
-    cross-check byte-equal). Flipping this DEFAULT to ON (on_by_default) is now the UNBLOCKED owner product decision; it
-    is HELD here only because that flip moves the byte-identical baseline from UNSET to `=0`, so the wire-in verifier +
-    wave4 baseline OFF arms must pin `BRAIN_DA_ENCODING=0` explicitly first (they currently rely on unset==off)."""
-    return os.environ.get("BRAIN_DA_ENCODING", "0").strip().lower() in ("1", "true", "on", "yes")
+    cross-check byte-equal), and the two prep rungs the flip required are done: the OFF-arm verifiers
+    (`_da_encoding_wired_verify`, `_wave4_composed_flip_noregression`) are pinned to explicit `BRAIN_DA_ENCODING=0`
+    (they no longer rely on unset==off), and the substrate-homeostasis consolidation TRIGGER is wired into the idle tick
+    (`continuous_engine.consolidate_substrate_homeostasis`, fired between turns when the store grew). Flip verification:
+    the wire-in verifier + wave4 composed no-regression stay GO with the default ON, ON is load-bearing (g_high>g_low,
+    lesion severs), and `=0` is byte-identical to pre-flip (the coupling install is skipped on the same code path)."""
+    v = os.environ.get("BRAIN_DA_ENCODING")
+    if v is None:
+        return _DA_ENCODING_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def da_encoding_substrate_enabled() -> bool:

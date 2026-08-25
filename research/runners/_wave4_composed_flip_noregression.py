@@ -52,6 +52,9 @@ def main():
     out = {"runner": "research/runners/_wave4_composed_flip_noregression.py", "flags": FLAGS, "panel_len": len(PANEL)}
     diverged = []
     for i, msg in enumerate(PANEL):
+        # EXPLICIT-OFF PIN (load-bearing since the 2026-08-25 default-ON flip): the OFF arm sets each flag to "0", NOT
+        # unset. BRAIN_DA_ENCODING (and any faculty flipped default-ON) reads unset==ON, so an unset OFF arm would arm
+        # the coupling and the comparison would be ON-vs-ON. "0" is the byte-identical escape, invariant to the default.
         for f in FLAGS:
             os.environ[f] = "0"
         off = _reply(msg, f"w4-off-{i}")

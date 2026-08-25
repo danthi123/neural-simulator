@@ -480,7 +480,7 @@ The reward/value + homeostatic-drive halves are essentially **DONE**; the affect
 |---|---|---|---|
 | **Reward / value / RPE (actor-critic)** | HAVE | spiking SNc RPE 6/6 (`2026-06-18-limbic-core-rpe-battery-GO.md`, GABA_B/GIRK membrane subtraction); neural reward source N5 CLOSED; TD critic (`sim/td_value_critic.py`); **value-driven CHOICE RANK-1 GO 6/6 today** (`2026-07-23-value-critic-closure-RANK1-GO.md`, untrained-critic anti-cheat) | value is cue-value only; no forward model → gap#4 (bridge with teacher) |
 | **"Liking" (hedonic)** | MISSING → BUILDABLE-NOW | wanting exists (incentive-salience drift) | Berridge wanting≠liking → **µ-opioid `liking` modulator** fired by *consummation* only, read separately from predictive DA |
-| **Neuromodulator affect axes (4-basis)** | MISSING → BUILDABLE-NOW | declarative subsystem (`sim/neuromodulators.py`): `from_reward`/`from_surprise`/`pause_on_reward`/`from_region_firing_signed`; DA instantiated. **A neuromodulator RECONFIGURES the effective circuit (not just gains it) — board #64 6-seed GO (`2026-08-19-neuromod-reconfiguration-GO.md`); and the DA LEVEL is now SELF-DRIVEN by the spiking `snc` nucleus reading reward/context (board #76 6-seed GO, `2026-08-19-neuromod-spiking-da-mode-GO.md`) — de-risk, not yet production-default** | **no 5-HT/mood, no NE/arousal, `from_novelty` empty stub** → instantiate **`mood`(5-HT, long-tau, avg-δ = Eldar-Niv mood), `arousal`(NA, from_surprise+tonic), `learning_eagerness`(ACh, fill from_novelty)**; 5-HT sets TD discount (Doya); wire `dopamine_mode`+snc-read into the live default brain (mode-per-context). **2026-08-21: the WRITE-side counterpart — DA-gated ENCODING (self-produced DA scales fact write-magnitude, Lisman-Grace / Kandel D.16) is WIRED (GO, default-OFF); the default-ON flip gate is UNDEFINED** (moat leak + a sigma-dependent recall regression — see §7; surpass = homeostatic gain-map scaling, Turrigiano 2008) |
+| **Neuromodulator affect axes (4-basis)** | MISSING → BUILDABLE-NOW | declarative subsystem (`sim/neuromodulators.py`): `from_reward`/`from_surprise`/`pause_on_reward`/`from_region_firing_signed`; DA instantiated. **A neuromodulator RECONFIGURES the effective circuit (not just gains it) — board #64 6-seed GO (`2026-08-19-neuromod-reconfiguration-GO.md`); and the DA LEVEL is now SELF-DRIVEN by the spiking `snc` nucleus reading reward/context (board #76 6-seed GO, `2026-08-19-neuromod-spiking-da-mode-GO.md`) — de-risk, not yet production-default** | **no 5-HT/mood, no NE/arousal, `from_novelty` empty stub** → instantiate **`mood`(5-HT, long-tau, avg-δ = Eldar-Niv mood), `arousal`(NA, from_surprise+tonic), `learning_eagerness`(ACh, fill from_novelty)**; 5-HT sets TD discount (Doya); wire `dopamine_mode`+snc-read into the live default brain (mode-per-context). **2026-08-21: the WRITE-side counterpart — DA-gated ENCODING (self-produced DA scales fact write-magnitude, Lisman-Grace / Kandel D.16) is WIRED (GO); 2026-08-25 FLIPPED default-ON** (the UNDEFINED flip gate was the named surpass: an ON-substrate Turrigiano synaptic-scaling homeostat, soak GO 6-seed, on_by_default:YES — see §7) |
 | **Amygdala valence tagging** | MISSING → BUILDABLE-NOW | tagging *engine* (DA-gated 3-factor, engram tags) | no BLA/CeA region → **opponent V+/V− populations** per code (Namburi-Tye opposite-sign; Redondo-Tonegawa re-writable tag on fixed identity); VAD-seed ~1k words + 2-hop spread over co-occurrence graph (Bestgen-Vincze); arousal→consolidation gain (McGaugh) via Route-B |
 | **Core affect + standing affect-STATE region** | **QUALIFIED-GO / BOUNDARY** (P0.3, the keystone) | **6-seed on-bridge (`2026-07-24-P0.3-affect-state-region-6seed-GO.md`, commit e402a732):** slow-NMDA opponent attractor holds persistent state that causally biases recall/speak; the spiking `quench_fs` pathway clears and restarts it. A fresh two-seed recurrent-weight ladder retained persistence and clearing but selected no graded operating point (`2026-08-04-laneA-graded-affect-quench-v1-DIAGNOSTIC-RESULT.md`). | The state remains a **bistable good/bad latch, not a graded circumplex**: every tested weight had poor sign accuracy, no sign crossings, insufficient magnitude range, and excessive residual state near neutral. Replace the mechanism under a fresh preregistration; do not tune or promote the consumed diagnostic seeds. |
 | **Appraisal (OCC/Scherer) + discrete emotion** | shallow BUILDABLE-NOW / deep FRONTIER | shallow worth-appraisal (`_value_salience_appraisal_derisk.py`) | no structured map → **OCC rule-checks over parsed SVO** (goal-conducive? agency? liked?) + Barrett conceptual-act discrete-emotion read-out over (V,A,context) with **learned emotion concepts**; deep learned appraisal = gap#4 (teacher evaluative-conditioning) |
@@ -780,18 +780,20 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   `2026-08-26-four-day-window-negatives-roundup-source-monitor-replay-self-ignition-da-encoding`.
 
 > **⭐ 2026-08-21 — two INTEGRATION-lane flip walls, each with its named companion-process surpass (no-defer).**
-> - **da-gated-encoding default-ON flip = UNDEFINED** (finding
->   `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-moat-leak-and-sigma-dependent-benefit`, artifact
->   `research/findings/raw/_da_encoding_leansoak/soak.json`, 6-seed cupy): the lean production magnitude-store
->   no-regression soak returns UNDEFINED — instrument bites (aggregate OFF recall 54→…→2 across sigma), but 2
->   preconditions fail. (1) MOAT leak (moat_fail_total=2): the control-arm decomposition shows one leak is on the ON-arm
->   (candidate encoding manufacture) and one is an OFF-arm read-floor artifact of the unstored-cue probe — verify the
->   instrument at each leak first. (2) STRESS-net regression (14/54): the DA write-gain REGRESSES recall at low
->   read-damage sigma (low-DA facts written at the g=0.5 floor) and only IMPROVES it at high sigma — salience
->   redistribution, not a uniform lift. SURPASS = a homeostatic set-point normalizing the gain map to the running DA
->   distribution (Turrigiano 2008 multiplicative synaptic scaling — preserves relative strengths, so salience ordering
->   survives while low-DA facts are not driven below the recall floor). Faculty stays default-OFF until a clean GO (0
->   leaks, stress-net non-negative). WAVE-0 Gap-4 write-side coupling; the wire-in itself was a GO (default-OFF).
+> - **da-gated-encoding default-ON flip = GO — FLIPPED default-ON** (2026-08-25, findings
+>   `2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP` + `2026-08-25-da-encoding-faculty-default-on-flip`,
+>   artifact `research/findings/raw/_da_encoding_leansoak/soak_substrate.json`, 6-seed cupy). The prior UNDEFINED verdict
+>   is RESOLVED — it was the named SURPASS itself. (1) The gain-map's static g=0.5 floor was a PROXY for the homeostatic
+>   process real synapses run; it is replaced by an ON-SUBSTRATE Turrigiano multiplicative synaptic-scaling rule
+>   (`OneBrainComposer.apply_homeostatic_scaling`: sense each engram's readout activity, rescale its store synapses
+>   toward the unit set-point — a genuine synaptic rule, not host arithmetic), which floors low-DA facts to the
+>   recall-safe unit and regulates high-DA engrams while preserving the DA-salience order. Soak GO: moat_introduced=0,
+>   clean=0, genuine (target-block-attributed) stress-net=0, cross-check byte-equal; it IMPROVES recall across the
+>   damage knee (sigma 1.5: on 24 vs off 13 of 54). (2) The prior MOAT "leak" was a FOREIGN-BLOCK CONFABULATION the moat
+>   correctly suppresses (target-block attribution), not an ON regression. Two prep rungs done: the no-regression
+>   verifiers pin the OFF baseline to `BRAIN_DA_ENCODING=0`, and the slow/offline scaling pass fires on the between-turn
+>   idle tick when new facts were taught. Flip-verified GO through the real handler (default-on drives g_high 2.48 >
+>   g_low 1.0; lesion severs; `=0` byte-identical). WAVE-0 Gap-4 write-side coupling, now on_by_default:YES.
 > - **D5 learn-through-use default-ON flip = GO — FLIPPED default-ON** (`e9096bfa`, board #71): 5/6 GO + s102 excused
 >   (self-ignition build; moat abstains everywhere). The prior NO-GO verdict was a MISDIAGNOSIS, now retracted: the
 >   neighbor read was byte-identical OFF-vs-ON 6/6; the reply differed only because the disclosure surfaced strength on
@@ -922,12 +924,13 @@ engine) LANDED; D5 learn-through-use flip NO-GO; da-encoding flip gate UNDEFINED
   appended strength to EVERY reply globally (a format artifact). Fix: gate the surfaced strength PER CONSOLIDATED TOPIC;
   the DG separator was UNNECESSARY (sep_bias=0, byte-identical). Residual: s102 emergent-assembly self-ignition (a
   separate faculty) → next mechanism recall-time CA3 PV-basket WTA for a true 6/6.
-- **da-gated encoding default-ON flip gate = UNDEFINED** (#125, finding
-  `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-...`): the lean production magnitude-store no-regression soak
-  returned UNDEFINED — 2 unmet preconditions (a MOAT leak, moat_fail_total=2, one ON-arm + one OFF-arm-read-floor; and a
-  sigma-dependent STRESS-net regression, measured=14: DA-gating regresses recall at low read-damage sigma and only
-  improves it at high sigma). Named companion-process surpass = homeostatic scaling of the gain map to the running DA
-  distribution (Turrigiano 2008). Faculty stays default-OFF; see §7.
+- **da-gated encoding default-ON flip = GO — FLIPPED default-ON** (#116/#125, 2026-08-25, findings
+  `2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP` + `2026-08-25-da-encoding-faculty-default-on-flip`): the
+  prior UNDEFINED verdict WAS the named surpass — the static g=0.5 floor was a proxy for the homeostatic process, now
+  replaced by an ON-SUBSTRATE Turrigiano synaptic-scaling rule; soak GO 6-seed (moat_introduced=0, clean=0, genuine
+  target-block stress-net=0, cross-check byte-equal), and the lone "leak" was a foreign-block confabulation the moat
+  suppresses. Flip-verified GO through the real handler (default drives g_high 2.48 > g_low 1.0; lesion severs; `=0`
+  byte-identical). Faculty now on_by_default:YES; see §7.
 - **knowledge-scale (#66) flip IN FLIGHT** (another agent): wire the sharded FHRR store into brain_chat recall + scale K.
 NEXT: (1) D5 lever-2 (stable graded read + size floor) → re-soak → flip; (2) da-encoding homeostatic set-point →
 re-soak; (3) the enforcement engine's SUPPLY gap — author the prose backlog into runnable commands so the ratchet can

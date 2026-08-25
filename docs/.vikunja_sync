@@ -8,14 +8,14 @@
 #
 # Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
 
-last_reconciled: 2026-08-26
-at_commit: 01bb124c
-note: HARVEST of the four-day free-compute window. Board changes — #133 DONE (knowledge core shipped
-  as the default cortical LTM, BRAIN_LTM_BUNDLE default-on, soak go=True 6/6); #132 advanced (gap2
-  spiking delta-rule binder GO 6-seed, role->filler above permuted control); #75 advanced (vision
-  R-STDP sparse readout NOGO across the full 2D sweep — a mapped boundary, next needs a different
-  readout); #129 advanced (source-monitor NEGATIVE across variants; conjunctive-tag next mechanism
-  queued on pool); #130 advanced (replay order-consolidation CALIBRATION_NEEDS_REVISION); #134 CREATED
-  (self-ignition re-ignite-from-partial-cue rung — 1/6 but ignition sweep IGNITES-YES 26/96, a positive
-  operating-point lead; labels Memory + de-risked). Continuous-life longitudinal loop GO across 43 seeds
-  (8x120-day + 35x60-day, corr(M,C) ~0.85, recall/retention 1.0). DA-encoding lever-2 UNDEFINED.
+last_reconciled: 2026-08-25
+at_commit: 0fe3c3888
+note: DA-GATED ENCODING flipped to production default-ON (board #116 DONE). The faculty
+  (webapp/da_encoding_drives_chat.da_encoding_enabled, _DA_ENCODING_DEFAULT_ON=True) now scales every taught
+  fact's write magnitude by the brain's own self-produced dopamine by default; BRAIN_DA_ENCODING=0 is the
+  byte-identical escape. Gated by the 6-seed substrate-scaling soak GO + two prep rungs (OFF-arm verifiers
+  pinned to =0; the Turrigiano scaling pass wired onto the between-turn idle tick). Flip-verified GO through
+  the real handler (default drives g_high 2.48 > g_low 1.0; lesion severs; =0 byte-identical) + wave4 composed
+  no-regression GO (8 turns, 0 diverged). #138 CREATED (fire the scaling pass on a sleep/NREM event, next rung).
+  Ledger row da-gated-encoding on_by_default:YES. finding 2026-08-25-da-encoding-faculty-default-on-flip.
+  PRIOR HARVEST note preserved in git history (was 2026-08-26 @ 01bb124c: #133 DONE knowledge core, #132/#75/#129/#130 advanced, #134 created).

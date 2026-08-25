@@ -1,8 +1,8 @@
 {
- "run_id": "1787694434-1456903",
- "runner": "research/runners/_wave4_composed_flip_noregression.py",
+ "run_id": "1787696089-1515397",
+ "runner": "research/runners/_da_encoding_homeo_trigger.py",
  "argv": [
-  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-da-flip/research/runners/_wave4_composed_flip_noregression.py"
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-da-flip/research/runners/_da_encoding_homeo_trigger.py"
  ],
  "git_sha": "0fe3c3888",
  "git_dirty": true,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-25T17:47:14",
+ "started": "2026-08-25T18:14:49",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -21,5 +21,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_wave_flip_soak/composed_noregression.json"
+ "artifact": "research/findings/raw/_da_encoding_wired/homeo_trigger.json"
 }
