@@ -30,7 +30,25 @@ on only one of six seeds — but a wider sweep shows it *can* ignite, so the fix
 
 One piece of project plumbing was found broken and logged: an internal consistency check meant to keep the
 "what's shipped" ledger honest against the code had gone silent (a YAML quirk); the knowledge-core flip was
-verified by hand instead, and the repair is queued as its own task.
+verified by hand instead. **Update: the repair landed the same day** — see the next section.
+
+## ⭐ 2026-08-25 (follow-up) — three of the harvest's four negatives came back positive the same day, and a broken honesty-check got fixed
+
+The internal consistency check mentioned above (the one that keeps the "what's shipped" ledger honest against the
+code) is fixed — a YAML quirk was silently turning every one of its checks into a no-op; it now genuinely blocks a
+false "shipped" claim again.
+
+Two more of the harvest's four negatives were also resolved this same day. **Tagging where a memory came from**
+(so a stronger memory can't drown out a weaker one) works now — not via the conjunctive tag that was queued (that
+was tried too, and also came up short), but by having the brain compare two learned "was this seen or imagined"
+signals against each other rather than reading either one on its own; that comparison is what turned out to be
+robust. It is proven on six test runs but not yet wired into the live conversation. **Object recognition on spikes**
+made real progress but is still not a finished capability: a different (dense, signed) readout was built and it
+solves the earlier readout's problem entirely — but the resulting recognition still isn't quite as good as reading
+the raw visual signal directly, so the boundary moved rather than disappeared, and the next two attempts are already
+scoped. The fourth negative — a memory re-igniting itself from a partial cue — got a root cause and a fix (a
+memory-strength safety clamp was silently blocking the very first link in a chain of memories), but the fix has not
+yet been re-tested at full rigor, so it stays open.
 
 ## ⭐ 2026-08-25 (follow-up) — the "replay memories in the right order" calibration was revised, and it now passes
 

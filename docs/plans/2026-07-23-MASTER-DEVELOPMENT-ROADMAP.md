@@ -773,16 +773,32 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   code. Next SURPASS = (1) move common-mode rejection to the readout (lighter s2_norm + lower s2_gain, joint sweep),
 >   (2) a NONLINEAR 2-layer spiking readout to lift the linear ceiling. `vlin_readout_6seed.json`, finding
 >   `2026-08-25-vision-signed-linear-discriminant-spiking-readout-solves-quantization-wall-relocates-to-feature-ceiling`.
-> - **SOURCE-MONITORING (#129) — NEGATIVE across variants** (plastic NEGATIVE, competitive 5/6 go=false on the no-harm
->   control, attractor margins short). SURPASS = a CONJUNCTIVE source×content tag that cannot leak into the content read
->   (queued on the pool). `four_day/_laneC_*`, `laneC_source_competitive_decisive.json`.
-> - **gap#5 self-ignition — 1/6, positive op-point lead.** DG-detonator ignites 1/6 but the ignition SWEEP is
->   `IGNITES-YES` (26/96 configs ev≥1); SURPASS = set the decoupled-store op point from the igniting configs, then re-run
->   6-seed (#134). `four_day/gap5_dg_ignition_6seed.json`, `gap5_ignition_sweep_6seed.json`.
+> - **⛔ SOURCE-MONITORING (#129) — this "NEGATIVE across variants" verdict is STALE, corrected same-day 2026-08-25:
+>   GO 6/6 via a DIFFERENT family (not the conjunctive tag this bullet named).** The conjunctive tag WAS tried and
+>   also fell short; the surpass instead reads perceived-vs-generated provenance as the SIGN of a divisively-
+>   normalized OPPONENT comparator over two learned, context-gated Hebbian traces (immune to the absolute-rate
+>   weakness that sank plastic/competitive/attractor/conjunctive alike). 6-seed acc 1.000, min normalized d 0.859,
+>   no-harm 0.0. De-risked, not yet wired into live-chat honesty (next-rung board #137). See the §7 walls-ledger row
+>   "source monitoring" for full detail. Finding
+>   `2026-08-25-laneC-source-provenance-opponent-perceived-vs-generated-6seed-GO`.
+> - **gap#5 self-ignition — the a1-exclusion root cause found + fixed, decisive run still PENDING (2026-08-25).** The
+>   cold-start link from the first to second assembly was stalled by the `fused_bdsp` weight-clamp, not a BTSP
+>   skip-link problem. A widened plasticity step + a gamma-window eligibility trace forms the link (weight 5→155, 4x
+>   ADJ/SKIP separation); fix is weight-validated but the DECISIVE 6-seed self-ignition confirmation (#134) is QUEUED,
+>   not yet run — this remains an open de-risk. Also this window: the gap5 store's determinism was fixed (the earlier
+>   "seeding confound" diagnosis was itself wrong — the TRUE cause was cuSPARSE SpMV non-determinism, closed by a
+>   deterministic transpose SpMV). `four_day/gap5_dg_ignition_6seed.json`, `gap5_ignition_sweep_6seed.json`.
 > - **gap#2 binder — GO** (spiking delta-rule role→filler recall above permuted control, 6-seed); the remaining wall is
 >   the MULTI-attribute learned binder (dendritic multiplicative). `four_day/gap2_binder_6seed.json`.
-> - **#130 replay order-consolidation — CALIBRATION_NEEDS_REVISION**; **DA-encoding lever-2 — UNDEFINED** (STRESS net
->   precondition unmet) → SURPASS = on-substrate spiking synaptic-scaling homeostat (not a host clamp). Roundup finding
+> - **⛔ #130 replay order-consolidation — this "CALIBRATION_NEEDS_REVISION" verdict is STALE, corrected same-day
+>   2026-08-25: GO 6/6.** The calibration (a balanced directed-sweep replay, v7) was revised and now passes
+>   decisively, including on seeds the miscalibrated version had FAILED (a real fix, not a re-tune). Gate result on
+>   the toy consolidation network; not yet wired into production. Finding
+>   `2026-08-25-order-consolidation-recalib-balanced-directed-sweep-replay-6seed-GO`.
+> - **⛔ DA-encoding lever-2 — this "UNDEFINED" verdict is STALE, resolved same-day 2026-08-25: the on-substrate
+>   Turrigiano homeostat cleared the flip gate, and the FACULTY itself flipped default-ON** (board #116) — see the
+>   "two INTEGRATION-lane flip walls" block just below for full detail. Roundup finding (for the ORIGINAL, now-partly-
+>   superseded verdicts)
 >   `2026-08-26-four-day-window-negatives-roundup-source-monitor-replay-self-ignition-da-encoding`.
 
 > **⭐ 2026-08-21 — two INTEGRATION-lane flip walls, each with its named companion-process surpass (no-defer).**
@@ -874,7 +890,7 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 | **gap#5** [mechanism: btsp-place-field-formation] [mechanism: swr-sequence-replay] | SWR-replay recall READOUT (ordered replay) | CA3 cue-specific completion = DYNAMICS-DE-RISK GO on a hand-installed attractor (2026-07-08 dendritic readout + 2026-08-10 slow-NMDA reverberatory `483587c0b`; emergent FORMATION open — the "learned CLOSED" was ⛔ retracted; see the §7 wall row); **ENCODE-WIN** (`2026-07-24-gap5-moving-bump-replay-decode-encode-WIN-replay-BOUNDARY.md`, fe12ce2c): the theta-adjacent-pair **sharp-band encode is 6/6 robust with NO dendrites** (resolves the §5 band-sharpness fragility); **REPLAY-BOUNDARY** — point-neuron spike-frequency-adaptation SUPPRESSES the moving-bump replay, and the AdEx encode ports but replay needs a full model-build. **The old "learn CA3→CA1 Schaffer / theta-gamma phase-precession" surpass is SUPERSEDED** (5cf4a205): replay is a **MOVING BUMP on a near-diagonal BANDED weight matrix (Ecker 2022, point neurons)**, not a phase-precession dual-oscillator | **next arc = build the exact Ecker-2022 CA3 model** (banded recurrent matrix + the E/I-transient SWR state + adaptation regime that permits the moving bump); reverse replay via symmetric CA3 + reward-gate | S3–S4 |
 | **executed-action credit** [mechanism: vocal-action-credit] | delayed dopamine reinforces arbitrary actions under unrelated reward | Gate A neural selection is 4-seed GO. The V14 single-compartment packet is a structural engineering NO-GO. Its fast-channel successor failed 7/18 independent Ding endpoints, and four unmodified source-backed sodium/Kv3 comparators also produced no transferable candidate despite CPU/GPU parity. Source graphs now accept exact parameter documents, and the adaptive propose-seal-run-ingest-version lifecycle is resumable. Primary research found no defensible continuous microscopic biological bounds and no population mean current-time waveforms; official full-resolution population command-response figures are hash-bound. | Prospectively digitize population activation, inactivation, recovery, and deactivation curves with pixel-error custody; preserve representative traces as single-cell context only. Then run a discrete source-vector screen and identifiability-gated fitting before soma/proximal-dendrite integration. Keep candidates 284/404, unsupported cohorts, Stage 2, and held-out/learning seeds closed. | S1-S2 |
 | **source monitoring** [mechanism: source-monitor-coresidency] [mechanism: source-provenance-opponent] | stable learned source attribution on the shared bridge | **⭐ 2026-08-25 SURPASSED by a DIFFERENT family (#129 GO 6/6): perceived-vs-generated OPPONENT provenance.** All prior variants (coresidency v1-v7, popcode+homeostasis 5/6, four-day attractor_competition/joint/conjunctive_tag/plastic) are ONE family — source read from the ABSOLUTE RATE of one pool among competitors, where one seed always lands below an absolute floor (the 2026-08-11 residual). The surpass reads provenance as the SIGN of a divisively-normalized OPPONENT comparator: two neuromodulatory encoding-context lines each gate a SEPARATE zero-init Hebbian episode→prov trace (three-factor via postsynaptic context drive); at recall the contexts are silent and the content cue alone drives the learned trace; judgment = sign(r_perceived − r_generated), d=(r_true−r_false)/(r_true+r_false) — a RATIO immune to common-mode absolute-rate weakness. A COINCIDENCE THRESHOLD (low Hebbian cap) makes the overlap-3 partial-cue leak sub-threshold → min d ~0.85. 6-seed {42 43 44 100 101 102} GO: acc 1.000, min norm d 0.859, no-harm on content 0.0, swap-flips 0.0/1.0, learning-off silent, novel/content-perp clean; instrument verified (W_CTX_PROV=0 → NO-GO). This is the content-cued episodic source-MEMORY the 2026-08-01 agency/authorship opponent GO named as its follow-on. (`2026-08-25-laneC-source-provenance-opponent-perceived-vs-generated-6seed-GO.md`.) HISTORY: V1 dev 2/3 seeds; V2 FS competition cleared margins but violated no-harm; V3 threshold homeostasis failed; v6 calibration GO / dev NO-GO on weakest-source; popcode+homeo resolved no-harm structurally but 5/6 (one source encoding too weak). | Next (no-defer): self-organize the innate context routing + opponent wiring; neuromodulator-driven plasticity gate replacing the host-timed encode window; integrate the provenance read-out into the live-chat honesty pathway ("I saw this / I inferred this"). | S2-S3 |
-| **compositional consolidation** (A1) [mechanism: systems-consolidation] | replay does not yet produce reliable hippocampus-independent cortical memory | V1 shared-bridge transfer is NO-GO. V2 local opponent inhibition remained seed-fragile. V3's learned index relay was UNDEFINED. V4's target plateau suppressed intact target firing. V5 (learned CA1→cortex reinstatement) made consolidation causal + hippocampus-independent on both seeds but was NO-GO on seed-413 false recall + order control. **V5+SFA (2026-08-06) CLOSED the interference wall: intrinsic spike-frequency-adaptation one-of-N eviction on the target attractor drives retest false recall under 0.15 on BOTH seeds (load-bearing vs its lesion); the sole residual is the replay-ORDER control** (`2026-08-06-replay-cortical-consolidation-v5-sfa-eviction-closes-interference-wall-order-control-is-next.md`). | Next: order-SENSITIVE (spike-timing-dependent) consolidation plasticity so ordered replay potentiates a directional cue→target trace shuffled does not — the order-blind rate-window Hebbian rule is the residual root cause. | S3 |
+| **compositional consolidation** (A1) [mechanism: systems-consolidation] | replay does not yet produce reliable hippocampus-independent cortical memory | V1 shared-bridge transfer is NO-GO. V2 local opponent inhibition remained seed-fragile. V3's learned index relay was UNDEFINED. V4's target plateau suppressed intact target firing. V5 (learned CA1→cortex reinstatement) made consolidation causal + hippocampus-independent on both seeds but was NO-GO on seed-413 false recall + order control. **V5+SFA (2026-08-06) CLOSED the interference wall: intrinsic spike-frequency-adaptation one-of-N eviction on the target attractor drives retest false recall under 0.15 on BOTH seeds (load-bearing vs its lesion); the sole residual is the replay-ORDER control** (`2026-08-06-replay-cortical-consolidation-v5-sfa-eviction-closes-interference-wall-order-control-is-next.md`). **2026-08-25: the order-SENSITIVE mechanism this row's residual named is now GO 6/6 on a separate toy consolidation network (board #130)** — a balanced directed-sweep replay + isolated order-STDP reliably potentiates the directional cue→target trace over shuffled (finding `2026-08-25-order-consolidation-recalib-balanced-directed-sweep-replay-6seed-GO`); NOT yet ported onto this row's V5+SFA CA1 system. | Next: port the GO'd order-STDP mechanism (board #130) from the toy consolidation network onto the real V5+SFA CA1→cortex system so ordered replay potentiates a directional cue→target trace there, shuffled does not. | S3 |
 | **visual identity learning** [mechanism: visual-identity-spike-latency] | invariant identity still depends on weak representations after host top-k removal | Spike-latency selection removed host top-k. Temporal binding failed both fresh seeds. A hierarchical V2-part to trace-bound-IT successor also failed valid formal `503/509`: intact V2/IT were silent and chance-level; V2-FS lesion activated learning without identity and saturated one IT population. | Preregister a different mechanism only after smoke shows nonzero, non-saturated V2/IT learning and inhibition that improves selectivity; retain learning-off, pixel, RF, temporal, trace, and all-fired controls. | S2-S3 |
 | **open-ended non-fact generation (R4)** | production can't exceed bounded corpus-attested inventory (~4 orders too small) | biggest categorical gap | **scale spiking HTM Temporal-Memory generator** (`fused_htm_permanence_update`) + gap#4 deep credit + teacher-distilled soft targets + developmental domain growth; retire the RA-21M transformer | S5 |
 | **learned binder over structured codes (gap#2 depth)** [mechanism: coincidence-binding] | FHRR exact-inverse algebra is a host idealization; multi-attr bundling not learnable-from-scratch on point neurons | single-attr on-spikes GO | **dendritic multiplicative binding** (two-compartment: apical=role, basal=filler, Mikulasch-Priesemann analog pre-spike) + local PPMI normalization for generalization | S3 (frontier) |
@@ -894,8 +910,28 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-25 (LATER, same day — corrects the 2026-08-26 harvest block's next-actions below; 4 of its 6 items are
+now DONE, not still open):**
+- ~~Fix the dead production-integration gate~~ **DONE** (`135024f70`/`0fe3c3888`, `_level()` normalizer + 2 anchor
+  repairs shipped on `main`).
+- **Harvest the pool faculty-lane results:** #129 GO'd via a DIFFERENT mechanism than the conjunctive-tag queued
+  below (see §7 "source monitoring" row + the corrected bullet above) — **DONE, but not as originally scoped**. The
+  gap5 self-ignition op-point work became the a1-exclusion root-cause fix (#134, decisive run still PENDING/queued,
+  see above) — **IN PROGRESS, not done**. v1 self-org perception / spiking comprehension / curiosity learning-
+  progress pool harvest — **UNCONFIRMED**, no landing evidence found on the 2026-08-25 sync pass; verify against the
+  pool before assuming it landed.
+- **Vision next readout rung (#75):** unchanged — still open, now concretely scoped as board #135 (#75a, op-point
+  sweep) + #136 (#75b, nonlinear 2-layer readout).
+- ~~DA-encoding on-substrate homeostat~~ **DONE**, and the FACULTY itself flipped default-ON (board #116,
+  `acb8abe7b`/`a5a0dd099`) — beyond the original scope of this item.
+- ~~#130 replay: revise the order-STDP calibration...~~ **DONE** — GO 6/6 (`5679ef750`/`d4e8f1d71`, see the
+  corrected bullet above). Next (not yet done): move the fixed inhibitory membership onto a learned channel; wire
+  into production.
+- **Knowledge core latency knob (UX, non-blocking):** unchanged — still open.
+- **NEW:** gap5 a1-exclusion decisive 6-seed confirmation run — queued, not yet executed (board #134).
+
 **2026-08-26 (HARVEST of the four-day free-compute window) — knowledge core SHIPPED default-on (#133); window verdicts
-landed. Ordered next actions:**
+landed. Ordered next actions (⚠️ SEE THE 2026-08-25 LATER CORRECTION ABOVE — 4 of these 6 are now done):**
 - **Fix the dead production-integration gate** (sub-checks A/B silently skipped under PyYAML bool-coercion; see
   `research/FAILURE_LOG.md` 2026-08-26) with a `_level()` normalizer, and repair the 2 stale anchors it surfaces
   (`one-brain-substrate`, `continuous-state-engine`). The #133 flip anchor was verified independently (on=1/off=0).

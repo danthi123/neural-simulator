@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-08-25T22:12:19Z",
+ "updated_at": "2026-08-25T22:51:34Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -110,6 +110,168 @@
    "op": "create-task",
    "args": "proj=2 title=DA-encoding: fire the Turrigiano synaptic-scaling pass on a sleep/NREM consolidation event (not only the idle tick)",
    "head": "0fe3c3888"
+  },
+  {
+   "at": "2026-08-25T22:49:55Z",
+   "op": "label-task",
+   "args": "task=129 label=10",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:49:55Z",
+   "op": "label-task",
+   "args": "task=130 label=10",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:49:55Z",
+   "op": "label-task",
+   "args": "task=132 label=10",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:50:44Z",
+   "op": "set-desc",
+   "args": "task=129",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:50:49Z",
+   "op": "set-desc",
+   "args": "task=130",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:50:55Z",
+   "op": "set-desc",
+   "args": "task=134",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:02Z",
+   "op": "set-desc",
+   "args": "task=116",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:06Z",
+   "op": "set-desc",
+   "args": "task=113",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:06Z",
+   "op": "update-task",
+   "args": "task=113 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:10Z",
+   "op": "set-desc",
+   "args": "task=96",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:10Z",
+   "op": "update-task",
+   "args": "task=96 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:13Z",
+   "op": "set-desc",
+   "args": "task=100",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:13Z",
+   "op": "update-task",
+   "args": "task=100 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:16Z",
+   "op": "set-desc",
+   "args": "task=101",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:16Z",
+   "op": "update-task",
+   "args": "task=101 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:19Z",
+   "op": "set-desc",
+   "args": "task=103",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:19Z",
+   "op": "update-task",
+   "args": "task=103 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:22Z",
+   "op": "set-desc",
+   "args": "task=115",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:22Z",
+   "op": "update-task",
+   "args": "task=115 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:24Z",
+   "op": "set-desc",
+   "args": "task=117",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:26Z",
+   "op": "update-task",
+   "args": "task=117 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:29Z",
+   "op": "set-desc",
+   "args": "task=118",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:29Z",
+   "op": "update-task",
+   "args": "task=118 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:31Z",
+   "op": "set-desc",
+   "args": "task=119",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:31Z",
+   "op": "update-task",
+   "args": "task=119 done=true",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:34Z",
+   "op": "set-desc",
+   "args": "task=125",
+   "head": "1479b2013"
+  },
+  {
+   "at": "2026-08-25T22:51:34Z",
+   "op": "update-task",
+   "args": "task=125 done=true",
+   "head": "1479b2013"
   }
  ]
 }

@@ -1,32 +1,61 @@
-# Vikunja board reconcile stamp — updated by the `vikunja` skill after each board reconcile.
+# Vikunja board reconcile LOG — the `vikunja` skill APPENDS a new dated entry at the END of this file
+# after each board reconcile. NEVER rewrite this header, and NEVER edit or reorder an existing entry —
+# only add a new one after the last line.
 #
-# The vikunja-freshness gate (tools/gates/vikunja_freshness.py, CLASS VF) blocks a finding-adding
-# commit once THRESHOLD (6) findings have landed since this file was last touched. Stamping this file
-# (in the reconcile commit) = "the board at https://vikunja.dant123.com was reconciled" and resets the
-# budget. This is the mechanical enforcement the board previously lacked (the roadmap sync was gated,
-# the board sync was only remembered — so the board drifted while the docs stayed fresh, 2026-08-20).
+# WHY append-only (2026-08-25): every entry used to overwrite one shared header (last_reconciled /
+# at_commit / note), so every parallel branch that reconciled the board touched the SAME lines and every
+# merge conflicted on this file (see e.g. commits 831a014e9, d4e8f1d71, acb8abe7b, all "# Conflicts:
+# docs/.vikunja_sync"). Pure appends at the end let independent branches' reconciles merge cleanly.
 #
-# Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
+# What this file is FOR: `tools/gates/vikunja_freshness.py` (CLASS VF) only checks (a) the git-log
+# timestamp of the last commit that touched this file at ALL, and (b) whether this file is staged in the
+# current commit — it does not parse anything below this header. So any append satisfies the gate; the
+# entries below are for humans/Claude (a durable log of what board reconciles happened, when), not the
+# gate's logic.
+#
+# Entry format: `## YYYY-MM-DD  <short label — commit / branch / theme>` then a short note of what was
+# reconciled on the board (tasks marked done, labels advanced, duplicates closed). Newest entry LAST.
 
-last_reconciled: 2026-08-25
-at_commit: order-consolidation-recalib
-note: #116 DA-gated-encoding FACULTY flipped default-ON (records memories more strongly when engaged; verified LOAD-BEARING — high-DA vs low-DA writes a stronger trace, lesion collapses it; no-regression + OFF byte-identical; consolidation trigger on the idle tick; next-rung #138). #75 vision readout PARTIAL (signed linear-discriminant spiking readout: spike-port quantization SOLVED, wall relocated to the linear-separability ceiling; next-rungs #75a/#75b). #129 source-monitoring GO 6/6 (perceived-vs-generated opponent-provenance, a different family immune to the absolute-rate weakness; de-risk, next-rung #137). #130 RESOLVED to a decisive verdict (order-sensitive consolidation recalibration). Was
-  CALIBRATION_NEEDS_REVISION; diagnosed as replay winner-take-all (episode-agnostic random replay
-  let the stronger memory hog consolidation) + numpy->cupy operating-point drift, NOT a broken
-  order-STDP. Revised to balanced directed-sweep replay + isolated order-STDP: 6-seed GO on the
-  decisive seeds (42/43/44/100/101/102) with all anti-cheats intact (STDP-off collapses the margin
-  to 0.0000, lesions->0, false recall ~0), and 4/5 on the disjoint v6-NO-GO seeds (a real fix, not
-  a re-tune). Residual banked: the behavioural win is recall-SPEED (attenuates at long probe); the
-  physical trace strengthening is probe-independent. cupy confirm queued on gpu_queue. Gate result
-  (not yet production-integrated). NOTE: this marker was stamped by the order-consolidation subagent;
-  the LIVE board task #130 still needs the owner/main-session to mark its status.
-  --- prior stamp (2026-08-26 harvest, at_commit 01bb124c) ---
-  HARVEST of the four-day free-compute window. Board changes — #133 DONE (knowledge core shipped
-  as the default cortical LTM, BRAIN_LTM_BUNDLE default-on, soak go=True 6/6); #132 advanced (gap2
-  spiking delta-rule binder GO 6-seed, role->filler above permuted control); #75 advanced (vision
-  R-STDP sparse readout NOGO across the full 2D sweep — a mapped boundary, next needs a different
-  readout); #129 advanced (source-monitor NEGATIVE across variants; conjunctive-tag next mechanism
-  queued on pool); #130 advanced (replay order-consolidation CALIBRATION_NEEDS_REVISION); #134 CREATED
-  (self-ignition re-ignite-from-partial-cue rung — 1/6 but ignition sweep IGNITES-YES 26/96, a positive
-  operating-point lead; labels Memory + de-risked). Continuous-life longitudinal loop GO across 43 seeds
-  (8x120-day + 35x60-day, corr(M,C) ~0.85, recall/retention 1.0). DA-encoding lever-2 UNDEFINED.
+## 2026-08-26  harvest (at_commit 01bb124c)
+HARVEST of the four-day free-compute window. Board changes — #133 DONE (knowledge core shipped
+as the default cortical LTM, BRAIN_LTM_BUNDLE default-on, soak go=True 6/6); #132 advanced (gap2
+spiking delta-rule binder GO 6-seed, role->filler above permuted control); #75 advanced (vision
+R-STDP sparse readout NOGO across the full 2D sweep — a mapped boundary, next needs a different
+readout); #129 advanced (source-monitor NEGATIVE across variants; conjunctive-tag next mechanism
+queued on pool); #130 advanced (replay order-consolidation CALIBRATION_NEEDS_REVISION); #134 CREATED
+(self-ignition re-ignite-from-partial-cue rung — 1/6 but ignition sweep IGNITES-YES 26/96, a positive
+operating-point lead; labels Memory + de-risked). Continuous-life longitudinal loop GO across 43 seeds
+(8x120-day + 35x60-day, corr(M,C) ~0.85, recall/retention 1.0). DA-encoding lever-2 UNDEFINED.
+
+## 2026-08-25  order-consolidation-recalib
+#116 DA-gated-encoding FACULTY flipped default-ON (records memories more strongly when engaged;
+verified LOAD-BEARING — high-DA vs low-DA writes a stronger trace, lesion collapses it; no-regression
++ OFF byte-identical; consolidation trigger on the idle tick; next-rung #138). #75 vision readout
+PARTIAL (signed linear-discriminant spiking readout: spike-port quantization SOLVED, wall relocated
+to the linear-separability ceiling; next-rungs #75a/#75b). #129 source-monitoring GO 6/6
+(perceived-vs-generated opponent-provenance, a different family immune to the absolute-rate weakness;
+de-risk, next-rung #137). #130 RESOLVED to a decisive verdict (order-sensitive consolidation
+recalibration). Was CALIBRATION_NEEDS_REVISION; diagnosed as replay winner-take-all (episode-agnostic
+random replay let the stronger memory hog consolidation) + numpy->cupy operating-point drift, NOT a
+broken order-STDP. Revised to balanced directed-sweep replay + isolated order-STDP: 6-seed GO on the
+decisive seeds (42/43/44/100/101/102) with all anti-cheats intact (STDP-off collapses the margin to
+0.0000, lesions->0, false recall ~0), and 4/5 on the disjoint v6-NO-GO seeds (a real fix, not a
+re-tune). Residual banked: the behavioural win is recall-SPEED (attenuates at long probe); the
+physical trace strengthening is probe-independent. cupy confirm queued on gpu_queue. Gate result (not
+yet production-integrated). NOTE: this entry was stamped by the order-consolidation subagent before
+the live board task #130 itself was updated — see the 2026-08-25 docs+board sync entry below for that.
+
+## 2026-08-25  docs+board sync (sync-documentation + vikunja reconcile, gate-b-v2-clean worktree)
+Reconciled `GAP_CLOSURE_MISSION.md` CURRENT STATE (added a corrective "2026-08-25 LATER" header above
+the 2026-08-26 harvest header, fixing 6 stale next-actions: PI-gate fix DONE not queued, #129/#130 GO
+not NEGATIVE/CALIBRATION-NEEDED, vision #75 MIXED not a plain NO-GO, #116 flip landed, gap5
+a1-exclusion root-caused+fixed with a decisive run still pending), the master roadmap (docs/plans/
+2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) sections 7 and 8, and ROADMAP.md (fixed the stale "PI-gate
+repair queued" line; added a plain-language entry for the same-day #129/#75/#134 follow-through).
+Vikunja board: confirmed #133/#116 already correctly marked done; updated stale #129/#130/#134
+descriptions to their actual GO/pending status and swapped their `blocked` label for `de-risked`
+(they are GO'd research results awaiting production wiring, not upstream-blocked); closed 10 stale
+duplicate pre-flip tasks that were superseded by their already-done flip counterparts but never closed
+(#96, #100, #101, #103, #113, #115, #117, #118, #119, #125 -> superseded by #71/#114/#116/#123/#124/
+#126 respectively). Restructured THIS FILE to append-only (see header above) to end the recurring
+merge-conflict class the two entries above were each hit by.

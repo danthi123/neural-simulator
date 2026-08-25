@@ -13,7 +13,63 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-26 (READ FIRST; LIVE resume anchor; supersedes the 2026-08-21 header below, now history)
+## ⭐ STATE OF THE PROJECT — 2026-08-25 (LATER — READ FIRST; LIVE resume anchor; corrects the 2026-08-26 header below same-day, its own next-actions are now stale)
+
+**NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
+continuity → the emergentist bet. Non-negotiables: brain-based-only, ONE brain, emergent-not-hand-built, NO-DEFER (a
+wall defers a METHOD not a CAPABILITY), SPEED-SECONDARY, honesty-boundary-as-deliverable, 6-seed (42/43/44/100/101/102),
+gates AUTHORITATIVE, commit BOTH remotes via `tools/push_both.sh`, NEVER `--no-verify`.
+
+**Same-day follow-through on the 2026-08-26 header's own NEXT ACTIONS (below) — items 1/2(partial)/4 are now DONE,
+not still open as that header's ordered list says:**
+- **PI gate fix SHIPPED** (commits `135024f70`/`0fe3c3888`) — the `_level()` normalizer + the 2 stale anchor repairs
+  (`one-brain-substrate`, `continuous-state-engine`) are on `main`. The ledger's production-default status is now
+  genuinely machine-enforced. (The 2026-08-26 header's "the repair is queued as its own task" is now STALE.)
+- **#129 source-monitoring is now GO 6/6** (commits `0901548f6`/`831a014e9`, finding
+  `2026-08-25-laneC-source-provenance-opponent-perceived-vs-generated-6seed-GO`) — NOT via the queued conjunctive-tag
+  lever (that was ALSO tried this window and also fell short); the winner is a DIFFERENT family: perceived-vs-generated
+  provenance read as the SIGN of a divisively-normalized OPPONENT comparator over two learned, context-gated Hebbian
+  traces (immune to the absolute-rate weakness that sank every prior variant). 6-seed acc 1.000, min normalized d
+  0.859, no-harm 0.0. De-risked, NOT yet wired into live-chat honesty (board #137 is the wiring next-rung). (The
+  2026-08-26 header's "#129 source-monitor NEGATIVE across variants" is now STALE.)
+- **#130 order-consolidation is now GO 6/6** (commits `5679ef750`/`d4e8f1d71`, finding
+  `2026-08-25-order-consolidation-recalib-balanced-directed-sweep-replay-6seed-GO`) — the calibration (a balanced
+  directed-sweep replay, v7) was revised and now passes decisively, including on seeds the miscalibrated version had
+  FAILED (a real fix, not a re-tune). Gate result on the toy consolidation network; not yet wired into production.
+  (The 2026-08-26 header's "#130 replay order-consolidation CALIBRATION_NEEDS_REVISION" is now STALE.)
+- **Vision #75 — the DENSE signed linear-discriminant readout landed** (commits `487a164ee`/`c54cdc5f2`, finding
+  `2026-08-25-vision-signed-linear-discriminant-spiking-readout-solves-quantization-wall-relocates-to-feature-ceiling`)
+  — SOLVES the spike-port quantization wall the R-STDP sparse readout NO-GO'd on (gap collapses to +0.0243 vs
+  ~0.19), learning load-bearing 6/6, but the capability wall RELOCATES to the ~0.47 linear-separability ceiling of the
+  z-normed C2 code (does not beat V1-direct, capability_go 0/6). MIXED, not closed. Next-rungs are now concrete board
+  tasks: #75a (op-point sweep, board #135) + #75b (nonlinear 2-layer readout, board #136).
+- **gap5 self-ignition (#134) — the a1-exclusion root cause found + fixed, decisive run still PENDING** (commits
+  `b7b543eda`/`1479b2013`, no findings doc yet) — the cold-start link from the first to second assembly was stalled
+  by the `fused_bdsp` weight-clamp, not a BTSP skip-link problem as first suspected. A widened plasticity step + a
+  gamma-window eligibility trace forms the link (weight 5→155, 4x ADJ/SKIP separation); fix is weight-validated but
+  the DECISIVE 6-seed self-ignition confirmation run is QUEUED, not yet executed — this is still an open de-risk.
+- **Also this window: gap5 substrate determinism FIXED** (commits `cc8fdb073`/`fa0168a20`) — the earlier "seeding
+  confound" diagnosis (unseeded connectivity) was itself wrong; the TRUE cause was cuSPARSE SpMV floating-point
+  non-determinism, now closed by a deterministic transpose SpMV (`add.reduceat`, no atomics) + a determinism test.
+  A separate gap5 branch-B recall probe (PV-basket two-arm feedback) came back NO-GO 0/6, sub-threshold (finding
+  `2026-08-25-gap5-pv-basket-feedback-two-arm-subthreshold-NOGO-and-seeding-confound`) — mapped, next mechanism not
+  yet named.
+
+**CORRECTED NEXT ACTIONS (replaces the 2026-08-26 header's ordered list below — its items 1/2(partial)/4 are DONE):**
+1. ~~Fix the dead PI gate~~ **DONE** (see above).
+2. ~~Harvest #129 (conjunctive-tag) + #130~~ **DONE**, but #129's WINNER was a different mechanism than the one
+   queued — see above. The v1-self-org / comprehension / curiosity pool-lane harvest the 2026-08-26 header's item 2
+   also names is **UNCONFIRMED** — no landing evidence found on this sync pass; re-check the pool before assuming it
+   landed.
+3. **Vision next readout — still open, now concretely scoped as board #135 (#75a) + #136 (#75b).**
+4. ~~DA-encoding on-substrate homeostat~~ **DONE**, and the FACULTY itself flipped default-ON (board #116, commits
+   `acb8abe7b`/`a5a0dd099`) — a step beyond the original item 4's scope.
+5. **Knowledge core latency knob (UX, non-blocking)** — still open, unconfirmed landed.
+6. **NEW: gap5 a1-exclusion decisive 6-seed confirmation run** — queued, not yet run (board #134).
+
+---
+
+## ⭐ STATE OF THE PROJECT — 2026-08-26 (history — superseded by the 2026-08-25 LATER header above; its own NEXT ACTIONS list is stale, see the correction below)
 
 **NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
 continuity → the emergentist bet. Non-negotiables: brain-based-only, ONE brain, emergent-not-hand-built, NO-DEFER (a
