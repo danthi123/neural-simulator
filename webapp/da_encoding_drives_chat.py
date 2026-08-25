@@ -114,9 +114,27 @@ def _gain_map():
 
 
 def da_encoding_enabled() -> bool:
-    """The master flag. `BRAIN_DA_ENCODING` truthy (1/true/on/yes) enables the DA-gated encoding coupling; anything
-    else (the default UNSET) leaves it OFF -> `encoding_gain_fn` untouched -> the store is byte-identical to HEAD."""
+    """The master flag. `BRAIN_DA_ENCODING` truthy (1/true/on/yes) enables the DA-gated encoding coupling; anything else
+    (the default UNSET) leaves it OFF -> `encoding_gain_fn` untouched -> the store is byte-identical to HEAD.
+
+    FLIP GATE STATUS 2026-08-25: the magnitude-store no-regression flip gate is now GO (research/findings
+    2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP: 6-seed soak GO with the on-substrate Turrigiano
+    synaptic-scaling homeostat + target-block instrument fix -- moat_introduced=0, clean=0, genuine stress-net=0,
+    cross-check byte-equal). Flipping this DEFAULT to ON (on_by_default) is now the UNBLOCKED owner product decision; it
+    is HELD here only because that flip moves the byte-identical baseline from UNSET to `=0`, so the wire-in verifier +
+    wave4 baseline OFF arms must pin `BRAIN_DA_ENCODING=0` explicitly first (they currently rely on unset==off)."""
     return os.environ.get("BRAIN_DA_ENCODING", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def da_encoding_substrate_enabled() -> bool:
+    """The LEVER-3 (2026-08-25) on-substrate Turrigiano homeostat. `BRAIN_DA_ENCODING_SUBSTRATE` unset/truthy -> the
+    homeostat is the GENUINE synaptic-scaling rule `OneBrainComposer.apply_homeostatic_scaling()` (resonate-SENSE each
+    engram's readout activity -> multiplicatively rescale its store synapses toward the unit set-point), run as a
+    CONSOLIDATION pass (`apply_substrate_homeostasis`); the per-write path then carries the RAW DA gate (the substrate
+    pass supplies the recall-safe floor + regulation). Set 0 -> fall back to the host-proxy per-write homeostat
+    (`homeostatic_step`, the lever-2 ablation). This REPLACES the host arithmetic proxy with a substrate synaptic rule
+    (the BRAIN-BASED-ONLY deliverable) -- the scaling factor is computed from MEASURED NEURAL ACTIVITY, not a DA EMA."""
+    return os.environ.get("BRAIN_DA_ENCODING_SUBSTRATE", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def da_encoding_lesioned() -> bool:
@@ -176,6 +194,15 @@ def encoding_gain_for(chat, advance: bool = False) -> float:
     if da_encoding_lesioned():
         return 1.0
     da = da_level_of(chat)
+    if da_encoding_substrate_enabled():
+        # LEVER-3: the homeostat is the on-substrate synaptic-scaling CONSOLIDATION pass (apply_substrate_homeostasis).
+        # The per-WRITE gain here carries only the RECALL-SAFE FLOOR (g >= 1.0 == the set-point): a below-tonic-DA fact
+        # is never encoded below the readable floor (the "keep the synapse functional" write invariant), so the live
+        # store is SAFE even between consolidation passes; a salient fact is still boosted. The substrate pass then does
+        # the genuine population REGULATION (down-scaling over-strong engrams toward the set-point) -- the part that
+        # needs the whole population, run offline. The NET consolidated store (low->1.0, high->regulated) equals the
+        # flip-gate soak's validated state. (Do NOT also run the host per-write EMA homeostat here -> double homeostasis.)
+        return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_FLOOR_HOMEO, _G_MAX))
     if not da_encoding_homeostasis_enabled():
         return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_MIN, _G_MAX))
     r = 1.0 + _K_DA * (da - _DA_TONIC_BASELINE)                       # raw salience (UNCLAMPED); the homeostat floors it
@@ -202,8 +229,36 @@ def install_encoding_gain(chat) -> Optional[float]:
         return None
     if not hasattr(chat, "_da_encoding_mu"):
         chat._da_encoding_mu = _MU_INIT
+    if da_encoding_substrate_enabled():                              # arm the on-substrate Turrigiano homeostat
+        try:
+            if hasattr(comp, "homeostatic_scaling"):
+                comp.homeostatic_scaling = True                     # the composer's apply_homeostatic_scaling is now live
+        except Exception:
+            pass
     comp.encoding_gain_fn = lambda: encoding_gain_for(chat, advance=True)
     return encoding_gain_for(chat, advance=False)
+
+
+def apply_substrate_homeostasis(chat):
+    """Run the on-substrate Turrigiano synaptic-scaling CONSOLIDATION pass on the live composer's store: resonate-SENSE
+    each stored engram's readout activity, then multiplicatively rescale its store synapses toward the unit set-point
+    (`OneBrainComposer.apply_homeostatic_scaling`). This is the GENUINE synaptic homeostat that replaces the host-proxy
+    per-write EMA (BRAIN-BASED-ONLY: the scale is computed from measured neural activity, actuated on the synaptic
+    weight). Turrigiano scaling is biologically SLOW/OFFLINE, so this is a consolidation-time op (call at a consolidation
+    event / after a batch of taught facts), NOT per turn -- re-running it repeatedly on an already-scaled store would
+    pull the population toward unit. Returns the applied per-engram scale vector, or None if unavailable/disabled. NO-OP
+    (returns None) when the substrate homeostat is off or the composer lacks the rule. Validated: the 6-seed flip-gate
+    soak (research/runners/_da_encoding_leansoak.py --substrate-scaling) is byte-equal to a real production build."""
+    if not (da_encoding_enabled() and da_encoding_substrate_enabled()) or da_encoding_lesioned():
+        return None
+    comp = getattr(getattr(chat, "inner", None), "composer", None)
+    if comp is None or not hasattr(comp, "apply_homeostatic_scaling"):
+        return None
+    try:
+        comp.homeostatic_scaling = True
+        return comp.apply_homeostatic_scaling()
+    except Exception:
+        return None
 
 
 def uninstall_encoding_gain(chat) -> None:
@@ -211,3 +266,5 @@ def uninstall_encoding_gain(chat) -> None:
     comp = getattr(getattr(chat, "inner", None), "composer", None)
     if comp is not None:
         comp.encoding_gain_fn = None
+        if hasattr(comp, "homeostatic_scaling"):
+            comp.homeostatic_scaling = False

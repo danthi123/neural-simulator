@@ -117,7 +117,8 @@ class OneBrainComposer:
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
                  enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
                  use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False,
-                 vocab_headroom=0):
+                 vocab_headroom=0, homeostatic_scaling=False, homeo_beta_down=0.25,
+                 homeo_s_min=0.34, homeo_s_max=4.0):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
         # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
@@ -248,6 +249,24 @@ class OneBrainComposer:
         # (exactly RFPhasorComposer._store_substrate's semantics). The no-confab moat is preserved by construction: the
         # gain only scales the stored magnitude; the cue-match abstention + the cleanup winner-pick are unchanged.
         self.encoding_gain_fn = encoding_gain_fn
+        # homeostatic_scaling (2026-08-25, opt-in, DEFAULT-OFF = byte-identical): Turrigiano 2008 multiplicative
+        # homeostatic SYNAPTIC SCALING on the substrate store synapses -- the on-substrate SYNAPTIC realization of the
+        # host-proxy DA-encoding homeostat (webapp/da_encoding_drives_chat.homeostatic_step), which was a documented
+        # PROXY (a feed-forward multiply+clip on the DA scalar at write time). This is instead a FEEDBACK rule on the
+        # synaptic STATE: `apply_homeostatic_scaling()` resonates each stored engram, SENSES its readout-neuron activity
+        # (a genuine neural read: mean |Z| over the block's D readout neurons -- constant for a unit write, linear in the
+        # encoding strength), and multiplicatively rescales that engram's store synapses toward a homeostatic set-point
+        # A* = the unit-write readout activity. Weak engrams (a low-DA fact the DA gate halved) are scaled UP to the
+        # functional set-point (the recall-safe FLOOR, now EMERGENT from measured activity, not a host clip); strong
+        # engrams are partially down-regulated by (A*/A_i)**homeo_beta_down (beta_down<1 PRESERVES the relative DA-salience
+        # ORDER while regulating the extreme). The sensed variable is postsynaptic activity; the actuator is the synaptic
+        # weight -> a faithful synaptic-scaling rule, NOT host arithmetic on the DA reading. DEFAULT-OFF (never called) ->
+        # store_conns byte-identical. See research/findings 2026-08-25 (da-encoding substrate scaling).
+        self.homeostatic_scaling = bool(homeostatic_scaling)
+        self.homeo_beta_down = float(homeo_beta_down)    # <1 preserves DA-salience order under down-regulation
+        self.homeo_s_min = float(homeo_s_min)            # cap on the strongest down-scale (a strong engram floor)
+        self.homeo_s_max = float(homeo_s_max)            # cap on the strongest up-scale (a near-dead engram ceiling)
+        self._homeo_scales = None                        # the last applied per-engram scale vector (diagnostic)
         # enable_spiking_cleanup (burndown #1, default OFF = byte-identical = the numpy-CPU + test-oracle path): make
         # the cleanup SELECTION fully on-substrate. The matched FILTER is ALREADY on the co-resident bridge (the
         # complex-synapse `clean` matvec -> the rectified membrane `scores`); the residual host op was the WINNER-PICK
@@ -657,6 +676,90 @@ class OneBrainComposer:
             self._seq_dirty = True     # (shortcut #3) the store changed -> the per-block sequencer drives are stale
             if self._fused:
                 self._fused_dirty = True   # (R1) the store changed -> the per-block FUSED device-resident drives are stale
+
+    # --- Turrigiano homeostatic synaptic scaling on the substrate store (2026-08-25, opt-in, byte-identical-off) ------
+    def _measure_block_readout(self, block_idx):
+        """SENSE an engram's postsynaptic readout activity ON THE SUBSTRATE: kick the block's trigger, resonate, and read
+        the mean |Z| over its D readout neurons (trig+1..trig+D) off the bridge membrane (cp_membrane_potential_v /
+        cp_recovery_variable_u). This is a genuine neural read of the engram's synaptic drive -- CONSTANT for a unit
+        write (independent of the fact's phase pattern) and LINEAR in the encoding strength (a g-scaled block reads g*A).
+        The quantity Turrigiano homeostasis regulates. Read-only w.r.t. the store (restores nothing; the caller owns the
+        store_conns it measured)."""
+        b, Pd, D = self.b, self.period, self.D
+        self._zero_rf_v_u()
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        re = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+        im = np.asarray(to_host(b.cp_recovery_variable_u)).astype(float)
+        idx = slice(trig + 1, trig + 1 + D)
+        return float(np.sqrt(re[idx] * re[idx] + im[idx] * im[idx]).mean())
+
+    def _homeo_setpoint(self):
+        """The homeostatic ACTIVITY SET-POINT A* = the readout activity of a UNIT-magnitude engram (the intrinsic
+        functional level: a unit composite kicked through a unit trigger->readout fan-out). Measured on the substrate
+        from a unit-NORMALIZED reference of block 0's store synapses (so A* is independent of the stored DA distribution
+        -> a tonic/unit fact maps to s=1 -> byte-safe). Temporarily unit-normalizes block 0, resonates, restores."""
+        if not self.store_conns:
+            return 0.0
+        D = self.D
+        saved = list(self.store_conns[0:D])
+        mags = [abs(complex(w)) for (_p, _q, w) in saved]
+        mean_mag = (sum(mags) / len(mags)) if mags else 0.0
+        if mean_mag <= 0.0:
+            return 0.0
+        self.store_conns[0:D] = [(p, q, complex(w) / mean_mag) for (p, q, w) in saved]
+        self._store_dirty = True; self._store_csr = None
+        a_star = self._measure_block_readout(0)
+        self.store_conns[0:D] = saved                              # restore the real (DA-gated) block 0
+        self._store_dirty = True; self._store_csr = None
+        return a_star
+
+    def apply_homeostatic_scaling(self):
+        """TURRIGIANO 2008 multiplicative homeostatic synaptic scaling on the substrate store synapses -- the
+        on-substrate SYNAPTIC realization that REPLACES the host-proxy DA-encoding homeostat. For each stored engram:
+        SENSE its readout activity A_i on the substrate (`_measure_block_readout`), then multiplicatively rescale its
+        store synapses toward the set-point A* (`_homeo_setpoint`):
+          * WEAK engram (A_i <= A*, e.g. a low-DA fact the DA gate wrote at g<1): s = min(s_max, A*/A_i) -> scaled UP to
+            the functional set-point == the recall-safe FLOOR, now EMERGENT from measured activity (no host g_floor clip).
+          * STRONG engram (A_i > A*): s = max(s_min, (A*/A_i)**beta_down), beta_down<1 -> a PARTIAL down-regulation that
+            PRESERVES the relative DA-salience ORDER (all strong engrams keep their ranking) while pulling the extreme
+            toward A* (Turrigiano's runaway-prevention half).
+        The sensed variable is postsynaptic activity; the actuator is the synaptic weight -> a faithful homeostatic
+        synaptic-scaling rule (multiplicative, activity-set-point, relative-strength-preserving), NOT host arithmetic on
+        the DA reading. Rewrites store_conns in place (a real synaptic-weight change), busts the store CSR. Idempotent
+        input-wise (call once after the fact battery is stored). Guarded by the caller (only when self.homeostatic_scaling)
+        -> never called == store byte-identical. Returns the applied per-engram scale vector."""
+        m = len(self.kb)
+        if m == 0 or not self.store_conns:
+            self._homeo_scales = []
+            return []
+        D = self.D
+        a_star = self._homeo_setpoint()
+        scales = []
+        for i in range(m):
+            a_i = self._measure_block_readout(i)
+            if a_i <= 0.0 or a_star <= 0.0:
+                s = 1.0
+            else:
+                ratio = a_star / a_i
+                if ratio >= 1.0:                                  # weak engram -> full homeostatic restoration (floor)
+                    s = min(self.homeo_s_max, ratio)
+                else:                                             # strong engram -> partial, order-preserving down-reg
+                    s = max(self.homeo_s_min, ratio ** self.homeo_beta_down)
+            scales.append(float(s))
+            self.store_conns[i * D:(i + 1) * D] = [
+                (p, q, complex(s) * complex(w)) for (p, q, w) in self.store_conns[i * D:(i + 1) * D]]
+        self._store_dirty = True; self._store_csr = None; self._persistent_dirty = True
+        if getattr(self, "_csr_cache", None) is not None:
+            self._csr_cache = {}
+        if self.integrated_loop:
+            self._seq_dirty = True
+            if getattr(self, "_fused", False):
+                self._fused_dirty = True
+        self._homeo_scales = scales
+        return scales
 
     def _store_composite(self, fillers, roles):
         i = len(self.kb)

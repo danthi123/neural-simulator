@@ -17,20 +17,20 @@
     "da_high": 1.2386777669861797,
     "da_low": 0.04616293556102311,
     "g_high": 2.4773555339723594,
-    "g_low": 0.5,
+    "g_low": 1.0,
     "g_high_gt_g_low": true,
     "recall_content_unchanged_vs_off": true,
     "mechanism_stored_mag_high": 2.4773555339723594,
-    "mechanism_stored_mag_low": 0.5,
-    "mechanism_stored_ratio": 4.954711067944719,
-    "expected_ratio_g_high_over_g_low": 4.954711067944719,
+    "mechanism_stored_mag_low": 1.0,
+    "mechanism_stored_ratio": 2.4773555339723594,
+    "expected_ratio_g_high_over_g_low": 2.4773555339723594,
     "mechanism_stored_trace_differs": true
   },
   "C_lesion_severs": {
     "g_lesion_high": 1.0,
     "g_lesion_low": 1.0,
     "differential_vanishes": true,
-    "differential_live": 1.9773555339723594,
+    "differential_live": 1.4773555339723594,
     "differential_lesion": 0.0,
     "attribution_to_live_DA_read": 1.0
   },
@@ -61,14 +61,14 @@
       "name": "(B) ON, LOAD-BEARING: the live-DA write gain g_high > g_low",
       "ok": true,
       "detail": "measured=True expect=True",
-      "note": "g_high=2.4773555339723594 (DA=1.2386777669861797) > g_low=0.5 (DA=0.04616293556102311)"
+      "note": "g_high=2.4773555339723594 (DA=1.2386777669861797) > g_low=1.0 (DA=0.04616293556102311)"
     },
     {
       "kind": "require",
       "name": "(B) MECHANISM: that g writes a measurably stronger trace on a magnitude store (ratio == g_high/g_low)",
       "ok": true,
       "detail": "measured=True expect=True",
-      "note": "stored |w|: high=2.4773555339723594 low=0.5 ratio=4.954711067944719 vs g-ratio 4.954711067944719"
+      "note": "stored |w|: high=2.4773555339723594 low=1.0 ratio=2.4773555339723594 vs g-ratio 2.4773555339723594"
     },
     {
       "kind": "require",

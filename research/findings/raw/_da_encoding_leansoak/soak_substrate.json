@@ -1,0 +1,1402 @@
+{
+  "runner": "research/runners/_da_encoding_leansoak.py",
+  "coupling": "DA-gated encoding, LEAN production magnitude-store no-regression soak (the default-ON flip gate)",
+  "mode": "substrate_scaling",
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "D": 64,
+    "k_da": 2.0,
+    "da_baseline": 0.5,
+    "battery_m": 9,
+    "k_max": 13,
+    "sigmas": [
+      0.0,
+      0.5,
+      0.75,
+      1.0,
+      1.5,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "vocab": [
+      "apple",
+      "bird",
+      "cat",
+      "chase",
+      "dog",
+      "eat",
+      "grass",
+      "home",
+      "leaf",
+      "river",
+      "see",
+      "seed"
+    ],
+    "facts": [
+      [
+        "dog",
+        "eat",
+        "grass"
+      ],
+      [
+        "cat",
+        "eat",
+        "apple"
+      ],
+      [
+        "bird",
+        "eat",
+        "river"
+      ],
+      [
+        "dog",
+        "chase",
+        "home"
+      ],
+      [
+        "cat",
+        "chase",
+        "seed"
+      ],
+      [
+        "bird",
+        "chase",
+        "leaf"
+      ],
+      [
+        "dog",
+        "see",
+        "cat"
+      ],
+      [
+        "cat",
+        "see",
+        "bird"
+      ],
+      [
+        "bird",
+        "see",
+        "dog"
+      ]
+    ],
+    "da_class": [
+      "high",
+      "low",
+      "tonic",
+      "tonic",
+      "high",
+      "low",
+      "low",
+      "tonic",
+      "high"
+    ],
+    "da_values": {
+      "high": 1.24,
+      "tonic": 0.5,
+      "low": 0.05
+    },
+    "gains": [
+      2.48,
+      0.5,
+      1.0,
+      1.0,
+      2.48,
+      0.5,
+      0.5,
+      1.0,
+      2.48
+    ],
+    "gain_mode": "substrate_scaling",
+    "unstored_moat_cue": [
+      "leaf",
+      "eat"
+    ],
+    "substrate_scaling": {
+      "beta_down": 0.25,
+      "s_min": 0.34,
+      "s_max": 4.0,
+      "raw_da_gains": [
+        2.48,
+        0.5,
+        1.0,
+        1.0,
+        2.48,
+        0.5,
+        0.5,
+        1.0,
+        2.48
+      ],
+      "applied_scales": [
+        0.7968691895485451,
+        2.000000053740549,
+        0.9999999984324365,
+        1.0000000293249347,
+        0.796869200660543,
+        2.000000141508214,
+        2.000000009511365,
+        0.9999999968565263,
+        0.7968691985407294
+      ],
+      "effective_on_gains": [
+        1.9762,
+        1.0,
+        1.0,
+        1.0,
+        1.9762,
+        1.0,
+        1.0,
+        1.0,
+        1.9762
+      ]
+    }
+  },
+  "VERDICT": "GO",
+  "status": "GO",
+  "calibration": {
+    "instrument_bites": true,
+    "knee_sigma": 0.5,
+    "aggregate_off_recall_curve": {
+      "0": 54,
+      "0.5": 52,
+      "0.75": 43,
+      "1": 33,
+      "1.5": 13,
+      "2": 8,
+      "3": 4,
+      "4": 2,
+      "6": 2
+    },
+    "total_possible_per_sigma": 54
+  },
+  "outcome": {
+    "go_clean_zero_regression": true,
+    "go_stress_net_nonnegative": true,
+    "clean_regressions_total": 0,
+    "stress_net_violations": 2,
+    "stress_net_genuine_violations": 0,
+    "confab_off_total": 4,
+    "first_regression_sigma": 4.0
+  },
+  "preconditions_summary": {
+    "instrument_bites": true,
+    "derivation_ok": true,
+    "mechanism_scales_all": true,
+    "moat_introduced_total": 0,
+    "moat_baseline_total": 1
+  },
+  "derivation_cross_check": {
+    "seed": 42,
+    "n_conns_derived": 576,
+    "n_conns_real": 576,
+    "same_length": true,
+    "max_abs_weight_diff": 0.0,
+    "byte_equal": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.9762356235015588,
+        0.999999994456669,
+        1.000000011777029,
+        0.9999999988053043,
+        1.9762355990722966,
+        1.000000052367218,
+        0.9999999939776597,
+        0.9999999986989911,
+        1.9762356407222033
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 7,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 7,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 5,
+          "recall_on": 5,
+          "of": 9,
+          "recall_off_genuine": 5,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 4,
+          "recall_on": 5,
+          "of": 9,
+          "recall_off_genuine": 4,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 2,
+          "recall_on": 3,
+          "of": 9,
+          "recall_off_genuine": 2,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 1,
+          "recall_on": 2,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 0,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.976235608510299,
+        0.9999999912723105,
+        0.9999999862040012,
+        1.0000000432161913,
+        1.9762356449512044,
+        1.0000000054283864,
+        1.0000000159436995,
+        1.0000000601538195,
+        1.9762356139397395
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 7,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 7,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 4,
+          "recall_on": 6,
+          "of": 9,
+          "recall_off_genuine": 4,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 2,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 1,
+          "recall_on": 3,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 2,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 1,
+          "recall_on": 2,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 1,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 1,
+          "confab_off_idx": [
+            6
+          ],
+          "n_regressed": 1,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [
+            6
+          ],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.9762356192725417,
+        0.9999999761189275,
+        1.0000000183110807,
+        1.0000000133745675,
+        1.9762356026136292,
+        0.9999999804443862,
+        1.0000000335911807,
+        0.9999999914692936,
+        1.9762355952265516
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 8,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 8,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 8,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 8,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 3,
+          "recall_on": 6,
+          "of": 9,
+          "recall_off_genuine": 3,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 3,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            4,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 1,
+          "recall_on": 4,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 3,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            4,
+            8
+          ],
+          "moat_off": false,
+          "moat_on": false
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 1,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.9762355927852142,
+        0.9999999885803961,
+        1.0000000260453568,
+        1.0000000596013194,
+        1.9762355807391252,
+        1.0000000226422674,
+        1.0000000079700728,
+        1.0000000693792697,
+        1.9762355636118607
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 7,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 7,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 2,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 4,
+          "recall_on": 6,
+          "of": 9,
+          "recall_off_genuine": 4,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 2,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 0,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 0,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.9762356054882737,
+        0.9999999877528156,
+        0.9999999964739335,
+        0.9999999868354114,
+        1.9762355901616093,
+        0.9999999823280553,
+        0.9999999973879188,
+        1.0000000020648392,
+        1.9762356237786793
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 8,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 8,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 7,
+          "recall_on": 7,
+          "of": 9,
+          "recall_off_genuine": 7,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 3,
+          "recall_on": 6,
+          "of": 9,
+          "recall_off_genuine": 3,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 3,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            4,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 2,
+          "recall_on": 5,
+          "of": 9,
+          "recall_off_genuine": 2,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 3,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            4,
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 1,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 1,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 0,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "off_block_mags": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "on_block_mags": [
+        1.976235590080392,
+        1.0000000268702744,
+        0.9999999984324364,
+        1.0000000293249347,
+        1.9762356176381464,
+        1.0000000707541068,
+        1.0000000047556823,
+        0.9999999968565263,
+        1.9762356123810088
+      ],
+      "sweep": [
+        {
+          "sigma": 0.0,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.5,
+          "recall_off": 9,
+          "recall_on": 9,
+          "of": 9,
+          "recall_off_genuine": 9,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 0.75,
+          "recall_off": 8,
+          "recall_on": 8,
+          "of": 9,
+          "recall_off_genuine": 8,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.0,
+          "recall_off": 6,
+          "recall_on": 7,
+          "of": 9,
+          "recall_off_genuine": 6,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            8
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 1.5,
+          "recall_off": 4,
+          "recall_on": 5,
+          "of": 9,
+          "recall_off_genuine": 4,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 1,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 2.0,
+          "recall_off": 3,
+          "recall_on": 5,
+          "of": 9,
+          "recall_off_genuine": 3,
+          "n_confab_off": 0,
+          "confab_off_idx": [],
+          "n_regressed": 0,
+          "n_improved": 2,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [
+            0,
+            4
+          ],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 3.0,
+          "recall_off": 2,
+          "recall_on": 2,
+          "of": 9,
+          "recall_off_genuine": 1,
+          "n_confab_off": 1,
+          "confab_off_idx": [
+            0
+          ],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 4.0,
+          "recall_off": 1,
+          "recall_on": 0,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 1,
+          "confab_off_idx": [
+            0
+          ],
+          "n_regressed": 1,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [
+            0
+          ],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        },
+        {
+          "sigma": 6.0,
+          "recall_off": 1,
+          "recall_on": 1,
+          "of": 9,
+          "recall_off_genuine": 0,
+          "n_confab_off": 1,
+          "confab_off_idx": [
+            0
+          ],
+          "n_regressed": 0,
+          "n_improved": 0,
+          "n_regressed_genuine": 0,
+          "regressed_genuine_idx": [],
+          "regressed_idx": [],
+          "improved_idx": [],
+          "moat_off": true,
+          "moat_on": true
+        }
+      ]
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "INSTRUMENT BITES: OFF-arm recall degrades below full somewhere on the swept sigma grid (else the no-regression test is vacuous -- widen --sigmas)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "calibrated knee sigma=0.5; aggregate OFF recall curve (of 54) = {'0': 54, '0.5': 52, '0.75': 43, '1': 33, '1.5': 13, '2': 8, '3': 4, '4': 2, '6': 2}"
+    },
+    {
+      "kind": "require",
+      "name": "DERIVATION VALID: the RAW-gate + substrate-scaled ON arm is byte-equal to a REAL from-scratch encoding_gain_fn + apply_homeostatic_scaling build (seed 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "max|dw|=0.0"
+    },
+    {
+      "kind": "require",
+      "name": "MECHANISM (substrate scaling): every engram left at/above the recall-safe floor (0.9*unit) AND the DA-salience ORDER survives (min high-DA |w| > max tonic |w|) -- the on-substrate Turrigiano rule floors weak engrams to the set-point + regulates strong ones while preserving order.",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "applied per-engram scales (seed-independent) = [0.797, 2.0, 1.0, 1.0, 0.797, 2.0, 2.0, 1.0, 0.797]"
+    },
+    {
+      "kind": "require",
+      "name": "MOAT (encoding-introduced): the ON arm never leaks an unstored cue where the byte-identical OFF baseline abstains (encoding never MANUFACTURES a fact). Control-arm OFF leaks are baseline read-floor artifacts, reported + excluded.",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": "encoding-introduced leaks=0 (GO requires 0); baseline read-floor artifacts (OFF arm, encoding disabled)=1 (instrument property, excluded)"
+    },
+    {
+      "kind": "require",
+      "name": "CLEAN read (sigma=0): zero facts regress OFF->ON on every seed (magnitude-invariant)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": "the dominant production case for a modest fact store: a phase read is magnitude-invariant"
+    },
+    {
+      "kind": "require",
+      "name": "STRESS net (GENUINE): recall_ON >= the target-attributed OFF recall at every swept sigma (salience redistribution never loses a fact OFF recalls via its OWN engram)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": "RAW stress-net violations (incl. foreign-block confabulations)=2; OFF confabulation recalls excluded=4 (a foreign engram's damaged decode coincidentally matched the cue -- ON abstaining there is the moat working, not a regression)"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "the spiking-cleanup read (enable_spiking_cleanup=False for speed)",
+      "why": "the magnitude sensitivity lives in the substrate store's |w| + the RF read floor, exercised by the host read-damage sweep (the I-7-b instrument); the spiking cleanup adds intrinsic noise of the same KIND (a further read-stress point on this sweep), not a different mechanism"
+    }
+  ],
+  "undefined_reasons": []
+}
