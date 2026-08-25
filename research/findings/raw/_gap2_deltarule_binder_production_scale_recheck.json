@@ -1,0 +1,45 @@
+{
+  "runner": "research/runners/_gap2_spiking_deltarule_binder_derisk.py",
+  "backend": "numpy",
+  "note": "unmodified runner; two invocations re-de-risking the 2026-07-21 finding's audit-flagged open question (delta-vs-additive) at production-representative scale. SIM_BACKEND=numpy explicitly (small-scale RF substrate, 256 neurons; no GPU needed at this size).",
+  "six_seed_formal": {
+    "cmd": "python -m research.runners._gap2_spiking_deltarule_binder_derisk --seeds 42 43 44 100 101 102 --pmax 8 --n-facts 20 --cap 788",
+    "seeds": [42, 43, 44, 100, 101, 102],
+    "codes": 788,
+    "D": 128,
+    "by_P": {
+      "1": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "2": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "3": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "4": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "5": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "6": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "7": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000},
+      "8": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000, "decorrelated_ctrl": 1.000}
+    }
+  },
+  "single_seed_wide_probe": {
+    "note": "scoping probe, seed 42 only, n_facts=5-8 per point, cap=788; NOT a 6-seed artifact -- supporting context for the decision, not a standalone GO/NO-GO claim.",
+    "by_P": {
+      "8": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000},
+      "12": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000},
+      "16": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000},
+      "24": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000},
+      "32": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000},
+      "48": {"delta": 1.000, "additive": 1.000, "permuted_role": 0.000}
+    }
+  },
+  "production_role_count_check": {
+    "source": "bridges/developed/scale787/day_33/facts.json",
+    "n_facts": 404,
+    "role_count_histogram": {"4": 404},
+    "note": "every deployed fact has exactly 4 populated roles (agent, action, patient, polarity); none use attribute/attribute2 in this bundle."
+  },
+  "conclusion": "delta is not shown load-bearing over additive at any tested P (1 through 48); production's real per-fact P is 4, so the tested range covers it with a 12x margin. the standing re-scoped result (spiking-read reaches the fixed-FHRR ceiling; permuted-role collapses to chance) is unchanged; the runner's own delta>additive gate clause stays false throughout.",
+  "preconditions": [
+    {"name": "codes_at_full_corpus_scale", "measured": 788, "expect": 788, "ok": true, "note": "audit-corrected from the original --cap 300"},
+    {"name": "permuted_role_control_at_chance", "measured": 0.000, "expect": 0.000, "ok": true, "note": "role-addressing anti-cheat, both invocations, every P"},
+    {"name": "seed_count_formal_run", "measured": 6, "expect": 6, "ok": true},
+    {"name": "production_P_covered_by_tested_range", "measured": 4, "expect": 4, "ok": true, "note": "production's real per-fact role count (measured from the live corpus) falls inside the tested P=1..48 range"}
+  ]
+}
