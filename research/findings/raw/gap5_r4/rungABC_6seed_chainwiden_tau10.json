@@ -1,0 +1,1374 @@
+{
+  "probe": "gap5_dg_detonator_ignition",
+  "branch": "B (targeted DG-detonator ignition)",
+  "GO": false,
+  "n_go": 0,
+  "n_symmetric_ignites": 5,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "decoupled_cfg": {
+    "apical_R": 50.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "apical_kir_g": 3.0,
+    "assembly_frac": 0.12,
+    "bistable": true,
+    "btsp_lr": 0.05,
+    "ca3_density": 0.05,
+    "ca3_fb_inhib": 20.0,
+    "chain_bdsp_widen": true,
+    "chain_btsp_lr": 0.08,
+    "chain_elig_tau_ms": 10.0,
+    "chain_fwd": 24,
+    "chain_reset_steps": 12,
+    "chain_rev": 0,
+    "chain_rule": "btsp",
+    "coact_thresh": 0.02,
+    "drive_steps": 48,
+    "enable_ou": false,
+    "encode_btsp": true,
+    "encode_btsp_hetero": 0.0,
+    "encode_ca3w": 0.5,
+    "encode_drive": 3000.0,
+    "encode_plateau_pA": 250.0,
+    "freeze_between_refresh": true,
+    "hebb_max": 300.0,
+    "k_thresh": 18.0,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "nmda_recurrent": false,
+    "no_sync": true,
+    "overlap_draw": false,
+    "plateau_self_regen": 0.15,
+    "plateau_strength": 120.0,
+    "plateau_v_hold": -35.0,
+    "rank1_encode": true,
+    "recall_k_thresh": 40.0,
+    "reset_steps": 15,
+    "sel_inhib_spare": 0.0,
+    "selective_inhib": true,
+    "seq_win_steps": 16,
+    "structural_sep": 1,
+    "within_events": 30,
+    "within_refresh": 8
+  },
+  "detonator_cfg": {
+    "det_frac": 0.15,
+    "det_pa": [
+      1500.0,
+      3000.0,
+      6000.0
+    ],
+    "det_dur": 15,
+    "det_period": 150,
+    "det_settle": 50,
+    "self_regen_read": 0.0,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "apical_gc_read": null,
+    "fb_read": null,
+    "fb_drive": 10.0,
+    "chain_btsp_lr": 0.08,
+    "assembly_idx": 0,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "rest_steps": 1500,
+    "window": 5,
+    "ev_floor": 0.5,
+    "ev_k": 4.0,
+    "min_frac": 0.3,
+    "active_frac": 0.12,
+    "onset_frac": 0.08
+  },
+  "elapsed_seconds": 1130.5,
+  "verdict": "HONEST NEGATIVE 0/6 -- the DG-detonator IGNITES on this substrate (symmetric positive control fires 5/6) but the DECOUPLED store did NOT cleanly ignite-discretely-AND-transition-forward (member_frac 0.159 duty 0.001 forward_frac 0.000 vs chance 0.000). => scopes the residual: the sparse detonator does not complete a single within~206 assembly. Per THE LAW: RESEARCH GATE the next rung (sharper within-attractor with feedback inhibition so ONE assembly bursts discretely; or tune det_frac/det_pa/self_regen_read/d_abs); a partial on the targeted-ignition rung is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode_decoupled": {
+        "w_within": 149.920166015625,
+        "w_adj_fwd": 53.83331298828125,
+        "w_adj_rev": 5.730513572692871,
+        "ratio_adj": 9.394151554724267,
+        "n_between_fwd": 8494,
+        "n_between_rev": 8547,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.13194444444444445,
+          "random_frac": 0.3890625,
+          "cross_frac": 0.09537037037037037,
+          "specificity": -0.25711805555555556,
+          "duty_cycle": 0.0033333333333333335,
+          "pop_rate": 0.05811366666666667,
+          "assembly_rest_frac": 0.2319277777777778,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.44911193847656,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.10346666723489761
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.045665,
+          "assembly_rest_frac": 0.21438888888888888,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45197296142578,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.41295069456100464
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.042965333333333335,
+          "assembly_rest_frac": 0.20525,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.4462890625,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.323285311460495
+        }
+      },
+      "best_det_pa": 3000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.4976925551891327,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8690,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.14722222222222223,
+        "random_frac": 0.523611111111111
+      },
+      "encode_symmetric": {
+        "w_within": 28.371042251586914,
+        "w_adj_fwd": 26.8201847076416,
+        "w_adj_rev": 31.63425636291504,
+        "ratio_adj": 0.8478209318390366,
+        "n_between_fwd": 8494,
+        "n_between_rev": 8547,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 28.371042251586914,
+        "w_adj_fwd": 26.8201847076416,
+        "w_adj_rev": 31.63425636291504,
+        "n_events": 7,
+        "n_specific": 0,
+        "member_frac": 0.09001546072974644,
+        "cross_frac": 0.011004947433518862,
+        "duty_cycle": 0.03266666666666666,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 1,
+        "per_asm_active": [
+          6,
+          1,
+          1
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.004666666666666667,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.14166666666666666,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": false,
+        "assembly_specific": false,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": true,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "encode_decoupled": {
+        "w_within": 162.60243225097656,
+        "w_adj_fwd": 68.9264907836914,
+        "w_adj_rev": 5.7895188331604,
+        "ratio_adj": 11.905391928065566,
+        "n_between_fwd": 8590,
+        "n_between_rev": 8641,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.125,
+          "random_frac": 0.4479166666666667,
+          "cross_frac": 0.0625,
+          "specificity": -0.3229166666666667,
+          "duty_cycle": 0.002,
+          "pop_rate": 0.06569333333333333,
+          "assembly_rest_frac": 0.22930277777777777,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.46119689941406,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.10616666823625565
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.04781033333333333,
+          "assembly_rest_frac": 0.18322222222222223,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.46029663085938,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.43891197443008423
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.05460433333333334,
+          "assembly_rest_frac": 0.21368055555555554,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45135498046875,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.32247331738471985
+        }
+      },
+      "best_det_pa": 3000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.5006234049797058,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8589,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "encode_symmetric": {
+        "w_within": 32.56032943725586,
+        "w_adj_fwd": 29.997283935546875,
+        "w_adj_rev": 32.08878707885742,
+        "ratio_adj": 0.9348213711484099,
+        "n_between_fwd": 8590,
+        "n_between_rev": 8641,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 32.56032943725586,
+        "w_adj_fwd": 29.997283935546875,
+        "w_adj_rev": 32.08878707885742,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "cross_frac": 0.0,
+        "duty_cycle": 0.0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.0033333333333333335,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": false,
+        "assembly_specific": false,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": false,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "encode_decoupled": {
+        "w_within": 170.71920776367188,
+        "w_adj_fwd": 53.91999435424805,
+        "w_adj_rev": 5.773951530456543,
+        "ratio_adj": 9.338490991798233,
+        "n_between_fwd": 8461,
+        "n_between_rev": 8799,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.13035714285714287,
+          "random_frac": 0.3960565476190476,
+          "cross_frac": 0.0744047619047619,
+          "specificity": -0.2656994047619048,
+          "duty_cycle": 0.0026666666666666666,
+          "pop_rate": 0.06325233333333333,
+          "assembly_rest_frac": 0.22794444444444442,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.4563980102539,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.09745733439922333
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.04301666666666667,
+          "assembly_rest_frac": 0.18271111111111113,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.46244812011719,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.4460960328578949
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.05010633333333333,
+          "assembly_rest_frac": 0.1839111111111111,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45674896240234,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.32209065556526184
+        }
+      },
+      "best_det_pa": 3000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.4987054467201233,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8679,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "encode_symmetric": {
+        "w_within": 27.243511199951172,
+        "w_adj_fwd": 24.130634307861328,
+        "w_adj_rev": 27.411027908325195,
+        "ratio_adj": 0.8803257721149685,
+        "n_between_fwd": 8461,
+        "n_between_rev": 8799,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 27.243511199951172,
+        "w_adj_fwd": 24.130634307861328,
+        "w_adj_rev": 27.411027908325195,
+        "n_events": 3,
+        "n_specific": 0,
+        "member_frac": 0.10434854497354497,
+        "cross_frac": 0.03154761904761905,
+        "duty_cycle": 0.012666666666666666,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "n_multi": 1,
+        "per_asm_active": [
+          1,
+          1,
+          0
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.004666666666666667,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.11527777777777778,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": false,
+        "assembly_specific": false,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": true,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "encode_decoupled": {
+        "w_within": 181.09310913085938,
+        "w_adj_fwd": 50.2060661315918,
+        "w_adj_rev": 5.636521816253662,
+        "ratio_adj": 8.907277886659804,
+        "n_between_fwd": 8641,
+        "n_between_rev": 8621,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.08452380952380951,
+          "random_frac": 0.42864583333333334,
+          "cross_frac": 0.12321428571428572,
+          "specificity": -0.34412202380952384,
+          "duty_cycle": 0.0026666666666666666,
+          "pop_rate": 0.064978,
+          "assembly_rest_frac": 0.22179722222222223,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -79.06898498535156,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.1024506613612175
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.051603,
+          "assembly_rest_frac": 0.1884333333333333,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45643615722656,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.4433133006095886
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.05325966666666667,
+          "assembly_rest_frac": 0.206975,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45527648925781,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.3225879967212677
+        }
+      },
+      "best_det_pa": 3000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.5018243789672852,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8693,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.1361111111111111,
+        "random_frac": 0.5282986111111111
+      },
+      "encode_symmetric": {
+        "w_within": 33.246734619140625,
+        "w_adj_fwd": 32.334835052490234,
+        "w_adj_rev": 34.06614303588867,
+        "ratio_adj": 0.9491780451466283,
+        "n_between_fwd": 8641,
+        "n_between_rev": 8621,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 33.246734619140625,
+        "w_adj_fwd": 32.334835052490234,
+        "w_adj_rev": 34.06614303588867,
+        "n_events": 12,
+        "n_specific": 0,
+        "member_frac": 0.06571881767597729,
+        "cross_frac": 0.044169651572453804,
+        "duty_cycle": 0.12333333333333334,
+        "forward_frac": 0.25,
+        "reverse_frac": 0.0,
+        "n_multi": 8,
+        "per_asm_active": [
+          8,
+          8,
+          8
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.004666666666666667,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.11333333333333333,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": false,
+        "assembly_specific": false,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": true,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "encode_decoupled": {
+        "w_within": 151.4998779296875,
+        "w_adj_fwd": 55.397064208984375,
+        "w_adj_rev": 5.82112979888916,
+        "ratio_adj": 9.51654852629394,
+        "n_between_fwd": 8758,
+        "n_between_rev": 8545,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.13472222222222224,
+          "random_frac": 0.40069444444444446,
+          "cross_frac": 0.08842592592592592,
+          "specificity": -0.2659722222222222,
+          "duty_cycle": 0.0033333333333333335,
+          "pop_rate": 0.05867033333333333,
+          "assembly_rest_frac": 0.22716944444444442,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45294952392578,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.09927065670490265
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 1,
+          "member_frac": 0.44242424242424244,
+          "random_frac": 0.020265151515151514,
+          "cross_frac": 0.41174242424242424,
+          "specificity": 0.42215909090909093,
+          "duty_cycle": 0.004,
+          "pop_rate": 0.04583633333333333,
+          "assembly_rest_frac": 0.20226944444444445,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.4557876586914,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.42311331629753113
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 1,
+          "member_frac": 0.4765151515151515,
+          "random_frac": 0.025568181818181816,
+          "cross_frac": 0.41628787878787876,
+          "specificity": 0.4509469696969697,
+          "duty_cycle": 0.004,
+          "pop_rate": 0.045043999999999994,
+          "assembly_rest_frac": 0.20172222222222222,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.44027709960938,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.32265999913215637
+        }
+      },
+      "best_det_pa": 6000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.4997360408306122,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8702,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.24722222222222223,
+        "random_frac": 0.5375
+      },
+      "encode_symmetric": {
+        "w_within": 29.89733123779297,
+        "w_adj_fwd": 26.856481552124023,
+        "w_adj_rev": 30.478910446166992,
+        "ratio_adj": 0.8811496591900475,
+        "n_between_fwd": 8758,
+        "n_between_rev": 8545,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 29.89733123779297,
+        "w_adj_fwd": 26.856481552124023,
+        "w_adj_rev": 30.478910446166992,
+        "n_events": 2,
+        "n_specific": 0,
+        "member_frac": 0.1346861471861472,
+        "cross_frac": 0.052326839826839826,
+        "duty_cycle": 0.006666666666666667,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.004666666666666667,
+        "forward_frac": 1.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.17083333333333334,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": true,
+        "assembly_specific": true,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": true,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "encode_decoupled": {
+        "w_within": 149.0419464111328,
+        "w_adj_fwd": 55.14817428588867,
+        "w_adj_rev": 5.730880260467529,
+        "ratio_adj": 9.622984913209415,
+        "n_between_fwd": 8467,
+        "n_between_rev": 8754,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 0,
+          "member_frac": 0.11527777777777778,
+          "random_frac": 0.39959490740740744,
+          "cross_frac": 0.08101851851851852,
+          "specificity": -0.28431712962962963,
+          "duty_cycle": 0.0033333333333333335,
+          "pop_rate": 0.059366333333333327,
+          "assembly_rest_frac": 0.2317972222222222,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.46232604980469,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.09805066883563995
+        },
+        "det_pa=3000": {
+          "det_pa": 3000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.04002766666666667,
+          "assembly_rest_frac": 0.19531944444444443,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.46366882324219,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.43656933307647705
+        },
+        "det_pa=6000": {
+          "det_pa": 6000.0,
+          "k_det": 36,
+          "n_detonations": 10,
+          "n_events": 1,
+          "n_specific": 1,
+          "member_frac": 0.4766666666666667,
+          "random_frac": 0.031041666666666665,
+          "cross_frac": 0.44333333333333336,
+          "specificity": 0.445625,
+          "duty_cycle": 0.002,
+          "pop_rate": 0.044162,
+          "assembly_rest_frac": 0.19369444444444445,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.4531478881836,
+          "apical_n_latched": 0,
+          "n_fb_set": 0,
+          "fb_read": null,
+          "basket_mean": 0.32207730412483215
+        }
+      },
+      "best_det_pa": 6000.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 36,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.5011144876480103,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 8654,
+        "n_events": 1,
+        "n_specific": 0,
+        "member_frac": 0.16999999999999998,
+        "random_frac": 0.48802083333333335
+      },
+      "encode_symmetric": {
+        "w_within": 27.173988342285156,
+        "w_adj_fwd": 28.473594665527344,
+        "w_adj_rev": 25.94455337524414,
+        "ratio_adj": 1.097478698272616,
+        "n_between_fwd": 8467,
+        "n_between_rev": 8754,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 27.173988342285156,
+        "w_adj_fwd": 28.473594665527344,
+        "w_adj_rev": 25.94455337524414,
+        "n_events": 10,
+        "n_specific": 0,
+        "member_frac": 0.08835683760683762,
+        "cross_frac": 0.010712121212121213,
+        "duty_cycle": 0.04933333333333333,
+        "forward_frac": 0.0,
+        "reverse_frac": 1.0,
+        "n_multi": 1,
+        "per_asm_active": [
+          2,
+          1,
+          0
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 1,
+        "duty_cycle": 0.004666666666666667,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          1,
+          1,
+          1
+        ]
+      },
+      "reverse_detonation": {
+        "det_assembly": 2,
+        "n_events": 4,
+        "n_specific": 0,
+        "member_frac": 0.13253968253968254,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "upstream_active": 0,
+        "weights_frozen": true
+      },
+      "checks": {
+        "discrete_ignition": true,
+        "assembly_specific": true,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": true,
+        "reverse_control_clean": true,
+        "cleaner_than_symmetric": false
+      },
+      "seed_go": false
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "substrate_byte_reproducible",
+      "ok": true,
+      "detail": "deterministic_transpose_matvec ON in _build; TestGap5StoreByteReproducible passes"
+    },
+    {
+      "name": "plasticity_frozen_across_every_readout",
+      "ok": true,
+      "detail": "weights byte-unchanged across rest, all 6 seeds"
+    },
+    {
+      "name": "dendrite_reset_at_rest_start",
+      "ok": true,
+      "detail": "no latched apical plateau at rest-start, all 6 seeds"
+    },
+    {
+      "name": "no_detonator_control_silent",
+      "ok": true,
+      "detail": "acid: detonator OFF => silent, all 6 seeds"
+    },
+    {
+      "name": "readout_can_ignite_on_this_substrate",
+      "ok": true,
+      "detail": "symmetric positive control ignites 5/6 => the NO-GO is a real negative, not UNDEFINED (the machinery ignites)"
+    }
+  ]
+}

@@ -259,7 +259,7 @@ def _configure_ou(bridge, sigma, seed):
 # event detection: DISCRETE spontaneous reactivation events, scored for assembly-specificity + duty cycle.
 # ----------------------------------------------------------------------------------------------------------------------
 def _detect_events(F, assembly_local, seed, other_local=None, W=5, ev_floor=0.5, ev_k=4.0, n_rand=8, min_frac=0.30,
-                   ev_mean_smooth=False):
+                   ev_mean_smooth=False, ev_baseline_q=None):
     """F: bool [T, n_ca3] rest-phase CA3 firing. assembly_local: local CA3 positions of the assembly UNDER TEST.
     Events = windows where the SMOOTHED total CA3 co-firing crosses a threshold (unbiased: detected on ALL CA3, then
     classified). Per event: member_frac (mean per-step assembly-active fraction), random-set frac (chance / permuted-
@@ -285,7 +285,12 @@ def _detect_events(F, assembly_local, seed, other_local=None, W=5, ev_floor=0.5,
 
     _kern = (np.ones(W) / float(W)) if ev_mean_smooth else np.ones(W)
     S = np.convolve(pop, _kern, mode="same")
-    med = float(np.median(S)); mad = float(np.median(np.abs(S - med))) * 1.4826
+    # RUNG-B root fix: robust baseline from the quietest ev_baseline_q fraction (else whole trace = byte-identical) so a
+    # sustained/repeated readout does not inflate med+ev_k*mad and mask discrete bursts.
+    _base = S[S <= np.quantile(S, float(ev_baseline_q))] if (ev_baseline_q is not None and S.size) else S
+    if _base.size == 0:
+        _base = S
+    med = float(np.median(_base)); mad = float(np.median(np.abs(_base - med))) * 1.4826
     thr = max(med + ev_k * mad, ev_floor * asize)
     in_event = S > thr
 

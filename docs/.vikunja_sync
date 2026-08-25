@@ -59,3 +59,4 @@ duplicate pre-flip tasks that were superseded by their already-done flip counter
 (#96, #100, #101, #103, #113, #115, #117, #118, #119, #125 -> superseded by #71/#114/#116/#123/#124/
 #126 respectively). Restructured THIS FILE to append-only (see header above) to end the recurring
 merge-conflict class the two entries above were each hit by.
+- 2026-08-25 (gap5 #134): a1-exclusion RESOLVED — a0<a1<a2 strict forward onset 6/6, store-driven, reverse-clean (clamp-widen + gamma-window); shipped-detector instrument-failure fixed (ev_baseline_q). NO-GO on the strict bar; wall relocated encode->READ discreteness (duty 0.34-0.77). #139 next-rung (read discreteness) created. commit eff9aa70.

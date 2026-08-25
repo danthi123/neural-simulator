@@ -279,16 +279,18 @@ def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt,
 
 
 def _score(F, assemblies_local, assembly_local_by_idx, aidx, seed, W, ev_floor, ev_k, min_frac, active_frac, onset_frac,
-           ev_mean_smooth=False):
+           ev_mean_smooth=False, ev_baseline_q=None):
     """Score BOTH the single-assembly discrete-ignition (via _detect_events on assembly aidx, with the NEXT assembly as
     the cross-assembly co-fire reference) AND the forward-transition order (via _detect_sequence_events).
-    gap#5 RUNG-B: ev_mean_smooth => transient-burst detector (mean-rate smoothing). Default False = byte-identical."""
+    gap#5 RUNG-B: ev_mean_smooth => transient-burst (mean-rate) smoothing; ev_baseline_q => baseline-threshold (robust
+    med/mad from the quiet fraction only, the root fix for the signal-inflated threshold). Default = byte-identical."""
     a_test = assembly_local_by_idx[aidx]
     a_other = assembly_local_by_idx[(aidx + 1) % len(assembly_local_by_idx)] if len(assembly_local_by_idx) > 1 else None
     ev = _detect_events(F, a_test, seed, other_local=a_other, W=W, ev_floor=ev_floor, ev_k=ev_k, min_frac=min_frac,
-                        ev_mean_smooth=ev_mean_smooth)
+                        ev_mean_smooth=ev_mean_smooth, ev_baseline_q=ev_baseline_q)
     seq = _detect_sequence_events(F, assemblies_local, W=W, ev_floor=ev_floor, ev_k=ev_k,
-                                  active_frac=active_frac, onset_frac=onset_frac, ev_mean_smooth=ev_mean_smooth)
+                                  active_frac=active_frac, onset_frac=onset_frac, ev_mean_smooth=ev_mean_smooth,
+                                  ev_baseline_q=ev_baseline_q)
     return ev, seq
 
 
@@ -312,6 +314,7 @@ def one_seed(seed, cfg, a):
     fb_read = a.fb_read
     fb_drive = a.fb_drive
     evms = bool(getattr(a, "detector_transient", False))   # RUNG-B: transient-burst (mean-rate) event detector
+    evbq = getattr(a, "ev_baseline_q", None)               # RUNG-B root fix: baseline-quantile threshold (de-inflate med/mad)
 
     def _rd(prep, det_spec, verbose=False):
         return _rest_and_detonate(prep, det_spec, a.rest_steps, seed, self_regen_read, adapt=True, d_abs=d_abs,
@@ -331,7 +334,7 @@ def one_seed(seed, cfg, a):
     best_F = None
     for pa in a.det_pa:
         r = _rd(prep, ("assembly", aidx, det_frac, pa, det_dur), verbose=(best_pa is None))
-        ev, seq = _score(r["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+        ev, seq = _score(r["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
         rec = dict(det_pa=pa, k_det=r["k_det"], n_detonations=r["n_detonations"],
                    n_events=ev["n_events"], n_specific=ev["n_specific"], member_frac=ev["member_frac"],
                    random_frac=ev["random_frac"], cross_frac=ev["cross_frac"], specificity=ev["specificity"],
@@ -358,7 +361,7 @@ def one_seed(seed, cfg, a):
 
     # -- CONTROL 1: NO-DETONATOR (acid) -- same frozen bridge, detonator OFF -> MUST be SILENT (the detonator is the source)
     r_nd = _rd(prep, ("none",))
-    nd_ev, _ = _score(r_nd["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+    nd_ev, _ = _score(r_nd["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["no_detonator"] = dict(n_events=nd_ev["n_events"], n_specific=nd_ev["n_specific"],
                                assembly_rest_frac=nd_ev["assembly_rest_frac"], pop_rate=nd_ev["pop_rate"],
                                duty_cycle=nd_ev["duty_cycle"], weights_frozen=r_nd["weights_frozen"])
@@ -372,7 +375,7 @@ def one_seed(seed, cfg, a):
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                                det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     shd_ev, shd_seq = _score(r_shd["F"], prep_shd["assemblies_local"], prep_shd["assemblies_local"], aidx, seed,
-                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["shuffled_detonator"] = dict(k_det=r_shd["k_det"], n_events=shd_ev["n_events"], n_specific=shd_ev["n_specific"],
                                      member_frac=shd_ev["member_frac"], random_frac=shd_ev["random_frac"],
                                      specificity=shd_ev["specificity"], forward_frac=shd_seq["forward_frac"])
@@ -386,7 +389,7 @@ def one_seed(seed, cfg, a):
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     ne_ev, _ = _score(r_ne["F"], prep_ne["assemblies_local"], prep_ne["assemblies_local"], aidx, seed,
-                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["no_encode"] = dict(w_within=prep_ne["w_within"], n_events=ne_ev["n_events"], n_specific=ne_ev["n_specific"],
                             member_frac=ne_ev["member_frac"], random_frac=ne_ev["random_frac"])
     print(f"  [seed {seed}] NO-ENCODE (w_within={prep_ne['w_within']:.2f}): ev={ne_ev['n_events']} "
@@ -401,7 +404,7 @@ def one_seed(seed, cfg, a):
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sw_ev, _ = _score(r_sw["F"], prep_sw["assemblies_local"], prep_sw["assemblies_local"], aidx, seed,
-                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["shuffled_within"] = dict(n_within_shuffled=n_sw, n_events=sw_ev["n_events"], n_specific=sw_ev["n_specific"],
                                   member_frac=sw_ev["member_frac"], random_frac=sw_ev["random_frac"])
     print(f"  [seed {seed}] SHUFFLED-WITHIN ({n_sw} edges): ev={sw_ev['n_events']} spec={sw_ev['n_specific']} "
@@ -417,7 +420,7 @@ def one_seed(seed, cfg, a):
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                                det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sym_ev, sym_seq = _score(r_sym["F"], prep_sym["assemblies_local"], prep_sym["assemblies_local"], aidx, seed,
-                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["symmetric_readout"] = dict(w_within=prep_sym["w_within"], w_adj_fwd=prep_sym["w_adj_fwd"],
                                     w_adj_rev=prep_sym["w_adj_rev"], n_events=sym_ev["n_events"],
                                     n_specific=sym_ev["n_specific"], member_frac=sym_ev["member_frac"],
@@ -434,7 +437,7 @@ def one_seed(seed, cfg, a):
     r_latch = _rest_and_detonate(prep, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                  float(cfg["plateau_self_regen"]), adapt=True, d_abs=d_abs, a_abs=a_abs,
                                  det_period=det_period, det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
-    latch_ev, latch_seq = _score(r_latch["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+    latch_ev, latch_seq = _score(r_latch["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     out["latch_on_diag"] = dict(n_events=latch_ev["n_events"], duty_cycle=latch_ev["duty_cycle"],
                                 forward_frac=latch_seq["forward_frac"], per_asm_active=latch_seq["per_asm_active"])
     print(f"  [seed {seed}] LATCH-ON diag (self_regen_read={cfg['plateau_self_regen']}): ev={latch_ev['n_events']} "
@@ -451,7 +454,7 @@ def one_seed(seed, cfg, a):
     r_rev = _rest_and_detonate(prep, ("assembly", rev_aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                                det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
-    rev_ev, rev_seq = _score(r_rev["F"], al, al, rev_aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+    rev_ev, rev_seq = _score(r_rev["F"], al, al, rev_aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
     _rev_upstream_active = int(sum(rev_seq["per_asm_active"][:rev_aidx]))   # a0..a{last-1} activations under a{last} detonation
     out["reverse_detonation"] = dict(det_assembly=rev_aidx, n_events=rev_ev["n_events"], n_specific=rev_ev["n_specific"],
                                      member_frac=rev_ev["member_frac"], per_asm_active=rev_seq["per_asm_active"],
@@ -546,6 +549,7 @@ def main():
     ap.add_argument("--active-frac", type=float, default=0.12, help="ordered-replay: per-assembly peak ACTIVE frac")
     ap.add_argument("--onset-frac", type=float, default=0.08, help="ordered-replay: per-assembly ONSET frac")
     ap.add_argument("--detector-transient", action="store_true", help="RUNG-B: mean-rate (not running-SUM) event smoothing so a TRANSIENT discrete single-assembly burst is COUNTED (the SUM under-counts transient bursts by ~W). Default off = byte-identical detector")
+    ap.add_argument("--ev-baseline-q", type=float, default=None, help="RUNG-B ROOT FIX: compute the robust med/mad from ONLY the quietest fraction of S (e.g. 0.15) so a sustained/repeated readout does not inflate the threshold and MASK the discrete forward sweep. None = whole-trace (byte-identical)")
     # store knobs (default = the 6/6-GO DECOUPLED store; exposed so the JSON records exactly what was tested)
     ap.add_argument("--within-events", type=int, default=None)
     ap.add_argument("--within-refresh", type=int, default=None)

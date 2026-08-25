@@ -1,0 +1,43 @@
+{
+ "run_id": "1787698318-1597090",
+ "runner": "research/runners/_gap5_dg_detonator_ignition_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/gap5-encode-detector-retest/research/runners/_gap5_dg_detonator_ignition_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--chain-elig-tau",
+  "10",
+  "--chain-bdsp-widen",
+  "--chain-btsp-lr",
+  "0.08",
+  "--fb-drive",
+  "10",
+  "--dump-traces",
+  "research/findings/raw/gap5_r4/rungA_traces",
+  "--out",
+  "research/findings/raw/gap5_r4/rungABC_6seed_chainwiden_tau10.json"
+ ],
+ "git_sha": "b7b543eda",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T18:51:58",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap5_r4/rungABC_6seed_chainwiden_tau10.json"
+}
