@@ -1,0 +1,1279 @@
+{
+  "probe": "laneC source-provenance opponent (board #129)",
+  "mechanism": "perceived-vs-generated provenance carried by TWO neuromodulatory encoding-context lines (ctx_perceived/ctx_generated), each gating a SEPARATE zero-init Hebbian episode->prov trace; read back from content alone at recall as the SIGN of an opponent (Namburi-Tye cross-inhibited) prov_perceived vs prov_generated comparator, normalized d=(r_true-r_false)/(r_true+r_false). The learned content-cued episodic source-memory that the agency/authorship GO named as its follow-on; a DIFFERENT family from the rate-floor competition/tagging variants (all NO-GO).",
+  "verdict": "GO (6/6) \u2014 SOURCE PROVENANCE (perceived-vs-generated) on ONE spiking substrate via a LEARNED, context-gated OPPONENT trace. Every item's provenance sign is correct (acc 1.000) with min normalized discriminability 0.859; NO-HARM holds (content recall delta 0.0e+00, winner drop 0.0190); learning-off collapses to chance (0.542), context-SWAP flips provenance (acc 0.000, relabelled 1.000), a novel item confabulates no provenance (0.0000), and content does not decode from the prov pools (0.000 vs chance 0.250). Surpasses the rate-floor family: the SIGN read-out is immune to the absolute-rate weakness that failed coresidency/popcode.",
+  "GO": true,
+  "n_pass": 6,
+  "n_seeds": 6,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every item's provenance sign correct on every seed",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "worst-seed min normalized discriminability clears the floor",
+      "ok": true,
+      "detail": "0.832117 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-harm on content recall on every seed",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "learning-off leaves prov pools silent on every seed",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "context-swap flips provenance on every seed",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "context-swap flip is systematic on every seed",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "novel item confabulates no provenance on every seed",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "content does not decode from prov pools on any seed",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f23f4da9440>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / reward-mod / homeostasis / short-term & structural plasticity / OU noise",
+      "why": "isolates zero-init Hebbian content->provenance binding + a fixed opponent read-out"
+    }
+  ],
+  "undefined_reasons": [],
+  "seed_status": {
+    "42": "PASS",
+    "43": "PASS",
+    "44": "PASS",
+    "100": "PASS",
+    "101": "PASS",
+    "102": "PASS"
+  },
+  "thresholds": {
+    "D_FLOOR": 0.5,
+    "NOHARM_TOL": 0.0001,
+    "NOVEL_MAX_RATE": 0.02,
+    "go_bar": ">=5/6"
+  },
+  "means": {
+    "acc_real": 1.0,
+    "min_d": 0.8589663720729562,
+    "mean_d": 0.9129525701797349,
+    "acc_learning_off": 0.5416666666666666,
+    "learning_off_max_rate": 0.0,
+    "acc_swap": 0.0,
+    "acc_swap_flipped": 1.0,
+    "content_decode_acc": 0.0,
+    "noharm_content_max_abs_delta": 0.0,
+    "winner_noharm_max_drop": 0.018958333333333337,
+    "novel_max_rate": 0.0
+  },
+  "config": {
+    "N_PAIRS": 4,
+    "EP_PATTERN": 12,
+    "OVERLAP_K": 3,
+    "N_EPISODE": 192,
+    "N_CTX": 24,
+    "N_PROV": 32,
+    "N_INH": 12,
+    "N_CR": 24,
+    "EPISODE_DRIVE_PA": 2500.0,
+    "CTX_DRIVE_PA": 2500.0,
+    "W_CTX_PROV": 55.0,
+    "W_EP_CR_INIT": 6.0,
+    "W_PROV_INH": 8.0,
+    "W_INH_PROV": 26.0,
+    "HEBB_LR": 0.2,
+    "HEBB_WMAX": 60.0,
+    "ENCODE_CYCLES": 6,
+    "RECALL_STEPS": 100,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "acc_real": 1.0,
+      "min_d": 0.893805301297413,
+      "mean_d": 0.9114699561387736,
+      "acc_learning_off": 0.5,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.013750000000000012,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 100046.34748458862,
+      "content_l1_before": 27648.164680480957,
+      "content_l1_after": 28159.136876106262,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.030729166666666665,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8975903527943099,
+          "rate_perceived": 0.0984375,
+          "rate_generated": 0.0053125,
+          "content_rate": 0.03375
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.893805301297413,
+          "rate_perceived": 0.1003125,
+          "rate_generated": 0.005625,
+          "content_rate": 0.030833333333333334
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9204892876282394,
+          "rate_perceived": 0.098125,
+          "rate_generated": 0.0040625,
+          "content_rate": 0.029166666666666667
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9111111018553792,
+          "rate_perceived": 0.0940625,
+          "rate_generated": 0.004375,
+          "content_rate": 0.03
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9323076831280475,
+          "rate_perceived": 0.0034375,
+          "rate_generated": 0.098125,
+          "content_rate": 0.03333333333333333
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9016393348024726,
+          "rate_perceived": 0.0046875,
+          "rate_generated": 0.090625,
+          "content_rate": 0.03
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9044368501904507,
+          "rate_perceived": 0.004375,
+          "rate_generated": 0.0871875,
+          "content_rate": 0.02875
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9303797374138761,
+          "rate_perceived": 0.0034375,
+          "rate_generated": 0.0953125,
+          "content_rate": 0.03
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=100046.34748458862 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.030729166666666665 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.893805 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bce0>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "acc_real": 1.0,
+      "min_d": 0.8582089449766097,
+      "mean_d": 0.9182041462860642,
+      "acc_learning_off": 0.5,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.016562499999999994,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 98257.08414459229,
+      "content_l1_before": 27624.179762363434,
+      "content_l1_after": 27859.280776023865,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.030520833333333334,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9744408846063551,
+          "rate_perceived": 0.0965625,
+          "rate_generated": 0.00125,
+          "content_rate": 0.030416666666666668
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8805031357936792,
+          "rate_perceived": 0.0934375,
+          "rate_generated": 0.0059375,
+          "content_rate": 0.03166666666666667
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9411764607458671,
+          "rate_perceived": 0.0928125,
+          "rate_generated": 0.0028125,
+          "content_rate": 0.029166666666666667
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9380804860623605,
+          "rate_perceived": 0.0978125,
+          "rate_generated": 0.003125,
+          "content_rate": 0.029166666666666667
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9804560158388951,
+          "rate_perceived": 0.0009375,
+          "rate_generated": 0.095,
+          "content_rate": 0.029166666666666667
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8926174400792757,
+          "rate_perceived": 0.005,
+          "rate_generated": 0.088125,
+          "content_rate": 0.0325
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8801498021854705,
+          "rate_perceived": 0.005,
+          "rate_generated": 0.0784375,
+          "content_rate": 0.03166666666666667
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8582089449766097,
+          "rate_perceived": 0.0059375,
+          "rate_generated": 0.0778125,
+          "content_rate": 0.030416666666666668
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=98257.08414459229 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.030520833333333334 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.858209 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "acc_real": 1.0,
+      "min_d": 0.8321167786030157,
+      "mean_d": 0.9029500270024862,
+      "acc_learning_off": 0.5,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.021250000000000005,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 99241.32442092896,
+      "content_l1_before": 27664.035309791565,
+      "content_l1_after": 27931.81707715988,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.029791666666666668,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9651162700919417,
+          "rate_perceived": 0.105625,
+          "rate_generated": 0.001875,
+          "content_rate": 0.02875
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8888888801097393,
+          "rate_perceived": 0.095625,
+          "rate_generated": 0.005625,
+          "content_rate": 0.03125
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9395770301914003,
+          "rate_perceived": 0.1003125,
+          "rate_generated": 0.003125,
+          "content_rate": 0.03333333333333333
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.909385103851028,
+          "rate_perceived": 0.0921875,
+          "rate_generated": 0.004375,
+          "content_rate": 0.027916666666666666
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9112627886824543,
+          "rate_perceived": 0.0040625,
+          "rate_generated": 0.0875,
+          "content_rate": 0.030416666666666668
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8321167786030157,
+          "rate_perceived": 0.0071875,
+          "rate_generated": 0.0784375,
+          "content_rate": 0.029583333333333333
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8836363533540497,
+          "rate_perceived": 0.005,
+          "rate_generated": 0.0809375,
+          "content_rate": 0.02875
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8936170111362609,
+          "rate_perceived": 0.0046875,
+          "rate_generated": 0.0834375,
+          "content_rate": 0.028333333333333332
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=99241.32442092896 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.029791666666666668 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.832117 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d4e020>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "acc_real": 1.0,
+      "min_d": 0.8535031760152543,
+      "mean_d": 0.9184601588400914,
+      "acc_learning_off": 0.75,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.019062499999999996,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 98171.35576820374,
+      "content_l1_before": 27633.207097053528,
+      "content_l1_after": 30379.693777561188,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.03802083333333334,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8548895812755626,
+          "rate_perceived": 0.091875,
+          "rate_generated": 0.0071875,
+          "content_rate": 0.04416666666666667
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9076922987550298,
+          "rate_perceived": 0.096875,
+          "rate_generated": 0.0046875,
+          "content_rate": 0.04083333333333333
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9374999895833336,
+          "rate_perceived": 0.0871875,
+          "rate_generated": 0.0028125,
+          "content_rate": 0.03333333333333333
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9744408846063551,
+          "rate_perceived": 0.0965625,
+          "rate_generated": 0.00125,
+          "content_rate": 0.03125
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.8535031760152543,
+          "rate_perceived": 0.0071875,
+          "rate_generated": 0.0909375,
+          "content_rate": 0.0425
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9192546492496433,
+          "rate_perceived": 0.0040625,
+          "rate_generated": 0.0965625,
+          "content_rate": 0.041666666666666664
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9696048537910775,
+          "rate_perceived": 0.0015625,
+          "rate_generated": 0.10125,
+          "content_rate": 0.034583333333333334
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9307958374444751,
+          "rate_perceived": 0.003125,
+          "rate_generated": 0.0871875,
+          "content_rate": 0.035833333333333335
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=98171.35576820374 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.03802083333333334 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.853503 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "acc_real": 1.0,
+      "min_d": 0.868656708120294,
+      "mean_d": 0.9066588360333728,
+      "acc_learning_off": 0.375,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.020625000000000004,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 102839.60503959656,
+      "content_l1_before": 27637.186136722565,
+      "content_l1_after": 28815.470461845398,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.03484374999999999,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8961038867937258,
+          "rate_perceived": 0.09125,
+          "rate_generated": 0.005,
+          "content_rate": 0.03625
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8773006048853927,
+          "rate_perceived": 0.095625,
+          "rate_generated": 0.00625,
+          "content_rate": 0.034166666666666665
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.868656708120294,
+          "rate_perceived": 0.0978125,
+          "rate_generated": 0.006875,
+          "content_rate": 0.035416666666666666
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8885245808417094,
+          "rate_perceived": 0.09,
+          "rate_generated": 0.0053125,
+          "content_rate": 0.03625
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9493670789937511,
+          "rate_perceived": 0.0025,
+          "rate_generated": 0.09625,
+          "content_rate": 0.034166666666666665
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9318181733471075,
+          "rate_perceived": 0.00375,
+          "rate_generated": 0.10625,
+          "content_rate": 0.034583333333333334
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9178885544362364,
+          "rate_perceived": 0.004375,
+          "rate_generated": 0.1021875,
+          "content_rate": 0.034166666666666665
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9236111008487656,
+          "rate_perceived": 0.0034375,
+          "rate_generated": 0.0865625,
+          "content_rate": 0.03375
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=102839.60503959656 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.03484374999999999 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.868657 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "acc_real": 1.0,
+      "min_d": 0.8475073234251511,
+      "mean_d": 0.9199722967776215,
+      "acc_learning_off": 0.625,
+      "learning_off_max_rate": 0.0,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "content_decode_acc": 0.0,
+      "content_decode_chance": 0.25,
+      "noharm_content_max_abs_delta": 0.0,
+      "winner_noharm_max_drop": 0.022500000000000006,
+      "novel_max_rate": 0.0,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 102292.41424179077,
+      "content_l1_before": 27628.619049072266,
+      "content_l1_after": 29546.813404083252,
+      "learning_off_l1": 0.0,
+      "mean_content_rate": 0.03536458333333333,
+      "items": [
+        {
+          "pair": 0,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.909909901166031,
+          "rate_perceived": 0.099375,
+          "rate_generated": 0.0046875,
+          "content_rate": 0.034583333333333334
+        },
+        {
+          "pair": 1,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9886685462783588,
+          "rate_perceived": 0.1096875,
+          "rate_generated": 0.000625,
+          "content_rate": 0.03625
+        },
+        {
+          "pair": 2,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.8475073234251511,
+          "rate_perceived": 0.0984375,
+          "rate_generated": 0.008125,
+          "content_rate": 0.035416666666666666
+        },
+        {
+          "pair": 3,
+          "provenance": "perceived",
+          "winner": "perceived",
+          "correct": true,
+          "d_true": 0.9635258264945816,
+          "rate_perceived": 0.1009375,
+          "rate_generated": 0.001875,
+          "content_rate": 0.032916666666666664
+        },
+        {
+          "pair": 0,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9041533453888476,
+          "rate_perceived": 0.0046875,
+          "rate_generated": 0.093125,
+          "content_rate": 0.03625
+        },
+        {
+          "pair": 1,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9452054690936387,
+          "rate_perceived": 0.0025,
+          "rate_generated": 0.08875,
+          "content_rate": 0.035833333333333335
+        },
+        {
+          "pair": 2,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.852090023386855,
+          "rate_perceived": 0.0071875,
+          "rate_generated": 0.09,
+          "content_rate": 0.03625
+        },
+        {
+          "pair": 3,
+          "provenance": "generated",
+          "winner": "generated",
+          "correct": true,
+          "d_true": 0.9487179389875082,
+          "rate_perceived": 0.0025,
+          "rate_generated": 0.095,
+          "content_rate": 0.035416666666666666
+        }
+      ],
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "provenance traces start at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "experience grows the provenance traces",
+          "ok": true,
+          "detail": "measured=102292.41424179077 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off keeps traces at zero",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content ('what') readout actually recalls",
+          "ok": true,
+          "detail": "measured=0.03536458333333333 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every item's provenance sign is correct",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "min normalized discriminability clears the floor",
+          "ok": true,
+          "detail": "0.847507 vs floor 0.5",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "no-harm on content recall (prov module ON vs lesioned)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "learning-off leaves prov pools silent (no learned trace -> no signal)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flips provenance (acc vs original ~0)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "context-swap flip is systematic (relabelled ~1)",
+          "ok": true,
+          "detail": "measured=1.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "novel item confabulates no provenance",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "content does not decode from prov pools (<= 1/N_PAIR + 0.25)",
+          "ok": true,
+          "detail": "measured=0.0 expect=<function evaluate_seed.<locals>.<lambda> at 0x7f23f4d9bb00>",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ],
+  "honest_scope": "numpy-CPU read on the real spiking Izhikevich bridge (backend, not a host shortcut). Scaffolds (unchanged from the family): caller-supplied sparse episode/content activity, innate context routing + opponent wiring, an externally-timed encode window, host spike-count evaluation. The context->provenance binding is LEARNED (zero-init Hebbian). No language, confidence scalar, or speech policy.",
+  "elapsed_seconds": 30.4
+}

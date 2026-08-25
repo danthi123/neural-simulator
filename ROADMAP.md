@@ -103,6 +103,15 @@ Status below reflects the records available at the 2026-08-05 audit, with
 inline **2026-08-07 UPDATE** notes on items 2 (Gate B delayed-credit Stage-2j
 GO), 3 (source monitoring = characterized conservation boundary), and 4 (replay
 self-calibration Step-0 NO-GO + the cross-gap identity-competition synthesis).
+**2026-08-25 UPDATE — item 3 (source monitoring, #129) SURPASSED by a different
+family:** the whole prior cluster read source from one pool's ABSOLUTE RATE, where
+one seed always fell below the floor; the new mechanism reads perceived-vs-generated
+provenance as the SIGN of a normalized OPPONENT comparator over two LEARNED,
+context-gated traces — immune to that absolute-rate weakness — and is 6-seed GO
+(acc 1.000, min normalized d 0.859, no-harm on content recall 0.0), so item 3 is no
+longer a conservation boundary but a surpassed wall with named next steps
+(self-organize the wiring; neuromodulator-gated plasticity; wire into the chat
+honesty pathway).
 A **2026-08-07 landscape-survey adoption thread** also landed (owner-directed
 "make use of the findings"), all 6-seed and brain-based: the Rubicon
 delayed-credit machinery adopted as a maintained-goal delay bridge + a
