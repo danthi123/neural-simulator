@@ -94,13 +94,86 @@ OUT = _REPO / "research" / "findings" / "raw" / "gap5_r4" / "dg_detonator_igniti
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+# _set_fb_basket_read: the RANK-2 READOUT MECHANISM (2026-08-25). The store already builds a ca3_pv_basket FS FEEDBACK
+# pool (ca3->basket->ca3 E->I->E loop, weight_mean=ca3_fb_inhib) but ENCODE spares ALL assembly members from it
+# (selective_inhib + sel_inhib_spare=0 -> the basket->member synapses are ZEROED), so at readout the shared basket exerts
+# NO cross-assembly lateral inhibition -> no competition -> the detonated assembly cannot win discretely over the others.
+# At RECALL, real CA3 PV-basket feedback is NOT member-selective: it is global E%-max lateral inhibition (de Almeida-
+# Idiart-Lisman 2009; the recurrent PV loop, Kandel 6e Ch 54). This helper RESTORES that at readout: it sets EVERY
+# ca3_pv_basket->ca3 synapse (member AND non-member) to a uniform tuned weight fb_read, re-arming competitive feedback
+# inhibition. The WTA is EMERGENT from the spiking E->I->E dynamics (the winning assembly drives the basket which then
+# suppresses the losers + terminates the burst for discreteness) -- NO host argmax / per-assembly silence. fb_read=None
+# => leave the store's spared basket untouched (byte-identical to the pre-2026-08-25 readout).
+# ----------------------------------------------------------------------------------------------------------------------
+def _set_fb_basket_read(bridge, fb_read):
+    """Set ALL ca3_pv_basket->ca3 synapse weights to fb_read (un-sparing members -> global lateral inhibition at recall).
+    Returns (n_conns_set, w_mean_after) or (0, None) if the basket / pathway is absent. Applied on the FROZEN bridge
+    BEFORE w_before is captured, so the plasticity-frozen guard still holds (no weight change DURING the rest loop)."""
+    if fb_read is None:
+        return 0, None
+    cp, _ = get_backend()
+    rm = getattr(bridge, "region_manager", None)
+    if rm is None:
+        return 0, None
+    try:
+        bask = np.asarray(list(rm.indices("ca3_pv_basket")), dtype=np.int64)
+    except Exception:
+        return 0, None
+    if len(bask) == 0:
+        return 0, None
+    conn = bridge.cp_connections
+    nnz = int(conn.nnz)
+    indptr = np.asarray(to_host(conn.indptr))
+    pre_of = np.searchsorted(indptr, np.arange(nnz), side="right") - 1
+    n_all = int(bridge.core_config.num_neurons)
+    bask_bool = np.zeros(n_all, dtype=bool); bask_bool[bask] = True
+    sel = np.nonzero(bask_bool[pre_of])[0]
+    if len(sel) == 0:
+        return 0, None
+    conn.data[cp.asarray(sel, dtype=cp.int64)] = cp.full(len(sel), float(fb_read), dtype=conn.data.dtype)
+    return int(len(sel)), float(fb_read)
+
+
+def _scale_fb_drive(bridge, drive_mult):
+    """Scale the ca3->ca3_pv_basket (E->I) drive weights by drive_mult -> a sparse assembly burst can actually RECRUIT
+    the FS basket (the E->I arm the store builds at density 0.40 weight 5.0 is too weak to fire the basket from a
+    ~k_det-cell volley, so the feedback loop under-engages). This lets the WTA mechanism be tested at its STRONGEST
+    (basket firing), so a null result is airtight. drive_mult=None => untouched. Returns (n_conns_scaled, drive_mult)."""
+    if drive_mult is None:
+        return 0, None
+    cp, _ = get_backend()
+    rm = getattr(bridge, "region_manager", None)
+    if rm is None:
+        return 0, None
+    try:
+        bask = np.asarray(list(rm.indices("ca3_pv_basket")), dtype=np.int64)
+        ca3 = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
+    except Exception:
+        return 0, None
+    if len(bask) == 0 or len(ca3) == 0:
+        return 0, None
+    conn = bridge.cp_connections
+    nnz = int(conn.nnz)
+    indptr = np.asarray(to_host(conn.indptr)); indices = np.asarray(to_host(conn.indices))
+    pre_of = np.searchsorted(indptr, np.arange(nnz), side="right") - 1
+    n_all = int(bridge.core_config.num_neurons)
+    ca3_bool = np.zeros(n_all, dtype=bool); ca3_bool[ca3] = True
+    bask_bool = np.zeros(n_all, dtype=bool); bask_bool[bask] = True
+    sel = np.nonzero(ca3_bool[pre_of] & bask_bool[indices[:nnz]])[0]   # pre in ca3, post in basket
+    if len(sel) == 0:
+        return 0, None
+    conn.data[cp.asarray(sel, dtype=cp.int64)] *= cp.asarray(np.float32(drive_mult))
+    return int(len(sel)), float(drive_mult)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 # _rest_and_detonate: freeze plasticity + hard-silence (verify reset) + DE-LATCH plateau + crank Izhikevich adaptation,
 # then run REST while injecting a PERIODIC TARGETED DETONATOR (a sparse subset of ONE assembly's cells driven strongly).
 # Mirrors _gap5_intrinsic_fatigue_replay_derisk._rest_with_fatigue's readout substrate (de-latch + adaptation) but the
 # ignition source is the DG-detonator, not Poisson noise. NO host per-step assembly silence / argmax-next (numpy-ref guard).
 # ----------------------------------------------------------------------------------------------------------------------
 def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt, d_abs, a_abs,
-                       det_period, det_settle, apical_gc_read=None, verbose=False):
+                       det_period, det_settle, apical_gc_read=None, verbose=False, fb_read=None, fb_drive=None):
     """det_spec: ("assembly", aidx, det_frac, det_pa, det_dur) | ("shuffled", aidx, det_frac, det_pa, det_dur) | ("none",).
     Returns dict(F, weights_frozen, apical_rest_max, apical_n_latched, n_detonations, k_det, d0, a0)."""
     cp, _ = get_backend()
@@ -123,10 +196,24 @@ def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt,
     _configure_ou(bridge, None, seed)   # NO non-specific background -> the DETONATOR is the SOLE ignition source (keeps
     #                                     the NO-DETONATOR acid a genuine silence test)
 
+    # RANK-2 READOUT MECHANISM: re-arm the ca3_pv_basket FEEDBACK loop at recall (un-spare members -> global lateral
+    # inhibition -> emergent competitive WTA). fb_read=None => untouched (byte-identical). fb_drive scales the E->I arm
+    # so a sparse burst can actually fire the basket (tests the loop at its strongest). Applied on the FROZEN bridge
+    # BEFORE w_before capture, so the plasticity-frozen guard still holds.
+    n_fb_set, fb_w = _set_fb_basket_read(bridge, fb_read)
+    n_fb_drive, fb_drive_w = _scale_fb_drive(bridge, fb_drive)
+
     ca3_arr_host = prep["ca3_arr_host"]
     assemblies_local = prep["assemblies_local"]
     exc_glob = ca3_arr_host[prep["ca3_exc_local"]]
     exc_dev = cp.asarray(exc_glob, dtype=cp.int64)
+    # ca3_pv_basket global indices (record its firing -> verify the feedback pool actually engages at readout)
+    basket_glob = None
+    try:
+        _bg = np.asarray(list(bridge.region_manager.indices("ca3_pv_basket")), dtype=np.int64)
+        basket_glob = _bg if len(_bg) else None
+    except Exception:
+        basket_glob = None
 
     # crank Izhikevich spike-frequency adaptation on the CA3-exc slice (the intrinsic-fatigue transition driver, Ecker 2022;
     # the just-fired assembly self-fatigues so the stored forward chain drives the next). adapt=False = the ExpIF control.
@@ -166,6 +253,7 @@ def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt,
     # the substrate's own u-fatigue, NOT rest-phase re-encoding -- retires the Wang confound).
     w_before = np.asarray(to_host(bridge.cp_connections.data)).copy()
     F = np.zeros((rest_steps, len(ca3_arr_host)), dtype=bool)
+    basket_rate = np.zeros(rest_steps, dtype=np.float32) if basket_glob is not None else None
     n_detonations = 0
     for t in range(rest_steps):
         bridge.cp_external_input_current[:] = 0.0
@@ -176,12 +264,18 @@ def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt,
                 if phase == 0:
                     n_detonations += 1
         bridge._run_one_simulation_step()          # NO external inhibition / argmax / per-assembly silence (numpy-ref guard)
-        F[t] = np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(bool)
+        fs = np.asarray(to_host(bridge.cp_firing_states))
+        F[t] = fs[ca3_arr_host].astype(bool)
+        if basket_glob is not None:
+            basket_rate[t] = float(fs[basket_glob].mean())
     bridge.core_config.enable_ou_process = False
     w_after = np.asarray(to_host(bridge.cp_connections.data))
     weights_frozen = bool(np.array_equal(w_before, w_after))
+    basket_mean = float(basket_rate.mean()) if basket_rate is not None else None
     return dict(F=F, weights_frozen=weights_frozen, apical_rest_max=apical_max, apical_n_latched=n_latched,
-                n_detonations=n_detonations, k_det=k_det, d0=d0, a0=a0)
+                n_detonations=n_detonations, k_det=k_det, d0=d0, a0=a0,
+                n_fb_set=n_fb_set, fb_read=fb_w, basket_mean=basket_mean,
+                n_fb_drive=n_fb_drive, fb_drive=fb_drive_w)
 
 
 def _score(F, assemblies_local, assembly_local_by_idx, aidx, seed, W, ev_floor, ev_k, min_frac, active_frac, onset_frac):
@@ -212,10 +306,13 @@ def one_seed(seed, cfg, a):
     self_regen_read, d_abs, a_abs = float(a.self_regen_read), float(a.d_abs), float(a.a_abs)
     det_period, det_settle = int(a.det_period), int(a.det_settle)
 
+    fb_read = a.fb_read
+    fb_drive = a.fb_drive
+
     def _rd(prep, det_spec, verbose=False):
         return _rest_and_detonate(prep, det_spec, a.rest_steps, seed, self_regen_read, adapt=True, d_abs=d_abs,
                                   a_abs=a_abs, det_period=det_period, det_settle=det_settle,
-                                  apical_gc_read=a.apical_gc_read, verbose=verbose)
+                                  apical_gc_read=a.apical_gc_read, verbose=verbose, fb_read=fb_read, fb_drive=fb_drive)
 
     # -- BUILD the DECOUPLED forward-asymmetric store (the store under test) --
     prep = _prepare_sequence(seed, cfg, do_encode=True)
@@ -237,12 +334,14 @@ def one_seed(seed, cfg, a):
                    forward_frac=seq["forward_frac"], reverse_frac=seq["reverse_frac"], n_multi=seq["n_multi"],
                    chance_forward=seq["chance_forward"], per_asm_active=seq["per_asm_active"],
                    weights_frozen=r["weights_frozen"], apical_rest_max=r["apical_rest_max"],
-                   apical_n_latched=r["apical_n_latched"])
+                   apical_n_latched=r["apical_n_latched"],
+                   n_fb_set=r.get("n_fb_set"), fb_read=r.get("fb_read"), basket_mean=r.get("basket_mean"))
         go_runs[f"det_pa={pa:g}"] = rec
         print(f"  [seed {seed}] GO det_pa={pa:>7g}: ev={ev['n_events']:>3} spec={ev['n_specific']:>3} "
               f"memb={ev['member_frac']:.3f} rand={ev['random_frac']:.3f} cross={ev['cross_frac']:.3f} "
               f"duty={ev['duty_cycle']:.3f} | FWD={seq['forward_frac']:.3f} REV={seq['reverse_frac']:.3f} "
               f"chance={seq['chance_forward']:.3f} multi={seq['n_multi']} act={seq['per_asm_active']} "
+              f"basket={r.get('basket_mean')} nfb={r.get('n_fb_set')} "
               f"frozen={r['weights_frozen']} latched={r['apical_n_latched']} ({time.time()-t0:.0f}s)", flush=True)
         score = (ev["n_specific"], seq["forward_frac"], ev["specificity"])
         if best is None or score > best:
@@ -264,7 +363,7 @@ def one_seed(seed, cfg, a):
     prep_shd = _prepare_sequence(seed, cfg, do_encode=True)
     r_shd = _rest_and_detonate(prep_shd, ("shuffled", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
-                               det_settle=det_settle, apical_gc_read=a.apical_gc_read)
+                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     shd_ev, shd_seq = _score(r_shd["F"], prep_shd["assemblies_local"], prep_shd["assemblies_local"], aidx, seed,
                              W, ev_floor, ev_k, min_frac, af, onf)
     out["shuffled_detonator"] = dict(k_det=r_shd["k_det"], n_events=shd_ev["n_events"], n_specific=shd_ev["n_specific"],
@@ -278,7 +377,7 @@ def one_seed(seed, cfg, a):
     prep_ne = _prepare_sequence(seed, cfg, do_encode=False)
     r_ne = _rest_and_detonate(prep_ne, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
-                              det_settle=det_settle, apical_gc_read=a.apical_gc_read)
+                              det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     ne_ev, _ = _score(r_ne["F"], prep_ne["assemblies_local"], prep_ne["assemblies_local"], aidx, seed,
                       W, ev_floor, ev_k, min_frac, af, onf)
     out["no_encode"] = dict(w_within=prep_ne["w_within"], n_events=ne_ev["n_events"], n_specific=ne_ev["n_specific"],
@@ -293,7 +392,7 @@ def one_seed(seed, cfg, a):
     n_sw = _shuffle_within_weights(prep_sw, seed)
     r_sw = _rest_and_detonate(prep_sw, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
-                              det_settle=det_settle, apical_gc_read=a.apical_gc_read)
+                              det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sw_ev, _ = _score(r_sw["F"], prep_sw["assemblies_local"], prep_sw["assemblies_local"], aidx, seed,
                       W, ev_floor, ev_k, min_frac, af, onf)
     out["shuffled_within"] = dict(n_within_shuffled=n_sw, n_events=sw_ev["n_events"], n_specific=sw_ev["n_specific"],
@@ -309,7 +408,7 @@ def one_seed(seed, cfg, a):
     out["encode_symmetric"] = _weight_diag(prep_sym)
     r_sym = _rest_and_detonate(prep_sym, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
-                               det_settle=det_settle, apical_gc_read=a.apical_gc_read)
+                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sym_ev, sym_seq = _score(r_sym["F"], prep_sym["assemblies_local"], prep_sym["assemblies_local"], aidx, seed,
                              W, ev_floor, ev_k, min_frac, af, onf)
     out["symmetric_readout"] = dict(w_within=prep_sym["w_within"], w_adj_fwd=prep_sym["w_adj_fwd"],
@@ -327,7 +426,7 @@ def one_seed(seed, cfg, a):
     #    assembly latches ON, not discrete / no transition (the de-latch is load-bearing). Reported, not a hard GO gate. --
     r_latch = _rest_and_detonate(prep, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                  float(cfg["plateau_self_regen"]), adapt=True, d_abs=d_abs, a_abs=a_abs,
-                                 det_period=det_period, det_settle=det_settle, apical_gc_read=a.apical_gc_read)
+                                 det_period=det_period, det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     latch_ev, latch_seq = _score(r_latch["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf)
     out["latch_on_diag"] = dict(n_events=latch_ev["n_events"], duty_cycle=latch_ev["duty_cycle"],
                                 forward_frac=latch_seq["forward_frac"], per_asm_active=latch_seq["per_asm_active"])
@@ -388,6 +487,9 @@ def main():
     ap.add_argument("--d-abs", type=float, default=40.0, help="cranked Izhikevich per-spike u-kick on CA3-exc (transition driver, Ecker 2022)")
     ap.add_argument("--a-abs", type=float, default=0.008, help="cranked Izhikevich recovery rate a on CA3-exc (slower fatigue recovery)")
     ap.add_argument("--apical-gc-read", type=float, default=None, help="WEAKEN apical->soma read during rest (bridge.py:7111); None = build value (byte-identical)")
+    ap.add_argument("--fb-read", type=float, default=None, help="RANK-2 readout mechanism: set ALL ca3_pv_basket->ca3 weights to this at recall (un-spare members -> global lateral inhibition -> emergent competitive WTA). None = leave the store's spared basket untouched (byte-identical)")
+    ap.add_argument("--fb-drive", type=float, default=None, help="RANK-2 readout mechanism: scale the ca3->ca3_pv_basket (E->I) drive so a sparse assembly burst actually RECRUITS the FS basket (the store's density-0.4 weight-5 arm under-fires from a ~k_det-cell volley). None = untouched. The 6-seed sweep found fb_read=None + fb_drive=10 converts a0+a2 co-fire into ordered a0->a2 events.")
+    ap.add_argument("--chain-btsp-lr", type=float, default=None, help="override the decoupled store's forward-chain learning rate (adj_fwd strength); None = DECOUPLED_CFG default (0.5)")
     ap.add_argument("--rest-steps", type=int, default=1500)
     ap.add_argument("--window", type=int, default=5)
     ap.add_argument("--ev-floor", type=float, default=0.5)
@@ -410,6 +512,8 @@ def main():
         cfg["within_refresh"] = int(a.within_refresh)
     if a.chain_fwd is not None:
         cfg["chain_fwd"] = int(a.chain_fwd)
+    if a.chain_btsp_lr is not None:
+        cfg["chain_btsp_lr"] = float(a.chain_btsp_lr)
 
     _, backend = get_backend()
     print(f"[gap5-detonate] DG-DETONATOR ignition (branch B) on the DECOUPLED forward-asymmetric store "
@@ -467,7 +571,9 @@ def main():
                "decoupled_cfg": {k: cfg[k] for k in sorted(cfg)},            # every store knob recorded
                "detonator_cfg": dict(det_frac=a.det_frac, det_pa=a.det_pa, det_dur=a.det_dur, det_period=a.det_period,
                                      det_settle=a.det_settle, self_regen_read=a.self_regen_read, d_abs=a.d_abs,
-                                     a_abs=a.a_abs, apical_gc_read=a.apical_gc_read, assembly_idx=a.assembly_idx,
+                                     a_abs=a.a_abs, apical_gc_read=a.apical_gc_read, fb_read=a.fb_read,
+                                     fb_drive=a.fb_drive, chain_btsp_lr=a.chain_btsp_lr,
+                                     assembly_idx=a.assembly_idx,
                                      n_ca3=a.n_ca3, n_mem=a.n_mem, rest_steps=a.rest_steps, window=a.window,
                                      ev_floor=a.ev_floor, ev_k=a.ev_k, min_frac=a.min_frac, active_frac=a.active_frac,
                                      onset_frac=a.onset_frac),
