@@ -1,10 +1,10 @@
 {
- "run_id": "1787686017-1182366",
+ "run_id": "1787692625-1400876",
  "runner": "research/runners/_da_encoding_wired_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim-worktrees/da-encoding-substrate-scaling/research/runners/_da_encoding_wired_verify.py"
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-da-flip/research/runners/_da_encoding_wired_verify.py"
  ],
- "git_sha": "01bb124c1",
+ "git_sha": "0fe3c3888",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-25T15:26:57",
+ "started": "2026-08-25T17:17:05",
  "env": {
   "SIM_BACKEND": "numpy"
  },

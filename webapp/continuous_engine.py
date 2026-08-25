@@ -62,6 +62,13 @@ _D5_BUDGET: dict = {}
 # consolidate_used_memory; cleared on forget_session. Empty whenever BRAIN_D5_CONSOLIDATE is off (nothing consolidates),
 # so the OFF reply stays byte-identical to HEAD.
 _CONSOLIDATED_TOPICS: dict = {}
+# per-session composer store-size (len(kb)) at the LAST DA-encoding substrate-homeostasis consolidation pass. The idle
+# tick runs the Turrigiano synaptic-scaling pass (webapp/da_encoding_drives_chat.apply_substrate_homeostasis) only when
+# the store has GROWN since the last pass (new facts were taught) — Turrigiano scaling is slow/offline and re-running it
+# on an already-scaled store with no new writes would compound the strong-engram down-regulation toward unit and erase
+# the DA-salience ordering. Cleared on forget_session. Empty whenever the DA-encoding faculty is off (nothing scales),
+# so the =0 escape stays byte-identical to HEAD.
+_LAST_HOMEO_KB: dict = {}
 
 
 # 2026-08-21 FLIP: the between-turn CONTINUOUS LIFE is DEFAULT-ON (the mission-defining flip — the brain keeps a
@@ -98,6 +105,7 @@ def forget_session(cache_key) -> None:
     _RECALLED_TOPIC.pop(cache_key, None)
     _D5_BUDGET.pop(cache_key, None)
     _CONSOLIDATED_TOPICS.pop(cache_key, None)
+    _LAST_HOMEO_KB.pop(cache_key, None)
     _IDEATE_TICK.pop(cache_key, None)
 
 
@@ -276,6 +284,62 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
     rec = {"t": time.time(), "consolidated": topic, "slot": int(slot), "n_episodes": n_ep,
            "w_within_before": round(w0, 3), "w_within_after": round(wN, 3),
            "note": "idle: consolidated the used memory ‘%s’ (within-assembly weight %.1f → %.1f)" % (topic, w0, wN)}
+    lst = _INNER_LIFE.setdefault(cache_key, [])
+    lst.append(rec)
+    if len(lst) > _INNER_LIFE_MAX:
+        del lst[:-_INNER_LIFE_MAX]
+    return rec
+
+
+# ── DA-ENCODING SUBSTRATE HOMEOSTASIS: the Turrigiano synaptic-scaling consolidation pass, between turns ─────────────
+# The DA-gated encoding faculty writes a taught fact at a per-write RECALL-SAFE FLOOR (g >= set-point) so the LIVE store
+# is always safe. The POPULATION regulation — multiplicatively down-scaling over-strong (high-DA) engrams toward the
+# activity set-point while preserving their DA-salience ORDER (Turrigiano 2008 homeostatic synaptic scaling) — needs the
+# WHOLE stored population and is biologically SLOW/OFFLINE (hours-days, during sleep). So it runs here, on the idle tick,
+# as a CONSOLIDATION pass — alongside D5 learn-through-use — NOT per write. The pass SENSES each engram's readout
+# activity on the substrate and rescales its store synapses (webapp/da_encoding_drives_chat.apply_substrate_homeostasis
+# -> OneBrainComposer.apply_homeostatic_scaling), a real synaptic-weight change. The finding: research/findings
+# 2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP (6-seed GO, byte-equal to a real production build).
+def consolidate_substrate_homeostasis(cache_key, chat) -> dict | None:
+    """Run ONE DA-encoding substrate-homeostasis (Turrigiano synaptic-scaling) consolidation pass on this idle session's
+    live composer store, IF the store has grown since the last pass. Returns a record (or None when disabled / no
+    composer / no new writes / the pass was a no-op).
+
+    NEW-WRITES-SINCE-LAST-PASS TRIGGER (load-bearing): `apply_homeostatic_scaling` is idempotent input-wise but NOT
+    idempotent on repeated calls — a second pass on an already-scaled store re-senses the (now-regulated) activity and
+    keeps pulling strong engrams toward unit, eroding the DA-salience ordering. So the pass fires only when new engrams
+    were stored since the last consolidation (len(kb) grew), matching the biology: scaling consolidates a BATCH of
+    freshly-encoded facts once, offline, not continuously.
+
+    BRAIN-BASED + GATED: the actual scaling self-gates inside `apply_substrate_homeostasis` (no-op unless
+    da_encoding_enabled() AND da_encoding_substrate_enabled() AND not lesioned), so with `BRAIN_DA_ENCODING=0` this is a
+    pure no-op -> byte-identical to HEAD. Never raises (an idle-tick helper must not crash the loop)."""
+    comp = getattr(getattr(chat, "inner", None), "composer", None)
+    if comp is None:
+        return None
+    try:
+        cur_len = len(getattr(comp, "kb", []) or [])
+    except Exception:
+        return None
+    if cur_len == 0:
+        return None
+    last_len = _LAST_HOMEO_KB.get(cache_key, 0)
+    if cur_len <= last_len:
+        return None  # no new facts taught since the last scaling pass -> don't re-scale (would compound toward unit)
+    try:
+        from webapp import da_encoding_drives_chat as _DAE
+        scales = _DAE.apply_substrate_homeostasis(chat)  # self-gates on faculty/substrate/lesion; None == disabled/no-op
+    except Exception:
+        import logging as _lg
+        _lg.getLogger(__name__).warning(
+            "DA-encoding substrate homeostasis failed for %s", cache_key, exc_info=True)
+        return None
+    if scales is None:
+        return None  # faculty off / substrate homeostat off / lesioned / composer lacks the rule -> byte-identical
+    _LAST_HOMEO_KB[cache_key] = cur_len  # mark this batch consolidated (only advanced on an ACTUAL scaling pass)
+    n = len(scales)
+    rec = {"t": time.time(), "substrate_homeostasis": True, "n_engrams": n,
+           "note": "idle: Turrigiano synaptic-scaling pass over %d DA-encoded engram(s)" % n}
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
@@ -577,13 +641,15 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
 
 
 def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | None = None,
-                       selfinit_getter=None, episodic_getter=None) -> int:
+                       selfinit_getter=None, episodic_getter=None, chat_getter=None) -> int:
     """Run one tick over every session that is IDLE (no request for >= IDLE_SEC). Returns #sessions ticked.
 
     Called by the server's background loop. Skips sessions mid-conversation (raced writes) and any with no mood yet.
     `selfinit_getter(cache_key)` (optional) supplies that session's self-initiation organ for the thought-wander.
     `episodic_getter(cache_key)` (optional) supplies that session's ALREADY-BUILT episodic organ for the D5
-    learn-through-use consolidation (default-OFF behind `BRAIN_D5_CONSOLIDATE`; never builds an organ just to tick)."""
+    learn-through-use consolidation (default-OFF behind `BRAIN_D5_CONSOLIDATE`; never builds an organ just to tick).
+    `chat_getter(cache_key)` (optional) supplies that session's ALREADY-BUILT chat for the DA-encoding substrate
+    homeostasis (Turrigiano synaptic-scaling) consolidation pass; None-returning getter -> that step is skipped."""
     if not continuous_enabled():
         return 0
     now = time.time() if now is None else now
@@ -625,6 +691,19 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
                         "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
+            # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
+            # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
+            # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
+            # consolidates a batch of freshly-encoded facts, offline — the between-turn cadence Turrigiano scaling wants.
+            if chat_getter is not None:
+                try:
+                    _chat = chat_getter(cache_key)
+                    if _chat is not None:
+                        consolidate_substrate_homeostasis(cache_key, _chat)
+                except Exception:
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning(
+                        "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
         except Exception:
             continue
     return n

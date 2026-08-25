@@ -81,7 +81,11 @@ def _teach_turn(session, *, da_encoding, lesion, induce):
     lesion / induce control the coupling env for THIS arm; a fresh session -> a fresh chat + composer (no crosstalk)."""
     from webapp.server import brain_chat, BrainChatRequest as Req, _BRAIN_CHATS
     env = dict(_QUIET)
-    env["BRAIN_DA_ENCODING"] = "1" if da_encoding else None
+    # EXPLICIT-OFF PIN (2026-08-25, prep for the default-ON flip): the OFF arm exports BRAIN_DA_ENCODING=0, NOT unset.
+    # da_encoding_enabled() defaults ON post-flip, so an unset OFF arm would silently ARM the coupling and break the
+    # byte-identical (A) proof. `=0` is the byte-identical escape and is invariant to the default -> the OFF arm proves
+    # the escape, and every ON arm still sets `=1`.
+    env["BRAIN_DA_ENCODING"] = "1" if da_encoding else "0"
     env["BRAIN_DA_ENCODING_LESION"] = "1" if lesion else None
     env["BRAIN_DA_DRIVES_INDUCE"] = (str(induce) if induce is not None else None)
     _set(env)

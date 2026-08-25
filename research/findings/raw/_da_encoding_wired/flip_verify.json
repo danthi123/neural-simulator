@@ -1,0 +1,48 @@
+{
+  "runner": "research/runners/_da_encoding_flip_verify.py",
+  "what": "da-gated-encoding default-ON flip verify through the real brain_chat handler",
+  "1_default_unset_drives": {
+    "g_high": 2.4773555339723594,
+    "g_low": 1.0,
+    "key_high": true,
+    "key_low": true,
+    "PASS": true
+  },
+  "2_lesion_severs_default": {
+    "g_lesion_high": 1.0,
+    "g_lesion_low": 1.0,
+    "PASS": true
+  },
+  "3_off_byte_identical_and_consolidation_noop": {
+    "no_da_encoding_key": true,
+    "encoding_gain_fn_is_None": true,
+    "idle_tick_consolidation_result": null,
+    "apply_substrate_homeostasis_result": null,
+    "PASS": true
+  },
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(1) DEFAULT (unset) drives: g_high > g_low, da_encoding key present on the default turn",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "g_high=2.4773555339723594 > g_low=1.0; keys hi=True lo=True"
+    },
+    {
+      "kind": "require",
+      "name": "(2) LESION severs the default-ON drive: g pinned 1.0 on both arms",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "g_les_high=1.0 == g_les_low=1.0 == 1.0"
+    },
+    {
+      "kind": "require",
+      "name": "(3) =0 byte-identical-off + both consolidation entry points no-op",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "no da_encoding key, encoding_gain_fn None, apply_substrate_homeostasis + consolidate_substrate_homeostasis return None"
+    }
+  ]
+}

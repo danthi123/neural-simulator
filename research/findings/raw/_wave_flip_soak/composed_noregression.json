@@ -6,53 +6,18 @@
   "BRAIN_GNW_3ORGAN",
   "BRAIN_CONTINUOUS_IDEATE"
  ],
- "panel_len": 4,
- "n_turns": 4,
- "n_diverged": 2,
- "diverged": [
-  {
-   "msg": "what does dog chase?",
-   "off": {
-    "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: The dog chases cat. \u2014 worth going further here.",
-    "recalled_svo": [
-     "dog",
-     "chase",
-     "cat"
-    ],
-    "abstained": false
-   },
-   "on": {
-    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about dog yet: what can you tell me about dog? \u2014 worth going further here.",
-    "recalled_svo": null,
-    "abstained": true
-   }
-  },
-  {
-   "msg": "what does cat eat?",
-   "off": {
-    "answer": "The cat eats fish. \u2014 worth going further here.",
-    "recalled_svo": [
-     "cat",
-     "eat",
-     "fish"
-    ],
-    "abstained": false
-   },
-   "on": {
-    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about cat yet: what can you tell me about cat? \u2014 worth going further here.",
-    "recalled_svo": null,
-    "abstained": true
-   }
-  }
- ],
+ "panel_len": 8,
+ "n_turns": 8,
+ "n_diverged": 0,
+ "diverged": [],
  "preconditions": [
   {
    "kind": "require",
    "name": "no out-of-scope turn diverges with all four ON vs all four OFF",
-   "ok": false,
-   "detail": "measured=2 expect=0",
-   "note": "4 out-of-scope turns, 2 diverged"
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": "8 out-of-scope turns, 0 diverged"
   }
  ],
- "VERDICT": "NO-GO"
+ "VERDICT": "GO"
 }

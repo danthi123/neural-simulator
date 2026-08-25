@@ -131,8 +131,12 @@ where they conflict):**
   production uses is the open sub-question); board #125. gnw-three-organ — the composed check CONFIRMED its D4
   comprehension veto (toy cue-lexicon) regresses 2 legitimately-recalled facts (dog-chase-cat, cat-eat-fish); gate =
   a real-vocab/NLI comprehension read; board #126. **[SUPERSEDED 2026-08-21: gnw-three-organ is now FLIPPED default-ON
-  (e2d428d4) — the real-vocab comprehension read fixed the D4 over-veto; see LATE LANDINGS above. da-encoding remains
-  HELD, its flip gate now UNDEFINED — see LATE LANDINGS.]**
+  (e2d428d4) — the real-vocab comprehension read fixed the D4 over-veto; see LATE LANDINGS above. da-encoding is now
+  FLIPPED default-ON 2026-08-25 (board #116): the UNDEFINED flip gate WAS the named surpass — an on-substrate Turrigiano
+  synaptic-scaling homeostat cleared the 6-seed soak (moat_introduced=0, genuine stress-net=0) and the "leak" was a
+  foreign-block confabulation the moat suppresses; the two prep rungs (OFF-arm verifiers pinned to `=0`; the scaling
+  pass wired onto the between-turn idle tick) are done; ledger on_by_default:YES. finding
+  2026-08-25-da-encoding-faculty-default-on-flip (+ ...-substrate-turrigiano-scaling-FLIP).]**
   **⭐ LANDED 2026-08-21 (LATER STILL — the D5 learn-through-use de-risk + owner-#1 sharding):**
   (i) **knowledge-scale FHRR SHARDING GO** (owner #1 / #66, commit a5f594749 both remotes): route by agent → one
   shard, K=2000/S=16, ~16x routed speedup, byte-identical (0 mismatches), moat 8/8, honest host-hash-router scaffold

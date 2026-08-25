@@ -1795,7 +1795,8 @@ async def _continuous_state_tick() -> None:
                     None,
                     lambda: _CE.tick_idle_sessions(_SESSION_MOOD, _get_affect_organ,
                                                    selfinit_getter=_get_selfinit_organ,
-                                                   episodic_getter=_get_episodic_organ_existing),
+                                                   episodic_getter=_get_episodic_organ_existing,
+                                                   chat_getter=_get_chat_existing),
                 )
                 if n:
                     print("[webapp] continuous tick: evolved %d idle session(s)" % n, flush=True)
@@ -3143,6 +3144,14 @@ def _get_episodic_organ_existing(cache_key):
         return _EP._ORGANS.get(cache_key)
     except Exception:
         return None
+
+
+def _get_chat_existing(cache_key):
+    """The session's live chat IF one was already built this conversation. Used by the continuous tick's DA-encoding
+    substrate-homeostasis consolidation pass (`consolidate_substrate_homeostasis`) — never builds a chat just to
+    consolidate (the Turrigiano synaptic-scaling pass only refines a store the live turns already wrote). Returns None
+    if no chat exists for this session yet."""
+    return _BRAIN_CHATS.get(cache_key)
 
 
 def _get_multiref_organ(cache_key):

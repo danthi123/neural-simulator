@@ -1,0 +1,74 @@
+{
+  "runner": "research/runners/_da_encoding_homeo_trigger.py",
+  "A_fires_on_growth": {
+    "rec": {
+      "t": 1787696094.311251,
+      "substrate_homeostasis": true,
+      "n_engrams": 3,
+      "note": "idle: Turrigiano synaptic-scaling pass over 3 DA-encoded engram(s)"
+    },
+    "mag_before": 1.333333333333333,
+    "mag_after": 1.30940917847764,
+    "PASS": true
+  },
+  "B_noop_no_growth": {
+    "rec": null,
+    "PASS": true
+  },
+  "C_refires_after_new_fact": {
+    "rec": {
+      "t": 1787696094.4084964,
+      "substrate_homeostasis": true,
+      "n_engrams": 4,
+      "note": "idle: Turrigiano synaptic-scaling pass over 4 DA-encoded engram(s)"
+    },
+    "PASS": true
+  },
+  "D_lesion_disarms": {
+    "rec": null,
+    "PASS": true
+  },
+  "D2_off_disarms": {
+    "rec": null,
+    "PASS": true
+  },
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) FIRES on store-growth: a real store-synapse change, n_engrams==3",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "mean |w| 1.333333333333333 -> 1.30940917847764"
+    },
+    {
+      "kind": "require",
+      "name": "(B) NO-OP with no new writes (compounding guard)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C) RE-FIRES after a new fact is taught: n_engrams==4",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D) LESION (BRAIN_DA_ENCODING_LESION=1) disarms the pass",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D2) =0 (BRAIN_DA_ENCODING=0) disarms the pass (byte-identical off)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ]
+}
