@@ -21,8 +21,18 @@ from sim.backend import to_host
 from research.runners.rf_phasor_composer import _build_rf_bridge
 
 
-def load_phasor_codes(cap=None):
-    path = sorted(glob.glob("bridges/developed/scale787/day_*/grounded_codes.npz"))[-1]
+def load_phasor_codes(cap=None, codes_path=None):
+    # scale787 developed-brain codes are the preferred source; fall back to any grounded_codes.npz on disk (e.g. the
+    # wikidata knowledge bundle) so the binder de-risk runs headless without a prior scale787 developmental run.
+    if codes_path:
+        cands = sorted(glob.glob(codes_path))
+    else:
+        cands = sorted(glob.glob("bridges/developed/scale787/day_*/grounded_codes.npz"))
+        if not cands:
+            cands = sorted(glob.glob("research/findings/raw/**/grounded_codes.npz", recursive=True))
+    if not cands:
+        raise FileNotFoundError("no grounded_codes.npz found; pass --codes-path <glob>")
+    path = cands[-1]
     z = np.load(path, allow_pickle=True)
     keys = [k for k in z.keys() if k.startswith("g:")]
     theta = np.stack([np.asarray(z[k], np.float64) for k in keys])
@@ -83,18 +93,33 @@ def main():
     ap.add_argument("--pmax", type=int, default=4)
     ap.add_argument("--n-facts", type=int, default=20)
     ap.add_argument("--cap", type=int, default=256)
+    ap.add_argument("--codes-path", default=None, help="glob for grounded_codes.npz (default: scale787, else any)")
+    ap.add_argument("--out", default=None, help="optional JSON verdict path")
     args = ap.parse_args()
 
-    Z = load_phasor_codes(cap=args.cap); N, D = Z.shape
+    Z = load_phasor_codes(cap=args.cap, codes_path=args.codes_path); N, D = Z.shape
     bridge = _build_rf_bridge(2 * D, seed=args.seeds[0])
     print(f"[gap2 SPIKING learned binder] codes={N} D={D} on RF substrate (2D={2*D} neurons) | seeds={args.seeds}")
+    rows = []
     for P in range(1, args.pmax + 1):
         de = np.mean([retrieve(Z, bridge, s, P, args.n_facts, D, delta=True) for s in args.seeds])
         ad = np.mean([retrieve(Z, bridge, s, P, args.n_facts, D, delta=False) for s in args.seeds])
         pm = np.mean([retrieve(Z, bridge, s, P, args.n_facts, D, delta=True, permute=True) for s in args.seeds]) if P > 1 else 0.0
         dc = np.mean([retrieve(Z, bridge, s, P, args.n_facts, D, delta=True, decorrelate=True) for s in args.seeds])
+        rows.append({"P": P, "delta": float(de), "additive": float(ad), "permuted_role": float(pm),
+                     "decorrelated_ctrl": float(dc)})
         print(f"  P={P}: DELTA {de:.3f} | additive {ad:.3f} | permuted-role {pm:.3f} | decorrelated-ctrl {dc:.3f}"
               f"{'  <-- gate: delta>=0.80 & delta>additive' if P >= 3 else ''}")
+    if args.out:
+        import json as _json
+        import os as _os
+        hi = [r for r in rows if r["P"] >= 3]
+        go = bool(hi and all(r["delta"] >= 0.80 for r in hi) and all(r["permuted_role"] <= 0.2 for r in hi))
+        _os.makedirs(_os.path.dirname(args.out) or ".", exist_ok=True)
+        with open(args.out, "w") as fh:
+            _json.dump({"arc": "gap2 spiking delta-rule binder", "codes": int(N), "D": int(D),
+                        "seeds": args.seeds, "rows": rows, "go": go}, fh, indent=2)
+        print(f"  [written] {args.out} go={go}")
     print("  => the LEARNED local-J binder READ on the SPIKING RF resonate loop reaches the ceiling at P>=3. "
           "NOTE (audit-corrected 2026-07-21): at this scale (D=128 near-orthogonal roles, cap=300 codes) additive "
           "does NOT collapse (delta==additive==1.000), so delta is NOT load-bearing over additive here; the spiking-read "

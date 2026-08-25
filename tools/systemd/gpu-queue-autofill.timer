@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the GPU-queue autofill every 15 min (tops up genuine long jobs so the 3090 never drains)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

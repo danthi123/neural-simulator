@@ -1,0 +1,10 @@
+[Unit]
+Description=GPU-queue AUTOFILL — enqueue genuine long jobs when the queue runs low (no-drain until the usage reset)
+
+[Service]
+Type=oneshot
+User=dant123
+Group=dant123
+WorkingDirectory=/home/dant123/Projects/sim-worktrees/four-day-queue
+Environment=HOME=/home/dant123
+ExecStart=/bin/bash /home/dant123/Projects/sim-worktrees/four-day-queue/tools/gpu_queue_autofill.sh
