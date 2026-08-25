@@ -762,11 +762,17 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   (scaffold_retired NO): host-hash shard router + numpy VSA composer; scale next rung = candidate-restricted codebook
 >   cleanup (the O(V·D) cleanup grows with vocabulary, ~1.3s at 100k). Finding
 >   `2026-08-26-knowledge-core-shipped-as-default-cortical-ltm-soak-go-byte-identical`.
-> - **VISION object "which" readout — R-STDP sparse readout NO-GO across the FULL 2D op-point sweep (#75).** 14 cells
->   (n_s2 {24..256} × epochs {30,60,100}), 6-seed each, all `RSTDP-READOUT-NOGO`; learned not > random on spikes; the
->   distributed random S2 code is quantization-fragile. SURPASS = a different readout (learned DENSE population readout /
->   decorrelated-S2 shaping before the spiking read / a non-R-STDP credit path). `four_day/vrstdp_*_6seed.json`, finding
->   `2026-08-26-vision-rstdp-sparse-readout-NOGO-across-the-full-2D-operating-point-sweep-mapped-boundary`.
+> - **VISION object "which" readout — R-STDP NO-GO (mapped); the DENSE signed-linear readout SURPASS SOLVES the
+>   quantization wall but it RELOCATES to the feature ceiling (#75, MIXED).** R-STDP sparse readout: 14 cells (n_s2
+>   {24..256} × epochs {30..150}), 6-seed, all `RSTDP-READOUT-NOGO` (banked dead-end; `four_day/vrstdp_*_6seed.json`).
+>   The named surpass — a learned DENSE SIGNED linear-discriminant readout, spike-ported as EXCITATORY + feedforward-
+>   inhibition LIF class populations (common-mode rejection) + temporal G-glimpse evidence integration — makes readout
+>   LEARNING load-bearing 6/6 (learned 0.4375 vs random 0.2552 ≈ chance), clears the config-C NO-GO 0.34 6/6, and
+>   COLLAPSES the spike-port quantization gap to +0.0243 (config-C centroid was ~0.19). BUT does NOT beat V1-direct
+>   0.4184 (capability_go 0/6): the wall RELOCATED to the ~0.47 linear-separability ceiling of the z-normalized C2
+>   code. Next SURPASS = (1) move common-mode rejection to the readout (lighter s2_norm + lower s2_gain, joint sweep),
+>   (2) a NONLINEAR 2-layer spiking readout to lift the linear ceiling. `vlin_readout_6seed.json`, finding
+>   `2026-08-25-vision-signed-linear-discriminant-spiking-readout-solves-quantization-wall-relocates-to-feature-ceiling`.
 > - **SOURCE-MONITORING (#129) — NEGATIVE across variants** (plastic NEGATIVE, competitive 5/6 go=false on the no-harm
 >   control, attractor margins short). SURPASS = a CONJUNCTIVE source×content tag that cannot leak into the content read
 >   (queued on the pool). `four_day/_laneC_*`, `laneC_source_competitive_decisive.json`.
@@ -894,8 +900,11 @@ landed. Ordered next actions:**
 - **Harvest the pool faculty-lane results** queued this session: #129 source-monitor conjunctive-tag (the named
   surpass), v1 self-org perception, spiking comprehension, curiosity learning-progress — rsync from the pool nodes and
   promote GOs to findings; then the **gap5 self-ignition op-point re-run (#134)** from the igniting configs.
-- **Vision next readout rung (#75):** a learned DENSE population readout / decorrelated-S2 shaping / a non-R-STDP credit
-  path (the sparse R-STDP readout is a mapped NO-GO across the whole op range).
+- **Vision next readout rung (#75):** the DENSE signed-linear readout SOLVED quantization (gap +0.0243, learning
+  load-bearing 6/6, clears the 0.34 NO-GO 6/6) but the wall RELOCATED to the z-normed C2 feature ceiling (~0.47, below
+  config-B's raw-rate 0.56). Next: (1) lighter s2_norm + lower s2_gain so the readout itself does common-mode rejection
+  (a 2D op-point sweep — CPU/pool), (2) a NONLINEAR 2-layer spiking readout (hidden LIF conjunction units) to lift the
+  linear-separability ceiling.
 - **DA-encoding on-substrate homeostat:** replace the host multiplicative clamp with a spiking synaptic-scaling rule
   (Turrigiano-style) so the companion homeostatic process is run by the brain (lever-2 was UNDEFINED).
 - **#130 replay:** revise the order-STDP calibration + learned opponent membership, then the decisive 6-seed order test.

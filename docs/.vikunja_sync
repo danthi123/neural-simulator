@@ -10,7 +10,7 @@
 
 last_reconciled: 2026-08-25
 at_commit: order-consolidation-recalib
-note: #129 source-monitoring GO 6/6 (perceived-vs-generated opponent-provenance, a different family immune to the absolute-rate weakness; de-risk, next-rung #137). #130 RESOLVED to a decisive verdict (order-sensitive consolidation recalibration). Was
+note: #75 vision readout PARTIAL (signed linear-discriminant spiking readout: spike-port quantization SOLVED, wall relocated to the linear-separability ceiling; next-rungs #75a/#75b). #129 source-monitoring GO 6/6 (perceived-vs-generated opponent-provenance, a different family immune to the absolute-rate weakness; de-risk, next-rung #137). #130 RESOLVED to a decisive verdict (order-sensitive consolidation recalibration). Was
   CALIBRATION_NEEDS_REVISION; diagnosed as replay winner-take-all (episode-agnostic random replay
   let the stronger memory hog consolidation) + numpy->cupy operating-point drift, NOT a broken
   order-STDP. Revised to balanced directed-sweep replay + isolated order-STDP: 6-seed GO on the

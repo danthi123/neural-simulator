@@ -1,0 +1,40 @@
+{
+ "run_id": "1787692859-1407950",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/vision75-readout-v2/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--ridge",
+  "0.5",
+  "--n-glimpses",
+  "2",
+  "--n-s2",
+  "96",
+  "--out",
+  "research/findings/raw/lanes/perception/vlin_readout_6seed.json"
+ ],
+ "git_sha": "0fe3c3888",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T17:20:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/vlin_readout_6seed.json"
+}
