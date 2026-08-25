@@ -32,6 +32,21 @@ One piece of project plumbing was found broken and logged: an internal consisten
 "what's shipped" ledger honest against the code had gone silent (a YAML quirk); the knowledge-core flip was
 verified by hand instead, and the repair is queued as its own task.
 
+## ⭐ 2026-08-25 (follow-up) — the "replay memories in the right order" calibration was revised, and it now passes
+
+One of the harvest's four negatives above — "replaying memories in the right order needs its calibration
+revised" (board #130) — was diagnosed and fixed. The order-sensitivity mechanism was never broken: ordered
+replay always laid down a stronger memory-sequence trace than a scrambled one. What was broken was the sleep
+replay itself — it was random noise, and the stronger of the two memories hogged nearly all of it, so only one
+memory ever consolidated and the readout was junk. The fix replays each memory as a proper directed sweep
+(both memories get replayed) and reads the order signal on its own, cleanly. It now passes on all six decisive
+seeds with every anti-cheat intact, and — importantly — it also passes on the older seeds the previous version
+had FAILED on, so this is a real fix, not a re-tune. Honest caveat (banked as the next step): the behavioural
+advantage is that the correctly-ordered memory recalls FASTER; given a long enough recall window the scrambled
+one catches up, so the win is in recall speed, not final capacity. The underlying trace is stronger regardless.
+This is a gate result on the toy consolidation network, not yet wired into the production brain. Finding:
+`research/findings/2026-08-25-order-consolidation-recalib-balanced-directed-sweep-replay-6seed-GO.md`.
+
 ## ⭐ 2026-08-21 (late) — the "conscious workspace" now cross-checks comprehension by default; a self-maintaining project OS landed; two memory-flip gates came back honest
 
 Four things landed later the same day.
