@@ -54,8 +54,44 @@ from typing import Optional
 _DA_TONIC_BASELINE = 0.5
 # the VALIDATED DA->gain slope (== the I-7-b / consolidation-probe2 default k_da). g = 1 + k_DA*(DA - tonic), clamped.
 _K_DA = 2.0
-_G_MIN = 0.5
+_G_MIN = 0.5          # the RAW (pre-lever-2) recall-floor clamp (homeostasis OFF path only)
 _G_MAX = 3.0
+
+# ---------------------------------------------------------------------------
+# LEVER-2 (2026-08-22): the HOMEOSTATIC companion process the bare DA gate was missing.
+# ---------------------------------------------------------------------------
+# The bare DA gate (g = clip(0.5, 3.0, 1 + k(DA-tonic))) writes a below-tonic-DA fact at g<1 (floored 0.5). On the
+# production magnitude store that HALVES the stored |w| -> the fact's SNR drops below the RF read floor under only mild
+# read stress, so recall REGRESSES at narrow DA spread AND the over-suppressed block's decode is corrupted enough to
+# spuriously match an unstored cue (the "encoding-introduced" moat leak). Both are the SAME defect: the static g_min=0.5
+# clamp is a PROXY for the homeostatic process real synapses run alongside potentiation -- Turrigiano 2008 homeostatic
+# synaptic scaling ("The Self-Tuning Neuron", Cell 135(3):422-435): a MULTIPLICATIVE scaling of a neuron's synapses
+# toward an activity SET-POINT that PRESERVES their relative strengths (so a DA-salience ORDERING survives) while
+# preventing runaway weakening (no synapse driven below the level that keeps it functional).
+#
+# The lever-2 rule (two parts, both homeostatic):
+#   (1) a recall-SAFE FLOOR at the set-point: g_floor = A* = 1.0 -- a below-tonic-DA fact is written at unit magnitude
+#       (== the OFF-arm byte-identical write), never weaker. This is the "don't drive a synapse below functional" half
+#       of synaptic scaling; it removes BOTH the low-sigma recall regression and the encoding-introduced moat leak
+#       (which the diagnosis traced to a g=0.5 block's corrupted decode).
+#   (2) a MULTIPLICATIVE population scale toward the set-point: g = clip(g_floor, g_max, s * r), r = 1 + k(DA-tonic)
+#       the raw salience (UNCLAMPED), s = clip(s_min, s_max, A*/mu), mu = a running EMA of r (the neuron's tracked mean
+#       "activity"). A DA distribution skewed high (mu>1) pulls s<1 -> the high-DA boost is REGULATED toward the
+#       set-point (Turrigiano's total-activity homeostasis); a boring/low stretch (mu<1) pulls s>1. s is COMMON across
+#       facts -> relative salience ORDER is preserved. This is the load-bearing multiplicative half (distinguishable
+#       from a bare floor: it modulates the high-DA gain by the running mean).
+#
+# HONEST SCOPE (BRAIN-BASED-ONLY). This is HOST arithmetic (a multiply + clip + a scalar EMA) on the write gain, at the
+# SAME composer layer as the DA gate it companions (`encoding_gain_fn`, a callable read in `_write_block`; NO sim/ edit).
+# It is a documented PROXY for an emergent spiking homeostatic-plasticity rule on the substrate synapses, exactly as the
+# DA gate itself is a host proxy for DA-gated synaptic potentiation. The biology (Turrigiano multiplicative scaling) is
+# the DESIGN principle; the on-substrate synaptic-scaling realization is the tracked next target. It reads a
+# brain-derived signal (the running mean of the self-produced-DA gain), so it is grounded, not a free host knob.
+_A_STAR = 1.0        # the homeostatic activity set-point == the recall-safe unit-magnitude (tonic) write
+_G_FLOOR_HOMEO = 1.0 # the recall-safe floor: a low-DA fact is written at unit magnitude, never below (Turrigiano floor)
+_EMA_BETA = 0.25     # the homeostatic integration rate for the running mean of the raw salience (slow self-tuning)
+_S_MIN, _S_MAX = 0.5, 1.5   # bound the common multiplicative scale (guards live all-low / all-high edge streams)
+_MU_INIT = 1.0       # the running-mean init == the set-point (the first write is un-regulated: s=1 -> g=clip(floor,max,r))
 
 # lazily-bound reference to the canonical gain map (imported on first ON use so the default-OFF path stays light).
 _GAIN_MAP = None
@@ -90,6 +126,30 @@ def da_encoding_lesioned() -> bool:
     return os.environ.get("BRAIN_DA_ENCODING_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def da_encoding_homeostasis_enabled() -> bool:
+    """The lever-2 homeostatic companion (Turrigiano multiplicative scaling + recall-safe floor). DEFAULT ON whenever
+    the encoding coupling is on: `BRAIN_DA_ENCODING_HOMEOSTASIS` unset/truthy -> homeostasis ON; set to 0/false/off/no
+    -> the RAW pre-lever-2 map (g = clip(0.5, 3.0, 1+k(DA-tonic))) for the ablation control. Homeostasis is what makes
+    the default-ON flip safe (removes the low-sigma regression + the encoding-introduced moat leak), so it is on by
+    default with the coupling; the OFF-of-homeostasis path reproduces the bare gate's UNDEFINED flip gate."""
+    return os.environ.get("BRAIN_DA_ENCODING_HOMEOSTASIS", "1").strip().lower() in ("1", "true", "on", "yes")
+
+
+def homeostatic_step(mu, r, a_star=_A_STAR, g_floor=_G_FLOOR_HOMEO, g_max=_G_MAX,
+                     s_min=_S_MIN, s_max=_S_MAX, ema_beta=_EMA_BETA):
+    """The pure lever-2 homeostatic update for ONE write (reused verbatim by the flip-gate soak so the validated logic
+    IS the shipped logic). Given the running mean `mu` of the raw salience and this write's raw salience `r =
+    1+k(DA-tonic)` (UNCLAMPED), return (g_effective, mu_next):
+       s = clip(s_min, s_max, a_star / mu)            # Turrigiano common multiplicative scale toward the set-point
+       g = clip(g_floor, g_max, s * r)                # relative order preserved; never below the recall-safe floor
+       mu_next = (1-ema_beta)*mu + ema_beta*r         # slow self-tuning of the tracked mean activity
+    """
+    s = min(s_max, max(s_min, (a_star / mu) if mu > 0 else 1.0))
+    g = float(min(g_max, max(g_floor, s * r)))
+    mu_next = float((1.0 - ema_beta) * mu + ema_beta * r)
+    return g, mu_next
+
+
 def da_level_of(chat) -> float:
     """The live self-produced tonic DA off the DA-mode read (`chat._last_da_drives["da_level"]`, set by
     da_mode_drives_chat.observe_turn earlier in the turn). Missing (da-drives off / not yet observed) -> tonic 0.5 ->
@@ -104,25 +164,46 @@ def da_level_of(chat) -> float:
         return _DA_TONIC_BASELINE
 
 
-def encoding_gain_for(chat) -> float:
-    """g = clip(g_min, g_max, 1 + k_DA*(DA - tonic)) on the LIVE self-produced DA. Under the lesion the gain is pinned
-    to 1.0 (the coupling is severed). g == 1.0 at tonic (an unengaged turn is a neutral, byte-identical write)."""
+def encoding_gain_for(chat, advance: bool = False) -> float:
+    """The per-store write gain on the LIVE self-produced DA. Under the lesion -> pinned 1.0 (the coupling is severed).
+    HOMEOSTASIS ON (lever-2 default): g = clip(1.0, 3.0, s * r), r = 1+k(DA-tonic), s = clip(0.5, 1.5, 1.0/mu), mu a
+    running EMA of r held on the chat (`_da_encoding_mu`) -- Turrigiano multiplicative scaling toward the set-point with
+    a recall-safe floor; a tonic (r=1) write at steady state (mu->1) stays g=1.0 (byte-identical). HOMEOSTASIS OFF
+    (ablation): the RAW pre-lever-2 map g = clip(0.5, 3.0, r).
+    `advance` is the STORE-vs-PEEK switch: the store hook passes advance=True so the homeostatic running mean self-tunes
+    ONCE PER ACTUAL WRITE (== one homeostatic_step per store, matching the soak's per-fact fold); a trace/peek read
+    (advance=False) computes g from the current mu WITHOUT advancing it, so reads never drift the set-point."""
     if da_encoding_lesioned():
         return 1.0
     da = da_level_of(chat)
-    return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_MIN, _G_MAX))
+    if not da_encoding_homeostasis_enabled():
+        return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_MIN, _G_MAX))
+    r = 1.0 + _K_DA * (da - _DA_TONIC_BASELINE)                       # raw salience (UNCLAMPED); the homeostat floors it
+    mu = float(getattr(chat, "_da_encoding_mu", _MU_INIT))
+    g, mu_next = homeostatic_step(mu, r)
+    if advance:
+        try:
+            chat._da_encoding_mu = mu_next                            # self-tune the running mean ONCE per real store
+        except Exception:
+            pass
+    return g
 
 
 def install_encoding_gain(chat) -> Optional[float]:
     """Install the DA-gated `encoding_gain_fn` on the LIVE composer (read AT STORE TIME inside `chat.gate`'s
-    `_maybe_acquire`). The closure reads the fresh live DA each store, so a fact taught while engaged is encoded
-    stronger. Idempotent — reinstalls a fresh closure over THIS chat. Returns the current gain g (for the trace), or
-    None if there is no composer. NO `sim/` edit (a composer-layer callable)."""
+    `_maybe_acquire`). The closure reads the fresh live DA each store AND advances the homeostatic running mean (once
+    per real write), so a fact taught while engaged is encoded stronger AND the population is self-tuned toward the
+    recall-safe set-point. Idempotent — reinstalls a fresh closure over THIS chat; the homeostatic state
+    (`_da_encoding_mu`) PERSISTS across reinstalls (init to the set-point only if absent). Returns the current gain g as
+    a PEEK (does NOT advance mu -- only the store closure advances it), or None if there is no composer. NO `sim/` edit
+    (a composer-layer callable; the homeostat is a host proxy at that same layer)."""
     comp = getattr(getattr(chat, "inner", None), "composer", None)
     if comp is None:
         return None
-    comp.encoding_gain_fn = lambda: encoding_gain_for(chat)
-    return encoding_gain_for(chat)
+    if not hasattr(chat, "_da_encoding_mu"):
+        chat._da_encoding_mu = _MU_INIT
+    comp.encoding_gain_fn = lambda: encoding_gain_for(chat, advance=True)
+    return encoding_gain_for(chat, advance=False)
 
 
 def uninstall_encoding_gain(chat) -> None:
