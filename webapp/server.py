@@ -3396,6 +3396,16 @@ def _ltm_ship_default_on() -> bool:
     return env.strip().lower() in ("1", "true", "on", "yes")
 
 
+# PRODUCTION-DEFAULT knobs for the tiny-demo brain-chat load, promoted to NAMED constants so the CLASS-PI
+# ledger (docs/PRODUCTION_INTEGRATION_LEDGER.yaml) can machine-anchor them (a flip of the default here now
+# BLOCKS at commit until the ledger row moves). Same convention as _LTM_SHIP_DEFAULT_ON above.
+# _COMPOSER_KIND_DEFAULT: 'onebrain' = the GENUINELY-SPIKING recall is the production default (BRAIN_COMPOSER_KIND
+#   overrides; 'rf' is the numpy fast-path escape). _CONTINUOUS_DRIVES_DEFAULT: '1' = the between-turn wander
+#   LEADS the next turn by default (BRAIN_CONTINUOUS_DRIVES=0 is the byte-identical escape).
+_COMPOSER_KIND_DEFAULT = "onebrain"
+_CONTINUOUS_DRIVES_DEFAULT = "1"
+
+
 def _resolve_ltm_bundle():
     """Resolve the cortical LTM bundle path (returns a dir string, or None for the byte-identical no-LTM path).
       * BRAIN_LTM_BUNDLE=<path>                      -> that bundle (explicit override, unchanged).
@@ -3453,7 +3463,7 @@ def _build_chat_brain(brain: str, renderer: str):
         # recall (resonate-and-fire per query, runtime new-word LEARN via vocab_headroom). The onebrain build is
         # ~180s (speed secondary); it is the brain-based-only recall the mission requires. Env-gated so the flip to
         # spiking-by-default is one setting, and it can be verified via the real endpoint before becoming the default.
-        _ck = os.environ.get("BRAIN_COMPOSER_KIND", "onebrain")
+        _ck = os.environ.get("BRAIN_COMPOSER_KIND", _COMPOSER_KIND_DEFAULT)
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
                                               enable_neural_render=False, composer_kind=_ck)
         source = "tiny-demo"
@@ -4257,7 +4267,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # continuous engine itself is off (`BRAIN_CONTINUOUS=0`) — no wander is ever recorded regardless of this flag.
     wander_drives_lead = ""
     wander_drives_info = None
-    if os.environ.get("BRAIN_CONTINUOUS_DRIVES", "1").strip().lower() in ("1", "true", "on", "yes"):
+    if os.environ.get("BRAIN_CONTINUOUS_DRIVES", _CONTINUOUS_DRIVES_DEFAULT).strip().lower() in ("1", "true", "on", "yes"):
         try:
             from webapp import continuous_engine as _CEW
             _wander = _CEW.recent_wander(cache_key)

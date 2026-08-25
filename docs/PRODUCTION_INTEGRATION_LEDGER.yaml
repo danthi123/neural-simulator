@@ -112,11 +112,15 @@ rows:
     on_by_default: YES          # the production webapp default is now onebrain (BRAIN_COMPOSER_KIND defaults to 'onebrain'); BRAIN_COMPOSER_KIND=rf is the escape to the numpy fast path
     scaffold_retired: NO        # the rf numpy fast path remains as the CPU/test oracle + the env escape
     host_scaffold_in_default: "none for the recall MECHANISM (the resonate-and-fire onebrain store is the default); the rf numpy _scan fast path is the opt-out oracle (BRAIN_COMPOSER_KIND=rf), not the default"
-    default_anchor:
+    default_anchor:                # 2026-08-26 REPAIRED: the old _ck anchor put an os.environ.get(...) EXPRESSION in
+                                   # off/on_value, which _count_assign (a NAME = "literal" matcher) can never resolve —
+                                   # so it read on=0/off=0 and silently passed while sub-check A was dead. Re-pointed at
+                                   # the named production-default constant _COMPOSER_KIND_DEFAULT = "onebrain" (server.py,
+                                   # the value os.environ.get("BRAIN_COMPOSER_KIND", ...) reads); flipping it to "rf" now blocks.
       - file: webapp/server.py
-        assign: _ck
-        off_value: "os.environ.get(\"BRAIN_COMPOSER_KIND\", \"rf\")"
-        on_value: "os.environ.get(\"BRAIN_COMPOSER_KIND\", \"onebrain\")"
+        assign: _COMPOSER_KIND_DEFAULT
+        off_value: "rf"
+        on_value: "onebrain"
         count: 1
     lesion_note: "The one-brain property is a MECHANISM claim (recall on FIRING NEURONS via resonate, not numpy _scan) — proven by the HTTP activity trace (composer='onebrain', 45730 readout neurons, frac_fired ~1.7%% on a match / ~0 on abstain), NOT by an answer change (onebrain and rf give the same answers by design; the point is the substrate computing them). The TUI/smoke _build_tiny_demo default stays 'rf' (fast GPU-free smoke); only the webapp production default flipped."
     evidence: "webapp/server.py BRAIN_COMPOSER_KIND default 'onebrain'; _build_tiny_demo(composer_kind=) plumbing; one_brain_composer.py vocab_headroom recruit-an-assembly; HTTP-verified on /api/brain-chat: CHOOSE 'The dog chases cat.' + abstain + LEARN 'wolf hunt deer'->'The wolf hunts deer.' (matched_fact_index=5) + rich GENERATE 'The dog chases cat. The cat eats fish.', all composer='onebrain'; finding 2026-08-12-onebrain-spiking-store...RESOLVED"
@@ -552,8 +556,12 @@ rows:
         off_value: "False"
         on_value: "True"
         count: 1
-      - file: webapp/server.py
-        assign: "os.environ.get(\"BRAIN_CONTINUOUS_DRIVES\", \"1\")"
+      - file: webapp/server.py             # 2026-08-26 REPAIRED: the old anchor put the os.environ.get(...) EXPRESSION in
+                                           # `assign`, which _count_assign can never resolve (it needs NAME = "literal";
+                                           # server.py:4260 is an inline `if os.environ.get(...)`, not an assignment) —
+                                           # so it read on=0/off=0 and silently passed while sub-check A was dead. Re-pointed
+                                           # at the named production-default constant _CONTINUOUS_DRIVES_DEFAULT = "1".
+        assign: _CONTINUOUS_DRIVES_DEFAULT
         off_value: "0"
         on_value: "1"
         count: 1

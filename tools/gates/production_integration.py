@@ -144,12 +144,31 @@ def _count_assign(text, assign, value):
     return len(re.findall(pat, text))
 
 
+# ---------------------------------------------------------------- level normalizer (THE SILENT-DEATH FIX, 2026-08-26)
+def _level(v):
+    """Normalize a ledger LEVEL to the canonical 'YES'/'NO'/'PARTIAL' token.
+
+    PyYAML's safe_load applies the YAML-1.1 boolean rule and coerces the bare `on_by_default: YES` / `NO`
+    (and de_risked/wired/scaffold_retired) to Python True/False. The old checks then compared
+    str(True).upper()=='TRUE' against the literal 'YES'/'NO' — matching NEITHER — so sub-check A was vacuous
+    for every YES/NO row, sub-check B mis-read every faculty as wired=False/on_by_default=False, and the
+    ratchet counted 0 scaffold_retired (research/FAILURE_LOG.md 2026-08-26 'PI GATE SUB-CHECKS A+B SILENTLY
+    DEAD'). Normalizing here makes the checks compare like-for-like whether PyYAML coerced or the fallback
+    parser left a raw string. True->'YES', False->'NO', anything else -> str(v).upper() (so 'PARTIAL',
+    'yes', a quoted "YES" all land correctly)."""
+    if v is True:
+        return "YES"
+    if v is False:
+        return "NO"
+    return str(v).strip().upper()
+
+
 # ---------------------------------------------------------------- the three sub-checks (operate on a parsed ledger)
 def _check_anchors(data):
     problems = []
     for row in data.get("rows", []):
         key = row.get("key", "?")
-        lvl = str(row.get("on_by_default", "")).upper()
+        lvl = _level(row.get("on_by_default", ""))
         for anc in row.get("default_anchor", []) or []:
             src = _read(anc["file"])
             if src is None:
@@ -177,7 +196,7 @@ def _check_anchors(data):
                 problems.append("[A] row %r: scaffold_symbol file %s not found" % (key, sc["file"]))
             else:
                 present = sc["symbol"] in src
-                retired = str(row.get("scaffold_retired", "")).upper() == "YES"
+                retired = _level(row.get("scaffold_retired", "")) == "YES"
                 if retired and present:
                     problems.append("[A] row %r says scaffold_retired:YES but the host symbol %r is STILL PRESENT in %s"
                                     % (key, sc["symbol"], sc["file"]))
@@ -193,7 +212,7 @@ def _check_ratchet(data):
     rows = data.get("rows", [])
     if "total_faculties" in h and h["total_faculties"] != len(rows):
         problems.append("[C] headline.total_faculties=%s but the ledger has %d rows" % (h["total_faculties"], len(rows)))
-    got_retired = sum(1 for r in rows if str(r.get("scaffold_retired", "")).upper() == "YES")
+    got_retired = sum(1 for r in rows if _level(r.get("scaffold_retired", "")) == "YES")
     if "scaffold_retired" in h and h["scaffold_retired"] != got_retired:
         problems.append("[C] headline.scaffold_retired=%s but %d rows have scaffold_retired:YES" % (h["scaffold_retired"], got_retired))
     return problems
@@ -224,9 +243,9 @@ def _check_claim(text, rel, data):
     row = rows.get(key)
     if row is None:
         return ["[B] %s: integration_faculty:%r is not a row in %s" % (rel, key, LEDGER_REL)]
-    wired = str(row.get("wired", "")).upper() == "YES"
-    on_def = str(row.get("on_by_default", "")).upper() == "YES"
-    retired = str(row.get("scaffold_retired", "")).upper() == "YES"
+    wired = _level(row.get("wired", "")) == "YES"
+    on_def = _level(row.get("on_by_default", "")) == "YES"
+    retired = _level(row.get("scaffold_retired", "")) == "YES"
     need_retired = kind in ("onebrain", "scaffold_retired")
     ok = wired and on_def and (retired if need_retired else True)
     if not ok:
@@ -352,6 +371,40 @@ def selftest():
         if _check_claim(claim("Today it is NOT integrated into /api/brain-chat; the goal is to become on by default."),
                         "research/findings/f.md", data):
             bad.append("[B] FALSE POSITIVE: flagged a 'NOT integrated / goal to become' descriptive use")
+
+    # ---- PyYAML BOOLEAN COERCION (the 2026-08-26 silent-death guard) ----
+    # PyYAML's safe_load coerces bare `on_by_default: YES/NO` (+ wired/scaffold_retired) to Python True/False.
+    # The pre-fix checks compared str(True).upper()=='TRUE' against 'YES'/'NO' — matching NEITHER — so A was
+    # vacuous, B mis-read every row as wired=False/on=False, and C counted 0 retired (all SILENTLY: the string-only
+    # cases above still passed, which is exactly why the bug shipped). These cases feed BOOLEAN levels as safe_load
+    # produces them and FAIL if _level is removed/neutered — the registry's proof that the revived checks are live.
+    _orig_read = self_mod._read
+    self_mod._read = lambda rel: "flag=False\nflag=False\n" if rel == "__mem__" else _orig_read(rel)
+    try:
+        # A: on_by_default coerced to True(bool) while the source assigns the OFF value -> MUST flag.
+        d_boolA = {"rows": [{"key": "b", "on_by_default": True, "scaffold_retired": False,
+                             "default_anchor": [{"file": "__mem__", "assign": "flag",
+                                                 "off_value": "False", "on_value": "True", "count": 2}]}]}
+        if not _check_anchors(d_boolA):
+            bad.append("[A/bool] SILENT-DEATH: on_by_default=True(bool) + OFF source NOT flagged (the _level fix is dead)")
+        # A: on_by_default True(bool) consistent with an ON source -> must NOT flag.
+        self_mod._read = lambda rel: "flag=True\nflag=True\n" if rel == "__mem__" else _orig_read(rel)
+        d_boolAok = {"rows": [{"key": "b", "on_by_default": True, "scaffold_retired": False,
+                               "default_anchor": [{"file": "__mem__", "assign": "flag",
+                                                   "off_value": "False", "on_value": "True", "count": 2}]}]}
+        if _check_anchors(d_boolAok):
+            bad.append("[A/bool] FALSE POSITIVE: on_by_default=True(bool) consistent with the ON source was flagged")
+    finally:
+        self_mod._read = _orig_read
+    # C: scaffold_retired coerced to True(bool) MUST be counted (else a false ratchet mismatch).
+    if _check_ratchet({"headline": {"scaffold_retired": 1},
+                       "rows": [{"key": "a", "scaffold_retired": True}, {"key": "b", "scaffold_retired": False}]}):
+        bad.append("[C/bool] SILENT-DEATH: scaffold_retired=True(bool) not counted (the _level fix is dead)")
+    # B: a SUPPORTED claim whose row levels are BOOLEANS (wired=True, on_by_default=True) must NOT flag.
+    d_boolB = {"rows": [{"key": "semantic-recall", "wired": True, "on_by_default": True, "scaffold_retired": True}]}
+    supported = "---\ntype: finding\nintegration_faculty: semantic-recall\n---\n\nNow integrated into /api/brain-chat.\n"
+    if _check_claim(supported, "research/findings/g.md", d_boolB):
+        bad.append("[B/bool] FALSE POSITIVE: a supported claim with BOOLEAN levels (wired=True) was flagged (the _level fix is dead)")
 
     # ---- scoping ----
     if check(None) or check([]):
