@@ -1,0 +1,190 @@
+{
+  "backend": "numpy",
+  "disabled_processes": [
+    {
+      "process": "reward modulation, homeostasis, structural plasticity; sleep rate-Hebbian OFF",
+      "why": "isolate the order-sensitive spike-timing consolidation on the directed-sweep replay"
+    }
+  ],
+  "elapsed_seconds": 52.09055233001709,
+  "gate": "replay_cortical_consolidation_v7_balanced_directed_sweep_order",
+  "go_bar": "intact_beats_shuffled_order (margin>=+0.01) AND both_memories_recovered AND stdp_owns_order AND lesions~0, on >=5/6 seeds",
+  "mechanism": "v6 order-sensitive STDP consolidation + balanced DIRECTED-SWEEP replay (A->B stored-trajectory reactivation); both memories consolidate so the order margin is measurable, order effect attributed to STDP by the stdp-off power control",
+  "n_beats_shuffled_order": 4,
+  "n_both_recovered": 5,
+  "n_seed_order_go": 4,
+  "n_seeds": 5,
+  "phase": "decisive_multiseed",
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "the STDP-off power control produced a defined order margin on every seed",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "both-memory retest recovery was measured on every seed",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "the physical sleep-time cortical-trace delta was measured on every seed",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "the four causal-lesion controls executed (defined recovery) on every seed",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "remaining_scaffolds": [
+    "host-scheduled directed replay sweep (stored-trajectory drive) -- the same host-replay scaffold class as v6 episode-agnostic background",
+    "host-defined wake episode populations and partial probe cues",
+    "opponent inhibitory channel membership fixed from calibration assemblies",
+    "host-scheduled sleep down-state boundaries",
+    "fixed assembly anatomy",
+    "SFA parameters (d/a) and STDP amplitudes/bounds set at build, not developmentally tuned"
+  ],
+  "replay_plan": "directed_sweep",
+  "rows": [
+    {
+      "A_correct_rate": 0.05694444444444444,
+      "B_correct_rate": 0.05694444444444444,
+      "both_memories_recovered": true,
+      "calibration_status": "CALIBRATION_NEEDS_REVISION",
+      "checks_failed": [
+        "target_inhibition_improves_specificity"
+      ],
+      "intact_beats_shuffled_order": true,
+      "intact_mean_false_recall": 0.0,
+      "intact_mean_recovery": 0.05694444444444444,
+      "intact_stdp_cortical_delta": 1.1661131623728176,
+      "lesions_drop_to_zero": true,
+      "order_recovery_margin": 0.029166666666666667,
+      "order_stdp_attribution": 1.0,
+      "ordered_trace_stronger": true,
+      "replayed_A": 12,
+      "replayed_B": 12,
+      "seed": 412,
+      "seed_order_go": true,
+      "shuffled_mean_recovery": 0.027777777777777776,
+      "shuffled_stdp_cortical_delta": 0.8871405014263777,
+      "stdp_off_order_margin": 0.0,
+      "stdp_owns_order": true
+    },
+    {
+      "A_correct_rate": 0.041666666666666664,
+      "B_correct_rate": 0.04722222222222222,
+      "both_memories_recovered": true,
+      "calibration_status": "CALIBRATION_PROMISING",
+      "checks_failed": [],
+      "intact_beats_shuffled_order": true,
+      "intact_mean_false_recall": 0.016129032258064516,
+      "intact_mean_recovery": 0.04444444444444444,
+      "intact_stdp_cortical_delta": 1.0785107884116263,
+      "lesions_drop_to_zero": true,
+      "order_recovery_margin": 0.02916666666666666,
+      "order_stdp_attribution": 1.0,
+      "ordered_trace_stronger": true,
+      "replayed_A": 12,
+      "replayed_B": 12,
+      "seed": 413,
+      "seed_order_go": true,
+      "shuffled_mean_recovery": 0.015277777777777777,
+      "shuffled_stdp_cortical_delta": 0.732715582316612,
+      "stdp_off_order_margin": 0.0,
+      "stdp_owns_order": true
+    },
+    {
+      "A_correct_rate": 0.043055555555555555,
+      "B_correct_rate": 0.05694444444444444,
+      "both_memories_recovered": true,
+      "calibration_status": "CALIBRATION_NEEDS_REVISION",
+      "checks_failed": [
+        "target_inhibition_improves_specificity"
+      ],
+      "intact_beats_shuffled_order": true,
+      "intact_mean_false_recall": 0.0,
+      "intact_mean_recovery": 0.05,
+      "intact_stdp_cortical_delta": 1.1758138637637279,
+      "lesions_drop_to_zero": true,
+      "order_recovery_margin": 0.01805555555555556,
+      "order_stdp_attribution": 1.0,
+      "ordered_trace_stronger": true,
+      "replayed_A": 11,
+      "replayed_B": 13,
+      "seed": 414,
+      "seed_order_go": true,
+      "shuffled_mean_recovery": 0.03194444444444444,
+      "shuffled_stdp_cortical_delta": 0.969922242935152,
+      "stdp_off_order_margin": 0.0,
+      "stdp_owns_order": true
+    },
+    {
+      "A_correct_rate": 0.03333333333333333,
+      "B_correct_rate": 0.04583333333333333,
+      "both_memories_recovered": true,
+      "calibration_status": "CALIBRATION_NEEDS_REVISION",
+      "checks_failed": [
+        "intact_beats_shuffled_order",
+        "target_inhibition_improves_specificity"
+      ],
+      "intact_beats_shuffled_order": false,
+      "intact_mean_false_recall": 0.0,
+      "intact_mean_recovery": 0.03958333333333333,
+      "intact_stdp_cortical_delta": 1.0494013733534504,
+      "lesions_drop_to_zero": true,
+      "order_recovery_margin": 0.009027777777777773,
+      "order_stdp_attribution": 1.0,
+      "ordered_trace_stronger": true,
+      "replayed_A": 10,
+      "replayed_B": 14,
+      "seed": 415,
+      "seed_order_go": false,
+      "shuffled_mean_recovery": 0.030555555555555558,
+      "shuffled_stdp_cortical_delta": 0.9111987773988707,
+      "stdp_off_order_margin": 0.0,
+      "stdp_owns_order": false
+    },
+    {
+      "A_correct_rate": 0.04861111111111111,
+      "B_correct_rate": 0.05,
+      "both_memories_recovered": true,
+      "calibration_status": "CALIBRATION_PROMISING",
+      "checks_failed": [],
+      "intact_beats_shuffled_order": true,
+      "intact_mean_false_recall": 0.039473684210526314,
+      "intact_mean_recovery": 0.04930555555555556,
+      "intact_stdp_cortical_delta": 1.1640550408919808,
+      "lesions_drop_to_zero": true,
+      "order_recovery_margin": 0.01666666666666667,
+      "order_stdp_attribution": 1.0,
+      "ordered_trace_stronger": true,
+      "replayed_A": 12,
+      "replayed_B": 12,
+      "seed": 410,
+      "seed_order_go": true,
+      "shuffled_mean_recovery": 0.03263888888888889,
+      "shuffled_stdp_cortical_delta": 0.8631336522068724,
+      "stdp_off_order_margin": 0.0,
+      "stdp_owns_order": true
+    }
+  ],
+  "seeds": [
+    412,
+    413,
+    414,
+    415,
+    410
+  ],
+  "undefined_reasons": [],
+  "verdict": "NO-GO"
+}

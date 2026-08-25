@@ -1,0 +1,35 @@
+{
+ "run_id": "1787694051-1445122",
+ "runner": "research/runners/_replay_cortical_consolidation_gate_v7_balanced_order.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/order-consolidation-recalib/research/runners/_replay_cortical_consolidation_gate_v7_balanced_order.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/order_recalib/v7_decisive_numpy.json"
+ ],
+ "git_sha": "0fe3c3888",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T17:40:51",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2076.2,
+ "corpus_check_query": "order-sensitive replay consolidation operating point overfits \u2014 false recall ~0.5 and order margin ~0 on new seeds",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/order_recalib/v7_decisive_numpy.json"
+}
