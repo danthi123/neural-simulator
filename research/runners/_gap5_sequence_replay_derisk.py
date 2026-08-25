@@ -357,8 +357,13 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # plateau-gated potentiation outruns the per-step clamp (-> the 14-34 fan-out); the weaker STDP / hebb_sym rules
         # cannot, so they are pinned at the 5.0 BDSP ceiling. Widen the BDSP clip during the chain so the clamp does not
         # fight the sequence rule. ONLY for the new (non-default) rules -> the btsp default stays byte-identical.
+        # gap#5 RUNG-A a1-EXCLUSION ROOT CAUSE (2026-08-25): even on the DEFAULT btsp chain the BDSP clamp pins the
+        # FIRST forward link a0->a1 at exactly bdsp_w_max=5.0 while a1->a2 / a0->a2 escape to ~70 -- so a1 is never
+        # reachable from a0 and the readout completes a0->a2 (per_asm=[1,0,1]). Widen the BDSP clip for the btsp chain
+        # too (chain_bdsp_widen=True) so the clamp does not fight the forward BTSP write on the cold-start first link.
+        # Default False => byte-identical to the shipped decoupled store.
         _bdsp_clip_saved = None
-        if _chain_rule in ("stdp", "hebb_sym", "none"):
+        if _chain_rule in ("stdp", "hebb_sym", "none") or (_chain_rule == "btsp" and cfg.get("chain_bdsp_widen")):
             _bdsp_clip_saved = (cfg_b.bdsp_w_min, cfg_b.bdsp_w_max)
             cfg_b.bdsp_w_min = -float(cfg["hebb_max"]); cfg_b.bdsp_w_max = float(cfg["hebb_max"])
 
@@ -373,6 +378,20 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         _chain_lr = cfg.get("chain_btsp_lr")
         if _chain_lr is not None:
             cfg_b.btsp_learning_rate = float(_chain_lr)
+        # gap#5 RUNG-A a1-EXCLUSION FIX (2026-08-25): THETA-GAMMA SEQUENCE COMPRESSION. The BTSP pre-eligibility tau is
+        # 1000ms (behavioral-timescale, Bittner 2017) -- FAR longer than the ~18ms inter-assembly interval of a theta-
+        # compressed sweep, so when C's plateau fires, A's eligibility (2 gamma cycles / ~36ms back) is STILL saturated
+        # -> the chain writes an A->C SKIP link ~= as strong as A->B (measured: per_asm=[1,0,1], a1 NEVER activates, the
+        # store completes a0->a2 bypassing a1). The BIOLOGY: successive items in a theta cycle occupy successive GAMMA
+        # cycles (~25ms apart) and are bound by the fast GAMMA-timescale plasticity window (Skaggs-McNaughton phase
+        # precession + Jensen-Lisman theta-gamma), NOT the slow 1s plateau eligibility. So shorten the CHAIN's eligibility
+        # tau to a gamma-window scale (chain_elig_tau_ms ~ one gamma cycle): the immediately-preceding assembly (d=1,
+        # ~18ms) still has eligibility when the next plateau fires, but the skip (d>=2, >=36ms) has decayed -> ADJACENT-
+        # dominant forward band -> a0->a1->a2 with a1 active. btsp_elig_tau_ms is read LIVE each step (bridge.py:10120),
+        # so set it for the chain sweeps and RESTORE 1000ms for the within-refresh. Default None => unchanged (byte-identical).
+        _chain_elig_tau = cfg.get("chain_elig_tau_ms")
+        if _chain_elig_tau is not None:
+            cfg_b.btsp_elig_tau_ms = float(_chain_elig_tau)
         chain_edges = cfg.get("chain_edges")   # None = LINEAR order (default, byte-identical); else an explicit directed
                                                # edge list [(pre,post),...] for a BRANCHING topology (RANK 3 recombination).
         # gap#5 Ecker-band encode (research gate 2026-07-24, default OFF = byte-identical): chain_overlap SKIPS the hard
@@ -406,6 +425,23 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                     if not _overlap:
                         _silence_soma_apical(bridge, settle=2)   # theta reset: previous assembly OFF, eligibility kept
                     _drive_window(m, win)
+                    if cfg.get("_debug_chain_fire") and _ev >= int(cfg["chain_fwd"]) - 2:
+                        from sim.backend import to_host as _th
+                        _fs = bridge.cp_firing_states; _el = getattr(bridge, "cp_btsp_pre_elig", None)
+                        _va = getattr(bridge, "cp_v_apical", None)
+                        _vh = float(getattr(bridge.core_config, "coincidence_plateau_v_hold", -35.0))
+                        _row = []
+                        for _k in range(n_mem):
+                            _ad = assy_dev[_k]
+                            _ff = float(np.asarray(_th(_fs[_ad])).mean())
+                            _ee = float(np.asarray(_th(_el[_ad])).mean()) if _el is not None else -1.0
+                            if _va is not None:
+                                _vav = np.asarray(_th(_va[_ad])); _vam = float(_vav.mean())
+                                _plat = float((_vav > _vh).mean())   # fraction of assembly cells with apical plateau > v_hold
+                                _row.append(f"a{_k}[fire={_ff:.2f} elig={_ee:.3f} vap={_vam:.1f} plat={_plat:.2f}]")
+                            else:
+                                _row.append(f"a{_k}[fire={_ff:.2f} elig={_ee:.3f}]")
+                        print(f"    [dbg fwd-sweep {_ev} just drove a{m}] " + " ".join(_row), flush=True)
                 bridge.cp_external_input_current[:] = 0.0
 
             # CHAIN phase REVERSE sweeps (the symmetric component; fewer -> forward stays dominant): ... -> B -> A.
@@ -445,6 +481,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
             (cfg_b.bdsp_w_min, cfg_b.bdsp_w_max) = _bdsp_clip_saved
         if _chain_lr is not None:                       # restore the LOW within-phase btsp_lr for the refresh
             cfg_b.btsp_learning_rate = float(cfg["btsp_lr"])
+        if _chain_elig_tau is not None:                 # restore the 1000ms behavioral-timescale tau for the within-refresh
+            cfg_b.btsp_elig_tau_ms = 1000.0
 
         # WITHIN-REFRESH (2026-07-22 fix, default off): the CHAIN phase's transient-plateau + per-window theta silencing
         # ERODES the within-attractors the within-encode built (measured: w_within 15.2 -> 6.3 at n_mem=2 -> below the
@@ -505,10 +543,14 @@ def _prepare_sequence(seed, cfg, do_encode=True):
     rev_mask = between & (a_post < a_pre)
     adj_fwd = between & (a_post == a_pre + 1)
     adj_rev = between & (a_post == a_pre - 1)
+    skip_fwd = between & (a_post >= a_pre + 2)     # gap#5 RUNG-A: distance>=2 forward = the A->C SKIP links (a1-exclusion driver)
+    skip_rev = between & (a_post <= a_pre - 2)
     w_forward = float(np.mean(d[flat_h[fwd_mask]])) if fwd_mask.any() else 0.0
     w_reverse = float(np.mean(d[flat_h[rev_mask]])) if rev_mask.any() else 0.0
     w_adj_fwd = float(np.mean(d[flat_h[adj_fwd]])) if adj_fwd.any() else 0.0
     w_adj_rev = float(np.mean(d[flat_h[adj_rev]])) if adj_rev.any() else 0.0
+    w_skip_fwd = float(np.mean(d[flat_h[skip_fwd]])) if skip_fwd.any() else 0.0
+    w_skip_rev = float(np.mean(d[flat_h[skip_rev]])) if skip_rev.any() else 0.0
 
     # STRUCTURAL SEPARATION (structural_sep=1: zero true-outsider->member; PRESERVES inter-assembly member->member so
     # the directional chain survives -- verified: `within`/`between` are both member&member, only outsider->member zeroed)
@@ -544,7 +586,9 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                 assemblies_local=assemblies_local, assembly_local=assembly_local, ca3_exc_local=ca3_exc_local,
                 within_flat=within_flat, between_flat=between_flat, w_within=w_within,
                 w_forward=w_forward, w_reverse=w_reverse, w_adj_fwd=w_adj_fwd, w_adj_rev=w_adj_rev,
-                n_between_fwd=int(fwd_mask.sum()), n_between_rev=int(rev_mask.sum()), n_assy=n_assy)
+                w_skip_fwd=w_skip_fwd, w_skip_rev=w_skip_rev,
+                n_between_fwd=int(fwd_mask.sum()), n_between_rev=int(rev_mask.sum()),
+                n_skip_fwd=int(skip_fwd.sum()), n_skip_rev=int(skip_rev.sum()), n_assy=n_assy)
 
 
 def _scramble_between_weights(prep, seed):
@@ -590,11 +634,14 @@ def _smooth(x, W):
     return np.convolve(x.astype(float), np.ones(W), mode="same") if W > 1 else x.astype(float)
 
 
-def _event_windows(F, W=5, ev_floor=0.4, ev_k=4.0, asize_ref=1):
-    """Detect event windows from the smoothed TOTAL CA3 co-firing (unbiased: on ALL CA3, then classified per-assembly)."""
+def _event_windows(F, W=5, ev_floor=0.4, ev_k=4.0, asize_ref=1, ev_mean_smooth=False):
+    """Detect event windows from the smoothed TOTAL CA3 co-firing (unbiased: on ALL CA3, then classified per-assembly).
+    gap#5 RUNG-B (2026-08-25): ev_mean_smooth=True uses a running MEAN (per-step rate) instead of the running SUM so a
+    TRANSIENT single-assembly burst crosses the per-step floor ev_floor*asize_ref (the SUM under-counts transient bursts
+    by ~W relative to sustained activity). Default False => byte-identical."""
     T, _ = F.shape
     pop = F.sum(1).astype(float)
-    S = _smooth(pop, W)
+    S = (np.convolve(pop, np.ones(W) / float(W), mode="same") if (ev_mean_smooth and W > 1) else _smooth(pop, W))
     med = float(np.median(S)); mad = float(np.median(np.abs(S - med))) * 1.4826
     thr = max(med + ev_k * mad, ev_floor * asize_ref)
     inev = S > thr
@@ -632,14 +679,16 @@ def _order_stat(onsets):
 
 
 def _detect_sequence_events(F, assemblies_local, W=5, ev_floor=0.4, ev_k=4.0, active_frac=0.12, onset_frac=0.08,
-                            min_ev_len=4):
+                            min_ev_len=4, ev_mean_smooth=False):
     """Detect ordered replay. For each event, per-assembly smoothed firing fraction over time; an assembly is ACTIVE if
     its peak fraction >= active_frac; its ONSET = first step its smoothed fraction crosses onset_frac (tie-break by peak
-    time then center-of-mass). Score forward/reverse strict order + Kendall tau over multi-assembly (>=2 active) events."""
+    time then center-of-mass). Score forward/reverse strict order + Kendall tau over multi-assembly (>=2 active) events.
+    gap#5 RUNG-B: ev_mean_smooth threads to _event_windows (transient-burst detection). Default False => byte-identical."""
     T, nca3 = F.shape
     asizes = [max(1, len(a)) for a in assemblies_local]
     asize_ref = float(np.mean(asizes))
-    events, duty, pop_rate = _event_windows(F, W=W, ev_floor=ev_floor, ev_k=ev_k, asize_ref=asize_ref)
+    events, duty, pop_rate = _event_windows(F, W=W, ev_floor=ev_floor, ev_k=ev_k, asize_ref=asize_ref,
+                                            ev_mean_smooth=ev_mean_smooth)
 
     per_asm_active = [0] * len(assemblies_local)
     per_asm_peak = [[] for _ in assemblies_local]

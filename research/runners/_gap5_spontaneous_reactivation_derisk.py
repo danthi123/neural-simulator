@@ -258,12 +258,20 @@ def _configure_ou(bridge, sigma, seed):
 # ----------------------------------------------------------------------------------------------------------------------
 # event detection: DISCRETE spontaneous reactivation events, scored for assembly-specificity + duty cycle.
 # ----------------------------------------------------------------------------------------------------------------------
-def _detect_events(F, assembly_local, seed, other_local=None, W=5, ev_floor=0.5, ev_k=4.0, n_rand=8, min_frac=0.30):
+def _detect_events(F, assembly_local, seed, other_local=None, W=5, ev_floor=0.5, ev_k=4.0, n_rand=8, min_frac=0.30,
+                   ev_mean_smooth=False):
     """F: bool [T, n_ca3] rest-phase CA3 firing. assembly_local: local CA3 positions of the assembly UNDER TEST.
     Events = windows where the SMOOTHED total CA3 co-firing crosses a threshold (unbiased: detected on ALL CA3, then
     classified). Per event: member_frac (mean per-step assembly-active fraction), random-set frac (chance / permuted-
     assembly control), specificity = member_frac - random_frac; cross_frac = a co-stored OTHER assembly's participation
-    (basin-selectivity vs a real competing memory). duty_cycle = fraction of rest steps in an event."""
+    (basin-selectivity vs a real competing memory). duty_cycle = fraction of rest steps in an event.
+
+    gap#5 RUNG-B (2026-08-25): ev_mean_smooth=True switches the event signal from a running SUM to a running MEAN
+    (per-step rate). The SUM inflates SUSTAINED activity by ~W but a TRANSIENT single-assembly burst (a de-latched
+    ignition, ~2-4 steps) by far less, so the absolute floor ev_floor*asize (calibrated on a per-step count) is
+    effectively W-times too high for transient bursts and MISSES them; the mean puts the floor on the same per-step
+    scale so a discrete transient assembly burst is counted, while med+ev_k*mad still rejects the silent baseline.
+    Default False => byte-identical (running SUM)."""
     T, nca3 = F.shape
     A = np.asarray(assembly_local, dtype=np.int64); asize = int(len(A))
     O = np.asarray(other_local, dtype=np.int64) if other_local is not None and len(other_local) else None
@@ -275,7 +283,8 @@ def _detect_events(F, assembly_local, seed, other_local=None, W=5, ev_floor=0.5,
     rng = np.random.default_rng(seed * 991 + 5)
     rand_sets = [rng.choice(nonmember, asize, replace=False) for _ in range(n_rand)] if len(nonmember) >= asize else []
 
-    S = np.convolve(pop, np.ones(W), mode="same")
+    _kern = (np.ones(W) / float(W)) if ev_mean_smooth else np.ones(W)
+    S = np.convolve(pop, _kern, mode="same")
     med = float(np.median(S)); mad = float(np.median(np.abs(S - med))) * 1.4826
     thr = max(med + ev_k * mad, ev_floor * asize)
     in_event = S > thr

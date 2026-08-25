@@ -278,14 +278,17 @@ def _rest_and_detonate(prep, det_spec, rest_steps, seed, self_regen_read, adapt,
                 n_fb_drive=n_fb_drive, fb_drive=fb_drive_w)
 
 
-def _score(F, assemblies_local, assembly_local_by_idx, aidx, seed, W, ev_floor, ev_k, min_frac, active_frac, onset_frac):
+def _score(F, assemblies_local, assembly_local_by_idx, aidx, seed, W, ev_floor, ev_k, min_frac, active_frac, onset_frac,
+           ev_mean_smooth=False):
     """Score BOTH the single-assembly discrete-ignition (via _detect_events on assembly aidx, with the NEXT assembly as
-    the cross-assembly co-fire reference) AND the forward-transition order (via _detect_sequence_events)."""
+    the cross-assembly co-fire reference) AND the forward-transition order (via _detect_sequence_events).
+    gap#5 RUNG-B: ev_mean_smooth => transient-burst detector (mean-rate smoothing). Default False = byte-identical."""
     a_test = assembly_local_by_idx[aidx]
     a_other = assembly_local_by_idx[(aidx + 1) % len(assembly_local_by_idx)] if len(assembly_local_by_idx) > 1 else None
-    ev = _detect_events(F, a_test, seed, other_local=a_other, W=W, ev_floor=ev_floor, ev_k=ev_k, min_frac=min_frac)
+    ev = _detect_events(F, a_test, seed, other_local=a_other, W=W, ev_floor=ev_floor, ev_k=ev_k, min_frac=min_frac,
+                        ev_mean_smooth=ev_mean_smooth)
     seq = _detect_sequence_events(F, assemblies_local, W=W, ev_floor=ev_floor, ev_k=ev_k,
-                                  active_frac=active_frac, onset_frac=onset_frac)
+                                  active_frac=active_frac, onset_frac=onset_frac, ev_mean_smooth=ev_mean_smooth)
     return ev, seq
 
 
@@ -308,6 +311,7 @@ def one_seed(seed, cfg, a):
 
     fb_read = a.fb_read
     fb_drive = a.fb_drive
+    evms = bool(getattr(a, "detector_transient", False))   # RUNG-B: transient-burst (mean-rate) event detector
 
     def _rd(prep, det_spec, verbose=False):
         return _rest_and_detonate(prep, det_spec, a.rest_steps, seed, self_regen_read, adapt=True, d_abs=d_abs,
@@ -324,9 +328,10 @@ def one_seed(seed, cfg, a):
 
     # -- GO: sweep the detonator strength (det_pa) on the SAME frozen decoupled bridge (weights frozen -> reuse-safe). --
     go_runs = {}; best_pa, best, best_ev, best_seq = None, None, None, None
+    best_F = None
     for pa in a.det_pa:
         r = _rd(prep, ("assembly", aidx, det_frac, pa, det_dur), verbose=(best_pa is None))
-        ev, seq = _score(r["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf)
+        ev, seq = _score(r["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
         rec = dict(det_pa=pa, k_det=r["k_det"], n_detonations=r["n_detonations"],
                    n_events=ev["n_events"], n_specific=ev["n_specific"], member_frac=ev["member_frac"],
                    random_frac=ev["random_frac"], cross_frac=ev["cross_frac"], specificity=ev["specificity"],
@@ -346,12 +351,14 @@ def one_seed(seed, cfg, a):
         score = (ev["n_specific"], seq["forward_frac"], ev["specificity"])
         if best is None or score > best:
             best, best_pa, best_ev, best_seq = score, pa, ev, seq
+            if a.dump_traces:
+                best_F = r["F"].copy()
     out["go_runs"] = go_runs; out["best_det_pa"] = best_pa
     go_ev, go_seq = best_ev, best_seq
 
     # -- CONTROL 1: NO-DETONATOR (acid) -- same frozen bridge, detonator OFF -> MUST be SILENT (the detonator is the source)
     r_nd = _rd(prep, ("none",))
-    nd_ev, _ = _score(r_nd["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf)
+    nd_ev, _ = _score(r_nd["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["no_detonator"] = dict(n_events=nd_ev["n_events"], n_specific=nd_ev["n_specific"],
                                assembly_rest_frac=nd_ev["assembly_rest_frac"], pop_rate=nd_ev["pop_rate"],
                                duty_cycle=nd_ev["duty_cycle"], weights_frozen=r_nd["weights_frozen"])
@@ -365,7 +372,7 @@ def one_seed(seed, cfg, a):
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                                det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     shd_ev, shd_seq = _score(r_shd["F"], prep_shd["assemblies_local"], prep_shd["assemblies_local"], aidx, seed,
-                             W, ev_floor, ev_k, min_frac, af, onf)
+                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["shuffled_detonator"] = dict(k_det=r_shd["k_det"], n_events=shd_ev["n_events"], n_specific=shd_ev["n_specific"],
                                      member_frac=shd_ev["member_frac"], random_frac=shd_ev["random_frac"],
                                      specificity=shd_ev["specificity"], forward_frac=shd_seq["forward_frac"])
@@ -379,7 +386,7 @@ def one_seed(seed, cfg, a):
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     ne_ev, _ = _score(r_ne["F"], prep_ne["assemblies_local"], prep_ne["assemblies_local"], aidx, seed,
-                      W, ev_floor, ev_k, min_frac, af, onf)
+                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["no_encode"] = dict(w_within=prep_ne["w_within"], n_events=ne_ev["n_events"], n_specific=ne_ev["n_specific"],
                             member_frac=ne_ev["member_frac"], random_frac=ne_ev["random_frac"])
     print(f"  [seed {seed}] NO-ENCODE (w_within={prep_ne['w_within']:.2f}): ev={ne_ev['n_events']} "
@@ -394,7 +401,7 @@ def one_seed(seed, cfg, a):
                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sw_ev, _ = _score(r_sw["F"], prep_sw["assemblies_local"], prep_sw["assemblies_local"], aidx, seed,
-                      W, ev_floor, ev_k, min_frac, af, onf)
+                      W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["shuffled_within"] = dict(n_within_shuffled=n_sw, n_events=sw_ev["n_events"], n_specific=sw_ev["n_specific"],
                                   member_frac=sw_ev["member_frac"], random_frac=sw_ev["random_frac"])
     print(f"  [seed {seed}] SHUFFLED-WITHIN ({n_sw} edges): ev={sw_ev['n_events']} spec={sw_ev['n_specific']} "
@@ -410,7 +417,7 @@ def one_seed(seed, cfg, a):
                                self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
                                det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
     sym_ev, sym_seq = _score(r_sym["F"], prep_sym["assemblies_local"], prep_sym["assemblies_local"], aidx, seed,
-                             W, ev_floor, ev_k, min_frac, af, onf)
+                             W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["symmetric_readout"] = dict(w_within=prep_sym["w_within"], w_adj_fwd=prep_sym["w_adj_fwd"],
                                     w_adj_rev=prep_sym["w_adj_rev"], n_events=sym_ev["n_events"],
                                     n_specific=sym_ev["n_specific"], member_frac=sym_ev["member_frac"],
@@ -427,12 +434,49 @@ def one_seed(seed, cfg, a):
     r_latch = _rest_and_detonate(prep, ("assembly", aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
                                  float(cfg["plateau_self_regen"]), adapt=True, d_abs=d_abs, a_abs=a_abs,
                                  det_period=det_period, det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
-    latch_ev, latch_seq = _score(r_latch["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf)
+    latch_ev, latch_seq = _score(r_latch["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
     out["latch_on_diag"] = dict(n_events=latch_ev["n_events"], duty_cycle=latch_ev["duty_cycle"],
                                 forward_frac=latch_seq["forward_frac"], per_asm_active=latch_seq["per_asm_active"])
     print(f"  [seed {seed}] LATCH-ON diag (self_regen_read={cfg['plateau_self_regen']}): ev={latch_ev['n_events']} "
           f"duty={latch_ev['duty_cycle']:.3f} FWD={latch_seq['forward_frac']:.3f} act={latch_seq['per_asm_active']} "
           f"({time.time()-t0:.0f}s)", flush=True)
+
+    # -- CONTROL 5 (RUNG-C DIRECTIONALITY): REVERSE-DETONATION -- detonate the LAST assembly a{n_mem-1} on the SAME frozen
+    #    forward store. If the forward order is STORE-DRIVEN (adjacent-dominant forward band a0->a1->a2, reverse links at
+    #    the ~floor), detonating the terminal assembly must NOT replay BACKWARD (a2->a1->a0): the reverse links are too
+    #    weak to propagate. If the "forward order" were merely a PROTOCOL artifact (whatever is detonated replays in
+    #    detonation order), reverse-detonation WOULD yield an ordered chain. CLEAN => a{last} ignites ~alone, the upstream
+    #    assemblies (index < last) do NOT reactivate. This is the load-bearing control that the forward order is LEARNED. --
+    rev_aidx = int(cfg["n_mem"]) - 1
+    r_rev = _rest_and_detonate(prep, ("assembly", rev_aidx, det_frac, best_pa, det_dur), a.rest_steps, seed,
+                               self_regen_read, adapt=True, d_abs=d_abs, a_abs=a_abs, det_period=det_period,
+                               det_settle=det_settle, apical_gc_read=a.apical_gc_read, fb_read=fb_read, fb_drive=fb_drive)
+    rev_ev, rev_seq = _score(r_rev["F"], al, al, rev_aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms)
+    _rev_upstream_active = int(sum(rev_seq["per_asm_active"][:rev_aidx]))   # a0..a{last-1} activations under a{last} detonation
+    out["reverse_detonation"] = dict(det_assembly=rev_aidx, n_events=rev_ev["n_events"], n_specific=rev_ev["n_specific"],
+                                     member_frac=rev_ev["member_frac"], per_asm_active=rev_seq["per_asm_active"],
+                                     n_multi=rev_seq["n_multi"], forward_frac=rev_seq["forward_frac"],
+                                     reverse_frac=rev_seq["reverse_frac"], upstream_active=_rev_upstream_active,
+                                     weights_frozen=r_rev["weights_frozen"])
+    print(f"  [seed {seed}] REVERSE-DET (detonate a{rev_aidx}): ev={rev_ev['n_events']} per_asm={rev_seq['per_asm_active']} "
+          f"upstream_active={_rev_upstream_active} n_multi={rev_seq['n_multi']} FWD={rev_seq['forward_frac']:.3f} "
+          f"REV={rev_seq['reverse_frac']:.3f} ({time.time()-t0:.0f}s)", flush=True)
+
+    # -- OFFLINE-CALIBRATION DUMP (RUNG-B): save the GO + no-detonator + reverse-detonation rest firing F (packbits) +
+    #    assembly membership so the event detector can be recalibrated OFFLINE (no GPU re-run) vs the REAL transient
+    #    bursts, and the reverse control re-scored with the same detector. Default off. --
+    if a.dump_traces and best_F is not None:
+        import os as _os
+        _os.makedirs(a.dump_traces, exist_ok=True)
+        _dp = _os.path.join(a.dump_traces, f"seed{seed}_traces.npz")
+        _asm_kw = {f"asm{_i}": np.asarray(al[_i], dtype=np.int64) for _i in range(len(al))}
+        np.savez_compressed(_dp,
+                            F_go=np.packbits(best_F, axis=1), F_nd=np.packbits(r_nd["F"], axis=1),
+                            F_rev=np.packbits(r_rev["F"], axis=1),
+                            F_shape=np.asarray(best_F.shape, dtype=np.int64),
+                            n_mem=np.asarray([len(al)], dtype=np.int64),
+                            best_det_pa=np.asarray([best_pa], dtype=np.float64), **_asm_kw)
+        print(f"  [seed {seed}] dumped traces -> {_dp}", flush=True)
 
     # -- PER-SEED VERDICT --
     chance = max(go_seq["chance_forward"], 1e-6)
@@ -455,14 +499,18 @@ def one_seed(seed, cfg, a):
     cleaner_than_symmetric = bool(go_seq["forward_frac"] > sym_seq["forward_frac"]
                                   or go_ev["cross_frac"] < sym_ev["cross_frac"])
 
+    # RUNG-C DIRECTIONALITY: detonating the terminal assembly must not reactivate any upstream assembly (order is
+    # store-driven, not a protocol artifact). CLEAN = zero upstream reactivation under reverse-detonation.
+    reverse_control_clean = (_rev_upstream_active == 0)
     seed_go = bool(discrete_ignition and assembly_specific and forward_transition and no_detonator_silent
                    and shuffled_detonator_retired and noencode_retired and shuffled_within_retired
-                   and frozen_ok and dendrite_reset_ok and readout_ignites_symmetric)
+                   and frozen_ok and dendrite_reset_ok and readout_ignites_symmetric and reverse_control_clean)
     out["checks"] = dict(discrete_ignition=discrete_ignition, assembly_specific=assembly_specific,
                          forward_transition=forward_transition, no_detonator_silent=no_detonator_silent,
                          shuffled_detonator_retired=shuffled_detonator_retired, noencode_retired=noencode_retired,
                          shuffled_within_retired=shuffled_within_retired, frozen_ok=frozen_ok,
                          dendrite_reset_ok=dendrite_reset_ok, readout_ignites_symmetric=readout_ignites_symmetric,
+                         reverse_control_clean=reverse_control_clean,
                          cleaner_than_symmetric=cleaner_than_symmetric)
     out["seed_go"] = seed_go
     print(f"  [seed {seed}] => {'GO' if seed_go else 'no'}  checks={out['checks']}  best_det_pa={best_pa:g} "
@@ -497,10 +545,18 @@ def main():
     ap.add_argument("--min-frac", type=float, default=0.30, help="assembly-active fraction for a 'specific' ignition event")
     ap.add_argument("--active-frac", type=float, default=0.12, help="ordered-replay: per-assembly peak ACTIVE frac")
     ap.add_argument("--onset-frac", type=float, default=0.08, help="ordered-replay: per-assembly ONSET frac")
+    ap.add_argument("--detector-transient", action="store_true", help="RUNG-B: mean-rate (not running-SUM) event smoothing so a TRANSIENT discrete single-assembly burst is COUNTED (the SUM under-counts transient bursts by ~W). Default off = byte-identical detector")
     # store knobs (default = the 6/6-GO DECOUPLED store; exposed so the JSON records exactly what was tested)
     ap.add_argument("--within-events", type=int, default=None)
     ap.add_argument("--within-refresh", type=int, default=None)
     ap.add_argument("--chain-fwd", type=int, default=None)
+    # gap#5 RUNG-A a1-EXCLUSION FIX knobs (2026-08-25): the shipped store leaves a0->a1 pinned at the BDSP clamp
+    # ceiling (5.0) so a1 is unreachable from a0 (per_asm=[1,0,1]). --chain-bdsp-widen lifts the [-5,5] clamp for the
+    # forward btsp chain (so the cold-start first link can form) and --chain-elig-tau shortens the eligibility to a
+    # gamma-cycle window (theta-gamma compression) so ADJACENT dominates the a0->a2 SKIP -> the Ecker near-diagonal band.
+    ap.add_argument("--chain-elig-tau", type=float, default=None, help="chain-phase BTSP eligibility tau (ms); short (~10-15) => adjacent-dominant band. None=1000ms (byte-identical)")
+    ap.add_argument("--chain-bdsp-widen", action="store_true", help="widen the BDSP weight clamp for the forward btsp chain so a0->a1 can form (default off = byte-identical)")
+    ap.add_argument("--dump-traces", default=None, help="DIR: save the GO + no-detonator rest-phase firing F (packbits) per seed for OFFLINE detector (RUNG-B) calibration")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
 
@@ -514,6 +570,10 @@ def main():
         cfg["chain_fwd"] = int(a.chain_fwd)
     if a.chain_btsp_lr is not None:
         cfg["chain_btsp_lr"] = float(a.chain_btsp_lr)
+    if a.chain_elig_tau is not None:
+        cfg["chain_elig_tau_ms"] = float(a.chain_elig_tau)
+    if a.chain_bdsp_widen:
+        cfg["chain_bdsp_widen"] = True
 
     _, backend = get_backend()
     print(f"[gap5-detonate] DG-DETONATOR ignition (branch B) on the DECOUPLED forward-asymmetric store "
