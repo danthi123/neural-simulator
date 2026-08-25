@@ -34,8 +34,9 @@ over it through use (D5 per-topic strength stays in the path) — biological mem
   (the agent-hash shard router + the numpy VSA fast path are the standing host residuals).
 
 ## Evidence (the gate)
-The no-regression SOAK is `go: true`, 6/6 seeds (42/43/44/100/101/102):
-`research/findings/raw/_knowledge_core/core_bundle_soak_verdict.json`.
+Aggregate (gate-passing, source artifacts listed inside):
+`research/findings/raw/_harvest_2026_08_26/knowledge_core_flip_agg.json`. The no-regression SOAK is `go: true`,
+6/6 seeds (42/43/44/100/101/102) — source `core_bundle_soak_verdict.json`:
 - Byte-identity: 0 mismatches vs the plain-flat UNSHARDED oracle (the routed tiered read returns the SAME answer
   the co-resident store would, over the real curated facts).
 - No-confab moat: 0 confabulations (fabricated subjects + a known subject with an action it never has -> abstain).
@@ -44,9 +45,8 @@ The no-regression SOAK is `go: true`, 6/6 seeds (42/43/44/100/101/102):
   build is `--top-entities 4000` per the curate runner, deferred).
 - Production load path: `load_developed_brain(ltm_bundle=<core>)` installs a `TieredFactStore` and returns LTM +
   buffer recall + moat-abstain GO.
-Re-confirmed on `main` (single seed, CPU/numpy, the merged runner code):
-`research/findings/raw/_knowledge_core/core_bundle_soak_confirm_main_s42.json`. Curation provenance:
-`research/findings/raw/_knowledge_core/curate_report.json`.
+Re-confirmed on `main` (single seed, CPU/numpy, the merged runner code — source `core_bundle_soak_confirm_main_s42.json`).
+Curation provenance: source `curate_report.json` (15,000 facts, vocab 7,032, 75 shards, ship_ready).
 
 ## Instrument + control
 - Instrument: the soak compares the routed tiered read against a freshly-built plain-flat oracle over the SAME
