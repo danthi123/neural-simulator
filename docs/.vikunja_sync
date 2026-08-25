@@ -8,9 +8,16 @@
 #
 # Update this on every board reconcile (the `vikunja` skill does it): bump the date + at_commit + note.
 
-last_reconciled: 2026-08-26
-at_commit: 01bb124c
-note: HARVEST of the four-day free-compute window. Board changes — #133 DONE (knowledge core shipped
+last_reconciled: 2026-08-25
+at_commit: source-monitor-v2
+note: #129 source monitoring SURPASSED by a DIFFERENT family (perceived-vs-generated opponent
+  provenance, 6-seed GO — acc 1.000, min normalized d 0.859, no-harm on content 0.0). #129 stays OPEN
+  (de-risk, not production-integrated); created #137 as its next-rung (self-organize wiring →
+  neuromod-gated plasticity → wire the "I saw this / I inferred this" read-out into the chat honesty
+  pathway). Prior reconcile below.
+prev_reconciled: 2026-08-26
+prev_at_commit: 01bb124c
+prev_note: HARVEST of the four-day free-compute window. Board changes — #133 DONE (knowledge core shipped
   as the default cortical LTM, BRAIN_LTM_BUNDLE default-on, soak go=True 6/6); #132 advanced (gap2
   spiking delta-rule binder GO 6-seed, role->filler above permuted control); #75 advanced (vision
   R-STDP sparse readout NOGO across the full 2D sweep — a mapped boundary, next needs a different
