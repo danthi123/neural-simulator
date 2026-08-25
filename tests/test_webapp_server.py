@@ -1223,6 +1223,109 @@ def test_brain_chat_rich_false_escape_is_single_svo(client, monkeypatch):
         "session": sess, "brain": "tiny-demo", "renderer": "stub"})
 
 
+def test_brain_chat_source_provenance_default_off_is_byte_identical(client, monkeypatch):
+    """Board #129: `BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> the response carries `provenance: null` and the
+    answer text is UNCHANGED (the organ is never built -> byte-identical to the pre-#129 endpoint)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_SOURCE_PROVENANCE_HONESTY", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-provenance-off"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dog chase", "rich": False,
+    })
+    assert res.status_code == 200, res.text
+    data = res.json()
+    assert data["abstained"] is False
+    assert data["recalled_svo"] == ["dog", "chase", "cat"]
+    assert data.get("provenance") is None
+    assert "I believe" not in data["answer"]
+
+    client.post("/api/brain-chat/reset", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_source_provenance_on_reads_the_live_monitor(client, monkeypatch):
+    """Board #129, ON: the single-fact path only ever recalls a DIRECTLY-STORED fact (gate() never returns a
+    composed inference), so every live turn is presented to the monitor as PERCEIVED -- but the monitor's LIVE
+    JUDGED label (not a hardcoded claim) is what the response carries, and the perceived case reads exactly as
+    the flag-off text (byte-identical for the dominant case). A LESIONED monitor collapses the discrimination
+    (both provenance pools read silent) -- the load-bearing check through the REAL HTTP handler."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_SOURCE_PROVENANCE_HONESTY", "1")
+    monkeypatch.delenv("BRAIN_SOURCE_PROVENANCE_HONESTY_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.source_provenance_production_organ as _sp_organ
+    _sp_organ._ORGAN = None   # force a fresh (un-lesioned) organ for this test regardless of prior test order
+    _sp_organ._ORGAN_KEY = None
+
+    sess = "pytest-provenance-on"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dog chase", "rich": False,
+    })
+    assert res.status_code == 200, res.text
+    data = res.json()
+    assert data["abstained"] is False
+    prov = data.get("provenance")
+    assert prov is not None and prov.get("known") is True
+    assert prov["label"] == "perceived"
+    assert "cat" in data["answer"].lower()
+    assert "I believe" not in data["answer"]     # the perceived case is unflagged
+
+    client.post("/api/brain-chat/reset", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub"})
+    _sp_organ._ORGAN = None
+    _sp_organ._ORGAN_KEY = None
+
+
+def test_brain_chat_source_provenance_lesion_collapses_through_the_real_handler(client, monkeypatch):
+    """Board #129 LOAD-BEARING lesion, through the REAL /api/brain-chat handler: with
+    `BRAIN_SOURCE_PROVENANCE_HONESTY_LESION=1` the monitor's Hebbian plasticity gate is held shut at encode (the
+    #129 de-risk's own verified failing-direction anti-cheat), so the recalled fact's provenance pools read
+    SILENT (rate 0.0 on both sides, d == 0.0) instead of confidently PERCEIVED -- the discrimination the
+    un-lesioned test above relies on is gone."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_SOURCE_PROVENANCE_HONESTY", "1")
+    monkeypatch.setenv("BRAIN_SOURCE_PROVENANCE_HONESTY_LESION", "1")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.source_provenance_production_organ as _sp_organ
+    _sp_organ._ORGAN = None   # force a rebuild under the lesion (the organ caches by (seed, lesion))
+    _sp_organ._ORGAN_KEY = None
+
+    sess = "pytest-provenance-lesion"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dog chase", "rich": False,
+    })
+    assert res.status_code == 200, res.text
+    data = res.json()
+    prov = data.get("provenance")
+    assert prov is not None and prov.get("known") is True
+    assert prov["d"] == 0.0
+    assert prov["rate_perceived"] == 0.0 and prov["rate_generated"] == 0.0
+
+    client.post("/api/brain-chat/reset", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub"})
+    _sp_organ._ORGAN = None
+    _sp_organ._ORGAN_KEY = None
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
 # ─────────────────────────────────────────────────────────────────────────
