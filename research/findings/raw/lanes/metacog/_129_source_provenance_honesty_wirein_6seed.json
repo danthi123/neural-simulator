@@ -1,0 +1,641 @@
+{
+  "runner": "research/runners/_129_source_provenance_honesty_wirein_derisk.py",
+  "faculty": "board #129 source-provenance honesty, WIRED (default-off) into the live-chat known-fact / reasoned-fact answer pathway (BrainConversationalAgent + webapp/server.py /api/brain-chat)",
+  "board": 129,
+  "vikunja": 137,
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_pairs": 8,
+  "D": 128,
+  "thresholds": {
+    "ACC_FLOOR": 0.9,
+    "LESIONED_ACC_CEIL": 0.75,
+    "go_bar": ">=5/6"
+  },
+  "verdict": "GO (6/6) \u2014 board #129 source-provenance honesty is WIRED (default-off) into BrainConversationalAgent.known_fact_record/.reasoned_fact_record, reachable through webapp/server.py's single-fact /api/brain-chat path (env-flag gated). Default-off is byte-identical (6/6 seeds); the moat is never touched. Un-lesioned battery accuracy 0.990 (floor 0.9); the answer TEXT tracks the live judged label exactly (perceived unchanged, generated flagged) on every seed; lesioning the monitor's plasticity gate collapses the discriminability to exactly zero on every item (deterministic; the noisy tie-broken accuracy, mean 0.490, is reported only, NOT gated \u2014 see honest_scope) \u2014 the framing is driven by the LEARNED trace, not a hardcoded branch.",
+  "GO": true,
+  "n_pass": 6,
+  "n_seeds": 6,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "default-off byte-identical on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "default-off never builds the monitor, on every seed",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the hard moat is never touched, on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "worst-seed un-lesioned battery accuracy clears the floor",
+      "ok": true,
+      "detail": "0.9375 vs floor 0.9",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the answer TEXT tracks the judged label exactly, on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesioning zeroes the discriminability on every seed (deterministic, not the noisy tie-break)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "composes cleanly with self_schema_honesty on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "seed_status": {
+    "42": "PASS",
+    "43": "PASS",
+    "44": "PASS",
+    "100": "PASS",
+    "101": "PASS",
+    "102": "PASS"
+  },
+  "means": {
+    "real_accuracy": 0.9895833333333334,
+    "lesion_accuracy": 0.4895833333333333
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 1.0,
+      "real_correct": 16,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.3125,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "generated",
+        "known": true,
+        "d": -0.25174824893148806,
+        "text_unchanged": false,
+        "flagged": true
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "1 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 1.0,
+      "real_correct": 16,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.375,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "generated",
+        "known": true,
+        "d": -0.7733333250844446,
+        "text_unchanged": false,
+        "flagged": true
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "1 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 1.0,
+      "real_correct": 16,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.75,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "generated",
+        "known": true,
+        "d": -0.23684210193905822,
+        "text_unchanged": false,
+        "flagged": true
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "1 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 0.9375,
+      "real_correct": 15,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.5,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "perceived",
+        "known": true,
+        "d": 0.41955835538616176,
+        "text_unchanged": true,
+        "flagged": false
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "0.9375 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 1.0,
+      "real_correct": 16,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.5,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "generated",
+        "known": true,
+        "d": -0.7654723047247187,
+        "text_unchanged": false,
+        "flagged": true
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "1 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "default_off_ok": true,
+      "monitor_built_when_off": false,
+      "moat_preserved": true,
+      "real_accuracy": 1.0,
+      "real_correct": 16,
+      "n_items": 16,
+      "text_matches_judgment": true,
+      "every_judged_known": true,
+      "no_regression_on_correct_perceived": true,
+      "n_perceived_judged_correctly": 8,
+      "lesion_accuracy": 0.5,
+      "lesion_d_zero": true,
+      "composes_cleanly_with_self_schema_honesty": true,
+      "sample_generated_text": {
+        "truth": "generated",
+        "judged": "generated",
+        "known": true,
+        "d": -0.528169008133307,
+        "text_unchanged": false,
+        "flagged": true
+      },
+      "seed_status": "PASS",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "default-off text is byte-identical to the pre-existing path",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "default-off never builds the monitor",
+          "ok": true,
+          "detail": "measured=False expect=False",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a hard abstain is never touched (moat-first)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "every battery item returns a known (non-fabricated) judgment",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "floor",
+          "name": "un-lesioned battery accuracy clears the floor",
+          "ok": true,
+          "detail": "1 vs floor 0.9",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the answer TEXT tracks the judged label exactly",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "a correctly-judged perceived fact reads byte-identical to the flag-off text",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "lesioning zeroes the discriminability (both prov pools silent, d==0 exactly)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "composes cleanly with self_schema_honesty",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ],
+  "honest_scope": "Verified through the REAL BrainConversationalAgent class + a real RFPhasorComposer (the production composer), mirroring this project's own self_schema_honesty wire-in verification convention. The webapp/server.py single-fact /api/brain-chat path is ALSO wired, default-off (BRAIN_SOURCE_PROVENANCE_HONESTY, BRAIN_SOURCE_PROVENANCE_HONESTY_LESION; see tests/test_webapp_server.py's three new test_brain_chat_source_provenance_* cases) but that endpoint's gate() only ever returns a DIRECTLY-STORED fact, so it can only ever exercise the PERCEIVED half of the mechanism live over HTTP; the GENERATED half is reachable today via BrainConversationalAgent.reasoned_fact_record directly (not yet through a live HTTP turn). NAMED RESIDUAL (no-defer, next rung): teach the /api/brain-chat endpoint to answer some turns via reason_chain/chain_of_thought as a first-class answer channel (a bigger, separate design decision -- how does a free-text turn signal 'answer via inference'? -- left to the owner) so a single live HTTP conversation can exhibit BOTH provenance labels. The host boundary (declared, unchanged from the #129 de-risk): WHICH encoding context a fact is taught under is supplied by the caller (a known_fact_record hit is always PERCEIVED, a reasoned_fact_record conclusion is always GENERATED) -- the monitor's readback of which label a content pattern carries is the genuine spiking read, and it decides the framing.",
+  "elapsed_seconds": 44.88
+}

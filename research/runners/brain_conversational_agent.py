@@ -183,6 +183,7 @@ class BrainConversationalAgent:
                  defer_parser=False, communicable_mode=False, communicable_draw="spiking",
                  communicable_config=None, speak_value_Q=None, D=128,
                  enable_self_schema_honesty=False, self_schema_honesty_config=None,
+                 enable_source_provenance_honesty=False, source_provenance_honesty_config=None,
                  vocab_headroom=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
@@ -497,6 +498,18 @@ class BrainConversationalAgent:
         self.enable_self_schema_honesty = bool(enable_self_schema_honesty)
         self._self_schema_honesty_config = dict(self_schema_honesty_config) if self_schema_honesty_config else None
         self._self_schema_honesty = None
+        # (Lane C source-provenance production wire-in, board #129, opt-in, default OFF = byte-identical) a
+        # known-fact answer (known_fact_record, always a DIRECTLY-STORED fact) or a reasoned answer
+        # (reasoned_fact_record, a multi-hop conclusion the brain COMPOSED, not itself one stored fact) can be
+        # passed through the #129 spiking opponent-comparator provenance monitor before it is rendered, so the
+        # reply can honestly flag "I inferred this myself" for a generated claim while a perceived (directly
+        # taught) claim keeps reading exactly as it does today. Independent of enable_self_schema_honesty (a
+        # different axis -- correctness confidence vs source provenance); either, both, or neither may be on.
+        self.enable_source_provenance_honesty = bool(enable_source_provenance_honesty)
+        self._source_provenance_honesty_config = (
+            dict(source_provenance_honesty_config) if source_provenance_honesty_config else None
+        )
+        self._source_provenance_monitor = None
 
     def _ensure_parser(self):
         """Lazily build + train the comprehension `BridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a LOADED Q&A-only
@@ -747,6 +760,40 @@ class BrainConversationalAgent:
             )
         return self._self_schema_honesty
 
+    def _ensure_source_provenance_monitor(self):
+        if self._source_provenance_monitor is None:
+            from research.runners.source_provenance_honesty import SourceProvenanceHonestyMonitor
+            self._source_provenance_monitor = SourceProvenanceHonestyMonitor(
+                seed=self.seed,
+                **(self._source_provenance_honesty_config or {}),
+            )
+        return self._source_provenance_monitor
+
+    def _known_fact_provenance(self, rec, recalled_svo, cue):
+        """known_fact_record's provenance hook: EVERY known_fact_record answer is a DIRECTLY-STORED fact (the
+        composer's own kb match), so it is always presented to the monitor as PERCEIVED. Whether the reply
+        actually reads back 'perceived' still depends on the live judged label (see _apply_source_provenance),
+        not on this claim -- a lesioned monitor can still misjudge it."""
+        from research.runners.source_provenance_honesty import PROVENANCE_PERCEIVED
+        key = ("known_fact", rec["query"]) + tuple(recalled_svo if recalled_svo is not None else cue)
+        return self._apply_source_provenance(rec, PROVENANCE_PERCEIVED, key)
+
+    def _apply_source_provenance(self, rec, provenance, key):
+        """Route `rec` (a known_fact_record/reasoned_fact_record-shaped dict) through the #129 provenance
+        monitor and reframe its `answer_text` from the JUDGED label -- not from `provenance` itself, so a
+        lesioned/degraded monitor demonstrably loses the ability to distinguish (the wire-in de-risk's
+        load-bearing check). No-op (adds `rec["provenance"] = None`) when the faculty is off."""
+        rec["provenance"] = None
+        if not self.enable_source_provenance_honesty:
+            return rec
+        mon = self._ensure_source_provenance_monitor()
+        mon.encode_fact(key, provenance)
+        prov = mon.judge_fact(key)
+        from research.runners.source_provenance_honesty import provenance_framed_text
+        rec["answer_text"] = provenance_framed_text(rec["query"], rec["answer_text"], prov["label"], cue=rec.get("cue"))
+        rec["provenance"] = prov
+        return rec
+
     def _query_with_optional_trace(self, fn):
         comp = self.composer
         has_trace = hasattr(comp, "trace")
@@ -777,6 +824,7 @@ class BrainConversationalAgent:
             "self_schema_invoked": False,
             "self_schema": None,
             "confidence_source": None,
+            "provenance": None,
         }
         return rec
 
@@ -808,7 +856,7 @@ class BrainConversationalAgent:
             raise ValueError("known_fact_record expects a 2-item what-does cue or 3-item yes/no cue")
 
         if not self.enable_self_schema_honesty:
-            return {
+            rec = {
                 "query": "what_does" if len(cue) == 2 else "yes_no",
                 "cue": list(cue),
                 "raw_answer": raw_answer,
@@ -824,6 +872,7 @@ class BrainConversationalAgent:
                 "self_schema": None,
                 "confidence_source": None,
             }
+            return self._known_fact_provenance(rec, recalled_svo, cue)
 
         from research.runners.self_schema_honesty import (
             CONFIDENCE_SOURCE_NEURAL_SOURCE_CONSISTENCY,
@@ -874,7 +923,7 @@ class BrainConversationalAgent:
         else:
             answer_text = self_schema_hedge_text(kind, raw_answer, cue=cue)
             soft_abstain = False
-        return {
+        rec = {
             "query": kind,
             "cue": list(cue),
             "raw_answer": raw_answer,
@@ -892,6 +941,7 @@ class BrainConversationalAgent:
             "confidence_source_mode": source_mode,
             "confidence_evidence": confidence_evidence,
         }
+        return self._known_fact_provenance(rec, recalled_svo, cue)
 
     def reason_chain(self, cue, actions):
         """Multi-hop relational reasoning: chain stored facts, each hop's patient becoming the next hop's agent
@@ -899,6 +949,43 @@ class BrainConversationalAgent:
         moment any hop has no matching fact (the no-confab moat holds at EVERY hop). Delegates to the composer's
         query_chain -- de-risked GO 3 seeds x 3 D, every anti-cheat collapsing (2026-06-17-multihop-query-chain-GO.md)."""
         return self.composer.query_chain(cue, actions)
+
+    def reasoned_fact_record(self, cue, actions):
+        """Structured GENERATED-provenance answer: a multi-hop conclusion produced by `reason_chain`. Each HOP is a
+        literal stored fact, but the composed relation between `cue` and the terminal (e.g. 'dog' transitively
+        reaches 'mouse' via 'dog eat cat, cat eat mouse') is not itself any single stored fact -- the brain
+        COMPOSED it, so with source-provenance honesty on this is presented to the #129 monitor as GENERATED
+        (never PERCEIVED). Mirrors known_fact_record's shape/contract: the moat is first (a broken hop hard-
+        abstains before any provenance framing is applied), default OFF is unaffected, and the framing is driven
+        by the monitor's own judged label, not by this method's provenance claim.
+        """
+        terminal = self.reason_chain(cue, actions)
+        full_cue = (cue,) + tuple(actions)
+        if terminal is None:
+            return self._hard_known_record("reason_chain", full_cue, None, recalled_svo=None)
+        raw_text = f"{cue} " + " ".join(str(a) for a in actions) + f" {terminal}."
+        rec = {
+            "query": "reason_chain",
+            "cue": list(full_cue),
+            "raw_answer": terminal,
+            "answer": terminal,
+            "answer_text": raw_text,
+            "recalled_svo": None,
+            "yesno": None,
+            "hard_abstain": False,
+            "soft_abstain": False,
+            "certain": True,
+            "band": "assert",
+            "self_schema_invoked": False,
+            "self_schema": None,
+            "confidence_source": None,
+        }
+        if not self.enable_source_provenance_honesty:
+            rec["provenance"] = None
+            return rec
+        from research.runners.source_provenance_honesty import PROVENANCE_GENERATED
+        key = ("reasoned", cue, tuple(actions), terminal)
+        return self._apply_source_provenance(rec, PROVENANCE_GENERATED, key)
 
     def chain_of_thought(self, start, goal=None, max_hops=4, return_path=False):
         """SELF-CUED associative chain-of-thought (Tier 2.2 -- the structural heart of 'thinking'): from `start`,

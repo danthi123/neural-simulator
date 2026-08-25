@@ -2985,6 +2985,13 @@ def _get_curiosity_organ():
     return get_organ(seed=42)
 
 
+def _get_source_provenance_organ():
+    """The process-shared #129 spiking source-provenance opponent-comparator monitor (built once; rebuilt if the
+    lesion flag flips). See research/runners/source_provenance_production_organ.py."""
+    from research.runners.source_provenance_production_organ import get_organ, source_provenance_lesioned
+    return get_organ(seed=42, lesion=source_provenance_lesioned())
+
+
 def _get_pragmatic_organ():
     """The process-shared spiking scalar-implicature organ (built once; the W4 depth-2 graded RSA listener-belief)."""
     from research.runners.pragmatic_production_organ import get_organ
@@ -5144,6 +5151,31 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
+    # SOURCE-PROVENANCE HONESTY (board #129, 2026-08-25): read the #129 spiking opponent-comparator provenance
+    # monitor on the just-recalled fact. gate() only ever returns a DIRECTLY-STORED fact (never a composed multi-
+    # hop inference), so the fact is presented to the monitor as PERCEIVED; the monitor's OWN LIVE JUDGED label —
+    # not this claim — decides the framing (a lesioned monitor demonstrably loses the ability to keep the reply
+    # reading as confidently perceived; see research/runners/source_provenance_honesty.py +
+    # tests/test_source_provenance_honesty_wirein.py). Applied to the CORE rendered text, before any other
+    # faculty's prefix/suffix accretion below, so it composes cleanly with them. Additive + DEFAULT-OFF
+    # (`BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> byte-identical: the organ is never built, no substrate step
+    # runs, no `provenance` key is added).
+    provenance_info = None
+    if gate_svo is not None:
+        try:
+            import research.runners.source_provenance_production_organ as _SP
+            if _SP.source_provenance_enabled():
+                from research.runners.source_provenance_honesty import (
+                    PROVENANCE_PERCEIVED, provenance_framed_text,
+                )
+                _sp_mon = _get_source_provenance_organ()
+                _sp_key = ("live_chat_known_fact",) + tuple(gate_svo)
+                _sp_mon.encode_fact(_sp_key, PROVENANCE_PERCEIVED)
+                provenance_info = _sp_mon.judge_fact(_sp_key)
+                answer = provenance_framed_text("what_does", answer, provenance_info["label"])
+        except Exception as _spe:   # never let an opt-in honesty read crash a turn
+            provenance_info = {"on": True, "error": f"{type(_spe).__name__}: {_spe}"}
+
     # EPISODIC STORE (Gate-B, D5, Hook B — single-fact path): mirror the rich-path write (gated behind cupy; on a
     # numpy deployment the write is DEFERRED). Write-only; changes NO reply text. Guarded so it never crashes a turn.
     if _episodic_on and gate_svo is not None and _episodic_store_ok():
@@ -5195,6 +5227,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         # (or null -> abstained), and a scalar RF firing/|Z| gauge. Read-only of the spiking recall the gate already
         # ran (composer.query_patient); null for the rate composer / when the matcher abstained before any query.
         "activity": _sf_activity,
+        # SOURCE-PROVENANCE (board #129): the #129 opponent-comparator's judged label for the recalled fact
+        # ({"known","label","d",...}), or null when the faculty is off / the turn abstained. See above.
+        "provenance": provenance_info,
         # AFFECT (Gate-B): the live mood that colored this turn's prose manner (debug trace; single-fact path has
         # no forthcomingness lever, so only manner applies here). null when affect is disabled (BRAIN_AFFECT=0).
         "affect": affect_info,
