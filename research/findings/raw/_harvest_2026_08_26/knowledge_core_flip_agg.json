@@ -1,0 +1,64 @@
+{
+  "arc": "knowledge core default-LTM flip (board #133; harvest aggregate)",
+  "verdict": "GO -- curated 15k core is a no-regression BRAIN_LTM_BUNDLE, shipped default-on",
+  "go": true,
+  "backend": "numpy",
+  "aggregate": {
+    "n_facts": 15000,
+    "vocab_size": 7032,
+    "n_shards": 75,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "seeds_go": 6,
+    "byte_identity_mismatches_total": 0,
+    "moat_confab_total": 0,
+    "recall_rate_all_seeds": 1.0,
+    "latency_ms_median_min": 398.06,
+    "latency_ms_median_max": 413.66,
+    "production_load_path_go": true,
+    "confirm_main_seed42_go": true,
+    "confirm_main_recall_rate": 1.0,
+    "confirm_main_byte_mismatches": 0,
+    "curate_ship_ready": true
+  },
+  "preconditions": [
+    {
+      "name": "6/6 seeds GO (byte-identity + moat + recall over the curated core)",
+      "ok": true,
+      "detail": "6/6"
+    },
+    {
+      "name": "0 byte-identity mismatches vs the plain-flat unsharded oracle",
+      "ok": true
+    },
+    {
+      "name": "no-confab moat 0 confabulations",
+      "ok": true
+    },
+    {
+      "name": "first-match recall 1.0 on every seed",
+      "ok": true
+    },
+    {
+      "name": "production load path load_developed_brain(ltm_bundle) recall+buffer+moat GO",
+      "ok": true
+    },
+    {
+      "name": "single-seed re-confirm on main (merged runner code) go=True",
+      "ok": true
+    }
+  ],
+  "note": "Harvest aggregate of the 6-seed durable soak verdict + the single-seed on-main re-confirm + the curation report. Latency median ~398-413 ms is a UX knob (vocab 7,032), not a correctness gate; the byte-identity/moat/recall checks are the correctness gate.",
+  "provenance_exempt": "harvest aggregate of existing soak/confirm/curate run artifacts; not itself a run",
+  "source_artifacts": [
+    "core_bundle_soak_verdict.json",
+    "core_bundle_soak_confirm_main_s42.json",
+    "curate_report.json"
+  ]
+}

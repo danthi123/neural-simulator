@@ -13,7 +13,49 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐ STATE OF THE PROJECT — 2026-08-21 (READ FIRST; LIVE resume anchor; supersedes the 2026-08-20 header below, which is now base/history)
+## ⭐ STATE OF THE PROJECT — 2026-08-26 (READ FIRST; LIVE resume anchor; supersedes the 2026-08-21 header below, now history)
+
+**NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
+continuity → the emergentist bet. Non-negotiables: brain-based-only, ONE brain, emergent-not-hand-built, NO-DEFER (a
+wall defers a METHOD not a CAPABILITY), SPEED-SECONDARY, honesty-boundary-as-deliverable, 6-seed (42/43/44/100/101/102),
+gates AUTHORITATIVE, commit BOTH remotes via `tools/push_both.sh`, NEVER `--no-verify`.
+
+**THIS SESSION = the post-window HARVEST (weekly Claude usage reset).** The four-day free-compute window's verdicts were
+harvested onto `main`. Landings:
+
+- **MERGED the window code to `main`** — `research/four-day-autonomous-queue` (the STDP-inert fix to
+  `content_selection_spiking.py` — the WM-buffer loop bridge now advances the clock so STDP fires; the knowledge
+  core curate/soak runners; the fixed gap2 binder / #129 / #130 runners; `tools/gpu_queue_autofill.sh` + `tools/systemd/`
+  units; `research/coordination/FOUR_DAY_QUEUE.md`) and `research/da-encoding-lever2` (WIP homeostat, default-OFF
+  byte-identical — `BRAIN_DA_ENCODING` still defaults off). Both `--no-ff`, pushed to both remotes.
+- **⭐ KNOWLEDGE CORE SHIPPED AS THE DEFAULT CORTICAL LTM (#133 DONE, ledger `tiered-knowledge-ltm` on_by_default:YES).**
+  `webapp/server.py` `_resolve_ltm_bundle()` defaults `BRAIN_LTM_BUNDLE` to the curated 15k wikidata core when unset
+  (`_LTM_SHIP_DEFAULT_ON=True` + the bundle present); `BRAIN_LTM_SHIP_DEFAULT=0` / `BRAIN_LTM_BUNDLE=off` is the
+  byte-identical escape. Core no-regression soak `go=True` 6/6 (0 byte-identity mismatches vs the unsharded oracle,
+  0-confab moat, recall 1.0, latency median ~0.4s), re-confirmed on main. D5 learn-through-use stays in the path
+  (biological memory, not RAG). Residual (scaffold_retired NO): the shard router is host-hash, the composer is numpy VSA.
+- **Continuous-life longitudinal loop GO across 43 seeds** (8×120-day + 35×60-day): recall/retention 1.0,
+  corr(M,C) ~0.85, loop_closed + lineage_persisted + day0≠dayN + moat-clean on every seed — the #1 continuous-substrate
+  priority demonstrated at soak length. **gap2 spiking delta-rule binder GO** 6-seed (role→filler above permuted control).
+- **Mapped boundaries / negatives (each carries its next mechanism, no-defer):** vision R-STDP sparse readout NO-GO
+  across the full 2D op-point sweep (#75 — next: a different readout, not R-STDP); #129 source-monitor NEGATIVE across
+  variants (next: conjunctive source×content tag, queued on the pool); #130 replay order-consolidation
+  CALIBRATION_NEEDS_REVISION; gap5 self-ignition 1/6 with a positive ignition-sweep lead (IGNITES-YES 26/96 — #134
+  created to set the op point from the igniting configs); DA-encoding lever-2 UNDEFINED (next: an on-substrate spiking
+  synaptic-scaling homeostat, not a host clamp).
+
+**⚠️ NOTICED FAILURE logged (research/FAILURE_LOG.md 2026-08-26):** the production-integration gate's sub-checks A
+(ledger↔source anchor) + B (claim↔ledger) are silently DEAD under PyYAML — it coerces `on_by_default: YES/NO` to bool
+and the checks compare against the strings "YES"/"NO". The #133 flip anchor was verified independently (on=1/off=0). The
+fix (a `_level()` normalizer + repair 2 pre-existing stale anchors it surfaces: `one-brain-substrate`,
+`continuous-state-engine`) is spawned as a separate task, not shipped in this harvest.
+
+**NEXT ACTIONS (ordered):** (1) fix the dead PI gate + its 2 stale anchors; (2) harvest the pool faculty-lane results
+(conjunctive-tag #129, v1 self-org, comprehension, curiosity — queued this session) + the gap5 self-ignition op-point
+re-run (#134); (3) the vision next-readout rung (#75); (4) the DA-encoding on-substrate homeostat; (5) latency knob for
+the knowledge core (rebuild `--top-entities 4000` for sub-second warm recall if the ~0.4s default is too slow in chat).
+
+## ⭐ STATE OF THE PROJECT — 2026-08-21 (history — superseded by the 2026-08-26 header above)
 
 **NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
 continuity → the emergentist bet. Non-negotiables: brain-based-only (host = world/body/clock only), ONE brain,

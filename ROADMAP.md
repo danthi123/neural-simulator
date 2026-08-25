@@ -7,6 +7,31 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ 2026-08-26 (harvest) — the brain ships with a real body of knowledge on by default; a four-day compute window's verdicts landed
+
+The weekly free-compute window was harvested onto the main line. The headline: **the brain now loads a real
+body of world knowledge by default when you chat.** A curated 15,000-fact core sits beside the live
+conversation as its long-term memory; it answers big-knowledge questions with the exact same words it would give
+if every fact were kept in one place, and it still says "I don't know" honestly for things it wasn't taught. This
+was switched on as the default (with a clean off switch) after a no-regression check passed on all six runs, and
+the brain keeps learning through use over that store — it is biological memory, not a static lookup.
+
+Also proven over the window: the brain's **between-message continuous life** ran cleanly for the equivalent of up
+to 120 simulated days across 43 fresh starts — it keeps learning through daily use and holds onto what it learned,
+with the last day measurably different from the first. And a small **from-scratch binder** learned to pair a role
+with its filler on its own neurons (and correctly recalls nothing when asked with the wrong role).
+
+Four things came back negative, each now a mapped boundary with a named next step (no capability is dropped):
+making object recognition survive on spikes via a learned *sparse* readout does not work anywhere in the range
+tried (needs a different readout); tagging where a memory came from without a stronger memory drowning out a weaker
+one is still unsolved (a conjunctive source-and-content tag is the next attempt, already queued); replaying
+memories in the right order needs its calibration revised; and a memory re-igniting itself from a partial cue fired
+on only one of six seeds — but a wider sweep shows it *can* ignite, so the fix is finding the right operating point.
+
+One piece of project plumbing was found broken and logged: an internal consistency check meant to keep the
+"what's shipped" ledger honest against the code had gone silent (a YAML quirk); the knowledge-core flip was
+verified by hand instead, and the repair is queued as its own task.
+
 ## ⭐ 2026-08-21 (late) — the "conscious workspace" now cross-checks comprehension by default; a self-maintaining project OS landed; two memory-flip gates came back honest
 
 Four things landed later the same day.

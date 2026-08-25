@@ -1,0 +1,44 @@
+{
+  "arc": "four-day window negatives roundup (harvest aggregate; no top-level verdict)",
+  "backend": "mixed (numpy pool + cupy gpu)",
+  "results": {
+    "source_monitor_129": {
+      "plastic": "NEGATIVE",
+      "competitive_decisive": {
+        "n_pass": 5,
+        "n_total": 6,
+        "go": false
+      },
+      "next": "conjunctive source x content tag (queued on pool)"
+    },
+    "replay_order_130": {
+      "calibration_status": "CALIBRATION_NEEDS_REVISION",
+      "next": "revise order-STDP calibration + learned opponent membership, then decisive 6-seed"
+    },
+    "self_ignition_gap5": {
+      "dg_detonator_GO": false,
+      "dg_n_go": 1,
+      "ignition_sweep_verdict": "IGNITES-YES max_ev=5 max_spec=1 -- the SYMMETRIC positive co",
+      "n_igniting_configs": 26,
+      "n_configs": 96,
+      "next": "set decoupled-store op point from igniting configs, re-run 6-seed (#134)"
+    },
+    "da_encoding_lever2": {
+      "status": "UNDEFINED",
+      "undefined_reasons": [
+        "unmet: STRESS net: recall_ON >= recall_OFF at every swept sigma (salience redistribution net-neutral-or-positive over the realistic DA distribution) (measured=1 expect=0)"
+      ],
+      "next": "on-substrate spiking synaptic-scaling homeostat (not a host clamp)"
+    }
+  },
+  "note": "Each negative is a verdict on a METHOD; the next mechanism is named (no-defer).",
+  "provenance_exempt": "harvest aggregate of existing per-arc negative artifacts; not a run",
+  "source_artifacts": [
+    "four_day/_laneC_plastic_source_memory_derisk_6seed.json",
+    "four_day/laneC_source_competitive_decisive.json",
+    "four_day/replay_v6_order_stdp_calib.json",
+    "four_day/gap5_dg_ignition_6seed.json",
+    "four_day/gap5_ignition_sweep_6seed.json",
+    "_da_encoding_lever2/soak_homeostatic.json"
+  ]
+}

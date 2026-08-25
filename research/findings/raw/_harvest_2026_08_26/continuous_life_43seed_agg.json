@@ -1,0 +1,96 @@
+{
+  "arc": "continuous-life longitudinal develop loop (harvest aggregate, four-day window)",
+  "verdict": "GO -- 43/43 seeds (8x120-day + 35x60-day) learn-through-use + retain",
+  "go": true,
+  "backend": "cupy",
+  "aggregate": {
+    "n_seeds": 44,
+    "seeds_go": 44,
+    "nd120_seeds": 8,
+    "nd60_seeds": 36,
+    "corr_MC_mean": 0.8561,
+    "corr_MC_min": 0.835,
+    "corr_MC_max": 0.88,
+    "recall_acc_mean": 1.0,
+    "retention_acc_mean": 1.0,
+    "loop_closed_n": 44,
+    "lineage_persisted_n": 44,
+    "day0_neq_dayN_n": 44,
+    "moat_clean_n": 44
+  },
+  "preconditions": [
+    {
+      "name": "43/43 seeds GO",
+      "ok": true,
+      "detail": "44/44"
+    },
+    {
+      "name": "loop_closed all seeds",
+      "ok": true
+    },
+    {
+      "name": "lineage_persisted all seeds",
+      "ok": true
+    },
+    {
+      "name": "day0 != dayN (development occurred) all seeds",
+      "ok": true
+    },
+    {
+      "name": "no-confab moat 0-FA all seeds",
+      "ok": true
+    },
+    {
+      "name": "frozen-brain anti-cheat holds (corr is real learning, not decode artifact)",
+      "ok": true
+    }
+  ],
+  "note": "Aggregate of the four-day window per-seed artifacts (source_artifacts). corr(M,C) is the learn-through-use instrument. STDP-inert caveat: loops started before d8e817bd1 had the WM-buffer STDP inert (StreamCortex Hebbian corr + composer store unaffected); post-fix loops are STDP-faithful.",
+  "provenance_exempt": "harvest aggregate of existing per-seed run artifacts; not itself a run",
+  "source_artifacts": [
+    "longi_nd120_s910.json",
+    "longi_nd120_s911.json",
+    "longi_nd120_s912.json",
+    "longi_nd120_s913.json",
+    "longi_nd120_s920.json",
+    "longi_nd120_s921.json",
+    "longi_nd120_s922.json",
+    "longi_nd120_s923.json",
+    "longi_nd60_s1000.json",
+    "longi_nd60_s1001.json",
+    "longi_nd60_s1002.json",
+    "longi_nd60_s1010.json",
+    "longi_nd60_s1011.json",
+    "longi_nd60_s1012.json",
+    "longi_nd60_s1020.json",
+    "longi_nd60_s1021.json",
+    "longi_nd60_s1022.json",
+    "longi_nd60_s1030.json",
+    "longi_nd60_s1031.json",
+    "longi_nd60_s1032.json",
+    "longi_nd60_s1040.json",
+    "longi_nd60_s1041.json",
+    "longi_nd60_s1042.json",
+    "longi_nd60_s930.json",
+    "longi_nd60_s931.json",
+    "longi_nd60_s932.json",
+    "longi_nd60_s940.json",
+    "longi_nd60_s941.json",
+    "longi_nd60_s942.json",
+    "longi_nd60_s950.json",
+    "longi_nd60_s951.json",
+    "longi_nd60_s952.json",
+    "longi_nd60_s960.json",
+    "longi_nd60_s961.json",
+    "longi_nd60_s962.json",
+    "longi_nd60_s970.json",
+    "longi_nd60_s971.json",
+    "longi_nd60_s972.json",
+    "longi_nd60_s980.json",
+    "longi_nd60_s981.json",
+    "longi_nd60_s982.json",
+    "longi_nd60_s990.json",
+    "longi_nd60_s991.json",
+    "longi_nd60_s992.json"
+  ]
+}

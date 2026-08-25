@@ -3355,6 +3355,65 @@ def _get_warm_qwen_renderer():
         return _WARM_QWEN_RENDERER
 
 
+# The curated 15k wikidata knowledge core SHIPS as the default cortical LONG-TERM store (board #133).
+# Soak verdict go=True: 6/6 seeds byte-identical vs the unsharded oracle, 0 confabulations, first-match
+# recall 1.0, latency median ~0.4 s (vocab 7,032). It sits BEHIND the developed brain's small conversation
+# working-set as a routed TieredFactStore LTM tier -- the buffer (WM) keeps its D5 learn-through-use
+# plasticity, so this is biological memory (learn-through-use over a persistent store), not static RAG.
+def _default_ltm_bundle_dir():
+    """First existing candidate dir for the shipped curated core, or None if the data lake is absent.
+    Candidates (in order): $BRAIN_DATA_ROOT, the sibling-of-checkout `sim-data` (the primary-checkout
+    production layout), and ~/Projects/sim-data (the canonical machine path, robust when the server runs
+    from a worktree). Returning None means a checkout without the data lake stays byte-identical (no LTM)."""
+    roots = []
+    env_root = os.environ.get("BRAIN_DATA_ROOT", "").strip()
+    if env_root:
+        roots.append(env_root)
+    roots.append(str(REPO_ROOT.parent / "sim-data"))
+    roots.append(str(Path.home() / "Projects" / "sim-data"))
+    seen = set()
+    for r in roots:
+        if r in seen:
+            continue
+        seen.add(r)
+        d = str(Path(r) / "knowledge_bundles" / "wikidata_core_15k")
+        if os.path.isdir(d):
+            return d
+    return None
+
+
+# 2026-08-26 FLIPPED DEFAULT-ON (board #133): the curated 15k core ships as the default cortical LTM.
+# BRAIN_LTM_SHIP_DEFAULT=0 (and/or BRAIN_LTM_BUNDLE=off) is the byte-identical escape to the pre-flip no-LTM path.
+_LTM_SHIP_DEFAULT_ON = True
+
+
+def _ltm_ship_default_on() -> bool:
+    """The ship-default knob. Unset -> _LTM_SHIP_DEFAULT_ON (the curated core is the default LTM, ON). Set
+    BRAIN_LTM_SHIP_DEFAULT to 1/true/on/yes to force on, or 0/false/off/no for the byte-identical no-LTM escape."""
+    env = os.environ.get("BRAIN_LTM_SHIP_DEFAULT")
+    if env is None:
+        return _LTM_SHIP_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _resolve_ltm_bundle():
+    """Resolve the cortical LTM bundle path (returns a dir string, or None for the byte-identical no-LTM path).
+      * BRAIN_LTM_BUNDLE=<path>                      -> that bundle (explicit override, unchanged).
+      * BRAIN_LTM_BUNDLE=''/off/0/false/no/none      -> None (explicit disable).
+      * BRAIN_LTM_BUNDLE unset  -> the shipped curated core IF the ship-default knob is on AND the bundle dir
+        exists on disk (a checkout without the data lake degrades to None, byte-identical); else None.
+    The escape from the shipped default is BRAIN_LTM_SHIP_DEFAULT=off (its own on/off knob)."""
+    raw = os.environ.get("BRAIN_LTM_BUNDLE")
+    if raw is not None:
+        raw = raw.strip()
+        if raw.lower() in ("", "off", "0", "false", "no", "none"):
+            return None
+        return raw
+    if _ltm_ship_default_on():
+        return _default_ltm_bundle_dir()
+    return None
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -3404,11 +3463,12 @@ def _build_chat_brain(brain: str, renderer: str):
         source = "self-knowledge"
     elif is_developed_brain_bundle(_resolve_bundle(brain)):
         bundle = _resolve_bundle(brain)
-        # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF) BRAIN_LTM_BUNDLE points at a separate bundle of bulk KNOWLEDGE
-        # (100k-1M facts) that becomes a routed cortical LONG-TERM store beside the developed brain's small
-        # conversation working-set -- so the brain can answer over an LLM-scale body of facts at sub-second latency,
-        # beyond the k_max=32 co-resident cap. Unset -> the plain flat composer, byte-for-byte. See tiered_fact_store.py.
-        _ltm_bundle = os.environ.get("BRAIN_LTM_BUNDLE", "").strip() or None
+        # (KNOWLEDGE-SCALE) BRAIN_LTM_BUNDLE points at a separate bundle of bulk KNOWLEDGE that becomes a routed
+        # cortical LONG-TERM store beside the developed brain's small conversation working-set -- so the brain can
+        # answer over an LLM-scale body of facts at sub-second latency, beyond the k_max=32 co-resident cap.
+        # SHIP DEFAULT (board #133): the curated 15k core is ON by default; BRAIN_LTM_SHIP_DEFAULT=off restores the
+        # byte-identical no-LTM path. See _resolve_ltm_bundle() above and tiered_fact_store.py.
+        _ltm_bundle = _resolve_ltm_bundle()
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                ltm_bundle=_ltm_bundle)
@@ -4089,7 +4149,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 _oe_val, _oe_aro = 0.0, 0.3
             _oe = _OE.answer_turn(
                 msg, _warm_faculty, _oe_val, _oe_aro,
-                ltm_bundle=os.environ.get("BRAIN_LTM_BUNDLE", "").strip() or None,
+                ltm_bundle=_resolve_ltm_bundle(),
                 brain_bundle=(os.environ.get("BRAIN_CHAT_BUNDLE", "").strip() or None),
             )
         except HTTPException:

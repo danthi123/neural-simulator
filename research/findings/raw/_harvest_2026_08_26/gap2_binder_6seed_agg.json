@@ -1,0 +1,46 @@
+{
+  "arc": "gap2 spiking delta-rule binder (harvest aggregate)",
+  "verdict": "GO -- role->filler recall above permuted-role control, 6-seed",
+  "go": true,
+  "backend": "cupy",
+  "aggregate": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "codes": 256,
+    "D": 128,
+    "delta_recall_all_P": 1.0,
+    "permuted_role_control_all_P": 0.0,
+    "decorrelated_control_all_P": 1.0,
+    "P_values": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "preconditions": [
+    {
+      "name": "delta-rule role->filler recall = 1.0 for all P in {1,2,3,4}",
+      "ok": true
+    },
+    {
+      "name": "permuted-role control = 0.0 (binding, not co-activation, carries the answer)",
+      "ok": true
+    },
+    {
+      "name": "decorrelated-code control = 1.0 (not a correlated-code artifact)",
+      "ok": true
+    }
+  ],
+  "note": "Aggregate of four_day/gap2_binder_6seed.json.",
+  "provenance_exempt": "harvest aggregate; not a run",
+  "source_artifacts": [
+    "gap2_binder_6seed.json"
+  ]
+}

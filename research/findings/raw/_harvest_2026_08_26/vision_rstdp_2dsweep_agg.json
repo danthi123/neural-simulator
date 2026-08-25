@@ -1,0 +1,64 @@
+{
+  "arc": "vision R-STDP sparse object readout 2D operating-point sweep (harvest aggregate)",
+  "verdict": "RSTDP-READOUT-NOGO -- 14/14 cells (mapped boundary)",
+  "backend": "cupy",
+  "aggregate": {
+    "n_cells": 14,
+    "n_seeds_per_cell": 6,
+    "all_nogo": true,
+    "nogo_floor": 0.34,
+    "object_chance": 0.25,
+    "n_s2_grid": [
+      24,
+      32,
+      48,
+      64,
+      96,
+      128,
+      192,
+      256
+    ],
+    "epochs_grid": [
+      30,
+      60,
+      100
+    ]
+  },
+  "preconditions": [
+    {
+      "name": "sweep ran 14 cells x 6 seeds",
+      "ok": true,
+      "detail": "14 cells"
+    },
+    {
+      "name": "NO-GO floor 0.34 defined above object chance 0.25 (interpretable)",
+      "ok": true
+    },
+    {
+      "name": "random-readout control present (learned-vs-random is the load-bearing test)",
+      "ok": true
+    },
+    {
+      "name": "all 14 cells return RSTDP-READOUT-NOGO (boundary fully mapped)",
+      "ok": true
+    }
+  ],
+  "note": "A VALID (instrument-held) negative across the whole op range; the learned sparse spiking readout is not > random anywhere. Next = a different readout mechanism.",
+  "provenance_exempt": "harvest aggregate of the per-cell vrstdp artifacts; not a run",
+  "source_artifacts": [
+    "vrstdp_ns2128_ep100_6seed.json",
+    "vrstdp_ns2128_ep30_6seed.json",
+    "vrstdp_ns2128_ep60_6seed.json",
+    "vrstdp_ns2192_ep30_6seed.json",
+    "vrstdp_ns224_ep30_6seed.json",
+    "vrstdp_ns2256_ep30_6seed.json",
+    "vrstdp_ns232_ep30_6seed.json",
+    "vrstdp_ns248_ep30_6seed.json",
+    "vrstdp_ns248_ep60_6seed.json",
+    "vrstdp_ns264_ep100_6seed.json",
+    "vrstdp_ns264_ep30_6seed.json",
+    "vrstdp_ns264_ep60_6seed.json",
+    "vrstdp_ns296_ep30_6seed.json",
+    "vrstdp_ns296_ep60_6seed.json"
+  ]
+}

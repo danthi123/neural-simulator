@@ -755,6 +755,30 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-26 (four-day window HARVEST) — one wall CLEARED to production-default, four boundaries mapped with named surpasses (no-defer).**
+> - **KNOWLEDGE-SCALE (tiered-knowledge-ltm) — CLEARED to production-default (#133 DONE).** The curated 15k wikidata
+>   core ships as the default cortical LTM (`webapp/server.py _resolve_ltm_bundle`, `_LTM_SHIP_DEFAULT_ON=True`);
+>   soak `go=True` 6/6 (0 byte-identity mismatches vs the unsharded oracle, 0-confab moat, recall 1.0, ~0.4s). Residual
+>   (scaffold_retired NO): host-hash shard router + numpy VSA composer; scale next rung = candidate-restricted codebook
+>   cleanup (the O(V·D) cleanup grows with vocabulary, ~1.3s at 100k). Finding
+>   `2026-08-26-knowledge-core-shipped-as-default-cortical-ltm-soak-go-byte-identical`.
+> - **VISION object "which" readout — R-STDP sparse readout NO-GO across the FULL 2D op-point sweep (#75).** 14 cells
+>   (n_s2 {24..256} × epochs {30,60,100}), 6-seed each, all `RSTDP-READOUT-NOGO`; learned not > random on spikes; the
+>   distributed random S2 code is quantization-fragile. SURPASS = a different readout (learned DENSE population readout /
+>   decorrelated-S2 shaping before the spiking read / a non-R-STDP credit path). `four_day/vrstdp_*_6seed.json`, finding
+>   `2026-08-26-vision-rstdp-sparse-readout-NOGO-across-the-full-2D-operating-point-sweep-mapped-boundary`.
+> - **SOURCE-MONITORING (#129) — NEGATIVE across variants** (plastic NEGATIVE, competitive 5/6 go=false on the no-harm
+>   control, attractor margins short). SURPASS = a CONJUNCTIVE source×content tag that cannot leak into the content read
+>   (queued on the pool). `four_day/_laneC_*`, `laneC_source_competitive_decisive.json`.
+> - **gap#5 self-ignition — 1/6, positive op-point lead.** DG-detonator ignites 1/6 but the ignition SWEEP is
+>   `IGNITES-YES` (26/96 configs ev≥1); SURPASS = set the decoupled-store op point from the igniting configs, then re-run
+>   6-seed (#134). `four_day/gap5_dg_ignition_6seed.json`, `gap5_ignition_sweep_6seed.json`.
+> - **gap#2 binder — GO** (spiking delta-rule role→filler recall above permuted control, 6-seed); the remaining wall is
+>   the MULTI-attribute learned binder (dendritic multiplicative). `four_day/gap2_binder_6seed.json`.
+> - **#130 replay order-consolidation — CALIBRATION_NEEDS_REVISION**; **DA-encoding lever-2 — UNDEFINED** (STRESS net
+>   precondition unmet) → SURPASS = on-substrate spiking synaptic-scaling homeostat (not a host clamp). Roundup finding
+>   `2026-08-26-four-day-window-negatives-roundup-source-monitor-replay-self-ignition-da-encoding`.
+
 > **⭐ 2026-08-21 — two INTEGRATION-lane flip walls, each with its named companion-process surpass (no-defer).**
 > - **da-gated-encoding default-ON flip = UNDEFINED** (finding
 >   `2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-moat-leak-and-sigma-dependent-benefit`, artifact
@@ -861,6 +885,22 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-08-26 (HARVEST of the four-day free-compute window) — knowledge core SHIPPED default-on (#133); window verdicts
+landed. Ordered next actions:**
+- **Fix the dead production-integration gate** (sub-checks A/B silently skipped under PyYAML bool-coercion; see
+  `research/FAILURE_LOG.md` 2026-08-26) with a `_level()` normalizer, and repair the 2 stale anchors it surfaces
+  (`one-brain-substrate`, `continuous-state-engine`). The #133 flip anchor was verified independently (on=1/off=0).
+- **Harvest the pool faculty-lane results** queued this session: #129 source-monitor conjunctive-tag (the named
+  surpass), v1 self-org perception, spiking comprehension, curiosity learning-progress — rsync from the pool nodes and
+  promote GOs to findings; then the **gap5 self-ignition op-point re-run (#134)** from the igniting configs.
+- **Vision next readout rung (#75):** a learned DENSE population readout / decorrelated-S2 shaping / a non-R-STDP credit
+  path (the sparse R-STDP readout is a mapped NO-GO across the whole op range).
+- **DA-encoding on-substrate homeostat:** replace the host multiplicative clamp with a spiking synaptic-scaling rule
+  (Turrigiano-style) so the companion homeostatic process is run by the brain (lever-2 was UNDEFINED).
+- **#130 replay:** revise the order-STDP calibration + learned opponent membership, then the decisive 6-seed order test.
+- **Knowledge core latency knob (UX, non-blocking):** rebuild `--top-entities 4000` for sub-second warm recall if the
+  ~0.4s default core feels slow in live chat.
 
 **2026-08-21 (AUTONOMOUS, LATE) — GNW THREE-organ bus FLIPPED DEFAULT-ON; the SELF-MAINTAINING PROJECT OS (enforcement
 engine) LANDED; D5 learn-through-use flip NO-GO; da-encoding flip gate UNDEFINED; knowledge-scale flip in flight.**
