@@ -45,6 +45,26 @@ FORWARD-ORDER (FWD=1.0) is NOT reproducible (flips to 0.0 on rebuild). ROBUST ac
 fb_drive engages the basket, the anti-cheats collapse (within-run), and GO never reached (0/6). This seeding defect is
 almost certainly a load-bearing reason the whole gap5 READOUT arc has been hard to pin -- and is the FIRST thing to fix.
 
+## ⛔ CORRECTION (2026-08-25, on FIXING it) -- the root cause above is WRONG; it is NOT an unseeded RNG
+On fixing, the mechanism was measured directly and the "connectivity draw unseeded" diagnosis above did NOT hold. The
+connectivity + threshold DRAW is ALREADY fully `cfg.seed`-seeded: `_prepare_sequence(seed, cfg, do_encode=False)` is
+BYTE-IDENTICAL across 3 fresh processes (thresholds AND connectivity). The non-reproducibility appears ONLY with the
+ENCODE, enters at the FIRST spiking step, and VARIES run-to-run ACROSS processes (build2's hash changed between process
+runs) -- i.e. it is NOT a deterministic global-RNG advance. TRUE CAUSE: the per-step synaptic-current SpMV
+(`Wᵀ@spikes`) via cupyx/cuSPARSE is BIT-non-reproducible run-to-run on this stack (the identical SpMV returns 6
+distinct results over 6 calls -- atomic FP accumulation), and the chaotic/bistable spiking + BTSP plasticity amplify
+that per-step jitter into an entirely different store + a flipped readout. So it is a GPU floating-point determinism
+bug, not a seeding bug; every build-time RNG here was already correct.
+
+FIX (committed same day): `sim.bridge._deterministic_csr_matvec` computes each per-step transpose SpMV as an explicit
+`add.reduceat` segmented reduction (no atomics -> byte-identical every call), wired under the existing
+`cfg.deterministic_transpose_matvec` flag (which was itself non-deterministic before -- it still routed through
+cuSPARSE `@`); `_build` now sets that flag, so the gap5 store + readout are byte-reproducible at a fixed seed (verified
+in-process AND across fresh processes; different seeds still differ). Default (flag off) is byte-identical (9/9 existing
+determinism tests pass). Pinned by `tests/test_determinism.py::TestGap5StoreByteReproducible`. This retroactively
+un-blocks next-rung (a): the store is now reproducible, so the per-seed readout metrics can be trusted; caveat 3 (only
+directions + within-run contrasts trustworthy) is LIFTED for runs built through the fixed `_build`.
+
 ## What the diagnostics corrected
 - The DG-detonator drives a0 to a ~0.5 PEAK active fraction transiently (direct asm_peaks) -- well above the sparse
   driven set -- but only ~0.17 AVERAGED within the event (member_frac): a BRIEF, NON-SUSTAINED partial ignition, not a

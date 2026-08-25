@@ -128,10 +128,45 @@ from experiment.inhibitory_conductance_clamp import (
 )
 
 
+def _deterministic_csr_matvec(csr_mat, vec):
+    """`csr_mat @ vec` (dense vector) via an EXPLICIT per-output-row segmented reduction
+    (`add.reduceat` over the CSR index order) instead of the library SpMV.
+
+    WHY THIS EXISTS (2026-08-25): cupyx/cuSPARSE `csr @ v` — including the non-transpose
+    csrmv the old `_deterministic_ei_transpose_spmv` relied on — is BIT-NON-reproducible
+    run-to-run on this stack (measured: the identical SpMV returns 6 distinct results over
+    6 calls; FP summation-order variance from the atomic/load-balanced kernel). That silently
+    made `deterministic_transpose_matvec` non-deterministic and, via the chaotic spiking +
+    BTSP plasticity that amplifies any per-step FP jitter, made the gap#5 store build
+    non-reproducible at a FIXED cfg.seed even though every RNG draw is correctly seeded.
+    `add.reduceat` reduces each output row's contiguous slice in a FIXED index order with NO
+    atomics, so the result is byte-identical every call. Backend-neutral (`cp` is numpy on the
+    numpy backend, where np.add.reduceat is likewise order-deterministic). Correctness vs an
+    exact float64 reference: max abs err ~1e-3 (pure float32 rounding), incl. empty rows.
+    """
+    indptr = csr_mat.indptr
+    idx = csr_mat.indices
+    data = csr_mat.data
+    out = cp.zeros(int(csr_mat.shape[0]), dtype=data.dtype)
+    if data.size == 0:
+        return out
+    prod = data * vec[idx]
+    counts = cp.diff(indptr)
+    nonempty = counts > 0
+    # reduceat(starts) sums prod[starts[i]:starts[i+1]); because empty rows contribute NO
+    # elements, the next NON-EMPTY row's start equals this row's end, so each non-empty row's
+    # segment is exactly its own [indptr[r], indptr[r+1]) slice. Empty rows keep the 0 fill.
+    if bool(nonempty.any()):
+        starts = indptr[:-1][nonempty]
+        out[nonempty] = cp.add.reduceat(prod, starts).astype(data.dtype)
+    return out
+
+
 def _deterministic_ei_transpose_spmv(connections, excitatory_drive, inhibitory_drive):
     """Apply a transposed sparse matrix to E/I vectors with deterministic row reductions."""
     connections_t_csr = connections.T.tocsr()
-    return connections_t_csr @ excitatory_drive, connections_t_csr @ inhibitory_drive
+    return (_deterministic_csr_matvec(connections_t_csr, excitatory_drive),
+            _deterministic_csr_matvec(connections_t_csr, inhibitory_drive))
 
 
 def _backend_neutral_random_state(seed, *, stream_name):
@@ -8716,8 +8751,10 @@ class SimulationBridge:
                     # cfg.deterministic_transpose_matvec is set (default off ⇒ byte-identical).
                     _eff_cT1 = effective_connections_matrix.T
                     if getattr(cfg, "deterministic_transpose_matvec", False):
-                        _eff_cT1 = _eff_cT1.tocsr()
-                    g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
+                        g_e_increase = _deterministic_csr_matvec(
+                            _eff_cT1.tocsr(), prev_fired_float) * cfg.propagation_strength
+                    else:
+                        g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
                     self.cp_conductance_g_e += g_e_increase
 
             # GRADED (analog, non-spiking) transmission INCREMENT (2026-06-15; the retina's horizontal
@@ -8756,18 +8793,22 @@ class SimulationBridge:
                         self._cached_inhibitory_mask = _is_inh
                     _a_exc = _a_cont * (~_is_inh)
                     _a_inh = _a_cont * _is_inh
-                    _a_2col = cp.stack([_a_exc, _a_inh], axis=1)
                     _WgT = _Wg.T
                     if getattr(cfg, "deterministic_transpose_matvec", False):
-                        _WgT = _WgT.tocsr()
-                    _g2 = _WgT @ _a_2col
-                    self.cp_conductance_g_e += _g2[:, 0] * cfg.propagation_strength
-                    self.cp_conductance_g_i += _g2[:, 1] * cfg.inhibitory_propagation_strength
+                        _WgT_csr = _WgT.tocsr()
+                        self.cp_conductance_g_e += _deterministic_csr_matvec(_WgT_csr, _a_exc) * cfg.propagation_strength
+                        self.cp_conductance_g_i += _deterministic_csr_matvec(_WgT_csr, _a_inh) * cfg.inhibitory_propagation_strength
+                    else:
+                        _a_2col = cp.stack([_a_exc, _a_inh], axis=1)
+                        _g2 = _WgT @ _a_2col
+                        self.cp_conductance_g_e += _g2[:, 0] * cfg.propagation_strength
+                        self.cp_conductance_g_i += _g2[:, 1] * cfg.inhibitory_propagation_strength
                 else:
                     _WgT1 = _Wg.T
                     if getattr(cfg, "deterministic_transpose_matvec", False):
-                        _WgT1 = _WgT1.tocsr()
-                    self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
+                        self.cp_conductance_g_e += _deterministic_csr_matvec(_WgT1.tocsr(), _a_cont) * cfg.propagation_strength
+                    else:
+                        self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
@@ -8997,8 +9038,10 @@ class SimulationBridge:
                     # is unchanged (byte-identical — a pure extract-to-variable refactor when the flag is off).
                     _co_matT = _co_mat.T
                     if getattr(cfg, "deterministic_transpose_matvec", False):
-                        _co_matT = _co_matT.tocsr()
-                    c_drive = _co_matT @ self.cp_prev_firing_states.astype(cp.float32)
+                        c_drive = _deterministic_csr_matvec(
+                            _co_matT.tocsr(), self.cp_prev_firing_states.astype(cp.float32))
+                    else:
+                        c_drive = _co_matT @ self.cp_prev_firing_states.astype(cp.float32)
                 else:
                     # No prior spikes this step -> zero coincident drive (the plateau still DECAYS below).
                     c_drive = cp.zeros_like(self.cp_conductance_g_coincidence)

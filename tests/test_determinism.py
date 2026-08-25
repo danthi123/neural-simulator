@@ -9,6 +9,7 @@ Run with: pytest tests/test_determinism.py -v
 
 import sys
 import os
+import hashlib
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -407,8 +408,104 @@ class TestSubstrateActuallySeeded:
         )
 
 
+class TestGap5StoreByteReproducible:
+    """Pins the 2026-08-25 gap#5 store reproducibility fix — and the ROOT CAUSE the fix corrects.
+
+    THE FINDING'S FIRST GUESS WAS WRONG, so record what was actually measured. The connectivity +
+    threshold DRAW was ALWAYS correctly cfg.seed-seeded: `_prepare_sequence(seed, ..., do_encode=False)`
+    is byte-identical across fresh processes. What made the gap#5 store non-reproducible at a FIXED
+    seed (two same-seed builds differing in cp_neuron_firing_thresholds AND cp_connections, readout
+    forward_frac flipping 1.0<->0.0) was NOT an unseeded RNG. It was the per-step synaptic-current
+    SpMV: cupyx/cuSPARSE Wᵀ@spikes is BIT-NON-reproducible run-to-run (atomic FP accumulation — the
+    IDENTICAL SpMV returns distinct results call-to-call), and the chaotic spiking + BTSP plasticity
+    amplify that per-step jitter into an entirely different store. The fix routes every per-step
+    transpose SpMV through an explicit `add.reduceat` segmented reduction
+    (sim.bridge._deterministic_csr_matvec, no atomics) under `deterministic_transpose_matvec`, which
+    the gap#5 store builder (research/runners/_riii_ca3_coincidence_completion_derisk._build) now sets.
+
+    THE GENERAL LESSON: "seeded" is necessary but NOT sufficient for reproducibility on a GPU. A
+    correctly-seeded substrate whose dynamics run through a non-deterministic library SpMV is still
+    non-reproducible. Assert the PROPERTY (same seed => byte-identical store), on the GPU backend
+    where the non-determinism actually lives.
+    """
+
+    def test_deterministic_csr_matvec_is_reproducible_and_correct(self):
+        """The reduceat SpMV that replaces the cuSPARSE one must be (a) byte-identical across repeated
+        identical calls at the REAL gap#5 connectivity scale (the property the chaotic substrate needs;
+        a regression to `csr @ v` would VARY here — that is exactly the measured bug), and (b) a correct
+        float32 SpMV vs an exact float64 reference."""
+        import numpy as np
+        from sim.backend import get_backend, is_gpu_backend, to_host
+        from sim.bridge import _deterministic_csr_matvec
+        if not is_gpu_backend():
+            import pytest as _pytest
+            _pytest.skip("cuSPARSE SpMV non-determinism is a GPU/cupy concern; numpy SpMV is already deterministic")
+        cp, _ = get_backend()
+        from research.runners._gap5_sequence_replay_derisk import _prepare_sequence
+        from research.runners._gap5_decoupled_store_bistable_readout_derisk import DECOUPLED_CFG
+        # Real gap#5 connectivity at full CA3 scale (do_encode=False => fast, no BTSP loop) so a
+        # regression of the helper back to cuSPARSE `@` would be caught (it is non-deterministic here).
+        cfg = {**DECOUPLED_CFG, "n_ca3": 2000, "n_mem": 3, "freeze_between_refresh": True}
+        W = _prepare_sequence(42, cfg, do_encode=False)["bridge"].cp_connections
+        WT = W.T.tocsr()
+        cp.random.seed(0)
+        v = (cp.random.rand(W.shape[0]) > 0.9).astype(cp.float32)
+
+        def _hash(a):
+            return hashlib.sha1(np.ascontiguousarray(np.asarray(to_host(a))).tobytes()).hexdigest()
+
+        hs = {_hash(_deterministic_csr_matvec(WT, v)) for _ in range(6)}
+        assert len(hs) == 1, (
+            "the deterministic SpMV is NOT reproducible — 6 identical calls gave "
+            f"{len(hs)} distinct results. It has regressed to a non-deterministic (atomic) SpMV; the "
+            "gap#5 store will again be non-reproducible at a fixed seed."
+        )
+        # Correctness vs an EXACT float64 reference (any correct float32 SpMV lands within f32 rounding).
+        WT_h = WT.get() if hasattr(WT, "get") else WT
+        ref = (WT_h.astype(np.float64) @ np.asarray(to_host(v)).astype(np.float64))
+        mine = np.asarray(to_host(_deterministic_csr_matvec(WT, v))).astype(np.float64)
+        rel = np.max(np.abs(mine - ref)) / (np.max(np.abs(ref)) + 1e-9)
+        assert rel < 1e-3, f"deterministic SpMV is not a correct float32 matvec (rel err {rel:.2e})"
+
+    @pytest.mark.slow
+    def test_prepare_sequence_gives_byte_identical_store_at_fixed_seed(self):
+        """END-TO-END property (what the finding's probe checks): two same-seed gap#5 store builds IN
+        ONE PROCESS — through the full BTSP encode that drives the chaotic spiking — must be byte-
+        identical in BOTH thresholds AND connectivity, and a DIFFERENT seed must give a DIFFERENT store
+        (guards against over-seeding to a constant). Fails without the fix: at this scale the cuSPARSE
+        SpMV jitter compounds into distinct stores (measured e45500ac vs 96d987f5 on one seed). Slow
+        (~90s: two full BTSP encodes) but it is the load-bearing reproducibility property."""
+        import numpy as np
+        from sim.backend import is_gpu_backend, to_host
+        if not is_gpu_backend():
+            pytest.skip("reproducibility of the GPU store is a cupy concern; the numpy SpMV is already deterministic")
+        from research.runners._gap5_sequence_replay_derisk import _prepare_sequence
+        from research.runners._gap5_decoupled_store_bistable_readout_derisk import DECOUPLED_CFG
+        cfg = {**DECOUPLED_CFG, "n_ca3": 600, "n_mem": 3, "freeze_between_refresh": True}
+
+        def _store(seed):
+            br = _prepare_sequence(seed, cfg, do_encode=True)["bridge"]
+            def _h(a):
+                return hashlib.sha1(np.ascontiguousarray(np.asarray(to_host(a))).tobytes()).hexdigest()
+            return _h(br.cp_neuron_firing_thresholds), _h(br.cp_connections.data)
+
+        a = _store(42)
+        b = _store(42)
+        assert a == b, (
+            "same-seed gap#5 store build is NOT byte-reproducible (thresh/conn "
+            f"{a} != {b}). The deterministic-SpMV path has regressed; every quantitative gap#5 readout "
+            "metric built on this is confounded (only within-run control contrasts survive)."
+        )
+        c = _store(43)
+        assert c[1] != a[1], (
+            "a DIFFERENT seed gives the SAME connectivity — the store is over-seeded to a constant, "
+            "not merely made reproducible."
+        )
+
+
+if __name__ == "__main__":
     test_seed = TestSeedTracking()
     test_seed.test_explicit_seed_tracked()
     test_seed.test_random_seed_generated()
-    
+
     print("\n✅ All determinism tests passed!")

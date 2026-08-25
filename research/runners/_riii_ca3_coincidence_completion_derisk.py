@@ -170,6 +170,19 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
+    # REPRODUCIBILITY (2026-08-25): make a fixed cfg.seed give a BYTE-IDENTICAL store. The
+    # connectivity + threshold DRAW is already fully cfg.seed-seeded (verified byte-identical
+    # across fresh processes with do_encode=False); the non-reproducibility that confounded the
+    # whole gap#5 readout arc was NOT an unseeded draw but the per-step synaptic-current SpMV:
+    # cupyx/cuSPARSE Wᵀ@spikes is bit-non-reproducible run-to-run (atomic FP accumulation; the
+    # identical SpMV returns 6 distinct results over 6 calls), and the chaotic spiking + BTSP
+    # plasticity amplify that per-step jitter into a different store + a flipped readout. Turning
+    # deterministic_transpose_matvec ON routes every per-step transpose SpMV through the explicit
+    # reduceat segmented reduction (sim.bridge._deterministic_csr_matvec) — no atomics, byte-
+    # identical every run. Cost: a per-step .tocsr() + reduceat (speed is secondary here). This
+    # makes the store + readout reproducible; do NOT remove without restoring another deterministic
+    # SpMV. Probe: research/runners/_gap5_store_seeding_determinism_probe.py.
+    cfg.deterministic_transpose_matvec = True
     if adex:
         # gap#5 AdEx point-neuron swap (2026-07-24): Ecker 2022's traveling bump is on AdExpIF (a POINT neuron, no
         # dendrites). GLOBAL model swap (whole net -> AdEx; there is no per-region AdEx heterogeneity). Defaults are the
