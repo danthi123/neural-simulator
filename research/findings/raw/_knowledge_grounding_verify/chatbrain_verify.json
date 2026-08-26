@@ -1,0 +1,75 @@
+{
+  "run_id": "kg-verify-2026-08-26-01",
+  "provenance": {
+    "scripts": [
+      "verify_grounding_chatbrain.py (ON pass, turns ON-1..ON-9)",
+      "verify_lesion_only.py (OFF/lesion pass, turns OFF-1..OFF-5)"
+    ],
+    "runner": "hand-authored ChatBrain-level driver (not -m research.runners.X); reused by both scripts: research.runners.brain_chat_tui.ChatBrain / _build_tiny_demo, research.runners.tiered_fact_store.TieredFactStore, research.runners.sharded_phasor_store.ShardedPhasorStore",
+    "git_sha": "0b9acb3b8b7f9a9a629b17de1c6044b00dceb3d9",
+    "branch": "research/knowledge-grounding-A",
+    "repo": "/home/dant123/Projects/sim (worktree wf_4886665c-843-4)",
+    "note": "The two passes were run as separate processes (ON with BRAIN_KNOWLEDGE_GROUNDING=1, OFF with =0) since the env var is read once at ChatBrain-construction/query time; both against the SAME bundle. Turn-by-turn stdout captured verbatim below (this JSON is a faithful transcription of the two scripts' own printed results, not a re-derivation)."
+  },
+  "backend": "numpy",
+  "device": "cpu",
+  "composer_kind": "rf",
+  "bundle": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/kc_smoke_fixed_smoke",
+  "bundle_note": "A 400-top-entity/20-top-relation curated core (research/runners/_knowledge_core_curate.py --smoke), built with the SAME build_alias_facts mechanism as the full 8000-entity/40-relation shipped wikidata_core_15k core -- real Wikidata alias data throughout, not synthetic. See the finding for the full-scale (45,804-fact, 8000-entity) build launched in parallel (research/findings/raw/_knowledge_core/curate_report.json once complete).",
+  "composer_kind_note": "BRAIN_COMPOSER_KIND=rf used for wall-clock speed under this session's heavy concurrent CPU contention (verified NOT a different code path for the grounding feature: _ground_content_words runs in _extract_route BEFORE either the neural-parser branch or this host-heuristic branch -- see brain_chat_tui.py).",
+  "turns_grounding_on": [
+    {"label": "ON-1-copula-multiword-alias", "call": "chat.gate('what is vienna austria')",
+     "result": ["habsburg_austria", "instance_of", "city_work"], "elapsed_s": 1.75},
+    {"label": "ON-2-svo-multiword-entity", "call": "chat.gate('what does guggenheim fellowship country')",
+     "result": ["guggenheim_grant", "country", "u_s_of_a"], "elapsed_s": 0.96},
+    {"label": "ON-3-fidelity-literal-instance_of", "call": "ltm.query_patient('habsburg_austria', 'instance_of')",
+     "result": "city_work", "elapsed_s": 0.20,
+     "note": "matches ON-1's grounded patient exactly -- pure reachability fix, no answer drift"},
+    {"label": "ON-4-fidelity-literal-country", "call": "ltm.query_patient('guggenheim_grant', 'country')",
+     "result": "u_s_of_a", "elapsed_s": 0.23,
+     "note": "matches ON-2's grounded patient exactly"},
+    {"label": "ON-5-adversarial-nonsense", "call": "chat.gate('what is purple elephant bicycle')",
+     "result": null, "elapsed_s": 1.44, "note": "moat holds: nonsense phrase abstains, not mis-grounded"},
+    {"label": "ON-6-baseline-teach", "call": "chat.gate('the wolf hunts the deer')",
+     "result": ["wolf", "hunt", "deer"], "elapsed_s": 0.15},
+    {"label": "ON-7-baseline-recall", "call": "chat.gate('what does the wolf hunt?')",
+     "result": ["wolf", "hunt", "deer"], "elapsed_s": 0.35, "note": "in-conversation teach+recall unaffected"},
+    {"label": "ON-8-baseline-abstain-moat", "call": "chat.gate('what does the dragon breathe?')",
+     "result": null, "elapsed_s": 1.01, "note": "pre-existing unrelated-question moat unaffected"},
+    {"label": "ON-9-self-facts-regression", "call": "chat.gate('what are you?')",
+     "result": ["brain", "use", "spikes"], "elapsed_s": 0.08, "note": "self-facts regression check"}
+  ],
+  "turns_grounding_off_lesion": [
+    {"label": "OFF-1-copula-multiword-alias", "call": "chat.gate('what is vienna austria')",
+     "result": null, "elapsed_s": 0.203, "note": "REVERTS to abstain vs ON-1's correct answer -- load-bearing"},
+    {"label": "OFF-2-svo-multiword-entity", "call": "chat.gate('what does guggenheim fellowship country')",
+     "result": null, "elapsed_s": 0.24, "note": "REVERTS to abstain vs ON-2's correct answer -- load-bearing"},
+    {"label": "OFF-3-adversarial-nonsense", "call": "chat.gate('what is purple elephant bicycle')",
+     "result": null, "elapsed_s": 0.264, "note": "still abstains with grounding off (unaffected, as expected)"},
+    {"label": "OFF-4-baseline-teach", "call": "chat.gate('the wolf hunts the deer')",
+     "result": ["wolf", "hunt", "deer"], "elapsed_s": 0.151, "note": "byte-identical to ON-6 (unaffected)"},
+    {"label": "OFF-5-baseline-recall", "call": "chat.gate('what does the wolf hunt?')",
+     "result": ["wolf", "hunt", "deer"], "elapsed_s": 0.051, "note": "byte-identical to ON-7 (unaffected)"}
+  ],
+  "supplementary_direct_extract_route_trace": {
+    "note": "An earlier interactive debug run (debug_ground.py, same mechanism, same bundle, composer_kind=rf) captured the intermediate _extract_route / _definitional_copula_route / _substrate_recall stages directly, corroborating the gate()-level results above:",
+    "grounding_on": {
+      "extract_route(\"what is vienna austria\")": ["habsburg_austria", "isa"],
+      "copula_route(\"what is vienna austria\")": ["habsburg_austria", "isa"],
+      "substrate_recall(\"what is vienna austria\")": ["habsburg_austria", "instance_of", "city_work"],
+      "extract_route2(\"what does guggenheim fellowship country\")": ["guggenheim_grant", "country"],
+      "substrate_recall2(\"what does guggenheim fellowship country\")": ["guggenheim_grant", "country", "u_s_of_a"]
+    },
+    "grounding_off_lesion": {
+      "extract_route(\"what is vienna austria\")": ["vienna", "austria"],
+      "extract_route2(\"what does guggenheim fellowship country\")": ["guggenheim", "fellowship"]
+    }
+  },
+  "summary": {
+    "natural_language_recall": "PASS: 2/2 natural-language knowledge questions over multi-word aliased entities correctly grounded + recalled",
+    "fidelity": "PASS: 2/2 grounded answers identical to the literal canonical-token query",
+    "moat_adversarial": "PASS: 2/2 (nonsense phrase, pre-existing unrelated question) correctly abstain",
+    "regression": "PASS: 3/3 (self-facts, in-conversation teach, in-conversation recall) unaffected",
+    "load_bearing_lesion": "PASS: 2/2 grounding-dependent turns revert to abstain with BRAIN_KNOWLEDGE_GROUNDING=0; 3/3 grounding-independent turns unchanged"
+  }
+}

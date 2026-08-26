@@ -82,6 +82,120 @@ _SK_CURRICULUM = os.path.join(_REPO, "research", "findings", "raw", "_curriculum
 
 
 # ============================================================================================================
+# KNOWLEDGE GROUNDING (reasoning-frontier arc, 2026-08-26 -- board #65/#66, frontier A). See
+# research/findings/2026-08-26-knowledge-grounding-natural-language.md +
+# research/runners/_knowledge_core_curate.py's `build_alias_facts`.
+#
+# THE GAP. The shipped `wikidata_core_15k` cortical LTM stores facts under Wikidata-derived CANONICAL tokens
+# (e.g. agent='atlantic_jazz', action='instance_of') -- clean, but NOT the words a natural question uses
+# ('atlantic jazz', 'is a'). `_extract_route` splits a question into single stopword-stripped words and hands
+# (agent, action) as two of THOSE single words: a multi-word entity phrase never becomes the one underscore-
+# joined token the store keys on, and `_definitional_copula_route` hardcodes the copula to the in-conversation-
+# teaching convention 'isa', which the Wikidata core does not use (its instance-of relation is 'instance_of').
+# Once the right tokens reach `query_patient`, recall is exact and safe (2026-08-25-fhrr-decode-rate-at-scale.md,
+# 6-seed, false-hop=0.0 at the deployed D=128/15k scale) -- this closes a pure GROUNDING/COMPREHENSION gap, not
+# a recall or capacity problem.
+#
+# THE MECHANISM. A host-side phrase-SEGMENTATION scaffold (deciding how many stopword-stripped words form one
+# candidate span, longest-first) tries each candidate against a GENUINE spiking hop: `composer.query_patient
+# (candidate, "alias_of")` -- the SAME `query_patient` primitive `compositional_chain_route.py`'s 2-hop
+# reasoning already counts as brain-based, reading a NEW relation type ('alias_of') the curation script bakes
+# into the SAME store ordinary facts live in. An unresolved surface form returns None -> the caller passes it
+# through UNCHANGED (moat-safe: this can only ADD a successful grounding, never invent one) -- see
+# `_ground_content_words`.
+#
+# HONESTY (do not relabel as biology). The PHRASE SEGMENTATION (how many words form one candidate span before
+# any recall runs) is HOST CODE -- a scaffold, exactly like `_extract_route`'s pre-existing stopword-strip and
+# `_definitional_copula_route`'s own regex. What genuinely runs on the substrate is the RESOLUTION READ itself:
+# 'is this surface form known under this store's canonical name' is a real stored fact recalled via the SAME
+# spiking op the rest of the system already counts as brain-based, with the SAME no-confab moat (an unresolved
+# alias abstains exactly like an unknown agent) -- not a host dict consulted at answer time. The alias FACTS
+# themselves are host-curated from Wikidata's own crowd-sourced alias lists at BUILD time (the identical
+# honesty class as the already-shipped 15k curation itself). NOT built (the named next rung, out of scope
+# here): a LEARNED entity-linking/synonymy mechanism that acquires alias<->canonical associations from
+# co-occurrence in running text, so grounding emerges from exposure/use rather than a teacher-curated alias
+# file -- this closes reachability of the ALREADY-SHIPPED core in natural language now; that rung is what would
+# let the brain ground a genuinely novel entity's surface forms it was never given an alias list for.
+#
+# LESION / LOAD-BEARING. `BRAIN_KNOWLEDGE_GROUNDING` in {0,false,no,off} disables the whole pass -- a natural-
+# language knowledge question then reverts to the pre-grounding behavior (a literal underscore-token miss ->
+# abstain), exactly as it did before this arc. This is the load-bearing proof the pass DRIVES the answer.
+# ============================================================================================================
+
+
+def _knowledge_grounding_enabled() -> bool:
+    """Default-ON (production-wired, not opt-in). `BRAIN_KNOWLEDGE_GROUNDING` in {0,false,no,off} is the
+    LESION/escape."""
+    v = os.environ.get("BRAIN_KNOWLEDGE_GROUNDING")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def _alias_hop(composer, candidate: str):
+    """ONE genuinely-spiking hop: does the brain's OWN store know `candidate` as an ALIAS of some canonical
+    concept? Reuses the EXACT `query_patient` primitive `compositional_chain_route.py`'s reasoning hops already
+    count as brain-based (no new recall primitive) -- this only reads a new relation, 'alias_of', baked into
+    the shipped knowledge core by `_knowledge_core_curate.build_alias_facts`. Returns the canonical token, or
+    None (an unresolved surface form -- the moat's abstain, not a guess). Never raises: a composer that lacks
+    `query_patient`/an `alias_of` fact simply returns None, so this degrades to a no-op on any composer built
+    before this arc (a bundle with no alias facts at all)."""
+    if composer is None or not candidate:
+        return None
+    try:
+        return composer.query_patient(candidate, "alias_of")
+    except Exception:
+        return None
+
+
+def _ground_content_words(composer, content, *, max_span=6, min_span=2, known_words=frozenset()):
+    """Collapse multi-word ENTITY/RELATION phrases in `content` (a token list, already stopword-stripped for
+    the `_extract_route` caller) to their canonical single-token form via `_alias_hop`, longest-span-first,
+    non-overlapping, left to right. A span that resolves is replaced by its canonical token; anything that does
+    NOT resolve (including every span below `min_span`) passes through UNCHANGED -- byte-identical for any
+    question no alias covers, or for one already using the raw canonical token.
+
+    `min_span=2` (the `_extract_route` default) deliberately EXCLUDES single-word candidates: ordinary
+    conversational SVO teaching ('wolf hunts deer') uses single-word roles, and the shipped alias vocabulary is
+    large (~38k tokens) enough that a coincidental collision with an everyday word is a real risk -- grounding
+    a ROUTINE single word against a Wikidata alias could silently REWRITE an already-working in-session recall
+    into an unrelated concept. Restricting the eager pass to multi-word spans (a much rarer, higher-precision
+    surface shape) avoids that failure mode; single-word alias resolution is instead offered ONLY as a LAST-
+    RESORT fallback in `_substrate_recall`, tried after the literal + lemma recall have both already failed
+    (so it can only rescue an otherwise-abstaining turn, never override a working one). `_definitional_copula_
+    route` calls this with `min_span=1` for its OWN subject, which is safe because that route only fires on an
+    explicit 'what is X'/'who is X'/'define X' prefix -- a shape ordinary SVO teaching never matches.
+
+    `known_words`: content words already recognized this conversation (agents_set|actions_set|patients_set) are
+    never re-ground even when `min_span` would otherwise allow it -- an already-established in-session word's
+    meaning is never overridden by a store-wide alias lookup."""
+    if composer is None or not content:
+        return list(content)
+    out = []
+    i = 0
+    n = len(content)
+    while i < n:
+        matched = None
+        span_len = min(max_span, n - i)
+        for span in range(span_len, min_span - 1, -1):
+            candidate = "_".join(content[i:i + span])
+            if candidate in known_words:
+                continue
+            canon = _alias_hop(composer, candidate)
+            if canon:
+                matched = (span, canon)
+                break
+        if matched:
+            span, canon = matched
+            out.append(canon)
+            i += span
+        else:
+            out.append(content[i])
+            i += 1
+    return out
+
+
+# ============================================================================================================
 # OPEN-ENDED GENERATION (production wire-in of the 6-seed-GO #3E "brain owns open-ended generation" faculty).
 # On an EXPLICIT open-ended prompt ("what might X ...", "tell me something new about X", "what else about X",
 # "guess ..."), the brain VOLUNTEERS a NOVEL grounded proposition via generative replay over its OWN learned
@@ -680,12 +794,18 @@ class ChatBrain:
         """A DEFINITIONAL copula question -- 'what is X?', "what's a X?", 'who is X?', 'define X' -- asks for X's
         CATEGORY. English lexicalizes that relation as the copula 'is', which the stopword strip removes as a
         function word, leaving ONLY the subject X; so the normal (agent, action) extraction finds no action and the
-        turn wrongly abstains. Knowledge stores (Wikidata's 'instance of') lexicalize the same relation as 'isa'
-        (e.g. 'canada isa country'), so map such a question to (X, 'isa'). Returns [subject, 'isa'] or None. This is
-        COMPREHENSION only (the same lexical-variant job as the inflection map + the router synonyms) -- the recall
-        itself stays on the composer/substrate (`what_does`), so the no-confab MOAT is untouched: an unknown subject
-        -> `what_does` returns nothing -> honest abstain. Relational 'what is the capital of X' is NOT definitional
-        (it carries a relation word + ' of '), so it is deliberately excluded and left to the normal parse."""
+        turn wrongly abstains. The in-conversation TEACHING convention lexicalizes the same relation as 'isa'
+        (e.g. 'canada isa country'); the shipped Wikidata knowledge core lexicalizes it as 'instance_of' instead
+        (curation_report.json: instance_of:2734, no 'isa' anywhere) -- KNOWLEDGE GROUNDING (2026-08-26, see the
+        module docstring) tries an alias-hop-resolved 'is_a'/'is_an' FIRST (Wikidata's own P31 aliases literally
+        list "is a"/"is an", sanitized identically to 'is_a'/'is_an'), falling back to the literal 'isa' so the
+        pre-existing in-conversation teaching convention stays BYTE-IDENTICAL when grounding finds nothing (a
+        checkout with no alias facts, or the lesion). Returns [subject, relation] or None. This is COMPREHENSION
+        only (the same lexical-variant job as the inflection map + the router synonyms) -- the recall itself
+        stays on the composer/substrate (`what_does`), so the no-confab MOAT is untouched: an unknown subject or
+        relation -> `what_does` returns nothing -> honest abstain. Relational 'what is the capital of X' is NOT
+        definitional (it carries a relation word + ' of '), so it is deliberately excluded and left to the
+        normal parse."""
         import re as _re
         m = _re.match(r"^\s*(?:what(?:'s|s| is| are)|who(?:'s|s| is| are)|define)\s+"
                       r"(?:an?\s+|the\s+)?(.+?)\s*\??\s*$", question.lower())
@@ -698,7 +818,26 @@ class ChatBrain:
             return None
         if subj in self.router.self_aliases:
             return None
-        return [subj, "isa"]
+        # KNOWLEDGE GROUNDING: collapse a multi-word Wikidata-style entity phrase ('chelsea fc') to its
+        # canonical underscore token via the alias-hop -- `min_span=1` is safe HERE (unlike the generic
+        # `_extract_route` pass) because this route only fires on an explicit 'what is X'/'who is X'/'define X'
+        # prefix, a shape ordinary SVO teaching never matches. A PARTIAL grounding (not every word collapsed to
+        # ONE token) falls back to the ORIGINAL space-joined subject unchanged -- preserves the pre-existing
+        # 'the store keys on the phrase' convention for a conversationally-taught multi-word entity no alias
+        # covers, exactly as before this arc. The RELATION itself stays the literal 'isa' HERE (unchanged,
+        # PRECEDENCE-SAFE for the in-conversation teaching convention, which a taught 'isa' fact must keep
+        # winning) -- the alias-hop-resolved 'instance_of'/'is_a' relation is tried ONLY as a FALLBACK, in
+        # `_substrate_recall`, after the literal 'isa' recall has already failed (see there): trying it HERE
+        # instead would have the resolved relation shadow an already-correct in-session 'isa' fact whenever the
+        # composer also carries the shipped alias facts (the TieredFactStore buffer-then-LTM fall-through means
+        # 'instance_of' could reach the LTM and silently outrank a real taught 'isa' answer on the SAME subject).
+        subj_final = subj
+        if _knowledge_grounding_enabled():
+            composer = getattr(self.inner, "composer", None)
+            grounded = _ground_content_words(composer, subj.split(), min_span=1)
+            if len(grounded) == 1:
+                subj_final = grounded[0]
+        return [subj_final, "isa"]
 
     def _extract_route(self, question):
         """COMPREHENSION-ONLY phase of `_substrate_recall`: resolve the routable (agent, action) of a factual SVO query
@@ -712,6 +851,18 @@ class ChatBrain:
                  "to", "it", "that", "this", "they", "them", "of", "about"}
         toks = [t.lower().strip(".,!?") for t in question.split()]
         content = [t for t in toks if t and t not in _STOP]
+        # KNOWLEDGE GROUNDING (2026-08-26, see module docstring): collapse a multi-word Wikidata-style entity
+        # phrase ('chelsea fc') into its canonical underscore token BEFORE the copula-length check + the (agent,
+        # action) parse below, so e.g. 'what is chelsea fc' (2 content words purely from the entity's own name)
+        # correctly reaches the copula branch instead of being mis-split into a bogus (agent='chelsea',
+        # action='fc'). `min_span=2` + `known_words` guard an in-session word already established this
+        # conversation is NEVER re-ground -- see `_ground_content_words`'s docstring for the collision-risk
+        # reasoning. A grounding miss (no alias covers the phrase, or the composer carries none) leaves
+        # `content` UNCHANGED -- byte-identical for every previously-routable question.
+        if _knowledge_grounding_enabled():
+            composer = getattr(self.inner, "composer", None)
+            known = self.agents_set | self.actions_set | self.patients_set
+            content = _ground_content_words(composer, content, known_words=known)
         # DEFINITIONAL COPULA question ('what is X?') -> the instance-of relation 'isa'. Fires ONLY when the copula
         # strip left <=1 content word (i.e. the normal (agent, action) parse has NO verb to work with), so a question
         # that already carries two content words is untouched -> byte-identical for every previously-routable query.
@@ -771,6 +922,46 @@ class ChatBrain:
                     p_lemma = self.inner.what_does(a, v_lemma)
                     if p_lemma:
                         p, v = p_lemma, v_lemma      # report the canonical action that actually matched
+            # KNOWLEDGE GROUNDING (2026-08-26): RELATION alias-hop, ONE MORE fallback candidate, tried ONLY
+            # after BOTH the surface form and the lemma have already missed -- mirrors this loop's own surface-
+            # first/lemma-fallback convention. Covers a single-word relation SYNONYM the copula/content-
+            # grounding passes deliberately do not touch eagerly (e.g. 'nationality' -> the shipped core's
+            # 'country', or the copula's literal 'isa' -> the Wikidata core's 'instance_of' -- see
+            # `_definitional_copula_route`'s own comment on why that substitution is precedence-unsafe to make
+            # THERE). Being a MISS-ONLY fallback (never tried while `p` is already truthy) makes it structurally
+            # unable to override an already-correct recall -- it can only rescue an otherwise-abstaining turn.
+            if not p and _knowledge_grounding_enabled():
+                composer = getattr(self.inner, "composer", None)
+                v_candidates = [_alias_hop(composer, v)]
+                if v_lemma != v:
+                    v_candidates.append(_alias_hop(composer, v_lemma))
+                if v == "isa":
+                    # The in-conversation TEACHING convention's copula token 'isa' is this codebase's OWN
+                    # invented shorthand -- it is not itself a raw Wikidata alias, so alias-hopping the literal
+                    # string 'isa' above never resolves. Bridge it explicitly via 'is_a'/'is_an', which ARE
+                    # genuine raw Wikidata P31 aliases (confirmed in wikidata5m_relation.txt) and so DO resolve
+                    # to 'instance_of' through the same alias-hop primitive -- closing the exact gap
+                    # `_definitional_copula_route` names in its own comment (byte-identical for the checkout with
+                    # no alias facts, since `_alias_hop` returns None there for every candidate).
+                    v_candidates.append(_alias_hop(composer, "is_a"))
+                    v_candidates.append(_alias_hop(composer, "is_an"))
+                for v_cand in v_candidates:
+                    if v_cand and v_cand not in (v, v_lemma):
+                        p_alias = self.inner.what_does(a, v_cand)
+                        if p_alias:
+                            p, v = p_alias, v_cand
+                            break
+                # LAST-RESORT AGENT alias-hop: only reached when the relation-side fallbacks above ALSO missed.
+                # Resolves a single-word entity alias (e.g. 'usa' -> 'u_s_of_a') that the `_extract_route`
+                # content-grounding pass deliberately skips for single words (collision-risk, see that pass's
+                # docstring) -- safe HERE because it only fires on an otherwise-already-abstaining query, so it
+                # can only rescue, never shadow, a working recall.
+                if not p:
+                    a_alias = _alias_hop(composer, a)
+                    if a_alias and a_alias != a:
+                        p_alias = self.inner.what_does(a_alias, v)
+                        if p_alias:
+                            p, a = p_alias, a_alias
         except Exception:
             return None
         if not p:
