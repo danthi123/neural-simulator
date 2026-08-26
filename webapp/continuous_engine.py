@@ -554,11 +554,14 @@ _MULLED_TOPIC: dict = {}   # cache_key -> the most recent genuinely-recalled top
 
 
 def wander_mull_enabled() -> bool:
-    """#145. `BRAIN_CONTINUOUS_WANDER_MULL` truthy (1/true/on/yes) arms the mull-bias. Default-OFF (unset/0/anything
-    else) pending the cupy anti-hollow GO -- unarmed, `mark_mull` is never called (server.py gates it on this same
-    flag) and `_apply_wander_mull` short-circuits, so the wander stays EXACTLY today's fixed-novelty selection
-    (byte-identical to HEAD)."""
-    return os.environ.get("BRAIN_CONTINUOUS_WANDER_MULL", "0").strip().lower() in ("1", "true", "on", "yes")
+    """#145. `BRAIN_CONTINUOUS_WANDER_MULL` arms the mull-bias: the between-turn wander follows what the brain just
+    genuinely discussed. Default-ON since 2026-08-26 (run-verified GO through the real /api/brain-chat served path:
+    ARMED -> the served follow-up LEADS with the discussed topic 'dog', LESIONED -> the fixed baseline 'cat', clean
+    lesion + content-identical; the live-HTTP race that stalled the earlier PARTIAL was a test artifact, not a
+    production bug -- see the finding). `BRAIN_CONTINUOUS_WANDER_MULL=0` (or any non-truthy value) is the
+    byte-identical-OFF escape -- unarmed, `mark_mull` is never called (server.py gates it on this same flag) and
+    `_apply_wander_mull` short-circuits, so the wander stays EXACTLY the pre-#145 fixed-novelty selection."""
+    return os.environ.get("BRAIN_CONTINUOUS_WANDER_MULL", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def mark_mull(cache_key, topic) -> None:

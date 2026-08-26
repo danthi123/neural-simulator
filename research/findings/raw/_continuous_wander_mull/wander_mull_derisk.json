@@ -1,6 +1,6 @@
 {
   "runner": "research/runners/_continuous_wander_mull_derisk.py",
-  "run_id": "1787734781-2682097",
+  "run_id": "1787755480-3250498",
   "backend": "cupy",
   "device": "cuda:0",
   "seed": 42,
@@ -9,6 +9,7 @@
   "referential_msg": "you mentioned the dog, right?",
   "neutral_msg": "Ok.",
   "session_reuse": "ONE warm ChatBrain reused across both conditions; only the D5-episodic organ + self-init organ + continuous-engine per-session dicts are reset between conditions.",
+  "background_tick_task_stripped": true,
   "mechanism_level": {
     "agents": [
       "dog",
@@ -51,25 +52,25 @@
     "boosted_dog_over_baseline_cat_margin": 1.817,
     "MECH_flips_argmax": true
   },
-  "mechanism_check_s": 2.01,
-  "chat_build_s": 131.02,
+  "mechanism_check_s": 1.49,
+  "chat_build_s": 130.81,
   "fresh_baseline": {
     "concept": "cat",
     "share": [
-      0.3656084656084656,
-      0.5264550264550265,
-      0.09153439153439154,
-      0.0164021164021164
+      0.40207253886010363,
+      0.533160621761658,
+      0.04093264248704663,
+      0.02383419689119171
     ],
     "gains_on": [
-      1.5668316831683167,
+      1.6048265460030167,
       2.0,
-      1.2165841584158417,
-      1.0792079207920793
+      1.1613876319758674,
+      1.06184012066365
     ]
   },
-  "fresh_baseline_wander_s": 203.98,
-  "wall_s": 865.27,
+  "fresh_baseline_wander_s": 105.74,
+  "wall_s": 559.82,
   "conditions": {
     "ARMED": {
       "armed": true,
@@ -88,8 +89,8 @@
         "boosted_novelty": 1.6
       },
       "tick_note": "idle: felt state relaxing steady (was +0.00, now +0.00); a thought wandered to \u2018dog\u2019 (it had been on my mind \u2014 we'd just been discussing \u2018dog\u2019)",
-      "followup_wander_drives_concept": "bird",
-      "followup_answer": "(I'd been mulling over bird.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about ok yet: what can you tell me about ok? \u2014 worth going further here.",
+      "followup_wander_drives_concept": "dog",
+      "followup_answer": "(I'd been mulling over dog.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about ok yet: what can you tell me about ok? \u2014 worth going further here.",
       "followup_abstained": true,
       "followup_recalled_svo": null,
       "followup_verified": false
@@ -116,8 +117,8 @@
   },
   "PASS_MECH_flips_argmax": true,
   "PASS_induction_ok": true,
-  "PASS_ARMED_wander_shifts": false,
+  "PASS_ARMED_wander_shifts": true,
   "PASS_LESIONED_matches_baseline": true,
   "PASS_content_identical": true,
-  "VERDICT": "UNDEFINED"
+  "VERDICT": "GO"
 }

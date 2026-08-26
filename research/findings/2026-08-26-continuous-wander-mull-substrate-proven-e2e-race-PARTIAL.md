@@ -5,11 +5,17 @@ date: 2026-08-26
 mechanism: continuous-wander-mull (board #145 rung — wander-content driven by what the substrate has genuinely discussed)
 lane: continuity
 seeds: [42]
-verdict: PARTIAL — the curiosity-organ mechanism is decisively proven (1.82x want_hz margin, GPU-free + reproduced)
-  and the coupling correctly ARMS + APPLIES inside a single controlled idle tick (the wander's own dominant concept
-  flips from the fixed baseline to the mulled one); the FULL live-HTTP round-trip proof is UNDEFINED because the
-  served follow-up reply did not consistently reflect that tick — traced to a same-process race with the production
-  server's own autonomous background tick thread, not to the coupling. Shipped default-OFF pending that race's fix.
+verdict: GO (2026-08-26, upgraded from PARTIAL) — the curiosity-organ mechanism is decisively proven (1.82x want_hz
+  margin, GPU-free + reproduced) AND the FULL live-HTTP served-turn proof now PASSES through the real /api/brain-chat
+  endpoint (cupy, stub renderer, the app's own 20s background tick STRIPPED before the TestClient enters so the manual
+  tick is the sole driver): ARMED -> the served follow-up LEADS with the discussed topic ("(I'd been mulling over
+  dog.)"), LESIONED -> the fixed baseline ("(I'd been mulling over cat.)"), clean lesion + content-identical (all 5
+  PASS flags true: MECH_flips_argmax, induction_ok, ARMED_wander_shifts, LESIONED_matches_baseline, content_identical;
+  run_id 1787755480-3250498). The earlier PARTIAL's non-determinism was that background loop RACING the manual tick on
+  shared per-session dicts — a TEST-HARNESS artifact, NOT a production ordering bug (production has a single tick
+  caller + in-flight guard + wander budget=1/turn-gap, so exactly one wander runs and the mull is never shadowed; the
+  handler prepends recent_wander unconditionally). FLIPPED DEFAULT-ON (BRAIN_CONTINUOUS_WANDER_MULL default "1";
+  =0 is the byte-identical-off escape).
 instrument: through the REAL `/api/brain-chat` FastAPI endpoint (in-process Starlette TestClient calling the actual
   `webapp.server.app`, stub renderer, one warm ChatBrain reused across 2 conditions) — induce a genuine referential
   recall of a topic that overlaps the self-init organ's own stored concepts, then either drive the idle tick with
@@ -31,6 +37,19 @@ supersedes: none — additive extension of `webapp/continuous_engine.py` and a n
 # The between-turn WANDER can be genuinely driven by what the brain just discussed — the curiosity-organ mechanism is decisively proven, but the live-HTTP anti-hollow round-trip is blocked by a same-process race with the server's own background tick thread (board #145, PARTIAL)
 
 Artifact: `research/findings/raw/_continuous_wander_mull/wander_mull_derisk.json`
+
+> **⭐ RESOLVED TO GO — 2026-08-26 (supersedes the PARTIAL headline; filename kept to preserve citations).** The
+> live-HTTP round-trip was re-run with the app's own 20s-cadence background `_continuous_state_tick` task STRIPPED
+> before the TestClient enters (the fix the module already carried; its confirming run had been interrupted). Result:
+> a clean **GO** — ARMED the served follow-up leads with the discussed topic *"(I'd been mulling over dog.)"*,
+> LESIONED it leads with the fixed baseline *"(I'd been mulling over cat.)"*, all 5 PASS flags true (run_id
+> 1787755480-3250498, cupy, stub renderer). The PARTIAL's non-determinism was a TEST-HARNESS race (the background loop
+> racing the manual tick on shared per-session dicts), NOT a production ordering bug — code-traced: production has a
+> single tick caller + in-flight guard + wander budget=1/turn-gap → exactly one wander, the mull is never shadowed,
+> and the handler prepends `recent_wander` unconditionally. **Flipped DEFAULT-ON** (`BRAIN_CONTINUOUS_WANDER_MULL`
+> default `"1"`; `=0` byte-identical-off escape). This is the 3rd continuous between-turn drive-coupling to go
+> production-default (after affect #91 and DA-mode engagement #92) — the brain's idle daydream now genuinely tracks
+> what it was just discussing.
 
 **One line.** Board #145 asked for a THIRD "inner life shapes what it says" coupling that is NOT another idle-relax
 EMA (affect #144, DA-mode engagement #92 already landed that shape) — a faculty that genuinely CARRIES STATE across
