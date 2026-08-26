@@ -39,6 +39,7 @@ Creating/updating tasks + labels on the owner's own board is low-risk (no per-ac
 - **NEW frontier / owner steer** → add the plain-language task(s) with the right label + priority so the next session sees it.
 
 ## Guardrails
+- **⛔ VIKUNJA TASK IDs ≠ the harness in-session TaskList IDs — they share numbers but are DIFFERENT systems (2026-08-26, caught mid-session: I set-desc'd Vikunja #66 with content meant for the harness-tracker "#66", corrupting the Claude-only task).** The `<system-reminder>` "existing tasks #1..#N" list is the HARNESS's own tracker, NOT this board. Before any `set-desc`/`update-task`/`set-priority`, VERIFY the target by its TITLE on the real board (`tools/vikunja.sh list-tasks 2 | grep '#<id>'`) — never trust a number from the harness list or from memory.
 - The board is a SUMMARY/pointer; the findings are ground truth. Never adopt a Vikunja "next" without the RAG check.
 - Never echo or commit the token — it lives only in `~/.claude-config/secrets/vikunja.json`. If the script errors on a missing secrets file, recreate it (owner supplies the token); never hardcode it in the repo.
 - Keep it plain (rule 2) and single-project (rule 1) on EVERY edit, or it stops being human-readable and the owner stops trusting it.
