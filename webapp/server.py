@@ -3440,6 +3440,32 @@ def _resolve_ltm_bundle():
     return None
 
 
+def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128):
+    """Load (fast path) or build (fallback) a `ShardedPhasorStore` LTM from `ltm_bundle`, mirroring
+    `developed_brain_io.load_developed_brain`'s OWN `ltm_bundle` handling EXACTLY (same fast-path-persisted-
+    store-first, then build-from-facts.json precedence) -- factored out here so the default tiny-demo brain
+    (reasoning-frontier, 2026-08-25) gets the IDENTICAL LTM-attach behavior the developed-brain path already
+    has, without duplicating/diverging the load-vs-build decision. Returns None if the bundle has neither a
+    loadable sharded-store manifest nor a facts.json to build from (a missing/empty bundle degrades quietly;
+    the caller treats None as "no LTM available")."""
+    from research.runners.sharded_phasor_store import ShardedPhasorStore
+    manifest_path = Path(ltm_bundle) / "manifest.json"
+    if manifest_path.exists():
+        try:
+            mani = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:
+            mani = {}
+        if isinstance(mani, dict) and "n_shards" in mani:
+            return ShardedPhasorStore.load(str(ltm_bundle))
+    from research.runners.developed_brain_io import _load_facts_json
+    from research.runners.tiered_fact_store import build_ltm_from_facts, auto_n_shards
+    ltm_facts = _load_facts_json(ltm_bundle)
+    if not ltm_facts:
+        return None
+    ns = int(n_shards) if n_shards is not None else auto_n_shards(len(ltm_facts))
+    return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D))
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -3483,6 +3509,30 @@ def _build_chat_brain(brain: str, renderer: str):
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
                                               enable_neural_render=False, composer_kind=_ck)
         source = "tiny-demo"
+        # KNOWLEDGE-SCALE ON THE DEFAULT BRAIN (reasoning-frontier, 2026-08-25 -- board #133 extension). The
+        # 2026-08-25 integrated-conversational-state diagnostic found the shipped 15k curated core attached ONLY
+        # to the developed-brain path (below); the owner's DEFAULT out-of-box chat brain ('tiny-demo') had NO
+        # access to it -- every knowledge query on the default brain abstained even though the store itself
+        # answers correctly in isolation. Mirrors the developed-brain path's OWN attach exactly (same
+        # `_resolve_ltm_bundle()` + `TieredFactStore` composition, same fast-path-persisted-store / build-from-
+        # facts precedence as `developed_brain_io.load_developed_brain`): the tiny-demo composer stays the
+        # small recent-conversation BUFFER; a buffer abstain falls through to the routed LTM shard. Guarded so a
+        # missing/corrupt bundle degrades to the byte-identical no-LTM tiny-demo (never crashes brain load).
+        # Escape: `BRAIN_LTM_SHIP_DEFAULT=off` (or `BRAIN_LTM_BUNDLE=off`) -> `_resolve_ltm_bundle()` returns
+        # None -> this block is skipped entirely -> byte-identical to the pre-2026-08-25 tiny-demo.
+        _tiny_ltm_bundle = _resolve_ltm_bundle()
+        if _tiny_ltm_bundle is not None:
+            try:
+                from research.runners.developed_brain_io import _inner_agent
+                from research.runners.tiered_fact_store import TieredFactStore
+                _tiny_ltm = _load_or_build_ltm_store(_tiny_ltm_bundle, seed=42)
+                if _tiny_ltm is not None:
+                    _tiny_inner = _inner_agent(agent)
+                    _tiny_inner.composer = TieredFactStore(_tiny_inner.composer, _tiny_ltm)
+                    source = "tiny-demo +LTM"
+            except Exception as _tiny_ltm_exc:
+                print(f"[webapp] tiny-demo LTM attach failed (degrading to no-LTM tiny-demo): "
+                      f"{type(_tiny_ltm_exc).__name__}: {_tiny_ltm_exc}", flush=True)
     elif brain in ("self-knowledge", "self_knowledge", "self"):
         agent, aliases, _n = _load_self_knowledge(
             _SK_CODES, _SK_CURRICULUM, 42, True, False)
