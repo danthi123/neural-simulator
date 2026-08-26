@@ -1,0 +1,77 @@
+{
+  "probe": "value_choice_flip_soak",
+  "verdict": "GO",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "composer": "rf",
+    "no_organ": true,
+    "ordinary_turns": [
+      "what does cat eat",
+      "what does fox hunt",
+      "what do you know about it"
+    ],
+    "trigger_turn": "what does dog chase",
+    "ambiguous": [
+      "dog",
+      "chase",
+      [
+        "cat",
+        "ball"
+      ]
+    ]
+  },
+  "sim_backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ordinary turns byte-identical OFF-vs-ON (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "load-bearing: engagement-VARY flips the commit + LESION reverts to inner (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "skipped-as-True when --no-organ (ordinary panel only)"
+    }
+  ],
+  "detail": {
+    "n_seeds": 1,
+    "ordinary_byte_identical_pass": 1,
+    "load_bearing_pass": 1,
+    "seed_pass": 1
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "composer": "rf",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "trigger_favour0": null,
+      "trigger_favour1": null,
+      "trigger_lesion": null,
+      "trigger_commits_stored_patient": null,
+      "trigger_vary_flips_commit": null,
+      "trigger_lesion_reverts_to_inner": null,
+      "elapsed_s": 20.5,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    }
+  ],
+  "elapsed_total_s": 20.544803619384766
+}
