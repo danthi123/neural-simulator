@@ -1,1 +1,19 @@
+# Line-ending normalization (2026-08-26): repo was authored on Windows (CRLF) then migrated to
+# Linux; declaring LF canonical + a one-time `git add --renormalize` ends the "thousands of files
+# look modified" noise and the `git reset --hard` hazard. Content-preserving (verified: 0 non-CRLF changes).
+* text=auto eol=lf
+
+# Binaries: never touch (leave git to detect, but pin the common ones so renormalize can't corrupt them).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.h5 binary
+*.npy binary
+*.npz binary
+*.pt binary
+*.pyc binary
+
+# Preserved from the prior .gitattributes: append-only provenance logs union-merge across branches.
 research/findings/raw/_provenance/*.jsonl merge=union
