@@ -57,8 +57,13 @@ classify_pool_status() {
     age=$((now - epoch))
     [ "$age" -ge 0 ] && [ "$age" -le "$max_age" ] || continue
     [ "$rc" -ne 0 ] || continue
-    out=$(printf '%s' "$cmd" | grep -oE '\-\-out +[^ ]+' | awk '{print $2}' | head -1)
-    if [ -n "$out" ] && [ -f "$sim_root/$out" ]; then
+    # 2026-08-26 FALSE-ALARM FIX: recognise --json too (not only --out), and a job with NO output flag
+    # cannot be judged -> U (unverifiable), never a crash. The old --out-only test flagged every --json runner
+    # (gnw) and every no-flag runner (slot-order) as CRASHED when they were honest rc=1 verdicts.
+    out=$(printf '%s' "$cmd" | grep -oE '\-\-(out|json) +[^ ]+' | awk '{print $2}' | head -1)
+    if [ -z "$out" ]; then
+      printf 'U\t%s\t%s\n' "$rc" "$(printf '%s' "$cmd" | grep -oE 'runners\.[_a-zA-Z0-9]+' | head -1)"
+    elif [ -f "$sim_root/$out" ]; then
       printf 'V\t%s\t%s\n' "$rc" "$out"
     else
       printf 'C\t%s\t%s\n' "$rc" "$(printf '%s' "$cmd" | tr '\n\t' '  ' | cut -c1-90)"
@@ -391,7 +396,7 @@ fi
 # correctly exits 1). Flagging every rc!=0 cried wolf on real results. The reliable disambiguator is the
 # ARTIFACT: a job whose --out exists on the node PRODUCED a result (verdict) and is not lost compute; only a
 # job whose --out is MISSING truly spent compute for nothing (a crash / argparse / module-not-found).
-CRASHED=""; VERDICTS=""
+CRASHED=""; VERDICTS=""; UNVERIF=""
 for H in pool40 pool41 pool42; do
   R=$({
     declare -f classify_pool_status
@@ -402,6 +407,7 @@ for H in pool40 pool41 pool42; do
     [ -z "$kind" ] && continue
     [ "$kind" = "C" ] && CRASHED="$CRASHED\n  $H rc=$rc: $rest"
     [ "$kind" = "V" ] && VERDICTS="$VERDICTS\n  $H rc=$rc: $rest"
+    [ "$kind" = "U" ] && UNVERIF="$UNVERIF\n  $H rc=$rc: $rest (no --out/--json path to verify)"
   done <<< "$(printf '%b' "$R")"
 done
 if [ -n "$CRASHED" ]; then
@@ -411,6 +417,7 @@ if [ -n "$CRASHED" ]; then
   FAIL=1
 fi
 [ -n "$VERDICTS" ] && { echo "  · pool job(s) exited non-zero but WROTE their artifact (an honest NO-GO exits 1; not lost compute — verify the verdict):"; printf "%b\n" "$VERDICTS"; }
+[ -n "$UNVERIF" ] && { echo "  · pool job(s) exited non-zero with no --out/--json to check (cannot confirm crash — inspect the runner if this recurs):"; printf "%b\n" "$UNVERIF"; }
 
 if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all four rules satisfied."; else
   echo "⛔ workflow_check: $FAIL rule-group(s) violated — the commands above are copy-paste ready."; fi
