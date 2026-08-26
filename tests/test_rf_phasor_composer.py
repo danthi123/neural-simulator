@@ -27,6 +27,26 @@ def test_rf_phasor_composer_who_what_abstain(seed):
     assert comp.query_patient("dog", "run") is None        # agent=dog but action=run is not a stored pair
 
 
+def test_rf_phasor_composer_store_grows_unseen_relation_word():
+    """Regression (2026-08-26, `KeyError: 'confirm'` crash-looped the GNW coincidence-integrator pool lane 25+
+    times over 3+ hours). `store()` with an ACTION filler that was never part of the composer's initial vocab
+    must NOT crash. Before the 2026-08-12 runtime-growth fix (commit 5b2d1d7c3e), `_filler_phases` indexed
+    `self.concepts[filler]` directly -- a fact stored with a brand-new relation word (e.g. the GNW de-risk's
+    second-organ relation 'confirm', never in DEFAULT_VOCAB) raised an unhandled KeyError. `_filler_phases` must
+    instead allocate a fresh deterministic code for the unseen word (RUNTIME GROWTH) so the fact stores and the
+    word is immediately retrievable -- the same mechanism that lets the brain acquire a new word by being told a
+    fact containing it. Pins the behavior so a stale/regressed deployment of this file is caught by the suite,
+    not discovered by a pool node crash-looping for hours."""
+    comp = RFPhasorComposer(seed=42, D=64, period=200)
+    assert "confirm" not in comp.concepts                        # genuinely never-seen before this store()
+    comp.store("dog", "confirm", "cat")                          # must NOT raise KeyError
+    assert "confirm" in comp.concepts                              # grown into the concept dict
+    assert "confirm" in comp.words                                 # and joined the cleanup/scan codebook
+    assert comp.query_patient("dog", "confirm") == "cat"          # + immediately retrievable
+    assert comp.query_agent("confirm", "cat") == "dog"
+    assert comp.query_patient("dog", "go") is None                # no-confab moat: unrelated cue still abstains
+
+
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_rf_phasor_composer_negation_yesno(seed):
     """b.2: a bound AFFIRM/NEGATE polarity tag -> ask_yes_no returns yes/no via the unbound tag; 'unknown'

@@ -40,6 +40,27 @@ SOURCE_SHA=$(git rev-parse --verify "${REVISION_REF}^{commit}" 2>/dev/null) || {
   echo "invalid source revision: $REVISION_REF" >&2
   exit 2
 }
+# STALE-SOURCE GUARD (2026-08-26). This script rsyncs --delete over whatever the pool nodes already have, so
+# provisioning from a checkout that is BEHIND origin/main silently regresses already-fixed code across every
+# node in one shot. Measured: a provisioning run from a ~2-week-stale worktree (missing the RFPhasorComposer
+# RUNTIME GROWTH fix, commit 5b2d1d7c3e, 2026-08-12) overwrote pool40/41/42's own up-to-date git checkouts and
+# crash-looped the GNW coincidence-integrator derisk with `KeyError: 'confirm'` 25+ times over 3+ hours before
+# anyone traced it to the PROVISIONER rather than the runner. Neither the source manifest nor the ancestry
+# attestation below catches this: both faithfully certify whatever was archived, stale or not. Refuse unless the
+# revision being provisioned already contains origin/main.
+if timeout 15 git fetch origin main --quiet 2>/dev/null && git rev-parse --verify origin/main^{commit} >/dev/null 2>&1; then
+  MAIN_SHA=$(git rev-parse origin/main)
+  if ! git merge-base --is-ancestor "$MAIN_SHA" "$SOURCE_SHA" 2>/dev/null; then
+    BEHIND=$(git rev-list --count "$SOURCE_SHA..$MAIN_SHA" 2>/dev/null || echo "?")
+    echo "⛔ REFUSED: revision $SOURCE_SHA ($REVISION_REF) does not contain origin/main ($MAIN_SHA) -- it is" >&2
+    echo "   $BEHIND commit(s) behind (or diverged from) main and would regress the pool nodes' code." >&2
+    echo "   Rebase/merge origin/main into $REVISION_REF first, or set POOL_PROVISION_ALLOW_STALE=1 to" >&2
+    echo "   provision anyway (deliberate/isolated reproduction of an old state only)." >&2
+    [ "${POOL_PROVISION_ALLOW_STALE:-0}" = "1" ] || exit 2
+  fi
+else
+  echo "  (warning: could not resolve origin/main -- skipping the stale-source ancestry guard)" >&2
+fi
 if (( ISOLATED )); then
   REMOTE_ROOT="derisk-pool/revisions/$SOURCE_SHA"
 else
