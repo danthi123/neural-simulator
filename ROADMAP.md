@@ -7,6 +7,34 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ 2026-08-25 (reasoning + dopamine, a same-day landing not previously logged here) — the brain now DERIVES answers instead of only recalling them, a silent dopamine bug got fixed, and curiosity started working
+
+The brain can now **reason to a new conclusion instead of only repeating a fact it was told directly.** Teach it
+"the wolf hunts the deer" and "the deer eats grass," then ask "what does the wolf's prey eat?" — a question it was
+never told the answer to — and it now replies "I derived this from: wolf hunts deer; deer eats grass. The deer
+eats grass," openly naming the two facts it chained together. It still refuses to guess: if the second fact was
+never taught, or if two conflicting facts make the first step ambiguous, it honestly says "I don't know" rather
+than making something up. A live test also proved this is really doing the work — switching the mechanism off
+mid-conversation makes the exact same question fail again, and switching it back on makes it succeed again, on
+the same running brain.
+
+Separately, a silent bug meant the brain's own "how engaged am I in this conversation" signal (its dopamine
+read) had been failing on every single turn on the real hardware path (a numeric-array mismatch), quietly
+disabling three features at once: the tone that reflects engagement, stronger memory for engaging moments, and
+the brain's ability to feel curious. That bug is fixed and confirmed live — the engagement read now varies
+correctly with what's being discussed, and as a direct result, **curiosity started firing**: when the brain
+doesn't know something, it now often adds an honest follow-up question ("what can you tell me about X?")
+instead of just stopping at "I don't know." None of the previously-working behavior broke: mood coloring the
+reply, tracking topic changes, having an unprompted thought between messages, and asking for clarification on
+unfamiliar words all still work exactly as before.
+
+**The honest limit, found in the same test:** the new reasoning only recognizes ONE specific way of phrasing a
+multi-step question (the possessive form, "X's ROLE verb"). Ask the identical logical question a different way —
+spelling out both facts and asking the chain explicitly in one sentence — and it does not yet get the benefit of
+the same reasoning; it still fails on that phrasing exactly as before. So reasoning is real now, but it does not
+yet generalize across HOW the question is asked — the next step is making the brain's own sentence-understanding
+handle more than a two-word question shape, rather than adding more hand-written question patterns one at a time.
+
 ## ⭐ 2026-08-26 (harvest) — the brain ships with a real body of knowledge on by default; a four-day compute window's verdicts landed
 
 The weekly free-compute window was harvested onto the main line. The headline: **the brain now loads a real
