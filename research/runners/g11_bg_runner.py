@@ -5030,18 +5030,38 @@ def run_moving_goal_episode(
     # Also freeze IT -> cortex_X gate at 0 so the visual stream doesn't
     # disrupt motor selection during the critical period.
     if enable_visual_cortex:
-        from sim.visual_cortex import apply_v1_gabor_weights
-        n_gabor = apply_v1_gabor_weights(
-            bridge,
-            n_orientations=visual_n_orientations,
-            n_frequencies=visual_n_frequencies,
-            n_positions_per_dim=visual_n_positions_per_dim,
-            retina_size=visual_image_size,
-            receptive_field_radius=visual_receptive_field_radius,
-            weight_scale=visual_v1_weight_scale,
-        )
+        # B1 self-organized V1 (2026-08-26): BRAIN_V1_SELFORG=1 replaces the host Gabor FORMULA with a bank
+        # SELF-ORGANIZED on the substrate (research.runners.v1_selforg_production_organ). DEFAULT OFF -- the
+        # on-bridge realization is a COMMON-MODE BOUNDARY (OSI~0), so flipping it on would degrade V1; the flag
+        # stays OFF until the 6-seed flip-soak clears OSI>=0.5. Inline env-check keeps the OFF path byte-identical
+        # (the organ is not even imported unless the flag is set); the authority is organ.enabled().
+        _use_v1_selforg = os.environ.get("BRAIN_V1_SELFORG", "").strip().lower() in ("1", "true", "yes", "on")
+        if _use_v1_selforg:
+            from research.runners.v1_selforg_production_organ import apply_v1_selforg_weights
+            n_gabor = apply_v1_selforg_weights(
+                bridge,
+                seed=seed,
+                n_orientations=visual_n_orientations,
+                n_frequencies=visual_n_frequencies,
+                n_positions_per_dim=visual_n_positions_per_dim,
+                retina_size=visual_image_size,
+                receptive_field_radius=visual_receptive_field_radius,
+                weight_scale=visual_v1_weight_scale,
+            )
+        else:
+            from sim.visual_cortex import apply_v1_gabor_weights
+            n_gabor = apply_v1_gabor_weights(
+                bridge,
+                n_orientations=visual_n_orientations,
+                n_frequencies=visual_n_frequencies,
+                n_positions_per_dim=visual_n_positions_per_dim,
+                retina_size=visual_image_size,
+                receptive_field_radius=visual_receptive_field_radius,
+                weight_scale=visual_v1_weight_scale,
+            )
         if verbose:
-            print(f"[g11 seed={seed}] Cluster K v2: applied {n_gabor} Gabor "
+            _bank = "self-org" if _use_v1_selforg else "Gabor"
+            print(f"[g11 seed={seed}] Cluster K v2: applied {n_gabor} {_bank} "
                   f"weights to retina -> cortex_v1_simple", flush=True)
         # Freeze IT -> cortex_X until critical-period close (warmup)
         try:

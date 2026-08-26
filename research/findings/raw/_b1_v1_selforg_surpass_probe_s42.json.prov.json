@@ -1,0 +1,26 @@
+{
+ "run_id": "1787787437-455423",
+ "runner": "../../../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1_surpass_probe.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1_surpass_probe.py"
+ ],
+ "git_sha": "6e2d89a83",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T19:37:17",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 430.6,
+ "corpus_check_query": "V1 on-bridge self-org common-mode convergence ON/OFF channels cancel signed RF",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_b1_v1_selforg_surpass_probe_s42.json"
+}
