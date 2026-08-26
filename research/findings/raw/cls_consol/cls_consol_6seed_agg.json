@@ -1,0 +1,179 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "rows": [
+    {
+      "seed": 42,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.967,
+      "accB_interleaved": 0.967,
+      "ret_seq": 0.333,
+      "accB_seq": 1.0,
+      "ret_shuf": 0.167,
+      "accB_shuf": 0.967,
+      "ret_exp": 0.267,
+      "accB_exp": 1.0
+    },
+    {
+      "seed": 43,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.933,
+      "accB_interleaved": 0.967,
+      "ret_seq": 0.333,
+      "accB_seq": 1.0,
+      "ret_shuf": 0.067,
+      "accB_shuf": 0.867,
+      "ret_exp": 0.3,
+      "accB_exp": 1.0
+    },
+    {
+      "seed": 44,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.967,
+      "accB_interleaved": 0.933,
+      "ret_seq": 0.2,
+      "accB_seq": 0.967,
+      "ret_shuf": 0.2,
+      "accB_shuf": 0.933,
+      "ret_exp": 0.133,
+      "accB_exp": 1.0
+    },
+    {
+      "seed": 100,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.9,
+      "accB_interleaved": 0.867,
+      "ret_seq": 0.367,
+      "accB_seq": 1.0,
+      "ret_shuf": 0.133,
+      "accB_shuf": 0.933,
+      "ret_exp": 0.333,
+      "accB_exp": 1.0
+    },
+    {
+      "seed": 101,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.9,
+      "accB_interleaved": 0.8,
+      "ret_seq": 0.3,
+      "accB_seq": 1.0,
+      "ret_shuf": 0.1,
+      "accB_shuf": 0.9,
+      "ret_exp": 0.3,
+      "accB_exp": 1.0
+    },
+    {
+      "seed": 102,
+      "acc_A_baseline": 1.0,
+      "n_replay": 3600,
+      "ret_interleaved": 0.967,
+      "accB_interleaved": 0.933,
+      "ret_seq": 0.367,
+      "accB_seq": 1.0,
+      "ret_shuf": 0.133,
+      "accB_shuf": 0.933,
+      "ret_exp": 0.333,
+      "accB_exp": 1.0
+    }
+  ],
+  "backend": "numpy",
+  "means": {
+    "ret_interleaved": 0.939,
+    "ret_seq": 0.317,
+    "ret_shuf": 0.133,
+    "ret_exp": 0.278,
+    "accB_interleaved": 0.911,
+    "accB_seq": 0.994,
+    "accB_shuf": 0.922,
+    "accB_exp": 1.0,
+    "margin": 0.622
+  },
+  "attribution_frac": 0.663,
+  "anti_cheats": {
+    "ac1": true,
+    "ac2": true,
+    "ac3": true,
+    "ac4": true,
+    "ac5": true,
+    "ac6": true,
+    "protect": true
+  },
+  "verdict": "GO",
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "A learned to ceiling before B (precondition)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "replay branch actually executed",
+      "ok": true,
+      "detail": "measured=3600.0 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "AC4 new-learning: min B-acc over arms beats floor",
+      "ok": true,
+      "detail": "0.911111 vs floor 0.8",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "AC1 seq (replay-lesioned) forgets A",
+      "ok": true,
+      "detail": "measured=0.3166666666666667 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "AC2 shuffled replay does NOT protect",
+      "ok": true,
+      "detail": "measured=0.13333333333333333 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "AC3 exposure-matched (more-B) does NOT protect",
+      "ok": true,
+      "detail": "measured=0.27777777777777773 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "AC5 interleaved vs best lesion arm",
+      "ok": true,
+      "detail": "treatment=0.938889 control=0.316667 |sep|=0.622222 > 0.2",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "AC6 replay owns >= 50% of retained-A",
+      "ok": true,
+      "detail": "measured=0.6627218934911242 expect=<function main.<locals>.<lambda> at 0x7f072e78ae80>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "spiking neocortex",
+      "why": "rate-coded delta-rule associator = documented idealization of the SLOW cortical store; this de-risks the CLS FUNCTION, not a spiking cortex"
+    }
+  ],
+  "note": "display-rounded (3dp) aggregate of cls_consol_6seed.json; verdict/preconditions/backend are the runner-emitted values"
+}
