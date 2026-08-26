@@ -1,0 +1,124 @@
+{
+  "runner": "_learned_common_ground_ledger_derisk",
+  "faculty": "common-ground ledger -> audience design (conversational pragmatics)",
+  "theory": "Clark & Brennan 1991 grounding; Clark & Marshall 1981 common ground; Brennan-Clark 1996 conceptual pacts; Duff & Brown-Schmidt 2012 (common ground is hippocampal/declarative) \u2014 FUNCTIONAL correlate",
+  "mechanism": "K bistable referent stores (self-recurrent NMDA attractors, one per referent) latched by grounding acts + held by recurrence; gated per-referent SUBSTRATE read (led_k -> evidence) into a Namburi-Tye biased-competition reduce/introduce decision biased by a novelty prior",
+  "seeds": [
+    42
+  ],
+  "n_conv": 4,
+  "backend": "numpy",
+  "knobs": {
+    "K_REF": 6,
+    "LED_ASSEMBLY": 80,
+    "LED_FS_N": 20,
+    "N_EVID": 40,
+    "N_DEC": 40,
+    "attractor_weight": 30.0,
+    "W_LED_EVID": 3.5,
+    "W_EVID_REDUCE": 24.0,
+    "W_INH_DEC": 30.0,
+    "INTRO_PA": 220.0,
+    "GROUND_DRIVE_STEPS": 50,
+    "HOLD_STEPS": 25,
+    "QUERY_STEPS": 45,
+    "QUERY_FLUSH": 30,
+    "chance": 0.5
+  },
+  "thresholds": {
+    "acc": 0.9,
+    "separation": 0.25,
+    "static_frac": 0.85,
+    "read_margin": 0.05
+  },
+  "verdict": "UNDEFINED",
+  "n_go": 1,
+  "n_seeds": 1,
+  "status": "UNDEFINED",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "audience-design acc beats chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "lesion the ledger-update (recurrence=0) collapses audience design",
+      "ok": true,
+      "detail": "treatment=1 control=0.5 |sep|=0.5 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "permuted grounding history collapses audience design (vs true required design)",
+      "ok": true,
+      "detail": "treatment=1 control=0.5 |sep|=0.5 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion goes STATIC (nearly always INTRODUCE -> ignores what was grounded)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f98475d7b00>",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "the ledger read is a SUBSTRATE read (evidence fires on grounded >> ungrounded)",
+      "ok": true,
+      "detail": "before=0 after=0.113472 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "substrate-read margin (grounded - ungrounded evidence rate)",
+      "ok": true,
+      "detail": "measured=0.11347222222222224 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f98475d7b00>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / reward-mod / homeostasis / short-term & structural plasticity",
+      "why": "fixed-structure ledger + biased-competition read is the scope; the LEARNED conceptual-pact / lexical-entrainment / partner-specific ledger is the named follow-on"
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: 6 seeds (project bar) (measured=False expect=True)"
+  ],
+  "means": {
+    "audience_design_acc": 1.0,
+    "permute_acc": 0.5,
+    "lesion_acc": 0.5,
+    "lesion_frac_introduce": 1.0,
+    "evidence_rate_grounded": 0.11347222222222224,
+    "evidence_rate_ungrounded": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_conv": 4,
+      "n_grounded": 3,
+      "K_ref": 6,
+      "audience_design_acc": 1.0,
+      "permute_acc": 0.5,
+      "lesion_acc": 0.5,
+      "lesion_frac_introduce": 1.0,
+      "evidence_rate_grounded": 0.11347222222222224,
+      "evidence_rate_ungrounded": 0.0,
+      "real_minus_lesion": 0.5,
+      "real_minus_permute": 0.5,
+      "go": true
+    }
+  ],
+  "honest_scope": "A functional common-ground / audience-design correlate: a persistent per-referent grounded-state ledger (bistable NMDA attractors) read at speak-time through a gated synapse to choose introduce-vs-reduce. Audience design FOLLOWS the actual grounding history (permuting it collapses the read) and is load-bearing (lesioning the ledger's write-persistence makes audience design go static). NOT the learned conceptual-pact / lexical-entrainment / partner-specific machinery \u2014 those are named follow-ons."
+}
