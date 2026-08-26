@@ -1,0 +1,199 @@
+{
+  "arc": "reasoning-route no-confab moat: FHRR cue-role false-hop + wrong-patient decode-rate instrument",
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "vocab_size": 7032,
+  "n_facts_total_available": 15000,
+  "swept_D": [
+    128
+  ],
+  "swept_n_facts": [
+    1000
+  ],
+  "swept_seeds": [
+    42
+  ],
+  "n_trials_requested": 5000,
+  "instrument_verification": {
+    "ok": true,
+    "seed": 42,
+    "D": 64,
+    "checks": [
+      {
+        "case": "oov_agent_abstain",
+        "real": "None",
+        "closed_form": "None",
+        "ok": true
+      },
+      {
+        "case": "fresh_recall",
+        "rows": [
+          {
+            "agent": "a1",
+            "action": "act1",
+            "stored_patient": "p1",
+            "real_answer": "'p1'",
+            "closed_form_answer": "'p1'",
+            "ok": true
+          },
+          {
+            "agent": "a2",
+            "action": "act2",
+            "stored_patient": "p2",
+            "real_answer": "'p2'",
+            "closed_form_answer": "'p2'",
+            "ok": true
+          },
+          {
+            "agent": "a3",
+            "action": "act3",
+            "stored_patient": "p3",
+            "real_answer": "'p3'",
+            "closed_form_answer": "'p3'",
+            "ok": true
+          },
+          {
+            "agent": "a4",
+            "action": "act4",
+            "stored_patient": "p4",
+            "real_answer": "'p4'",
+            "closed_form_answer": "'p4'",
+            "ok": true
+          }
+        ],
+        "ok": true
+      },
+      {
+        "case": "false_hop_agreement",
+        "rows": [
+          {
+            "agent": "a1",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a1",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a1",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          }
+        ],
+        "ok": true
+      }
+    ]
+  },
+  "cells": [
+    {
+      "D": 128,
+      "n_facts_requested": 1000,
+      "n_facts_sampled": 1000,
+      "seed": 42,
+      "vocab_size": 7032,
+      "n_unique_agent_action_keys": 1000,
+      "elapsed_s": 0.616,
+      "oov_floor": {
+        "n_trials": 300,
+        "hits": 0,
+        "rate": 0.0,
+        "note": "structurally guaranteed 0 by construction (decode can only return a vocab word); measured, not assumed"
+      },
+      "wrong_patient": {
+        "n_checked": 1000,
+        "hits": 0,
+        "rate": 0.0,
+        "examples": []
+      },
+      "false_hop": {
+        "n_candidates": 27380,
+        "n_trials": 5000,
+        "exact": false,
+        "hits": 0,
+        "rate": 0.0,
+        "examples": []
+      },
+      "score_stats": {
+        "true_match_patient_score_mean": 0.45586445000767706,
+        "true_match_patient_score_min": 0.30601510405540466,
+        "true_match_patient_margin_mean": 0.22103336231410503,
+        "true_match_patient_margin_min": 0.06675451993942261,
+        "false_hop_agent_score_mean": null,
+        "false_hop_agent_score_max": null,
+        "false_hop_agent_margin_mean": null,
+        "false_hop_agent_margin_min": null,
+        "n_false_hop_scored": 0
+      }
+    }
+  ]
+}

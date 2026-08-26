@@ -1,0 +1,500 @@
+{
+  "arc": "reasoning-route no-confab moat: FHRR cue-role false-hop + wrong-patient decode-rate instrument",
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "vocab_size": 7032,
+  "n_facts_total_available": 15000,
+  "swept_D": [
+    1,
+    2,
+    4
+  ],
+  "swept_n_facts": [
+    15000
+  ],
+  "swept_seeds": [
+    42
+  ],
+  "n_trials_requested": 4000,
+  "instrument_verification": {
+    "ok": true,
+    "seed": 42,
+    "D": 64,
+    "checks": [
+      {
+        "case": "oov_agent_abstain",
+        "real": "None",
+        "closed_form": "None",
+        "ok": true
+      },
+      {
+        "case": "fresh_recall",
+        "rows": [
+          {
+            "agent": "a1",
+            "action": "act1",
+            "stored_patient": "p1",
+            "real_answer": "'p1'",
+            "closed_form_answer": "'p1'",
+            "ok": true
+          },
+          {
+            "agent": "a2",
+            "action": "act2",
+            "stored_patient": "p2",
+            "real_answer": "'p2'",
+            "closed_form_answer": "'p2'",
+            "ok": true
+          },
+          {
+            "agent": "a3",
+            "action": "act3",
+            "stored_patient": "p3",
+            "real_answer": "'p3'",
+            "closed_form_answer": "'p3'",
+            "ok": true
+          },
+          {
+            "agent": "a4",
+            "action": "act4",
+            "stored_patient": "p4",
+            "real_answer": "'p4'",
+            "closed_form_answer": "'p4'",
+            "ok": true
+          }
+        ],
+        "ok": true
+      },
+      {
+        "case": "false_hop_agreement",
+        "rows": [
+          {
+            "agent": "a1",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a1",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a1",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a2",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a3",
+            "action": "act4",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act1",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act2",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          },
+          {
+            "agent": "a4",
+            "action": "act3",
+            "real": "None",
+            "closed_form": "None",
+            "agree": true
+          }
+        ],
+        "ok": true
+      }
+    ]
+  },
+  "cells": [
+    {
+      "D": 1,
+      "n_facts_requested": 15000,
+      "n_facts_sampled": 15000,
+      "seed": 42,
+      "vocab_size": 7032,
+      "n_unique_agent_action_keys": 15000,
+      "elapsed_s": 6.271,
+      "oov_floor": {
+        "n_trials": 300,
+        "hits": 0,
+        "rate": 0.0,
+        "note": "structurally guaranteed 0 by construction (decode can only return a vocab word); measured, not assumed"
+      },
+      "wrong_patient": {
+        "n_checked": 15000,
+        "hits": 2,
+        "rate": 0.00013333333333333334,
+        "examples": [
+          {
+            "agent": "navy_cross",
+            "action": "country",
+            "returned_patient": "saint_kitts_nevis",
+            "stored_patient": "u_s_of_a",
+            "matched_index": 2838,
+            "score": 1.0,
+            "margin": 0.0
+          },
+          {
+            "agent": "county_of_carmarthenshire",
+            "action": "located_in_the_administrative_territoria",
+            "returned_patient": "pop_starlets",
+            "stored_patient": "wales_u_k",
+            "matched_index": 3257,
+            "score": 0.9999990463256836,
+            "margin": 6.556510925292969e-07
+          }
+        ]
+      },
+      "false_hop": {
+        "n_candidates": 215044,
+        "n_trials": 4000,
+        "exact": false,
+        "hits": 1,
+        "rate": 0.00025,
+        "examples": [
+          {
+            "agent": "geography_of_campinas",
+            "action": "languages_spoken_written_or_signed",
+            "returned_patient": "chapel_thrill",
+            "stored_patient": null,
+            "matched_index": 6697,
+            "agent_score": 1.0,
+            "agent_margin": 5.960464477539063e-08,
+            "action_score": 1.0,
+            "action_margin": 5.960464477539063e-08
+          }
+        ]
+      },
+      "score_stats": {
+        "true_match_patient_score_mean": 0.9999995231628418,
+        "true_match_patient_score_min": 0.9999990463256836,
+        "true_match_patient_margin_mean": 3.2782554626464844e-07,
+        "true_match_patient_margin_min": 0.0,
+        "false_hop_agent_score_mean": 1.0,
+        "false_hop_agent_score_max": 1.0,
+        "false_hop_agent_margin_mean": 5.960464477539063e-08,
+        "false_hop_agent_margin_min": 5.960464477539063e-08,
+        "n_false_hop_scored": 1
+      }
+    },
+    {
+      "D": 2,
+      "n_facts_requested": 15000,
+      "n_facts_sampled": 15000,
+      "seed": 42,
+      "vocab_size": 7032,
+      "n_unique_agent_action_keys": 15000,
+      "elapsed_s": 6.315,
+      "oov_floor": {
+        "n_trials": 300,
+        "hits": 0,
+        "rate": 0.0,
+        "note": "structurally guaranteed 0 by construction (decode can only return a vocab word); measured, not assumed"
+      },
+      "wrong_patient": {
+        "n_checked": 15000,
+        "hits": 2,
+        "rate": 0.00013333333333333334,
+        "examples": [
+          {
+            "agent": "coblenz_germany",
+            "action": "located_in_time_zone",
+            "returned_patient": "lynn_given_name",
+            "stored_patient": "rome_time",
+            "matched_index": 13588,
+            "score": 0.9993429183959961,
+            "margin": 0.00012117624282836914
+          },
+          {
+            "agent": "princely_states",
+            "action": "country",
+            "returned_patient": "gotland_municipality",
+            "stored_patient": "british_colonial_india",
+            "matched_index": 30,
+            "score": 0.9999023675918579,
+            "margin": 0.0002796649932861328
+          }
+        ]
+      },
+      "false_hop": {
+        "n_candidates": 215044,
+        "n_trials": 4000,
+        "exact": false,
+        "hits": 1,
+        "rate": 0.00025,
+        "examples": [
+          {
+            "agent": "association_sportive_de_cannes",
+            "action": "contains_administrative_territorial_enti",
+            "returned_patient": "odessa_ukraine",
+            "stored_patient": null,
+            "matched_index": 14274,
+            "agent_score": 0.9994136095046997,
+            "agent_margin": 0.0003402233123779297,
+            "action_score": 0.9999117255210876,
+            "action_margin": 3.874301910400391e-06
+          }
+        ]
+      },
+      "score_stats": {
+        "true_match_patient_score_mean": 0.999622642993927,
+        "true_match_patient_score_min": 0.9993429183959961,
+        "true_match_patient_margin_mean": 0.00020042061805725098,
+        "true_match_patient_margin_min": 0.00012117624282836914,
+        "false_hop_agent_score_mean": 0.9994136095046997,
+        "false_hop_agent_score_max": 0.9994136095046997,
+        "false_hop_agent_margin_mean": 0.0003402233123779297,
+        "false_hop_agent_margin_min": 0.0003402233123779297,
+        "n_false_hop_scored": 1
+      }
+    },
+    {
+      "D": 4,
+      "n_facts_requested": 15000,
+      "n_facts_sampled": 15000,
+      "seed": 42,
+      "vocab_size": 7032,
+      "n_unique_agent_action_keys": 15000,
+      "elapsed_s": 6.386,
+      "oov_floor": {
+        "n_trials": 300,
+        "hits": 0,
+        "rate": 0.0,
+        "note": "structurally guaranteed 0 by construction (decode can only return a vocab word); measured, not assumed"
+      },
+      "wrong_patient": {
+        "n_checked": 15000,
+        "hits": 16,
+        "rate": 0.0010666666666666667,
+        "examples": [
+          {
+            "agent": "caracas_landmarks",
+            "action": "located_in_time_zone",
+            "returned_patient": "barrow_f_c",
+            "stored_patient": "bolivia_time",
+            "matched_index": 2174,
+            "score": 0.9830049276351929,
+            "margin": 0.007117271423339844
+          },
+          {
+            "agent": "melodic_progressive_metal",
+            "action": "instance_of",
+            "returned_patient": "howard_university_news_service",
+            "stored_patient": "genre_of_music",
+            "matched_index": 3278,
+            "score": 0.9707457423210144,
+            "margin": 0.003887653350830078
+          },
+          {
+            "agent": "preston_north_end",
+            "action": "sport",
+            "returned_patient": "donna_first_name",
+            "stored_patient": "association_football_club",
+            "matched_index": 10692,
+            "score": 0.9876099824905396,
+            "margin": 0.009004771709442139
+          },
+          {
+            "agent": "real_betis_sevilla",
+            "action": "country",
+            "returned_patient": "lev_nikolaevich_graf_tolsto",
+            "stored_patient": "kingdom_of_the_spains",
+            "matched_index": 939,
+            "score": 0.991547703742981,
+            "margin": 0.013978719711303711
+          },
+          {
+            "agent": "sports_in_arkansas",
+            "action": "country",
+            "returned_patient": "lev_nikolaevich_graf_tolsto",
+            "stored_patient": "u_s_of_a",
+            "matched_index": 8794,
+            "score": 0.9876807332038879,
+            "margin": 0.014253973960876465
+          },
+          {
+            "agent": "la_plata_buenos_aires",
+            "action": "country",
+            "returned_patient": "rko_pictures",
+            "stored_patient": "argentina_information",
+            "matched_index": 4609,
+            "score": 0.957405686378479,
+            "margin": 0.005526721477508545
+          },
+          {
+            "agent": "utica_ny",
+            "action": "country",
+            "returned_patient": "flower_class_corvette",
+            "stored_patient": "u_s_of_a",
+            "matched_index": 377,
+            "score": 0.9560556411743164,
+            "margin": 0.003296494483947754
+          },
+          {
+            "agent": "vladikavkaz_urban_okrug",
+            "action": "country",
+            "returned_patient": "halle_saxony_anhalt",
+            "stored_patient": "tsarist_regime",
+            "matched_index": 320,
+            "score": 0.9985394477844238,
+            "margin": 0.004950165748596191
+          },
+          {
+            "agent": "london_borough_of_hammersmith",
+            "action": "country",
+            "returned_patient": "borac_a_ak",
+            "stored_patient": "united_kingom",
+            "matched_index": 3466,
+            "score": 0.9883098602294922,
+            "margin": 0.006176114082336426
+          },
+          {
+            "agent": "dolj_county",
+            "action": "country",
+            "returned_patient": "placentia_italy",
+            "stored_patient": "danubian_carpathian_area",
+            "matched_index": 11142,
+            "score": 0.9636659622192383,
+            "margin": 0.0013467669486999512
+          },
+          {
+            "agent": "linguistic_history_of_china",
+            "action": "country",
+            "returned_patient": "halle_saxony_anhalt",
+            "stored_patient": "china_pr",
+            "matched_index": 1108,
+            "score": 0.9819977283477783,
+            "margin": 0.007762908935546875
+          },
+          {
+            "agent": "oise",
+            "action": "country",
+            "returned_patient": "rowingat2016summerolympics",
+            "stored_patient": "franzoesische_republik",
+            "matched_index": 12264,
+            "score": 0.9815816283226013,
+            "margin": 0.011754393577575684
+          },
+          {
+            "agent": "university_of_idaho",
+            "action": "country",
+            "returned_patient": "denis_given_name",
+            "stored_patient": "u_s_of_a",
+            "matched_index": 215,
+            "score": 0.9794864654541016,
+            "margin": 0.0034685134887695312
+          },
+          {
+            "agent": "seventh_chromosome",
+            "action": "follows",
+            "returned_patient": "county_of_bucks",
+            "stored_patient": "chromosome_six",
+            "matched_index": 5764,
+            "score": 0.9811958074569702,
+            "margin": 0.015435338020324707
+          },
+          {
+            "agent": "hawthorn_football_club",
+            "action": "sport",
+            "returned_patient": "donna_first_name",
+            "stored_patient": "australian_football",
+            "matched_index": 1522,
+            "score": 0.9752925038337708,
+            "margin": 0.013771295547485352
+          },
+          {
+            "agent": "fc_bastia",
+            "action": "sport",
+            "returned_patient": "2006_fifa_world_cup_final_positions",
+            "stored_patient": "association_football_club",
+            "matched_index": 440,
+            "score": 0.9889230132102966,
+            "margin": 0.0036592483520507812
+          }
+        ]
+      },
+      "false_hop": {
+        "n_candidates": 215044,
+        "n_trials": 4000,
+        "exact": false,
+        "hits": 1,
+        "rate": 0.00025,
+        "examples": [
+          {
+            "agent": "university_of_essex",
+            "action": "sport",
+            "returned_patient": "xv_asiad",
+            "stored_patient": null,
+            "matched_index": 14271,
+            "agent_score": 0.9651878476142883,
+            "agent_margin": 0.0059084296226501465,
+            "action_score": 0.9720261096954346,
+            "action_margin": 0.00192183256149292
+          }
+        ]
+      },
+      "score_stats": {
+        "true_match_patient_score_mean": 0.9795651771128178,
+        "true_match_patient_score_min": 0.9560556411743164,
+        "true_match_patient_margin_mean": 0.007836896926164627,
+        "true_match_patient_margin_min": 0.0013467669486999512,
+        "false_hop_agent_score_mean": 0.9651878476142883,
+        "false_hop_agent_score_max": 0.9651878476142883,
+        "false_hop_agent_margin_mean": 0.0059084296226501465,
+        "false_hop_agent_margin_min": 0.0059084296226501465,
+        "n_false_hop_scored": 1
+      }
+    }
+  ]
+}

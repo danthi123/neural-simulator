@@ -1,0 +1,38 @@
+{
+ "run_id": "1787712370-2037762",
+ "runner": "research/runners/reasoning_route_decode_rate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0b80206a671e8ae8/research/runners/reasoning_route_decode_rate.py",
+  "--D",
+  "1",
+  "2",
+  "4",
+  "--n-facts",
+  "15000",
+  "--seed",
+  "42",
+  "--n-trials",
+  "4000",
+  "--out",
+  "research/findings/raw/_reasoning_route_decode_rate/stress_lowD_N15000_s42.json"
+ ],
+ "git_sha": "dcb1c4d95",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T22:46:10",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 157.1,
+ "corpus_check_query": "FHRR cue-role false-hop and wrong-patient decode rate at production scale (query_patient exact-match, floorless argmax)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_reasoning_route_decode_rate/stress_lowD_N15000_s42.json"
+}

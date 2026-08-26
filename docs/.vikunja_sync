@@ -77,3 +77,18 @@ adversarial battery; the moat is exact-string-gated with NO confidence floor -> 
 hookup would confabulate on in-vocab near-misses + bypass the GNW conflict-abstain). gap5 #139 read
 NO-GO 0/6 (forward-transition solved 6/6; duty residual -> termination mechanism next); off-frontier,
 artifact durable in the gap5-139 worktree.
+
+## 2026-08-25  reasoning-route de-risked: FHRR decode-rate measured ~0 at deployed scale
+The moat-audit's scariest hole (chain confabulation via FHRR crosstalk) MEASURED and found empirically
+negligible at the deployed operating point. Closed-form instrument (numpy, self-verified byte-exact vs the
+genuine RFPhasorComposer.query_patient) on the shipped 15k wikidata core (vocab 7032):
+- D=128, N=15000: cue-role FALSE-HOP rate = 0.0 (0/8000 trials); WRONG-PATIENT = 0.0001 (1/15000);
+  OOV floor 0.0 (structural). True-match patient margin mean 0.218, min 0.0081.
+- Low-D stress (D=1/2/4) DOES show rising crosstalk -> the ~0 at D=128 is real signal, not a dead instrument.
+Implication for #141: the missing confidence FLOOR is NOT the load-bearing safety mechanism at D=128/15k
+(false-hop already 0); if added it is defense-in-depth and must sit BELOW the 0.0081 true-match margin. The
+OTHER audit hardening (route each hop through chat.gate conflict-abstain, GENERATED-not-PERCEIVED provenance,
+the _neural_question_parse truncation fix, keep derived answers out of episodic memory) stays load-bearing.
+Single-seed (42) headline; the 36-cell multi-seed sweep (D{128..1024} x N{1k,5k,15k} x seed{42,43,44}) is
+queued to the pool to confirm. finding 2026-08-25-fhrr-decode-rate-at-scale; runner
+research/runners/reasoning_route_decode_rate.py.
