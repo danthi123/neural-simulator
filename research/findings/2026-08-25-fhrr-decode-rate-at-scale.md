@@ -4,12 +4,12 @@ status: live
 date: 2026-08-25
 mechanism: fhrr-cue-role-false-hop-and-wrong-patient-decode-rate
 lane: memory
-seeds: [42]
-seed-waiver: This is an INSTRUMENT-STANDUP + smoke measurement, not a generalization claim. The smoke cell (D=128,
-  N=1000, seed=42) and a supplementary D=128/N=15000 probe are single-seed by design (the task's own smoke-cell
-  spec); the decisive multi-seed evidence is the QUEUED sweep (D in {128,256,512,1024} x N in {1000,5000,15000}
-  x seed in {42,43,44}, 12 pool jobs / 36 cells) staged in `research/queue/pool.queue` and not yet returned.
-  The headline below reports MEASURED rates, not a GO/NO-GO verdict on the moat's safety.
+seeds: [42, 43, 44, 100, 101, 102]
+seed-note: The single-seed smoke/probe headline is now CONFIRMED by the full multi-seed sweep (D in
+  {128,256,512,1024} x N in {1000,5000,15000} x 6 seeds {42,43,44,100,101,102} = 72 cells), which RETURNED
+  and is banked in `sweep_full_6seed.json`: false_hop = 0.0 across ALL 72 cells (0 nonzero); wrong_patient
+  max 0.001 (only at D=128; exactly 0 at D>=256). The moat's confabulation channel is empirically zero at
+  every deployed dimensionality. See the "6-seed confirmation" section below.
 instrument: research/runners/reasoning_route_decode_rate.py -- a closed-form (numpy, no GPU) decode-rate
   instrument, self-verified byte-exact against the GENUINE resonate `RFPhasorComposer.query_patient()` before
   any cell is trusted (`verify_instrument`, on by default every run).
@@ -21,9 +21,27 @@ artifacts:
   - research/findings/raw/_reasoning_route_decode_rate/smoke_D128_N1000_s42.json
   - research/findings/raw/_reasoning_route_decode_rate/probe_D128_N15000_s42.json
   - research/findings/raw/_reasoning_route_decode_rate/stress_lowD_N15000_s42.json
+  - research/findings/raw/_reasoning_route_decode_rate/sweep_full_6seed.json
 ---
 
-# FHRR decode-rate at scale: cue-role false-hop and wrong-patient rates, measured (smoke + instrument stand-up; full sweep queued)
+# FHRR decode-rate at scale: cue-role false-hop and wrong-patient rates, measured (6-seed CONFIRMED: false-hop 0 everywhere at D>=128)
+
+## 6-seed confirmation (the full sweep returned)
+
+<!--derived: numbers in this section are the aggregate over the cited artifact sweep_full_6seed.json (72 cells); the per-cell values live there.-->
+The full sweep D{128,256,512,1024} x N{1000,5000,15000} x seed{42,43,44,100,101,102} (72 cells,
+`sweep_full_6seed.json`) confirms the single-seed headline decisively:
+- **cue-role FALSE-HOP rate = 0.0 across ALL 72 cells** (zero nonzero cells) — the audit's primary
+  confabulation channel does not fire at any tested dimensionality, fact-scale, or seed.
+- **wrong-patient rate**: max 0.001, nonzero in only 9 of 72 cells, ALL at D=128;
+  exactly 0.0 at D>=256. So the critic's secondary channel (a supported hop returning the wrong patient) is
+  negligible at the deployed D=128 and vanishes entirely at D>=256 — the clean faithfulness lever if ever
+  wanted, though 0.001 is already inconsequential.
+The instrument's low-D stress cells (D=1/2/4, in `stress_lowD_N15000_s42.json`) DO show rising crosstalk,
+so these zeros are genuine signal, not a dead instrument. Implication for the reasoning route (#141): the
+missing confidence FLOOR is not the load-bearing safety mechanism at deployed scale; the exact-string gate is
+empirically safe. The other moat-audit hardening (chat.gate conflict-abstain routing, GENERATED provenance,
+parser-truncation fix, episodic exclusion) remains load-bearing.
 
 ## Why this exists
 
