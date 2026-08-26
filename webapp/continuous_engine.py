@@ -415,6 +415,29 @@ def _affect_relax_drive_enabled() -> bool:
     return os.environ.get("BRAIN_CONTINUOUS_AFFECT_RELAX", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# ── #92 (2026-08-26): extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship,
+# default-ON, most user-visible ENGAGEMENT->forthcomingness coupling (board #76/#79, `webapp.da_mode_drives_chat`),
+# on a DIFFERENT axis than #91 (energy/engagement, not valence/warmth). Today's idle tick relaxes the legacy Gate-B
+# mood (v1) and, when #91 is armed, board #84's own affect EMA -- but `DaModeDrivesWorkspace.ema_engagement` (the
+# state behind the DA-mode engagement SUFFIX -- " -- worth going further here.", "there's plenty more to dig into
+# here!") is written only inside a live `observe_turn` and a content-free turn merely HOLDS it; an idle session with
+# NO turns at all never touches it either. So telling the brain something highly engaging, waiting idle, then
+# sending a neutral follow-up produced the IDENTICAL engagement suffix as zero idle time -- the same observe-vs-
+# drive gap #91 closed for #84, unclosed on this second, independent axis. `_da_relax_drive_enabled()` gates a NEW,
+# independently-severable idle-tick call into the DA-mode workspace's OWN `relax_idle()` -- an escape hatch distinct
+# from `BRAIN_DA_DRIVES` / `BRAIN_DA_DRIVES_LESION` so this one coupling can be lesioned without touching the DA-mode
+# faculty wholesale (the load-bearing proof needs exactly that knob). DEFAULT-ON (mirrors the #86 wander-lead /
+# #85 swap-lead default-flip pattern): `BRAIN_CONTINUOUS_DA_RELAX=0` is the byte-identical escape (a session that
+# never had a DA-drives turn is untouched regardless, since `relax_idle` no-ops with no workspace).
+def _da_relax_drive_enabled() -> bool:
+    """#92. `BRAIN_CONTINUOUS_DA_RELAX` truthy (1/true/on/yes) — the DEFAULT — arms the idle-tick relax->reread call
+    into the DA-mode workspace's `relax_idle` (board #76/#79's engagement/forthcomingness coupling). Explicit
+    0/false/off/no is the BYTE-IDENTICAL escape (also the anti-hollow LESION arm — see the #92 finding): unarmed,
+    `tick_idle_sessions` never calls `da_mode_drives_chat.relax_idle`, so the DA-mode engagement EMA stays exactly
+    as it is today between turns (untouched by any idle tick, only by a live `observe_turn`)."""
+    return os.environ.get("BRAIN_CONTINUOUS_DA_RELAX", "1").strip().lower() in ("1", "true", "on", "yes")
+
+
 def recent_wander(cache_key) -> str | None:
     """Rung 2 (board #86, 2026-08-20): make the idle-wandered THOUGHT load-bearing on the NEXT real turn (drive, not
     just observe -- mirrors the #84 affect-lead / #85 swap-lead pattern). Returns the most recent concept an idle
@@ -803,6 +826,32 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                         import logging as _lg
                         _lg.getLogger(__name__).warning(
                             "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
+                # #92: extend the SAME idle-tick "keeps evolving between turns" relaxation to the flagship DA-mode
+                # engagement->forthcomingness coupling's OWN persistent EMA (see _da_relax_drive_enabled's header
+                # note) -- a second, independent axis (energy/engagement) alongside #91's (valence/warmth).
+                # Self-gates on BRAIN_CONTINUOUS_DA_RELAX (default-ON) -> the byte-identical escape when set to 0.
+                # relax_idle() itself no-ops (returns None) for a session that never had a DA-drives turn.
+                if _da_relax_drive_enabled():
+                    try:
+                        _chat3 = chat_getter(cache_key)
+                        if _chat3 is not None:
+                            from webapp import da_mode_drives_chat as _DMD
+                            rec92 = _DMD.relax_idle(_chat3, relax=RELAX, neutral=NEUTRAL)
+                            if rec92 is not None and rec92.get("relaxed"):
+                                lst92 = _INNER_LIFE.setdefault(cache_key, [])
+                                lst92.append({
+                                    "t": now, "da_drives_relax": True,
+                                    "mode": rec92.get("mode", "rest"), "lead": rec92.get("lead", ""),
+                                    "da_level": rec92.get("da_level", 0.0),
+                                    "note": "idle: my energy/engagement (the DA-mode lead) is settling toward "
+                                            "rest (mode now %s)" % rec92.get("mode", "rest"),
+                                })
+                                if len(lst92) > _INNER_LIFE_MAX:
+                                    del lst92[:-_INNER_LIFE_MAX]
+                    except Exception:
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "#92 da-mode-drives idle relax failed for %s", cache_key, exc_info=True)
         except Exception:
             continue
     return n
