@@ -71,8 +71,12 @@ def open_tasks():
         ts = json.loads(raw)
     except Exception:
         return None, []
-    # actionable = open, priority>=1, and not the north-star/stage meta rows (priority 5 north-star kept out)
-    act = [t for t in ts if not t.get("done") and 1 <= (t.get("priority") or 0) <= 4]
+    # actionable = open + not done + priority>=1. NOTE (2026-08-26 fix): the old cap `<= 4` excluded the
+    # priority-5 CRUX tasks (e.g. #150 knowledge-scale) and undercounted the frontier to ~1, which made the
+    # SATURATED bar (n_open > lanes) trivially met and the whole check UNABLE TO FIRE. Include p5; the raw
+    # count still under-represents the true parallelizable backlog (dozens of buildable de-risks never land on
+    # the board), which is WHY the agent-floor below (compute-independent) is the real enforcement, not this count.
+    act = [t for t in ts if not t.get("done") and (t.get("priority") or 0) >= 1]
     act.sort(key=lambda t: -(t.get("priority") or 0))
     return len(act), [(t.get("priority") or 0, t.get("title", "")) for t in act]
 
@@ -94,25 +98,36 @@ def main():
 
     have_capacity = bool(cap)
     have_ready = (n_open is not None and n_open > 0)
-    # under-parallelized: idle capacity AND ready independent work AND not already many lanes
-    under = have_capacity and have_ready and (n_open > total_lanes)
+    # ROOT-CAUSE FIX (2026-08-26, owner-flagged twice): the old bar required IDLE COMPUTE *and* n_open>lanes.
+    # But agent-bound BUILD/RESEARCH/VERIFY/WIRING work is NOT compute-limited — so when agents filled the cores
+    # AND the board count read ~1, the check was structurally UNABLE TO FIRE, giving false "you're parallelized"
+    # comfort while ONE agent ran against a huge backlog. Two independent conditions now; EITHER fires:
+    AGENT_FLOOR = int(os.environ.get("PARALLEL_AGENT_FLOOR", "3"))  # run >= this many concurrent build/research agents while a live frontier exists
+    under_agents = have_ready and (agents < AGENT_FLOOR)                       # compute-INDEPENDENT — the real fix
+    under_compute = have_ready and have_capacity and (n_open > total_lanes)    # idle cores/GPU the lanes don't cover
+    under = under_agents or under_compute
 
     print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | open-tasks=%s"
           % (total_lanes, lanes_local, lanes_pool, agents, ("%d%%" % gpu if gpu >= 0 else "n/a"),
              (str(n_open) if n_open is not None else "?")))
     if under:
-        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — idle: %s ; %d ready board tasks vs %d lanes."
-              % (", ".join(cap), n_open, total_lanes))
-        print("   LAUNCH now (independent, from the board — agents for build/research, pool for CPU, GPU for the big run):")
+        why = []
+        if under_agents:
+            why.append("only %d build/research agent(s) running (floor %d) — agent work is NOT compute-limited, FAN OUT MORE"
+                       % (agents, AGENT_FLOOR))
+        if under_compute:
+            why.append("idle %s ; %d ready tasks vs %d lanes" % (", ".join(cap), n_open, total_lanes))
+        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s." % " ; ".join(why))
+        print("   The parallelizable backlog is ALWAYS bigger than the board — roadmap de-risks, pending 6-seed")
+        print("   validations, faculty wirings, consolidations. LAUNCH concurrent agents/workflows now (pool for CPU,")
+        print("   GPU for the big run). Board frontier rows for anchors:")
         for pr, title in top[:6]:
             print("     • p%d  %s" % (pr, title))
-        print("   Holding is NOT earned until this reads SATURATED.")
+        print("   Holding is NOT earned until this reads SATURATED (>= %d agents AND compute covered)." % AGENT_FLOOR)
     elif not have_ready:
         print("✓ SATURATED (no ready board tasks — restock the board or hold).")
-    elif not have_capacity:
-        print("✓ SATURATED (compute full — holding for lanes is the async pattern).")
     else:
-        print("✓ SATURATED (%d lanes cover the %d ready tasks)." % (total_lanes, n_open))
+        print("✓ SATURATED (%d agents + %d compute lanes cover the frontier)." % (agents, lanes_local + lanes_pool))
 
     # COST-ROUTING — agent tokens count toward the Claude usage limit; mechanical work must go to non-Claude
     # machinery. Fires whenever cheap idle compute exists, so the routing is enforced every cycle, not remembered.
@@ -126,5 +141,37 @@ def main():
     return 0
 
 
+def _under_decision(have_ready, have_capacity, agents, n_open, total_lanes, agent_floor=3):
+    """Pure copy of main()'s under-parallelization decision, for the selftest. Keep in sync with main()."""
+    under_agents = have_ready and (agents < agent_floor)
+    under_compute = have_ready and have_capacity and (n_open > total_lanes)
+    return under_agents or under_compute
+
+
+def _selftest():
+    """The 2026-08-26 root cause was that this check had shipped UNABLE TO FIRE (the old bar needed idle compute
+    AND a board-count that was structurally ~1). A check that cannot fail is the bug. This selftest asserts the
+    fixed decision FIRES in its failing direction (few agents while a frontier exists) and stays quiet when saturated."""
+    # (have_ready, have_capacity, agents, n_open, total_lanes) -> expected_under
+    cases = [
+        (True,  False, 1, 1, 13, True),   # THE REGRESSION: 1 agent, tiny board count, compute full -> must fire now
+        (True,  False, 2, 1,  6, True),   # the exact hold I was in -> must fire
+        (True,  False, 5, 1,  8, False),  # 5 agents running -> saturated, must NOT fire
+        (True,  True,  3, 2, 10, False),  # at the floor, compute covered -> must NOT fire
+        (False, True,  0, 0,  0, False),  # no ready work -> must NOT fire
+        (True,  True,  5, 20, 8, True),   # idle compute + backlog lanes don't cover -> fires (compute branch)
+    ]
+    bad = [(c, _under_decision(*c[:5])) for c in cases if _under_decision(*c[:5]) != c[5]]
+    if bad:
+        print("PARALLEL_AUDIT SELFTEST FAILED (the check is unable to fire correctly):")
+        for c, got in bad:
+            print("   case %s -> got under=%s, expected %s" % (c[:5], got, c[5]))
+        sys.exit(1)
+    print("parallel_audit selftest OK — fires when under-parallelized (agents<floor / idle compute) and is quiet when saturated.")
+    sys.exit(0)
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        _selftest()
     sys.exit(main())
