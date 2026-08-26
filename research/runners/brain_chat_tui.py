@@ -71,6 +71,10 @@ if _REPO not in sys.path:
 from research.runners.developed_brain_io import (  # noqa: E402
     load_developed_brain, is_developed_brain_bundle,
 )
+# VERB LEMMATIZATION (reasoning-frontier, 2026-08-25): canonicalize an inflected action to one stable store/query
+# key (hunts/hunt/hunted -> "hunt") -- see research/runners/lexical_lemma.py + the 2026-08-25 reasoning-frontier
+# finding. Used in `ChatBrain._maybe_acquire` (store-write) and `ChatBrain._substrate_recall` (query fallback).
+from research.runners.lexical_lemma import lemma_verb  # noqa: E402
 
 # default self-knowledge artifacts (so `--self-knowledge` works with no path)
 _SK_CODES = os.path.join(_REPO, "research", "findings", "raw", "_self_knowledge_grounded_codes.json")
@@ -614,22 +618,33 @@ class ChatBrain:
         except Exception:
             _b3nc = None
             _b3nc_on = False
+        # VERB LEMMATIZATION AT STORE-WRITE (reasoning-frontier, 2026-08-25 -- see research/runners/lexical_lemma.py
+        # + research/findings/2026-08-25-reasoning-frontier-chain-routing.md). The 2026-08-25 integrated-conversational
+        # -state diagnostic found in-loop teaching FRAGILE to verb inflection: "the wolf hunts the deer" stored the
+        # SURFACE token "hunts" as the action, so "what does the wolf hunt?" (extracting the base "hunt") missed on a
+        # plain string-key mismatch -- an honest fact the brain was JUST told came back ABSTAIN. Canonicalizing the
+        # action to ONE lemma key HERE (store-write) and symmetrically at query time (`_substrate_recall` below) makes
+        # hunts/hunt/hunted collapse to the same stored key. HOST-SIDE SCAFFOLD (documented, not biology): a rule-based
+        # suffix stemmer, no learned/spiking morphology segmentation exists yet (the named next rung). Byte-identical
+        # for every already-base-form verb (lemma_verb is a no-op on a word with no matching inflectional suffix).
         if _b3nc_on:
             parsed = _b3nc.extract_polar_assertion(q)   # (agent, action, patient, polarity) or None (out of scope)
             if parsed is None:
                 return None
             a, v, p, pol = parsed
+            v = lemma_verb(v)
             try:
                 self.inner.hear("%s %s %s" % (a, v, p), polarity=pol)   # a heard NEGATION stores as NEGATE
             except Exception:
                 return None
             self._refresh_facts()
             return [a, v, p]
-        # (B3 unavailable / disabled) — the EXACT legacy path (byte-identical acquisition)
+        # (B3 unavailable / disabled) — the EXACT legacy path (byte-identical acquisition) + the SAME lemma canonicalization
         toks = [t.strip(".,!?") for t in q.split() if t.strip(".,!?")]
         if len(toks) != 3:                       # the minimal SVO assertion the parser handles
             return None
         a, v, p = toks
+        v = lemma_verb(v)
         try:
             self.inner.hear("%s %s %s" % (a, v, p), polarity="AFFIRM")
         except Exception:
@@ -744,6 +759,18 @@ class ChatBrain:
         a, v = route
         try:
             p = self.inner.what_does(a, v)
+            # VERB LEMMATIZATION AT QUERY (reasoning-frontier, 2026-08-25): SURFACE-FIRST, LEMMA-FALLBACK -- try the
+            # question's literal action first (byte-identical whenever it already matches), and ONLY on a miss retry
+            # with the canonicalized lemma (`research/runners/lexical_lemma.lemma_verb`), so "what does the wolf
+            # hunt?" recalls a fact taught as "the wolf hunts the deer" (both canonicalize to "hunt" at store-write
+            # in `_maybe_acquire`, above). Mirrors the SAME surface-first/lemma-fallback convention the B3 non-
+            # contradiction organ already uses for its own recall (`_action_lemma_candidates`).
+            if not p:
+                v_lemma = lemma_verb(v)
+                if v_lemma != v:
+                    p_lemma = self.inner.what_does(a, v_lemma)
+                    if p_lemma:
+                        p, v = p_lemma, v_lemma      # report the canonical action that actually matched
         except Exception:
             return None
         if not p:
