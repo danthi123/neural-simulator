@@ -60,3 +60,20 @@ duplicate pre-flip tasks that were superseded by their already-done flip counter
 #126 respectively). Restructured THIS FILE to append-only (see header above) to end the recurring
 merge-conflict class the two entries above were each hit by.
 - 2026-08-25 (gap5 #134): a1-exclusion RESOLVED — a0<a1<a2 strict forward onset 6/6, store-driven, reverse-clean (clamp-widen + gamma-window); shipped-detector instrument-failure fixed (ev_baseline_q). NO-GO on the strict bar; wall relocated encode->READ discreteness (duty 0.34-0.77). #139 next-rung (read discreteness) created. commit eff9aa70.
+
+## 2026-08-25  reasoning-frontier opened + DA-axis fix landed (gate-b-v2-clean)
+Reconcile for the integrated-conversational-state diagnostic (the session's decisive result: the
+production brain recalls one fact and never reasons). Board changes:
+- #141 CREATED — the reasoning-route frontier (connect stored facts into a DERIVED answer, not just
+  recall one); labels Live-brain + Focus; build guided by the moat-hardening audit spec.
+- #76 CORRECTED then CLOSED (done) — the DA-mode faculty was silently INERT on the GPU (cupy) chat
+  path (a swallowed numpy/cupy array-type error neutralized DA-mode + DA-gated-encoding +
+  DA-gated-curiosity); fixed device-correct (_bridge_xp) + a second latent snapshot bug, verified on
+  GPU (mode responds 0.05->0.90, lesion collapses to floor, endpoint 200 with suffix) + numpy
+  byte-identical; merged commit dcb1c4d9.
+Findings added this cycle: 2026-08-25-integrated-conversational-state-diagnostic,
+-da-axis-cupy-interop-fix, -reasoning-route-moat-audit-hardening-spec (10 hardening reqs + a 12-test
+adversarial battery; the moat is exact-string-gated with NO confidence floor -> a naive query_chain
+hookup would confabulate on in-vocab near-misses + bypass the GNW conflict-abstain). gap5 #139 read
+NO-GO 0/6 (forward-transition solved 6/6; duty residual -> termination mechanism next); off-frontier,
+artifact durable in the gap5-139 worktree.
