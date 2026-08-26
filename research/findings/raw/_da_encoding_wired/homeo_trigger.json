@@ -2,9 +2,10 @@
   "runner": "research/runners/_da_encoding_homeo_trigger.py",
   "A_fires_on_growth": {
     "rec": {
-      "t": 1787696094.311251,
+      "t": 1787703355.7894306,
       "substrate_homeostasis": true,
       "n_engrams": 3,
+      "trigger": "idle_tick",
       "note": "idle: Turrigiano synaptic-scaling pass over 3 DA-encoded engram(s)"
     },
     "mag_before": 1.333333333333333,
@@ -17,9 +18,10 @@
   },
   "C_refires_after_new_fact": {
     "rec": {
-      "t": 1787696094.4084964,
+      "t": 1787703355.90074,
       "substrate_homeostasis": true,
       "n_engrams": 4,
+      "trigger": "idle_tick",
       "note": "idle: Turrigiano synaptic-scaling pass over 4 DA-encoded engram(s)"
     },
     "PASS": true

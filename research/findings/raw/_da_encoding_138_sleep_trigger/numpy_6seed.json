@@ -1,0 +1,857 @@
+{
+  "mechanism": "da-encoding-138-sleep-nrem-trigger-wiring",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "aggregate_status": "GO",
+  "per_seed": [
+    {
+      "seed": 42,
+      "scales_off": [
+        0.7968692030248221,
+        1.9999999889133382,
+        1.0000000117770287,
+        0.9999999988053045,
+        0.7968691931743133,
+        2.000000104734436,
+        1.9999999879553192,
+        0.9999999986989913,
+        0.7968692099686303
+      ],
+      "scales_on_sleep": [
+        0.7968692030248221,
+        1.9999999889133382,
+        1.0000000117770287,
+        0.9999999988053045,
+        0.7968691931743133,
+        2.000000104734436,
+        1.9999999879553192,
+        0.9999999986989913,
+        0.7968692099686303
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=42",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    },
+    {
+      "seed": 43,
+      "scales_off": [
+        0.7968691969799592,
+        1.9999999825446213,
+        0.9999999862040014,
+        1.0000000432161913,
+        0.7968692116738727,
+        2.000000010856773,
+        2.000000031887399,
+        1.0000000601538193,
+        0.7968691991692498
+      ],
+      "scales_on_sleep": [
+        0.7968691969799592,
+        1.9999999825446213,
+        0.9999999862040014,
+        1.0000000432161913,
+        0.7968692116738727,
+        2.000000010856773,
+        2.000000031887399,
+        1.0000000601538193,
+        0.7968691991692498
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=43",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    },
+    {
+      "seed": 44,
+      "scales_off": [
+        0.7968692013195732,
+        1.9999999522378549,
+        1.0000000183110807,
+        1.0000000133745675,
+        0.7968691946022698,
+        1.9999999608887726,
+        2.0000000671823615,
+        0.9999999914692936,
+        0.7968691916236095
+      ],
+      "scales_on_sleep": [
+        0.7968692013195732,
+        1.9999999522378549,
+        1.0000000183110807,
+        1.0000000133745675,
+        0.7968691946022698,
+        1.9999999608887726,
+        2.0000000671823615,
+        0.9999999914692936,
+        0.7968691916236095
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=44",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    },
+    {
+      "seed": 100,
+      "scales_off": [
+        0.7968691906391993,
+        1.9999999771607924,
+        1.0000000260453568,
+        1.0000000596013192,
+        0.7968691857819055,
+        2.000000045284535,
+        2.0000000159401456,
+        1.0000000693792697,
+        0.7968691788757503
+      ],
+      "scales_on_sleep": [
+        0.7968691906391993,
+        1.9999999771607924,
+        1.0000000260453568,
+        1.0000000596013192,
+        0.7968691857819055,
+        2.000000045284535,
+        2.0000000159401456,
+        1.0000000693792697,
+        0.7968691788757503
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=100",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    },
+    {
+      "seed": 101,
+      "scales_off": [
+        0.7968691957614008,
+        1.9999999755056317,
+        0.9999999964739335,
+        0.9999999868354112,
+        0.796869189581294,
+        1.9999999646561106,
+        1.9999999947758373,
+        1.0000000020648394,
+        0.7968692031365642
+      ],
+      "scales_on_sleep": [
+        0.7968691957614008,
+        1.9999999755056317,
+        0.9999999964739335,
+        0.9999999868354112,
+        0.796869189581294,
+        1.9999999646561106,
+        1.9999999947758373,
+        1.0000000020648394,
+        0.7968692031365642
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=101",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    },
+    {
+      "seed": 102,
+      "scales_off": [
+        0.7968691895485451,
+        2.000000053740549,
+        0.9999999984324365,
+        1.0000000293249347,
+        0.796869200660543,
+        2.000000141508214,
+        2.000000009511365,
+        0.9999999968565263,
+        0.7968691985407294
+      ],
+      "scales_on_sleep": [
+        0.7968691895485451,
+        2.000000053740549,
+        0.9999999984324365,
+        1.0000000293249347,
+        0.796869200660543,
+        2.000000141508214,
+        2.000000009511365,
+        0.9999999968565263,
+        0.7968691985407294
+      ],
+      "verdict": {
+        "label": "da-encoding #138 sleep/NREM trigger wiring, seed=102",
+        "status": "GO",
+        "go": true,
+        "undefined_reasons": [],
+        "preconditions": [
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER unset -> sleep-trigger reports disabled",
+            "ok": true,
+            "detail": "measured=False expect=False",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF + light idle: the pass FIRES (unconditional idle-tick path, matches pre-#138 HEAD)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "OFF: fired record tagged trigger=idle_tick",
+            "ok": true,
+            "detail": "measured=idle_tick expect=idle_tick",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "OFF: store weights actually changed (a real rescale, not a metadata event)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "BRAIN_DA_ENCODING_SLEEP_TRIGGER=1 -> sleep-trigger reports enabled",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle (< SLEEP_IDLE_SEC): the pass does NOT fire (no-op)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + light idle: weight fingerprint literally unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth idle (>= SLEEP_IDLE_SEC): the pass FIRES",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth: fired record tagged trigger=nrem_sleep",
+            "ok": true,
+            "detail": "measured=nrem_sleep expect=nrem_sleep",
+            "note": ""
+          },
+          {
+            "kind": "reaches",
+            "name": "ON + sleep-depth: store weights actually changed (a real store-synapse rescale)",
+            "ok": true,
+            "detail": "before=764.16 after=763.437 moved=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "MECHANISM IDENTITY: sleep-triggered scale vector byte-equal to idle-tick-triggered (same seed/facts/gains) -- #138 changes WHEN, never WHAT",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: re-ticking an already-consolidated sleeping session is a no-op (no new facts since the last pass)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "COMPOUNDING GUARD: weights identical across the re-tick (no double rescale)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "ON + sleep-depth + LESION: still no-ops (delegates through the SAME faculty self-gate, does not bypass it)",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          },
+          {
+            "kind": "require",
+            "name": "LESION: weights unchanged",
+            "ok": true,
+            "detail": "measured=True expect=True",
+            "note": ""
+          }
+        ],
+        "disabled_processes": [],
+        "chance": null
+      }
+    }
+  ]
+}

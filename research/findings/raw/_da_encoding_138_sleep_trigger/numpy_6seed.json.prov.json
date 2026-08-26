@@ -1,8 +1,10 @@
 {
- "run_id": "1787703349-1765977",
- "runner": "research/runners/_da_encoding_homeo_trigger.py",
+ "run_id": "1787703183-1761025",
+ "runner": "research/runners/_da_encoding_138_sleep_trigger_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim-worktrees/da-encoding-138-sleep-trigger/research/runners/_da_encoding_homeo_trigger.py"
+  "/home/dant123/Projects/sim-worktrees/da-encoding-138-sleep-trigger/research/runners/_da_encoding_138_sleep_trigger_derisk.py",
+  "--out",
+  "research/findings/raw/_da_encoding_138_sleep_trigger/numpy_6seed.json"
  ],
  "git_sha": "3b810c851",
  "git_dirty": true,
@@ -12,13 +14,13 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-25T20:15:49",
+ "started": "2026-08-25T20:13:03",
  "env": {},
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 891.8,
+ "corpus_check_age_s": 846.0,
  "corpus_check_query": "Turrigiano homeostatic synaptic-scaling should fire on sleep/NREM consolidation event, not only the between-turn idle tick",
  "corpus_check_fresh": true,
- "artifact": "research/findings/raw/_da_encoding_wired/homeo_trigger.json"
+ "artifact": "research/findings/raw/_da_encoding_138_sleep_trigger/numpy_6seed.json"
 }
