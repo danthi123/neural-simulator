@@ -921,6 +921,22 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-25 (EVENING — THE NORTH-STAR MILESTONE; this is the top priority, supersedes the items below):**
+- ~~Make the brain reason to its own conclusion~~ **DONE + PRODUCTION-DEFAULT** (`3bb9bfdf`): the reasoning
+  route derives multi-hop answers over the phasor store ("what does the wolf's prey eat?" -> "grass"), moat
+  held (6-seed false-hop 0.0, finding `2026-08-25-fhrr-decode-rate-at-scale`), hardened (multi-valued-hop
+  abstain / GENERATED provenance / episodic exclusion), CONFIRMED live on the integrated system (finding
+  `2026-08-25-integrated-conversational-state-diagnostic-2`). The DA-axis silent GPU failure fixed
+  (`dcb1c4d9`) restored DA-mode + DA-encoding + curiosity. Board #141 + #76 done.
+- **NEXT FRONTIER (highest-leverage, named by the confirming diagnostic): make the brain reason + recall over
+  its OWN 15k knowledge core via NATURAL language.** Today the route reasons over just-taught facts + the
+  possessive two-hop shape only; the 15k core still needs exact underscore tokens, and compound / inverse /
+  3+hop phrasings do not parse. This is the bridge from "reasons over what you teach it" to "reasons over what
+  it already knows."
+- Residual polish: reasoning-route audit reqs #7/#11 (lemmatizer irregular-table + shard-routing
+  normalization), the `[unverified render` cosmetic leak on the single-fact non-default path, and the
+  parser-truncation incidental bug (`task_1a5eaba8`).
+
 **2026-08-25 (LATER, same day — corrects the 2026-08-26 harvest block's next-actions below; 4 of its 6 items are
 now DONE, not still open):**
 - ~~Fix the dead production-integration gate~~ **DONE** (`135024f70`/`0fe3c3888`, `_level()` normalizer + 2 anchor

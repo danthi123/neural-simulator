@@ -106,3 +106,15 @@ parser-truncation bug on modifier-laden questions (spawned task_1a5eaba8); a cos
 render' leak on the single-fact (non-default) path. MERGED to main default-ON (_CHAIN_ROUTE_DEFAULT_ON;
 BRAIN_CHAIN_ROUTE=0 lesion). #141 -> next: re-run the integrated diagnostic on the full system to
 confirm live, then close #141.
+
+## 2026-08-25  reasoning route CONFIRMED LIVE on the integrated production system (#141 -> DONE)
+Re-ran the integrated conversational-state diagnostic on main (finding
+2026-08-25-integrated-conversational-state-diagnostic-2, 24 turns through the real /api/brain-chat).
+CONFIRMED live + together: reasoning route DERIVES ("what does the wolf's prey eat?" -> "I derived this
+from: wolf hunt deer; deer eat grass"), moat holds (unsupported + ambiguous multi-valued hops abstain),
+lesion load-bearing both ways; the DA axis is LIVE (every turn engaged/low_engagement, zero error:) and
+CURIOSITY is BACK (abstains append "my curiosity is piqued") — both were dead in the original diagnostic;
+no framing-faculty regression. #141 CLOSED (production-default + confirmed live). NEXT FRONTIER (named by
+the diagnostic): reasoning + recall over the brain's OWN 15k knowledge via NATURAL language (today the
+route reasons over just-taught facts + the possessive 2-hop shape; the 15k core still needs exact tokens,
+and compound/inverse/3+hop phrasings don't parse) -> new board task. Residuals tracked on #141's ref.

@@ -7,6 +7,32 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐⭐⭐ 2026-08-25 (evening) — the brain now REASONS to its own conclusion when you chat, on by default
+
+The biggest step toward the north-star landed. Until now, asking the brain something that needs two facts
+joined — "what does the wolf's prey eat?" — got you one repeated fact or "I don't know"; it never connected
+them. A live conversation test had just confirmed that gap was real. It is now closed: teach it "wolves hunt
+deer" and "deer eat grass", ask what the wolf's prey eats, and it answers **"grass"** — a conclusion it was
+never told — and says so honestly ("I derived this from: wolf hunt deer; deer eat grass"). This is on by
+default in the live chat.
+
+It was done carefully. A safety audit warned a naive version could occasionally make up a connected "fact"
+from noise; that risk was measured at real scale and found to be exactly zero (across four dimensionalities,
+three knowledge sizes, and six seeds — 0 in every case). Every unsupported or ambiguous question still
+honestly abstains, and turning the feature off reverts it to "I don't know" (proving the answer comes from the
+reasoning, not decoration). Verified with a 37-turn live conversation, then re-confirmed on the full system
+alongside everything else.
+
+Two more fixes rode along. The brain's dopamine sense was silently broken on the GPU — an internal type
+mismatch crashed it every single message (quietly), leaving three "done" abilities (its engaged-vs-flat mood,
+dopamine-driven memory strength, and dopamine-driven curiosity) doing nothing when you actually chatted. Fixed
+— and all three came back, including curiosity, which now genuinely pipes up ("my curiosity is piqued…") when
+it meets something it doesn't know.
+
+What's next: the brain reasons over facts you teach it in the conversation, but not yet over its own big body
+of stored knowledge (the 15,000-fact core still needs exact wording to reach), and only the simplest two-step
+question shape parses so far. Making it reason over its own knowledge in natural language is the next frontier.
+
 ## ⭐ 2026-08-26 (harvest) — the brain ships with a real body of knowledge on by default; a four-day compute window's verdicts landed
 
 The weekly free-compute window was harvested onto the main line. The headline: **the brain now loads a real
