@@ -1,0 +1,35 @@
+{
+ "run_id": "1787703678-1775456",
+ "runner": "research/runners/_vision_nonlin2layer_readout_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/vision-75b-nonlinear/research/runners/_vision_nonlin2layer_readout_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/lanes/perception/vision_nonlin2layer_readout_6seed.json"
+ ],
+ "git_sha": "3b810c851",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T20:21:18",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1159.0,
+ "corpus_check_query": "nonlinear 2-layer spiking readout for the z-normed C2 feature linear-separability ceiling (board #75b)",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/perception/vision_nonlin2layer_readout_6seed.json"
+}

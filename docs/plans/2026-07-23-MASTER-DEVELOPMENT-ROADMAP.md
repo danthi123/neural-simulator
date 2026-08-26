@@ -770,9 +770,20 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   LEARNING load-bearing 6/6 (learned 0.4375 vs random 0.2552 ≈ chance), clears the config-C NO-GO 0.34 6/6, and
 >   COLLAPSES the spike-port quantization gap to +0.0243 (config-C centroid was ~0.19). BUT does NOT beat V1-direct
 >   0.4184 (capability_go 0/6): the wall RELOCATED to the ~0.47 linear-separability ceiling of the z-normalized C2
->   code. Next SURPASS = (1) move common-mode rejection to the readout (lighter s2_norm + lower s2_gain, joint sweep),
->   (2) a NONLINEAR 2-layer spiking readout to lift the linear ceiling. `vlin_readout_6seed.json`, finding
+>   code. `vlin_readout_6seed.json`, finding
 >   `2026-08-25-vision-signed-linear-discriminant-spiking-readout-solves-quantization-wall-relocates-to-feature-ceiling`.
+>   **#75b (the nonlinear-2-layer rung) is now BUILT and NEGATIVE (2026-08-25, 61-config op-point search).** A
+>   cerebellar granule-cell expansion (fixed random K-claw excitatory convergence, an emergent AND-like
+>   coincidence nonlinearity) inserted before the SAME #75 readout TIES the 1-layer baseline (0.4288 vs 0.4375,
+>   dNONLIN -0.0087, 2/6 seeds positive — no lift) across 3 architectures (global gain, per-unit homeostatic
+>   gain, signed E+I claws); the corrected RATE ceiling confirms the underlying linear-separability ceiling does
+>   not move (0.3889, below the #75 1-layer ceiling 0.4653). Also surfaces a NEW residual (position leaks on
+>   4/6 seeds; anti_cheats_clean only 1/6, vs #75's clean 6/6). This CONVERGES with, and independently
+>   corroborates, #75's own diagnosis that the gap is MAGNITUDE/common-mode (not missing nonlinear structure) —
+>   **#75a is now the more promising lever**; a genuinely multiplicative (not summed-then-thresholded)
+>   conjunction on a magnitude-preserving C2 code remains untried if #75a alone does not close it. `vision_
+>   nonlin2layer_readout_6seed.json`, `vision_nonlin2layer_opsearch.json`, finding
+>   `2026-08-25-vision-nonlinear-2layer-granule-expansion-readout-does-not-lift-the-c2-linear-ceiling`.
 > - **⛔ SOURCE-MONITORING (#129) — this "NEGATIVE across variants" verdict is STALE, corrected same-day 2026-08-25:
 >   GO 6/6 via a DIFFERENT family (not the conjunctive tag this bullet named).** The conjunctive tag WAS tried and
 >   also fell short; the surpass instead reads perceived-vs-generated provenance as the SIGN of a divisively-
@@ -920,8 +931,11 @@ now DONE, not still open):**
   see above) — **IN PROGRESS, not done**. v1 self-org perception / spiking comprehension / curiosity learning-
   progress pool harvest — **UNCONFIRMED**, no landing evidence found on the 2026-08-25 sync pass; verify against the
   pool before assuming it landed.
-- **Vision next readout rung (#75):** unchanged — still open, now concretely scoped as board #135 (#75a, op-point
-  sweep) + #136 (#75b, nonlinear 2-layer readout).
+- **Vision next readout rung (#75):** board #136 (#75b, nonlinear 2-layer readout) is now BUILT + de-risked —
+  NEGATIVE (61-config op-point search, ties the 1-layer baseline, does not lift the RATE ceiling; see the
+  corrected bullet above). Board #135 (#75a, op-point sweep) is now the MORE PROMISING open lever, since
+  #75b's RATE-ceiling evidence independently corroborates #75's own magnitude/common-mode diagnosis over a
+  missing-nonlinearity one.
 - ~~DA-encoding on-substrate homeostat~~ **DONE**, and the FACULTY itself flipped default-ON (board #116,
   `acb8abe7b`/`a5a0dd099`) — beyond the original scope of this item.
 - ~~#130 replay: revise the order-STDP calibration...~~ **DONE** — GO 6/6 (`5679ef750`/`d4e8f1d71`, see the
