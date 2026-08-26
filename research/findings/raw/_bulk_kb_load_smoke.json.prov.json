@@ -1,0 +1,39 @@
+{
+ "run_id": "1787780062-4169275",
+ "runner": "research/runners/_bulk_kb_load_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_9afca2df-8ea-1/research/runners/_bulk_kb_load_derisk.py",
+  "--seeds",
+  "42",
+  "--n-facts",
+  "5000",
+  "--sample",
+  "2000",
+  "--moat-sample",
+  "1500",
+  "--spiking-n",
+  "40",
+  "--cross-n",
+  "30",
+  "--out",
+  "research/findings/raw/_bulk_kb_load_smoke.json"
+ ],
+ "git_sha": "0e22e97f1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T17:34:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_bulk_kb_load_smoke.json"
+}
