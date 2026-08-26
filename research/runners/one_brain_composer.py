@@ -116,7 +116,9 @@ class OneBrainComposer:
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
                  enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
-                 use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False):
+                 use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False,
+                 vocab_headroom=0, enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
+                 sparse_index_c=8, sparse_index_conf_floor=0.5):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
         # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
@@ -257,6 +259,43 @@ class OneBrainComposer:
         # The no-confab moat is preserved by construction: the confidence_gate margin + the cue-match abstention read
         # the SAME `scores`, and the WTA picks the same winner the argmax did, so every abstention is unchanged.
         self.enable_spiking_cleanup = bool(enable_spiking_cleanup)
+        # enable_sparse_index (KNOWLEDGE-SCALE fast path, board #150/#66; ADDITIVE + DEFAULT-OFF = BYTE-IDENTICAL to
+        # today when off, incl. the numpy-CPU + test-oracle path): route the who/what recall's V-wide matched-filter
+        # cleanup through a DG-like SPARSE INDEX so it runs O(shard) instead of O(V) as the concept codebook grows to
+        # LLM scale (500k-1M concepts). The wall today is the cleanup: each role's recovered phasor is matched against
+        # the codebook of ALL V concept codes (a V x D matvec) then argmax (`_select`) -- LINEAR in vocabulary, ~1.1 s
+        # / recall at ~37k vocab and intractable at small-LLM scale. The brain does NOT linearly scan memory: the
+        # dentate gyrus does sparse PATTERN SEPARATION (Kandel: 'pattern separation results from the divergence of
+        # entorhinal inputs onto a larger number of granule cells') then CA3 auto-associative COMPLETION restricted to
+        # the routed ensemble ('the recurrent excitatory connections of CA3 ... reactivation of a subset ... sufficient
+        # to activate the entire original neural ensemble'). When ON, a DG expansion + hard k-WTA + CA3-conjunction
+        # routing (reuse-by-import of the 6-seed-GO de-risk `_sparse_indexed_retrieval_derisk.DGSparseIndex`) routes the
+        # recovered role phasor to a SMALL candidate SHARD of the codebook, and the SAME matched-filter cleanup + argmax
+        # runs only over the shard rows. NO-REGRESSION is preserved two ways: (1) the SHARD is a SUBSET of the codebook,
+        # so its peak score <= the full peak -- if the full scan's decode/abstain holds, the shard's does too (the moat
+        # is intact by construction: an out-of-store cue whose full decode does not match any stored (agent, action)
+        # cue still does not match under the shard, so query_patient/query_agent/ask_yes_no abstain identically); and
+        # (2) a per-role CONFIDENCE FALLBACK -- when the shard's peak is not decisive (< conf_floor*D), the role
+        # ESCALATES to the full-codebook host cleanup, so the decoded word is IDENTICAL to the full scan (a stored
+        # fact's own code scores ~D and dominates -> the fast path fires on it; an ambiguous/degraded role escalates).
+        # BRAIN-BASED: the in-shard matched-filter cleanup IS the composer's existing on-substrate op (the same complex-
+        # synapse cleanup + argmax the full path runs, over fewer rows -- the composer's own oracle form, rf_phasor_
+        # composer.py:662, sum_k cos(2pi(rec - code))). The DG sparse PROJECTION is a DECLARED host-rate stand-in; its
+        # named spiking burn-down is the granule-cell WTA in the trisynaptic-loop probes (_riii_ca3_completion_
+        # specificity_derisk.py, cortex_dg_ca3_cleanup_probe.py, _gap5_emergent_dg_selection_derisk.py). Determinism:
+        # the index seeds from cfg.seed (self.seed). Biology binding: research/biology/dg-ca3-sparse-index.md. Env
+        # BRAIN_SPARSE_INDEX_RETRIEVAL=1 flips it on without a code change (owner reviews the default-on flip
+        # separately -- leave it OFF). The index does NOT engage when confidence_gate>0 (its shard-local margins are not
+        # byte-identical to full-V margins) -> the full read runs, no regression; clause-patient RENDERING also stays
+        # on the full bridge cleanup (only the flat who/what SELECTION + role decode route through the shard).
+        import os as _os
+        self.enable_sparse_index = bool(enable_sparse_index) or (
+            _os.environ.get("BRAIN_SPARSE_INDEX_RETRIEVAL", "").strip().lower() in ("1", "true", "on", "yes"))
+        self._dg_g = int(sparse_index_g); self._dg_G = int(sparse_index_G); self._dg_c = int(sparse_index_c)
+        self._dg_conf_floor = float(sparse_index_conf_floor)   # shard peak < floor*D -> escalate to the full scan
+        self._dg_index = None          # the DGSparseIndex over the concept codebook (lazy; reuse-by-import)
+        self._dg_codebook = None       # (V, D) concept phase-matrix aligned to self.words (fractional-cycle phases)
+        self._dg_built_V = -1          # len(self.words) the current index/codebook were built for (rebuild on change)
         # enable_multiframe (richer-syntax #2, default OFF = byte-identical): build a FrameParser (verb-position ->
         # frame selection + position x frame -> role, both neural) so `hear_multiframe(sentence, verbs)` comprehends a
         # sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV). The default `hear` (the on-bridge SVO/passive
@@ -289,6 +328,25 @@ class OneBrainComposer:
         self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes,
                                      local_reciprocal_unbind=local_reciprocal_unbind)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
+        # --- runtime vocabulary growth via a RESERVE of uncommitted cleanup slots (recruit-an-assembly) ---
+        # A cortex holds a pool of UNCOMMITTED assemblies (adult-born granule cells / silent synapses) that get
+        # RECRUITED when a new concept is learned -- it does NOT re-architect on every new word. So reserve
+        # `vocab_headroom` blank codebook slots HERE (sized into the layout + bridge below, since cb/n_total cascade
+        # from V); runtime word-learning then RECRUITS a free slot (binds the new word to that slot's fixed code)
+        # with NO layout/bridge change. Each reserved slot's code is used by BOTH the bind (self.comp.concepts[w])
+        # and the cleanup (self.words) once recruited, so decode is consistent. DEFAULT vocab_headroom=0 => V/cb/
+        # n_total/the bridge are byte-identical to before (the rf/numpy oracle + every existing test unchanged); the
+        # PRODUCTION onebrain chat sets a headroom so a fact taught mid-conversation is laid down + recalled on the
+        # spiking store. See 2026-08-12-onebrain-spiking-store... (the wrap-vs-inner codebook bug this closes).
+        self._recruit_rng = np.random.default_rng(int(seed) + 90210)
+        self._free_slots = []
+        for _k in range(max(0, int(vocab_headroom))):
+            _ph = f"__free{_k}__"
+            if _ph in self.comp.concepts:                # avoid the (astronomically unlikely) name collision
+                continue
+            self.comp.concepts[_ph] = self._recruit_rng.uniform(0.0, 1.0, self.D)
+            self._free_slots.append(len(self.words))
+            self.words.append(_ph)
         self.V = len(self.words)
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
         self.pol_words = list(self.comp.pol_words)                   # ["AFFIRM","NEGATE"] -- cleaned up SEPARATELY from
@@ -420,9 +478,47 @@ class OneBrainComposer:
         fact = {"agent": agent, "action": action, "patient": noun, "polarity": pol}
         if self.enable_attributed and attr is not None:
             fact["attribute"] = attr
+        # RECRUIT any never-seen main-role filler into a reserved cleanup slot BEFORE binding, so the bind and the
+        # cleanup use the SAME code. Without this the new word's code lives only on the inner comp while the outer
+        # cleanup codebook (self.words, copied once at construction) stays blind to it -> the taught fact STORES but
+        # never RECALLS (the wrap-vs-inner codebook bug). No-op when vocab_headroom=0 (the pool is empty).
+        recruited = False
+        for _r in self.main_roles:
+            _v = fact.get(_r)
+            if isinstance(_v, str):
+                recruited = self._recruit_word(_v) or recruited
+        if recruited:
+            self._csr_cache.clear()                          # the cleanup operator changed -> rebuild on next batched read
         roles = [r for r in self.bind_roles if r in fact]       # bind only present roles, in canonical order
         self._store_composite([fact[r] for r in roles], roles)
         return fact
+
+    def _recruit_word(self, w):
+        """Recruit a never-seen concept into a reserved (uncommitted) cleanup slot -- the biological recruit-an-
+        assembly (a pool of uncommitted assemblies is claimed when a new concept is learned). The word takes a free
+        slot's FIXED code as BOTH its bind code (self.comp.concepts[w]) and its cleanup code (self.words[slot]); if
+        the inner comp already allocated a code for w, that code is reused (so any fact already bound with it stays
+        consistent). No layout/bridge change (the slot was pre-allocated by vocab_headroom). Returns True iff a
+        recruit happened (caller clears the cleanup cache). A word already in the cleanup codebook, or an exhausted
+        pool, is a no-op (False)."""
+        if not isinstance(w, str) or w in self._word_index:
+            return False                                     # already decodable by the outer cleanup
+        if not self._free_slots:
+            return False                                     # pool exhausted (headroom too small) -> stays a decode miss
+        s = self._free_slots.pop(0)
+        ph = self.words[s]
+        reserve_code = self.comp.concepts.pop(ph, None)
+        code = self.comp.concepts.get(w)
+        if code is None:
+            code = reserve_code if reserve_code is not None else self._recruit_rng.uniform(0.0, 1.0, self.D)
+            self.comp.concepts[w] = code
+        if w not in self.comp.words:
+            import bisect; bisect.insort(self.comp.words, w)
+        self.words[s] = w                                    # the cleanup slot now decodes to the real word
+        self._word_index.pop(ph, None)
+        self._word_index[w] = s
+        self._dg_index = None; self._dg_built_V = -1         # codebook mutated -> rebuild the DG index on next read
+        return True
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
@@ -899,9 +995,99 @@ class OneBrainComposer:
             out.append(row)
         return out
 
+    # --- (#150 knowledge-scale) DG-INDEXED cleanup fast path: route the cue -> shard -> cleanup over shard rows -----
+    def _ensure_dg_index(self):
+        """Build (lazily, once per codebook mutation) the DG-like sparse index + the concept phase-matrix over the
+        CURRENT cleanup codebook `self.words`. Reuse-by-import of the validated de-risk (research/runners/
+        _sparse_indexed_retrieval_derisk.py, 6-seed GO; import deferred so a default-off composer never imports it).
+        The index KEY is computed from the concept feature vector via the DG sparse projection -- NEVER from an answer
+        id (content-addressable, anti-cheat a). Rebuilt only when len(self.words) changed (a recruit/grow), so the moat
+        is never served a stale index. m ~ V^(1/g) keeps bucket occupancy O(1) -> the shard stays ~constant as V
+        grows. Seeds from self.seed (== cfg.seed determinism)."""
+        V = len(self.words)
+        if self._dg_index is not None and self._dg_built_V == V:
+            return
+        from research.runners._sparse_indexed_retrieval_derisk import DGSparseIndex
+        # concept codebook aligned to self.words, in FRACTIONAL-CYCLE phases (the composer's convention; the phasor is
+        # exp(2pi i phase)). The de-risk index's feature convention is [cos(phase_rad), sin(phase_rad)], so build/query
+        # in RADIANS (phase * 2pi).
+        cb = np.stack([np.asarray(self.comp.concepts[w], dtype=float) for w in self.words])   # (V, D) fractional-cycle
+        m = max(2, int(np.ceil(V ** (1.0 / self._dg_g))))
+        idx = DGSparseIndex(D=self.D, m=m, g=self._dg_g, G=self._dg_G, c=self._dg_c, seed=self.seed)
+        idx.build(cb * (2.0 * np.pi))       # store each concept's band-winner conjunctive key -> bucket (id = word idx)
+        self._dg_index = idx
+        self._dg_codebook = cb
+        self._dg_built_V = V
+
+    def _dg_shard_select(self, rec_phases):
+        """Route the recovered role phasor (fractional-cycle phases) to its DG shard and decode it by the matched
+        filter over ONLY the shard concepts. Returns (word, peak_score), or (None, peak) to signal ESCALATE-to-full
+        when the shard is empty or its peak is not decisive (< conf_floor*D) -- the no-regression fallback. The score
+        is the composer's own on-substrate matched filter over fewer rows: score_w = sum_k cos(2pi(rec - code_w))
+        (== rf_phasor_composer.py:662; equals Re(conj(code)*rec) for unit phasors, the bridge cleanup argmax under the
+        default persistent_loop unit-normalization)."""
+        self._ensure_dg_index()
+        rec = np.asarray(rec_phases, dtype=float)
+        shard = self._dg_index.query(rec * (2.0 * np.pi))          # candidate word indices (the routed CA3 ensemble)
+        if shard.size == 0:
+            return None, 0.0
+        cb = self._dg_codebook[shard]                              # (s, D) shard concept phases
+        sc = np.cos(2.0 * np.pi * (rec[None, :] - cb)).sum(axis=1)  # (s,) matched-filter cleanup over the shard
+        t = int(np.argmax(sc)); peak = float(sc[t])
+        if peak < self._dg_conf_floor * self.D:
+            return None, peak                                     # not decisive -> escalate to the full scan (parity)
+        return self.words[int(shard[t])], peak
+
+    def _full_host_select(self, rec_phases):
+        """Full-codebook host matched-filter argmax over the recovered role phasor (the escalation path == the full
+        scan). Same operator as `_dg_shard_select`, over ALL V rows. Used only when a role's shard read is not
+        decisive, so the decoded word is IDENTICAL to the full cleanup."""
+        rec = np.asarray(rec_phases, dtype=float)
+        sc = np.cos(2.0 * np.pi * (rec[None, :] - self._dg_codebook)).sum(axis=1)
+        return self.words[int(np.argmax(sc))]
+
+    def _read_block_indexed(self, block_idx):
+        """DG-indexed variant of `_read_block`: reconstruct + unbind (IDENTICAL machinery), read each role's RECOVERED
+        phasor from its Q register (rf_read_phases, == `_recovered_patient_phases`), and decode each MAIN role by
+        ROUTING to a DG shard + matched-filter cleanup over the shard rows -- falling back to the full-codebook host
+        cleanup on a non-decisive role, so the decode is identical to the full scan. Polarity (a 2-word codebook) is
+        decoded directly (no index needed). Only reached when enable_sparse_index (and confidence_gate==0); the full
+        read path stays byte-unchanged. NO V-wide cleanup wiring/resonate is built -> O(shard) not O(V) at scale."""
+        b, D, Pd = self.b, self.D, self.period
+        self._zero_rf_v_u()
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        unbind = []
+        for ri, role in enumerate(self.bind_roles):
+            zc = self._unbind_conj(role)
+            unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        recovered = np.asarray(b.rf_read_phases())                 # fractional-cycle phases over the whole bridge
+        out = {}
+        for ri, role in enumerate(self.main_roles):
+            rec = recovered[self.q_base + ri * D: self.q_base + (ri + 1) * D]
+            w, _pk = self._dg_shard_select(rec)
+            out[role] = w if w is not None else self._full_host_select(rec)   # escalate on a non-decisive role
+        pol_ri = self.bind_roles.index("polarity")
+        rec_p = recovered[self.q_base + pol_ri * D: self.q_base + (pol_ri + 1) * D]
+        pol_cb = np.stack([np.asarray(self.comp.concepts[w], dtype=float) for w in self.pol_words])   # (NP, D)
+        psc = np.cos(2.0 * np.pi * (rec_p[None, :] - pol_cb)).sum(axis=1)
+        out["polarity"] = self.pol_words[int(np.argmax(psc))]
+        return out
+
+    def _read_blocks_indexed(self):
+        """All stored blocks decoded via the DG-indexed per-block read (the knowledge-scale fast path)."""
+        return [self._read_block_indexed(i) for i in range(len(self.kb))]
+
     def _read_blocks(self):
-        """All stored blocks as {role: word} dicts: the BATCHED read (default, A5 lever 1) or the per-block loop (the
-        oracle). Each dict has agent/action/patient/polarity (+attribute on the attribute-enabled composer)."""
+        """All stored blocks as {role: word} dicts. DEFAULT: the BATCHED read (A5 lever 1) or the per-block loop (the
+        oracle). When enable_sparse_index (and confidence_gate==0, whose shard-local margins are out of scope), the
+        DG-INDEXED per-block read routes each role's cleanup through its sparse shard (O(shard) not O(V)). Each dict
+        has agent/action/patient/polarity (+attribute on the attribute-enabled composer)."""
+        if self.enable_sparse_index and self.confidence_gate == 0.0:
+            return self._read_blocks_indexed()
         if self.enable_batched:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]

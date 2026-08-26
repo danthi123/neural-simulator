@@ -1,0 +1,254 @@
+{
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "scales": [
+  5000,
+  50000,
+  200000
+ ],
+ "api": [
+  {
+   "seed": 42,
+   "ok": true,
+   "rows_match": true,
+   "n_role_cells": 64,
+   "n_role_mismatch": 0,
+   "ans_patient_match": true,
+   "ans_agent_match": true,
+   "ans_yesno_match": true,
+   "moat_match": true,
+   "moat_new_confab": 0,
+   "moat_all_abstain_off": true,
+   "n_in_store_queries": 48
+  },
+  {
+   "seed": 43,
+   "ok": true,
+   "rows_match": true,
+   "n_role_cells": 64,
+   "n_role_mismatch": 0,
+   "ans_patient_match": true,
+   "ans_agent_match": true,
+   "ans_yesno_match": true,
+   "moat_match": true,
+   "moat_new_confab": 0,
+   "moat_all_abstain_off": true,
+   "n_in_store_queries": 48
+  },
+  {
+   "seed": 44,
+   "ok": true,
+   "rows_match": true,
+   "n_role_cells": 64,
+   "n_role_mismatch": 0,
+   "ans_patient_match": true,
+   "ans_agent_match": true,
+   "ans_yesno_match": true,
+   "moat_match": true,
+   "moat_new_confab": 0,
+   "moat_all_abstain_off": true,
+   "n_in_store_queries": 48
+  }
+ ],
+ "scale": [
+  {
+   "seed": 42,
+   "V": 5000,
+   "m": 18,
+   "parity": 0.9833333333333333,
+   "rows_full": 5000.0,
+   "rows_dg": 18.0,
+   "rows_speedup": 277.77777777777777,
+   "wall_full_ms": 8.201321734425923,
+   "wall_dg_ms": 0.3080659041491648,
+   "wall_speedup": 26.621971545591304,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 42,
+   "V": 50000,
+   "m": 37,
+   "parity": 1.0,
+   "rows_full": 50000.0,
+   "rows_dg": 22.033333333333335,
+   "rows_speedup": 2269.28895612708,
+   "wall_full_ms": 91.98076733543228,
+   "wall_dg_ms": 0.36445496371015906,
+   "wall_speedup": 252.37896720918866,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 42,
+   "V": 200000,
+   "m": 59,
+   "parity": 1.0,
+   "rows_full": 200000.0,
+   "rows_dg": 23.6,
+   "rows_speedup": 8474.57627118644,
+   "wall_full_ms": 375.3969546640292,
+   "wall_dg_ms": 0.3970841372696062,
+   "wall_speedup": 945.3839109396299,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 43,
+   "V": 5000,
+   "m": 18,
+   "parity": 1.0,
+   "rows_full": 5000.0,
+   "rows_dg": 17.333333333333332,
+   "rows_speedup": 288.4615384615385,
+   "wall_full_ms": 8.237208016604805,
+   "wall_dg_ms": 0.31152163476993644,
+   "wall_speedup": 26.44184896720933,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 43,
+   "V": 50000,
+   "m": 37,
+   "parity": 0.9833333333333333,
+   "rows_full": 50000.0,
+   "rows_dg": 22.233333333333334,
+   "rows_speedup": 2248.8755622188905,
+   "wall_full_ms": 92.00232581351884,
+   "wall_dg_ms": 0.36567490121039253,
+   "wall_speedup": 251.59595451858732,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 43,
+   "V": 200000,
+   "m": 59,
+   "parity": 0.9833333333333333,
+   "rows_full": 200000.0,
+   "rows_dg": 23.066666666666666,
+   "rows_speedup": 8670.520231213874,
+   "wall_full_ms": 375.6446694819412,
+   "wall_dg_ms": 0.39169269730336964,
+   "wall_speedup": 959.029034924797,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 44,
+   "V": 5000,
+   "m": 18,
+   "parity": 1.0,
+   "rows_full": 5000.0,
+   "rows_dg": 18.283333333333335,
+   "rows_speedup": 273.47310847766636,
+   "wall_full_ms": 8.676902344450355,
+   "wall_dg_ms": 0.33998266056490445,
+   "wall_speedup": 25.521602572416743,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 44,
+   "V": 50000,
+   "m": 37,
+   "parity": 1.0,
+   "rows_full": 50000.0,
+   "rows_dg": 21.933333333333334,
+   "rows_speedup": 2279.6352583586627,
+   "wall_full_ms": 92.1268383487283,
+   "wall_dg_ms": 0.3782993221345047,
+   "wall_speedup": 243.52895434470938,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  },
+  {
+   "seed": 44,
+   "V": 200000,
+   "m": 59,
+   "parity": 1.0,
+   "rows_full": 200000.0,
+   "rows_dg": 26.666666666666668,
+   "rows_speedup": 7500.0,
+   "wall_full_ms": 375.0020327356954,
+   "wall_dg_ms": 0.4146269988268614,
+   "wall_speedup": 904.4322579010046,
+   "oos_full_abstain": 1.0,
+   "oos_dg_abstain": 1.0,
+   "dg_new_confab": 0
+  }
+ ],
+ "api_ok": true,
+ "scale_ok": true,
+ "label": "DG sparse-index wired into OneBrainComposer (#150 knowledge-scale) \u2014 no-regression",
+ "status": "GO",
+ "go": true,
+ "undefined_reasons": [],
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(A) API decode + answers IDENTICAL flag OFF vs ON (all seeds)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(A) API moat preserved: 0 new confab + all moat cues abstain OFF (all seeds)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(B) scale top-1 parity vs full scan >= 0.98 at every V",
+   "ok": true,
+   "detail": "measured=0.9944444444444445 expect=<function build_verdict.<locals>.<lambda> at 0x7f1a063d1f80>",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "(B) scale rows-speedup @ Vmax vs 10x floor",
+   "ok": true,
+   "detail": "8215.03 vs floor 10",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(B) scale shard SUBLINEAR (grows slower than V)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(B) scale moat: out-of-store abstains under both + 0 new confab",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "disabled_processes": [
+  {
+   "process": "spiking DG granule-cell WTA",
+   "why": "the host-rate DG sparse projection is a DECLARED stand-in; the in-shard matched-filter cleanup IS the composer's on-substrate op. Burn-down: _riii_ca3_completion_specificity_derisk.py / cortex_dg_ca3_cleanup_probe.py / _gap5_emergent_dg_selection_derisk.py"
+  },
+  {
+   "process": "enable_spiking_cleanup",
+   "why": "the verify runs the numpy-CPU test-oracle argmax path (enable_spiking_cleanup=False); the spiking-cleanup WTA winner == argmax (validated), so the index composes with it unchanged"
+  }
+ ],
+ "chance": null
+}
