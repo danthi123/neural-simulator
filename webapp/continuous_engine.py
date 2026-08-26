@@ -395,6 +395,26 @@ def inner_life(cache_key) -> list:
     return list(_INNER_LIFE.get(cache_key, []))
 
 
+# ── #91 (2026-08-26, additive/default-OFF pending GO): extend the idle-tick "felt mood keeps evolving" relaxation to
+# the flagship, default-ON, most user-visible affect->tone coupling (board #84, `webapp.affect_drives_chat`). Today's
+# idle tick (tick_session, above) only relaxes+re-reads the LEGACY Gate-B mood (`_SESSION_MOOD` +
+# `_get_affect_organ().read_differential`); #84's OWN persistent EMA (`AffectDrivesWorkspace.ema_valence/ema_arousal`)
+# is written only inside `observe_turn` (a LIVE turn) and was never touched by an idle tick -- so telling the brain
+# something emotionally charged, waiting idle, then sending a neutral follow-up produced the IDENTICAL #84 lead
+# marker as zero idle time (an observe-vs-drive gap on the single most legible "felt life between messages" signal).
+# `_affect_relax_drive_enabled()` gates a NEW, independently-severable idle-tick call into #84's own relax_idle() --
+# an escape hatch distinct from BRAIN_AFFECT_DRIVES / BRAIN_AFFECT_DRIVES_LESION so this one coupling can be lesioned
+# without touching #84 wholesale (the load-bearing proof needs exactly that knob).
+def _affect_relax_drive_enabled() -> bool:
+    """#91. `BRAIN_CONTINUOUS_AFFECT_RELAX` truthy (1/true/on/yes) arms the idle-tick relax->reread call into #84's
+    `AffectDrivesWorkspace.relax_idle`. Default-OFF (unset/0/anything else) pending the cupy anti-hollow GO --
+    unarmed, `tick_idle_sessions` never calls `affect_drives_chat.relax_idle`, so #84 stays exactly as it is today
+    (byte-identical): its EMA is untouched by any idle tick, only by a live `observe_turn`. Mirrors the
+    `_wander_ior_enabled()` / `ideation_enabled()` pattern (an independent per-coupling flag), but starts OFF
+    because THIS coupling has not yet been owner-reviewed/flipped the way IOR and ideation were after their GO."""
+    return os.environ.get("BRAIN_CONTINUOUS_AFFECT_RELAX", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def recent_wander(cache_key) -> str | None:
     """Rung 2 (board #86, 2026-08-20): make the idle-wandered THOUGHT load-bearing on the NEXT real turn (drive, not
     just observe -- mirrors the #84 affect-lead / #85 swap-lead pattern). Returns the most recent concept an idle
@@ -758,6 +778,31 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
                         "DA-encoding substrate homeostasis tick failed for %s", cache_key, exc_info=True)
+                # #91: extend the idle-tick "felt mood keeps evolving" relaxation to the flagship #84 affect->tone
+                # coupling's OWN persistent EMA (see _affect_relax_drive_enabled's header note). Self-gates on
+                # BRAIN_CONTINUOUS_AFFECT_RELAX (default-OFF pending GO) -> a no-op, byte-identical tick when unset.
+                # relax_idle() itself no-ops (returns None) for a session that never had an #84 turn.
+                if _affect_relax_drive_enabled():
+                    try:
+                        _chat2 = chat_getter(cache_key)
+                        if _chat2 is not None:
+                            from webapp import affect_drives_chat as _ADC
+                            rec91 = _ADC.relax_idle(_chat2, relax=RELAX, neutral=NEUTRAL)
+                            if rec91 is not None and rec91.get("relaxed"):
+                                lst91 = _INNER_LIFE.setdefault(cache_key, [])
+                                lst91.append({
+                                    "t": now, "affect_drives_relax": True,
+                                    "level": rec91.get("level", 0), "lead": rec91.get("lead", ""),
+                                    "mood": rec91.get("mood", 0.0),
+                                    "note": "idle: my felt warmth (the #84 lead) is fading toward neutral "
+                                            "(level now %s)" % rec91.get("level", 0),
+                                })
+                                if len(lst91) > _INNER_LIFE_MAX:
+                                    del lst91[:-_INNER_LIFE_MAX]
+                    except Exception:
+                        import logging as _lg
+                        _lg.getLogger(__name__).warning(
+                            "#91 affect-drives idle relax failed for %s", cache_key, exc_info=True)
         except Exception:
             continue
     return n

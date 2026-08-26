@@ -1,0 +1,23 @@
+{
+ "run_id": "1787723217-2358007",
+ "runner": "research/runners/_continuous_affect_drives_idle_relax_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_4886665c-843-3/research/runners/_continuous_affect_drives_idle_relax_derisk.py"
+ ],
+ "git_sha": "0b9acb3b8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T01:46:57",
+ "env": {},
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_continuous_affect_relax/idle_relax_derisk.json"
+}

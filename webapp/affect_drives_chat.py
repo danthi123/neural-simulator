@@ -296,6 +296,50 @@ class AffectDrivesWorkspace:
             return info
 
 
+    def relax_idle(self, relax: float, neutral: float = 0.0) -> dict:
+        """ONE IDLE-TICK relaxation step (board #91, 2026-08-26) -- the continuous-engine companion to `observe()`:
+        decay the persistent EMA body-state toward the neutral set-point (the SAME homeostatic relaxation formula
+        `continuous_engine.tick_session` already applies to the legacy Gate-B mood, `v1 = NEUTRAL + (v0-NEUTRAL)*RELAX`
+        -- reused verbatim, not reinvented), recompute the body-state (h, a), and re-run ONE neural #81 ladder READ at
+        the DECAYED point. So the felt mood this coupling reports between turns is a genuine spiking read AT THE
+        RELAXED body-state -- never a host time-based formula computing the level/lead directly. Does NOT increment
+        `n_turns` (an idle tick is not a conversational turn) and does NOT touch the induction/hold branching
+        `observe()` uses -- it is a distinct, idempotent decay step the idle loop calls once per tick, applied
+        directly to the SAME `ema_valence`/`ema_arousal`/`h`/`a` state a live `observe()` turn reads and writes next.
+
+        Returns the same-shaped record `observe()` returns (mood/felt_arousal/level/lead/...) plus `relaxed: True`,
+        so a caller can log an inner-life note ("my felt warmth is fading toward neutral"). Never raises out (mirrors
+        `observe()`'s never-crash contract) -- on any error the level/lead stay at the inert default (0/'')."""
+        with self._lock:
+            self.ema_valence = float(neutral) + (float(self.ema_valence) - float(neutral)) * float(relax)
+            self.ema_arousal = float(self.ema_arousal) * float(relax)
+            self.h, self.a = _valence_to_body(self.ema_valence, self.ema_arousal)
+
+            info = {"acted": False, "relaxed": True, "turn": self.n_turns, "lesioned": False,
+                    "ema_valence": float(self.ema_valence), "ema_arousal": float(self.ema_arousal),
+                    "body_h": float(self.h), "body_a": float(self.a),
+                    "mood": 0.0, "felt_arousal": 0.0, "level": 0, "high_arousal": False, "lead": "",
+                    "reason": None, "seed": self.seed}
+            try:
+                self._isolated(self._ensure)
+                r = self._isolated(lambda: _read_body(self._brain, self.h, self.a, _I_BODY_PA,
+                                                      settle=_SETTLE_MS, establish=_ESTABLISH_MS, read=_READ_MS,
+                                                      lesion_gate=False))
+                mood = float(r["mood"])
+                felt = float(r["felt_arousal"])
+                level = mood_to_level(mood)
+                high = bool(felt > _AROUSAL_HIGH)
+                lead = expression_lead(level, high)
+                info.update({"acted": True, "mood": mood, "felt_arousal": felt, "level": int(level),
+                             "high_arousal": high, "lead": lead,
+                             "vplus_rate": float(r.get("vplus_rate", 0.0)),
+                             "vminus_rate": float(r.get("vminus_rate", 0.0)),
+                             "reason": "idle_relax"})
+            except Exception as e:   # never let the idle-relax read crash the tick loop
+                info["reason"] = f"error:{type(e).__name__}: {e}"
+            return info
+
+
 def get_workspace(chat, *, seed: int = _DEFAULT_SEED) -> AffectDrivesWorkspace:
     """Idempotently attach a per-session `AffectDrivesWorkspace` to the cached ChatBrain (auto-cleared on session
     reset, which drops the ChatBrain). No `sim/` edit; the ChatBrain instance is a host scaffold."""
@@ -304,6 +348,29 @@ def get_workspace(chat, *, seed: int = _DEFAULT_SEED) -> AffectDrivesWorkspace:
         ws = AffectDrivesWorkspace(seed=seed)
         chat._affect_drives_workspace = ws
     return ws
+
+
+def relax_idle(chat, relax: float, neutral: float = 0.0) -> Optional[dict]:
+    """The IDLE-TICK entry point (board #91): relax THIS session's #84 affect-drives EMA toward neutral and re-read
+    the neural ladder at the decayed point. `continuous_engine`'s headline mechanism -- "the felt mood keeps
+    evolving while idle" -- previously reached ONLY the legacy Gate-B affect path (`_SESSION_MOOD` +
+    `_get_affect_organ().read_differential`); this extends the SAME idle-relax idea to the flagship, default-ON,
+    most user-visible affect->tone coupling (the #84 lead marker this module drives), closing an observe-vs-drive
+    gap: tell the brain something emotionally charged, wait idle, then send a neutral follow-up -- BEFORE this, the
+    #84 lead on return was IDENTICAL to zero idle time, because the thing that decays (`_SESSION_MOOD`) never fed
+    #84.
+
+    Returns None (a clean no-op) when this session has no `_affect_drives_workspace` yet -- i.e. #84 was never
+    triggered on a live turn -- so a session that never had an affect-drives turn is BYTE-IDENTICAL: idling it
+    does nothing new, exactly like today. Never raises (delegates to `AffectDrivesWorkspace.relax_idle`, itself
+    never-raising)."""
+    ws = getattr(chat, "_affect_drives_workspace", None)
+    if ws is None:
+        return None
+    try:
+        return ws.relax_idle(relax, neutral=neutral)
+    except Exception as e:
+        return {"acted": False, "relaxed": True, "reason": f"error:{type(e).__name__}: {e}", "lead": "", "level": 0}
 
 
 def observe_turn(chat, message: str, appraisal: Optional[dict] = None, *,
