@@ -1,0 +1,66 @@
+"""Production wire-in ORGAN for SELECTIVE ATTENTION — biased competition (Wong-Wang / Desimone-Duncan lateral
+inhibition between held discourse-referent attractors).
+
+WHAT THIS DOES. The validated faculty already exists as an organ — `BiasedCompetitionContextBuffer`
+(`research/runners/biased_competition_buffer.py`) — and is already wired into `MultiTurnAgent` behind its
+`enable_biased_competition` constructor flag. But EVERY live build site (the console TUI's self-knowledge /
+tiny-demo brains, the rich-answer smoke, and the WEBAPP production loader `developed_brain_io.load_developed_brain`)
+hard-codes `enable_biased_competition=False`, so the faculty is dark in production. This module is the single
+place that decides — from a NEW env flag — whether those live sites turn the faculty ON. It adds NO new mechanism;
+it only routes the existing, de-risk-validated organ into the live pipeline behind one gate.
+
+THE FLAG (default OFF for now — the PARENT flips the default after the 6-seed pool soak passes):
+    BRAIN_BIASED_COMPETITION   unset / "0" / "false" / "off" / "no" / ""  -> OFF  (byte-identical to today)
+                               "1" / "true" / "on" / "yes"               -> ON
+
+BYTE-IDENTITY GUARANTEE (flag OFF == today). Each wired build site substitutes the literal `False` it holds today
+with `biased_competition_enabled()`. When the flag is unset this call returns exactly `False`, i.e. the SAME value
+the code passes today, so `MultiTurnAgent.enable_biased_competition is False`, the biased-competition buffer is
+never constructed (`self.bcw is None`), and `_write_referent` / `_resolve` follow the plain single-attractor
+anaphora path unchanged. Byte-identity here is therefore STRUCTURAL (identical argument value), not merely
+empirical — and it is additionally proven empirically by the wire-in verifier + the 6-seed soak runner.
+
+WHAT CHANGES WHEN ON (the faculty, load-bearing). With the flag ON, a bare pronoun over >=2 held discourse
+referents ("the cat and the ball ... it ...") routes through the WTA biased competition: mutual inhibition between
+the referent assemblies + a small CONTENT bias from the query verb's selectional restriction resolves the pronoun
+to the SALIENT / content-favored referent (e.g. "what does it eat?" -> the animate cat; "where does it roll?" ->
+the inanimate ball). UNIQUE-referent turns (< 2 held) never enter the biased path -> byte-identical to OFF; only
+MULTI-referent turns change. The no-confab moat is preserved (empty WM / content-silent verb -> abstain).
+
+LESION ORACLE (the coupling is load-bearing iff lesioning it makes the content-tracking VANISH). The de-risk's own
+bias-lesion: zero the content bias current injected into the winning sel pool
+(`MultiTurnAgent(..., biased_competition_bias_pA=0.0)`) -> the WTA reverts to the SEED-DEPENDENT intrinsic
+attractor, so the verb no longer steers the winner (both verbs collapse to the same intrinsic referent, or
+abstain). A lesion that changed nothing would be a FAIL; the wire-in verifier asserts the difference vanishes.
+
+De-risk GO (the mechanism this routes): `research/findings/2026-06-19-multireferent-biased-competition-derisk.md`
+(GO-arm 5/6 seeds, all anti-cheat controls 6/6, on the spiking `SimulationBridge`). Integration into MultiTurnAgent:
+`research/findings/2026-06-19-multireferent-integration-multiturnagent.md`. CI guard:
+`tests/test_multireferent_biased_competition.py`.
+
+Reuse-by-import; NO `sim/` edit; the organ + its lesion oracle are unchanged.
+"""
+from __future__ import annotations
+
+import os
+
+#: The environment flag that gates selective-attention biased competition at the live build sites.
+BRAIN_BIASED_COMPETITION_ENV = "BRAIN_BIASED_COMPETITION"
+
+#: Truthy spellings (case-insensitive, whitespace-stripped). Anything else -> OFF.
+_TRUTHY = frozenset({"1", "true", "on", "yes"})
+
+
+def biased_competition_enabled(env=None) -> bool:
+    """Return True iff the ``BRAIN_BIASED_COMPETITION`` env flag is set to a truthy value.
+
+    Default (flag unset, or any non-truthy value such as ``"0"``/``"false"``/``"off"``/``""``) -> ``False`` ==
+    exactly the literal the live build sites pass today == byte-identical to the current production behavior. The
+    PARENT flips the production default (to ON) only after the 6-seed pool soak passes; until then this returns
+    ``False`` for an unset flag, so the wire-in ships dark.
+
+    ``env`` defaults to ``os.environ``; an explicit mapping is accepted so a test/soak can toggle the flag without
+    mutating the process environment.
+    """
+    src = os.environ if env is None else env
+    return str(src.get(BRAIN_BIASED_COMPETITION_ENV, "")).strip().lower() in _TRUTHY

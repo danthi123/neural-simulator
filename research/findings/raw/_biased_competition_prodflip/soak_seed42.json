@@ -1,0 +1,74 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 1,
+  "n_no_regression": 1,
+  "go": [
+    true
+  ],
+  "no_regression": [
+    true
+  ],
+  "backend": "numpy",
+  "results": {
+    "42": {
+      "seed": 42,
+      "backend": "numpy",
+      "GO": true,
+      "no_regression": true,
+      "faculty_live": true,
+      "off_buffer_absent": true,
+      "on_buffer_built": true,
+      "on_content_flip": true,
+      "roll_differs": true,
+      "lesion_reverts": true,
+      "off": {
+        "ordinary": {
+          "unique_pronoun": "fish",
+          "plain_fact": "fish",
+          "moat_unknown_subject": null,
+          "truth_query": "yes",
+          "moat_pronoun_silent": null
+        },
+        "triggered": {
+          "held_ok": true,
+          "resolve_eat": null,
+          "wd_eat": null,
+          "resolve_roll": null,
+          "wd_roll": null,
+          "enable_biased_competition": false,
+          "bcw_built": false
+        }
+      },
+      "on": {
+        "ordinary": {
+          "unique_pronoun": "fish",
+          "plain_fact": "fish",
+          "moat_unknown_subject": null,
+          "truth_query": "yes",
+          "moat_pronoun_silent": null
+        },
+        "triggered": {
+          "held_ok": true,
+          "resolve_eat": "cat",
+          "wd_eat": "fish",
+          "resolve_roll": "ball",
+          "wd_roll": "hill",
+          "enable_biased_competition": true,
+          "bcw_built": true
+        }
+      },
+      "lesion": {
+        "held_ok": true,
+        "resolve_eat": "cat",
+        "wd_eat": "fish",
+        "resolve_roll": "cat",
+        "wd_roll": "mat",
+        "enable_biased_competition": true,
+        "bcw_built": true
+      },
+      "elapsed_s": 33.1
+    }
+  }
+}
