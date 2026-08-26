@@ -48,16 +48,18 @@ def run(seed):
     return recall_ok and moat_ok
 
 
-if not is_gpu_backend():
-    print("SKIP: needs GPU (OneBrainComposer on-bridge parser)", flush=True); sys.exit(0)
-print("gap#5 ONE-BRAIN PRODUCTION sleep-cycle — does the OneBrainComposer's store/recall/moat survive a WAKE->SLEEP->WAKE "
-      "phase-switch cycle? GO iff recall + moat IDENTICAL before/after, all seeds.", flush=True)
-seeds = [42, 43, 44, 100, 101, 102]
-oks = []
-for s in seeds:
-    try:
-        oks.append(run(s))
-    except Exception as e:
-        print(f"  [seed {s}] ERROR: {type(e).__name__}: {e}", flush=True); oks.append(False)
-print(f"\n=== PRODUCTION SLEEP-CYCLE: survived {sum(oks)}/{len(seeds)} -> {'GO' if all(oks) and len(oks)==len(seeds) else 'NO-GO'} ===", flush=True)
-print("GAP5-ONEBRAIN-SLEEPCYCLE DONE", flush=True)
+if __name__ == "__main__":   # guarded so `sleep_cycle` is importable without running the 6-seed suite (the production
+                             # continuous-engine sleep-replay consumer reuses `sleep_cycle` verbatim by import, #64)
+    if not is_gpu_backend():
+        print("SKIP: needs GPU (OneBrainComposer on-bridge parser)", flush=True); sys.exit(0)
+    print("gap#5 ONE-BRAIN PRODUCTION sleep-cycle — does the OneBrainComposer's store/recall/moat survive a WAKE->SLEEP->WAKE "
+          "phase-switch cycle? GO iff recall + moat IDENTICAL before/after, all seeds.", flush=True)
+    seeds = [42, 43, 44, 100, 101, 102]
+    oks = []
+    for s in seeds:
+        try:
+            oks.append(run(s))
+        except Exception as e:
+            print(f"  [seed {s}] ERROR: {type(e).__name__}: {e}", flush=True); oks.append(False)
+    print(f"\n=== PRODUCTION SLEEP-CYCLE: survived {sum(oks)}/{len(seeds)} -> {'GO' if all(oks) and len(oks)==len(seeds) else 'NO-GO'} ===", flush=True)
+    print("GAP5-ONEBRAIN-SLEEPCYCLE DONE", flush=True)

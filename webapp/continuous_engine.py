@@ -69,6 +69,17 @@ _CONSOLIDATED_TOPICS: dict = {}
 # the DA-salience ordering. Cleared on forget_session. Empty whenever the DA-encoding faculty is off (nothing scales),
 # so the =0 escape stays byte-identical to HEAD.
 _LAST_HOMEO_KB: dict = {}
+# per-session SLEEP-REPLAY (BRAIN_SLEEP_REPLAY, #64) state. `_SLEEP_REPLAYED[cache_key]` maps each topic that the LAST
+# deep-idle sleep pass replayed -> its (when_rank, batch_size) — the per-topic surfacing gate + host store-order WHEN
+# position (mirrors _CONSOLIDATED_TOPICS: a topic is added only on a SUCCESSFUL sleep pass, which needs the flag ON, so
+# a topic never sleep-replayed — every topic when the flag is off — reads absent, keeping recall_disclosure byte-
+# identical to HEAD). `_LAST_SLEEP_KB[cache_key]` is len(store_order) at the last sleep pass: the batch is the tail
+# stored SINCE then, so an idle session does not re-replay an already-consolidated batch forever (which would compound
+# the within-assembly potentiation) — the same new-writes-since-last-pass discipline the Turrigiano pass uses. Both
+# empty whenever BRAIN_SLEEP_REPLAY is off (nothing replays), so the =0 escape stays byte-identical to HEAD. Cleared on
+# forget_session.
+_SLEEP_REPLAYED: dict = {}
+_LAST_SLEEP_KB: dict = {}
 
 
 # 2026-08-21 FLIP: the between-turn CONTINUOUS LIFE is DEFAULT-ON (the mission-defining flip — the brain keeps a
@@ -106,6 +117,8 @@ def forget_session(cache_key) -> None:
     _D5_BUDGET.pop(cache_key, None)
     _CONSOLIDATED_TOPICS.pop(cache_key, None)
     _LAST_HOMEO_KB.pop(cache_key, None)
+    _SLEEP_REPLAYED.pop(cache_key, None)
+    _LAST_SLEEP_KB.pop(cache_key, None)
     _IDEATE_TICK.pop(cache_key, None)
     _MULLED_TOPIC.pop(cache_key, None)
 
@@ -285,6 +298,204 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
     rec = {"t": time.time(), "consolidated": topic, "slot": int(slot), "n_episodes": n_ep,
            "w_within_before": round(w0, 3), "w_within_after": round(wN, 3),
            "note": "idle: consolidated the used memory ‘%s’ (within-assembly weight %.1f → %.1f)" % (topic, w0, wN)}
+    lst = _INNER_LIFE.setdefault(cache_key, [])
+    lst.append(rec)
+    if len(lst) > _INNER_LIFE_MAX:
+        del lst[:-_INNER_LIFE_MAX]
+    return rec
+
+
+# ── OFFLINE SLEEP-REPLAY: batch reactivation of recently-stored episodes during genuine sleep-depth idle (#64) ────────
+# The learn-through-use consolidator above strengthens the ONE memory the last turn recalled. This is the OFFLINE
+# systems-side analogue: on a genuine SLEEP-DEPTH idle (>= SLEEP_IDLE_SEC, the NREM window `_is_sleep_tick` already
+# defines for the Turrigiano pass), the brain REPLAYS the BATCH of episodes it stored since the last sleep — reactivating
+# each recently-stored CA3 assembly in store-order so the substrate's OWN plateau-gated BTSP potentiates their within-
+# assembly recurrence, so the whole recent batch recalls measurably STRONGER on a later turn (retention) and its store-
+# order is reinforced (re-ordering). This is the biology's sharp-wave-ripple ordered replay -> systems consolidation,
+# but temporally separated from waking cognition exactly as in sleep.
+#
+# THE VALIDATED SLEEP-CYCLE (reuse-by-import, NO sim/ edit): the pass BRACKETS the batch reactivation in the 6-seed-GO
+# one-brain WAKE->SLEEP->WAKE phase switch (`_gap5_onebrain_sleepcycle_merge.sleep_cycle`: switch_to_adex_sleep(dt=0.1) ->
+# a quiescent AdEx SWR/sleep window -> switch_to_izhikevich_wake(dt=1.0)) — the merge finding proved the store + recall +
+# no-confab moat survive that neuron-model round-trip BYTE-IDENTICAL on the real agent, so entering/leaving the offline
+# sleep state never corrupts the conversation. The load-bearing WRITE is the substrate's plateau-gated BTSP (`sim/bridge`
+# `fused_btsp_update`, gated by IS_post = max(cp_v_apical - v_hold, 0)) reactivating each batch assembly on the wake
+# readout bridge — the SAME kernel `consolidate_used_memory` uses, applied over the batch in store-order.
+#
+# HONEST BOUND (load-bearing, not a caveat): this claims ONLY the DIRECT retain/re-order payoff on the episodic store.
+# Replay-DRIVEN hippocampus->cortex COMPOSITIONAL transfer (a cortical generalization the replayed episodes never
+# explicitly taught) is a separate, still-NO-GO item (2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO) and
+# is NOT claimed here. The WHEN-order surfaced is the DECLARED host store-order recency residual (EpisodicRecallOrgan.
+# recency_rank), not a spiking recency signal — there is still no spiking WHEN code.
+#
+# STRICTLY ADDITIVE + DEFAULT-OFF behind BRAIN_SLEEP_REPLAY (pending the pool/GPU soak). Off -> consolidate_sleep_replay
+# returns immediately, the store is never touched, and no topic surfaces a sleep-replay strength -> every recall reply is
+# byte-identical to HEAD. The whole pass fires only on `_is_sleep_tick` AND only when new episodes were stored since the
+# last sleep (the batch is non-empty), so a truly idle server does not re-replay the same batch forever.
+_SLEEP_SWR_WINDOW_STEPS = 60   # the quiescent AdEx SWR/sleep window length (the `sleep_cycle` default) — a host-timed
+                               #  scaffold, like IDLE_SEC/SLEEP_IDLE_SEC; the sleep-depth bracket, not the write.
+
+
+def sleep_replay_enabled() -> bool:
+    """#64 (additive/default-OFF, pending the 6-seed pool/GPU soak). `BRAIN_SLEEP_REPLAY` in {1,true,on,yes} arms the
+    deep-idle sleep-replay batch consolidation. Unset/0/anything-else -> BYTE-IDENTICAL TO HEAD: consolidate_sleep_replay
+    is an immediate no-op (nothing replays, no store change), tick_idle_sessions never enters the branch, and no recall
+    surfaces a sleep-replay strength. Mirrors the substrate_homeostasis_sleep_trigger_enabled / d5_consolidate_enabled
+    contract."""
+    return os.environ.get("BRAIN_SLEEP_REPLAY", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def topic_sleep_replayed(cache_key, topic):
+    """The (when_rank, batch_size) of `topic` in the LAST deep-idle sleep pass for this session, or None if it was not
+    sleep-replayed (including EVERY topic when BRAIN_SLEEP_REPLAY is off -> the set is empty -> None). Gates whether a
+    recall reply surfaces the sleep-replay retention + WHEN-order for it (recall_disclosure): a topic never sleep-replayed
+    keeps a reply byte-identical to HEAD, so replaying one batch changes only the replayed topics' replies. Pure
+    bookkeeping (a dict lookup)."""
+    if not topic:
+        return None
+    return _SLEEP_REPLAYED.get(cache_key, {}).get(str(topic).lower())
+
+
+def consolidate_sleep_replay(cache_key, episodic_organ) -> dict | None:
+    """OFFLINE SLEEP-REPLAY (#64) of the BATCH of episodes stored since the last sleep. For every recently-stored formed
+    topic (in store-order), run the substrate's plateau-gated BTSP reactivation on the organ's REAL store — bracketed in
+    the validated one-brain WAKE->SLEEP(AdEx/dt0.1)->WAKE phase switch — so the whole recent batch recalls measurably
+    stronger next turn (retention) and its store-order is reinforced (re-order). Returns a record, or None (disabled / no
+    organ / no store / no new episodes since the last sleep).
+
+    BRAIN-BASED: every weight change is the substrate's own BTSP kernel (no host `dw`); host code here is only the clock,
+    the batch selection (host store-order — the DECLARED recency residual), and the snapshot/restore determinism guard.
+    BYTE-IDENTITY (data, not code): every cfg field the phase-switch + reactivate mutate is saved and restored, and the
+    ONLY lasting change is the strengthened within-assembly weights of the replayed batch — an un-replayed neighbour's
+    later recall differs from HEAD in nothing. CRASH-SAFE: on any failure mid-pass the persistent store is rolled back to
+    its pre-sleep snapshot and the bridge is forced back to the wake neuron-model before re-raising, so a mid-sleep GPU
+    fall-off can neither corrupt the store nor strand the bridge in AdEx for future recalls."""
+    if not sleep_replay_enabled():
+        return None
+    if episodic_organ is None:
+        return None
+    mem = getattr(episodic_organ, "mem", None)
+    if mem is None:
+        return None
+    store_order = [str(t).lower() for t in getattr(episodic_organ, "_store_order", [])]
+    last_idx = _LAST_SLEEP_KB.get(cache_key, 0)
+    formed = getattr(mem, "formed", set())
+    batch = [t for t in store_order[last_idx:]
+             if mem.topic_slot.get(t) is not None and mem.topic_slot.get(t) in formed]
+    if not batch:
+        return None  # nothing stored since the last sleep -> don't re-replay an already-consolidated batch
+
+    # Heavy imports kept lazy so the OFF path stays byte-identical + import-light (reuse-by-import; NO sim/ edit).
+    import numpy as _np
+    from research.runners._gap5_dendritic_dap_readout_completion_derisk import _reset_apical_latch
+    from research.runners._gap5_d5_latch_self_termination_derisk import snapshot_state, restore_state
+    from research.runners._gap5_d5_learn_through_use_derisk import reactivate
+    # the VALIDATED one-brain WAKE->SLEEP->WAKE phase switch, reused VERBATIM (import-only, NO edit to its logic).
+    from research.runners._gap5_onebrain_sleepcycle_merge import sleep_cycle
+    from research.runners._gap5_wake_sleep_roundtrip import switch_to_izhikevich_wake, reset_transient_synaptic_state
+    from research.runners._gap5_wake_sleep_phase_switch import _recompute_cached_decays
+
+    bridge = mem.bridge
+    cp = mem.R.cp
+    cfg = bridge.core_config
+    n_ep = 1                                   # one reactivation episode per batch topic per sleep pass (accumulates
+                                               #  across sleeps, mirrors _D5_EPISODES=1: the graded read climbs gradually)
+    rk = dict(_D5_RK)
+    rk["up_thresh"] = mem.p["up_thresh"]
+    rk["v_hold"] = mem.p["v_hold"]
+    wake_model = str(getattr(cfg, "neuron_model_type", ""))   # capture BEFORE any switch, for the crash-safe wake restore
+    wake_dt = float(getattr(cfg, "dt_ms", 1.0))
+
+    def _w_within(topic):
+        return float(cp.mean(bridge.cp_connections.data[mem.R.withinA_masks[mem.topic_slot[topic]]]))
+
+    # SAVE the cfg fields the phase-switch + reactivate mutate, so nothing but the weights persists (superset of
+    # consolidate_used_memory's keys + the phase-switch's neuron-model/dt/AdEx keys).
+    _cfg_keys = (
+        "enable_hebbian_learning", "enable_stdp", "enable_structural_plasticity", "enable_bdsp", "enable_btsp",
+        "btsp_learning_rate", "btsp_w_max", "btsp_w_min", "btsp_elig_tau_ms", "btsp_hetero_dep",
+        "btsp_milstein_k_dep", "btsp_mean_subtract", "btsp_dog_a_dep", "btsp_elig_tau_slow_ms",
+        "btsp_win_gate_theta", "btsp_elig_exponent", "btsp_elig_hard_thresh", "coincidence_plateau_v_hold",
+        "neuron_model_type", "dt_ms",
+        "adex_C", "adex_g_L", "adex_E_L", "adex_V_T", "adex_Delta_T", "adex_a", "adex_tau_w", "adex_b",
+        "adex_V_r", "adex_V_peak")
+    cfg_saved = {k: getattr(cfg, k, None) for k in _cfg_keys}
+    btsp_saved = {a: getattr(bridge, a, None)
+                  for a in ("cp_btsp_pre_elig", "cp_btsp_pre_elig_slow", "cp_btsp_win_count", "cp_btsp_wmax")}
+
+    w_before = {t: round(_w_within(t), 3) for t in batch}
+    W_pre = bridge.cp_connections.data.copy()   # rollback anchor (the sleep pass mutates the PERSISTENT store in place)
+    try:
+        # WARM the apical latch if a fresh bridge never allocated it (as consolidate_used_memory does) — else the
+        # reactivate loop's plateau-gated BTSP never fires. Cheap no-op in the live flow (a prior recall warmed it).
+        if getattr(bridge, "cp_v_apical", None) is None:
+            try:
+                mem.recall(batch[-1])
+            except Exception:
+                pass
+        # (1) ORDERED SWR REPLAY (the load-bearing WRITE) — the substrate's OWN plateau-gated BTSP reactivates each
+        #     recently-stored assembly in store-order, potentiating its within-assembly recurrence. This runs on the WAKE
+        #     readout bridge: the plateau-gated BTSP write is Izhikevich-tuned, and (measured, #64) it does NOT fire
+        #     correctly if run through the AdEx/dt round-trip first — the recurrent-delay dynamics the coincidence
+        #     plateau reads are dt-dependent — so the write precedes the sleep bracket (the whole pass still runs OFFLINE
+        #     during idle; the temporal separation from waking cognition is preserved).
+        mem.R.hard_silence()
+        _reset_apical_latch(bridge)
+        snap = snapshot_state(bridge)
+        W = bridge.cp_connections.data.copy()
+        for topic in batch:
+            slot = mem.topic_slot[topic]
+            cue_full = _np.asarray(mem.cue_by_asm[slot], dtype=_np.int64)
+            for _i in range(n_ep):
+                W = reactivate(mem, slot, snap, W, cue_indices=cue_full, strengthen=True,
+                               clamp_apical=False, adapt_on=True, **rk)["W_out"]
+        # leave the bridge at CLEAN REST with only the strengthened weights persisting
+        restore_state(bridge, snap)
+        bridge.cp_connections.data[:] = W
+        w_mid = {t: round(_w_within(t), 3) for t in batch}   # post-replay (the strengthened store)
+        # (2) SLEEP-DEPTH BRACKET — the VALIDATED one-brain WAKE->SLEEP(AdEx/dt0.1)->WAKE phase switch, reused verbatim
+        #     (`sleep_cycle`). Reactivate froze all plasticity (enable_btsp/hebbian/stdp/bdsp = False), so the quiescent
+        #     AdEx window is non-plastic: the FRESHLY-CONSOLIDATED batch survives the offline sleep state byte-identical
+        #     (the merge property) — the sleep event does not corrupt the conversation's store.
+        sleep_cycle(mem.bridge, n_sleep=_SLEEP_SWR_WINDOW_STEPS)
+        w_after = {t: round(_w_within(t), 3) for t in batch}   # post-sleep-bracket (must equal w_mid -> survival)
+    except Exception:
+        # ON-PATH SAFETY: roll the PERSISTENT store back to its pre-sleep state, then re-raise so the caller LOGS it.
+        try:
+            bridge.cp_connections.data[:] = W_pre
+        except Exception:
+            pass
+        raise
+    finally:
+        # ALWAYS return the bridge to the WAKE neuron-model — a mid-sleep failure could strand it in AdEx, corrupting
+        # every future recall. Re-assert wake before restoring the plasticity cfg fields.
+        try:
+            if str(getattr(cfg, "neuron_model_type", "")) != wake_model or float(getattr(cfg, "dt_ms", 0.0)) != wake_dt:
+                switch_to_izhikevich_wake(bridge, dt=wake_dt)
+                reset_transient_synaptic_state(bridge)
+                _recompute_cached_decays(bridge)
+        except Exception:
+            pass
+        for k, v in cfg_saved.items():
+            try:
+                setattr(cfg, k, v)
+            except Exception:
+                pass
+        for a, v in btsp_saved.items():
+            setattr(bridge, a, v)
+
+    # RECORD the batch + host store-order WHEN position for the per-topic surfacing gate (reached only on SUCCESS — a
+    # crash re-raises above, so a rolled-back sleep pass never surfaces a strength). Advance the new-writes watermark.
+    _LAST_SLEEP_KB[cache_key] = len(store_order)
+    bsz = len(batch)
+    per_topic = _SLEEP_REPLAYED.setdefault(cache_key, {})
+    for rank, topic in enumerate(batch):
+        per_topic[topic] = (rank, bsz)
+    rec = {"t": time.time(), "sleep_replay": True, "batch": list(batch), "batch_size": bsz,
+           "w_within_before": w_before, "w_within_after_replay": w_mid, "w_within_after": w_after,
+           "store_survived_sleep_bracket": bool(w_after == w_mid),
+           "note": "sleep: replayed %d recently-stored episode(s) in order (%s) — their within-assembly recurrence is "
+                   "strengthened for a stronger later recall" % (bsz, ", ".join(batch))}
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
@@ -892,6 +1103,22 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
                         "D5 consolidation failed for %s (persistent store rolled back)", cache_key, exc_info=True)
+            # OFFLINE SLEEP-REPLAY (#64): on a genuine SLEEP-DEPTH idle only (>= SLEEP_IDLE_SEC, the same NREM window the
+            # Turrigiano pass uses), replay the BATCH of episodes this session stored since its last sleep so the whole
+            # recent batch recalls STRONGER + its store-order is reinforced. Gated by BRAIN_SLEEP_REPLAY (default-OFF ->
+            # the branch is never entered -> byte-identical to HEAD) AND _is_sleep_tick (an offline sleep event, not a
+            # light between-turn pause). Reuses the SAME already-built episodic organ getter as D5 (never builds one just
+            # to replay); consolidate_sleep_replay self-gates + rolls the store back on any failure.
+            if sleep_replay_enabled() and episodic_getter is not None and _is_sleep_tick(cache_key, now):
+                try:
+                    seorg = episodic_getter(cache_key)
+                    if seorg is not None:
+                        consolidate_sleep_replay(cache_key, seorg)
+                except Exception:
+                    import logging as _lg
+                    _lg.getLogger(__name__).warning(
+                        "sleep-replay consolidation failed for %s (persistent store rolled back)", cache_key,
+                        exc_info=True)
             # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
             # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
             # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
