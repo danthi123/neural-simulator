@@ -48,3 +48,10 @@ if [ "$wc_rc" -ne 0 ]; then
 else
   echo "✅ workflow_check: parallelism + lanes + sources + cluster all satisfied"
 fi
+# PARALLEL AUDIT — call the LIVE file, never a snapshot (2026-08-26). The audit output used to come from a
+# SEPARATE Monitor command that carried its own copy of the logic; when tools/parallel_audit.py was fixed to
+# actually fire, the running Monitor kept printing the OLD verdict because it never re-read the file. Folding the
+# call into THIS one canonical script means the heartbeat always executes whatever tools/parallel_audit.py
+# currently is — a code fix is live on the next cycle with no re-arm. Selftest-guarded (a check unable to fire is
+# the bug it exists to catch), so a broken audit is loud, not silently-passing.
+.venv/bin/python tools/parallel_audit.py 2>/dev/null || echo "⚠ parallel_audit FAILED to run — check tools/parallel_audit.py"

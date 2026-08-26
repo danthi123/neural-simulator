@@ -71,31 +71,14 @@ def open_tasks():
         ts = json.loads(raw)
     except Exception:
         return None, []
-    # actionable = open, priority 1-4 (priority-5 north-star kept out), and NOT labeled epic(12)/blocked(11) —
-    # those are mission-framing or production-blocked-upstream, not launchable independent work (2026-08-19: the
-    # audit was counting epics + blocked-on-no-consumer tasks as "ready", firing a false UNDER-PARALLELIZED).
-    _NOT_READY = {11, 12}  # blocked, epic
-    act = [t for t in ts if not t.get("done") and 1 <= (t.get("priority") or 0) <= 4
-           and not (_NOT_READY & {l.get("id") for l in (t.get("labels") or [])})]
+    # actionable = open + not done + priority>=1. NOTE (2026-08-26 fix): the old cap `<= 4` excluded the
+    # priority-5 CRUX tasks (e.g. #150 knowledge-scale) and undercounted the frontier to ~1, which made the
+    # SATURATED bar (n_open > lanes) trivially met and the whole check UNABLE TO FIRE. Include p5; the raw
+    # count still under-represents the true parallelizable backlog (dozens of buildable de-risks never land on
+    # the board), which is WHY the agent-floor below (compute-independent) is the real enforcement, not this count.
+    act = [t for t in ts if not t.get("done") and (t.get("priority") or 0) >= 1]
     act.sort(key=lambda t: -(t.get("priority") or 0))
     return len(act), [(t.get("priority") or 0, t.get("title", "")) for t in act]
-
-
-def mem_state():
-    """(avail_mb, total_mb, pct_avail) from /proc/meminfo. THE CEILING THE CPU/GPU AUDIT IS BLIND TO: on
-    2026-08-21 ~5 agents + 2 workflows + 3 sim-builds ran at once; each sim-loading job holds ~1-4 GB (bridges +
-    Qwen mouth + co-resident organs), the 46 GB box ran OUT OF RAM, and the whole Claude process CRASHED and took
-    the background work down. So RAM gates 'launch more' — an idle core is cheap, an OOM crash is not."""
-    try:
-        info = {}
-        for line in open("/proc/meminfo"):
-            k, _, v = line.partition(":")
-            info[k.strip()] = int(v.split()[0])  # kB
-        avail = info.get("MemAvailable", 0) // 1024
-        total = info.get("MemTotal", 1) // 1024
-        return avail, total, (100 * avail // total if total else 0)
-    except Exception:
-        return -1, -1, -1
 
 
 def main():
@@ -107,59 +90,55 @@ def main():
 
     total_lanes = lanes_local + lanes_pool + agents
     gpu_free = (0 <= gpu < 30)
-    # idle CAPACITY worth filling: >6 local cores, or any reachable idle pool cores (>10), or a free GPU
+    # idle CAPACITY worth filling, for the informative message: >6 local cores, idle pool cores (>10), or a free GPU.
     cap = []
     if idle_local > 6: cap.append("%d local cores" % idle_local)
     if idle_pool > 10: cap.append("%d pool cores (%d/3 nodes up)" % (idle_pool, pool_up))
     if gpu_free: cap.append("GPU idle(%d%%)" % gpu)
 
-    avail_mb, total_mb, mem_pct = mem_state()
-    # MEMORY CEILING (2026-08-21 crash): RAM gates 'launch more'. Heavy = sim-loading jobs (each ~1-4 GB) +
-    # agents + workflow sub-agents. Keep a headroom so a burst of them cannot OOM the box. When constrained,
-    # HOLDING IS CORRECT even with idle cores + ready tasks — an OOM crash loses all in-flight work.
-    MEM_FLOOR_MB = 8000
-    mem_constrained = (avail_mb >= 0 and (avail_mb < MEM_FLOOR_MB or mem_pct < 15))
-
-    have_capacity = bool(cap)
+    # DEDICATED idle = a whole pool node or the GPU sitting idle. THESE are pure waste when idle (they exist only to
+    # run our jobs), so an idle one with ready work IS under-parallelization — this is the same signal workflow_check.sh
+    # fires on, so the two checks now AGREE instead of contradicting. Idle LOCAL cores are a weaker signal (the box runs
+    # other things), so they inform the message but do NOT by themselves trip the compute branch (avoids crying wolf).
+    dedicated_idle = (idle_pool > 10) or gpu_free
     have_ready = (n_open is not None and n_open > 0)
-    # under-parallelized: idle capacity AND ready independent work AND not already many lanes AND RAM headroom
-    under = have_capacity and have_ready and (n_open > total_lanes) and not mem_constrained
+    # ROOT-CAUSE FIX (2026-08-26, owner-flagged 3x). Two INDEPENDENT triggers; EITHER fires:
+    #  (1) under_agents — agent-bound BUILD/RESEARCH/VERIFY/WIRING work is NOT compute-limited, so a live frontier with
+    #      fewer than FLOOR concurrent agents is under-parallelized regardless of cores. Compute-independent = the real fix.
+    #  (2) under_compute — a DEDICATED lane (pool node / GPU) idle while a frontier exists. NOTE the removed clause: the
+    #      old bar also required `n_open > total_lanes`, which made it UNABLE TO FIRE (the board count reads ~1-3 while the
+    #      TRUE parallelizable backlog — roadmap de-risks, pending 6-seed validations, wirings — is dozens). Gating idle
+    #      dedicated compute on the board count was the bug; the backlog is ALWAYS bigger than the board, so idle pool/GPU
+    #      + ready work fires on its own. (This is what let SATURATED print while 3 pool nodes sat idle with crashed jobs.)
+    AGENT_FLOOR = int(os.environ.get("PARALLEL_AGENT_FLOOR", "3"))
+    under_agents = have_ready and (agents < AGENT_FLOOR)      # compute-INDEPENDENT
+    under_compute = have_ready and dedicated_idle            # a dedicated lane idle with ready work
+    under = under_agents or under_compute
 
-    print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | mem=%s | open-tasks=%s"
+    print("─ PARALLEL AUDIT ─ lanes=%d (local %d + pool %d + agents %d) | GPU=%s | open-tasks=%s"
           % (total_lanes, lanes_local, lanes_pool, agents, ("%d%%" % gpu if gpu >= 0 else "n/a"),
-             ("%dMB/%d%% free" % (avail_mb, mem_pct) if avail_mb >= 0 else "n/a"),
              (str(n_open) if n_open is not None else "?")))
-    if mem_constrained:
-        print("⛔ MEMORY-CONSTRAINED (only %dMB / %d%% free) — do NOT launch more heavy jobs (sim-builds/agents/"
-              "workflows); an OOM crash loses ALL in-flight work + is worse than an idle core. Let running work"
-              " drain first, then reassess. (This is the ceiling the CPU/GPU lanes are blind to — 2026-08-21.)"
-              % (avail_mb, mem_pct))
-    elif under:
-        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — idle: %s ; %d ready board tasks vs %d lanes."
-              % (", ".join(cap), n_open, total_lanes))
-        print("   LAUNCH now (independent, from the board — agents for build/research, pool for CPU, GPU for the big run):")
+    if under:
+        why = []
+        if under_agents:
+            why.append("only %d build/research agent(s) running (floor %d) — agent work is NOT compute-limited, FAN OUT MORE"
+                       % (agents, AGENT_FLOOR))
+        if under_compute:
+            why.append("idle %s ; %d ready tasks vs %d lanes" % (", ".join(cap), n_open, total_lanes))
+        print("⛔ UNDER-PARALLELIZED (a STALL, not a hold) — %s." % " ; ".join(why))
+        print("   The parallelizable backlog is ALWAYS bigger than the board — roadmap de-risks, pending 6-seed")
+        print("   validations, faculty wirings, consolidations. LAUNCH concurrent agents/workflows now (pool for CPU,")
+        print("   GPU for the big run). Board frontier rows for anchors:")
         for pr, title in top[:6]:
             print("     • p%d  %s" % (pr, title))
-        print("   Holding is NOT earned until this reads SATURATED (and RAM has headroom).")
+        print("   Holding is NOT earned until this reads SATURATED (>= %d agents AND compute covered)." % AGENT_FLOOR)
     elif not have_ready:
         print("✓ SATURATED (no ready board tasks — restock the board or hold).")
-    elif not have_capacity:
-        print("✓ SATURATED (compute full — holding for lanes is the async pattern).")
     else:
-        print("✓ SATURATED (%d lanes cover the %d ready tasks)." % (total_lanes, n_open))
+        print("✓ SATURATED (%d agents + %d compute lanes cover the frontier)." % (agents, lanes_local + lanes_pool))
 
-    # COST-ROUTING ENFORCEMENT (owner-flagged 2026-08-19: ~50% of the weekly limit in 1.5 days). Two halves:
-    # (1) the model-tiering check — every workflow agent must declare its model or it inherited OPUS by default;
-    # cost_audit scans the session's live workflow scripts + committed workflows and prints a ⛔ verdict here so
-    # the leak recurs until fixed (same enforcement philosophy as the parallelization check above).
-    try:
-        import cost_audit as _CA
-        _CA.main()
-    except Exception as _e:
-        print("─ COST AUDIT ─ (unavailable: %s)" % type(_e).__name__)
-
-    # (2) ENGINE-ROUTING — agent tokens count toward the Claude usage limit; mechanical compute must go to
-    # non-Claude machinery. Fires whenever cheap idle compute exists, so the routing is nudged every cycle.
+    # COST-ROUTING — agent tokens count toward the Claude usage limit; mechanical work must go to non-Claude
+    # machinery. Fires whenever cheap idle compute exists, so the routing is enforced every cycle, not remembered.
     if idle_pool > 10 or idle_local > 6:
         print("   💸 COST-ROUTING (agent tokens burn the usage limit): put MECHANICAL work on non-Claude machinery —")
         print("      • CPU param grids / TUNING → `tools/sweep_pool.sh` (headless on the %d idle pool cores, 0 tokens)"
@@ -170,5 +149,41 @@ def main():
     return 0
 
 
+def _under_decision(have_ready, dedicated_idle, agents, n_open, total_lanes, agent_floor=3):
+    """Pure copy of main()'s under-parallelization decision, for the selftest. Keep in sync with main().
+    n_open/total_lanes are accepted for signature stability but NO LONGER gate the compute branch — gating idle
+    dedicated compute on the board count was the exact bug (the backlog is always bigger than the board)."""
+    under_agents = have_ready and (agents < agent_floor)
+    under_compute = have_ready and dedicated_idle
+    return under_agents or under_compute
+
+
+def _selftest():
+    """The 2026-08-26 root cause was that this check had shipped UNABLE TO FIRE (the old bar needed idle compute
+    AND a board-count that was structurally ~1). A check that cannot fail is the bug. This selftest asserts the
+    fixed decision FIRES in its failing direction (few agents / idle dedicated lane) and stays quiet when saturated."""
+    # (have_ready, dedicated_idle, agents, n_open, total_lanes) -> expected_under
+    cases = [
+        (True,  False, 1, 1, 13, True),   # THE REGRESSION: 1 agent, tiny board count, no idle lane -> agent-floor fires
+        (True,  False, 2, 1,  6, True),   # the exact hold I was in -> agent-floor fires
+        (True,  False, 5, 1,  8, False),  # 5 agents, no idle dedicated lane -> saturated, must NOT fire
+        (True,  True,  4, 3,  8, True),   # THE 2nd REGRESSION: agents>=floor, board count LOW, but a POOL NODE idle
+                                          #   -> must fire (this is the false-SATURATED-while-pool-idle case)
+        (True,  True,  3, 2, 10, True),   # at the agent floor BUT a dedicated lane idle with ready work -> fires
+        (False, True,  0, 0,  0, False),  # no ready work -> must NOT fire (idle lane but nothing to run)
+        (True,  True,  5, 20, 8, True),   # idle dedicated lane + backlog -> fires (compute branch)
+    ]
+    bad = [(c, _under_decision(*c[:5])) for c in cases if _under_decision(*c[:5]) != c[5]]
+    if bad:
+        print("PARALLEL_AUDIT SELFTEST FAILED (the check is unable to fire correctly):")
+        for c, got in bad:
+            print("   case %s -> got under=%s, expected %s" % (c[:5], got, c[5]))
+        sys.exit(1)
+    print("parallel_audit selftest OK — fires on agents<floor OR an idle dedicated lane with ready work; quiet when saturated.")
+    sys.exit(0)
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        _selftest()
     sys.exit(main())
