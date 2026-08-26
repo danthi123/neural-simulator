@@ -20,9 +20,20 @@ LOG=$MAIN/research/queue/autofill.log
 LOW=${GPU_QUEUE_LOW_WATERMARK:-8}
 OUT=research/findings/raw/four_day            # relative to $WT (jobs cd there)
 
+# SYNC-BACK (added 2026-08-26): each cycle, PULL completed pool-node results back to the local repo BEFORE refilling,
+# so finished 0-token compute never strands on the nodes (the gap that left ~2433 results unpulled overnight). Safe
+# rsync -au (never clobbers a newer local copy); non-fatal so a sync hiccup never blocks the refill.
+bash "$MAIN/tools/pool_sync.sh" >> "$LOG" 2>&1 || echo "$(date '+%F %T') pool_sync non-fatal error" >> "$LOG"
+
 depth=$(wc -l < "$QUEUE" 2>/dev/null || echo 0)
-if [ "${depth:-0}" -ge "$LOW" ]; then
-  echo "$(date '+%F %T') depth=$depth >= $LOW — no refill" >> "$LOG"; exit 0
+POOL_QUEUE=$MAIN/research/queue/pool.queue
+pdepth=$(awk 'NF>1 && $0 !~ /^[[:space:]]*#/' "$POOL_QUEUE" 2>/dev/null | wc -l)
+
+# BUGFIX 2026-08-26: the old GPU-queue-full check did `exit 0` BEFORE the pool refill, so the 5 CPU lanes STARVED
+# whenever the GPU queue was topped up — which is almost always, since the longi loops are long. Now each queue is
+# refilled INDEPENDENTLY on its OWN depth; the cycle advances if EITHER needs work, and we exit only when BOTH are healthy.
+if [ "${depth:-0}" -ge "$LOW" ] && [ "${pdepth:-0}" -ge 3 ]; then
+  echo "$(date '+%F %T') gpu_depth=$depth>=$LOW AND pool_depth=$pdepth>=3 — both healthy, no refill" >> "$LOG"; exit 0
 fi
 
 cycle=$(cat "$STATE" 2>/dev/null || echo 0); cycle=$((cycle + 1)); echo "$cycle" > "$STATE"
@@ -30,21 +41,22 @@ base=$((900 + cycle * 10))                      # fresh seed block per cycle -> 
 
 add() { bash "$MAIN/tools/gpu_queue.sh" add "$1" >/dev/null; }
 
-# 3 continuous-life longitudinal loops at fresh seeds (the long, high-value backstop)
-for i in 0 1 2; do
-  s=$((base + i))
-  add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners._longitudinal_develop_loop_gpu --n-days 60 --seed $s --out $OUT/longi_nd60_s${s}.json"
-done
-# 1 continuous-life multi-seed persistent-loop soak (distinct mechanism, also long)
-add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners.persistent_living_loop_derisk --seeds $base $((base+1)) $((base+2)) --segment 6000 --out $OUT/persistent_living_seg6000_c${cycle}.json"
-# 1 vision #75 cell for lane diversity (fresh 6-seed at a deeper epoch)
-add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners._vision_rstdp_readout_derisk --seeds 42 43 44 100 101 102 --n-s2 96 --epochs 150 --out $OUT/vrstdp_ns296_ep150_c${cycle}.json"
-
-echo "$(date '+%F %T') cycle=$cycle depth_was=$depth enqueued 5 long jobs (seed base $base)" >> "$LOG"
+if [ "${depth:-0}" -lt "$LOW" ]; then
+  # 3 continuous-life longitudinal loops at fresh seeds (the long, high-value backstop)
+  for i in 0 1 2; do
+    s=$((base + i))
+    add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners._longitudinal_develop_loop_gpu --n-days 60 --seed $s --out $OUT/longi_nd60_s${s}.json"
+  done
+  # 1 continuous-life multi-seed persistent-loop soak (distinct mechanism, also long)
+  add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners.persistent_living_loop_derisk --seeds $base $((base+1)) $((base+2)) --segment 6000 --out $OUT/persistent_living_seg6000_c${cycle}.json"
+  # 1 vision #75 cell for lane diversity (fresh 6-seed at a deeper epoch)
+  add "cd $WT && SIM_BACKEND=cupy $PY -u -m research.runners._vision_rstdp_readout_derisk --seeds 42 43 44 100 101 102 --n-s2 96 --epochs 150 --out $OUT/vrstdp_ns296_ep150_c${cycle}.json"
+  echo "$(date '+%F %T') cycle=$cycle gpu_depth_was=$depth enqueued 5 long GPU jobs (seed base $base)" >> "$LOG"
+else
+  echo "$(date '+%F %T') cycle=$cycle gpu_depth=$depth>=$LOW — GPU queue healthy, skipped GPU refill" >> "$LOG"
+fi
 
 # --- POOL refill: keep the 5 disjoint CPU lanes served (they drain in minutes; lane_check gate blocks on empty) ---
-POOL_QUEUE=$MAIN/research/queue/pool.queue
-pdepth=$(awk 'NF>1 && $0 !~ /^[[:space:]]*#/' "$POOL_QUEUE" 2>/dev/null | wc -l)
 if [ "${pdepth:-0}" -lt 3 ]; then
   PQ="$WT/tools/pool_queue.sh"
   PS="$base $((base+1)) $((base+2)) $((base+3)) $((base+4)) $((base+5))"
