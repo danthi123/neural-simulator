@@ -308,8 +308,15 @@ def one_seed(seed, cfg, a):
     af, onf = a.active_frac, a.onset_frac
     aidx = int(a.assembly_idx)
     det_frac, det_dur = float(a.det_frac), int(a.det_dur)
-    self_regen_read, d_abs, a_abs = float(a.self_regen_read), float(a.d_abs), float(a.a_abs)
-    det_period, det_settle = int(a.det_period), int(a.det_settle)
+    self_regen_read = float(a.self_regen_read)
+    # board #139 (readout discreteness): d_abs/a_abs/det_period are now LISTS (nargs="+"); when each has length 1
+    # (the pre-#139 default) this degenerates to exactly the old single-combo behaviour. When longer, the GO loop
+    # below sweeps the Cartesian product on the SAME frozen encode and every control then runs at the WINNING combo.
+    d_abs_list = [float(x) for x in a.d_abs]
+    a_abs_list = [float(x) for x in a.a_abs]
+    det_period_list = [int(x) for x in a.det_period]
+    d_abs, a_abs, det_period = d_abs_list[0], a_abs_list[0], det_period_list[0]   # placeholders; overwritten by the winning combo below
+    det_settle = int(a.det_settle)
 
     fb_read = a.fb_read
     fb_drive = a.fb_drive
@@ -329,35 +336,58 @@ def one_seed(seed, cfg, a):
           f"adj_rev={prep['w_adj_rev']:.2f} ratio={out['encode_decoupled']['ratio_adj']:.2f}x "
           f"(n_fwd={prep['n_between_fwd']} n_rev={prep['n_between_rev']}) ({time.time()-t0:.0f}s)", flush=True)
 
-    # -- GO: sweep the detonator strength (det_pa) on the SAME frozen decoupled bridge (weights frozen -> reuse-safe). --
-    go_runs = {}; best_pa, best, best_ev, best_seq = None, None, None, None
+    # -- GO: sweep the detonator strength (det_pa) AND, board #139, the READOUT-DYNAMICS combo (d_abs/a_abs/det_period)
+    #    -- ALL on the SAME frozen decoupled bridge (weights frozen -> reuse-safe, no re-encode). Selection prioritizes
+    #    the two HARD bars (forward_transition AND duty<=0.40 -- the discreteness residual named in the finding) over
+    #    raw event count, so the winning combo is the one that actually clears the GO gate, not just the loudest one.
+    go_runs = {}; best_key = None; best = None; best_ev = None; best_seq = None
+    best_pa = best_d_abs = best_a_abs = best_det_period = None
     best_F = None
-    for pa in a.det_pa:
-        r = _rd(prep, ("assembly", aidx, det_frac, pa, det_dur), verbose=(best_pa is None))
+    combos = [(pa, da, aa, dp) for pa in a.det_pa for da in d_abs_list for aa in a_abs_list for dp in det_period_list]
+    for (pa, da, aa, dp) in combos:
+        r = _rest_and_detonate(prep, ("assembly", aidx, det_frac, pa, det_dur), a.rest_steps, seed, self_regen_read,
+                               adapt=True, d_abs=da, a_abs=aa, det_period=dp, det_settle=det_settle,
+                               apical_gc_read=a.apical_gc_read, verbose=(best_key is None), fb_read=fb_read, fb_drive=fb_drive)
         ev, seq = _score(r["F"], al, al, aidx, seed, W, ev_floor, ev_k, min_frac, af, onf, ev_mean_smooth=evms, ev_baseline_q=evbq)
-        rec = dict(det_pa=pa, k_det=r["k_det"], n_detonations=r["n_detonations"],
+        chance = max(seq["chance_forward"], 1e-6)
+        duty_ok = bool(ev["duty_cycle"] <= 0.40)
+        fwd_ok = bool(seq["forward_frac"] >= 2.0 * chance and seq["forward_frac"] > seq["reverse_frac"] and seq["n_multi"] >= 2)
+        key = f"det_pa={pa:g}|d_abs={da:g}|a_abs={aa:g}|det_period={dp}"
+        rec = dict(det_pa=pa, d_abs=da, a_abs=aa, det_period=dp, k_det=r["k_det"], n_detonations=r["n_detonations"],
                    n_events=ev["n_events"], n_specific=ev["n_specific"], member_frac=ev["member_frac"],
                    random_frac=ev["random_frac"], cross_frac=ev["cross_frac"], specificity=ev["specificity"],
-                   duty_cycle=ev["duty_cycle"], pop_rate=ev["pop_rate"], assembly_rest_frac=ev["assembly_rest_frac"],
+                   duty_cycle=ev["duty_cycle"], duty_ok=duty_ok, pop_rate=ev["pop_rate"], assembly_rest_frac=ev["assembly_rest_frac"],
                    forward_frac=seq["forward_frac"], reverse_frac=seq["reverse_frac"], n_multi=seq["n_multi"],
-                   chance_forward=seq["chance_forward"], per_asm_active=seq["per_asm_active"],
+                   forward_transition=fwd_ok, chance_forward=seq["chance_forward"], per_asm_active=seq["per_asm_active"],
                    weights_frozen=r["weights_frozen"], apical_rest_max=r["apical_rest_max"],
                    apical_n_latched=r["apical_n_latched"],
                    n_fb_set=r.get("n_fb_set"), fb_read=r.get("fb_read"), basket_mean=r.get("basket_mean"))
-        go_runs[f"det_pa={pa:g}"] = rec
-        print(f"  [seed {seed}] GO det_pa={pa:>7g}: ev={ev['n_events']:>3} spec={ev['n_specific']:>3} "
+        go_runs[key] = rec
+        print(f"  [seed {seed}] GO det_pa={pa:>7g} d_abs={da:>6g} a_abs={aa:>7g} det_period={dp:>4}: "
+              f"ev={ev['n_events']:>3} spec={ev['n_specific']:>3} "
               f"memb={ev['member_frac']:.3f} rand={ev['random_frac']:.3f} cross={ev['cross_frac']:.3f} "
-              f"duty={ev['duty_cycle']:.3f} | FWD={seq['forward_frac']:.3f} REV={seq['reverse_frac']:.3f} "
+              f"duty={ev['duty_cycle']:.3f}({'OK' if duty_ok else 'no'}) | FWD={seq['forward_frac']:.3f} REV={seq['reverse_frac']:.3f} "
               f"chance={seq['chance_forward']:.3f} multi={seq['n_multi']} act={seq['per_asm_active']} "
+              f"fwd_transition={'OK' if fwd_ok else 'no'} "
               f"basket={r.get('basket_mean')} nfb={r.get('n_fb_set')} "
               f"frozen={r['weights_frozen']} latched={r['apical_n_latched']} ({time.time()-t0:.0f}s)", flush=True)
-        score = (ev["n_specific"], seq["forward_frac"], ev["specificity"])
+        # score: clear BOTH hard bars first, then EACH bar individually, then tie-break on specificity/forward strength
+        # and (negated) duty so among two combos that both clear the bar the cleaner (lower-duty) one wins.
+        score = (int(fwd_ok and duty_ok), int(fwd_ok), int(duty_ok), ev["n_specific"], seq["forward_frac"],
+                 -ev["duty_cycle"], ev["specificity"])
         if best is None or score > best:
-            best, best_pa, best_ev, best_seq = score, pa, ev, seq
+            best, best_key = score, key
+            best_pa, best_d_abs, best_a_abs, best_det_period = pa, da, aa, dp
+            best_ev, best_seq = ev, seq
             if a.dump_traces:
                 best_F = r["F"].copy()
-    out["go_runs"] = go_runs; out["best_det_pa"] = best_pa
+    out["go_runs"] = go_runs
+    out["best_det_pa"] = best_pa; out["best_d_abs"] = best_d_abs; out["best_a_abs"] = best_a_abs
+    out["best_det_period"] = best_det_period; out["n_combos_swept"] = len(combos); out["best_key"] = best_key
     go_ev, go_seq = best_ev, best_seq
+    # board #139: propagate the WINNING readout-dynamics combo to every control below (_rd + the direct
+    # _rest_and_detonate calls all read d_abs/a_abs/det_period from this enclosing scope by late-bound closure).
+    d_abs, a_abs, det_period = best_d_abs, best_a_abs, best_det_period
 
     # -- CONTROL 1: NO-DETONATOR (acid) -- same frozen bridge, detonator OFF -> MUST be SILENT (the detonator is the source)
     r_nd = _rd(prep, ("none",))
@@ -492,11 +522,11 @@ def one_seed(seed, cfg, a):
                                   or shd_ev["member_frac"] < 0.5 * max(go_ev["member_frac"], 1e-6))
     noencode_retired = (ne_ev["n_specific"] == 0 or ne_ev["member_frac"] < 0.5 * max(go_ev["member_frac"], 1e-6))
     shuffled_within_retired = (sw_ev["n_specific"] == 0 or sw_ev["member_frac"] < 0.5 * max(go_ev["member_frac"], 1e-6))
-    frozen_ok = bool(go_runs[f"det_pa={best_pa:g}"]["weights_frozen"] and r_nd["weights_frozen"]
+    frozen_ok = bool(go_runs[best_key]["weights_frozen"] and r_nd["weights_frozen"]
                      and r_shd["weights_frozen"] and r_ne["weights_frozen"] and r_sw["weights_frozen"]
                      and r_sym["weights_frozen"])
-    dendrite_reset_ok = (go_runs[f"det_pa={best_pa:g}"]["apical_rest_max"] is None
-                         or go_runs[f"det_pa={best_pa:g}"]["apical_rest_max"] <= float(cfg["plateau_v_hold"]) + 1e-3)
+    dendrite_reset_ok = (go_runs[best_key]["apical_rest_max"] is None
+                         or go_runs[best_key]["apical_rest_max"] <= float(cfg["plateau_v_hold"]) + 1e-3)
     readout_ignites_symmetric = (sym_ev["n_events"] >= 1)                                             # positive control fires
     # CLEAN vs DIFFUSE (diagnostic): the decoupled store's forward order beats the symmetric store's diffuse co-fire.
     cleaner_than_symmetric = bool(go_seq["forward_frac"] > sym_seq["forward_frac"]
@@ -517,7 +547,8 @@ def one_seed(seed, cfg, a):
                          cleaner_than_symmetric=cleaner_than_symmetric)
     out["seed_go"] = seed_go
     print(f"  [seed {seed}] => {'GO' if seed_go else 'no'}  checks={out['checks']}  best_det_pa={best_pa:g} "
-          f"({time.time()-t0:.0f}s)", flush=True)
+          f"best_d_abs={best_d_abs:g} best_a_abs={best_a_abs:g} best_det_period={best_det_period} "
+          f"(swept {len(combos)} combos) ({time.time()-t0:.0f}s)", flush=True)
     return out
 
 
@@ -531,12 +562,12 @@ def main():
     ap.add_argument("--det-frac", type=float, default=0.15, help="fraction of the assembly's cells the DG detonator drives (sparse; a few strong mossy synapses)")
     ap.add_argument("--det-pa", type=float, nargs="+", default=[1500.0, 3000.0, 6000.0], help="detonator drive strength sweep (pA)")
     ap.add_argument("--det-dur", type=int, default=15, help="detonator pulse duration (steps) per detonation")
-    ap.add_argument("--det-period", type=int, default=150, help="steps between detonation onsets (long enough for an A->B->C sweep + return to silence)")
+    ap.add_argument("--det-period", type=int, nargs="+", default=[150], help="steps between detonation onsets (long enough for an A->B->C sweep + return to silence). Multiple values -> SWEPT (board #139 lever: longer settle between triggers so consecutive sweeps don't merge into sustained/latched activity), reusing the SAME frozen encode; the winning combo (by forward_transition AND duty<=0.40, tie-broken by n_specific/forward_frac) is then used for every control. Single value = byte-identical to the pre-#139 behaviour.")
     ap.add_argument("--det-settle", type=int, default=50, help="silent settle steps before the first detonation (baseline-silence window)")
     # READOUT substrate (reused from the intrinsic-fatigue readout: de-latch + cranked adaptation)
     ap.add_argument("--self-regen-read", type=float, default=0.0, help="plateau self-regen during the READ (0 = transient de-latch -> discrete + hand-off; the load-bearing knob)")
-    ap.add_argument("--d-abs", type=float, default=40.0, help="cranked Izhikevich per-spike u-kick on CA3-exc (transition driver, Ecker 2022)")
-    ap.add_argument("--a-abs", type=float, default=0.008, help="cranked Izhikevich recovery rate a on CA3-exc (slower fatigue recovery)")
+    ap.add_argument("--d-abs", type=float, nargs="+", default=[40.0], help="cranked Izhikevich per-spike u-kick on CA3-exc (transition driver, Ecker 2022). Multiple values -> SWEPT (board #139 lever: STRONGER adaptation so a0 SILENCES as a1 peaks -- the hand-off). See --det-period for the sweep/selection mechanics.")
+    ap.add_argument("--a-abs", type=float, nargs="+", default=[0.008], help="cranked Izhikevich recovery rate a on CA3-exc (slower fatigue recovery). Multiple values -> SWEPT (board #139 lever: SLOWER recovery -- smaller a -- so the just-fired assembly stays fatigued through the hand-off). See --det-period for the sweep/selection mechanics.")
     ap.add_argument("--apical-gc-read", type=float, default=None, help="WEAKEN apical->soma read during rest (bridge.py:7111); None = build value (byte-identical)")
     ap.add_argument("--fb-read", type=float, default=None, help="RANK-2 readout mechanism: set ALL ca3_pv_basket->ca3 weights to this at recall (un-spare members -> global lateral inhibition -> emergent competitive WTA). None = leave the store's spared basket untouched (byte-identical)")
     ap.add_argument("--fb-drive", type=float, default=None, help="RANK-2 readout mechanism: scale the ca3->ca3_pv_basket (E->I) drive so a sparse assembly burst actually RECRUITS the FS basket (the store's density-0.4 weight-5 arm under-fires from a ~k_det-cell volley). None = untouched. The 6-seed sweep found fb_read=None + fb_drive=10 converts a0+a2 co-fire into ordered a0->a2 events.")
@@ -598,7 +629,7 @@ def main():
         n_go = sum(1 for p in per if p["seed_go"])
         go = n_go >= max(1, (len(per) + 1) // 2)      # smoke gate; the FULL-RUN GO bar is >=5/6 (stated below)
         n_sym = sum(1 for p in per if p["symmetric_readout"]["n_events"] >= 1)
-        mg = [p["go_runs"][f"det_pa={p['best_det_pa']:g}"] for p in per]
+        mg = [p["go_runs"][p["best_key"]] for p in per]
         mm = float(np.mean([g["member_frac"] for g in mg])); mr = float(np.mean([g["random_frac"] for g in mg]))
         mc = float(np.mean([g["cross_frac"] for g in mg])); md = float(np.mean([g["duty_cycle"] for g in mg]))
         mf = float(np.mean([g["forward_frac"] for g in mg])); mrev = float(np.mean([g["reverse_frac"] for g in mg]))
