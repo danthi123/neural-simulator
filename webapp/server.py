@@ -3440,6 +3440,32 @@ def _resolve_ltm_bundle():
     return None
 
 
+def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128):
+    """Load (fast path) or build (fallback) a `ShardedPhasorStore` LTM from `ltm_bundle`, mirroring
+    `developed_brain_io.load_developed_brain`'s OWN `ltm_bundle` handling EXACTLY (same fast-path-persisted-
+    store-first, then build-from-facts.json precedence) -- factored out here so the default tiny-demo brain
+    (reasoning-frontier, 2026-08-25) gets the IDENTICAL LTM-attach behavior the developed-brain path already
+    has, without duplicating/diverging the load-vs-build decision. Returns None if the bundle has neither a
+    loadable sharded-store manifest nor a facts.json to build from (a missing/empty bundle degrades quietly;
+    the caller treats None as "no LTM available")."""
+    from research.runners.sharded_phasor_store import ShardedPhasorStore
+    manifest_path = Path(ltm_bundle) / "manifest.json"
+    if manifest_path.exists():
+        try:
+            mani = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:
+            mani = {}
+        if isinstance(mani, dict) and "n_shards" in mani:
+            return ShardedPhasorStore.load(str(ltm_bundle))
+    from research.runners.developed_brain_io import _load_facts_json
+    from research.runners.tiered_fact_store import build_ltm_from_facts, auto_n_shards
+    ltm_facts = _load_facts_json(ltm_bundle)
+    if not ltm_facts:
+        return None
+    ns = int(n_shards) if n_shards is not None else auto_n_shards(len(ltm_facts))
+    return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D))
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -3483,6 +3509,30 @@ def _build_chat_brain(brain: str, renderer: str):
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
                                               enable_neural_render=False, composer_kind=_ck)
         source = "tiny-demo"
+        # KNOWLEDGE-SCALE ON THE DEFAULT BRAIN (reasoning-frontier, 2026-08-25 -- board #133 extension). The
+        # 2026-08-25 integrated-conversational-state diagnostic found the shipped 15k curated core attached ONLY
+        # to the developed-brain path (below); the owner's DEFAULT out-of-box chat brain ('tiny-demo') had NO
+        # access to it -- every knowledge query on the default brain abstained even though the store itself
+        # answers correctly in isolation. Mirrors the developed-brain path's OWN attach exactly (same
+        # `_resolve_ltm_bundle()` + `TieredFactStore` composition, same fast-path-persisted-store / build-from-
+        # facts precedence as `developed_brain_io.load_developed_brain`): the tiny-demo composer stays the
+        # small recent-conversation BUFFER; a buffer abstain falls through to the routed LTM shard. Guarded so a
+        # missing/corrupt bundle degrades to the byte-identical no-LTM tiny-demo (never crashes brain load).
+        # Escape: `BRAIN_LTM_SHIP_DEFAULT=off` (or `BRAIN_LTM_BUNDLE=off`) -> `_resolve_ltm_bundle()` returns
+        # None -> this block is skipped entirely -> byte-identical to the pre-2026-08-25 tiny-demo.
+        _tiny_ltm_bundle = _resolve_ltm_bundle()
+        if _tiny_ltm_bundle is not None:
+            try:
+                from research.runners.developed_brain_io import _inner_agent
+                from research.runners.tiered_fact_store import TieredFactStore
+                _tiny_ltm = _load_or_build_ltm_store(_tiny_ltm_bundle, seed=42)
+                if _tiny_ltm is not None:
+                    _tiny_inner = _inner_agent(agent)
+                    _tiny_inner.composer = TieredFactStore(_tiny_inner.composer, _tiny_ltm)
+                    source = "tiny-demo +LTM"
+            except Exception as _tiny_ltm_exc:
+                print(f"[webapp] tiny-demo LTM attach failed (degrading to no-LTM tiny-demo): "
+                      f"{type(_tiny_ltm_exc).__name__}: {_tiny_ltm_exc}", flush=True)
     elif brain in ("self-knowledge", "self_knowledge", "self"):
         agent, aliases, _n = _load_self_knowledge(
             _SK_CODES, _SK_CURRICULUM, 42, True, False)
@@ -4987,12 +5037,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
         facts = [list(f) for f in r.get("facts", [])]
+        # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when this turn's direct fact
+        # was a COMPOSED multi-hop inference (compositional_chain_route), not a directly-recalled one.
+        _rich_derived = bool(r.get("derived"))
         # EPISODIC STORE (Gate-B, D5, Hook B): a normal answered turn with a VERIFIED SVO BTSP-forms the answered
         # topic's (subject/agent) CA3 assembly (write-only; changes NO reply text). The spiking BTSP write is
         # ~seconds on cupy but ~510s/topic on numpy@2000, so it is GATED behind cupy (`_episodic_store_ok`) — on a
         # numpy deployment the write is DEFERRED (a declared latency residual: the recall GATE stays spiking + load-
         # bearing; only the WRITE is amortized to the cupy deployment). Guarded so it never crashes the turn.
-        if _episodic_on and (not r["abstained"]) and facts and _episodic_store_ok():
+        # EXCLUDES a derived (ChainedSVO) direct answer (moat-hardening audit #5): a composed multi-hop
+        # inference's terminal was not itself directly recalled this turn.
+        if _episodic_on and (not r["abstained"]) and facts and not _rich_derived and _episodic_store_ok():
             try:
                 _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
                 _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(facts[0][0])
@@ -5011,7 +5066,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # the direct recall (the first supporting fact) is the gate hit,
             # surfaced for parity with the single-fact path's recalled_svo.
             # A hypothesis has no recalled fact -> null (it is a guess, not knowledge).
-            "recalled_svo": facts[0] if facts else None,
+            # A DERIVED answer (moat-hardening audit #5) also reports null here -- a composed multi-hop
+            # inference's terminal is NOT a directly-recalled fact; see `derived`/`derived_from` instead.
+            "recalled_svo": (None if _rich_derived else (facts[0] if facts else None)),
+            # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when the direct fact
+            # above was a COMPOSED multi-hop inference (compositional_chain_route), not a directly-recalled
+            # one; derived_from names the verified hop-facts it was reasoned from. False/None otherwise.
+            "derived": _rich_derived,
+            "derived_from": (list(r.get("derived_from") or []) if _rich_derived else None),
             # every kept sentence is gate-sourced + verify-checked, so the
             # multi-sentence reply is verified-by-construction (unless it
             # abstained, in which case there is nothing to verify).
@@ -5139,7 +5201,22 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
     # smoke records), then render. gate() returns None on the moat.
     try:
-        gate_svo = chat.gate(msg)
+        # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
+        # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
+        # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
+        # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
+        # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
+        gate_svo = None
+        _is_chain_route = False
+        try:
+            from research.runners.compositional_chain_route import resolve_compositional_chain
+            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+            _is_chain_route = gate_svo is not None
+        except Exception:
+            gate_svo = None
+            _is_chain_route = False
+        if gate_svo is None:
+            gate_svo = chat.gate(msg)
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:
@@ -5148,37 +5225,53 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # 'verified' = the render did NOT fall back to the raw triple
             # (ChatBrain marks an unverified render with this suffix).
             verified = "[unverified render" not in answer
+            if _is_chain_route:
+                # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): frame a
+                # composed multi-hop inference as the brain's OWN inference, surfacing the supporting hop-facts
+                # -- UNCONDITIONALLY, not gated behind the optional #129 provenance monitor below (which is
+                # default-OFF and must not be the only thing standing between a derived answer and being
+                # presented as a plain perceived fact).
+                from research.runners.compositional_chain_route import frame_derived_answer
+                answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
     # SOURCE-PROVENANCE HONESTY (board #129, 2026-08-25): read the #129 spiking opponent-comparator provenance
-    # monitor on the just-recalled fact. gate() only ever returns a DIRECTLY-STORED fact (never a composed multi-
-    # hop inference), so the fact is presented to the monitor as PERCEIVED; the monitor's OWN LIVE JUDGED label —
-    # not this claim — decides the framing (a lesioned monitor demonstrably loses the ability to keep the reply
-    # reading as confidently perceived; see research/runners/source_provenance_honesty.py +
-    # tests/test_source_provenance_honesty_wirein.py). Applied to the CORE rendered text, before any other
-    # faculty's prefix/suffix accretion below, so it composes cleanly with them. Additive + DEFAULT-OFF
-    # (`BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> byte-identical: the organ is never built, no substrate step
-    # runs, no `provenance` key is added).
+    # monitor on the just-recalled fact. gate() usually returns a DIRECTLY-STORED fact, presented to the monitor
+    # as PERCEIVED; the monitor's OWN LIVE JUDGED label — not this claim — decides the framing (a lesioned
+    # monitor demonstrably loses the ability to keep the reply reading as confidently perceived; see
+    # research/runners/source_provenance_honesty.py + tests/test_source_provenance_honesty_wirein.py). The ONE
+    # EXCEPTION (reasoning-frontier hardening, moat-hardening audit req #4): a chain-route answer is a COMPOSED
+    # multi-hop inference, not a directly-recalled fact — presenting it as PERCEIVED would be a provenance lie.
+    # It is encoded as GENERATED instead, so the monitor's own judged label (when it fires) agrees; the text
+    # framing itself already happened UNCONDITIONALLY above, so we do NOT also call `provenance_framed_text`
+    # here (that would double-wrap an already-framed derived answer in a second, generic disclaimer). Applied
+    # to the CORE rendered text, before any other faculty's prefix/suffix accretion below, so it composes
+    # cleanly with them. Additive + DEFAULT-OFF (`BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> byte-identical: the
+    # organ is never built, no substrate step runs, no `provenance` key is added).
     provenance_info = None
     if gate_svo is not None:
         try:
             import research.runners.source_provenance_production_organ as _SP
             if _SP.source_provenance_enabled():
                 from research.runners.source_provenance_honesty import (
-                    PROVENANCE_PERCEIVED, provenance_framed_text,
+                    PROVENANCE_PERCEIVED, PROVENANCE_GENERATED, provenance_framed_text,
                 )
                 _sp_mon = _get_source_provenance_organ()
                 _sp_key = ("live_chat_known_fact",) + tuple(gate_svo)
-                _sp_mon.encode_fact(_sp_key, PROVENANCE_PERCEIVED)
+                _sp_mon.encode_fact(_sp_key, PROVENANCE_GENERATED if _is_chain_route else PROVENANCE_PERCEIVED)
                 provenance_info = _sp_mon.judge_fact(_sp_key)
-                answer = provenance_framed_text("what_does", answer, provenance_info["label"])
+                if not _is_chain_route:
+                    answer = provenance_framed_text("what_does", answer, provenance_info["label"])
         except Exception as _spe:   # never let an opt-in honesty read crash a turn
             provenance_info = {"on": True, "error": f"{type(_spe).__name__}: {_spe}"}
 
     # EPISODIC STORE (Gate-B, D5, Hook B — single-fact path): mirror the rich-path write (gated behind cupy; on a
-    # numpy deployment the write is DEFERRED). Write-only; changes NO reply text. Guarded so it never crashes a turn.
-    if _episodic_on and gate_svo is not None and _episodic_store_ok():
+    # numpy deployment the write is DEFERRED). Write-only; changes NO reply text. Guarded so it never crashes a
+    # turn. A chain-route (ChainedSVO) answer is EXCLUDED (moat-hardening audit req #5): note_topic marks a
+    # topic as directly recalled this turn, which a synthesized chain terminal is not (each hop-fact was already
+    # noted, if at all, on the turn that taught it).
+    if _episodic_on and gate_svo is not None and not _is_chain_route and _episodic_store_ok():
         try:
             _ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
             _EP.get_episodic_organ(cache_key, 42, _ep_topics).note_topic(gate_svo[0])
@@ -5217,7 +5310,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     _resp = {
         "answer": answer,
         "abstained": abstained,
-        "recalled_svo": list(gate_svo) if gate_svo is not None else None,
+        # a chain-route answer (moat-hardening audit req #5) reports null here — it is a COMPOSED multi-hop
+        # inference, not a directly-recalled fact; see `derived`/`derived_from` for its distinct API shape.
+        "recalled_svo": (None if _is_chain_route else (list(gate_svo) if gate_svo is not None else None)),
+        # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when `gate_svo` came from the
+        # compositional chain route (a composed multi-hop inference) rather than a direct `chat.gate` recall;
+        # `derived_from` names the two independently-verified hop-facts it was reasoned from.
+        "derived": bool(_is_chain_route),
+        "derived_from": (list(getattr(gate_svo, "derived_from", None) or []) if _is_chain_route else None),
         "verified": verified,
         "renderer": rname,
         "brain": req.brain,

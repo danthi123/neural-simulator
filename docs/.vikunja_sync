@@ -92,3 +92,17 @@ the _neural_question_parse truncation fix, keep derived answers out of episodic 
 Single-seed (42) headline; the 36-cell multi-seed sweep (D{128..1024} x N{1k,5k,15k} x seed{42,43,44}) is
 queued to the pool to confirm. finding 2026-08-25-fhrr-decode-rate-at-scale; runner
 research/runners/reasoning_route_decode_rate.py.
+
+## 2026-08-25  reasoning-route HARDENED + MERGED to production-default (#141)
+Moat-audit reqs #1 (multi-valued-hop abstain), #4 (GENERATED provenance, hop-facts surfaced), #5
+(recalled_svo=null/derived=true API shape, kept out of episodic memory) CLOSED; req #6 (parser
+truncation) CONFIRMED moot for this route. 37-turn live battery against the real /api/brain-chat
+(finding 2026-08-25-reasoning-route-hardened.md), adversarially spot-checked in the raw records: core
+reqs pass — derives grass on the default rich path, moat abstains on unsupported/near-miss/multi-valued
+hops, GENERATED framing, lesion load-bearing, regressions intact. Moat DE-RISKED to 6-seed (false-hop
+0.0 across 72 cells). Residuals as FOLLOW-UPS: reqs #7/#11 (lemmatizer irregular-table / shard-routing
+normalization) out of scope this pass; #8 inconclusive (vocab-growth quirk); an incidental pre-existing
+parser-truncation bug on modifier-laden questions (spawned task_1a5eaba8); a cosmetic '[unverified
+render' leak on the single-fact (non-default) path. MERGED to main default-ON (_CHAIN_ROUTE_DEFAULT_ON;
+BRAIN_CHAIN_ROUTE=0 lesion). #141 -> next: re-run the integrated diagnostic on the full system to
+confirm live, then close #141.
