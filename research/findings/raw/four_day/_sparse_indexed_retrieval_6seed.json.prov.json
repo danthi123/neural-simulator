@@ -1,0 +1,32 @@
+{
+ "run_id": "1787774187-3840682",
+ "runner": "research/runners/_sparse_indexed_retrieval_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_sparse_indexed_retrieval_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--scales",
+  "10000,50000,200000",
+  "--n-query",
+  "120",
+  "--oos-query",
+  "120",
+  "--json",
+  "research/findings/raw/four_day/_sparse_indexed_retrieval_6seed.json"
+ ],
+ "git_sha": "dc7549ba2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-26T15:56:27",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 72411.1,
+ "corpus_check_query": "gap5 readout discreteness: sustained/latched multi-assembly activity dilutes forward_frac (duty 0.34-0.77) despite forward-ordered store",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/four_day/_sparse_indexed_retrieval_6seed.json"
+}
