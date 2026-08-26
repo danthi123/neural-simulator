@@ -691,10 +691,12 @@ def _build_smoke_chat(seed, use_multiturn):
         # self-knowledge path + _longitudinal_develop_loop.build_agent use.
         pattern_size = 40
         wm_n = max(600, 2 * pattern_size * max(1, len(referents)))
+        # --- SELECTIVE ATTENTION / biased-competition wire-in (env-gated, default OFF = byte-identical) ---------
+        from research.runners.biased_competition_prod import biased_competition_enabled as _bc_enabled
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
                                wm_n=wm_n, wm_pattern_size=pattern_size,
                                enable_neural_render=False, composer_kind="rf",
-                               enable_biased_competition=False)
+                               enable_biased_competition=_bc_enabled())
         inner = agent.agent
     else:
         from research.runners.brain_conversational_agent import BrainConversationalAgent

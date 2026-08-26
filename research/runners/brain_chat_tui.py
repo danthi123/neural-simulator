@@ -1310,11 +1310,15 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
         # (the curriculum teach below uses BrainConversationalAgent.hear, which does NOT write WM referents, so a
         # loaded self-knowledge brain never pays the ~681s WM build at load -- only when a console turn actually
         # introduces a pronoun antecedent). Byte-identical otherwise.
+        # --- SELECTIVE ATTENTION / biased-competition wire-in (env-gated, default OFF = byte-identical) ---------
+        # BRAIN_BIASED_COMPETITION unset/"0" -> biased_competition_enabled() == False == the literal passed today.
+        # ON -> a bare pronoun over >=2 held referents resolves to the content-favored referent (Wong-Wang WTA).
+        from research.runners.biased_competition_prod import biased_competition_enabled as _bc_enabled
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts,
                                grounded_codes=grounded if grounded else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False, defer_planner=True, event_register=ev_reg)
+                               enable_biased_competition=_bc_enabled(), defer_planner=True, event_register=ev_reg)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=grounded if grounded else None,
@@ -1367,9 +1371,11 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="r
             ev_reg = _DR.make_discourse_register(["dog", "cat", "fish", "bird", "worm", "ball"], seed=seed)
         except Exception as _e:
             print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
+        # --- SELECTIVE ATTENTION / biased-competition wire-in (env-gated, default OFF = byte-identical) ---------
+        from research.runners.biased_competition_prod import biased_competition_enabled as _bc_enabled
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
-                               enable_biased_competition=False, defer_planner=True, event_register=ev_reg)
+                               enable_biased_competition=_bc_enabled(), defer_planner=True, event_register=ev_reg)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind=composer_kind,
                                          enable_neural_render=enable_neural_render)

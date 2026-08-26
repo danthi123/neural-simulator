@@ -430,11 +430,15 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
         # grow the WM loop so it can hold every referent (the buffer holds wm_n/wm_pattern_size patterns); a large
         # developed vocabulary must not overrun the pattern budget (same rule as the develop loop's build_agent).
         wm_n = max(int(wm_n), 2 * int(wm_pattern_size) * max(1, len(referent_nouns)))
+        # --- SELECTIVE ATTENTION / biased-competition wire-in (env-gated, default OFF = byte-identical) ---------
+        # This is the WEBAPP production loader (webapp/server.py:_build_chat_brain -> load_developed_brain), so the
+        # env flag reaches the live chat brain here. BRAIN_BIASED_COMPETITION unset/"0" -> enabled()==False == today.
+        from research.runners.biased_competition_prod import biased_competition_enabled as _bc_enabled
         agent = MultiTurnAgent(referent_concepts=referent_nouns, concepts=concepts,
                                grounded_codes=codes if codes else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=wm_pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
-                               enable_biased_competition=False, defer_parser=defer_parser,
+                               enable_biased_competition=_bc_enabled(), defer_parser=defer_parser,
                                defer_planner=defer_parser,
                                communicable_mode=communicable_mode, communicable_draw=communicable_draw,
                                speak_value_Q=(speak_value_Q or None))
