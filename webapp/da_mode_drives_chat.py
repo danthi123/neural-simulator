@@ -375,6 +375,48 @@ class DaModeDrivesWorkspace:
                 info["reason"] = f"error:{type(e).__name__}: {e}"
             return info
 
+    def relax_idle(self, relax: float, neutral: float = 0.0) -> dict:
+        """ONE IDLE-TICK relaxation step (board #92, 2026-08-26) — the continuous-engine companion to `observe()`,
+        mirroring `affect_drives_chat.AffectDrivesWorkspace.relax_idle` (board #91) on the ENGAGEMENT/AROUSAL axis
+        instead of valence: decay the persistent `ema_engagement` toward the neutral set-point (the SAME homeostatic
+        relaxation formula `continuous_engine.tick_session` already applies elsewhere, `v1 = NEUTRAL +
+        (v0-NEUTRAL)*RELAX` — reused verbatim, not reinvented), map the decayed EMA to the SNc reward/context
+        afferent, and re-run ONE #76 neural SNc->DA READ at the relaxed point. So the engagement/mode this coupling
+        reports between turns is a genuine spiking read AT THE RELAXED afferent — never a host time-based formula
+        computing the mode/suffix directly. Does NOT increment `n_turns` (an idle tick is not a conversational turn)
+        and does NOT touch the hold/induction branching `observe()` uses — a distinct, idempotent decay step the
+        idle loop calls once per tick, applied directly to the SAME `ema_engagement` state a live `observe()` turn
+        reads and writes next.
+
+        BIOLOGICAL GROUNDING (the same LC-NE / tonic-DA vigor account this module's docstring cites): without a
+        salient/novel afferent, engagement is not held at its last value forever — arousal/vigor relaxes back toward
+        a resting baseline over time. Today (pre-#92) `ema_engagement` was written ONLY inside a live `observe()`
+        and a content-free turn merely HOLDS it — an idle session with no turns at all never touched it either, so
+        telling the brain something highly engaging, waiting idle, then sending a neutral follow-up produced the
+        IDENTICAL engagement suffix as zero idle time (the same observe-vs-drive gap #91 closed for #84's mood).
+
+        Returns the same-shaped record `observe()` returns (mode/lead/da_level/...) plus `relaxed: True`, so a
+        caller can log an inner-life note. Never raises out (mirrors `observe()`'s never-crash contract) — on any
+        error the mode/lead stay at the inert default (rest / '')."""
+        with self._lock:
+            self.ema_engagement = float(neutral) + (float(self.ema_engagement) - float(neutral)) * float(relax)
+            afferent = float(np.clip(self.ema_engagement, 0.0, 1.0)) * _MAX_AFFERENT_PA
+
+            info = {"acted": False, "relaxed": True, "turn": self.n_turns, "lesioned": False,
+                    "turn_engagement": None, "ema_engagement": float(self.ema_engagement),
+                    "afferent_pA": float(afferent), "da_level": 0.0, "snc_firing": 0.0, "mode": "rest", "lead": "",
+                    "reason": None, "seed": self.seed}
+            try:
+                self._isolated(self._ensure)
+                conc, sncf = self._isolated(lambda: self._read_da_level(afferent, False))
+                mode = da_to_mode(conc)
+                suffix = mode_suffix(mode)
+                info.update({"acted": True, "da_level": conc, "snc_firing": sncf, "mode": mode, "lead": suffix,
+                             "reason": "idle_relax"})
+            except Exception as e:   # never let the idle-relax read crash the tick loop
+                info["reason"] = f"error:{type(e).__name__}: {e}"
+            return info
+
 
 def get_workspace(chat, *, seed: int = _DEFAULT_SEED) -> DaModeDrivesWorkspace:
     """Idempotently attach a per-session `DaModeDrivesWorkspace` to the cached ChatBrain (auto-cleared on session
@@ -384,6 +426,29 @@ def get_workspace(chat, *, seed: int = _DEFAULT_SEED) -> DaModeDrivesWorkspace:
         ws = DaModeDrivesWorkspace(seed=seed)
         chat._da_drives_workspace = ws
     return ws
+
+
+def relax_idle(chat, relax: float, neutral: float = 0.0) -> Optional[dict]:
+    """The IDLE-TICK entry point (board #92): relax THIS session's DA-mode engagement EMA toward neutral and
+    re-read the #76 neural SNc->DA at the decayed point. Mirrors `affect_drives_chat.relax_idle` (board #91) on the
+    ENGAGEMENT/AROUSAL axis: `continuous_engine`'s "the brain keeps feeling between turns" mechanism previously
+    never reached this flagship, default-ON, most-visible engagement->forthcomingness coupling (the #76/#79 DA-mode
+    suffix this module drives) — closing an observe-vs-drive gap on a SECOND axis (#91 closed it for valence/warmth;
+    this closes it for engagement/energy): tell the brain something highly engaging, wait idle, then send a neutral
+    follow-up — BEFORE this, the DA-mode suffix on return was IDENTICAL to zero idle time, because nothing between
+    turns ever touched `ema_engagement`.
+
+    Returns None (a clean no-op) when this session has no `_da_drives_workspace` yet — i.e. the DA-mode coupling
+    was never triggered on a live turn — so a session that never had a DA-drives turn is BYTE-IDENTICAL: idling it
+    does nothing new, exactly like today. Never raises (delegates to `DaModeDrivesWorkspace.relax_idle`, itself
+    never-raising)."""
+    ws = getattr(chat, "_da_drives_workspace", None)
+    if ws is None:
+        return None
+    try:
+        return ws.relax_idle(relax, neutral=neutral)
+    except Exception as e:
+        return {"acted": False, "relaxed": True, "reason": f"error:{type(e).__name__}: {e}", "lead": "", "mode": "rest"}
 
 
 def observe_turn(chat, message: str, *, seed: int = _DEFAULT_SEED) -> dict:
