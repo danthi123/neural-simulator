@@ -1,0 +1,35 @@
+{
+ "run_id": "1787772151-3735645",
+ "runner": "research/runners/_second_order_metacog_monitor_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_27488f47-beb-3/research/runners/_second_order_metacog_monitor_derisk.py",
+  "--seeds",
+  "42",
+  "--n-trials",
+  "160",
+  "--confidence-read",
+  "plastic_acc",
+  "--backend",
+  "numpy",
+  "--json",
+  "research/findings/raw/lanes/metacog/metacog_plastic_difforth_s42_n160.json"
+ ],
+ "git_sha": "8f6375712",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T15:22:31",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/metacog/metacog_plastic_difforth_s42_n160.json"
+}

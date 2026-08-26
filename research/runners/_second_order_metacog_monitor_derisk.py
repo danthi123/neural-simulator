@@ -280,6 +280,62 @@ def _score_type2(stimulus, response, confidence, c1, d1, seed=0):
             "conf_error_mean": float(np.mean(np.asarray(confidence)[~correct])) if (~correct).any() else None}
 
 
+def _difficulty_orthogonal_type2(sig, confidence, correct, n_bins: int, thr: float):
+    """ANTI-CHEAT: is the second-order signal ORTHOGONAL to raw difficulty, or is the monitor just RE-READING the
+    experimenter's signal strength (a first-order artifact)?
+
+    A monitor could look metacognitive for a trivial reason: easy trials (large `sig`) are BOTH high-confidence AND
+    high-accuracy, so pooling across difficulties makes confidence predict correctness even if the monitor only
+    read the difficulty label -- not the trial-specific settled evidence. This CONFOUNDS meta-d' with d'.
+
+    The test: STRATIFY trials into `n_bins` quantile bins of the true signal strength `sig` (difficulty ~constant
+    within a bin), then measure the type-2 AUC(confidence, correct) WITHIN each bin. If confidence merely re-reads
+    difficulty, the within-bin AUC -> chance (no difficulty variance left to exploit). If the monitor reads the
+    ACTUAL trial's competition (signal + the noise realization on THAT trial), it still separates correct from error
+    at fixed difficulty -> AUC stays above chance. Pooled = trial-count-weighted mean of the valid-bin AUCs.
+
+    Returns (result_dict, ok: bool). `ok` requires the pooled within-difficulty AUC >= thr AND at least 2 valid bins
+    (so a single lucky bin cannot carry it). This is the metacog analogue of the within-CLASS control, but the
+    nuisance conditioned out is DIFFICULTY rather than stimulus identity."""
+    sig = np.asarray(sig, dtype=np.float64)
+    confidence = np.asarray(confidence, dtype=np.float64)
+    correct = np.asarray(correct).astype(bool)
+    n = sig.shape[0]
+    n_bins = int(max(2, n_bins))
+    # quantile edges over the observed signal strengths (robust to any sampling distribution).
+    qs = np.linspace(0.0, 1.0, n_bins + 1)
+    edges = np.quantile(sig, qs)
+    edges[0] = -np.inf
+    edges[-1] = np.inf
+    per_bin = []
+    weighted_sum = 0.0
+    weight_tot = 0.0
+    n_valid = 0
+    for b in range(n_bins):
+        m = (sig >= edges[b]) & (sig < edges[b + 1])
+        n_in = int(m.sum())
+        if n_in >= 4 and correct[m].any() and (~correct[m]).any():
+            auc_b = float(_auc(confidence[m], correct[m]))
+            per_bin.append({"bin": b, "n": n_in, "sig_lo": float(edges[b]) if np.isfinite(edges[b]) else None,
+                            "sig_hi": float(edges[b + 1]) if np.isfinite(edges[b + 1]) else None,
+                            "type2_auc": auc_b, "n_correct": int(correct[m].sum())})
+            weighted_sum += auc_b * n_in
+            weight_tot += n_in
+            n_valid += 1
+        else:
+            per_bin.append({"bin": b, "n": n_in, "type2_auc": None})
+    pooled = float(weighted_sum / weight_tot) if weight_tot > 0 else None
+    valid_aucs = [pb["type2_auc"] for pb in per_bin if pb["type2_auc"] is not None]
+    min_bin = float(min(valid_aucs)) if valid_aucs else None
+    ok = bool(pooled is not None and pooled >= thr and n_valid >= 2)
+    return {
+        "mechanism": "difficulty_stratified_type2_auc",
+        "n_bins": n_bins, "n_valid_bins": n_valid,
+        "pooled_within_difficulty_type2_auc": pooled, "min_within_difficulty_type2_auc": min_bin,
+        "threshold": float(thr), "per_bin": per_bin, "ok": ok,
+    }, ok
+
+
 def _sigmoid(x: float) -> float:
     x = float(np.clip(x, -40.0, 40.0))
     return float(1.0 / (1.0 + math.exp(-x)))
@@ -1175,6 +1231,14 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
     valid_pc = [v for v in per_class_t2_auc.values() if v is not None]
     within_class_ok = bool(valid_pc and min(valid_pc) >= thresholds["within_class_t2_auc"])
 
+    # ANTI-CHEAT (5) DIFFICULTY-ORTHOGONAL: the second-order signal must predict correctness WITHIN a fixed
+    # difficulty bin -- proving it reads the trial's ACTUAL settled evidence (signal + the noise realization), not
+    # just re-reading the experimenter's signal strength (which would confound meta-d' with d'). See
+    # `_difficulty_orthogonal_type2`.
+    diff_orth, difficulty_orthogonal_ok = _difficulty_orthogonal_type2(
+        sig, conf_intact, correct, int(plastic_config.get("difficulty_bins", 3)),
+        thresholds["difficulty_orthogonal_t2_auc"])
+
     # ANTI-CHEAT (1) META-LESION: sever the monitor's ACCESS (zero drive to the meta subpools). The monitor is a
     # read-only downstream faculty, so the first-order competition -- hence the response and d' -- is UNCHANGED.
     t2_l = _score_type2(stimulus, response, conf_lesion, c1, d1, seed=seed)
@@ -1237,8 +1301,9 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
         "within_class_ok": within_class_ok,
     }
     base_go, go_components = _seed_go_decision(t2, type1_accuracy, controls, thresholds)
-    go = bool(base_go and self_read_lesion_collapsed)
+    go = bool(base_go and self_read_lesion_collapsed and difficulty_orthogonal_ok)
     go_components["self_read_lesion_collapses"] = bool(self_read_lesion_collapsed)
+    go_components["difficulty_orthogonal"] = bool(difficulty_orthogonal_ok)
 
     r = {
         "seed": int(seed), "n_trials": int(n_trials), "confidence_read": PLASTIC_ACC_CONFIDENCE_READ,
@@ -1272,6 +1337,7 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
             "null_mean_auc": srl_null_mean, "null_p95_auc": srl_null_p95, "perm_p": srl_perm_p,
             "collapsed": self_read_lesion_collapsed,
         },
+        "difficulty_orthogonal": dict(diff_orth, difficulty_orthogonal_ok=difficulty_orthogonal_ok),
         "host_logistic_fit_calls_on_path": int(host_logistic_calls_on_path),
         "plastic_monitor": monitor.to_json(),
         "go_components": go_components,
@@ -1295,6 +1361,10 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
         print(f"    SELF-READ-LESION(shuffled-feedback perm test, n={n_srl}) intact_raw_auc={intact_raw_auc:.3f} "
               f"null_mean={srl_null_mean:.3f} perm_p={srl_perm_p:.3f} collapsed={self_read_lesion_collapsed} | "
               f"host_logistic_calls_on_path={host_logistic_calls_on_path}", flush=True)
+        print(f"    DIFFICULTY-ORTHOGONAL(within-difficulty type2, {diff_orth['n_valid_bins']}/{diff_orth['n_bins']} "
+              f"bins) pooled_auc={diff_orth['pooled_within_difficulty_type2_auc']} "
+              f"min_bin={diff_orth['min_within_difficulty_type2_auc']} thr={diff_orth['threshold']} "
+              f"ok={difficulty_orthogonal_ok}", flush=True)
         print(f"    >>> seed GO = {go}  {go_components}", flush=True)
     return r
 
@@ -1312,6 +1382,7 @@ def run_plastic_mode(seeds, n_trials, args):
         "feature_mode": str(args.plastic_feature_mode),
         "self_read_permutations": int(args.plastic_self_read_permutations),
         "permuted_permutations": int(args.plastic_permuted_permutations),
+        "difficulty_bins": int(args.plastic_difficulty_bins),
     }
     print(f"[metacog:plastic] SYNAPTICALLY SELF-ORGANIZED metacog monitor (reward-gated THREE-FACTOR HEBBIAN) | "
           f"seeds={seeds} n_trials={n_trials} backend={args.backend} base_pa={args.base_pa} "
@@ -1349,6 +1420,10 @@ def run_plastic_mode(seeds, n_trials, args):
         "all_permuted_collapse": all(r["permuted_confidence"]["collapsed"] for r in per_seed),
         "all_self_read_lesion_collapse": all(r["self_read_lesion"]["collapsed"] for r in per_seed),
         "all_within_class_ok": all(r["within_class_correctness"]["within_class_ok"] for r in per_seed),
+        "all_difficulty_orthogonal_ok": all(r["difficulty_orthogonal"]["difficulty_orthogonal_ok"]
+                                            for r in per_seed),
+        "mean_pooled_within_difficulty_type2_auc": _mean(["difficulty_orthogonal",
+                                                          "pooled_within_difficulty_type2_auc"]),
         "all_host_logistic_calls_zero": all(r["host_logistic_fit_calls_on_path"] == 0 for r in per_seed),
     }
 
@@ -1388,7 +1463,7 @@ def run_plastic_mode(seeds, n_trials, args):
         }
 
     controls_all_collapse = bool(agg["all_meta_lesion_collapse"] and agg["all_permuted_collapse"]
-                                 and agg["all_self_read_lesion_collapse"])
+                                 and agg["all_self_read_lesion_collapse"] and agg["all_difficulty_orthogonal_ok"])
     # MISSION GO = parity to host (>=5/6) AND all three controls collapse 6/6 AND no host optimizer AND the operating
     # window is valid on every seed (meta-d' only meaningful in-window). This is the mission bar -- a RELATIVE parity
     # to the host read -- NOT the stricter absolute per-seed learned_acc gate (`verdict`, reported as secondary).
@@ -1410,9 +1485,10 @@ def run_plastic_mode(seeds, n_trials, args):
         "preconditions": [
             {"name": "per_seed_type1_type2_and_meta_metrics_recorded",
              "ok": all("intact" in r and "type2_auc" in r["intact"] and "meta_d" in r["intact"] for r in per_seed)},
-            {"name": "meta_lesion_permuted_selfread_and_within_class_controls_recorded",
+            {"name": "meta_lesion_permuted_selfread_within_class_and_difficulty_orthogonal_controls_recorded",
              "ok": all(all(k in r for k in ("meta_lesion", "permuted_confidence", "self_read_lesion",
-                                            "within_class_correctness")) for r in per_seed)},
+                                            "within_class_correctness", "difficulty_orthogonal"))
+                       for r in per_seed)},
             {"name": "no_host_logistic_optimizer_on_plastic_path",
              "ok": all(r["host_logistic_fit_calls_on_path"] == 0 for r in per_seed)},
             {"name": "verdict_derived_from_recorded_seed_go_flags",
@@ -1421,9 +1497,14 @@ def run_plastic_mode(seeds, n_trials, args):
         "honest_scope": ("The type-2 confidence->correctness MAPPING is self-organized by a local reward-gated "
                          "three-factor Hebbian rule (w_plus/w_minus from experienced trial-correctness feedback), "
                          "NOT a host logistic fit -- this closes the committed learned_acc GO's named residual. The "
-                         "presynaptic ACC features are direct rate reads of the brain's own first-order competition "
-                         "(the same reads the balance/learned_acc modes use); a fully-spiking presynaptic population "
-                         "read is the next rung. FUNCTIONAL metacognition correlate only; no phenomenal claim."),
+                         "meta-d' dissociation from d' is now ROBUST to a difficulty confound: the DIFFICULTY-"
+                         "ORTHOGONAL control shows confidence predicts correctness WITHIN a fixed signal-strength "
+                         "bin, so the second-order signal reads the trial's actual settled evidence (signal + the "
+                         "noise realization), not just the experimenter's difficulty label -- meta-d' is not a "
+                         "re-read of d'. The presynaptic ACC features are direct rate reads of the brain's own "
+                         "first-order competition (the same reads the balance/learned_acc modes use); a fully-"
+                         "spiking presynaptic population read is the next rung. FUNCTIONAL metacognition correlate "
+                         "only; no phenomenal claim."),
     }
     os.makedirs(os.path.dirname(os.path.abspath(args.json)), exist_ok=True)
     with open(args.json, "w") as f:
@@ -1435,8 +1516,10 @@ def run_plastic_mode(seeds, n_trials, args):
           f"M-ratio={agg['mean_m_ratio']:.2f}", flush=True)
     print(f"[metacog:plastic]   controls: meta-lesion={agg['all_meta_lesion_collapse']} "
           f"permuted={agg['all_permuted_collapse']} self-read-lesion={agg['all_self_read_lesion_collapse']} "
-          f"within-class={agg['all_within_class_ok']} | host_logistic_calls_zero="
-          f"{agg['all_host_logistic_calls_zero']} in-window={agg['all_in_window']}", flush=True)
+          f"within-class={agg['all_within_class_ok']} difficulty-orthogonal={agg['all_difficulty_orthogonal_ok']} "
+          f"(mean pooled within-diff auc={agg['mean_pooled_within_difficulty_type2_auc']}) | "
+          f"host_logistic_calls_zero={agg['all_host_logistic_calls_zero']} in-window={agg['all_in_window']}",
+          flush=True)
     if host_compare is not None:
         print(f"[metacog:plastic]   PARITY vs host: plastic mean AUC={host_compare['plastic_mean_type2_auc']:.3f} vs "
               f"host {host_compare['host_mean_type2_auc']:.3f} "
@@ -1848,6 +1931,8 @@ DEFAULT_THRESHOLDS = {
     "type2_auc": 0.65,                            # confidence separates correct from error
     "m_ratio": 0.60,                              # metacognitive efficiency near the ideal (=1)
     "within_class_t2_auc": 0.55,                  # confidence tracks correctness WITHIN a fixed stimulus class
+    "difficulty_orthogonal_t2_auc": 0.55,         # confidence predicts correctness WITHIN a fixed DIFFICULTY bin
+                                                  #   (orthogonal to raw difficulty -> not just re-reading d')
     "chance_type2_auc": 0.58,                     # lesion/permuted type2 AUC must drop to ~chance (0.5) + margin
     "collapse_meta_d": 0.35,                      # lesion/permuted meta_d must collapse to ~0
     "max_d1_shift": 0.30,                         # domain dissociation: type-1 d' UNCHANGED under meta-lesion
@@ -2027,6 +2112,9 @@ def main():
                     help="plastic_acc only: shuffled-feedback permutations for the self-read-lesion control")
     ap.add_argument("--plastic-permuted-permutations", type=int, default=200,
                     help="plastic_acc only: confidence permutations for the permuted-confidence control")
+    ap.add_argument("--plastic-difficulty-bins", type=int, default=3,
+                    help="plastic_acc only: quantile difficulty bins for the difficulty-orthogonal anti-cheat "
+                         "(confidence must predict correctness WITHIN a fixed signal-strength bin)")
     ap.add_argument("--host-json", type=str, default=None,
                     help="plastic_acc only: a host learned_acc 6-seed artifact for the parity gate (>=0.85x host mean)")
     ap.add_argument("--parity-ratio", type=float, default=0.85,

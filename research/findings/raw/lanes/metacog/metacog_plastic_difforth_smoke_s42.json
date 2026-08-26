@@ -1,0 +1,310 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition -- SYNAPTICALLY SELF-ORGANIZED monitor (reward-gated three-factor Hebbian ACC/aPFC->meta_schema); closes the host-logistic residual of the learned_acc GO",
+  "theory": "Reward-gated three-factor Hebbian (pre=ACC evidence/conflict read; post=opponent V+/V- aPFC confidence channel driven by the correctness US; third factor=dopamine/RPE, Fleming-Daw / Holroyd-Coles ACC) -- the type-2 confidence->correctness mapping learned by SYNAPSES, not a host optimizer. Scored in Maniscalco-Lau type-2 SDT / meta-d'.",
+  "seeds": [
+    42
+  ],
+  "n_trials": 64,
+  "backend": "numpy",
+  "confidence_read": "plastic_acc",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "difficulty_orthogonal_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "plastic_config": {
+    "calib_trials": 64,
+    "report_steps": 40,
+    "td_alpha": 0.1,
+    "gain": 1.2,
+    "conf_min_pa": 150.0,
+    "conf_max_pa": 750.0,
+    "feature_mode": "dynamic",
+    "self_read_permutations": 200,
+    "permuted_permutations": 200,
+    "difficulty_bins": 3
+  },
+  "verdict": "NEGATIVE",
+  "n_go": 0,
+  "n_seeds": 1,
+  "mission_go": false,
+  "aggregate": {
+    "mean_type1_accuracy": 0.859375,
+    "mean_d1": 2.061025784308625,
+    "mean_type2_auc": 0.6868686868686869,
+    "mean_meta_d": 1.1681363784618695,
+    "mean_m_ratio": 0.5667742671417976,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_permuted_collapse": true,
+    "all_self_read_lesion_collapse": false,
+    "all_within_class_ok": true,
+    "all_difficulty_orthogonal_ok": true,
+    "mean_pooled_within_difficulty_type2_auc": 0.75,
+    "all_host_logistic_calls_zero": true
+  },
+  "host_compare": null,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 64,
+      "confidence_read": "plastic_acc",
+      "intact": {
+        "type1_accuracy": 0.859375,
+        "d1": 2.061025784308625,
+        "c1": -0.005920498501510552,
+        "hr": 0.85,
+        "far": 0.1527777777777778,
+        "type2_auc": 0.6868686868686869,
+        "meta_d": 1.1681363784618695,
+        "m_ratio": 0.5667742671417976,
+        "conf_correct_mean": -0.013531468531468532,
+        "conf_error_mean": -0.032905982905982914,
+        "conf_vs_signal_spearman": 0.03603479853479853,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.6733333333333333,
+          "1": 0.725
+        },
+        "min_per_class_type2_auc": 0.6733333333333333,
+        "within_class_ok": true
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.859375,
+        "d1": 2.061025784308625,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": 1.0,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "mechanism": "confidence_permutation_test",
+        "n_permutations": 200,
+        "single_draw_type2_auc": 0.396969696969697,
+        "single_draw_meta_d": 0.0,
+        "null_mean_auc": 0.494969696969697,
+        "null_p95_auc": 0.6567676767676767,
+        "perm_p": 0.029850746268656716,
+        "collapsed": true
+      },
+      "self_read_lesion": {
+        "mechanism": "shuffled_feedback_permutation_test_on_learned_mapping_margin",
+        "intact_raw_margin_auc": 0.6888888888888889,
+        "n_permutations": 200,
+        "null_mean_auc": 0.519040404040404,
+        "null_p95_auc": 0.8184848484848485,
+        "perm_p": 0.24378109452736318,
+        "collapsed": false
+      },
+      "difficulty_orthogonal": {
+        "mechanism": "difficulty_stratified_type2_auc",
+        "n_bins": 3,
+        "n_valid_bins": 2,
+        "pooled_within_difficulty_type2_auc": 0.75,
+        "min_within_difficulty_type2_auc": 0.75,
+        "threshold": 0.55,
+        "per_bin": [
+          {
+            "bin": 0,
+            "n": 21,
+            "sig_lo": null,
+            "sig_hi": 119.23963447231242,
+            "type2_auc": 0.75,
+            "n_correct": 15
+          },
+          {
+            "bin": 1,
+            "n": 21,
+            "sig_lo": 119.23963447231242,
+            "sig_hi": 195.91146513547045,
+            "type2_auc": 0.75,
+            "n_correct": 18
+          },
+          {
+            "bin": 2,
+            "n": 22,
+            "type2_auc": null
+          }
+        ],
+        "ok": true,
+        "difficulty_orthogonal_ok": true
+      },
+      "host_logistic_fit_calls_on_path": 0,
+      "plastic_monitor": {
+        "mechanism": "plastic_three_factor_hebbian_acc_apfc_reward_gated",
+        "weight_source": "reward_gated_three_factor_hebbian (NO host optimizer, NO weight transport)",
+        "calibration_trials": 64,
+        "calibration_accuracy": 0.890625,
+        "calibration_errors": 7,
+        "n_pos_writes": 57,
+        "n_neg_writes": 7,
+        "gate_plus_da_mass": 9.11354856919272,
+        "gate_minus_da_mass": 6.234329631936814,
+        "w_plus_l2": 0.3590690402232986,
+        "w_minus_l2": 1.859040930393492,
+        "calibration_opponent_type2_auc": 0.8245614035087719,
+        "td_alpha": 0.1,
+        "gain": 1.2,
+        "feature_mode": "dynamic",
+        "host_logistic_fit_calls_at_fit": 0,
+        "feature_names": [
+          "winner_rate",
+          "runner_rate",
+          "margin_abs",
+          "balance",
+          "conflict",
+          "total_rate",
+          "signed_margin",
+          "response_sign",
+          "late_winner_rate",
+          "late_runner_rate",
+          "late_margin_abs",
+          "late_balance",
+          "late_conflict",
+          "late_total_rate",
+          "chosen_late_rate",
+          "unchosen_late_rate",
+          "chosen_rate_drop",
+          "margin_drop",
+          "response_persistence",
+          "fs_late_rate"
+        ],
+        "feature_mean": [
+          0.053183593749999994,
+          0.04599999999999999,
+          0.007183593749999999,
+          0.11548772670969766,
+          0.44225613137401926,
+          0.09918359375000002,
+          -0.00155078125,
+          -0.03125,
+          0.04967447916666668,
+          0.04044744318181817,
+          0.00922703598484848,
+          0.142251301159835,
+          0.4288743434823269,
+          0.09012192234848483,
+          0.04407552083333333,
+          0.046046401515151505,
+          0.009108072916666664,
+          -0.002043442234848484,
+          -0.3125,
+          0.03478219696969696
+        ],
+        "feature_scale": [
+          0.003037683953888379,
+          0.01571940232244852,
+          0.01498454556651489,
+          0.271760407082072,
+          0.13588020486951652,
+          0.01697402900087251,
+          0.016544960033637087,
+          0.9995115994824673,
+          0.0060238242236378674,
+          0.012688593362565134,
+          0.010575444342639906,
+          0.24250409141953766,
+          0.12125204773481718,
+          0.016814686929924157,
+          0.006828159519719453,
+          0.013830763123303984,
+          0.005702890138375042,
+          0.008790706358202055,
+          0.9499177595981665,
+          0.003528412140729663
+        ],
+        "w_plus": [
+          -0.03446827815281435,
+          -0.0790218070670364,
+          0.07590966552983305,
+          0.08494081589791473,
+          -0.08494081592216954,
+          -0.07934941744988286,
+          0.08357667895839238,
+          -0.08599728743707438,
+          -0.09499906885951648,
+          -0.10181465850497137,
+          0.06804698550561422,
+          0.0894504715309904,
+          -0.08945047191472034,
+          -0.11086394293904349,
+          -0.070960037964596,
+          -0.09974981288377509,
+          0.06660179559286866,
+          0.04753255508094388,
+          0.016221564206010675,
+          -0.07981427849721738
+        ],
+        "w_minus": [
+          -0.0032840922731913803,
+          0.41525753187419123,
+          -0.436287921868509,
+          -0.40219669282762904,
+          0.4021966927599451,
+          0.3839762602161798,
+          0.09606817165065502,
+          0.15673449278515425,
+          0.2929592991368237,
+          0.5198158106859734,
+          -0.4568125901875925,
+          -0.40407896966517953,
+          0.4040789699690712,
+          0.4972121576065856,
+          0.7340453182227982,
+          0.24208991293739154,
+          -0.8806332298312258,
+          -0.1941345841020386,
+          0.15557333858190983,
+          0.12309482308494445
+        ],
+        "raw_mu": -6.938893903907228e-17,
+        "raw_sigma": 4.202164502265316,
+        "conf_min_pa": 150.0,
+        "conf_max_pa": 750.0
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": true,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": true,
+        "within_class_correctness": true,
+        "self_read_lesion_collapses": false,
+        "difficulty_orthogonal": true
+      },
+      "go": false
+    }
+  ],
+  "preconditions": [
+    {
+      "name": "per_seed_type1_type2_and_meta_metrics_recorded",
+      "ok": true
+    },
+    {
+      "name": "meta_lesion_permuted_selfread_within_class_and_difficulty_orthogonal_controls_recorded",
+      "ok": true
+    },
+    {
+      "name": "no_host_logistic_optimizer_on_plastic_path",
+      "ok": true
+    },
+    {
+      "name": "verdict_derived_from_recorded_seed_go_flags",
+      "ok": true
+    }
+  ],
+  "honest_scope": "The type-2 confidence->correctness MAPPING is self-organized by a local reward-gated three-factor Hebbian rule (w_plus/w_minus from experienced trial-correctness feedback), NOT a host logistic fit -- this closes the committed learned_acc GO's named residual. The meta-d' dissociation from d' is now ROBUST to a difficulty confound: the DIFFICULTY-ORTHOGONAL control shows confidence predicts correctness WITHIN a fixed signal-strength bin, so the second-order signal reads the trial's actual settled evidence (signal + the noise realization), not just the experimenter's difficulty label -- meta-d' is not a re-read of d'. The presynaptic ACC features are direct rate reads of the brain's own first-order competition (the same reads the balance/learned_acc modes use); a fully-spiking presynaptic population read is the next rung. FUNCTIONAL metacognition correlate only; no phenomenal claim."
+}
