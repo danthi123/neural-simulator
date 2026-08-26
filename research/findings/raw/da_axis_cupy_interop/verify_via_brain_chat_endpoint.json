@@ -1,0 +1,33 @@
+{
+  "script": "research/findings/raw/da_axis_cupy_interop/verify_via_brain_chat_endpoint.py",
+  "seed": 42,
+  "backend": "cupy",
+  "renderer": "stub",
+  "note": "Calls the REAL webapp.server.brain_chat() FastAPI route function directly (same technique as tests/test_production_chat_gpu_smoke.py), in a fresh SIM_BACKEND=cupy subprocess, session='da_cupy_interop_verify'.",
+  "turn_1_empty_message": {
+    "status_code": 200,
+    "da_drives": null,
+    "comment": "da_drives key absent on this turn -- the empty-message turn takes an early abstain/short-circuit path in brain_chat() before the DA block runs; unrelated to the cupy-interop fix (confirmed separately at the workspace level in verify_after_fix_cupy.json)."
+  },
+  "turn_2_rich_novel_message": {
+    "message": "tell me something surprising and unusual about deep sea bioluminescent creatures",
+    "status_code": 200,
+    "answer": "I don't know about that. My curiosity is piqued -- I haven't learned about surprising yet: what can you tell me about surprising? -- worth going further here.",
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 1.0,
+      "ema_engagement": 0.6,
+      "afferent_pA": 840.0,
+      "da_level": 0.8965045558416256,
+      "snc_firing": 0.14166666666666666,
+      "mode": "focus",
+      "lead": " — worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "on": true
+    }
+  },
+  "summary": "PASS: both turns return HTTP 200 (no crash); turn 2's da_drives.reason == 'engaged' (no error:) and the DA-mode engagement suffix ' -- worth going further here.' is visibly APPENDED to the real live answer text returned by the actual /api/brain-chat handler on SIM_BACKEND=cupy."
+}

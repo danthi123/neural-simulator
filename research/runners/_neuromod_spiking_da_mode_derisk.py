@@ -123,18 +123,42 @@ def da_nucleus_config():
     )
 
 
+def _bridge_xp(sb):
+    """The array module SB's OWN `cp_*` state actually lives on -- NOT the process-global `SIM_BACKEND` /
+    `get_backend()` (a sticky cache; `sim.bridge` binds its module-level `cp` at IMPORT time, so a substrate
+    built under `SIM_BACKEND=cupy` (the production `/api/brain-chat` path) has cupy `cp_*` arrays regardless
+    of what `get_backend()` reports later). Deriving `xp` from the substrate's own array keeps every array this
+    module allocates on the SAME device as `sb`, so `sb.cp_external_input_current[:] = <this-module's array>`
+    never mixes host numpy into a device cupy fill. Same pattern + same root cause as the 2026-06-24
+    `brain_conversational_agent._bridge_xp` webapp fix; this module hardcoded `np` instead (2026-08-25 root
+    cause of `da_drives.reason = "error:ValueError: non-scalar numpy.ndarray cannot be used for fill"` --
+    board #76's `make_manager`/`_base_current`/`measure_self_driven` are NUMPY-only, so on the cupy webapp
+    every DA-mode read silently threw and was swallowed by `da_mode_drives_chat.observe`'s bare `except`).
+    Falls back to numpy when cupy is not installed (a numpy-only box can only ever have a numpy substrate)."""
+    try:
+        import cupy as _cp  # noqa: PLC0415
+        return _cp.get_array_module(sb.cp_external_input_current)
+    except Exception:
+        return np
+
+
 def make_manager(sb):
+    xp = _bridge_xp(sb)                                      # device-correct: matches SB's own cp_* arrays
     mgr = NeuromodulatorManager([da_nucleus_config()], dt_ms=1.0)
-    mgr.initialize(sb.core_config.num_neurons, np)          # numpy as the array module (SIM_BACKEND=numpy)
-    mgr.set_group_indices(NR._group_indices(sb))            # group:str_D1 / group:str_D2 for the targets
+    mgr.initialize(sb.core_config.num_neurons, xp)           # numpy on a numpy substrate, cupy on a cupy one
+    mgr.set_group_indices(NR._group_indices(sb))             # group:str_D1 / group:str_D2 for the targets
     return mgr
 
 
 def _base_current(sb, nbt, baseline, context_snc, perturb, silence_snc):
     """STATIC input template: baseline tones + the reward/context afferent to snc (or the lesion clamp) +
-    perturbation. Only the neuromodulatory drive changes step-to-step, so this is built ONCE per measure."""
-    idx = lambda n: np.asarray(sb.region_manager.indices(n))
-    v = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
+    perturbation. Only the neuromodulatory drive changes step-to-step, so this is built ONCE per measure.
+    Built on SB's own array module (`_bridge_xp`) so the result can be assigned straight into
+    `sb.cp_external_input_current` on either backend -- byte-identical to the old numpy-only version whenever
+    SB itself is numpy-backed (the board-#76 GO path, `SIM_BACKEND=numpy`)."""
+    xp = _bridge_xp(sb)
+    idx = lambda n: xp.asarray(sb.region_manager.indices(n))
+    v = xp.zeros(sb.core_config.num_neurons, dtype=xp.float64)
     for t, cur in baseline.items():
         for n in nbt[t]:
             v[idx(n)] = cur
@@ -151,7 +175,15 @@ def measure_self_driven(sb, mgr, nbt, baseline, context_snc, perturb=None,
                         warmup=WARMUP, settle=SETTLE, silence_snc=False):
     """LIVE loop: each step add the SNc-produced DA excitability drive to the static base current, step the
     substrate, then let the bus read SNc firing to update the DA concentration. Returns per-region rates +
-    the established DA concentration + the SNc firing fraction (means over the settle window)."""
+    the established DA concentration + the SNc firing fraction (means over the settle window).
+
+    `base` and `drive` are kept on SB's OWN array module (`_bridge_xp`) right up to the assignment into
+    `sb.cp_external_input_current[:]` -- on a cupy substrate `mgr` is now also cupy-backed (`make_manager`
+    fix), so `drive` is already a cupy array; casting through `np.asarray` here (the old code) would either
+    force an illegal device->host->device round trip or, for `base` alone, assign a host numpy array into a
+    device cupy slice -- the exact `ValueError: non-scalar numpy.ndarray cannot be used for fill` this fixes.
+    `rates`/`snc_firing` stay host-numpy via `to_host` below, unaffected (that half was already correct)."""
+    xp = _bridge_xp(sb)
     base = _base_current(sb, nbt, baseline, context_snc, perturb, silence_snc)
     snc_idx = np.asarray(sb.region_manager.indices("snc"))
     idx = lambda n: np.asarray(sb.region_manager.indices(n))
@@ -163,7 +195,7 @@ def measure_self_driven(sb, mgr, nbt, baseline, context_snc, perturb=None,
         if drive is None:
             sb.cp_external_input_current[:] = base
         else:
-            sb.cp_external_input_current[:] = base + np.asarray(drive, dtype=np.float64)
+            sb.cp_external_input_current[:] = base + xp.asarray(drive, dtype=xp.float64)
         sb._run_one_simulation_step()
         mgr.step(sb)                                                 # SNc firing -> DA concentration (bus)
         if step_i >= warmup:

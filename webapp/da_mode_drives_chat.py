@@ -116,6 +116,19 @@ import research.runners._perturb_and_measure_derisk as _PM
 
 _DEFAULT_SEED = 42
 
+
+def _is_ndarray(x) -> bool:
+    """True for a numpy OR cupy ndarray (device-agnostic; used by `_ensure`'s post-build snapshot filter so a
+    cupy-backed substrate's `cp_*` state is captured too, not just numpy's -- see `_ensure`'s docstring)."""
+    if isinstance(x, np.ndarray):
+        return True
+    try:
+        import cupy
+        return isinstance(x, cupy.ndarray)
+    except Exception:
+        return False
+
+
 # ── engagement -> SNc reward/context afferent. e in [0,1] -> afferent in [0, _MAX_AFFERENT] pA. Calibrated on the
 #    #76 self-produced DA(afferent) curve (tonic DA=0.5): 0pA->DA~0.05 (rest), 400pA->0.52 (neutral), 800pA->0.88
 #    (focus), 1300pA->1.24 (arousal). So e~0.3 lands neutral, e~0.55 focus, e~1.0 arousal.
@@ -287,13 +300,23 @@ class DaModeDrivesWorkspace:
     def _ensure(self):
         """Lazy-build the #76 BG substrate once and snapshot its full post-build dynamic state (all cp_* ndarrays),
         so every read can restore to an identical starting point -> the read is a deterministic function of THIS
-        turn's afferent, history-independent (the cross-turn persistence lives in the host engagement EMA)."""
+        turn's afferent, history-independent (the cross-turn persistence lives in the host engagement EMA).
+
+        The snapshot filter used to be `isinstance(..., np.ndarray)`, which is FALSE for every `cp_*` attr on a
+        cupy-backed substrate (`SIM_BACKEND=cupy`, the production `/api/brain-chat` path) -> the snapshot dict
+        came back EMPTY and `_restore()` silently became a no-op (a second, non-crashing bug alongside the
+        `.fill()` ValueError this module's cupy-interop fix addresses -- see
+        `research/findings/2026-08-25-da-axis-cupy-interop-fix.md`). `_is_ndarray` recognizes cupy arrays too,
+        and `.copy()` (available on both numpy and cupy ndarrays) keeps each snapshot entry on ITS OWN array's
+        backend, so `_restore()`'s `getattr(self._sb, k)[:] = v` assigns same-device-to-same-device on either
+        backend -- never a host numpy array into a device cupy slice. Byte-identical on numpy (`.copy()` of a
+        numpy array == the old `np.array(...)` copy)."""
         if self._sb is None:
             sb, regions, _ = _PM.build(self.seed)
             self._sb = sb
             self._nbt = _PM.names_by_type(regions)
-            self._snapshot = {k: np.array(getattr(sb, k)) for k in dir(sb)
-                              if k.startswith("cp_") and isinstance(getattr(sb, k, None), np.ndarray)}
+            self._snapshot = {k: getattr(sb, k).copy() for k in dir(sb)
+                              if k.startswith("cp_") and _is_ndarray(getattr(sb, k, None))}
 
     def _restore(self):
         for k, v in self._snapshot.items():
