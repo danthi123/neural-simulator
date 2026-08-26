@@ -105,6 +105,119 @@ def _alias_map(path, wanted: set, clean: bool) -> dict:
     return out
 
 
+def _alias_quality(raw_alias: str):
+    """Score a RAW (unsanitized) alias for natural-language usefulness, or None to reject outright. Deliberately
+    mirrors `pick_clean_alias`'s own reject/score rules (cruft, digit/paren/slash noise, proper-noun shape) so
+    the alias net applies the SAME quality bar the canonical-label picker already trusts, WITHOUT touching that
+    already-verified function -- this is an independent scorer over the FULL alias list (not a pick-one-best),
+    used to rank+cap every OTHER alias, below."""
+    a = raw_alias.strip()
+    low = a.lower()
+    if len(a) < 2:
+        return None
+    if any(c in a for c in "/()+|:0123456789"):
+        return None
+    if any(k in low for k in _CRUFT):
+        return None
+    w = a.split()
+    if len(w) > 5:
+        return None
+    score = 0.0
+    if 2 <= len(w) <= 4:
+        score += 2
+    if a[:1].isupper():
+        score += 1.5
+    if a.islower():
+        score -= 1
+    return score
+
+
+_MAX_ALIASES_PER_ID = 6   # caps vocab growth (raw Wikidata aliases run ~30/concept; most are low-quality noise)
+
+
+def _all_other_aliases(path, id_to_canon: dict, max_per_id: int = _MAX_ALIASES_PER_ID) -> dict:
+    """For every id in `id_to_canon`, take the TOP `max_per_id` OTHER raw aliases on that id's line (ranked by
+    `_alias_quality`, rejects dropped outright) and return {id: [sanitized_token, ...]}, excluding the canonical
+    token itself and de-duplicated. This is the SAME file, re-scanned (aliases were discarded after `_alias_map`
+    picked one) -- a second pass is the simplest correct way to recover them without changing `_alias_map`'s
+    existing (and already-verified) contract. Only ids present in `id_to_canon` are scanned/kept (callers
+    restrict this to ids whose canonical token actually made it into the final curated fact vocab, so alias
+    volume tracks the SHIPPED core, not the full top_entities/top_relations candidate pool). The cap keeps
+    vocab growth bounded (the store's O(V*D) cleanup latency scales with vocab size -- see the module
+    docstring's ">~20k distinct entities lifts latency above 1s" flip-soak finding) and, as a side effect,
+    improves precision (a raw Wikidata alias list runs ~30 entries/concept, most low-quality: redirects, year
+    tags, typos -- ranking by the SAME quality bar `pick_clean_alias` trusts keeps the natural multi-word
+    phrasings a real question would use)."""
+    wanted = set(id_to_canon)
+    out = {}
+    with open(path, "r", encoding="utf-8", errors="ignore") as fh:
+        for line in fh:
+            parts = line.rstrip("\n").split("\t")
+            if len(parts) < 2:
+                continue
+            eid = parts[0]
+            if eid not in wanted:
+                continue
+            canon = id_to_canon[eid]
+            seen = {canon}
+            scored = []
+            for i, al in enumerate(parts[1:]):
+                q = _alias_quality(al)
+                if q is None:
+                    continue
+                t = sanitize(al)
+                if not t or t in seen:
+                    continue
+                seen.add(t)
+                scored.append((q - 0.05 * i, t))
+            scored.sort(key=lambda x: -x[0])
+            out[eid] = [t for _q, t in scored[:max_per_id]]
+    return out
+
+
+def build_alias_facts(ent_tok: dict, rel_tok: dict, ent_txt: str, rel_txt: str, used_vocab: set):
+    """Build `{agent: alias_token, action: 'alias_of', patient: canonical_token}` facts from every OTHER raw
+    Wikidata alias of each entity/relation already in the shipped core (restricted to `used_vocab`, the
+    canonical tokens that actually appear in the final curated `facts` list -- so alias volume scales with
+    what shipped, not the larger candidate pool).
+
+    AMBIGUITY POLICY (honest, matches the module's dense-shared-vocab philosophy): an alias token is emitted
+    ONLY if (a) it names exactly ONE distinct canonical concept across the whole scanned set, AND (b) it does
+    not collide with any EXISTING canonical vocab word (an alias that happens to spell a different concept's
+    own name is a genuine ambiguity -- 'is this word itself, or the thing it aliases?' -- and is dropped, never
+    guessed). This mirrors `compositional_chain_route.py`'s own multi-valued-hop abstain: an unresolvable
+    surface form must abstain, not silently pick one reading.
+
+    Returns (alias_facts, n_collisions_dropped) for curation_report.json honesty.
+    """
+    ent_wanted = {eid: tok for eid, tok in ent_tok.items() if tok in used_vocab}
+    rel_wanted = {rid: tok for rid, tok in rel_tok.items() if tok in used_vocab}
+    ent_aliases = _all_other_aliases(ent_txt, ent_wanted)
+    rel_aliases = _all_other_aliases(rel_txt, rel_wanted)
+    all_canon = set(ent_wanted.values()) | set(rel_wanted.values())
+
+    rev = {}   # alias_token -> set of canonical tokens it was seen pointing at
+    for id_to_tok, alias_lists in ((ent_wanted, ent_aliases), (rel_wanted, rel_aliases)):
+        for eid, toks in alias_lists.items():
+            canon = id_to_tok[eid]
+            for t in toks:
+                rev.setdefault(t, set()).add(canon)
+
+    alias_facts = []
+    n_collisions = 0
+    for tok, canons in sorted(rev.items()):
+        # ambiguous if the alias names >=2 distinct concepts, OR collides with an EXISTING canonical word
+        # (itself already means something directly -> a second, aliased meaning is an unresolvable homonym).
+        if len(canons) != 1 or tok in all_canon:
+            n_collisions += 1
+            continue
+        canon = next(iter(canons))
+        if canon == tok:
+            continue
+        alias_facts.append({"agent": tok, "action": "alias_of", "patient": canon, "polarity": "AFFIRM"})
+    return alias_facts, n_collisions
+
+
 def curate(data_dir, n_facts, top_entities, top_relations, seed):
     train = os.path.join(data_dir, "wikidata5m_transductive_train.txt")
     ent_txt = os.path.join(data_dir, "wikidata5m_entity.txt")
@@ -163,14 +276,41 @@ def curate(data_dir, n_facts, top_entities, top_relations, seed):
              for (s, rel), (obj, _sc) in ranked]
     vocab = sorted({w for f in facts for w in (f["agent"], f["action"], f["patient"])})
     rel_used = Counter(f["action"] for f in facts)
+
+    # --- NATURAL-LANGUAGE GROUNDING (2026-08-26, board #65/#66 knowledge-grounding frontier A) ---
+    # The canonical tokens above are Wikidata-alias-derived (e.g. 'chelsea_fc', 'instance_of') and are NOT the
+    # words a natural question uses ('chelsea fc', 'is a'). Emit 'alias_of' facts from every OTHER raw alias of
+    # each entity/relation ALREADY in `vocab`, so a query-time alias-hop (brain_chat_tui.py) can reach the
+    # canonical token via a genuine spiking `query_patient` read. See `build_alias_facts` docstring for the
+    # ambiguity/drop policy. `vocab` set alone (not full `used_vocab`) already IS "what shipped".
+    alias_facts, n_alias_collisions = build_alias_facts(ent_tok, rel_tok, ent_txt, rel_txt, set(vocab))
+    print(f"[curate] aliases: {len(alias_facts):,} alias_of facts, {n_alias_collisions:,} ambiguous "
+          f"aliases dropped ({time.time()-t0:.0f}s)", flush=True)
+    facts_with_aliases = facts + alias_facts
+    # CRITICAL: include EVERY word an alias fact touches (agent, action, AND patient -- the literal 'alias_of'
+    # relation token included) in the vocab passed to `build_ltm_from_facts`/`ShardedPhasorStore`, so NONE of
+    # them is ever dynamically GROWN (an out-of-vocabulary word hit during the fast-path bulk encode). A grown
+    # word's code comes from a SEPARATE runtime `_growth_rng`, inserted into the shared codebook at its
+    # alphabetical position; `ShardedPhasorStore.save()`/`.load()` persists+reconstructs the codebook by a FRESH
+    # BATCH generation over the (by-then-larger) vocab list, which does not reproduce that mixed batch+growth
+    # history -- discovered by this arc's own end-to-end verification (a missing 'alias_of' from this set
+    # corrupted decode for the ENTIRE reloaded bundle, alias facts and plain facts alike, not just the new
+    # ones): every plain fact ALSO failed to recall after a save/reload round-trip once one word was grown.
+    # Pre-existing store fragility (`ShardedPhasorStore`'s fast-path save/load does not preserve a runtime-grown
+    # word's code); the fix here is to never trigger it -- the curated bundle is BUILT ONCE, not runtime-grown.
+    vocab_with_aliases = sorted(set(vocab) | {w for f in alias_facts for w in (f["agent"], f["action"], f["patient"])})
+
     meta = {
         "n_triples_scanned": n_triples, "n_entities_total": len(ent_freq), "n_relations_total": len(rel_freq),
         "top_entities": top_entities, "top_relations": top_relations,
         "n_facts": len(facts), "vocab_size": len(vocab),
+        "n_alias_facts": len(alias_facts), "n_alias_collisions_dropped": n_alias_collisions,
+        "n_facts_with_aliases": len(facts_with_aliases), "vocab_size_with_aliases": len(vocab_with_aliases),
         "relations_used": rel_used.most_common(40),
         "sample_facts": [[f["agent"], f["action"], f["patient"]] for f in facts[:25]],
+        "sample_alias_facts": [[f["agent"], f["action"], f["patient"]] for f in alias_facts[:25]],
     }
-    return facts, vocab, meta
+    return facts_with_aliases, vocab_with_aliases, meta
 
 
 def main():
