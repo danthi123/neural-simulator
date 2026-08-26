@@ -1,0 +1,19 @@
+{
+  "script": "research/findings/raw/da_axis_cupy_interop/verify_ensure_restore_cupy.py",
+  "seed": 42,
+  "backend": "cupy",
+  "before_fix": {
+    "snapshot_dict_size": 0,
+    "comment": "`_ensure`'s `isinstance(x, np.ndarray)` filter is False for every cp_* attr on a cupy substrate -> the post-build snapshot dict is EMPTY -> `_restore()`'s `for k, v in self._snapshot.items()` loop is a silent no-op. Confirmed via `git stash` on the pre-fix code (the script asserts on this and correctly raises)."
+  },
+  "after_fix": {
+    "snapshot_dict_size": 33,
+    "repeated_identical_afferent_reads": {
+      "afferent_pA": 900.0,
+      "read_1": {"da_level": 0.9002284628483648, "snc_firing": 0.14250000000000013},
+      "read_2": {"da_level": 0.9002284628483648, "snc_firing": 0.14250000000000013},
+      "read_3": {"da_level": 0.9002284628483648, "snc_firing": 0.14250000000000013}
+    }
+  },
+  "summary": "PASS: post-fix, `_ensure` captures 33 cp_* dynamic-state arrays on a cupy substrate (was 0), and three consecutive reads at the identical afferent on the SAME persistent workspace are byte-identical -- `_restore()` correctly resets the cupy substrate state each turn, restoring the module's documented history-independence contract on the cupy backend."
+}

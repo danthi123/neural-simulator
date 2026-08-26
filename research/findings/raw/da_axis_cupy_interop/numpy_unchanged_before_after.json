@@ -1,0 +1,20 @@
+{
+  "script": "research/findings/raw/da_axis_cupy_interop/numpy_unchanged_check.py",
+  "seed": 42,
+  "backend": "numpy",
+  "method": "ran the identical script via `git stash` (pre-fix code) then `git stash pop` (post-fix code), captured stdout, `diff`'d the two logs byte-for-byte",
+  "before_fix": [
+    {"afferent_pA": 0.0, "acted": true, "da_level": 0.04616293556102311, "snc_firing": 0.0, "mode": "rest", "reason": "low_engagement"},
+    {"afferent_pA": 800.0, "acted": true, "da_level": 0.8801292495026654, "snc_firing": 0.13916666666666655, "mode": "focus", "reason": "engaged"},
+    {"afferent_pA": 1300.0, "acted": true, "da_level": 1.2386777669861797, "snc_firing": 0.2, "mode": "arousal", "reason": "engaged"},
+    {"runner_level_conc": 0.8801292495026654, "runner_level_sncf": 0.13916666666666655}
+  ],
+  "after_fix": [
+    {"afferent_pA": 0.0, "acted": true, "da_level": 0.04616293556102311, "snc_firing": 0.0, "mode": "rest", "reason": "low_engagement"},
+    {"afferent_pA": 800.0, "acted": true, "da_level": 0.8801292495026654, "snc_firing": 0.13916666666666655, "mode": "focus", "reason": "engaged"},
+    {"afferent_pA": 1300.0, "acted": true, "da_level": 1.2386777669861797, "snc_firing": 0.2, "mode": "arousal", "reason": "engaged"},
+    {"runner_level_conc": 0.8801292495026654, "runner_level_sncf": 0.13916666666666655}
+  ],
+  "diff_result": "byte-identical (`diff` on the two full-precision-repr stdout logs returned no differences)",
+  "summary": "PASS: the SIM_BACKEND=numpy board-#76 6/6-seed-GO path is byte-identical before and after the cupy-interop fix (make_manager/_base_current/measure_self_driven all resolve `_bridge_xp(sb) == numpy` on a numpy-backed substrate, so every array op is the exact call it was before)."
+}

@@ -1,0 +1,25 @@
+{
+ "run_id": "1787709588-1953021",
+ "runner": "research/findings/raw/da_axis_cupy_interop/verify_via_brain_chat_endpoint.py",
+ "argv": [
+  "research/findings/raw/da_axis_cupy_interop/verify_via_brain_chat_endpoint.py"
+ ],
+ "git_sha": "a645cca3a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-25T21:59:48",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/da_axis_cupy_interop/numpy_unchanged_before_after.json"
+}

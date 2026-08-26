@@ -1,0 +1,37 @@
+{
+  "script": "research/findings/raw/da_axis_cupy_interop/repro_cupy_bug.py",
+  "commit_state": "pre-fix (HEAD before this branch's fix commit)",
+  "seed": 42,
+  "backend": "cupy",
+  "observe_via_production_entrypoint": {
+    "acted": false,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.85,
+    "ema_engagement": 0.51,
+    "afferent_pA": 714.0,
+    "da_level": 0.0,
+    "snc_firing": 0.0,
+    "mode": "rest",
+    "lead": "",
+    "reason": "error:ValueError: non-scalar numpy.ndarray cannot be used for fill",
+    "seed": 42
+  },
+  "uncaught_traceback": {
+    "exception_type": "ValueError",
+    "exception_message": "non-scalar numpy.ndarray cannot be used for fill",
+    "throw_site": "research/runners/_neuromod_spiking_da_mode_derisk.py:164 measure_self_driven -- sb.cp_external_input_current[:] = base",
+    "call_chain": [
+      "webapp/da_mode_drives_chat.py:309 DaModeDrivesWorkspace._read_da_level -> _DA.measure_self_driven(...)",
+      "research/runners/_neuromod_spiking_da_mode_derisk.py:164 measure_self_driven -- sb.cp_external_input_current[:] = base (base is a plain numpy array; sb.cp_external_input_current is a cupy array under SIM_BACKEND=cupy)"
+    ],
+    "cupy_internal_frames": [
+      "cupy/_core/core.pyx:1873 _ndarray_base.__setitem__",
+      "cupy/_core/_routines_indexing.pyx:75 _ndarray_setitem",
+      "cupy/_core/_routines_indexing.pyx:1092 _scatter_op",
+      "cupy/_core/core.pyx:1002 _ndarray_base.fill"
+    ]
+  },
+  "full_traceback_log": "research/findings/raw/da_axis_cupy_interop/repro_before_fix_cupy_traceback.log",
+  "note": "Matches the diagnostic-observed da_drives.reason verbatim: 'error:ValueError: non-scalar numpy.ndarray cannot be used for fill'."
+}

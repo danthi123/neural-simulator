@@ -1,0 +1,65 @@
+{
+  "script": "research/findings/raw/da_axis_cupy_interop/verify_fix_cupy.py",
+  "commit_state": "post-fix",
+  "seed": 42,
+  "backend": "cupy",
+  "check_a_acted_no_error": {
+    "acted": true,
+    "turn": 1,
+    "lesioned": false,
+    "turn_engagement": 0.95,
+    "ema_engagement": 0.57,
+    "afferent_pA": 797.9999999999999,
+    "da_level": 0.8773571795323781,
+    "snc_firing": 0.13833333333333322,
+    "mode": "focus",
+    "lead": " — worth going further here.",
+    "reason": "engaged",
+    "seed": 42,
+    "on": true
+  },
+  "check_b_engagement_varies": {
+    "low_engagement_turn": {
+      "message": "",
+      "acted": true,
+      "turn_engagement": null,
+      "ema_engagement": 0.0,
+      "afferent_pA": 0.0,
+      "da_level": 0.04616293556102311,
+      "snc_firing": 0.0,
+      "mode": "rest",
+      "lead": "",
+      "reason": "low_engagement"
+    },
+    "high_engagement_turn": {
+      "message": "tell me something surprising and unusual about deep sea bioluminescent creatures and their behavior",
+      "acted": true,
+      "turn_engagement": 1.0,
+      "ema_engagement": 0.6,
+      "afferent_pA": 840.0,
+      "da_level": 0.8965045558416256,
+      "snc_firing": 0.14166666666666666,
+      "mode": "focus",
+      "lead": " — worth going further here.",
+      "reason": "engaged"
+    },
+    "da_level_delta": 0.8503416202806025,
+    "assertion": "da_level(high) > da_level(low) AND mode(low) in {rest,neutral} AND mode(high) in {focus,arousal} -- PASS"
+  },
+  "check_c_lesion_collapses": {
+    "message": "tell me something surprising and unusual about deep sea bioluminescent creatures and their behavior (SAME as check_b high-engagement)",
+    "lesion_env": "BRAIN_DA_DRIVES_LESION=1",
+    "acted": true,
+    "lesioned": true,
+    "turn_engagement": 1.0,
+    "ema_engagement": 0.6,
+    "afferent_pA": 840.0,
+    "da_level": 0.04616293556102311,
+    "snc_firing": 0.0,
+    "mode": "rest",
+    "lead": "",
+    "reason": "lesion_collapsed",
+    "assertion": "lesioned da_level (0.0462) < unlesioned high-engagement da_level (0.8965), mode==rest, lead=='' -- PASS. Lesioned da_level == the low-engagement-turn floor value exactly (0.04616293556102311), confirming the collapse lands on the SAME sub-firing floor regardless of the (unchanged, still-engaging) input."
+  },
+  "summary": "PASS: (a) acted=True with no error reason; (b) da_level rises 0.046->0.897 with engagement (mode rest->focus); (c) lesion collapses da_level back to the 0.046 floor on the identical high-engagement message, and the engagement suffix vanishes."
+}
