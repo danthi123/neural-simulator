@@ -1,0 +1,184 @@
+{
+  "probe": "vision_identity_flip_soak",
+  "backend": "numpy",
+  "device": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "vision_n_seed_ok": 6,
+  "vision_go": true,
+  "mean_intact_acc": 1.0,
+  "mean_scramble_acc": 0.5555555555555556,
+  "mean_lesion_acc": 0.0,
+  "mean_intact_overlap": 0.47549861198346743,
+  "mean_scramble_overlap": 0.10540425248640055,
+  "attributable_to_pooler": 1.0,
+  "attributable_to_visual_similarity": 0.4444444444444444,
+  "scramble_collapsed": true,
+  "handler": null,
+  "overall_go": true,
+  "elapsed_s": 7.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.6308296116788085,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.8333333333333334,
+        "n": 6,
+        "codon_overlap": 0.09819252519905565,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.6
+    },
+    {
+      "seed": 43,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.45799616283184935,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.3333333333333333,
+        "n": 6,
+        "codon_overlap": 0.061560303495787366,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.2
+    },
+    {
+      "seed": 44,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.4375450557036866,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.5,
+        "n": 6,
+        "codon_overlap": 0.16118816229207752,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.2
+    },
+    {
+      "seed": 100,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.49813425655277804,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.8333333333333334,
+        "n": 6,
+        "codon_overlap": 0.0762155289438967,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.2
+    },
+    {
+      "seed": 101,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.29490857126263625,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.5,
+        "n": 6,
+        "codon_overlap": 0.11175152602979598,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.2
+    },
+    {
+      "seed": 102,
+      "seed_ok": true,
+      "intact": {
+        "acc": 1.0,
+        "n": 6,
+        "codon_overlap": 0.533578013871046,
+        "abstain_all": false
+      },
+      "scramble": {
+        "acc": 0.3333333333333333,
+        "n": 6,
+        "codon_overlap": 0.12351746895778998,
+        "abstain_all": false
+      },
+      "pooler_lesion": {
+        "acc": 0.0,
+        "n": 6,
+        "codon_overlap": 0.0,
+        "abstain_all": true
+      },
+      "intact_ok": true,
+      "lesion_floored": true,
+      "scramble_dropped": true,
+      "elapsed_s": 1.2
+    }
+  ]
+}
