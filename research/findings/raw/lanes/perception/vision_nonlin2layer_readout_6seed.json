@@ -1,0 +1,425 @@
+{
+  "probe": "vision_nonlin2layer_readout",
+  "board": "75b",
+  "primary_code": "count",
+  "overall_verdict": "NONLIN2LAYER-READOUT-PARTIAL-cap0/6-floor6/6-lb6/6-lift2/6",
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "code": "count",
+    "c1_code": "count",
+    "n_classes": 4,
+    "n_slots": 3,
+    "n_pos_total": 8,
+    "pos_span": 8.0,
+    "n_ex": 6,
+    "image_size": 56,
+    "slot_offset": 10.0,
+    "stroke_len": 7.0,
+    "stroke_tk": 1.8,
+    "pixel_noise": 0.03,
+    "n_orientations": 8,
+    "n_frequencies": 2,
+    "n_pos": 24,
+    "rf_radius": 3,
+    "orient_norm": "z",
+    "c1_gate": 0.15,
+    "c1_win": 6,
+    "c1_stride": 3,
+    "s2_p": 3,
+    "n_s2": 96,
+    "ridge": 0.5,
+    "n_glimpses": 2,
+    "class_pop": 24,
+    "read_gain": 2.5,
+    "read_bias": 1.0,
+    "T_read": 48,
+    "n_hidden": 1536,
+    "k_claw": 8,
+    "gc_gain": 0.05,
+    "gc_thresh": 1.0,
+    "T_gc": 48,
+    "lift_margin": 0.03,
+    "s1_mode": "spiking",
+    "s2_norm": "z",
+    "T1": 64,
+    "T2": 48,
+    "tau": 8.0,
+    "v_thresh": 1.0,
+    "t_ref": 2,
+    "noise": 0.06,
+    "s1_gain": 1.2,
+    "s2_gain": 2.0,
+    "kwta_frac": 0.15,
+    "decode_margin": 0.15,
+    "beat_margin": 0.1,
+    "pos_decode_margin": 0.15,
+    "nogo_floor": 0.34,
+    "out": "research/findings/raw/lanes/perception/vision_nonlin2layer_readout_6seed.json"
+  },
+  "by_code": {
+    "count": {
+      "summary": {
+        "probe": "vision_nonlin2layer_readout",
+        "code": "count",
+        "overall_verdict": "NONLIN2LAYER-READOUT-PARTIAL-cap0/6-floor6/6-lb6/6-lift2/6",
+        "seeds": [
+          42,
+          43,
+          44,
+          100,
+          101,
+          102
+        ],
+        "n_seeds": 6,
+        "chance_object": 0.25,
+        "nogo_floor": 0.34,
+        "task_go_bar": false,
+        "per_seed_task_go": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "per_seed_capability_go": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "per_seed_beats_readout_floor": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_seed_learning_load_bearing": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "per_seed_beats_1layer_ceiling": [
+          false,
+          true,
+          false,
+          false,
+          true,
+          false
+        ],
+        "decode_means": {
+          "A_v1_direct_held": 0.4184,
+          "H_flat_pool_held": 0.3003,
+          "NOEXPAND_learned_held": 0.4375,
+          "NOEXPAND_learned_train": 0.9722,
+          "EXPAND_learned_held": 0.4288,
+          "EXPAND_learned_train": 1.0,
+          "EXPAND_linscore_held": 0.4271,
+          "EXPAND_random_held": 0.25,
+          "EXPAND_RATE_lin_held": 0.3889,
+          "LINEXPAND_lin_held": 0.4063,
+          "scramble_null_held": 0.243
+        },
+        "reframe_means": {
+          "expand_learned_held": 0.4288,
+          "expand_random_held": 0.25,
+          "noexpand_learned_held": 0.4375,
+          "expand_minus_random": 0.1788,
+          "expand_minus_noexpand_1layer": -0.0087,
+          "expand_minus_linexpand": 0.0226,
+          "expand_RATE_lin_ceiling_held": 0.3889,
+          "linexpand_lin_held": 0.4063,
+          "spkport_cost": -0.0017
+        },
+        "dissociation_means": {
+          "object_decode_heldsplit": 0.4132,
+          "position_decode_heldsplit": 0.3785,
+          "label_shuffle_null": 0.2448,
+          "scramble_null_held": 0.243
+        },
+        "verdict_fracs": {
+          "task_go": 0.0,
+          "capability_go": 0.0,
+          "beats_readout_floor": 1.0,
+          "beats_readout_floor_strict": 0.5,
+          "learning_load_bearing": 1.0,
+          "beats_1layer_ceiling": 0.3333,
+          "anti_cheats_clean": 0.1667
+        },
+        "headroom": {
+          "expand_minus_v1_held": 0.0104,
+          "expand_minus_flat_held": 0.1285,
+          "expand_minus_nogo_floor": 0.0888,
+          "rate_ceiling_minus_expand_spk": -0.0399,
+          "expand_rate_ceiling_minus_1layer_rate_ceiling_0.4653": -0.0764
+        },
+        "elapsed_seconds": 19.5
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4167,
+            "H_flat_pool_held": 0.3542,
+            "NOEXPAND_learned_held": 0.4896,
+            "NOEXPAND_learned_train": 0.9271,
+            "EXPAND_learned_held": 0.4271,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.4271,
+            "EXPAND_random_held": 0.2083,
+            "EXPAND_RATE_lin_held": 0.3958,
+            "LINEXPAND_lin_held": 0.4688,
+            "scramble_null_held": 0.25
+          },
+          "reframe": {
+            "expand_minus_random": 0.2187,
+            "expand_minus_noexpand_1layer": -0.0625,
+            "expand_minus_linexpand": -0.0417,
+            "spkport_cost_linscore_minus_spkwta": 0.0,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.5,
+            "position_decode_heldsplit": 0.4375,
+            "label_shuffle_null": 0.2083,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": false,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": false,
+            "anti_cheats_clean": false
+          }
+        },
+        {
+          "seed": 43,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4792,
+            "H_flat_pool_held": 0.3646,
+            "NOEXPAND_learned_held": 0.375,
+            "NOEXPAND_learned_train": 0.9792,
+            "EXPAND_learned_held": 0.4479,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.4479,
+            "EXPAND_random_held": 0.3333,
+            "EXPAND_RATE_lin_held": 0.3854,
+            "LINEXPAND_lin_held": 0.375,
+            "scramble_null_held": 0.25
+          },
+          "reframe": {
+            "expand_minus_random": 0.1146,
+            "expand_minus_noexpand_1layer": 0.0729,
+            "expand_minus_linexpand": 0.0729,
+            "spkport_cost_linscore_minus_spkwta": 0.0,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.3125,
+            "position_decode_heldsplit": 0.4583,
+            "label_shuffle_null": 0.2917,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": true,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": true,
+            "anti_cheats_clean": false
+          }
+        },
+        {
+          "seed": 44,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4583,
+            "H_flat_pool_held": 0.375,
+            "NOEXPAND_learned_held": 0.4583,
+            "NOEXPAND_learned_train": 1.0,
+            "EXPAND_learned_held": 0.4271,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.4271,
+            "EXPAND_random_held": 0.1458,
+            "EXPAND_RATE_lin_held": 0.4792,
+            "LINEXPAND_lin_held": 0.3854,
+            "scramble_null_held": 0.25
+          },
+          "reframe": {
+            "expand_minus_random": 0.2812,
+            "expand_minus_noexpand_1layer": -0.0312,
+            "expand_minus_linexpand": 0.0417,
+            "spkport_cost_linscore_minus_spkwta": 0.0,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4583,
+            "position_decode_heldsplit": 0.3333,
+            "label_shuffle_null": 0.25,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": false,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": false,
+            "anti_cheats_clean": true
+          }
+        },
+        {
+          "seed": 100,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.375,
+            "H_flat_pool_held": 0.2083,
+            "NOEXPAND_learned_held": 0.4688,
+            "NOEXPAND_learned_train": 1.0,
+            "EXPAND_learned_held": 0.4479,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.4375,
+            "EXPAND_random_held": 0.2917,
+            "EXPAND_RATE_lin_held": 0.4167,
+            "LINEXPAND_lin_held": 0.4479,
+            "scramble_null_held": 0.2083
+          },
+          "reframe": {
+            "expand_minus_random": 0.1562,
+            "expand_minus_noexpand_1layer": -0.0208,
+            "expand_minus_linexpand": 0.0,
+            "spkport_cost_linscore_minus_spkwta": -0.0104,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.375,
+            "position_decode_heldsplit": 0.1875,
+            "label_shuffle_null": 0.2708,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": true,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": false,
+            "anti_cheats_clean": false
+          }
+        },
+        {
+          "seed": 101,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4583,
+            "H_flat_pool_held": 0.2604,
+            "NOEXPAND_learned_held": 0.4271,
+            "NOEXPAND_learned_train": 0.9792,
+            "EXPAND_learned_held": 0.4792,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.4688,
+            "EXPAND_random_held": 0.2812,
+            "EXPAND_RATE_lin_held": 0.3333,
+            "LINEXPAND_lin_held": 0.375,
+            "scramble_null_held": 0.25
+          },
+          "reframe": {
+            "expand_minus_random": 0.1979,
+            "expand_minus_noexpand_1layer": 0.0521,
+            "expand_minus_linexpand": 0.1042,
+            "spkport_cost_linscore_minus_spkwta": -0.0104,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4375,
+            "position_decode_heldsplit": 0.4792,
+            "label_shuffle_null": 0.2188,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": true,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": true,
+            "anti_cheats_clean": false
+          }
+        },
+        {
+          "seed": 102,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.3229,
+            "H_flat_pool_held": 0.2396,
+            "NOEXPAND_learned_held": 0.4062,
+            "NOEXPAND_learned_train": 0.9479,
+            "EXPAND_learned_held": 0.3438,
+            "EXPAND_learned_train": 1.0,
+            "EXPAND_linscore_held": 0.3542,
+            "EXPAND_random_held": 0.2396,
+            "EXPAND_RATE_lin_held": 0.3229,
+            "LINEXPAND_lin_held": 0.3854,
+            "scramble_null_held": 0.25
+          },
+          "reframe": {
+            "expand_minus_random": 0.1042,
+            "expand_minus_noexpand_1layer": -0.0625,
+            "expand_minus_linexpand": -0.0417,
+            "spkport_cost_linscore_minus_spkwta": 0.0104,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.3958,
+            "position_decode_heldsplit": 0.375,
+            "label_shuffle_null": 0.2292,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "task_go": false,
+            "capability_go": false,
+            "beats_readout_floor": true,
+            "beats_readout_floor_strict": false,
+            "learning_load_bearing": true,
+            "beats_1layer_ceiling": false,
+            "anti_cheats_clean": false
+          }
+        }
+      ]
+    }
+  },
+  "mechanism": "UNCHANGED #75 C2 spike code (FIXED config-B spiking front end + FIXED random S2 bank, G glimpses averaged) -> NEW fixed random sparse K-claw granule (mossy-fiber -> granule cell, Marr 1969/Albus 1971/Litwin-Kumar et al. 2017) LIF expansion layer (AND-like coincidence nonlinearity from claw-summation + hard threshold) -> the UNCHANGED #75 readout (ridge signed linear discriminant, spike-ported as E + FF-inhibition class populations, spiking WTA). RANDOM arm = identical expanded port, V untrained. LINEXPAND arm = same connectivity, no threshold (isolates the nonlinearity). Sources: Marr 1969; Albus 1971; Litwin-Kumar et al. 2017; Cayco-Gajic & Silver 2019; Brunel et al. 2004; Maass et al. 2002; Fremaux & Gerstner 2016.",
+  "reframe_test": "#75's residual was the ~0.47 RATE linear-separability ceiling of the z-normed C2 code, not spike quantization. A fixed nonlinear (AND-like) expansion is predicted to raise that ceiling (EXPAND_RATE_lin > the #75 1-layer RATE ceiling ~0.4653) and the spiking mechanism to inherit the lift (EXPAND_learned_held > NOEXPAND_learned_held ~0.4375), while a LINEAR-only expansion of the same dimensionality should NOT lift it (composing two linear maps stays linear). task GO (board #75b) = beats V1-direct floor by margin (capability_go) AND clears the #72/#75 NO-GO readout floor (0.34) at >=5/6 AND anti-cheats clean on every seed.",
+  "elapsed_seconds": 19.5
+}
