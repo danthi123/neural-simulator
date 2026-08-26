@@ -300,7 +300,44 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
 # activity on the substrate and rescales its store synapses (webapp/da_encoding_drives_chat.apply_substrate_homeostasis
 # -> OneBrainComposer.apply_homeostatic_scaling), a real synaptic-weight change. The finding: research/findings
 # 2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP (6-seed GO, byte-equal to a real production build).
-def consolidate_substrate_homeostasis(cache_key, chat) -> dict | None:
+#
+# #138 (2026-08-25, additive/default-off): the every-idle-tick trigger above is a STOPGAP -- Turrigiano scaling is
+# canonically a slow OFFLINE/SLEEP process, not something that should re-check after every ~20s between-turn pause
+# (IDLE_SEC). BRAIN_DA_ENCODING_SLEEP_TRIGGER RETARGETS the pass to fire only on genuine sleep-depth idle
+# (>= SLEEP_IDLE_SEC, minutes) instead. See substrate_homeostasis_sleep_trigger_enabled / _is_sleep_tick and the call
+# site in tick_idle_sessions for the mutual-exclusion that keeps the two triggers from double-applying.
+SLEEP_IDLE_SEC = 300.0   # idle >= this long = genuine SLEEP/NREM depth (minutes), distinct from the light between-turn
+                         # IDLE_SEC pause (~20s) that merely lets the mood relax. Host-timed scaffold, like IDLE_SEC
+                         # itself (declared) -- the biologically-motivated threshold for an OFFLINE consolidation event.
+
+
+def substrate_homeostasis_sleep_trigger_enabled() -> bool:
+    """#138 (additive/default-off). BRAIN_DA_ENCODING_SLEEP_TRIGGER in {1,true,on,yes} RETARGETS the Turrigiano
+    consolidation pass from firing on every light between-turn idle tick (>= IDLE_SEC ~20s -- today's default, a
+    stopgap) to firing ONLY on genuine sleep-depth idle (>= SLEEP_IDLE_SEC, minutes) -- the trigger Turrigiano 2008
+    scaling actually models (a slow/offline sleep process, not a between-utterance one).
+
+    Unset/0 (default) -> BYTE-IDENTICAL TO HEAD: tick_idle_sessions takes the ORIGINAL branch and the pass keeps
+    firing on every idle tick exactly as before this rung. When armed, tick_idle_sessions takes the OTHER branch
+    instead of the original one (an if/else on the same call site, not an addition beside it) -- so the two triggers
+    are structurally MUTUALLY EXCLUSIVE within one activation and can never both reach the pass for the same tick
+    (the shared _LAST_HOMEO_KB new-writes-since-last-pass guard inside consolidate_substrate_homeostasis is the
+    second, independent line of defense against compounding, e.g. across an OFF->ON flag flip mid-session)."""
+    return os.environ.get("BRAIN_DA_ENCODING_SLEEP_TRIGGER", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _is_sleep_tick(cache_key, now: float) -> bool:
+    """True iff this session has been idle >= SLEEP_IDLE_SEC (genuine sleep-depth), i.e. this idle tick is a NREM/
+    sleep-replay-style consolidation event rather than a light between-turn pause. Requires an ACTUAL recorded
+    last-request timestamp (mark_request, set on every real turn) -- a session with no timing evidence yet
+    (_LAST_REQUEST empty) is conservatively never treated as 'asleep' rather than manufacturing a sleep state."""
+    last = _LAST_REQUEST.get(cache_key)
+    if last is None:
+        return False
+    return (now - last) >= SLEEP_IDLE_SEC
+
+
+def consolidate_substrate_homeostasis(cache_key, chat, trigger: str = "idle_tick") -> dict | None:
     """Run ONE DA-encoding substrate-homeostasis (Turrigiano synaptic-scaling) consolidation pass on this idle session's
     live composer store, IF the store has grown since the last pass. Returns a record (or None when disabled / no
     composer / no new writes / the pass was a no-op).
@@ -309,11 +346,16 @@ def consolidate_substrate_homeostasis(cache_key, chat) -> dict | None:
     idempotent on repeated calls — a second pass on an already-scaled store re-senses the (now-regulated) activity and
     keeps pulling strong engrams toward unit, eroding the DA-salience ordering. So the pass fires only when new engrams
     were stored since the last consolidation (len(kb) grew), matching the biology: scaling consolidates a BATCH of
-    freshly-encoded facts once, offline, not continuously.
+    freshly-encoded facts once, offline, not continuously. This guard is SHARED by every caller (keyed only on
+    `cache_key`), so it also protects against double-application ACROSS the #138 trigger paths (idle-tick vs
+    sleep-depth), not just repeated calls on the same path.
 
     BRAIN-BASED + GATED: the actual scaling self-gates inside `apply_substrate_homeostasis` (no-op unless
     da_encoding_enabled() AND da_encoding_substrate_enabled() AND not lesioned), so with `BRAIN_DA_ENCODING=0` this is a
-    pure no-op -> byte-identical to HEAD. Never raises (an idle-tick helper must not crash the loop)."""
+    pure no-op -> byte-identical to HEAD. Never raises (an idle-tick helper must not crash the loop).
+
+    `trigger` (#138, additive, OBSERVABILITY-ONLY -- never gates behaviour): which caller fired this pass
+    ("idle_tick" | "nrem_sleep"), stamped into the returned record so a test can prove which path actually ran."""
     comp = getattr(getattr(chat, "inner", None), "composer", None)
     if comp is None:
         return None
@@ -338,8 +380,9 @@ def consolidate_substrate_homeostasis(cache_key, chat) -> dict | None:
         return None  # faculty off / substrate homeostat off / lesioned / composer lacks the rule -> byte-identical
     _LAST_HOMEO_KB[cache_key] = cur_len  # mark this batch consolidated (only advanced on an ACTUAL scaling pass)
     n = len(scales)
-    rec = {"t": time.time(), "substrate_homeostasis": True, "n_engrams": n,
-           "note": "idle: Turrigiano synaptic-scaling pass over %d DA-encoded engram(s)" % n}
+    rec = {"t": time.time(), "substrate_homeostasis": True, "n_engrams": n, "trigger": trigger,
+           "note": "%s: Turrigiano synaptic-scaling pass over %d DA-encoded engram(s)" %
+                   ("sleep" if trigger == "nrem_sleep" else "idle", n)}
     lst = _INNER_LIFE.setdefault(cache_key, [])
     lst.append(rec)
     if len(lst) > _INNER_LIFE_MAX:
@@ -699,7 +742,18 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                 try:
                     _chat = chat_getter(cache_key)
                     if _chat is not None:
-                        consolidate_substrate_homeostasis(cache_key, _chat)
+                        # #138 (additive/default-off): BRAIN_DA_ENCODING_SLEEP_TRIGGER retargets the trigger from
+                        # "every idle tick" to "genuine sleep-depth idle only" (see
+                        # substrate_homeostasis_sleep_trigger_enabled). The two branches are an if/else on the SAME
+                        # call site (not an addition beside it) -> MUTUALLY EXCLUSIVE, so the pass can never
+                        # double-fire for one activation: OFF -> only the original unconditional call runs
+                        # (byte-identical to HEAD); ON -> ONLY the sleep-depth-gated call runs (the original call is
+                        # skipped entirely for this session, every tick, while the flag is armed).
+                        if substrate_homeostasis_sleep_trigger_enabled():
+                            if _is_sleep_tick(cache_key, now):
+                                consolidate_substrate_homeostasis(cache_key, _chat, trigger="nrem_sleep")
+                        else:
+                            consolidate_substrate_homeostasis(cache_key, _chat, trigger="idle_tick")
                 except Exception:
                     import logging as _lg
                     _lg.getLogger(__name__).warning(
