@@ -13,6 +13,30 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-25 EVENING (READ FIRST; LATEST anchor — supersedes the LATER header below)
+
+**NORTH-STAR MILESTONE LANDED — the brain REASONS TO ITS OWN CONCLUSION in production, by default.** A live
+diagnostic first FALSIFIED the north-star (the integrated brain recalled one fact and never reasoned); this
+session closed it.
+- **Reasoning route MERGED to production-default** (commit `3bb9bfdf`, `_CHAIN_ROUTE_DEFAULT_ON`; lesion
+  `BRAIN_CHAIN_ROUTE=0`): a compositional question routes to the brain's own chain engine over the phasor store
+  and DERIVES a fact it was never told ("what does the wolf's prey eat?" -> "grass"), framed as its own
+  inference, moat held (unsupported / near-miss / multi-valued hops ABSTAIN). Verified: 37-turn live battery
+  through the real `/api/brain-chat` + adversarial raw-record spot-check. Findings
+  `2026-08-25-reasoning-route-hardened` / `-reasoning-route-moat-audit-hardening-spec`.
+- **Moat DE-RISKED 6-seed:** FHRR cue-role false-hop 0.0 across 72 cells at D>=128 (finding
+  `2026-08-25-fhrr-decode-rate-at-scale`) — the confabulation channel is empirically zero at deployed scale.
+- **DA-axis silent GPU failure FIXED** (commit `dcb1c4d9`): the dopamine axis was erroring every turn on cupy
+  (swallowed), leaving 3 default-ON faculties inert; device-correct fix restored them; board #76 CLOSED.
+
+**CURRENT FRONTIER / SINGLE NEXT ACTION:** the confirming integrated diagnostic is IN FLIGHT (agent `a7f8e02e`
+-> finding `2026-08-25-integrated-conversational-state-diagnostic-2`, branch `research/integrated-convo-diagnostic-2`)
+-- it re-runs the multi-turn conversation on `main` to confirm reasoning + DA + curiosity live and NAME THE NEXT
+WALL. **NEXT once it lands: (1) sync THIS header + `ROADMAP.md` to the confirmed state + the named next frontier;
+(2) address reasoning-route residuals (audit reqs #7/#11 lemmatizer irregular-table + shard-routing, the
+`[unverified render` cosmetic leak on the single-fact non-default path, parser-truncation `task_1a5eaba8`);
+(3) start the new frontier.** Board: #141 = reasoning route (OPEN pending live-confirm), #76 = DA fix (done).
+
 ## ⭐ STATE OF THE PROJECT — 2026-08-25 (LATER — READ FIRST; LIVE resume anchor; corrects the 2026-08-26 header below same-day, its own next-actions are now stale)
 
 **NORTH-STAR (unchanged):** one spiking substrate that CONVERSES genuinely, with affect + self-model + curiosity +
