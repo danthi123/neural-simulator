@@ -2998,6 +2998,15 @@ def _get_pragmatic_organ():
     return get_organ(seed=42)
 
 
+def _get_self_schema_organ():
+    """The process-shared DR-3 self-schema AUTHORSHIP organ (built once; the self_schema `author` sub-block that
+    fires 'self' on a volunteered proposition vs 'heard' on a recalled fact). The read-time lesion is passed
+    per-read (schema_access=False), so the SAME organ serves a normal request and a lesion-verification probe.
+    See research/runners/self_schema_production_organ.py."""
+    from research.runners.self_schema_production_organ import get_organ
+    return get_organ(seed=42)
+
+
 # ─── MULTI-REFERENT WORKING MEMORY (Gate-B, D6): a spiking multi-register discourse buffer that HOLDS >=2 referents
 # across a span. The organ's process singleton accumulates a referent codebook across ALL sessions, so a hold-query
 # would re-materialize other conversations' referents — the buffer MUST be per-session. Keyed identically to the
@@ -5130,6 +5139,27 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["hypothesis"] = True
             resp["hypothesis_svo"] = list(r.get("hypothesis_svo") or [])
             resp["fluent_hypothesis"] = bool(r.get("fluent_hypothesis"))
+            # ── BEGIN faculty: DR-3 self-schema AUTHORSHIP (self-vs-heard) — additive, DEFAULT-OFF (BRAIN_SELF_SCHEMA) ──
+            # BACK the host 'guess, not something I was taught' flag with a genuinely-SPIKING neural authorship read:
+            # a generated HYPOTHESIS is a VOLUNTEERED proposition (self-authored), so the DR-3 self_schema `author`
+            # sub-block is driven 'self' and fires; its readback decides whether to PREPEND an honest own-guess MARKER.
+            # LOAD-BEARING: the marker rides the LIVE author-pool read — under BRAIN_SELF_SCHEMA_LESION the author
+            # access is severed (schema_access=False), the pool goes silent, the read collapses to 'heard', and the
+            # marker VANISHES -> the reply reverts to the host default (while the recalled/content fields stay
+            # byte-identical). Reuse-by-import of the 6-seed GO de-risk (authorship acc 1.000; self-lesion collapses
+            # author to chance 6/6). DEFAULT-OFF: BRAIN_SELF_SCHEMA unset -> no `authorship` key, no marker ->
+            # byte-identical. Guarded so it never crashes a turn. See research/runners/self_schema_production_organ.py.
+            try:
+                import research.runners.self_schema_production_organ as _SS
+                if _SS.self_schema_enabled():
+                    _ss_read = _get_self_schema_organ().read_author(
+                        authored=True, lesion=_SS.self_schema_lesioned())
+                    resp["authorship"] = _ss_read
+                    if _ss_read.get("is_self"):
+                        resp["answer"] = _SS.authorship_marker() + resp["answer"]
+            except Exception as _sse:   # never let the authorship read crash a turn — degrade to the un-marked guess
+                resp["authorship"] = {"on": True, "error": f"{type(_sse).__name__}: {_sse}"}
+            # ── END faculty: DR-3 self-schema AUTHORSHIP ──
         # METACOG (Gate-B, E1): qualify a low-confidence RECALL answer with an honest functional hedge (skip an
         # abstain or a flagged guess — no recalled answer to qualify). Additive; null when disabled/out-of-scope.
         _mc_prefix, resp["metacog"] = _metacog_qualify(resp.get("activity"), bool(r["abstained"]) or is_hyp)
