@@ -3803,6 +3803,14 @@ class BrainChatRequest(BaseModel):
     # If True, drop the cached ChatBrain for this (session, brain,
     # renderer) before answering (rebuilds — for 'start fresh').
     reset: bool = False
+    # ── BEGIN faculty:vision-identity (BRAIN_VISION_IDENTITY, default OFF) ──
+    # The ENVIRONMENT's visual percept for a 'what do you see?' turn: an object
+    # descriptor the neural retina/V1 then receive ('bird'/'fish'/'0'/'1', with
+    # an optional '#<exemplar>' suffix). Additive + optional; IGNORED entirely
+    # when BRAIN_VISION_IDENTITY is off or the message is not a visual query, so
+    # existing callers are byte-identical. See research/runners/vision_identity_production_organ.py.
+    percept: str | None = None
+    # ── END faculty:vision-identity ──
 
 
 def _json_safe(obj, _path="", _bad=None):
@@ -4133,6 +4141,51 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         raise HTTPException(422, "message must be non-empty")
 
     rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
+
+    # ── BEGIN faculty:vision-identity — VISUAL OBJECT -> CATEGORY IDENTITY ("spiking HMAX"), default-OFF ───────
+    # The production consumer for the EMERGE-36 fully-spiking perception->pooler->inference GO (6 seeds). On a
+    # 'what do you see?'-class turn that CARRIES a percept (the environment's retinal render, `req.percept`), the
+    # brain SEES the object through the real sim.visual_cortex Gabor/V1 front end -> a spiking Marr-Albus
+    # coincidence-column pooler on a real SimulationBridge (coincidence_weighted_drive, NO numpy kWTA) -> reads the
+    # winning self-organized category column block as the recognized-object identity, and the recognized concept
+    # SEEDS this turn's answer ('I see a <recognized-object>. It can <property>.'). Reuse-by-import (NO sim/ edit).
+    # Default-OFF: `BRAIN_VISION_IDENTITY` unset -> the cheap env read below is the ONLY thing that runs -> the block
+    # imports nothing + returns nothing -> the turn is BYTE-IDENTICAL to today (the parent flips default-on after the
+    # pool soak). It ALSO short-circuits ONLY when it recognizes: an unresolvable percept OR an ABSTAIN (the
+    # POOLER-LESION `BRAIN_VISION_IDENTITY_LESION=1` collapses the codon -> recognize()=-1) returns None -> the turn
+    # FALLS THROUGH to the normal path -> byte-identical to flag-off, which is exactly the load-bearing lesion-vanish.
+    # LOAD-BEARING: vary the percept (bird<->fish) -> the answer content differs; lesion the pooler -> it vanishes.
+    # SCOPE (honest): invariance is on WELL-POSED SYNTHETIC category sets, NOT natural-image translation-invariance
+    # (a separate NO-GO). See research/runners/vision_identity_production_organ.py. Guarded so a wiring failure can
+    # never crash a turn (degrades to the normal path).
+    if os.environ.get("BRAIN_VISION_IDENTITY", "0").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            import research.runners.vision_identity_production_organ as _VI
+            if req.percept and _VI.is_visual_query(msg):
+                _vi = _VI.answer_percept(req.percept)     # None on abstain/unresolvable -> fall through (host path)
+                if _vi is not None:
+                    # seed the discourse grounding: write the recognized concept as the discourse referent so a
+                    # follow-up ('what is it?') can reason about the seen object (best-effort, multiturn only). This
+                    # runs ONLY on a triggered visual turn, so ordinary turns stay byte-identical.
+                    try:
+                        _ag = getattr(chat, "agent", None)
+                        if _ag is not None and hasattr(_ag, "_write_referent"):
+                            _ag._write_referent(_vi["noun"])
+                    except Exception:
+                        pass
+                    return JSONResponse({
+                        "answer": _vi["answer"], "abstained": False, "recalled_svo": None,
+                        "verified": True, "renderer": rname, "brain": req.brain, "source": source,
+                        "rich": False, "activity": None, "affect": None,
+                        "vision_identity": {
+                            "on": True, "recognized_category": _vi["category"], "noun": _vi["noun"],
+                            "prop": _vi["prop"], "shown_category": _vi["shown_category"], "which": _vi["which"],
+                            "lesioned": _VI.vision_identity_lesioned(),
+                        },
+                    })
+        except Exception:
+            pass  # never let the vision coupling crash a turn -> fall through to the normal path
+    # ── END faculty:vision-identity ──
 
     # ── AFFECT / EMOTION coloring (Gate-B, 2026-08-12) ──────────────────────────────────────────────────────
     # Read the brain's live MOOD off the co-resident spiking graded-affect ladder and prepare (a) a CONTENT plan
