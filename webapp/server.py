@@ -5139,7 +5139,19 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
     # smoke records), then render. gate() returns None on the moat.
     try:
-        gate_svo = chat.gate(msg)
+        # COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked BEFORE chat.gate(msg) for the same
+        # reason the rich path does (RichAnswerComposer._direct_fact) -- chat.gate is monkeypatched by the
+        # (not-yet-chain-aware) GNW ignition-bus installers, so the check must run ahead of it, not as a fallback
+        # on its abstain. A non-compositional question's regex simply does not match -> byte-identical fall-
+        # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
+        gate_svo = None
+        try:
+            from research.runners.compositional_chain_route import resolve_compositional_chain
+            gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
+        except Exception:
+            gate_svo = None
+        if gate_svo is None:
+            gate_svo = chat.gate(msg)
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:

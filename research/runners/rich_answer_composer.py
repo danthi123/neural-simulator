@@ -196,7 +196,23 @@ class RichAnswerComposer:
 
     def _direct_fact(self, question):
         """(a) The DIRECT recall: the question's matched stored fact, GATED + VERIFIED by the brain (the moat
-        abstains here -> None). Reuses the validated chat.gate (router match + spiking-recall verify)."""
+        abstains here -> None). Reuses the validated chat.gate (router match + spiking-recall verify).
+
+        COMPOSITIONAL CHAIN ROUTE (reasoning-frontier, 2026-08-25): checked FIRST, before `chat.gate`. WHY
+        first, not as a fallback on gate()'s abstain: `chat.gate` is idempotently monkeypatched by the GNW
+        ignition-bus installers (`gnw_bus_shadow` / `gnw_two_organ_bus` / `gnw_three_organ_bus` / ...), none of
+        which are chain-aware yet (extending each bus organ to a multi-hop read is the honest next rung -- see
+        the finding); inserting the check AFTER a call to `self.chat.gate(question)` would run the (not-chain-
+        aware) bus machinery for nothing on a compositional turn and still need this same fallback. Checking
+        the regex shape FIRST costs nothing on a non-compositional turn (the regex simply does not match, and
+        control falls straight through to `chat.gate` UNCHANGED -- byte-identical for every other question) and
+        covers the SAME class uniformly regardless of which bus wrapper is installed. See
+        research/runners/compositional_chain_route.py for the detection + hop-execution + the honesty/moat
+        argument (only a hop pair BOTH independently confirmed by the composer is ever returned)."""
+        from research.runners.compositional_chain_route import resolve_compositional_chain
+        chained = resolve_compositional_chain(self.composer, question)
+        if chained is not None:
+            return chained
         return self.chat.gate(question)              # [a, v, p] or None
 
     def _chain_facts(self, start_agent, seed_action):
