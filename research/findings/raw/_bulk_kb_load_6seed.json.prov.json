@@ -1,0 +1,28 @@
+{
+ "run_id": "1787780422-4193292",
+ "runner": "research/runners/_bulk_kb_load_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_bulk_kb_load_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--n-facts",
+  "100000",
+  "--out",
+  "research/findings/raw/four_day/_bulk_kb_load_6seed.json"
+ ],
+ "git_sha": "7017cd1b2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-26T17:40:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 78389.7,
+ "corpus_check_query": "gap5 readout discreteness: sustained/latched multi-assembly activity dilutes forward_frac (duty 0.34-0.77) despite forward-ordered store",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/four_day/_bulk_kb_load_6seed.json"
+}
