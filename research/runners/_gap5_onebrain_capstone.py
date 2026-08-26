@@ -135,18 +135,20 @@ def run(seed):
     return recall_ok and moat_ok and replay_ok
 
 
-if not is_gpu_backend():
-    print("SKIP: needs GPU", flush=True); sys.exit(0)
-obc.build_coresident_bridge = _patched_build      # install the CA3-track-appending bridge builder
-print("gap#5 END-TO-END CAPSTONE — the conversing brain SLEEPS, runs a REAL decodable CA3 replay on its own bridge, WAKES, "
-      "and STILL CONVERSES. GO iff recall+moat preserved AND the sleep replay travels (DECODE_r>0.6), all seeds.", flush=True)
-seeds = [42, 43, 44, 100, 101, 102]
-oks = []
-for s in seeds:
-    try:
-        oks.append(run(s))
-    except Exception as e:
-        import traceback; print(f"  [seed {s}] ERROR: {type(e).__name__}: {e}", flush=True); traceback.print_exc(); oks.append(False)
-print(f"\n=== CAPSTONE: {sum(oks)}/{len(seeds)} -> {'GO' if all(oks) and len(oks)==len(seeds) else 'NO-GO'} "
-      f"(converse -> sleep+replay -> converse, one brain) ===", flush=True)
-print("GAP5-CAPSTONE DONE", flush=True)
+if __name__ == "__main__":   # guarded so the module is importable without running the 6-seed suite AND without the
+                             # module-scope monkeypatch of obc.build_coresident_bridge leaking into an importer (#64)
+    if not is_gpu_backend():
+        print("SKIP: needs GPU", flush=True); sys.exit(0)
+    obc.build_coresident_bridge = _patched_build      # install the CA3-track-appending bridge builder
+    print("gap#5 END-TO-END CAPSTONE — the conversing brain SLEEPS, runs a REAL decodable CA3 replay on its own bridge, WAKES, "
+          "and STILL CONVERSES. GO iff recall+moat preserved AND the sleep replay travels (DECODE_r>0.6), all seeds.", flush=True)
+    seeds = [42, 43, 44, 100, 101, 102]
+    oks = []
+    for s in seeds:
+        try:
+            oks.append(run(s))
+        except Exception as e:
+            import traceback; print(f"  [seed {s}] ERROR: {type(e).__name__}: {e}", flush=True); traceback.print_exc(); oks.append(False)
+    print(f"\n=== CAPSTONE: {sum(oks)}/{len(seeds)} -> {'GO' if all(oks) and len(oks)==len(seeds) else 'NO-GO'} "
+          f"(converse -> sleep+replay -> converse, one brain) ===", flush=True)
+    print("GAP5-CAPSTONE DONE", flush=True)

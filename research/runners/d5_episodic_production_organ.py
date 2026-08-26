@@ -243,6 +243,23 @@ def _topic_consolidated(cache_key, topic: str) -> bool:
         return False
 
 
+def _sleep_replayed_when(cache_key, topic: str):
+    """FLAG+topic gate for the offline SLEEP-REPLAY surfacing (#64). Returns (when_rank, batch_size) iff
+    `BRAIN_SLEEP_REPLAY` is armed AND `topic` was actually replayed in this session's LAST deep-idle sleep pass, else
+    None. With the flag off nothing is ever sleep-replayed (the per-session set is empty), so this returns None for EVERY
+    topic -> the recall reply is byte-identical to HEAD. Surfaced only for a replayed topic, so replaying one batch
+    changes only the replayed topics' replies (the no-regression property). Lazy import (no import-order coupling)."""
+    if cache_key is None:
+        return None
+    try:
+        from webapp.continuous_engine import sleep_replay_enabled, topic_sleep_replayed
+        if not sleep_replay_enabled():
+            return None
+        return topic_sleep_replayed(cache_key, topic)
+    except Exception:
+        return None
+
+
 def recall_disclosure(record: dict, content: str | None = None, *, cache_key=None) -> str:
     """Compose the honest recall line from a spiking recall record. in_memory (a spiking completion) gates whether
     any content is surfaced at all — a completion failure is an honest abstain, never a confabulation.
@@ -266,6 +283,20 @@ def recall_disclosure(record: dict, content: str | None = None, *, cache_key=Non
         else:
             lead = (f"Earlier you brought up {topic} — my hippocampal readout completes its assembly for it "
                     f"(dendritic dAP completion {cue:.2f}).")
+        # ADDITIVE (#64): if this topic was replayed in the session's last offline SLEEP-REPLAY pass, surface the BATCH
+        # retention (its recall reads stronger — the risen graded apical magnitude) + the host store-order WHEN position.
+        # Gated PER TOPIC + on BRAIN_SLEEP_REPLAY, so with the flag off (nothing replays) the reply is byte-identical to
+        # HEAD. The WHEN-order is the DECLARED host store-order recency residual (EpisodicRecallOrgan.recency_rank), not a
+        # spiking recency signal — surfaced honestly as such, never as a neural WHEN code.
+        sr = _sleep_replayed_when(cache_key, topic)
+        if sr is not None:
+            when_rank, bsz = int(sr[0]), int(sr[1])
+            strength = float((record.get("graded_cue") or {}).get(SURFACED_GRADED_READ, 0.0))
+            ordinal = ("1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th")[when_rank] \
+                if 0 <= when_rank < 9 else f"{when_rank + 1}th"
+            lead += (f" I also replayed it offline while idle — it was the {ordinal} of {bsz} recent memories I "
+                     f"consolidated in store-order during sleep, and its recall reads stronger now "
+                     f"(recall strength {strength:.1f} mV).")
         if content:
             return f"{lead} {content}"
         return lead
