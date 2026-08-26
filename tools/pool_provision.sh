@@ -40,6 +40,10 @@ for h in "${NODES[@]}"; do
   rsync -az "$STAGE/requirements.txt" "$h:~/$REMOTE_ROOT/requirements.txt" 2>/dev/null
   rsync -az "$MANIFEST" "$h:~/$REMOTE_ROOT/.source_manifest.sha256"
   rsync -az "$REVISION" "$h:~/$REMOTE_ROOT/.source_revision"
+  # 1b. corpus data the pool lane runners read (affect -> tinystories) — NOT in the git-archive (data/ is excluded),
+  # so rsync the small essentials directly from the source repo. Without this the affect lane FileNotFound's on nodes.
+  ssh "$h" "mkdir -p ~/$REMOTE_ROOT/data/corpus" 2>/dev/null
+  [ -f data/corpus/tinystories.txt ] && rsync -az data/corpus/tinystories.txt "$h:~/$REMOTE_ROOT/data/corpus/" 2>/dev/null
   # 2. ensurepip/venv are missing on these Ubuntu 22.04 nodes -> install via passwordless sudo (verified available)
   ssh "$h" "python3 -c 'import ensurepip' 2>/dev/null || { echo '  installing python3.10-venv+pip'; \
     sudo -n DEBIAN_FRONTEND=noninteractive apt-get install -y python3.10-venv python3-pip >/dev/null 2>&1 || \
