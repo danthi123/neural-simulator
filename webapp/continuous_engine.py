@@ -107,6 +107,7 @@ def forget_session(cache_key) -> None:
     _CONSOLIDATED_TOPICS.pop(cache_key, None)
     _LAST_HOMEO_KB.pop(cache_key, None)
     _IDEATE_TICK.pop(cache_key, None)
+    _MULLED_TOPIC.pop(cache_key, None)
 
 
 # ── D5 LEARN-THROUGH-USE: consolidate a memory the brain USED, between turns ─────────────────────────────────────
@@ -509,6 +510,102 @@ def _post_wander_ior(cache_key, organ, concept) -> None:
     st["adapt"] = [1.0 - (1.0 - a) * (1.0 - IOR_RECOVERY) for a in st["adapt"]]  # all basins recover toward rest
 
 
+# ── MULL: the between-turn WANDER genuinely DRIVEN by what the substrate has actually been discussing this
+# conversation (board #145 rung, 2026-08-26). NOT a third idle-relax axis -- #91/#92 fade a felt EMA toward neutral
+# every tick; MULL instead ARMS on a genuine live-turn event and is CONSUMED once, mirroring recent_wander/mark_recall.
+#
+# THE GAP: `_wander_ior_enabled()` (#105) already makes the wander VARY over ticks (inhibition-of-return breaks the
+# degenerate 'cat'x8 repeat), but WHICH concept it is biased toward in the first place still comes from a per-concept
+# NOVELTY level that is a FIXED, seed-derived permutation baked in at organ-build time (`_lexicon`/`NOV_BY_NMEM`,
+# honestly declared as the "ENVIRONMENT" in `self_initiated_production_organ.py`). So the SAME four concepts rotate in
+# the SAME curiosity order in EVERY conversation, on EVERY session -- telling the brain about "the dog" vs never
+# mentioning it at all produces the IDENTICAL wander rotation. The mind's unprompted thought is not actually shaped by
+# what it has been mulling over IN THIS conversation, only by IOR fatigue ticking over a fixed baseline.
+#
+# THE FIX: when a LIVE turn's referential recall GENUINELY completes (`d5_episodic_production_organ`'s spiking
+# dendritic-dAP pattern-completion, in_memory=True -- the SAME gate `mark_recall`/D5 already trusts, reused unchanged)
+# on a topic that happens to ALSO be one of the self-init organ's own stored concepts, that concept's curiosity
+# NOVELTY is raised to the organ's own ceiling and RE-READ through the SAME spiking `CuriosityProductionOrgan` the
+# organ's fixed baseline already comes from (reuse-by-import `_self_initiated_spontaneous_thought_derisk._curiosity_
+# wants`) -- so the resulting boosted `gains_on` (and therefore WHICH basin the CA3 noise volley is biased to complete
+# into) is a genuine higher-novelty spiking read of a concept the substrate just actually engaged with THIS
+# conversation, never a host gain multiply. Verified (seed 42): baseline argmax want is 'cat' (fixed novelty 0.95,
+# ~115-127 Hz depending on build-order); boosting a mulled 'dog' (fixed novelty 0.65) only to the organ's own 0.95
+# ceiling TIES it with cat (a ~2-3% edge) -- too close to survive this codebase's documented build-order RNG drift
+# (CLAUDE.md: "each net build advances the global RNG"; confirmed here run-to-run: an identical seed=42 rerun of
+# this exact test flipped which of dog/cat won). MULL_NOVELTY=1.6 instead gives dog ~218 Hz vs cat's ~115-127 Hz
+# (a decisive ~1.7-1.9x edge, not a coin-flip) -- still the SAME organ, SAME transfer function, just a genuinely
+# higher input (a topic ACTIVELY being discussed right now is categorically more salient than a topic's fixed
+# baseline interestingness, so reading beyond the small stored lexicon's normal 0-0.95 novelty range is principled,
+# not arbitrary). Verified end-to-end (2 conditions x cupy /api/brain-chat, see
+# research/findings/2026-08-26-continuous-wander-mull-*): the ARMED condition's actual stochastic CA3 wander picks
+# the mulled concept and the LESIONED condition (identical induce+referential turns, coupling off) reproduces a
+# fresh, never-mulled organ's own baseline pick exactly.
+#
+# Applied for EXACTLY the one wander call that consumes it (arm-then-drain), and `gains_on` is RESTORED immediately
+# after that call so the boost can never leak into `_WANDER_ADAPT`'s own first-tick base-capture (see
+# `_apply_wander_mull`'s docstring). Default-OFF pending the cupy anti-hollow GO (mirrors #91's
+# `BRAIN_CONTINUOUS_AFFECT_RELAX` convention for a not-yet-owner-reviewed coupling).
+MULL_NOVELTY = 1.6   # DECISIVELY above the organ's own stored-lexicon novelty range (NOV_BY_NMEM tops out at 0.95)
+                     # -- large enough that the boosted concept's curiosity want clears any other concept's want by
+                     # a wide, noise-robust margin (see the derivation above), not merely a tie with whichever
+                     # concept the fixed seeded permutation happened to already put at the ceiling.
+_MULLED_TOPIC: dict = {}   # cache_key -> the most recent genuinely-recalled topic, armed for the NEXT wander
+
+
+def wander_mull_enabled() -> bool:
+    """#145. `BRAIN_CONTINUOUS_WANDER_MULL` truthy (1/true/on/yes) arms the mull-bias. Default-OFF (unset/0/anything
+    else) pending the cupy anti-hollow GO -- unarmed, `mark_mull` is never called (server.py gates it on this same
+    flag) and `_apply_wander_mull` short-circuits, so the wander stays EXACTLY today's fixed-novelty selection
+    (byte-identical to HEAD)."""
+    return os.environ.get("BRAIN_CONTINUOUS_WANDER_MULL", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def mark_mull(cache_key, topic) -> None:
+    """The live handler calls this when a referential turn GENUINELY recalled `topic` (in_memory=True) -- the exact
+    call site + gate as `mark_recall`. Pure bookkeeping (a dict write, no cognition): arms the NEXT idle wander's
+    mull-bias check with the MOST RECENT genuinely-discussed topic (overwrites any unconsumed prior one -- what's
+    freshest in mind), mirroring `recent_wander`'s single-slot semantics."""
+    if topic:
+        _MULLED_TOPIC[cache_key] = str(topic).lower()
+
+
+def _apply_wander_mull(cache_key, organ):
+    """If MULL is armed for this session AND the mulled topic is one of THIS organ's own stored concepts, boost that
+    concept's curiosity NOVELTY to `MULL_NOVELTY` and re-derive `gains_on` through the SAME spiking
+    `CuriosityProductionOrgan` read the organ's baseline already uses (a genuine higher-novelty spiking read, not a
+    host gain multiply). Returns `(pre_gains, record)`: `pre_gains` is the organ's gains_on BEFORE this call (so the
+    caller can restore it right after the ONE wander call this arms -- the boost must never leak into
+    `_WANDER_ADAPT`'s own base-capture on this session's first-ever tick, see the MULL section header above), or
+    `(None, None)` if nothing armed / disabled / no match. CONSUMES the armed topic on every call while enabled
+    (arm-once), so an unmatched mulled topic (outside this organ's tiny lexicon) still clears rather than lingering to
+    silently apply to some later, unrelated wander."""
+    if not wander_mull_enabled():
+        return None, None
+    topic = _MULLED_TOPIC.pop(cache_key, None)
+    if not topic:
+        return None, None
+    agents = getattr(organ, "agents", None)
+    novelties = getattr(organ, "novelties", None)
+    gains = getattr(organ, "gains_on", None)
+    if not agents or not novelties or not gains or topic not in agents:
+        return None, None
+    i = agents.index(topic)
+    if novelties[i] >= MULL_NOVELTY:
+        return None, None   # already at/above the ceiling -- no genuine boost to apply
+    try:
+        from research.runners._self_initiated_spontaneous_thought_derisk import _curiosity_wants
+    except Exception:
+        return None, None
+    boosted = list(novelties)
+    boosted[i] = MULL_NOVELTY
+    wants, _meta = _curiosity_wants(organ.seed, boosted)
+    wmax = max(wants) if wants else 1.0
+    pre_gains = list(gains)
+    organ.gains_on = [1.0 + organ.gain_scale * (w / wmax if wmax > 1e-9 else 0.0) for w in wants]
+    return pre_gains, {"mulled": topic, "basin": i, "boosted_novelty": MULL_NOVELTY}
+
+
 # ── IDEATION: an OCCASIONAL between-turn wander that GENERATES a NOVEL blended concept (creativity rung) ──────────
 # Rung of the continuous-substrate frontier: today the idle wander SELECTS one stored basin and speaks its concept
 # (recall). IDEATION makes the wander OCCASIONALLY *generate* instead — it drives a BLENDED cue of the TWO most
@@ -690,6 +787,7 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
     # runs EXACTLY as today (byte-identical): the `ideation` key is then absent from `rec`.
     wandered = None
     ideation = None
+    mull = None
     if selfinit_organ is not None:
         try:
             if ideation_enabled() and _is_ideation_tick(cache_key):
@@ -708,15 +806,29 @@ def tick_session(cache_key, session_mood: dict, affect_organ, now: float | None 
                 ior = _wander_ior_enabled()
                 if ior:
                     _pre_wander_ior(cache_key, selfinit_organ)   # bias away from recently-visited basins
+                # MULL (#145): if a live turn genuinely recalled one of THIS organ's own concepts, boost it via a
+                # real spiking curiosity re-read for EXACTLY this one wander call, then restore gains_on right after
+                # (see _apply_wander_mull — the boost must never leak into IOR's own base-capture).
+                try:
+                    selfinit_organ._ensure_mouth()   # need agents/novelties/gains_on populated (idempotent, cheap)
+                except Exception:
+                    pass
+                pre_gains, mull = _apply_wander_mull(cache_key, selfinit_organ)
                 out = selfinit_organ.speak(lesion=False)
+                if pre_gains is not None:
+                    selfinit_organ.gains_on = pre_gains
                 wandered = out.get("concept")
                 if ior and wandered:
                     _post_wander_ior(cache_key, selfinit_organ, wandered)  # fatigue the just-won basin
                 if wandered:
                     note += "; a thought wandered to ‘%s’" % wandered
+                if mull is not None:
+                    note += " (it had been on my mind — we'd just been discussing ‘%s’)" % mull["mulled"]
         except Exception:
             wandered = None
     rec = {"t": now, "valence": v1, "arousal": a1, "differential": diff, "wandered": wandered, "note": note}
+    if mull is not None:   # additive: absent when MULL is off/didn't match -> rec is byte-identical to today
+        rec["mull"] = mull
     if ideation is not None:   # additive: absent when ideation is off -> rec is byte-identical to today
         rec["ideation"] = ideation
     lst = _INNER_LIFE.setdefault(cache_key, [])

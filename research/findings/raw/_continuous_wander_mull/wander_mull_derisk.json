@@ -1,0 +1,123 @@
+{
+  "runner": "research/runners/_continuous_wander_mull_derisk.py",
+  "run_id": "1787734781-2682097",
+  "backend": "cupy",
+  "device": "cuda:0",
+  "seed": 42,
+  "idle_sec": 20.0,
+  "induce_msg": "what does the dog chase?",
+  "referential_msg": "you mentioned the dog, right?",
+  "neutral_msg": "Ok.",
+  "session_reuse": "ONE warm ChatBrain reused across both conditions; only the D5-episodic organ + self-init organ + continuous-engine per-session dicts are reset between conditions.",
+  "mechanism_level": {
+    "agents": [
+      "dog",
+      "cat",
+      "bird",
+      "fish"
+    ],
+    "facts": [
+      "dog chase ball",
+      "cat eat worm",
+      "bird see seed",
+      "fish hear bug"
+    ],
+    "baseline_novelties": {
+      "dog": 0.65,
+      "cat": 0.95,
+      "bird": 0.35,
+      "fish": 0.15
+    },
+    "baseline_wants_hz": {
+      "dog": 69.61805555555554,
+      "cat": 115.10416666666666,
+      "bird": 18.57638888888889,
+      "fish": 7.118055555555555
+    },
+    "argmax_baseline": "cat",
+    "boosted_novelties": {
+      "dog": 1.6,
+      "cat": 0.95,
+      "bird": 0.35,
+      "fish": 0.15
+    },
+    "boosted_wants_hz": {
+      "dog": 209.20138888888889,
+      "cat": 115.10416666666666,
+      "bird": 18.57638888888889,
+      "fish": 7.118055555555555
+    },
+    "argmax_boosted": "dog",
+    "boosted_dog_over_baseline_cat_margin": 1.817,
+    "MECH_flips_argmax": true
+  },
+  "mechanism_check_s": 2.01,
+  "chat_build_s": 131.02,
+  "fresh_baseline": {
+    "concept": "cat",
+    "share": [
+      0.3656084656084656,
+      0.5264550264550265,
+      0.09153439153439154,
+      0.0164021164021164
+    ],
+    "gains_on": [
+      1.5668316831683167,
+      2.0,
+      1.2165841584158417,
+      1.0792079207920793
+    ]
+  },
+  "fresh_baseline_wander_s": 203.98,
+  "wall_s": 865.27,
+  "conditions": {
+    "ARMED": {
+      "armed": true,
+      "induce_recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "referential_in_memory": true,
+      "induction_ok": true,
+      "n_ticked": 1,
+      "tick_wandered": "dog",
+      "tick_mull": {
+        "mulled": "dog",
+        "basin": 0,
+        "boosted_novelty": 1.6
+      },
+      "tick_note": "idle: felt state relaxing steady (was +0.00, now +0.00); a thought wandered to \u2018dog\u2019 (it had been on my mind \u2014 we'd just been discussing \u2018dog\u2019)",
+      "followup_wander_drives_concept": "bird",
+      "followup_answer": "(I'd been mulling over bird.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about ok yet: what can you tell me about ok? \u2014 worth going further here.",
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    },
+    "LESIONED": {
+      "armed": false,
+      "induce_recalled_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "referential_in_memory": true,
+      "induction_ok": true,
+      "n_ticked": 1,
+      "tick_wandered": "cat",
+      "tick_mull": null,
+      "tick_note": "idle: felt state relaxing steady (was +0.00, now +0.00); a thought wandered to \u2018cat\u2019",
+      "followup_wander_drives_concept": "cat",
+      "followup_answer": "(I'd been mulling over cat.) I don't know about that. My curiosity is piqued \u2014 I haven't learned about ok yet: what can you tell me about ok?",
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    }
+  },
+  "PASS_MECH_flips_argmax": true,
+  "PASS_induction_ok": true,
+  "PASS_ARMED_wander_shifts": false,
+  "PASS_LESIONED_matches_baseline": true,
+  "PASS_content_identical": true,
+  "VERDICT": "UNDEFINED"
+}

@@ -4468,6 +4468,14 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     from webapp import continuous_engine as _CEc
                     if _CEc.d5_consolidate_enabled() and rec.get("in_memory"):
                         _CEc.mark_recall(cache_key, ref)
+                    # MULL (continuous engine, board #145, 2026-08-26, default-OFF `BRAIN_CONTINUOUS_WANDER_MULL`):
+                    # mark the topic this turn RECALLED (the SAME genuine spiking completion gate as D5 above) so the
+                    # NEXT idle wander is biased toward it IF it's one of the self-init organ's own stored concepts —
+                    # what the brain unprompted brings up next genuinely tracks what it just discussed, instead of a
+                    # fixed per-session draw. Independent flag/state from D5 (own enablement, own dict) so lesioning
+                    # one never touches the other.
+                    if _CEc.wander_mull_enabled() and rec.get("in_memory"):
+                        _CEc.mark_mull(cache_key, ref)
                 except Exception:
                     pass
                 # CONTENT (a DECLARED host-oracle residual): surface a fact the brain holds about `ref`, rendered
