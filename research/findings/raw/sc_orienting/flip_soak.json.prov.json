@@ -1,0 +1,29 @@
+{
+ "run_id": "1787787087-414128",
+ "runner": "research/runners/_sc_orienting_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_e447264d-c60-1/research/runners/_sc_orienting_flip_soak.py",
+  "--seeds",
+  "42,43,44,45,46,47",
+  "--out",
+  "research/findings/raw/sc_orienting/flip_soak.json"
+ ],
+ "git_sha": "6e2d89a83",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T19:31:27",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/sc_orienting/flip_soak.json"
+}

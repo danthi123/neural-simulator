@@ -1,0 +1,83 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "min_intact_cardinal": 1.0,
+  "mean_intact_cardinal": 1.0,
+  "max_lesion_cardinal": 0.25,
+  "mean_lesion_cardinal": 0.13888888888888887,
+  "min_intact_reach": 1.0,
+  "mean_intact_reach": 1.0,
+  "max_lesion_reach": 0.125,
+  "mean_lesion_reach": 0.08333333333333333,
+  "thresholds": {
+    "min_intact_cardinal": 0.8,
+    "max_lesion_cardinal": 0.45,
+    "min_intact_reach": 0.8,
+    "max_lesion_reach": 0.5
+  },
+  "rows": [
+    {
+      "seed": 42,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.0,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.0,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    },
+    {
+      "seed": 43,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.25,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.125,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    },
+    {
+      "seed": 44,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.08333333333333333,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.125,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    },
+    {
+      "seed": 45,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.08333333333333333,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.0,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    },
+    {
+      "seed": 46,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.16666666666666666,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.125,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    },
+    {
+      "seed": 47,
+      "intact_cardinal": 1.0,
+      "lesion_cardinal": 0.25,
+      "intact_reach": 1.0,
+      "lesion_reach": 0.125,
+      "n_cardinal": 12,
+      "n_episodes": 8
+    }
+  ],
+  "flip_gate": "GO",
+  "attributable_cardinal": 0.8611111111111112,
+  "attributable_reach": 0.9166666666666666
+}
