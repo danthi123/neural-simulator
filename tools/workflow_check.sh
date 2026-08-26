@@ -31,7 +31,32 @@ classify_pool_status() {
   local f1 f2 f3 f4 extra epoch rc cmd payload age out day_epoch file_mtime
   [ -f "$status_file" ] || return 0
   file_mtime=$(stat -c%Y "$status_file" 2>/dev/null) || return 0
-  while IFS=$'\t' read -r f1 f2 f3 f4 extra; do
+  # job_status.log is APPEND-ONLY and NEVER ROTATED -- it holds WEEKS of history, not one day. Legacy
+  # (pre-v2) rows carry only a clock-of-day (HH:MM:SS), no date. The "today, else yesterday, capped at
+  # file_mtime" reconstruction below (kept for its own comment/history) can distinguish at most ~2
+  # calendar days -- but this file spans far more than that. Any row that many days old whose clock-time
+  # happens to fall <= "now"'s clock-time reconstructs as TODAY with a tiny age, so a long-resolved,
+  # days-old failure re-aliases into the ~1h freshness window EVERY DAY once wall-clock passes that
+  # time-of-day -- and fires again the next day, and the day after. CONFIRMED 2026-08-26: a "(merge
+  # restock)" affect_h3 row timestamped 18:24:31 (real age: unknown, but definitely >24h -- it sits
+  # among a block of rows spanning multiple day-wraps, e.g. 22:57 -> 04:16 -> 07:46 -> 12:17 in the same
+  # unbroken run) reconstructed to an age of 580s the moment wall-clock passed 18:24 -- and would do so
+  # again every day at 18:24 forever, because the file is never rotated and this heuristic cannot tell
+  # "9 minutes ago" from "9 minutes past the same clock reading N days ago".
+  #
+  # FIX: the log is written in strict chronological (append) order -- a row can never postdate the row
+  # written after it. Scan TAIL-TO-HEAD and anchor each legacy row's same-day guess against a monotonic
+  # "ceiling" (the already-resolved epoch of the row that follows it), rolling the guess back a whole day
+  # at a time until it satisfies day_epoch <= ceiling. This recovers the true calendar day from the
+  # file's own write order instead of guessing against wall-clock "now", and holds regardless of how many
+  # days/weeks the file spans. v2 rows carry a real epoch: they are trusted outright and set the ceiling
+  # for the (earlier) rows above them.
+  local -a lines
+  mapfile -t lines < "$status_file"
+  local ceiling=$((file_mtime + 60))
+  local i
+  for ((i = ${#lines[@]} - 1; i >= 0; i--)); do
+    IFS=$'\t' read -r f1 f2 f3 f4 extra <<<"${lines[$i]}"
     epoch=""; rc=""; cmd=""
     if [ "$f1" = "v2" ]; then
       epoch="$f2"; rc="$f3"; payload="$f4"
@@ -40,20 +65,18 @@ classify_pool_status() {
       cmd=$(printf '%s' "$payload" | base64 -d 2>/dev/null) || continue
     else
       # Legacy records had no date and could contain raw newlines. Accept only
-      # structurally valid, recent rows during migration; malformed fragments
-      # cannot be trusted and are ignored.
+      # structurally valid rows; malformed fragments cannot be trusted and are ignored
+      # (and do not move the ceiling -- the next-earlier row anchors off the last GOOD one).
       rc="$f1"
       [[ "$rc" =~ ^[0-9]+$ && "$f2" =~ ^[0-9]{2}:[0-9]{2}:[0-9]{2}$ && -n "$f3" ]] || continue
       cmd="$f3${f4:+$'\t'$f4}${extra:+$'\t'$extra}"
-      day_epoch=$(date -d "$(date -d "@$now" +%F) $f2" +%s 2>/dev/null) || continue
-      [ "$day_epoch" -le "$now" ] || day_epoch=$((day_epoch - 86400))
-      # A legacy row cannot have been written after the file's own mtime. When
-      # today's wall-clock reconstruction is newer than the last file write,
-      # the row belongs to the prior day. Without this anchor, yesterday's
-      # 13:18 failure becomes a fresh crash every day around 13:18.
-      [ "$day_epoch" -le $((file_mtime + 60)) ] || day_epoch=$((day_epoch - 86400))
+      day_epoch=$(date -d "$(date -d "@$ceiling" +%F) $f2" +%s 2>/dev/null) || continue
+      while [ "$day_epoch" -gt "$ceiling" ]; do
+        day_epoch=$((day_epoch - 86400))
+      done
       epoch="$day_epoch"
     fi
+    [ -n "$epoch" ] && ceiling="$epoch"
     age=$((now - epoch))
     [ "$age" -ge 0 ] && [ "$age" -le "$max_age" ] || continue
     [ "$rc" -ne 0 ] || continue
@@ -66,9 +89,13 @@ classify_pool_status() {
     elif [ -f "$sim_root/$out" ]; then
       printf 'V\t%s\t%s\n' "$rc" "$out"
     else
-      printf 'C\t%s\t%s\n' "$rc" "$(printf '%s' "$cmd" | tr '\n\t' '  ' | cut -c1-90)"
+      # Emit the extracted --out/--json PATH as its own field (not just the truncated cmd text) so a
+      # caller that runs on the PRIMARY (which has its own copy of every synced artifact) can re-check
+      # $ROOT/$out before crying crash -- belt-and-suspenders against any future sync-timing gap between
+      # a node's local file and the primary's pulled-back copy.
+      printf 'C\t%s\t%s\t%s\n' "$rc" "$out" "$(printf '%s' "$cmd" | tr '\n\t' '  ' | cut -c1-90)"
     fi
-  done < "$status_file"
+  done
 }
 
 # An empty queue is not itself a scientific failure. When every CPU-compatible lane is
@@ -403,11 +430,23 @@ for H in pool40 pool41 pool42; do
     printf '\nclassify_pool_status "$HOME/derisk-pool/sim/job_status.log" "$HOME/derisk-pool/sim" %q %q\n' \
       "$(date +%s)" "${POOL_STATUS_MAX_AGE:-3600}"
   } | timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" 'bash -s' 2>/dev/null)
-  while IFS=$'\t' read -r kind rc rest; do
+  while IFS=$'\t' read -r kind rc field3 field4; do
     [ -z "$kind" ] && continue
-    [ "$kind" = "C" ] && CRASHED="$CRASHED\n  $H rc=$rc: $rest"
-    [ "$kind" = "V" ] && VERDICTS="$VERDICTS\n  $H rc=$rc: $rest"
-    [ "$kind" = "U" ] && UNVERIF="$UNVERIF\n  $H rc=$rc: $rest (no --out/--json path to verify)"
+    if [ "$kind" = "C" ]; then
+      # BELT-AND-SUSPENDERS: classify_pool_status only sees the NODE's own copy of the artifact. If the
+      # primary already pulled it back (pool_sync.sh, rsync -au, never removes the node's source file --
+      # so this is a secondary safety net, not the primary fix for the false-alarm class this landed to
+      # close), don't cry crash over a result that exists right here.
+      if [ -n "$field3" ] && [ -f "$ROOT/$field3" ]; then
+        VERDICTS="$VERDICTS\n  $H rc=$rc: $field3 (seen as missing on the node, but present at the primary path — not lost compute)"
+      else
+        CRASHED="$CRASHED\n  $H rc=$rc: $field4"
+      fi
+    elif [ "$kind" = "V" ]; then
+      VERDICTS="$VERDICTS\n  $H rc=$rc: $field3"
+    elif [ "$kind" = "U" ]; then
+      UNVERIF="$UNVERIF\n  $H rc=$rc: $field3 (no --out/--json path to verify)"
+    fi
   done <<< "$(printf '%b' "$R")"
 done
 if [ -n "$CRASHED" ]; then
