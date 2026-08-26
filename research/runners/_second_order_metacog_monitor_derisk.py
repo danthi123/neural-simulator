@@ -150,8 +150,37 @@ BALANCE_CONFIDENCE_READ = "balance"
 # = rate(V+) - rate(V-). This CLOSES the host-logistic residual of the committed learned_acc GO -- the type-2
 # confidence->correctness mapping is now carried by synaptic weights self-organized from experienced reinforcement.
 PLASTIC_ACC_CONFIDENCE_READ = "plastic_acc"
+# `spiking_acc`: the FULLY-SPIKING-PRESYNAPTIC read (2026-08-26) -- closes the named honest residual of the
+# committed plastic_acc GO ("the learned synaptic sum w.z is INJECTED as the meta subpool current rather than
+# propagated through installed presynaptic synapses; a fully-spiking presynaptic-population read is the remaining
+# shortcut to burn down"). The SAME three-factor Hebbian rule learns the opponent weight w_diff = w_plus - w_minus,
+# but instead of a host np.dot injected as current, w_diff is INSTALLED as an ACC->meta projection: an ACC
+# presynaptic population encodes the (standardized) first-order features as non-negative rate channels (z_+ = relu(z),
+# z_- = relu(-z)), and the opponent V+/V- confidence subpools receive their drive FROM ACC SPIKES through the
+# installed synapses. Sign is carried by the Namburi-Tye OPPONENT structure (not by inhibitory weights): with
+# w_diff = w_pos - w_neg (w_pos,w_neg >= 0), the terms that RAISE the margin (w_pos.z_+ , w_neg.z_-) excite V+, the
+# terms that LOWER it (w_pos.z_- , w_neg.z_+) excite V- -- so EVERY ACC->meta synapse is excitatory (Dale's law
+# respected). Confidence = rate(V+) - rate(V-) is then a genuine spiking read of a synaptic integral (Kiani-Shadlen
+# 2009: confidence is the firing rate of neurons that integrate the decision evidence through synapses). Anti-cheat:
+# host_dot_on_read_path == 0 (the V+/V- currents are set ONLY by ACC synaptic input, never by monitor.currents_from_
+# features). Residual after this rung: features are still host rate reads; a Dale E/I split of a single unsigned
+# opponent read is a later rung. Biology binding: research/biology/spiking-confidence-synaptic-integration.md.
+SPIKING_ACC_CONFIDENCE_READ = "spiking_acc"
 CONFIDENCE_READ_CHOICES = ("meta_rate", "margin", "margin_abs", BALANCE_CONFIDENCE_READ, LEARNED_ACC_CONFIDENCE_READ,
-                           PLASTIC_ACC_CONFIDENCE_READ)
+                           PLASTIC_ACC_CONFIDENCE_READ, SPIKING_ACC_CONFIDENCE_READ)
+
+# --- spiking_acc geometry / operating point ---
+ACC_SUB_N = 6                    # neurons per ACC feature-sign channel (2 channels/feature: z_+ , z_-)
+DEFAULT_SPIKING_ACC_DRIVE_PA = 320.0   # pA per standardized-feature unit driving an ACC channel into a graded rate
+DEFAULT_SPIKING_ACC_SYN_W = 32.0       # ACC->meta synaptic weight scale (maps ACC spike drive to the meta subpools);
+                                       # tuned 2026-08-26: syn_w=5.5 STARVED the V+/V- subpools (conf~=0, type2_auc
+                                       # 0.575); syn_w=32 recovers host-parity (type2_auc 0.768 vs host 0.841, ratio
+                                       # 0.914, meta_d 1.80; meta-lesion+permuted+within-class controls all collapse).
+
+# ANTI-CHEAT instrument for spiking_acc: counts host DOT-PRODUCT confidence reads (monitor.raw_channels /
+# currents_from_features). The spiking_acc READ path asserts this stays 0 -- the V+/V- drive comes ONLY from ACC
+# spikes through installed synapses, never from a host np.dot injected as current.
+_HOST_DOT_ON_READ_PATH = 0
 
 # ANTI-CHEAT instrument: counts calls to the HOST LOGISTIC fitter. The plastic path asserts this stays 0 (the
 # mapping comes from the three-factor Hebbian rule, never a host optimizer / no weight transport from the logistic).
@@ -553,7 +582,7 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
                          nmda_tau: float = DEFAULT_NMDA_TAU,
                          confidence_read: str = DEFAULT_CONFIDENCE_READ,
                          coresident_regions=None, per_region_param_het: bool = False,
-                         per_region_thresh: bool = False):
+                         per_region_thresh: bool = False, acc_plan=None):
     """One `SimulationBridge`: `workspace` (K accumulator assemblies + shared inhibition) + slow-NMDA `meta_schema`
     monitor. The monitor reads the first-order competition via a fixed workspace->meta excitation + fs->meta
     feed-forward inhibition; under `lesion_meta` both read weights are 0 (severs the monitor's ACCESS while the
@@ -584,6 +613,16 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
         regions.append(
             BrainRegion(name="meta_margin_fs", n_neurons=META_MARGIN_FS_SIZE * K_CLASSES, exc_fraction=0.0,
                         internal_density=0.0, enable_nmda=False)
+        )
+    # spiking_acc: APPEND (last -> leading workspace/meta indices + their per-neuron heterogeneity draws are
+    # UNCHANGED, so the first-order competition is byte-identical to the calibration bridge that has no ACC) an
+    # excitatory ACC presynaptic population: 2 channels/feature (z_+, z_-), ACC_SUB_N neurons each.
+    n_acc_feat = 0
+    if confidence_read == SPIKING_ACC_CONFIDENCE_READ and acc_plan is not None:
+        n_acc_feat = 2 * int(len(acc_plan["w_diff"])) * ACC_SUB_N
+        regions.append(
+            BrainRegion(name="acc_feat", n_neurons=n_acc_feat, exc_fraction=1.0, internal_density=0.0,
+                        enable_nmda=False)
         )
     pathways = [
         RegionPathway(from_region="workspace", to_region="workspace_fs", density=0.5,
@@ -674,6 +713,34 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
         # balance: NO downstream meta wiring. The confidence IS the first-order workspace WTA margin, read
         # directly from cp_firing_states in _run_trial. The meta_schema region is left present but unused.
         pass
+    elif confidence_read == SPIKING_ACC_CONFIDENCE_READ and acc_plan is not None:
+        # spiking_acc: INSTALL the learned opponent weight w_diff = w_plus - w_minus as an all-excitatory ACC->meta
+        # projection (Namburi-Tye opponent coding carries the sign, NOT inhibitory weights -> Dale's law respected).
+        # w_diff = w_pos - w_neg (both >= 0). z = z_+ - z_- (both >= 0). The margin-RAISING terms (w_pos.z_+ ,
+        # w_neg.z_-) excite V+ (meta subpool 0); the margin-LOWERING terms (w_pos.z_- , w_neg.z_+) excite V- (meta
+        # subpool 1). At report time the V+/V- drive EMERGES from ACC spikes through these synapses; confidence =
+        # rate(V+) - rate(V-). No host np.dot on the read path.
+        acc = np.asarray(rm.indices("acc_feat"), dtype=np.int64)
+        w_diff = np.asarray(acc_plan["w_diff"], dtype=np.float64)
+        F = int(w_diff.shape[0])
+        w_pos = np.maximum(w_diff, 0.0)
+        w_neg = np.maximum(-w_diff, 0.0)
+        syn = float(acc_plan["syn_w"]) if not lesion_meta else 0.0
+        Vpos = meta_member_idx[0]
+        Vneg = meta_member_idx[1]
+        # per-feature channel slices: acc[(2j)*S:(2j+1)*S] = z_+ channel; acc[(2j+1)*S:(2j+2)*S] = z_- channel.
+        S = ACC_SUB_N
+        acc_plus = {j: acc[(2 * j) * S:(2 * j + 1) * S] for j in range(F)}
+        acc_minus = {j: acc[(2 * j + 1) * S:(2 * j + 2) * S] for j in range(F)}
+        for j in range(F):
+            wp = float(w_pos[j])
+            wn = float(w_neg[j])
+            if wp > 1e-9:
+                union[f"acc_{j}p_to_Vpos"] = _dense_projection(acc_plus[j], Vpos, syn * wp, META_GATE)
+                union[f"acc_{j}m_to_Vneg"] = _dense_projection(acc_minus[j], Vneg, syn * wp, META_GATE)
+            if wn > 1e-9:
+                union[f"acc_{j}m_to_Vpos"] = _dense_projection(acc_minus[j], Vpos, syn * wn, META_GATE)
+                union[f"acc_{j}p_to_Vneg"] = _dense_projection(acc_plus[j], Vneg, syn * wn, META_GATE)
     else:
         # learned_acc / plastic_acc: the runner-local calibration learns an ACC/aPFC error/conflict read (host
         # logistic for learned_acc; SYNAPTIC three-factor Hebbian for plastic_acc), then drives the meta_schema/aPFC
@@ -703,6 +770,17 @@ def build_metacog_bridge(seed: int = 42, lesion_meta: bool = False,
         "fs_dev": xp.asarray(fs),
         "confidence_read": confidence_read,
     }
+    if confidence_read == SPIKING_ACC_CONFIDENCE_READ and acc_plan is not None:
+        acc = np.asarray(rm.indices("acc_feat"), dtype=np.int64)
+        F = int(len(acc_plan["w_diff"]))
+        S = ACC_SUB_N
+        # device index arrays for the z_+ / z_- channel of every feature (for per-trial ACC drive).
+        idx["acc_plus_dev"] = {j: xp.asarray(acc[(2 * j) * S:(2 * j + 1) * S]) for j in range(F)}
+        idx["acc_minus_dev"] = {j: xp.asarray(acc[(2 * j + 1) * S:(2 * j + 2) * S]) for j in range(F)}
+        idx["acc_feature_mean"] = np.asarray(acc_plan["feature_mean"], dtype=np.float64)
+        idx["acc_feature_scale"] = np.asarray(acc_plan["feature_scale"], dtype=np.float64)
+        idx["acc_drive_pa"] = float(acc_plan["drive_pa"])
+        idx["acc_n_features"] = F
     return bridge, xp, idx, snap
 
 
@@ -961,7 +1039,11 @@ class PlasticThreeFactorMonitor:
         return np.clip(z, -5.0, 5.0)
 
     def raw_channels(self, features):
-        """The two opponent synaptic sums (w . pre) -- V+ ('correct') and V- ('error') presynaptic drive."""
+        """The two opponent synaptic sums (w . pre) -- V+ ('correct') and V- ('error') presynaptic drive.
+        NB: this is a HOST DOT PRODUCT -- the spiking_acc read path must NEVER call it (it counts as a host-side
+        confidence computation; the anti-cheat _HOST_DOT_ON_READ_PATH tracks it)."""
+        global _HOST_DOT_ON_READ_PATH
+        _HOST_DOT_ON_READ_PATH += 1
         z = self._standardize(features)
         return float(np.dot(self.w_plus, z)), float(np.dot(self.w_minus, z))
 
@@ -1100,6 +1182,54 @@ def _run_plastic_meta_report(bridge, xp, idx, snap, i_pos, i_neg, report_steps):
     return pos_acc / (nlate * sub), neg_acc / (nlate * sub)
 
 
+def _run_spiking_acc_meta_report(bridge, xp, idx, snap, z, report_steps):
+    """FULLY-SPIKING-PRESYNAPTIC read (spiking_acc). Encode the standardized feature vector z as ACC channel drive
+    (z_+ = relu(z), z_- = relu(-z), each * acc_drive_pa), inject it into the ACC presynaptic population, and free-run.
+    The opponent V+/V- meta subpools receive their drive FROM ACC SPIKES through the INSTALLED ACC->meta synapses
+    (NO host np.dot). Read the late-window V+/V- population rates. Restore the quiescent snapshot first so the read is
+    a clean function of the ACC drive, identical starting state across intact / meta-lesion conditions.
+
+    z=None -> META-LESION: no ACC drive at all (the monitor's ACCESS to the evidence is severed; ACC stays silent so
+    the meta subpools get zero synaptic input -> confidence flat), while the first-order competition is unchanged."""
+    report_steps = int(max(3, report_steps))
+    late_start = report_steps - max(1, report_steps // 3)
+    bridge.cp_external_input_current[:] = 0.0
+    _restore_state(bridge, snap)
+    bridge.cp_external_input_current[:] = 0.0
+    F = idx["acc_n_features"]
+    drive_pa = idx["acc_drive_pa"]
+    pos_dev = idx["meta_member_dev"][0]
+    neg_dev = idx["meta_member_dev"][1]
+
+    # per-channel constant current for this trial (0 under the meta-lesion).
+    if z is None:
+        z_plus = np.zeros(F, dtype=np.float64)
+        z_minus = np.zeros(F, dtype=np.float64)
+    else:
+        z = np.asarray(z, dtype=np.float64)
+        z_plus = np.maximum(z, 0.0)
+        z_minus = np.maximum(-z, 0.0)
+
+    pos_acc = 0
+    neg_acc = 0
+    for t in range(report_steps):
+        bridge.cp_external_input_current[:] = 0.0
+        if z is not None:
+            for j in range(F):
+                if z_plus[j] > 0.0:
+                    bridge.cp_external_input_current[idx["acc_plus_dev"][j]] = xp.float32(float(drive_pa * z_plus[j]))
+                if z_minus[j] > 0.0:
+                    bridge.cp_external_input_current[idx["acc_minus_dev"][j]] = xp.float32(float(drive_pa * z_minus[j]))
+        bridge._run_one_simulation_step()
+        if t >= late_start:
+            pos_acc += int(to_host(bridge.cp_firing_states[pos_dev].astype(xp.float64).sum()))
+            neg_acc += int(to_host(bridge.cp_firing_states[neg_dev].astype(xp.float64).sum()))
+    bridge.cp_external_input_current[:] = 0.0
+    nlate = float(report_steps - late_start)
+    sub = float(META_SIZE // K_CLASSES)
+    return pos_acc / (nlate * sub), neg_acc / (nlate * sub)
+
+
 def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
                           attractor_weight, meta_exc_w, meta_inh_w, nmda_tau, thresholds, plastic_config,
                           verbose=False):
@@ -1136,27 +1266,55 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
         f"host logistic fit was called on the plastic path ({host_logistic_calls_on_path} calls) -- weight transport!"
 
     # ---- EVALUATION: held-out block; run the competition ONCE per trial, then the opponent spiking read per condition ----
+    global _HOST_DOT_ON_READ_PATH
+    spiking_read = bool(plastic_config.get("spiking_read", False))
     stimulus, drive, sig = make_trials(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise)
+    if spiking_read:
+        # FULLY-SPIKING-PRESYNAPTIC read: install the learned opponent weight w_diff = w_plus - w_minus as an
+        # all-excitatory ACC->meta projection; the V+/V- drive emerges from ACC spikes (no host np.dot on the read).
+        acc_plan = {
+            "w_diff": (monitor.w_plus - monitor.w_minus),
+            "feature_mean": monitor.feature_mean, "feature_scale": monitor.feature_scale,
+            "drive_pa": float(plastic_config["spiking_acc_drive_pa"]),
+            "syn_w": float(plastic_config["spiking_acc_syn_w"]),
+        }
+        eval_read_mode = SPIKING_ACC_CONFIDENCE_READ
+    else:
+        acc_plan = None
+        eval_read_mode = PLASTIC_ACC_CONFIDENCE_READ
     bridge, xp, idx, snap = build_metacog_bridge(
         seed=seed, lesion_meta=False, attractor_weight=attractor_weight, meta_exc_w=meta_exc_w,
-        meta_inh_w=meta_inh_w, nmda_tau=nmda_tau, confidence_read=PLASTIC_ACC_CONFIDENCE_READ)
+        meta_inh_w=meta_inh_w, nmda_tau=nmda_tau, confidence_read=eval_read_mode, acc_plan=acc_plan)
     response = np.zeros(n_trials, dtype=int)
     conf_intact = np.zeros(n_trials, dtype=np.float64)       # the SPIKING opponent read (pos_rate - neg_rate)
     conf_lesion = np.zeros(n_trials, dtype=np.float64)
     z_eval = np.zeros((n_trials, monitor.w_plus.shape[0]), dtype=np.float64)   # cached standardized features
     raw_margin_intact = np.zeros(n_trials, dtype=np.float64)  # the learned-mapping score z.(w+ - w-), for the perm test
+    host_dot_before_read = int(_HOST_DOT_ON_READ_PATH)
     for i in range(n_trials):
         tr = _run_workspace_decision_trace(bridge, xp, idx, snap, drive[i], feature_mode=feature_mode)
         response[i] = _response_from_assembly(tr["assembly"])
         feats = tr["features"]
-        zi = monitor._standardize(feats)
+        zi = monitor._standardize(feats)          # NB: _standardize is (x-mu)/sigma, NOT a dot product
         z_eval[i] = zi
-        raw_margin_intact[i] = monitor.raw_margin_from_z(zi)
-        ip, in_ = monitor.currents_from_features(feats)
-        pr, nr = _run_plastic_meta_report(bridge, xp, idx, snap, ip, in_, report_steps)
-        conf_intact[i] = pr - nr
-        prl, nrl = _run_plastic_meta_report(bridge, xp, idx, snap, 0.0, 0.0, report_steps)
-        conf_lesion[i] = prl - nrl
+        raw_margin_intact[i] = monitor.raw_margin_from_z(zi)   # CONTROL input (self-read-lesion perm test), not the read
+        if spiking_read:
+            # confidence emerges from ACC SPIKES through installed synapses -- no monitor.currents_from_features call.
+            pr, nr = _run_spiking_acc_meta_report(bridge, xp, idx, snap, zi, report_steps)
+            conf_intact[i] = pr - nr
+            prl, nrl = _run_spiking_acc_meta_report(bridge, xp, idx, snap, None, report_steps)  # meta-lesion: no ACC drive
+            conf_lesion[i] = prl - nrl
+        else:
+            ip, in_ = monitor.currents_from_features(feats)
+            pr, nr = _run_plastic_meta_report(bridge, xp, idx, snap, ip, in_, report_steps)
+            conf_intact[i] = pr - nr
+            prl, nrl = _run_plastic_meta_report(bridge, xp, idx, snap, 0.0, 0.0, report_steps)
+            conf_lesion[i] = prl - nrl
+    host_dot_on_read_path = int(_HOST_DOT_ON_READ_PATH) - host_dot_before_read
+    if spiking_read:
+        # ANTI-CHEAT: the spiking read must never have touched a host dot-product confidence computation.
+        assert host_dot_on_read_path == 0, \
+            f"host dot-product confidence read on the spiking_acc path ({host_dot_on_read_path} calls) -- not fully spiking!"
 
     type1_accuracy = float(np.mean(response == stimulus))
     d1, c1, hr, far = _type1_sdt(stimulus, response)
@@ -1273,6 +1431,8 @@ def evaluate_plastic_seed(seed, n_trials, base_pa, sig_lo, sig_hi, stim_noise,
             "collapsed": self_read_lesion_collapsed,
         },
         "host_logistic_fit_calls_on_path": int(host_logistic_calls_on_path),
+        "spiking_read": bool(spiking_read),
+        "host_dot_on_read_path": int(host_dot_on_read_path),
         "plastic_monitor": monitor.to_json(),
         "go_components": go_components,
         "go": go,
@@ -1312,6 +1472,9 @@ def run_plastic_mode(seeds, n_trials, args):
         "feature_mode": str(args.plastic_feature_mode),
         "self_read_permutations": int(args.plastic_self_read_permutations),
         "permuted_permutations": int(args.plastic_permuted_permutations),
+        "spiking_read": bool(getattr(args, "confidence_read", PLASTIC_ACC_CONFIDENCE_READ) == SPIKING_ACC_CONFIDENCE_READ),
+        "spiking_acc_drive_pa": float(getattr(args, "spiking_acc_drive_pa", DEFAULT_SPIKING_ACC_DRIVE_PA)),
+        "spiking_acc_syn_w": float(getattr(args, "spiking_acc_syn_w", DEFAULT_SPIKING_ACC_SYN_W)),
     }
     print(f"[metacog:plastic] SYNAPTICALLY SELF-ORGANIZED metacog monitor (reward-gated THREE-FACTOR HEBBIAN) | "
           f"seeds={seeds} n_trials={n_trials} backend={args.backend} base_pa={args.base_pa} "
@@ -1350,7 +1513,10 @@ def run_plastic_mode(seeds, n_trials, args):
         "all_self_read_lesion_collapse": all(r["self_read_lesion"]["collapsed"] for r in per_seed),
         "all_within_class_ok": all(r["within_class_correctness"]["within_class_ok"] for r in per_seed),
         "all_host_logistic_calls_zero": all(r["host_logistic_fit_calls_on_path"] == 0 for r in per_seed),
+        "all_host_dot_on_read_zero": all(r.get("host_dot_on_read_path", 0) == 0 for r in per_seed),
+        "any_spiking_read": any(r.get("spiking_read", False) for r in per_seed),
     }
+    spiking_mode = bool(agg["any_spiking_read"])
 
     # ---- MISSION PARITY GATE vs the host learned_acc read: each plastic seed's type-2 AUC (and meta-d') must reach
     #      >= parity_ratio * the HOST MEAN, on >= 5/6 seeds (the mission bar: "comparable to the host-logistic read,
@@ -1392,8 +1558,11 @@ def run_plastic_mode(seeds, n_trials, args):
     # MISSION GO = parity to host (>=5/6) AND all three controls collapse 6/6 AND no host optimizer AND the operating
     # window is valid on every seed (meta-d' only meaningful in-window). This is the mission bar -- a RELATIVE parity
     # to the host read -- NOT the stricter absolute per-seed learned_acc gate (`verdict`, reported as secondary).
+    # spiking_acc adds a HARD anti-cheat to the mission gate: the confidence read must be a genuine spiking synaptic
+    # integral (host_dot_on_read_path == 0 on every seed) -- else the "fully spiking presynaptic" claim is void.
     mission_go = bool(controls_all_collapse and agg["all_host_logistic_calls_zero"] and agg["all_in_window"]
-                      and (host_compare is not None and host_compare["parity_gate_pass"]))
+                      and (host_compare is not None and host_compare["parity_gate_pass"])
+                      and (not spiking_mode or agg["all_host_dot_on_read_zero"]))
 
     out = {
         "runner": "_second_order_metacog_monitor_derisk",
@@ -1403,7 +1572,8 @@ def run_plastic_mode(seeds, n_trials, args):
                    "confidence channel driven by the correctness US; third factor=dopamine/RPE, Fleming-Daw / "
                    "Holroyd-Coles ACC) -- the type-2 confidence->correctness mapping learned by SYNAPSES, not a host "
                    "optimizer. Scored in Maniscalco-Lau type-2 SDT / meta-d'."),
-        "seeds": seeds, "n_trials": n_trials, "backend": args.backend, "confidence_read": PLASTIC_ACC_CONFIDENCE_READ,
+        "seeds": seeds, "n_trials": n_trials, "backend": args.backend,
+        "confidence_read": (SPIKING_ACC_CONFIDENCE_READ if spiking_mode else PLASTIC_ACC_CONFIDENCE_READ),
         "thresholds": DEFAULT_THRESHOLDS, "plastic_config": plastic_config,
         "verdict": verdict, "n_go": n_go, "n_seeds": len(seeds), "mission_go": mission_go,
         "aggregate": agg, "host_compare": host_compare, "per_seed": per_seed,
@@ -1436,7 +1606,9 @@ def run_plastic_mode(seeds, n_trials, args):
     print(f"[metacog:plastic]   controls: meta-lesion={agg['all_meta_lesion_collapse']} "
           f"permuted={agg['all_permuted_collapse']} self-read-lesion={agg['all_self_read_lesion_collapse']} "
           f"within-class={agg['all_within_class_ok']} | host_logistic_calls_zero="
-          f"{agg['all_host_logistic_calls_zero']} in-window={agg['all_in_window']}", flush=True)
+          f"{agg['all_host_logistic_calls_zero']} in-window={agg['all_in_window']}"
+          + (f" | SPIKING_READ host_dot_on_read_zero={agg['all_host_dot_on_read_zero']}" if spiking_mode else ""),
+          flush=True)
     if host_compare is not None:
         print(f"[metacog:plastic]   PARITY vs host: plastic mean AUC={host_compare['plastic_mean_type2_auc']:.3f} vs "
               f"host {host_compare['host_mean_type2_auc']:.3f} "
@@ -2023,6 +2195,10 @@ def main():
     ap.add_argument("--plastic-feature-mode", type=str, default=DEFAULT_PLASTIC_FEATURE_MODE,
                     choices=LEARNED_FEATURE_MODE_CHOICES,
                     help="plastic_acc only: ACC feature set (static rate or dynamic late-conflict/persistence)")
+    ap.add_argument("--spiking-acc-drive-pa", type=float, default=DEFAULT_SPIKING_ACC_DRIVE_PA,
+                    help="spiking_acc only: pA per standardized-feature unit driving an ACC presynaptic channel")
+    ap.add_argument("--spiking-acc-syn-w", type=float, default=DEFAULT_SPIKING_ACC_SYN_W,
+                    help="spiking_acc only: ACC->meta synaptic weight scale (maps ACC spike drive to V+/V-)")
     ap.add_argument("--plastic-self-read-permutations", type=int, default=200,
                     help="plastic_acc only: shuffled-feedback permutations for the self-read-lesion control")
     ap.add_argument("--plastic-permuted-permutations", type=int, default=200,
@@ -2055,7 +2231,9 @@ def main():
     if args.confidence_read == BALANCE_CONFIDENCE_READ:
         return run_balance_mode(seeds, n_trials, args)
 
-    if args.confidence_read == PLASTIC_ACC_CONFIDENCE_READ:
+    if args.confidence_read in (PLASTIC_ACC_CONFIDENCE_READ, SPIKING_ACC_CONFIDENCE_READ):
+        # spiking_acc reuses the plastic three-factor calibration + full scoring/mission gate; it only swaps the
+        # READ from a host np.dot injected as current to an ACC-spike-driven synaptic integral (spiking_read flag).
         return run_plastic_mode(seeds, n_trials, args)
 
     learned_config = None
