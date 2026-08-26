@@ -1,0 +1,156 @@
+{
+  "vary": {
+    "favour0_chosen": "fish",
+    "favour1_chosen": "ball",
+    "meta0": {
+      "V_hz": [
+        30.972,
+        17.917
+      ],
+      "fed_spread_hz": 13.056,
+      "wta_counts": [
+        86.0,
+        59.0
+      ],
+      "wta_margin": 27.0,
+      "wta_choice": 0,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0
+    },
+    "meta1": {
+      "V_hz": [
+        17.639,
+        30.694
+      ],
+      "fed_spread_hz": 13.056,
+      "wta_counts": [
+        77.0,
+        84.0
+      ],
+      "wta_margin": 7.0,
+      "wta_choice": 1,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0
+    },
+    "load_bearing": true
+  },
+  "lesion": {
+    "favour0_chosen": null,
+    "favour1_chosen": null,
+    "meta0": {
+      "V_hz": [
+        34.028,
+        17.083
+      ],
+      "fed_spread_hz": 0.0,
+      "wta_counts": [
+        80.0,
+        80.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 0,
+      "decisive": false,
+      "lesion": true,
+      "untrained": false,
+      "v_margin_hz": 2.0
+    },
+    "meta1": {
+      "V_hz": [
+        16.944,
+        28.194
+      ],
+      "fed_spread_hz": 0.0,
+      "wta_counts": [
+        80.0,
+        80.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 0,
+      "decisive": false,
+      "lesion": true,
+      "untrained": false,
+      "v_margin_hz": 2.0
+    },
+    "reverts_to_abstain": true,
+    "difference_vanishes": true
+  },
+  "untrained": {
+    "favour0_chosen": "fish",
+    "favour1_chosen": "fish",
+    "meta0": {
+      "V_hz": [
+        12.361,
+        15.417
+      ],
+      "fed_spread_hz": 3.056,
+      "wta_counts": [
+        80.0,
+        80.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 0,
+      "decisive": true,
+      "lesion": false,
+      "untrained": true,
+      "v_margin_hz": 2.0
+    },
+    "meta1": {
+      "V_hz": [
+        19.444,
+        15.139
+      ],
+      "fed_spread_hz": 4.306,
+      "wta_counts": [
+        80.0,
+        77.0
+      ],
+      "wta_margin": 3.0,
+      "wta_choice": 0,
+      "decisive": true,
+      "lesion": false,
+      "untrained": true,
+      "v_margin_hz": 2.0
+    },
+    "tracks_engagement": false,
+    "advantage_vanishes": true
+  },
+  "verdict": "LOAD_BEARING_PROVEN",
+  "elapsed_s": 444.8687672615051,
+  "sim_backend": "numpy",
+  "provenance": {
+    "runner": "value_choice_production_organ.ValueChoiceProductionOrgan (organ-level load-bearing verify)",
+    "seed": 42,
+    "sim_backend": "numpy",
+    "device": "cpu",
+    "value_train_trials": 40,
+    "argv": [
+      "organ_loadbearing_verify",
+      "--seed",
+      "42",
+      "--value-train-trials",
+      "40"
+    ],
+    "note": "trained vs untrained ValueChoiceProductionOrgan; VARY/LESION/UNTRAINED on 2 candidate patients."
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "VARY flips the committed patient (favour0->fish, favour1->ball)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "LESION (pin V to mean) reverts to abstain/None (difference vanishes)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "UNTRAINED critic -> engagement-advantage vanishes",
+      "ok": true
+    }
+  ]
+}

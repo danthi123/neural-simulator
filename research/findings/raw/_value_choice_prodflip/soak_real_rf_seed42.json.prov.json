@@ -1,0 +1,30 @@
+{
+ "run_id": "1787787796-467343",
+ "runner": "research/runners/_value_choice_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_0d747728-691-5/research/runners/_value_choice_flip_soak.py",
+  "--seeds",
+  "42",
+  "--composer",
+  "rf",
+  "--no-organ",
+  "--out",
+  "research/findings/raw/_value_choice_prodflip/soak_real_rf_seed42.json"
+ ],
+ "git_sha": "e3a692bab",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T19:43:16",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_value_choice_prodflip/soak_real_rf_seed42.json"
+}

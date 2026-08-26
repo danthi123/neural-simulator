@@ -1915,6 +1915,18 @@ async def _warm_chat_brain() -> None:
                           flush=True)
             except Exception as _pe:
                 print(f"[webapp] startup: pragmatic organ warm skipped ({type(_pe).__name__}: {_pe})", flush=True)
+            # VALUE-CHOICE (RANK-1 value-critic GO wire-in; DEFAULT-OFF): if the parent has flipped BRAIN_VALUE_CHOICE
+            # on, pre-build the LEARNED spiking striosome_value critic + the value-WTA so the first >=2-competing turn
+            # does not stall on the ~4-min value-train. Best-effort + guarded; DEFAULT-OFF (unset -> nothing built).
+            try:
+                from research.runners.value_choice_production_organ import (
+                    value_choice_enabled as _vc_enabled, get_value_choice_organ as _get_vc_organ)
+                if _vc_enabled():
+                    _get_vc_organ(seed=42, untrained=False).ensure_built()
+                    print("[webapp] startup: value-choice organ (learned striosome_value critic + spiking WTA) WARM",
+                          flush=True)
+            except Exception as _vce:
+                print(f"[webapp] startup: value-choice organ warm skipped ({type(_vce).__name__}: {_vce})", flush=True)
             dt = round(_t.time() - t0, 1)
             print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
                   f"(default ChatBrain cached as {cache_key!r}); "
@@ -4059,6 +4071,30 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             _gnw_delib_mod.install_deliberation_gate(chat)
         except Exception:
             pass
+
+    # ── BEGIN faculty wire-in: VALUE-DRIVEN CHOICE (RANK-1 value-critic GO; DEFAULT-OFF) ───────────────────────
+    # Owner directive "make the brain COMMIT [by value] instead of abstaining/guessing": on a >=2-distinct-patient
+    # (agent, action) recall — the ambiguity the GNW chain today resolves by an ARBITRARY FIRST-MATCH (verified live)
+    # or a halt-if-unsure abstain — COMMIT the higher-VALUE patient instead, scored by the brain's OWN LEARNED spiking
+    # striosome_value critic (DA-gated STDP) and committed by a spiking value-WTA (Wang-2002 biased competition). GO:
+    # research/findings/2026-07-23-value-critic-closure-RANK1-GO.md (6/6 seeds). The wrapper is installed OUTSIDE the
+    # deliberation gate (INSIDE the multistep gate below, so chase-form questions keep precedence). It touches ONLY the
+    # >=2-competing case (a <2-candidate turn -- confident single recall, single-patient/untaught abstain, self -- is
+    # returned VERBATIM) and commits only STORED candidates (never invents a fact -> the moat holds). On decline
+    # (lesion / non-decisive value) it returns the INNER pipeline result verbatim -> reverts to EXACTLY what the chain
+    # would have done. DEFAULT-OFF: BRAIN_VALUE_CHOICE unset -> NOT installed -> chat.gate stays the pure existing
+    # chain -> BYTE-IDENTICAL to today. The PARENT flips default-on (BRAIN_VALUE_CHOICE=1) after the pool soak
+    # (research/runners/_value_choice_flip_soak.py). Load-bearing levers: BRAIN_VALUE_CHOICE_LESION=1 (pin V to the
+    # mean -> the value gradient vanishes -> reverts to the inner result), BRAIN_VALUE_CHOICE_UNTRAINED=1 (untrained
+    # critic -> the learned engagement-advantage vanishes). Guarded so a wiring failure can never crash a turn.
+    # Reuse-by-import of the R5b organ (NO sim/ edit). See research/runners/value_choice_production_organ.py.
+    try:
+        from research.runners import value_choice_production_organ as _vc_mod
+        if _vc_mod.value_choice_enabled():
+            _vc_mod.install_value_choice(chat)
+    except Exception as _vc_exc:
+        print(f"[webapp] value-choice install skipped ({type(_vc_exc).__name__}: {_vc_exc})", flush=True)
+    # ── END faculty wire-in: VALUE-DRIVEN CHOICE ──────────────────────────────────────────────────────────────
 
     # GNW MULTI-STEP re-entrant deliberation — THE KEYSTONE'S DEFERRED RUNG, WIRED LIVE (T1-1 rung d, 2026-08-19; flipped
     # to DEFAULT-ON as a production-default 2026-08-19 after the 6/6-seed live GO): the single-hop deliberation gate above
