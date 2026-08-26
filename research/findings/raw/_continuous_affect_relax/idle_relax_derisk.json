@@ -1,0 +1,81 @@
+{
+  "runner": "research/runners/_continuous_affect_drives_idle_relax_derisk.py",
+  "run_id": "1787723217-2358007",
+  "backend": "cupy",
+  "device": "cuda:0",
+  "seed": 42,
+  "n_idle_ticks": 14,
+  "idle_sec": 20.0,
+  "relax": 0.85,
+  "induce_msg": "I am so wonderfully thrilled and joyful right now -- this is genuinely the best news I've heard all year!",
+  "neutral_msg": "Okay, noted.",
+  "session_reuse": "ONE warm ChatBrain reused across all 4 conditions; only the #84 workspace + continuous-engine per-session dicts are reset between conditions (see _reset_condition_state)",
+  "chat_build_s": 211.88,
+  "wall_s": 272.19,
+  "conditions": {
+    "I_on": {
+      "idle": false,
+      "lesion": false,
+      "induce_level": 2,
+      "induce_lead": "Gladly! ",
+      "induce_mood": 0.068125,
+      "followup_level": 2,
+      "followup_lead": "Gladly! ",
+      "followup_mood": 0.068125,
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    },
+    "A_on": {
+      "idle": true,
+      "lesion": false,
+      "induce_level": 2,
+      "induce_lead": "Gladly! ",
+      "induce_mood": 0.068125,
+      "followup_level": 0,
+      "followup_lead": "",
+      "followup_mood": 0.005541666666666667,
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    },
+    "I_off": {
+      "idle": false,
+      "lesion": true,
+      "induce_level": 2,
+      "induce_lead": "Gladly! ",
+      "induce_mood": 0.068125,
+      "followup_level": 2,
+      "followup_lead": "Gladly! ",
+      "followup_mood": 0.068125,
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    },
+    "A_off": {
+      "idle": true,
+      "lesion": true,
+      "induce_level": 2,
+      "induce_lead": "Gladly! ",
+      "induce_mood": 0.068125,
+      "followup_level": 2,
+      "followup_lead": "Gladly! ",
+      "followup_mood": 0.068125,
+      "followup_abstained": true,
+      "followup_recalled_svo": null,
+      "followup_verified": false
+    }
+  },
+  "levels": {
+    "I_on": 2,
+    "A_on": 0,
+    "I_off": 2,
+    "A_off": 2
+  },
+  "PASS_induced_nonzero": true,
+  "PASS_idle_decays_when_armed": true,
+  "PASS_vanishes_under_lesion": true,
+  "PASS_lesion_flag_inert_on_immediate_read": true,
+  "PASS_content_fields_identical": true,
+  "VERDICT": "GO"
+}
