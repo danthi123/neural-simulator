@@ -1,0 +1,140 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 0.967,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.25,
+      "align_acc_blind": 0.1
+    },
+    {
+      "seed": 43,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 0.917,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.2,
+      "align_acc_blind": 0.267
+    },
+    {
+      "seed": 44,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 1.0,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.15,
+      "align_acc_blind": 0.183
+    },
+    {
+      "seed": 100,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 1.0,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.183,
+      "align_acc_blind": 0.183
+    },
+    {
+      "seed": 101,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 0.983,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.167,
+      "align_acc_blind": 0.133
+    },
+    {
+      "seed": 102,
+      "K": 6,
+      "n_trials": 60,
+      "chance": 0.167,
+      "align_acc": 1.0,
+      "align_acc_lesion": 0.0,
+      "align_acc_scramble": 0.1,
+      "align_acc_blind": 0.2
+    }
+  ],
+  "aggregate": {
+    "align_acc": 0.9778333333333333,
+    "align_acc_lesion": 0.0,
+    "align_acc_scramble": 0.17500000000000002,
+    "align_acc_blind": 0.17766666666666667
+  },
+  "band": 0.26666666666666666,
+  "go": true,
+  "checks": {
+    "a_align": true,
+    "b_lesion": true,
+    "c_scramble": true,
+    "d_notacopy": true
+  },
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "intact align vs chance",
+      "ok": true,
+      "detail": "0.977833 vs floor 0.166667",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "align_acc >= 0.85 (GATE a)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "agg align=0.978"
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses: align_lesion <= chance+0.10 (GATE b, STS-TPJ read load-bearing)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "agg lesion=0.000 band=0.267"
+    },
+    {
+      "kind": "require",
+      "name": "scramble -> chance: align_scramble <= chance+0.10 (GATE c, rides ACTUAL partner gaze)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "agg scramble=0.175 band=0.267"
+    },
+    {
+      "kind": "require",
+      "name": "not-a-copy: align_blind <= chance+0.10 (GATE d, needs gaze x layout)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "agg blind=0.178 band=0.267"
+    }
+  ],
+  "undefined_reasons": [],
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / homeostasis / reward-mod / STP / structural plasticity",
+      "why": "the gaze ring is a pure direction-encoder and the STS-TPJ read uses fixed synapses; the lesion holds by construction (no plasticity to regrow the severed read within a trial)"
+    }
+  ],
+  "chance": 0.167,
+  "attribution": {
+    "vs_lesion": 1.0,
+    "vs_scramble": 0.8210328958581898,
+    "vs_blind": 0.8183057780807909
+  },
+  "K": 6,
+  "n_dir": 48,
+  "n_trials": 60,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ]
+}
