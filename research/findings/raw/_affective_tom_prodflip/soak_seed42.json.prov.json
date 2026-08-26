@@ -1,0 +1,29 @@
+{
+ "run_id": "1787787129-430780",
+ "runner": "research/runners/_affective_tom_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_0d747728-691-2/research/runners/_affective_tom_flip_soak.py",
+  "--seeds",
+  "42",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_0d747728-691-2/research/findings/raw/_affective_tom_prodflip/soak_seed42.json"
+ ],
+ "git_sha": "e3a692bab",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T19:32:09",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affective_tom_prodflip/soak_seed42.json"
+}

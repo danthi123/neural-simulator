@@ -1,0 +1,277 @@
+{
+  "runner": "_affective_tom_production_organ_verify",
+  "faculty": "W5 affective theory of mind \u2014 production organ (empathy lead), load-bearing verify",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds_go": 6,
+  "GO": true,
+  "verdict": "GO",
+  "neutral_tol": 0.02,
+  "flag_off_inertness": {
+    "all_inert": true,
+    "organ_built": false,
+    "reasons": [
+      "no_other_agent",
+      "no_other_agent",
+      "no_other_agent"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.069062,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.067187,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      }
+    },
+    {
+      "seed": 43,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.065938,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.068125,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      }
+    },
+    {
+      "seed": 44,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.068125,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.065313,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.000313,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.000313,
+        "lead": ""
+      }
+    },
+    {
+      "seed": 100,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.065625,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.06875,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.000625,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.000625,
+        "lead": ""
+      }
+    },
+    {
+      "seed": 101,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.066875,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.066875,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      }
+    },
+    {
+      "seed": 102,
+      "go": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "lesion_collapse": true,
+      "bad_intact": {
+        "valence_sign": -1,
+        "lesion": false,
+        "tone_sign": -1,
+        "differential": -0.065937,
+        "lead": "That sounds really hard for Sam -- "
+      },
+      "good_intact": {
+        "valence_sign": 1,
+        "lesion": false,
+        "tone_sign": 1,
+        "differential": 0.06875,
+        "lead": "That's wonderful for Sam -- "
+      },
+      "bad_lesion": {
+        "valence_sign": -1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      },
+      "good_lesion": {
+        "valence_sign": 1,
+        "lesion": true,
+        "tone_sign": 0,
+        "differential": 0.0,
+        "lead": ""
+      }
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "VARY on EVERY seed (bad-other lead != good-other lead)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the empathic lead flips with the OTHER agent's situation valence"
+    },
+    {
+      "kind": "require",
+      "name": "sign correct on EVERY seed (bad -> tone -1, good -> tone +1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION collapses on EVERY seed (affect_out=0 -> |diff|<tol -> tone 0 -> lead '')",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the empathic tone rides the OTHER-region spiking read, not a host if valence<0"
+    },
+    {
+      "kind": "require",
+      "name": "FLAG-OFF inert (ordinary turn: acted=False, no lead, bridge NOT built)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "elapsed_seconds": 1.85
+}

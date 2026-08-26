@@ -3105,6 +3105,35 @@ def _affect_drives_on() -> bool:
     return _ADC.affect_drives_enabled()
 
 
+# >>> W5 AFFECTIVE ToM BEGIN (empathy — infer ANOTHER agent's emotion; additive, mergeable block) ───────────────
+# ─── AFFECTIVE THEORY OF MIND DRIVES THE RESPONSE (W5, 2026-08-26): the 6/6-seed-GO W5 de-risk (an OTHER-tagged P0.3
+# affect region, dissociable from the system's OWN affect) made LOAD-BEARING on the live turn — on a turn about
+# ANOTHER agent's affectively-charged situation ("Maria is devastated", "Sam's team lost", "my friend won") the reply
+# LEADS with an EMPATHIC expression whose tone is read NEURALLY off the OTHER model's `affect_out`-gated recall
+# differential (reuse-by-import, NO sim/ edit). The production-integration anchor. When `_AFFECTIVE_TOM_DEFAULT_ON`
+# is False the block is gated on the env flag alone (`BRAIN_AFFECTIVE_TOM=1` opts in for review); the response carries
+# NO `affective_tom` key and NO empathic lead -> byte-identical. Flipping the anchor to True installs the coupling by
+# default (a `BRAIN_AFFECTIVE_TOM=0` escape reverts to the byte-identical oracle). Default-OFF for now — the parent
+# flips it default-ON after the pool soak passes. Orthogonal to the #84 self-affect path. LESION
+# (`BRAIN_AFFECTIVE_TOM_LESION=1`): cut the OTHER region's `affect_out` -> the empathic tone collapses to neutral ->
+# the lead VANISHES (the load-bearing proof). See research/runners/affective_tom_production_organ.py.
+_AFFECTIVE_TOM_DEFAULT_ON = False
+
+
+def _affective_tom_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-OFF anchor (current): enabled ONLY on an
+    explicit truthy `BRAIN_AFFECTIVE_TOM`. Default-ON anchor (after the parent flips it): enabled UNLESS
+    `BRAIN_AFFECTIVE_TOM` is an explicit off. Kept lightweight so the disabled path does no OTHER-model work."""
+    try:
+        from research.runners import affective_tom_production_organ as _ATM
+    except Exception:
+        return False
+    if _AFFECTIVE_TOM_DEFAULT_ON:
+        return not _ATM.affective_tom_off()
+    return _ATM.affective_tom_enabled()
+# <<< W5 AFFECTIVE ToM END ──────────────────────────────────────────────────────────────────────────────────────
+
+
 # ─── DA-MODE DRIVES THE RESPONSE (board #79, 2026-08-19): the #76 spiking DA-mode (rest/focus/arousal) made
 # LOAD-BEARING on the live turn — the brain's OWN dopamine nucleus (the snc population) self-produces a DA LEVEL from
 # the message's reward/context (engagement), the level is binned to a MODE, and the mode modulates HOW forthcoming the
@@ -4272,6 +4301,33 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             affect_drives_info = {"on": True, "error": f"{type(_ade).__name__}: {_ade}", "lead": ""}
             affect_drives_lead = ""
 
+    # >>> W5 AFFECTIVE ToM BEGIN (empathy — infer ANOTHER agent's emotion; additive, mergeable block) ───────────
+    # ── AFFECTIVE THEORY OF MIND DRIVES THE RESPONSE (W5, 2026-08-26) ──────────────────────────────────────────
+    # On a turn about ANOTHER agent's affectively-charged situation ("Maria is devastated", "Sam's team lost", "my
+    # friend won"), infer the OTHER agent's EMOTION (valence) with an OTHER-tagged P0.3 affect region (dissociable
+    # from the system's OWN #84 affect) and lead the reply with an EMPATHIC expression whose tone is read NEURALLY
+    # off the OTHER model's `affect_out`-gated recall differential (reuse-by-import, NO sim/ edit). `tom_lead` is
+    # prepended to the answer surface; `tom_info` is the additive trace (agent, appraised valence, neural tone, the
+    # lead). The moat/recall/abstain verdict runs FIRST and unchanged — this DECORATES an already-matched surface,
+    # never a fact; the content fields (abstained/recalled_svo/verified) are byte-identical with it on or off. The
+    # OTHER-model build + read run on a PRIVATE RNG timeline (host RNG restored — the #77 footgun), so the other
+    # response fields stay byte-identical even on a triggered turn. An ORDINARY turn (no other-agent, or no affective
+    # word) never builds/reads the bridge -> byte-identical + no RNG perturbation (the soak-gate property). Default-OFF
+    # (anchor; the parent flips it default-ON after the pool soak); `BRAIN_AFFECTIVE_TOM=1` opts in -> the block runs.
+    # LESION (`BRAIN_AFFECTIVE_TOM_LESION=1`): cut the OTHER region's `affect_out` -> the neural tone collapses to
+    # neutral -> the empathic lead VANISHES (the load-bearing proof). See affective_tom_production_organ.py.
+    tom_info = None
+    tom_lead = ""
+    if _affective_tom_on():
+        try:
+            from research.runners import affective_tom_production_organ as _ATM
+            tom_info = _ATM.observe_turn(chat, msg)
+            tom_lead = str(tom_info.get("lead", "") or "")
+        except Exception as _tme:  # never let the empathy coupling crash a turn — degrade to the un-led answer
+            tom_info = {"on": True, "error": f"{type(_tme).__name__}: {_tme}", "lead": ""}
+            tom_lead = ""
+    # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────────────────────
+
     # ── DA-MODE DRIVES THE RESPONSE (board #79, 2026-08-19) ───────────────────────────────────────────────────
     # Read the brain's OWN dopamine MODE off the #76 spiking DA nucleus (the snc population self-produces the DA
     # LEVEL from this turn's reward/context engagement — NEURAL off the neuromodulator bus, reuse-by-import, NO
@@ -4819,6 +4875,18 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     }
                     if repair_info is not None:      # BRAIN_REPAIR=0 -> key absent -> byte-identical bare abstain
                         payload["repair"] = repair_info
+                    # >>> W5 AFFECTIVE ToM BEGIN (comprehension-repair early-return; additive, mergeable block) ──
+                    # This abstain-class turn RETURNS here, before the main assembly sites — so an empathy trigger
+                    # whose content words are OOV ("Sam's team lost") would otherwise bypass the empathic lead. The
+                    # observe block above already computed `tom_lead`/`tom_info`; prepend the lead OUTERMOST (ahead of
+                    # the pragmatic prefix) + attach the additive `affective_tom` trace, so empathy also leads an
+                    # OOV/unresolved abstain. Empty lead / no key when disabled, no other-agent, or lesion-collapsed
+                    # -> byte-identical. The abstain content is unchanged (empathy colors the surface, never a fact).
+                    if tom_lead:
+                        payload["answer"] = tom_lead + payload["answer"]
+                    if tom_info is not None and tom_info.get("acted"):
+                        payload["affective_tom"] = tom_info
+                    # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────
                     return JSONResponse(payload)
         except Exception as _ce:  # never let the comprehension read crash a turn — degrade to the normal answer
             comprehension_info = {"on": True, "error": f"{type(_ce).__name__}: {_ce}"}
@@ -5171,6 +5239,17 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["answer"] = affect_drives_lead + resp["answer"]
         if affect_drives_info is not None:
             resp["affect_drives"] = affect_drives_info
+        # >>> W5 AFFECTIVE ToM BEGIN (rich path; additive, mergeable block) ─────────────────────────────────────
+        # AFFECTIVE ToM DRIVES THE RESPONSE (W5): prepend the empathic EXPRESSION lead OUTERMOST (the emotional
+        # acknowledgment of the OTHER agent's situation, spoken first) + attach the additive `affective_tom` trace.
+        # Empty lead / no key when disabled, no other-agent, no affective word, or lesion-collapsed -> byte-identical.
+        # The content fields above are unchanged (empathy colors the surface, never a fact); the lead VANISHES under
+        # the OTHER-region `affect_out` lesion (the load-bearing proof).
+        if tom_lead:
+            resp["answer"] = tom_lead + resp["answer"]
+        if tom_info is not None and tom_info.get("acted"):   # attach ONLY on a genuine trigger (organ ran the neural
+            resp["affective_tom"] = tom_info                 # read) -> an ORDINARY turn stays byte-identical (no key)
+        # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────────────────
         # SWAP DRIVES THE RESPONSE (board #85): prepend the topic-transition lead OUTERMOST (the discourse shift is
         # announced first, ahead of the tone) + attach the additive `swap_drives` trace. Empty lead / no key when
         # disabled or on a hold -> byte-identical. The content fields above are unchanged (the swap frames the reply,
@@ -5395,6 +5474,16 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["answer"] = affect_drives_lead + _resp["answer"]
     if affect_drives_info is not None:
         _resp["affect_drives"] = affect_drives_info
+    # >>> W5 AFFECTIVE ToM BEGIN (single-fact path; additive, mergeable block) ──────────────────────────────────
+    # AFFECTIVE ToM DRIVES THE RESPONSE (W5, single-fact path): prepend the empathic EXPRESSION lead OUTERMOST +
+    # attach the additive `affective_tom` trace. Empty lead / no key when disabled, no other-agent, no affective
+    # word, or lesion-collapsed -> byte-identical. The content fields are unchanged (empathy colors the surface,
+    # never a fact); the lead VANISHES under the OTHER-region `affect_out` lesion (the load-bearing proof).
+    if tom_lead:
+        _resp["answer"] = tom_lead + _resp["answer"]
+    if tom_info is not None and tom_info.get("acted"):   # attach ONLY on a genuine trigger (organ ran the neural
+        _resp["affective_tom"] = tom_info                 # read) -> an ORDINARY turn stays byte-identical (no key)
+    # <<< W5 AFFECTIVE ToM END ─────────────────────────────────────────────────────────────────────────────────
     # SWAP DRIVES THE RESPONSE (board #85, single-fact path): prepend the topic-transition lead OUTERMOST + attach the
     # additive `swap_drives` trace. Empty lead / no key when disabled or on a hold -> byte-identical. The content
     # fields are unchanged (the swap frames the reply, never a fact); the lead VANISHES under the neural swap lesion.
