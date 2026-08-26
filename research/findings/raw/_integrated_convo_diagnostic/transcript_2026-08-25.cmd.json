@@ -1,0 +1,16 @@
+{
+ "runner": "_diag_driver.py (webapp/server.py brain_chat via FastAPI TestClient, in-process)",
+ "script": "research/findings/raw/_integrated_convo_diagnostic/_diag_driver.py",
+ "seed": 42,
+ "backend": "cupy (SIM_BACKEND=cupy)",
+ "renderer": "stub (BRAIN_CHAT_RENDERER=stub; worktree lacks the Qwen priming corpus)",
+ "env": {
+  "BRAIN_SOURCE_PROVENANCE_HONESTY": "1",
+  "BRAIN_DATA_ROOT": "/home/dant123/Projects/sim-data",
+  "all_other_faculties": "production default"
+ },
+ "brain": "tiny-demo",
+ "session": "diag (one warm brain reused across all 19 turns)",
+ "base_commit": "a645cca3a (origin/main)",
+ "note": "single-session qualitative diagnostic; 19 turns; captured 2026-08-25"
+}
