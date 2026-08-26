@@ -172,6 +172,15 @@ class RichAnswerComposer:
         # a 'tell me more' always brings up genuinely NEW grounded content (the DIRECT recall is exempt: a fresh
         # question's own matched fact may legitimately restate, but the chain/elaboration always extend).
         self._conversation_said = set()              # set of tuple(a, v, p) said anywhere this conversation
+        # DERIVED-ANSWER side channel (reasoning-frontier hardening, moat-hardening audit findings #4/#5):
+        # `gather()`'s internal pipeline (chain/elaboration combination, `render_paragraph`'s `list(f)`
+        # conversions) normalizes every fact to a plain list, so a `ChainedSVO` marker on the direct fact does
+        # not survive to `answer()`'s returned `facts`. Tracked here instead so `answer()` can surface
+        # `derived`/`derived_from` and frame the paragraph as the brain's OWN inference, and so the caller
+        # (webapp/server.py) can avoid presenting a composed multi-hop inference as a directly-recalled fact.
+        # Reset at the top of EVERY `gather()` call so it never leaks from a prior turn onto an unrelated one.
+        self._last_direct_derived = False
+        self._last_direct_derived_from = []
 
     # ------------------------------------------------------------------------------------------------
     # GATHER: assemble a small GROUNDED fact-set (a) direct + (b) chain + (c) elaboration.
@@ -334,6 +343,10 @@ class RichAnswerComposer:
 
         A FOLLOW-UP ('tell me more' / 'why?') skips the direct gate and elaborates FURTHER on the held topic,
         excluding everything already said anywhere this conversation (so it never repeats)."""
+        # reset the derived-answer side channel EVERY call (reasoning-frontier hardening) so a prior turn's
+        # ChainedSVO flag never leaks onto this one.
+        self._last_direct_derived = False
+        self._last_direct_derived_from = []
         # the conversation-wide exclude: the chain + elaboration never restate a fact said anywhere in the
         # conversation, so 'tell me more' always brings genuinely NEW content.
         convo_exclude = [list(f) for f in self._conversation_said]
@@ -347,6 +360,12 @@ class RichAnswerComposer:
         direct = self._direct_fact(question)
         if direct is None:
             return None, []                                   # the brain has no matched fact -> ABSTAIN
+        if type(direct).__name__ == "ChainedSVO":
+            # a COMPOSED multi-hop inference (moat-hardening audit findings #4/#5) -- record it on the side
+            # channel so answer() can flag + frame it, then continue treating `direct` as a plain [a,v,p] for
+            # the existing chain/elaboration/render pipeline (it IS a literal stored fact, the final hop).
+            self._last_direct_derived = True
+            self._last_direct_derived_from = list(getattr(direct, "derived_from", []))
         # OPEN-ENDED GENERATION (#3E): an open-ended prompt makes chat.gate VOLUNTEER a generated HYPOTHESIS (a
         # HypothesisSVO). It is a single, clearly-FLAGGED guess -- it MUST NOT be chained/elaborated with stored
         # recall (mixing a guess with asserted facts blurs the honesty boundary, and its own novel (a,v,p) is not
@@ -601,8 +620,22 @@ class RichAnswerComposer:
                 self.chat.agent._write_referent(topic)
             except Exception:
                 pass
+        # DERIVED-ANSWER framing (reasoning-frontier hardening, moat-hardening audit req #4): a paragraph whose
+        # DIRECT fact was a composed multi-hop inference (ChainedSVO) is framed as the brain's OWN inference,
+        # surfacing the supporting hop-facts -- UNCONDITIONALLY (not gated behind the optional #129 provenance
+        # monitor, which is default-OFF; see compositional_chain_route.frame_derived_answer).
+        if self._last_direct_derived:
+            from research.runners.compositional_chain_route import frame_derived_answer
+            paragraph = frame_derived_answer(paragraph, self._last_direct_derived_from)
         return {"answer": paragraph, "abstained": False, "facts": kept, "dropped": dropped,
-                "n_sentences": len(kept), "topic": topic, "followup": followup}
+                "n_sentences": len(kept), "topic": topic, "followup": followup,
+                # DERIVED-ANSWER flag (reasoning-frontier hardening, moat-hardening audit findings #4/#5): True
+                # when this turn's DIRECT fact was a ChainedSVO (a composed multi-hop inference) rather than a
+                # directly-recalled one; `derived_from` names the hop-facts it was composed from. False/[] for
+                # every ordinary turn (byte-identical addition -- existing callers that ignore these keys are
+                # unaffected).
+                "derived": bool(self._last_direct_derived),
+                "derived_from": list(self._last_direct_derived_from)}
 
 
 # ====================================================================================================
