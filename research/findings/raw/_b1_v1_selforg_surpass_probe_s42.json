@@ -1,0 +1,52 @@
+{
+  "note": "Reduced-scale (n_v1=2048, dev_steps=10000) seed-42 learn-only OSI probe of the cheap no-sim-edit surpass levers for the B1 on-bridge common-mode BOUNDARY. CLOCK-FIXED so --rule stdp is genuinely exercised (it was silently inert in prior runs). on_minus_off_mean ~0 for every rule = common mode.",
+  "arch": "8x4x8x8",
+  "dev_steps": 10000,
+  "backend": "cupy",
+  "rows": [
+    {
+      "name": "A_hebb_base",
+      "seed": 42,
+      "rule": "hebbian",
+      "dog": false,
+      "osi_pre_frac": 0.0044,
+      "osi_post_frac": 0.002,
+      "osi_post_mean": 0.1709,
+      "on_minus_off_mean": 0.000674,
+      "l2_mean": 497.593475
+    },
+    {
+      "name": "B_stdp",
+      "seed": 42,
+      "rule": "stdp",
+      "dog": false,
+      "osi_pre_frac": 0.0044,
+      "osi_post_frac": 0.0054,
+      "osi_post_mean": 0.0151,
+      "on_minus_off_mean": -0.000116,
+      "l2_mean": 47.24588
+    },
+    {
+      "name": "C_both",
+      "seed": 42,
+      "rule": "both",
+      "dog": false,
+      "osi_pre_frac": 0.0044,
+      "osi_post_frac": 0.002,
+      "osi_post_mean": 0.1681,
+      "on_minus_off_mean": -0.015516,
+      "l2_mean": 433.026489
+    },
+    {
+      "name": "D_hebb_dog",
+      "seed": 42,
+      "rule": "hebbian",
+      "dog": true,
+      "osi_pre_frac": 0.0044,
+      "osi_post_frac": 0.001,
+      "osi_post_mean": 0.1698,
+      "on_minus_off_mean": -0.000592,
+      "l2_mean": 478.354065
+    }
+  ]
+}
