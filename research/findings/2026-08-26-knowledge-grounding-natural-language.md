@@ -7,6 +7,7 @@ lane: integration
 seeds: [42]
 artifacts:
   - research/findings/raw/_knowledge_grounding_verify/chatbrain_verify.json
+  - research/findings/raw/_knowledge_grounding_verify/fullscale_spotcheck.json
 runner: research/runners/_knowledge_core_curate.py
 ---
 
@@ -167,21 +168,27 @@ unset) is **untouched**. Swapping the production default is an owner decision (`
 `webapp/server.py`), not made here per the task's "hand back for owner review" instruction; verification used an
 explicit `BRAIN_LTM_BUNDLE` override.
 
-## Full production scale (in progress, headless, not blocking this deliverable)
+## Full production scale (completed during this session)
 
 A production-scale build (`--n-facts 15000 --top-entities 8000 --top-relations 40 --seed 42`, the SAME
 parameters as the shipped `wikidata_core_15k`, genuine resonate bind per the standing faithfulness-over-speed
-rule) was launched headless in the background
-(`SIM_BACKEND=numpy .venv/bin/python -m research.runners._knowledge_core_curate --out-bundle
-~/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1 ...`, log-visible progress:
-30,804 alias facts generated from the 8000-entity/40-relation core, 44 ambiguous aliases dropped, 45,804 total
-facts / 37,837-word vocab going into the genuine resonate bind). This does not block the deliverable above (the
-mechanism is fully verified at smoke scale with real Wikidata data); it is the source for a follow-up owner
-decision on whether/how to ship the alias-extended core as the production default. Honest scale note: the
-alias-extended vocab (37,837 words) is ~5.4x the shipped core's 7,032-word vocab, which the curation script's
-own docstring names as a latency-relevant threshold (codebook cleanup is O(V·D); the 2026-08-21 flip-soak
-finding measured sub-second recall only through ~20k distinct entities) — an owner-facing tradeoff to weigh
-against the `_MAX_ALIASES_PER_ID` cap (currently 6; lowering it trades alias coverage for vocab/latency), not
+rule) completed headless in the background: `SIM_BACKEND=numpy .venv/bin/python -m
+research.runners._knowledge_core_curate --out-bundle
+~/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1 --n-facts 15000 --top-entities 8000
+--top-relations 40 --seed 42`. Result: 30,804 alias facts from the 8000-entity/40-relation core (44 ambiguous
+aliases dropped), 45,804 total facts / 37,837-word vocab, 2097s build time (45.8 ms/fact, matching the module's
+own ~52 ms/fact estimate), `ship_ready: true`. A 60-fact random spot-check against the SAVED+RELOADED bundle
+(the exact round-trip the earlier bug corrupted) came back **60/60 correct** — the vocab-completeness fix holds
+at full production scale, not just the smoke scale used for the natural-language verify above.
+
+**Honest latency measurement** (not a projection): median `query_patient` latency **1.13s**, max 1.33s, on
+this 37,837-word vocab (measured on this session's contended CPU — see the box-load caveat throughout this
+finding; still directionally real, since `_can_batch_scan`'s cost is O(V·D) codebook cleanup, CPU-bound
+regardless of contention). This is ~5.4x the shipped core's 7,032-word vocab and confirms the curation script's
+own docstring warning and the 2026-08-21 flip-soak finding's ~20k-entity sub-second threshold: the
+alias-extended core, AS BUILT (cap=6 aliases/concept), trades chat-turn latency for natural-language coverage.
+This is the concrete number the owner needs to decide whether/how to ship it — options include lowering
+`_MAX_ALIASES_PER_ID`, sharding the alias vocabulary out of the shared codebook, or accepting ~1s/turn — none
 resolved here.
 
 ## Next action

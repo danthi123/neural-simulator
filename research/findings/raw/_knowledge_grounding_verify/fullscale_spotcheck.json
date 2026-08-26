@@ -1,0 +1,42 @@
+{
+  "run_id": "kg-fullscale-spotcheck-2026-08-26-01",
+  "provenance": {
+    "script": "hand-authored inline python (SIM_BACKEND=numpy .venv/bin/python -c '...')",
+    "runner": "loads research.runners.sharded_phasor_store.ShardedPhasorStore directly (round-trip save/load, the exact path the pre-existing bug corrupted)",
+    "git_sha": "a72657d41",
+    "branch": "research/knowledge-grounding-A",
+    "repo": "/home/dant123/Projects/sim (worktree wf_4886665c-843-4)"
+  },
+  "backend": "numpy",
+  "device": "cpu",
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1",
+  "bundle_manifest": {
+    "n_facts": 45804,
+    "vocab_size": 37837,
+    "n_shards": 230,
+    "seed": 42,
+    "D": 128,
+    "fast": false,
+    "n_alias_facts": 30804,
+    "n_alias_collisions_dropped": 44,
+    "base_curated_facts": 15000,
+    "top_entities": 8000,
+    "top_relations": 40,
+    "build_seconds": 2097.4,
+    "ms_per_fact": 45.8,
+    "ship_ready": true
+  },
+  "spotcheck": {
+    "method": "60 random facts (agent,action,patient) sampled from the SAVED+RELOADED bundle's own shard kb (seed=2), each queried via store.query_patient(agent, action) and compared against the stored patient",
+    "n_sampled": 60,
+    "n_correct": 60,
+    "n_failed": 0,
+    "load_time_s": 0.208,
+    "query_latency_s": {
+      "median": 1.127,
+      "max": 1.325,
+      "note": "measured under this session's heavy concurrent CPU contention (see finding); the O(V*D) codebook-cleanup cost driving this number is CPU-bound work, so the magnitude is directionally real even if the absolute number would be somewhat lower on an uncontended box"
+    }
+  },
+  "conclusion": "The vocab-completeness fix (research/runners/_knowledge_core_curate.py's vocab_with_aliases computation) holds at full production scale: 60/60 facts recalled correctly after a genuine save/reload round-trip on the 45,804-fact/37,837-vocab bundle -- the exact round-trip the pre-existing ShardedPhasorStore bug corrupted (0/30 correct) before the fix. Query latency at this vocab size is ~1.1-1.3s, confirming the finding's honest scale/latency tradeoff note."
+}
