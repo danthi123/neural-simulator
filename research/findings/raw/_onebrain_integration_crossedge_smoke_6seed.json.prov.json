@@ -1,0 +1,25 @@
+{
+ "run_id": "1787828650-2942825",
+ "runner": "research/runners/_onebrain_integration_crossedge_smoke.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_onebrain_integration_crossedge_smoke.py",
+  "42,43,44,100,101,102"
+ ],
+ "git_sha": "6fb0611e8",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T07:04:10",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 485.9,
+ "corpus_check_query": "one-brain cross-region integration learned inter-areal synapses",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_integration_crossedge_smoke_6seed.json"
+}
