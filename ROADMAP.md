@@ -7,6 +7,22 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐ 2026-08-26 — the brain now SPEAKS its recalled answers on its own neurons for simple sentences (wired, default-OFF)
+
+The "mouth" — the part that turns a recalled fact into a sentence — has been the biggest remaining scaffold: the
+brain reasons and recalls with its own spiking neurons, but a small language model (Qwen) or a fixed template did
+the actual WORDING. The generate channel (the brain's own guesses) already speaks on spikes by default; this
+extends the SAME spiking "Broca" mouth to the RECALL / rich-answer surface for simple subject-verb-object
+sentences ("the brain uses the spikes"): the WORD ORDER is now decided by which neuron-pools fire fastest on a
+real spiking substrate, not by the language model. Open, free-form prose still uses Qwen (the sanctioned crutch on
+the deep-credit wall); only the bounded simple-sentence frames change, and everything else is byte-for-byte
+unchanged. Proven on 6 seeds: with the feature off the output is byte-identical to today; with it on, ~15 of 17
+test facts are spoken on spikes, and two independent lesions confirm the spiking read genuinely authored the word
+order (turn the read off → the order scrambles with the same words; a scrambled sentence then safely falls back to
+the old mouth). The no-lying guarantee is untouched (every spoken sentence must re-parse to exactly the recalled
+fact). Wired but default-OFF pending the pool soak; the flip to on-by-default is the next step. Flag
+`BRAIN_SPIKING_MOUTH_RECALL`; finding `2026-08-26-spiking-broca-mouth-recall-surface-production-wirein-GO`.
+
 ## ⭐⭐⭐ 2026-08-25 (evening) — the brain now REASONS to its own conclusion when you chat, on by default
 
 The biggest step toward the north-star landed. Until now, asking the brain something that needs two facts

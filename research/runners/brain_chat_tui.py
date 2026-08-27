@@ -996,6 +996,12 @@ class ChatBrain:
         a, v, p = gate_svo
         if self.raw_mode or self.renderer is None:
             return self._raw(gate_svo)
+        # BRAIN-NATIVE SPIKING MOUTH (recall surface): a bounded transitive-SVO recall renders ON SPIKES (word order
+        # = the per-pool spiking-RATE ranking), verify-gated. Flag BRAIN_SPIKING_MOUTH_RECALL (default OFF) / open
+        # prose / a verify miss -> None -> falls straight through to the Qwen/template path below (BYTE-IDENTICAL).
+        spk = self.spiking_recall_surface(a, v, p)
+        if spk is not None:
+            return spk
         surface, asserted = self.renderer.render_svo(a, v, p)
         if self._verify(surface, asserted, gate_svo):
             return surface
@@ -1192,6 +1198,40 @@ class ChatBrain:
         surface already leads with the epistemic hedge 'perhaps' (the spiking Broca's own CONN slot); we append the
         SAME not-taught disclaimer the raw template uses, so the honesty framing is identical whichever mouth spoke."""
         return f"{surface.strip()}  [a guess from what I've learned -- not something I was taught]"
+
+    # --- BRAIN-NATIVE SPIKING BROCA mouth for the RECALL / RICH answer surface (ASSERTED SVO; REUSE-BY-IMPORT) ---
+    def _spiking_recall_mouth(self):
+        """Lazily build + cache the reused spiking BROCA clause producer for the ASSERTED recall surface (EMERGE-59/61
+        order read-out on a real Izhikevich SimulationBridge, the 5-slot PLAIN_TRANSITIVE frame). Built ONCE (~0.35 s
+        CPU); each recall SVO then emits in ~5 ms via the EMERGE-61 wash-out. REUSE-BY-IMPORT (spiking_mouth_recall_prod),
+        NO reimplementation, NO sim/ edit."""
+        mouth = getattr(self, "_spk_recall_mouth", None)
+        if mouth is None:
+            from research.runners.spiking_mouth_recall_prod import SpikingRecallMouth
+            mouth = SpikingRecallMouth(seed=int(getattr(self.inner, "seed", 42)))
+            self._spk_recall_mouth = mouth
+        return mouth
+
+    def spiking_recall_surface(self, a, v, p):
+        """Render a GROUNDED recalled SVO grammatically ON FIRING NEURONS (the spiking BROCA render 'the <S> <V-3sg>
+        the <O>', word order = the per-pool spiking-RATE ranking on the SimulationBridge), then re-parse VERIFY (the
+        SAME moat the Qwen recall path uses -> `_verify` re-parses the surface PROSE) that the rendered sentence
+        recovers the recalled (a, v, p). Returns the verified spiking surface on a PASS, or None on a verify miss /
+        raw mode / no renderer / unsupported frame -> the caller falls back to the current mouth (BYTE-IDENTICAL).
+        Transformer-FREE: this path never touches the Qwen mouth.
+
+        Gated on `spiking_mouth_recall_prod.recall_mouth_enabled()` (flag BRAIN_SPIKING_MOUTH_RECALL, default OFF) +
+        `frame_supported` (bounded transitive SVO). OFF or unsupported -> None -> the surface is byte-identical to the
+        pre-wire Qwen/template path."""
+        from research.runners.spiking_mouth_recall_prod import recall_mouth_enabled, frame_supported
+        if self.raw_mode or self.renderer is None:
+            return None                                   # GPU-free / --raw: keep the brain's raw triple path
+        if not recall_mouth_enabled() or not frame_supported(a, v, p):
+            return None                                   # flag OFF / open prose -> byte-identical fallback
+        surface = self._spiking_recall_mouth().render(a, v, p)
+        if self._verify(surface, None, [a, v, p]):        # the moat: the spiking sentence must recover THIS (a, v, p)
+            return surface
+        return None                                       # verify miss -> caller falls back (NEVER a leak)
 
     # --- discourse event tracking (who is doing it now / who was doing it before) ---
     def _discourse_turn(self, line):
