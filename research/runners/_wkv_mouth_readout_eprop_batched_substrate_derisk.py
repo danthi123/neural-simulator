@@ -89,14 +89,28 @@ from research.runners._wkv_fewspike_read_derisk import (  # noqa: E402
 # from the ComposedEndToEndRead chain; only _build_bridge / _wire are B-blocked.
 # ====================================================================================================================
 class BatchedSubstrateReadout(ComposedEndToEndRead):
-    def __init__(self, ro, seed, B, hid_pop=4, pop=1, **kw):
+    def __init__(self, ro, seed, B, hid_pop=4, pop=1, dendritic=False, apical_drive_pA=600.0,
+                 apical_baseline_pA=220.0, apical_syn_scale=12.0, dendritic_tau=1.0,
+                 dendritic_logit_spread=4.0, n_apical_i=16, **kw):
         self.B = int(B)
+        # ---- DENDRITIC (Urbanczik-Senn) lever: a SECOND, target-driven APICAL population wired onto the SAME word-pools
+        # as an independent synaptic teaching pathway (gated OFF by default -> byte-identical to the softmax-onehot rule).
+        # Set BEFORE super().__init__ because the overridden _build_bridge/_wire run inside it. ----
+        self.dendritic = bool(dendritic)
+        self.apical_drive_pA = float(apical_drive_pA)          # target-word excitatory teacher drive (labelled-line)
+        self.apical_baseline_pA = float(apical_baseline_pA)    # tonic inhibitory baseline on ALL pools (non-target -> low)
+        self.apical_syn_scale = float(apical_syn_scale)
+        self.dendritic_tau = float(dendritic_tau)              # sigmoid temperature (nats)
+        self.dendritic_logit_spread = float(dendritic_logit_spread)   # apical calibrated to +/- this logit at target/non
+        self.n_apical_i = int(n_apical_i)
+        self._apical_cal = None                                # (center, scale) set once per seed by calibrate_apical
         # feature = host (drive the substrate read-out with the host feature r_h*(Wo_sp@state) — the prior GO's Arm A
         # isolation read; the projection-feature composition is a separate, even costlier lever).
         super().__init__(ro, seed, proj=None, use_proj=False, use_bias_pop=True, hb_k=0.0,
                          pop=pop, hid_pop=hid_pop, **kw)
         self._build_batch_slot_map()
         self._n_substrate_reads = 0            # counts batched-forward reads — must equal the gradient-step count
+        self._n_apical_reads = 0               # counts APICAL teacher reads (dendritic) — a separate provenance counter
 
     # ---- bridge: B block-diagonal copies of (hid, hidinh, wpool, bias_e, bias_i); region-major layout ----
     def _build_bridge(self):
@@ -127,6 +141,12 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
             BrainRegion(name="bias_e", n_neurons=B * self.n_bias, exc_fraction=1.0, internal_density=0.0),
             BrainRegion(name="bias_i", n_neurons=B * self.n_bias, exc_fraction=1.0, internal_density=0.0),
         ]
+        if self.dendritic:
+            # APICAL teacher (labelled-line): one excitatory teacher neuron per (block, word) -> its own word-pool;
+            # a tonic inhibitory baseline population per block -> ALL word-pools (so a non-target pool reads LOW).
+            regions.append(BrainRegion(name="apical_e", n_neurons=B * self.V, exc_fraction=1.0, internal_density=0.0))
+            regions.append(BrainRegion(name="apical_i", n_neurons=B * self.n_apical_i, exc_fraction=1.0,
+                                       internal_density=0.0))
         cfg.brain_regions = regions; cfg.region_pathways = []
         b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                              runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -140,6 +160,9 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
         self.wpool_all = np.asarray(list(rm.indices("wpool")), dtype=np.int64).reshape(B, self.V, self.P)
         self.bias_e_all = np.asarray(list(rm.indices("bias_e")), dtype=np.int64).reshape(B, self.n_bias)
         self.bias_i_all = np.asarray(list(rm.indices("bias_i")), dtype=np.int64).reshape(B, self.n_bias)
+        if self.dendritic:
+            self.apical_e_all = np.asarray(list(rm.indices("apical_e")), dtype=np.int64).reshape(B, self.V)
+            self.apical_i_all = np.asarray(list(rm.indices("apical_i")), dtype=np.int64).reshape(B, self.n_apical_i)
         self.hid_dim = np.repeat(np.arange(self.F), self.Hp).astype(np.int64)   # [Hn] feature dim of each hid neuron
         self._v0 = (b.cp_izh_c_reset.copy() if getattr(b, "cp_izh_c_reset", None) is not None else None)
         if self.uniform_thresh and getattr(b, "cp_neuron_firing_thresholds", None) is not None:
@@ -169,10 +192,17 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
                      * (self.syn_scale * self.bias_scale))
         wbn_block = (np.repeat(np.repeat(hb_neg, self.P), nB).astype(np.float32)
                      * (self.syn_scale * self.ratio * self.bias_scale))
+        # APICAL teacher edge templates (dendritic only): apical_e(word)->its P pool members (identity, excitatory);
+        # apical_i (tonic) -> ALL pools (inhibitory baseline). Raw magnitudes are calibrated away in calibrate_apical.
+        nA = self.n_apical_i
+        wapp_block = np.full(self.V * self.P, self.apical_syn_scale, np.float32)                       # [V*P]
+        wapn_block = np.full(self.V * self.P * nA, self.apical_syn_scale * self.ratio, np.float32)     # [V*P*nA]
         pre_pos, post_pos, w_pos = [], [], []
         pre_neg, post_neg, w_neg = [], [], []
         pre_bp, post_bp, w_bp = [], [], []
         pre_bn, post_bn, w_bn = [], [], []
+        pre_ap, post_ap, w_ap = [], [], []
+        pre_an, post_an, w_an = [], [], []
         for blk in range(B):
             hid_b = self.hid_all[blk]; hidinh_b = self.hidinh_all[blk]
             pool_b = self.wpool_all[blk].reshape(-1)                            # [V*P]
@@ -181,6 +211,10 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
             pre_neg.append(np.tile(hidinh_b, self.V * self.P)); post_neg.append(np.repeat(pool_b, Hn)); w_neg.append(wn_block)
             pre_bp.append(np.tile(be_b, self.V * self.P)); post_bp.append(np.repeat(pool_b, nB)); w_bp.append(wbp_block)
             pre_bn.append(np.tile(bi_b, self.V * self.P)); post_bn.append(np.repeat(pool_b, nB)); w_bn.append(wbn_block)
+            if self.dendritic:
+                ape_b = self.apical_e_all[blk]; api_b = self.apical_i_all[blk]
+                pre_ap.append(np.repeat(ape_b, self.P)); post_ap.append(pool_b); w_ap.append(wapp_block)
+                pre_an.append(np.tile(api_b, self.V * self.P)); post_an.append(np.repeat(pool_b, nA)); w_an.append(wapn_block)
         union = {
             "readout_pos": {"pre_indices": np.concatenate(pre_pos), "post_indices": np.concatenate(post_pos),
                             "initial_weights": np.concatenate(w_pos), "plastic": False, "conn_type": "E_TO_E"},
@@ -191,7 +225,15 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
             "bias_neg": {"pre_indices": np.concatenate(pre_bn), "post_indices": np.concatenate(post_bn),
                          "initial_weights": np.concatenate(w_bn), "plastic": False, "conn_type": "I_TO_E"},
         }
-        inh = np.concatenate([self.hidinh_all.reshape(-1), self.bias_i_all.reshape(-1)]).tolist()
+        if self.dendritic:
+            union["apical_pos"] = {"pre_indices": np.concatenate(pre_ap), "post_indices": np.concatenate(post_ap),
+                                   "initial_weights": np.concatenate(w_ap), "plastic": False, "conn_type": "E_TO_E"}
+            union["apical_neg"] = {"pre_indices": np.concatenate(pre_an), "post_indices": np.concatenate(post_an),
+                                   "initial_weights": np.concatenate(w_an), "plastic": False, "conn_type": "I_TO_E"}
+        inh_list = [self.hidinh_all.reshape(-1), self.bias_i_all.reshape(-1)]
+        if self.dendritic:
+            inh_list.append(self.apical_i_all.reshape(-1))
+        inh = np.concatenate(inh_list).tolist()
         b.inject_explicit_wiring(union, output_inhibitory_indices=inh)
         self._pos_edges = (union["readout_pos"]["pre_indices"], union["readout_pos"]["post_indices"], None)
         self._neg_edges = (union["readout_neg"]["pre_indices"], union["readout_neg"]["post_indices"], None)
@@ -220,6 +262,9 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
         self._hidinh_flat = xp.asarray(self.hidinh_all.reshape(-1))
         self._wpool_flat = xp.asarray(self.wpool_all.reshape(-1))
         self._hid_dim_gpu = xp.asarray(self.hid_dim)
+        if self.dendritic:
+            self._apical_e_all_gpu = xp.asarray(self.apical_e_all)              # [B, V] teacher index per (block, word)
+            self._apical_i_flat = xp.asarray(self.apical_i_all.reshape(-1))     # [B*nA] tonic inhibitory baseline pop
 
     def set_weights(self, W_hat):
         """Dale-split W_hat[V,D] -> Wp/Wn word-pool synapses (SHARED across all B blocks) and scatter into the fixed
@@ -273,6 +318,65 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
         self._n_substrate_reads += 1
         return np.asarray(to_host(margin)).reshape(self.B, self.V)
 
+    # ---- DENDRITIC: the APICAL teacher read (independent of W; the target enters via a spiking top-down pathway) ----
+    def apical_margin(self, targets, freeze_apical=False):
+        """The APICAL teaching read. Drive apical_e[(b, targets[b])] high (one-hot per block) + apical_i tonic; the
+        feedforward hid/hidinh are SILENT. Run read_window, integrate the pools' net signed synaptic current off
+        cp_conductance_g_e/g_i -> [B, V] APICAL margin (target pool high, non-target low). This is a FIXED teacher
+        pathway (0 host matmul on the margin; independent of the read-out weights W). freeze_apical=True silences the
+        one-hot target drive (baseline only) -> the anti-cheat that removes the teacher."""
+        b = self._b
+        xp, _ = get_backend()
+        targets = np.asarray(targets, dtype=np.int64)
+        assert targets.shape[0] == self.B, "apical_margin expects B targets"
+        self._reset()
+        drive = xp.zeros(b.core_config.num_neurons, dtype=xp.float64)
+        if not freeze_apical:
+            tgt_idx = self._apical_e_all_gpu[xp.arange(self.B), xp.asarray(targets)]    # [B] teacher neuron per block
+            drive[tgt_idx] = self.apical_drive_pA
+        drive[self._apical_i_flat] = self.apical_baseline_pA
+        b.cp_external_input_current[:] = drive.astype(b.cp_external_input_current.dtype)
+        settle = int(self.read_window * self.settle_frac)
+        ge_sum = xp.zeros(self.B * self.V, dtype=xp.float64)
+        gi_sum = xp.zeros(self.B * self.V, dtype=xp.float64)
+        n_acc = 0
+        for step in range(self.read_window):
+            b._run_one_simulation_step()
+            if step < settle:
+                continue
+            ge = b.cp_conductance_g_e[self._wpool_flat].astype(xp.float64).reshape(self.B * self.V, self.P).sum(axis=1)
+            gi = b.cp_conductance_g_i[self._wpool_flat].astype(xp.float64).reshape(self.B * self.V, self.P).sum(axis=1)
+            ge_sum += ge; gi_sum += gi; n_acc += 1
+        b.cp_external_input_current[:] = 0.0
+        n_acc = max(1, n_acc)
+        margin = (self.df_e * (ge_sum / n_acc) + self.df_i * (gi_sum / n_acc))
+        self._n_apical_reads += 1
+        return np.asarray(to_host(margin)).reshape(self.B, self.V)
+
+    def calibrate_apical(self, targets):
+        """Measure the apical teacher's response ONCE (a real substrate read): m_target (the driven pool) vs
+        m_nontarget (all others), then set (center, scale) so the calibrated apical logit is +spread at the target and
+        -spread elsewhere -> sigma(apical) approximates a clean one-hot teacher REGARDLESS of the raw drive magnitude
+        (a physical unit calibration, exactly like the conductance->logit `gain`). scale keeps the sign of the
+        separation; a degenerate (~0) separation yields scale 0 -> sigma 0.5 everywhere -> the run honestly fails."""
+        targets = np.asarray(targets, dtype=np.int64)
+        am = self.apical_margin(targets)                                          # [B, V]
+        B = self.B
+        m_target = float(am[np.arange(B), targets].mean())
+        mask = np.ones_like(am, dtype=bool); mask[np.arange(B), targets] = False
+        m_nontarget = float(am[mask].mean())
+        half = 0.5 * (m_target - m_nontarget)
+        center = 0.5 * (m_target + m_nontarget)
+        scale = (self.dendritic_logit_spread / half) if abs(half) > 1e-9 else 0.0
+        self._apical_cal = (center, scale, m_target, m_nontarget)
+        return self._apical_cal
+
+    def apical_p(self, apical_margin):
+        """sigma of the CALIBRATED apical margin -> the per-unit teaching target (~one-hot). Reuses (center, scale)."""
+        center, scale = self._apical_cal[0], self._apical_cal[1]
+        logit = (apical_margin - center) * scale / max(1e-9, self.dendritic_tau)
+        return 1.0 / (1.0 + np.exp(-logit))
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 def _softmax_rows(logits):
@@ -316,7 +420,7 @@ def _calibrate_gain(s_batch, ro, feats_signed, seed):
 
 
 def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="main", max_steps=None,
-                             traj_eval=None, traj_out=None):
+                             traj_eval=None, traj_out=None, freeze_apical=False):
     """The LOCAL three-factor delta rule with the FORWARD margin from the BATCHED SUBSTRATE READ. mode: main |
     frozen | lesion_err | shuffle_teach. Returns (W_hat[V,D], n_grad_steps, n_matmul_forward).
 
@@ -351,19 +455,38 @@ def _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, mode="
         for start in range(0, n_full, B):
             bi = idx[start:start + B]
             Hb = H[bi]                                                          # [B, D] signed host feature
-            if getattr(args, "forward", "substrate") == "host_proxy":
-                logits = Hb @ W.T + head_b[None, :]                             # CONTROL: host-linear proxy forward
-                if unk >= 0:
-                    logits = logits.copy(); logits[:, unk] = -1e30
-                n_matmul_forward += 1                                           # host matmul on forward -> not substrate
-            else:
+            if getattr(args, "dendritic", False) and getattr(args, "forward", "substrate") != "host_proxy":
+                # ---- DENDRITIC (Urbanczik-Senn) local error: TWO independent substrate reads. BASAL = the feedforward
+                # prediction (as today); APICAL = a teacher read where the TARGET enters via its own spiking pathway.
+                # err = sigma(apical) - sigma(basal) = target - prediction (PER-UNIT sigmoids, NOT a cross-unit softmax
+                # -> read noise in one word no longer corrupts every other word's error). The teacher never touches the
+                # forward ANSWER (apical is off in the demo read). W += lr*err@h is the delta rule toward the target. ----
                 s_batch.set_weights(W)
-                margin_sub = s_batch.batch_margin(Hb, silence_bias=True)        # [B, V] ACTUAL SUBSTRATE READ
-                logits = _sub_logits(margin_sub, gain, head_b, unk)             # gain-normalized + base-rate (no matmul)
-            P = _softmax_rows(logits)
-            P[np.arange(B), Ye[bi]] -= 1.0                                      # err = softmax - onehot (substrate err)
-            # local delta: -lr * sum_b err_b (x) h_b / B  (explicit outer product = the UPDATE, allowed) + decay
-            W = W - args.lr * (P.T @ Hb) / B - args.weight_decay * W
+                basal = s_batch.batch_margin(Hb, silence_bias=True)            # [B, V] SUBSTRATE basal prediction read
+                apical = s_batch.apical_margin(Ye[bi], freeze_apical=freeze_apical)   # [B, V] SUBSTRATE teacher read
+                basal_logit = basal / gain + head_b[None, :]
+                if unk >= 0:
+                    basal_logit = basal_logit.copy(); basal_logit[:, unk] = -60.0     # sentinel (err[unk] zeroed below)
+                p_basal = 1.0 / (1.0 + np.exp(-np.clip(basal_logit / max(1e-9, s_batch.dendritic_tau), -60.0, 60.0)))
+                p_apical = s_batch.apical_p(apical)                            # ~one-hot target (calibrated apical)
+                err = p_apical - p_basal                                       # [B, V] local prediction error
+                if unk >= 0:
+                    err = err.copy(); err[:, unk] = 0.0
+                W = W + args.lr * (err.T @ Hb) / B - args.weight_decay * W     # ascent toward the target + decay
+            else:
+                if getattr(args, "forward", "substrate") == "host_proxy":
+                    logits = Hb @ W.T + head_b[None, :]                         # CONTROL: host-linear proxy forward
+                    if unk >= 0:
+                        logits = logits.copy(); logits[:, unk] = -1e30
+                    n_matmul_forward += 1                                       # host matmul on forward -> not substrate
+                else:
+                    s_batch.set_weights(W)
+                    margin_sub = s_batch.batch_margin(Hb, silence_bias=True)    # [B, V] ACTUAL SUBSTRATE READ
+                    logits = _sub_logits(margin_sub, gain, head_b, unk)         # gain-normalized + base-rate (no matmul)
+                P = _softmax_rows(logits)
+                P[np.arange(B), Ye[bi]] -= 1.0                                  # err = softmax - onehot (substrate err)
+                # local delta: -lr * sum_b err_b (x) h_b / B  (explicit outer product = the UPDATE, allowed) + decay
+                W = W - args.lr * (P.T @ Hb) / B - args.weight_decay * W
             # SYNAPTIC SCALING (Turrigiano homeostasis): hold ||W|| in the substrate's LINEAR read range. The graded
             # read saturates for large ||W|| (the gain, calibrated at ||W||~||head_w||, drops), so an un-scaled forward
             # UNDER-reads, the softmax never gets confident, err persists and W runs away (measured ||W||~970 vs
@@ -487,13 +610,25 @@ def run_seed(seed, ro, args):
     s_batch = BatchedSubstrateReadout(ro, seed, args.batch, hid_pop=args.sub_hid_pop, pop=args.sub_pop,
                                       ou_std=args.ou_std, read_window=args.sub_read_window, hid_gain=args.hid_gain,
                                       ratio=args.ratio, settle_frac=args.settle_frac, n_bias=args.n_bias,
-                                      bias_drive_pA=args.bias_drive_pA)
+                                      bias_drive_pA=args.bias_drive_pA,
+                                      dendritic=getattr(args, "dendritic", False),
+                                      apical_drive_pA=args.apical_drive_pA, apical_baseline_pA=args.apical_baseline_pA,
+                                      apical_syn_scale=args.apical_syn_scale, dendritic_tau=args.dendritic_tau,
+                                      dendritic_logit_spread=args.dendritic_logit_spread, n_apical_i=args.n_apical_i)
 
     # -- CALIBRATE the conductance->logit GAIN once per seed (a physical measurement of the wiring, RANDOM probe, NOT
     #    the teacher). This puts the substrate forward in the read-out's logit units so the proven lr/decay transfer. --
     gain, gain_corr = _calibrate_gain(s_batch, ro, H[:args.batch], seed)
     print(f"[calib-gain seed {seed}] conductance->logit gain={gain:.5g} (substrate-vs-linear corr={gain_corr})",
           flush=True)
+
+    # -- DENDRITIC: calibrate the APICAL teacher ONCE per seed (measure m_target vs m_nontarget; set the unit map so
+    #    sigma(apical) is a clean +/-spread one-hot). Provenance: this is a real substrate read of the teacher pathway. --
+    apical_cal = None
+    if getattr(args, "dendritic", False):
+        apical_cal = s_batch.calibrate_apical(Y[:args.batch])
+        print(f"[calib-apical seed {seed}] m_target={apical_cal[2]:.4g} m_nontarget={apical_cal[3]:.4g} "
+              f"center={apical_cal[0]:.4g} scale={apical_cal[1]:.4g} (spread={args.dendritic_logit_spread})", flush=True)
 
     # -- VERIFY-FIRST: substrate forward gradient reduces held-frame error (guard before the full run) --
     vok, ce0, ce1, ae0, ae1 = _verify_first(seed, ro, s_batch, H, Y, args, gain, head_b)
@@ -503,10 +638,12 @@ def run_seed(seed, ro, args):
     hw = ro.head_w                                                              # target head (also the traj wcos ref)
     t0 = time.time()
     reads_before_main = int(s_batch._n_substrate_reads)
+    apical_reads_before_main = int(s_batch._n_apical_reads)
     traj = []
     W_main, n_grad, n_mm = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "main",
                                                     traj_eval=(He, Ye, PFe, hw), traj_out=traj)
     main_substrate_reads = int(s_batch._n_substrate_reads) - reads_before_main
+    main_apical_reads = int(s_batch._n_apical_reads) - apical_reads_before_main
     learn_secs = round(time.time() - t0, 1)
     W_frozen, _, _ = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "frozen")
     W_lesion, _, _ = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "lesion_err")
@@ -515,6 +652,14 @@ def run_seed(seed, ro, args):
     W_shuffle, n_grad_shuf, _ = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b,
                                                          "shuffle_teach", max_steps=shuf_steps)
     shuf_secs = round(time.time() - t1, 1)
+    # DENDRITIC anti-cheat: FREEZE the apical teacher (silence the one-hot target drive) at the SAME FULL budget as main
+    # -> the local error loses its target (only a uniform baseline remains) -> the learned read-out must collapse. Full
+    # budget (not reduced) so this isolates "no target" from "few steps": if it does NOT collapse, the lift is an
+    # artifact of the sigmoid-error structure, not the dendritic teacher.
+    W_freeze_ap = None
+    if getattr(args, "dendritic", False):
+        W_freeze_ap, _, _ = _learn_substrate_batched(seed, ro, s_batch, H, Y, args, gain, head_b, "main",
+                                                     freeze_apical=True)
 
     # DECISIVE: the learning FORWARD used the substrate read on EVERY main gradient step, 0 host matmul on it. The
     # count is falsifiable — if the forward had used the host-linear proxy, batch_margin would not have been called
@@ -546,6 +691,8 @@ def run_seed(seed, ro, args):
     sub_copied = _fresh_substrate_read(ro, seed, hw.copy(), sub_tuples, Ys, PFs, demo_feats, args)
     sub_learned = _fresh_substrate_read(ro, seed, W_main, sub_tuples, Ys, PFs, demo_feats, args)
     sub_shuffle = _fresh_substrate_read(ro, seed, W_shuffle, sub_tuples, Ys, PFs, demo_feats, args)
+    sub_freeze_apical = (_fresh_substrate_read(ro, seed, W_freeze_ap, sub_tuples, Ys, PFs, demo_feats, args)
+                         if W_freeze_ap is not None else None)
 
     chance = 1.0 / ro.V
     ratio = round(sub_learned["recov_argmax"] / max(1e-9, sub_copied["recov_argmax"]), 4)
@@ -600,8 +747,31 @@ def run_seed(seed, ro, args):
     m["integrated_go"] = bool(ratio >= 0.85)
     #  parity (reported): does it also MATCH the host-linear-proxy version's QUALITY (proxy: hostlin ~0.93, wcos ~0.51)?
     m["parity_recovery"] = bool(hostlin["recov_argmax"] >= 0.85 and wcos_main >= 0.35)
-    #  GO = the PRODUCTION integrated bar (the task's, prior-GO-comparable) + anti-cheats + forward-is-substrate + verify.
-    m["go"] = bool(m["integrated_go"] and m["anticheats_collapse"] and m["forward_is_substrate"] and vok)
+    if getattr(args, "dendritic", False):
+        # ---- DENDRITIC lever verdict (present only in --dendritic): teacher provenance + load-bearing + pre-reg GO ----
+        m["dendritic"] = True
+        m["main_apical_reads"] = int(main_apical_reads)
+        m["apical_reads_match_grad_steps"] = bool(main_apical_reads == n_grad and n_grad > 0)
+        m["apical_cal"] = ({"m_target": round(apical_cal[2], 4), "m_nontarget": round(apical_cal[3], 4),
+                            "center": round(apical_cal[0], 4), "scale": round(apical_cal[1], 6)}
+                           if apical_cal is not None else None)
+        m["sub_freeze_apical"] = sub_freeze_apical
+        m["sub_freeze_apical_recov"] = (round(sub_freeze_apical["recov_argmax"], 4)
+                                        if sub_freeze_apical is not None else None)
+        #  the apical TEACHER is load-bearing: freezing it (silence the target drive) collapses the learned read, AND the
+        #  forward genuinely ran an apical substrate read every gradient step (provenance).
+        m["dendritic_anticheats_ok"] = bool(
+            sub_freeze_apical is not None
+            and sub_learned["recov_argmax"] > 2.0 * sub_freeze_apical["recov_argmax"]
+            and m["apical_reads_match_grad_steps"])
+        #  pre-registered dendritic GO: parity (ratio >= 0.85) OR a decisive anti-cheat-clean LIFT over the ~0.37
+        #  plateau (sub_learned recov >= 0.55, the WKV-fewspike midpoint), with the two dendritic anti-cheats collapsing.
+        m["dendritic_lift_go"] = bool(sub_learned["recov_argmax"] >= 0.55)
+        m["go"] = bool((m["integrated_go"] or m["dendritic_lift_go"]) and m["anticheats_collapse"]
+                       and m["dendritic_anticheats_ok"] and m["forward_is_substrate"] and vok)
+    else:
+        #  GO = PRODUCTION integrated bar (the task's, prior-GO-comparable) + anti-cheats + forward-is-substrate + verify.
+        m["go"] = bool(m["integrated_go"] and m["anticheats_collapse"] and m["forward_is_substrate"] and vok)
     lever(f"substrate_forward_recov_learned_vs_shuffle_seed{seed}",
           before=sub_shuffle["recov_argmax"], after=sub_learned["recov_argmax"], required=False)
     del s_batch
@@ -641,6 +811,17 @@ def main():
     ap.add_argument("--bias-scale", type=float, default=0.14)
     ap.add_argument("--n-bias", type=int, default=16)
     ap.add_argument("--bias-drive-pA", type=float, default=160.0)
+    # ---- DENDRITIC (Urbanczik-Senn two-compartment) lever: default OFF, byte-identical to the softmax-onehot rule ----
+    ap.add_argument("--dendritic", action="store_true",
+                    help="learn the read-out via a SECOND target-driven APICAL substrate read: the local error becomes "
+                         "err=sigma(apical)-sigma(basal) (PER-UNIT, not a cross-unit softmax over the noisy basal read). "
+                         "Off by default and byte-identical to the default rule when off.")
+    ap.add_argument("--apical-drive-pA", type=float, default=600.0)         # one-hot target teacher (labelled-line) drive
+    ap.add_argument("--apical-baseline-pA", type=float, default=220.0)      # tonic inhibitory baseline (non-target -> low)
+    ap.add_argument("--apical-syn-scale", type=float, default=12.0)         # apical synapse scale (magnitude calibrated away)
+    ap.add_argument("--dendritic-tau", type=float, default=1.0)             # sigmoid temperature (nats)
+    ap.add_argument("--dendritic-logit-spread", type=float, default=4.0)    # apical calibrated to +/- this logit
+    ap.add_argument("--n-apical-i", type=int, default=16)                   # tonic inhibitory baseline population size
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--forward", type=str, default="substrate", choices=["substrate", "host_proxy"],
                     help="learning-forward margin: substrate (default, the real test, host_matmul=0) or host_proxy "
@@ -691,6 +872,11 @@ def main():
               f"WCOS={m['weight_cosine_to_head_diag']} | fwd_matmul={m['host_matmul_on_learning_forward']} "
               f"reads={m['substrate_reads']} | ac={m['anticheats_collapse']} int={m['integrated_go']} "
               f"parity={m['parity_recovery']} GO={m['go']} ({m['learn_secs']}+{m['shuffle_secs']}s)", flush=True)
+        if m.get("dendritic"):
+            print(f"    [dendritic seed {seed}] apical_reads={m['main_apical_reads']}/{m['n_grad_steps']} "
+                  f"(match={m['apical_reads_match_grad_steps']}) freeze_apical_recov={m.get('sub_freeze_apical_recov')} "
+                  f"apical_cal={m.get('apical_cal')} lift_go={m.get('dendritic_lift_go')} "
+                  f"dend_ac_ok={m.get('dendritic_anticheats_ok')}", flush=True)
         project_cost("batched-substrate 6-seed", si + 1, len(seeds), time.time() - t_all, warn_hours=10.0)
 
     rows = [r for r in results if "sub_learned" in r]
@@ -716,6 +902,12 @@ def main():
             "weight_cosine_mean": round(float(np.mean([r["weight_cosine_to_head_diag"] for r in rows])), 4),
             "weight_cosine_floor_max": round(float(np.max([r["weight_cosine_floor"] for r in rows])), 4),
         }
+        if any(r.get("dendritic") for r in rows):
+            fa = [r["sub_freeze_apical_recov"] for r in rows if r.get("sub_freeze_apical_recov") is not None]
+            summary["dendritic"] = True
+            summary["sub_freeze_apical_recov_mean"] = round(float(np.mean(fa)), 4) if fa else None
+            summary["apical_reads_match_all"] = bool(all(r.get("apical_reads_match_grad_steps") for r in rows))
+            summary["dendritic_anticheats_ok_count"] = int(sum(1 for r in rows if r.get("dendritic_anticheats_ok")))
     out = {"results": _native(results), "summary": _native(summary), "seeds": seeds,
            "no_transport": True, "no_host_grad": True,
            "forward_during_learning": "batched_substrate_graded_conductance_read",

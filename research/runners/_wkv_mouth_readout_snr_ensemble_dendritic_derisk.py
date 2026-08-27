@@ -43,8 +43,8 @@ THIS RUNNER, TWO LEVERS:
     used). Zero new mechanism code -- pure reuse-by-subprocess of the validated, anti-cheated runner, single
     variable changed. This is the SMALLEST test of the "ensemble" half of the open lever.
 
-  --lever dendritic (SCOPED, NOT implemented -- raises on invocation with the design below): a genuine two-
-    compartment Urbanczik & Senn (2014) read. The existing runner ALREADY shows the wiring pattern needed (its
+  --lever dendritic (IMPLEMENTED 2026-08-27 in the underlying runner as --dendritic; this scaffold invokes it): a
+    genuine two-compartment Urbanczik & Senn (2014) read. The existing runner ALREADY shows the wiring pattern (its
     `bias_e`/`bias_i` tonic bias-input population, wired onto the SAME word-pools as an independent extra synaptic
     drive -- see `_wkv_mouth_endtoend_substrate_read_derisk.py` "BIOLOGIZE head_b" section) -- the dendritic lever
     reuses exactly that pattern but for the TEACHING signal instead of a tonic prior:
@@ -77,11 +77,14 @@ THIS RUNNER, TWO LEVERS:
         the rough midpoint the WKV-fewspike population lever demonstrated between a degraded read and ideal-sampler
         parity), with `host_matmul_on_learning_forward == 0` preserved (the forward, apical included, stays 0 host
         matmul) and the two anti-cheats above collapsing.
-    NOT implemented here: writing + verifying the actual block-diagonal apical wiring is a real, non-trivial spiking-
-    mechanism change (a second CSR wire-up per batch slot) that deserves its own careful build + smoke pass, which
-    this audit-scoping session (no heavy sims) is not the place to author untested. Escalate to this AFTER the
-    ensemble screen below reports its verdict -- if ensemble already lifts the plateau, the dendritic build may not
-    be needed at all (cheaper lever wins first, per the mission's cost discipline).
+    IMPLEMENTED 2026-08-27 (`research/mouth-read-snr-dendritic`): the apical population (a block-diagonal labelled-line
+    excitatory teacher per (block,word) + a tonic inhibitory baseline), the apical substrate read `apical_margin`, the
+    per-seed apical unit-calibration, the U-S local error, and the freeze-apical + shuffle-apical anti-cheats all live
+    in `_wkv_mouth_readout_eprop_batched_substrate_derisk.py` behind `--dendritic` (byte-identical to the softmax rule
+    when off; verified by a numpy off/off diff). This lever was escalated to AFTER the ensemble screen returned its
+    verdict: the ensemble (--sub-pop) lever is INERT by construction (the word-pool members are deterministic
+    conductance replicas of a SHARED noisy hidden drive -> common-mode -> no SNR averaging; see the 2026-08-27
+    verdict finding), so the dendritic lever is the live contingency.
 
 USAGE (screen -- cheap, ~minutes/arm on GPU, single seed, reduced coverage; NOT the decisive setting):
     SIM_BACKEND=cupy .venv/bin/python -m research.runners._wkv_mouth_readout_snr_ensemble_dendritic_derisk \\
@@ -140,10 +143,15 @@ _SCREEN_EXTRA_ARGS: list[str] = [
 
 
 def _cmd_for(pop: int, seeds: str, coverage: str, out_json: Path, python: str, backend: str,
-             extra: list[str]) -> list[str]:
+             extra: list[str], lever: str = "ensemble") -> list[str]:
     cmd = [python, "-u", "-m", _UNDERLYING_MODULE,
            "--forward", "substrate", "--sub-pop", str(pop), "--seeds", seeds,
            "--json", str(out_json)]
+    if lever == "dendritic":
+        # the DENDRITIC (Urbanczik-Senn) lever is now IMPLEMENTED in the underlying runner as --dendritic (a second
+        # target-driven apical substrate read; err = sigma(apical) - sigma(basal), per-unit not softmax). Same anti-cheat
+        # battery + provenance + GO-gate as the substrate forward, PLUS the freeze-apical / shuffle-apical anti-cheats.
+        cmd += ["--dendritic"]
     cmd += (_DECISIVE_EXTRA_ARGS if coverage == "decisive" else _SCREEN_EXTRA_ARGS)
     cmd += extra
     return cmd
@@ -157,9 +165,11 @@ def run_sweep(args) -> list[Path]:
     pops = [int(p) for p in args.pops.split(",") if p.strip()]
     paths = []
     for pop in pops:
-        out_json = out_dir / f"sub_pop{pop}_{args.coverage}.json"
+        tag = f"dendritic_sub_pop{pop}" if args.lever == "dendritic" else f"sub_pop{pop}"
+        out_json = out_dir / f"{tag}_{args.coverage}.json"
         paths.append(out_json)
-        cmd = _cmd_for(pop, args.seeds, args.coverage, out_json, args.python, args.backend, args.extra_args)
+        cmd = _cmd_for(pop, args.seeds, args.coverage, out_json, args.python, args.backend, args.extra_args,
+                       lever=args.lever)
         env_prefix = f"SIM_BACKEND={args.backend} "
         printable = env_prefix + " ".join(cmd)
         if args.dry_run:
@@ -255,6 +265,46 @@ def aggregate(paths: list[Path], pops: list[int]) -> dict:
     }
 
 
+def aggregate_dendritic(paths: list[Path], pops: list[int]) -> dict:
+    """Read the dendritic run summaries and decide the Urbanczik-Senn verdict via tools.verdict.Verdict (UNDEFINED,
+    not a fabricated GO/NO-GO, if the arm never ran). The underlying runner already computes the per-seed dendritic GO
+    (integrated OR >=0.55 lift, with the freeze-apical + shuffle-apical anti-cheats collapsing and apical-read
+    provenance); this aggregates its summary into the >=5/6-seed board verdict."""
+    summaries = {}
+    for pop, path in zip(pops, paths):
+        s = _load_summary(path)
+        if s is not None:
+            summaries[pop] = s
+    v = Verdict("the DENDRITIC (Urbanczik-Senn) two-compartment read lifts the mouth read-out e-prop learning forward "
+                "off the ~0.37 plateau, teacher-load-bearing + provenance-clean")
+    best = None
+    for pop, s in summaries.items():
+        r = s.get("sub_learned_recov_mean")
+        if r is not None and (best is None or r > best[1]):
+            best = (pop, r, s)
+    v.require("every dendritic arm produced a summary (no silently-missing arm)", len(summaries),
+              expect=lambda n: n == len(pops), note=f"{len(summaries)}/{len(pops)} arms produced a summary")
+    go = False
+    detail = {}
+    if best is not None:
+        pop, recov, s = best
+        go_count = s.get("go_count") or 0
+        ac_ok = s.get("dendritic_anticheats_ok_count")
+        reads_ok = s.get("apical_reads_match_all")
+        v.require("the winning arm's apical read ran every gradient step (provenance)", reads_ok,
+                  expect=lambda x: bool(x), note=f"apical_reads_match_all={reads_ok}")
+        v.require("the winning arm's dendritic anti-cheats collapse on >=5/6 seeds (teacher load-bearing)",
+                  ac_ok, expect=(lambda x: x is not None and x >= 5), note=f"dendritic_anticheats_ok_count={ac_ok}")
+        go = bool(go_count >= 5)                                       # >=5/6 per-seed dendritic GO (the runner's gate)
+        detail = {"best_pop": pop, "sub_learned_recov_mean": recov,
+                  "sub_freeze_apical_recov_mean": s.get("sub_freeze_apical_recov_mean"),
+                  "go_count": go_count, "n_seeds": s.get("n_seeds"),
+                  "dendritic_anticheats_ok_count": ac_ok, "apical_reads_match_all": reads_ok,
+                  "sub_copied_recov_mean": s.get("sub_copied_recov_mean")}
+    decided = v.decide(go=go)
+    return {"summaries_by_pop": summaries, "detail": detail, "verdict": decided}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--lever", choices=["ensemble", "dendritic"], required=True)
@@ -280,20 +330,25 @@ def main():
                           "aggregate_<lever>.json)")
     args = ap.parse_args()
 
-    if args.lever == "dendritic":
-        print(__doc__.split("--lever dendritic (SCOPED")[1].split("USAGE")[0])
-        raise NotImplementedError(
-            "the dendritic (Urbanczik-Senn two-compartment) read is SCOPED in this file's module docstring "
-            "(mechanism, smallest test, GO-gate, and the exact reused wiring precedent) but NOT implemented -- "
-            "writing the block-diagonal apical wiring is a real spiking-mechanism change that was not authored "
-            "untested during a no-heavy-sims audit session. See the docstring's '--lever dendritic' section, and "
-            "run --lever ensemble first (cheaper; may already resolve the wall)."
-        )
+    # the DENDRITIC mechanism is pop-INDEPENDENT (it is the apical teacher read, not the word-pool size); collapse the
+    # ensemble default multi-pop sweep to a single arm so `--lever dendritic` runs the mechanism once per seed.
+    if args.lever == "dendritic" and args.pops == "1,2,4,8,16":
+        args.pops = "1"
 
     pops = [int(p) for p in args.pops.split(",") if p.strip()]
     paths = run_sweep(args)
     if args.dry_run:
         print("[dry-run] no aggregation -- nothing ran")
+        return
+
+    if args.lever == "dendritic":
+        agg = aggregate_dendritic(paths, pops)
+        out = args.summary_json or str(Path(args.out_dir) / f"aggregate_{args.lever}_{args.coverage}.json")
+        Path(out).parent.mkdir(parents=True, exist_ok=True)
+        Path(out).write_text(json.dumps(agg, indent=2, default=str))
+        print(json.dumps(agg["detail"], indent=2, default=str))
+        print(f"[DENDRITIC] verdict={agg['verdict']['status']}")
+        print(f"[done] -> {out}")
         return
 
     agg = aggregate(paths, pops)
