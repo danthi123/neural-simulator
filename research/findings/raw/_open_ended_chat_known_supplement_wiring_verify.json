@@ -1,0 +1,319 @@
+{
+ "probe": "open_ended_chat_known_supplement_wiring_verify",
+ "backend": "numpy",
+ "source_replies": "research/findings/raw/_open_ended_verify_postfilter_derisk.json",
+ "off_path_import_gated": true,
+ "off_is_false": true,
+ "on_is_true": true,
+ "known_report": [
+  {
+   "topic": "canada",
+   "wired_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape",
+   "must_drop": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "caught": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "n_sentences_wired": 1,
+   "specificity_wired": 0
+  },
+  {
+   "topic": "france",
+   "wired_filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world",
+   "must_drop": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "caught": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "n_sentences_wired": 1,
+   "specificity_wired": 3
+  },
+  {
+   "topic": "morocco",
+   "wired_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "must_drop": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "caught": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "n_sentences_wired": 1,
+   "specificity_wired": 4
+  }
+ ],
+ "lesion_report": [
+  {
+   "topic": "canada",
+   "lesioned_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated:\n\nCanada is a vast country located in North America, bordered by the United States to the south and Mexico to the west It has a population of around 35 million people, making it one of the largest countries in the world The capital city of Canada is Ottawa, which was founded in 1867 It serves as the federal capital and is home to the Parliament of",
+   "caught": [],
+   "leaked": [
+    "1867",
+    "35 million",
+    "mexico"
+   ]
+  },
+  {
+   "topic": "france",
+   "lesioned_filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea It's bordered by Italy to the west, Germany to the north, and Switzerland to the east The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world",
+   "caught": [],
+   "leaked": [
+    "germany",
+    "italy",
+    "switzerland"
+   ]
+  },
+  {
+   "topic": "morocco",
+   "lesioned_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat Morocco has borders with several countries including Algeria, Tunisia, Libya, and Egypt It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Algeria and Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "caught": [],
+   "leaked": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ]
+  }
+ ],
+ "hard_report": [
+  {
+   "topic": "paris",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "python",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "shakespeare",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "coffee",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "jupiter",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "beethoven",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "everest",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  },
+  {
+   "topic": "photosynthesis",
+   "byte_identical_to_base": true,
+   "fabrication_suppressed_wired": true
+  }
+ ],
+ "wrong_supplements_total": 10,
+ "caught_wired": 10,
+ "leaked_wired": 0,
+ "catch_rate_wired": 1.0,
+ "caught_lesioned": 0,
+ "leaked_lesioned": 10,
+ "catch_rate_lesioned": 0.0,
+ "attributable_to_wiring": 1.0,
+ "all_known_replies_nonempty": true,
+ "hard_byte_identical_to_base": true,
+ "hard_fabrication_suppressed": true,
+ "specificity_by_topic": {
+  "canada": 0,
+  "france": 3,
+  "morocco": 4
+ },
+ "verdict": {
+  "label": "the GO known-topic contradiction filter is correctly wired into webapp.open_ended_chat.post_filter",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(a) server.py's open_ended_chat import stays nested under the unchanged BRAIN_OPEN_ENDED guard (off path never imports the changed module)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(a) BRAIN_OPEN_ENDED unset/0 -> open_ended_enabled() is False",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(a) BRAIN_OPEN_ENDED=1 -> open_ended_enabled() is True",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "(b) known-topic wrong-supplement catch rate through the WIRED webapp.open_ended_chat.post_filter",
+    "ok": true,
+    "detail": "1 vs floor 0.8",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(b) no wrong supplement leaks through the wired filter",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) every known-topic filtered reply stays non-empty (still conversational)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "control",
+    "name": "(d) known-topic wrong-supplement catch rate: WIRED vs LESIONED (stub contradicts() restored)",
+    "ok": true,
+    "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+    "note": "lesioning back to the stub must make the SAME wrong supplements leak -- attributes the catch in (b) to this wiring, not something else in the pipeline"
+   },
+   {
+    "kind": "require",
+    "name": "(d) the lesioned (unwired) path leaks the wrong supplements the wired path catches",
+    "ok": true,
+    "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7f54b28e91c0>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(e) unknown-topic filtered output is byte-identical to the base filter on every saved hard reply",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(e) unknown-topic fabrication stays suppressed on every saved hard reply (moat unchanged)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [
+   {
+    "process": "per-topic specificity / correct-substance survival at per-CLAUSE granularity",
+    "why": "v1 (this wiring, unmodified from the 2026-08-21 de-risk) drops entire SENTENCES, not clauses: france/morocco keep their capital+continent (specificity 3-4) but canada's correct facts co-occur, in this saved Qwen reply, with its wrong supplements in the SAME sentences (Ottawa + 'founded in 1867'; North America/United States + 'and Mexico'), so specificity_wired=0 for canada though the reply stays non-empty. Inherited from the approved de-risk (its own canada n_kept=1 predates this wiring); the general fix (per-clause split or a store-backed entity check / NLI model) is the SAME next rung the 2026-08-21 finding already names."
+   },
+   {
+    "process": "live retrieval against the CURRENT on-disk LTM bundle for these exact topic strings",
+    "why": "the shipped default bundle (~/Projects/sim-data/knowledge_bundles/wikidata_core_15k) keys country entities like 'canada_portal', not the bare 'canada' a user types, so retrieve('canada') against TODAY's bundle returns [] independent of this wiring -- a pre-existing topic-routing/store-content gap, out of scope for this filter wiring. This verify uses the topic's store facts in the (agent, action, patient) triple shape the 2026-08-21 de-risk itself documented as coming from the store, run through the REAL production post_filter code path (webapp.open_ended_chat.post_filter), which is what proves the WIRING (not the store's current content)."
+   }
+  ],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(a) server.py's open_ended_chat import stays nested under the unchanged BRAIN_OPEN_ENDED guard (off path never imports the changed module)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(a) BRAIN_OPEN_ENDED unset/0 -> open_ended_enabled() is False",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(a) BRAIN_OPEN_ENDED=1 -> open_ended_enabled() is True",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "(b) known-topic wrong-supplement catch rate through the WIRED webapp.open_ended_chat.post_filter",
+   "ok": true,
+   "detail": "1 vs floor 0.8",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(b) no wrong supplement leaks through the wired filter",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) every known-topic filtered reply stays non-empty (still conversational)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "(d) known-topic wrong-supplement catch rate: WIRED vs LESIONED (stub contradicts() restored)",
+   "ok": true,
+   "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+   "note": "lesioning back to the stub must make the SAME wrong supplements leak -- attributes the catch in (b) to this wiring, not something else in the pipeline"
+  },
+  {
+   "kind": "require",
+   "name": "(d) the lesioned (unwired) path leaks the wrong supplements the wired path catches",
+   "ok": true,
+   "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7f54b28e91c0>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(e) unknown-topic filtered output is byte-identical to the base filter on every saved hard reply",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(e) unknown-topic fabrication stays suppressed on every saved hard reply (moat unchanged)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true
+}

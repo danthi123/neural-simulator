@@ -755,6 +755,16 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-27 (continuation) — the one-brain INTEGRATION goal has its first two GO rungs (a LEARNED cross-region edge, then a genuinely three-factor/self-organized version); a hollow production flip on the honesty spine was found + fixed; a flip-soak instrument bug recurred 5×; the known-topic honesty gap named in the 2026-08-21 open-ended-chat wiring is closed.**
+> - **One-brain INTEGRATION R1: the FIRST learned faculty→faculty cross-region edge on the shared merge pool, 6/6 GO.** `d6_multiref_wm`'s held-referent slot pool → comprehension's `sel_agent`/`sel_patient` accumulators (WM-guided pronoun/reference resolution), admitted by the new FUNCTIONAL gate (F1-F4) the DESIGN branch specified, grown 0.05→~11-14 by the substrate's OWN rate-window Hebbian rule — advances the 2026-08-11 cross-region GO (which hand-injected a fixed-weight pathway) to a genuinely LEARNED one. Declared residuals: two-factor (not three-factor) plasticity, and a host-hardcoded candidate edge pair. Finding `2026-08-27-onebrain-integration-R1-wm-to-comprehension`.
+> - **One-brain INTEGRATION R2 closes both R1 residuals, 6/6 GO, with two honestly-narrower-than-bare-"self-organized" scope notes.** The rule is upgraded to strict three-factor (reward-deferred credit-gated) STDP, and the candidate set widens from R1's one hardcoded pair to an unbiased 6-edge set whose winning wire self-selects and tracks a per-seed RANDOM ground truth. Finding `2026-08-27-onebrain-integration-R2-threefactor-selforganized`.
+> - **A hollow production flip on the honesty spine, found and fixed: the GNW three-organ consensus bus read `on_by_default: YES` in the PI ledger since 2026-08-21 but was INERT in production.** A second, inner gate (`gnw_three_organ_bus.py::three_organ_enabled()`) independently defaulted OFF while the outer gate + ledger said ON, so the faculty the ledger claimed was live had done nothing since the flip landed. Found while auditing a different staleness class; fixed (inner default `""`→`"1"`); a systemic 36-gate audit of every other `on_by_default: YES` faculty found no other instance of this exact class. Finding `2026-08-27-gnw-3organ-hollow-flip-fixed-plus-ledger-audit`.
+> - **The flip-soak `os.environ.pop(FLAG)`-as-OFF staleness bug (first caught on the mouth-mood soak, see below) was not isolated: auditing every runner soak against each flag's CURRENT production default found 5 more soaks comparing ON-vs-ON, now fixed the same way** (explicit `="0"`); ~22 other pop-based soaks were checked clean. Two deeper production-default conflicts surfaced separately and are flagged, not yet resolved. Finding `2026-08-27-flip-soak-off-arm-staleness-audit`.
+> - **Vikunja #142 diagnosed: "what country is chelsea fc from" answered "I don't know" despite the store holding the fact — TWO independent, sequential vetoes on the live-chat light path.** Bug 1 (comprehension `_extract_route` word-order bug) is FIXED, byte-identical-off, verified. Bug 2 is a genuine architecture gap: the GNW two-organ consensus bus's organ B builds its "expectation" registry only from the small conversational-buffer tier, so it structurally excludes the entire 15,000-fact shipped Wikidata LTM core and vetoes all of it, right or wrong — CHARACTERIZED, owner-review (not yet decided whether/how to promote a fix). A default-OFF de-risk closing it (organ B corroborates when the recall's provenance is the stable LTM tier) is 6/6 GO, not yet promoted.
+>   Findings `2026-08-27-knowledge-in-live-chat-veto-comprehension-and-gnw-organb-expectation-gap`, `2026-08-27-organb-ltm-exempt-derisk-6seed-GO`.
+> - **The known-topic honesty gap named in the 2026-08-21 open-ended-chat wiring commit is closed.** `webapp/open_ended_chat.py`'s post-filter (BRAIN_OPEN_ENDED, still default-OFF) had reused the base VERIFY post-filter's `contradicts()` — a declared stub that always returns False — so a KNOWN-topic reply's wrong parametric supplement (Canada "borders ... Mexico" when the store holds "united states") survived. The already-GO 2026-08-21 contradiction filter is now wired in (reuse-by-import): 10/10 wrong supplements caught, 0 leaked, through the real `webapp.open_ended_chat.post_filter`; a lesion back to the stub leaks all 10 (`attributable_to`=1.0); the unknown-topic moat is byte-identical/unchanged.
+>   Honest residual carried over from the approved de-risk, not introduced by this wiring: a reply where the correct and wrong facts share one sentence loses both (per-sentence, not per-clause, granularity). Finding `2026-08-27-known-supplement-contradiction-filter-wired-into-open-ended-chat-postfilter-GO`.
+
 > **⭐ 2026-08-27 — the one-brain merge's individual-organ MIGRATION-safety gate is COMPLETE (7/7 Group-A organ-READ byte-identity); a knowledge-scale flip is resolved (no-op, don't flip); the INTEGRATION phase (cross-region synapses) is DESIGNED but sits on an unmerged branch; one hardening lever came back VOID (instrument, not a verdict).**
 > - **One-brain merge organ-READ byte-identity now 7/7, ALL Group-A organs** (self_schema, d6_multiref_wm,
 >   comprehension, source_provenance, causal_whatif, prospective_memory via a reusable multi-turn
@@ -797,8 +807,12 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   VOID — an instrument failure, not a verdict on the lever.** All 6 seeds show `op_point_ok=False` and
 >   `dev_firing_fraction_mean=0.0`: the dev/pre-BCM operating-point check never found a valid baseline to warm up
 >   FROM. Needs a re-eval with a fixed instrument before the BCM-hardening question (3/6 seed-variable PARTIAL →
->   6/6) is actually answered. Not yet written up as its own finding or logged in `research/FAILURE_LOG.md` — the
->   committed design doc (`2026-08-27-b1-v1-selforg-bcm-warmup-hardening-SCOPING`) predates the run.
+>   6/6) is actually answered. **UPDATE (same continuation): now written up** (finding
+>   `2026-08-27-b1-v1-selforg-bcm-warmup-VOID`, status `void`) and logged in `research/FAILURE_LOG.md`
+>   (2026-08-27 row) — the staged 4000-step dose was never piloted cheaply against the runner's own
+>   pre-BCM operating-point precondition before spending 6 full GPU seeds; a same-session numpy probe found the
+>   collapse is steep (0.019 firing fraction control → 0.0 by 100 warm-up steps), so a reduced-scale dose screen
+>   is now staged on the CPU pool before any second GPU spend.
 
 > **⭐ 2026-08-26 (four-day window HARVEST) — one wall CLEARED to production-default, four boundaries mapped with named surpasses (no-defer).**
 > - **KNOWLEDGE-SCALE (tiered-knowledge-ltm) — CLEARED to production-default (#133 DONE).** The curated 15k wikidata
@@ -978,6 +992,38 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-08-27 (continuation, same day — supersedes the items below):**
+- ~~decide whether to merge `research/onebrain-integration-design`, then build the first learned cross-edge~~
+  **DONE.** Merged; **R1** (d6 WM → comprehension, two-factor Hebbian, host-picked edge pair) is 6/6 GO on
+  `main`; **R2** closes both of R1's declared residuals (upgraded to strict three-factor credit-gated STDP,
+  widened to a self-selecting 6-edge topology) also 6/6 GO on `main`. **NEXT: R3** — extend the one proven
+  cross-edge pattern to a second faculty pairing, and decide whether the INTEGRATION functional gate (F1-F4)
+  is ready to become the standing migration criterion in place of byte-identity for future organs.
+- ~~re-run the V1 BCM warm-up with a fixed instrument, write up the VOID~~ **write-up DONE** (finding
+  `2026-08-27-b1-v1-selforg-bcm-warmup-VOID`, `research/FAILURE_LOG.md` row added). **NEXT: run the staged
+  reduced-scale CPU dose screen** (`research/findings/raw/_b1_v1_bcm_dose_screen/`) to find a non-silencing
+  warm-up dose before spending a second GPU seed-6 batch.
+- ~~audit other flip-soaks for the `os.environ.pop`-as-OFF staleness pattern~~ **DONE** — 5 more soaks had the
+  identical bug, fixed; ~22 checked clean; two deeper production-default conflicts surfaced and are flagged,
+  unresolved (`2026-08-27-flip-soak-off-arm-staleness-audit`).
+- **A hollow production flip was found and fixed on the honesty spine** (GNW three-organ bus was
+  `on_by_default: YES` in the ledger, inert in production since 2026-08-21 — a second inner gate defaulted
+  OFF independently). Fixed; a 36-gate systemic audit found no other instance of the class. **NEXT: none
+  queued** — the audit closed the class for now; re-run it after any future flip-gate refactor.
+- **Vikunja #142 (knowledge facts the live-chat brain silently vetoes) is half-fixed**: the comprehension
+  word-order bug is FIXED + live; the GNW organ-B LTM-tier blind spot is CHARACTERIZED with a 6/6-GO
+  default-OFF de-risk (`2026-08-27-organb-ltm-exempt-derisk-6seed-GO`) **awaiting an owner decision on
+  whether/when to promote it to default-ON.**
+- **The known-topic honesty gap the 2026-08-21 open-ended-chat wiring named (its `contradicts()` stub always
+  returning False) is closed** — the already-GO contradiction filter is wired in, 10/10 wrong supplements
+  caught, unknown-topic moat unchanged, BRAIN_OPEN_ENDED stays default-OFF
+  (`2026-08-27-known-supplement-contradiction-filter-wired-into-open-ended-chat-postfilter-GO`, branch
+  `research/wire-known-supplement-contradiction-filter`, not yet merged to `main`). **NEXT (named, not yet
+  built): per-clause splitting or a store-backed entity check**, so a reply whose correct and wrong facts
+  share one sentence does not lose both; separately, the shipped LTM bundle's country-entity keys
+  (`canada_portal`, not `canada`) don't exact-match a typed topic string — a pre-existing retrieval-routing
+  gap, unrelated to this filter, noticed but not yet actioned.
 
 **2026-08-27 (LATER, same overnight session — supersedes the items below):**
 - **One-brain merge: the individual-organ MIGRATION-safety gate (organ-READ byte-identity) is now COMPLETE, 7/7
