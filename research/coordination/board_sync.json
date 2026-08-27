@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-08-26T22:49:19Z",
+ "updated_at": "2026-08-27T01:01:07Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -308,6 +308,114 @@
    "op": "append-desc",
    "args": "task=140",
    "head": "541574264"
+  },
+  {
+   "at": "2026-08-27T01:00:40Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make pronoun resolution ('it'/'they') pay attention to relevance by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:44Z",
+   "op": "update-task",
+   "args": "task=156 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:44Z",
+   "op": "label-task",
+   "args": "task=156 label=1",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain respond with empathy to other people's feelings by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain honestly flag its own guesses ('that's just my own idea') by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain see and name objects by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain commit to the higher-value answer instead of guessing arbitrarily, by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:00:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Make the brain strengthen recent memories while idle ('sleep'), by default",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:05Z",
+   "op": "update-task",
+   "args": "task=157 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:05Z",
+   "op": "label-task",
+   "args": "task=157 label=5",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:05Z",
+   "op": "update-task",
+   "args": "task=158 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:05Z",
+   "op": "label-task",
+   "args": "task=158 label=5",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:06Z",
+   "op": "update-task",
+   "args": "task=159 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:06Z",
+   "op": "label-task",
+   "args": "task=159 label=4",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:06Z",
+   "op": "update-task",
+   "args": "task=160 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:06Z",
+   "op": "label-task",
+   "args": "task=160 label=1",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:07Z",
+   "op": "update-task",
+   "args": "task=161 done=true",
+   "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:01:07Z",
+   "op": "label-task",
+   "args": "task=161 label=3",
+   "head": "3e1751451"
   }
  ]
 }

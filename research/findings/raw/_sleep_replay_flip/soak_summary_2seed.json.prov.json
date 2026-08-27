@@ -1,0 +1,26 @@
+{
+ "run_id": "1787787602-460352",
+ "runner": "research/runners/_sleep_replay_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_e447264d-c60-3/research/runners/_sleep_replay_flip_soak.py",
+  "--seeds",
+  "42",
+  "43"
+ ],
+ "git_sha": "6e2d89a83",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T19:40:02",
+ "env": {},
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_sleep_replay_flip/soak_summary_2seed.json"
+}

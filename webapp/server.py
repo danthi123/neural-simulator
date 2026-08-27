@@ -1915,9 +1915,9 @@ async def _warm_chat_brain() -> None:
                           flush=True)
             except Exception as _pe:
                 print(f"[webapp] startup: pragmatic organ warm skipped ({type(_pe).__name__}: {_pe})", flush=True)
-            # VALUE-CHOICE (RANK-1 value-critic GO wire-in; DEFAULT-OFF): if the parent has flipped BRAIN_VALUE_CHOICE
-            # on, pre-build the LEARNED spiking striosome_value critic + the value-WTA so the first >=2-competing turn
-            # does not stall on the ~4-min value-train. Best-effort + guarded; DEFAULT-OFF (unset -> nothing built).
+            # VALUE-CHOICE (RANK-1 value-critic GO wire-in; DEFAULT-ON 2026-08-26): pre-build the LEARNED spiking
+            # striosome_value critic + the value-WTA so the first >=2-competing turn does not stall on the ~4-min
+            # value-train. Best-effort + guarded; BRAIN_VALUE_CHOICE=0 -> nothing built (byte-identical escape).
             try:
                 from research.runners.value_choice_production_organ import (
                     value_choice_enabled as _vc_enabled, get_value_choice_organ as _get_vc_organ)
@@ -3134,11 +3134,12 @@ def _affect_drives_on() -> bool:
 # differential (reuse-by-import, NO sim/ edit). The production-integration anchor. When `_AFFECTIVE_TOM_DEFAULT_ON`
 # is False the block is gated on the env flag alone (`BRAIN_AFFECTIVE_TOM=1` opts in for review); the response carries
 # NO `affective_tom` key and NO empathic lead -> byte-identical. Flipping the anchor to True installs the coupling by
-# default (a `BRAIN_AFFECTIVE_TOM=0` escape reverts to the byte-identical oracle). Default-OFF for now — the parent
-# flips it default-ON after the pool soak passes. Orthogonal to the #84 self-affect path. LESION
-# (`BRAIN_AFFECTIVE_TOM_LESION=1`): cut the OTHER region's `affect_out` -> the empathic tone collapses to neutral ->
-# the lead VANISHES (the load-bearing proof). See research/runners/affective_tom_production_organ.py.
-_AFFECTIVE_TOM_DEFAULT_ON = False
+# default (a `BRAIN_AFFECTIVE_TOM=0` escape reverts to the byte-identical oracle). Orthogonal to the #84 self-affect
+# path. LESION (`BRAIN_AFFECTIVE_TOM_LESION=1`): cut the OTHER region's `affect_out` -> the empathic tone collapses to
+# neutral -> the lead VANISHES (the load-bearing proof). See research/runners/affective_tom_production_organ.py.
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO): the empathic lead ships as the production
+# default. BRAIN_AFFECTIVE_TOM=0 is the byte-identical escape to the pre-flip no-lead oracle.
+_AFFECTIVE_TOM_DEFAULT_ON = True
 
 
 def _affective_tom_on() -> bool:
@@ -3153,6 +3154,25 @@ def _affective_tom_on() -> bool:
         return not _ATM.affective_tom_off()
     return _ATM.affective_tom_enabled()
 # <<< W5 AFFECTIVE ToM END ──────────────────────────────────────────────────────────────────────────────────────
+
+
+# ─── VISION-IDENTITY (spiking HMAX) DEFAULT-ON anchor (2026-08-26 flip, wave 1/2, 6-seed pool soak GO — vision 6/6 +
+# scramble-collapsed GO): the production-integration anchor for BRAIN_VISION_IDENTITY. This path ONLY fires on a
+# visual query that CARRIES a `percept` field (req.percept), so the flip is a no-op on every ordinary (non-visual)
+# turn -> byte-identical there regardless of the flag. `BRAIN_VISION_IDENTITY=0` is the explicit escape back to the
+# pre-flip OFF oracle even on a visual-query turn. Mirrors the _AFFECTIVE_TOM_DEFAULT_ON / _SELF_SCHEMA_DEFAULT_ON
+# convention. See research/runners/vision_identity_production_organ.py.
+_VISION_IDENTITY_DEFAULT_ON = True
+
+
+def _vision_identity_on() -> bool:
+    """Master switch = the anchor combined with the env override. Default-ON anchor (current): enabled UNLESS
+    `BRAIN_VISION_IDENTITY` is an explicit off (0/false/off/no/''). Default-OFF anchor: enabled only on an explicit
+    truthy opt-in."""
+    v = os.environ.get("BRAIN_VISION_IDENTITY")
+    if _VISION_IDENTITY_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 # ─── DA-MODE DRIVES THE RESPONSE (board #79, 2026-08-19): the #76 spiking DA-mode (rest/focus/arousal) made
@@ -3853,11 +3873,12 @@ class BrainChatRequest(BaseModel):
     # If True, drop the cached ChatBrain for this (session, brain,
     # renderer) before answering (rebuilds — for 'start fresh').
     reset: bool = False
-    # ── BEGIN faculty:vision-identity (BRAIN_VISION_IDENTITY, default OFF) ──
+    # ── BEGIN faculty:vision-identity (BRAIN_VISION_IDENTITY, default ON 2026-08-26) ──
     # The ENVIRONMENT's visual percept for a 'what do you see?' turn: an object
     # descriptor the neural retina/V1 then receive ('bird'/'fish'/'0'/'1', with
     # an optional '#<exemplar>' suffix). Additive + optional; IGNORED entirely
-    # when BRAIN_VISION_IDENTITY is off or the message is not a visual query, so
+    # when BRAIN_VISION_IDENTITY=0 or the message is not a visual query (no percept
+    # on the turn is the byte-identical no-op case regardless of the flag), so
     # existing callers are byte-identical. See research/runners/vision_identity_production_organ.py.
     percept: str | None = None
     # ── END faculty:vision-identity ──
@@ -4072,7 +4093,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         except Exception:
             pass
 
-    # ── BEGIN faculty wire-in: VALUE-DRIVEN CHOICE (RANK-1 value-critic GO; DEFAULT-OFF) ───────────────────────
+    # ── BEGIN faculty wire-in: VALUE-DRIVEN CHOICE (RANK-1 value-critic GO; DEFAULT-ON 2026-08-26) ─────────────
     # Owner directive "make the brain COMMIT [by value] instead of abstaining/guessing": on a >=2-distinct-patient
     # (agent, action) recall — the ambiguity the GNW chain today resolves by an ARBITRARY FIRST-MATCH (verified live)
     # or a halt-if-unsure abstain — COMMIT the higher-VALUE patient instead, scored by the brain's OWN LEARNED spiking
@@ -4082,12 +4103,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # >=2-competing case (a <2-candidate turn -- confident single recall, single-patient/untaught abstain, self -- is
     # returned VERBATIM) and commits only STORED candidates (never invents a fact -> the moat holds). On decline
     # (lesion / non-decisive value) it returns the INNER pipeline result verbatim -> reverts to EXACTLY what the chain
-    # would have done. DEFAULT-OFF: BRAIN_VALUE_CHOICE unset -> NOT installed -> chat.gate stays the pure existing
-    # chain -> BYTE-IDENTICAL to today. The PARENT flips default-on (BRAIN_VALUE_CHOICE=1) after the pool soak
-    # (research/runners/_value_choice_flip_soak.py). Load-bearing levers: BRAIN_VALUE_CHOICE_LESION=1 (pin V to the
-    # mean -> the value gradient vanishes -> reverts to the inner result), BRAIN_VALUE_CHOICE_UNTRAINED=1 (untrained
-    # critic -> the learned engagement-advantage vanishes). Guarded so a wiring failure can never crash a turn.
-    # Reuse-by-import of the R5b organ (NO sim/ edit). See research/runners/value_choice_production_organ.py.
+    # would have done. FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO: ordinary byte-identical 6/6,
+    # load-bearing 6/6, research/runners/_value_choice_flip_soak.py): BRAIN_VALUE_CHOICE=0 is the byte-identical
+    # escape -> NOT installed -> chat.gate stays the pure existing chain. Load-bearing levers:
+    # BRAIN_VALUE_CHOICE_LESION=1 (pin V to the mean -> the value gradient vanishes -> reverts to the inner result),
+    # BRAIN_VALUE_CHOICE_UNTRAINED=1 (untrained critic -> the learned engagement-advantage vanishes). Guarded so a
+    # wiring failure can never crash a turn. Reuse-by-import of the R5b organ (NO sim/ edit).
+    # See research/runners/value_choice_production_organ.py.
     try:
         from research.runners import value_choice_production_organ as _vc_mod
         if _vc_mod.value_choice_enabled():
@@ -4216,23 +4238,24 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
 
     rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
 
-    # ── BEGIN faculty:vision-identity — VISUAL OBJECT -> CATEGORY IDENTITY ("spiking HMAX"), default-OFF ───────
+    # ── BEGIN faculty:vision-identity — VISUAL OBJECT -> CATEGORY IDENTITY ("spiking HMAX"), DEFAULT-ON ─────────
     # The production consumer for the EMERGE-36 fully-spiking perception->pooler->inference GO (6 seeds). On a
     # 'what do you see?'-class turn that CARRIES a percept (the environment's retinal render, `req.percept`), the
     # brain SEES the object through the real sim.visual_cortex Gabor/V1 front end -> a spiking Marr-Albus
     # coincidence-column pooler on a real SimulationBridge (coincidence_weighted_drive, NO numpy kWTA) -> reads the
     # winning self-organized category column block as the recognized-object identity, and the recognized concept
     # SEEDS this turn's answer ('I see a <recognized-object>. It can <property>.'). Reuse-by-import (NO sim/ edit).
-    # Default-OFF: `BRAIN_VISION_IDENTITY` unset -> the cheap env read below is the ONLY thing that runs -> the block
-    # imports nothing + returns nothing -> the turn is BYTE-IDENTICAL to today (the parent flips default-on after the
-    # pool soak). It ALSO short-circuits ONLY when it recognizes: an unresolvable percept OR an ABSTAIN (the
-    # POOLER-LESION `BRAIN_VISION_IDENTITY_LESION=1` collapses the codon -> recognize()=-1) returns None -> the turn
-    # FALLS THROUGH to the normal path -> byte-identical to flag-off, which is exactly the load-bearing lesion-vanish.
+    # 2026-08-26 FLIPPED DEFAULT-ON (`_VISION_IDENTITY_DEFAULT_ON` above): `BRAIN_VISION_IDENTITY=0` is the explicit
+    # escape back to the pre-flip OFF oracle; NO percept on the turn (the overwhelming majority of ordinary chat)
+    # means this block is a no-op regardless of the flag. It ALSO short-circuits ONLY when it recognizes: an
+    # unresolvable percept OR an ABSTAIN (the POOLER-LESION `BRAIN_VISION_IDENTITY_LESION=1` collapses the codon ->
+    # recognize()=-1) returns None -> the turn FALLS THROUGH to the normal path -> byte-identical to flag-off, which
+    # is exactly the load-bearing lesion-vanish.
     # LOAD-BEARING: vary the percept (bird<->fish) -> the answer content differs; lesion the pooler -> it vanishes.
     # SCOPE (honest): invariance is on WELL-POSED SYNTHETIC category sets, NOT natural-image translation-invariance
     # (a separate NO-GO). See research/runners/vision_identity_production_organ.py. Guarded so a wiring failure can
     # never crash a turn (degrades to the normal path).
-    if os.environ.get("BRAIN_VISION_IDENTITY", "0").strip().lower() in ("1", "true", "on", "yes"):
+    if _vision_identity_on():
         try:
             import research.runners.vision_identity_production_organ as _VI
             if req.percept and _VI.is_visual_query(msg):

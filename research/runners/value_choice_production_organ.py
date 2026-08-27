@@ -29,9 +29,11 @@ learned V (a real cp_firing_states read) + the spiking WTA then do the work — 
 anti-cheats prove the LEARNED SPIKING VALUE is load-bearing (host engagement ordering ALONE, without the trained
 critic, does NOT produce the commit: lesion -> abstain; untrained -> the engagement advantage vanishes).
 
-FLAGS (contract mirrors the other Gate-B production organs; the value-choice flag DEFAULTS OFF — the parent flips it
-default-ON after the pool soak passes; flag-OFF is byte-identical to today):
-  BRAIN_VALUE_CHOICE            in {1,true,yes,on} -> the faculty is ACTIVE (default OFF -> byte-identical to today).
+FLAGS (contract mirrors the other Gate-B production organs; 2026-08-26 FLIPPED DEFAULT-ON after the 6-seed pool soak
+passed — ordinary byte-identical 6/6, load-bearing 6/6; BRAIN_VALUE_CHOICE=0 is the byte-identical escape to the
+pre-flip abstain/first-match oracle):
+  BRAIN_VALUE_CHOICE            unset -> ACTIVE (the production default). {0,false,no,off,''} (explicit) -> OFF
+                                (byte-identical escape). {1,true,yes,on} -> ACTIVE (explicit, redundant now).
   BRAIN_VALUE_CHOICE_LESION     in {1,true,yes,on} -> G_LESION: pin each candidate's learned V to the MEAN -> the
                                 value gradient vanishes -> the organ DECLINES -> the turn reverts to abstain.
   BRAIN_VALUE_CHOICE_UNTRAINED  in {1,true,yes,on} -> G_UNTRAINED: score with the UNTRAINED critic (no value-train)
@@ -83,9 +85,23 @@ def _truthy(v: str | None) -> bool:
     return (v or "").strip().lower() in ("1", "true", "yes", "on")
 
 
+def _falsy_explicit(v: str | None) -> bool:
+    return v is not None and v.strip().lower() in ("0", "false", "no", "off", "")
+
+
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO: ordinary byte-identical 6/6, load-bearing 6/6).
+# The production-integration anchor.
+_VALUE_CHOICE_DEFAULT_ON = True
+
+
 def value_choice_enabled() -> bool:
-    """DEFAULT-OFF. `BRAIN_VALUE_CHOICE` in {1,true,yes,on} arms the faculty. Off -> byte-identical to today."""
-    return _truthy(os.environ.get("BRAIN_VALUE_CHOICE"))
+    """DEFAULT-ON anchor (post wave-1/2 flip; 6-seed pool soak GO). Unset -> `_VALUE_CHOICE_DEFAULT_ON` (True).
+    `BRAIN_VALUE_CHOICE` in {0,false,no,off,''} (explicitly set) is the byte-identical escape back to today's
+    pre-flip oracle; any other explicit value stays ON."""
+    v = os.environ.get("BRAIN_VALUE_CHOICE")
+    if _VALUE_CHOICE_DEFAULT_ON:
+        return not _falsy_explicit(v)
+    return _truthy(v)
 
 
 def value_choice_lesioned() -> bool:

@@ -9,9 +9,11 @@ hard-codes `enable_biased_competition=False`, so the faculty is dark in producti
 place that decides — from a NEW env flag — whether those live sites turn the faculty ON. It adds NO new mechanism;
 it only routes the existing, de-risk-validated organ into the live pipeline behind one gate.
 
-THE FLAG (default OFF for now — the PARENT flips the default after the 6-seed pool soak passes):
-    BRAIN_BIASED_COMPETITION   unset / "0" / "false" / "off" / "no" / ""  -> OFF  (byte-identical to today)
-                               "1" / "true" / "on" / "yes"               -> ON
+THE FLAG (2026-08-26 FLIPPED DEFAULT-ON — wave 1/2, 6-seed pool soak GO: NO_REGRESSION 6/6, FACULTY_LIVE 2/6 expected
+per the finding's seed-100 extreme-intrinsic-asymmetry abstain-under-both-arms case):
+    BRAIN_BIASED_COMPETITION   unset                                      -> ON  (the production default)
+                               "0" / "false" / "off" / "no" / ""          -> OFF (byte-identical escape to pre-flip)
+                               "1" / "true" / "on" / "yes"                -> ON  (explicit, redundant now)
 
 BYTE-IDENTITY GUARANTEE (flag OFF == today). Each wired build site substitutes the literal `False` it holds today
 with `biased_competition_enabled()`. When the flag is unset this call returns exactly `False`, i.e. the SAME value
@@ -49,18 +51,30 @@ BRAIN_BIASED_COMPETITION_ENV = "BRAIN_BIASED_COMPETITION"
 
 #: Truthy spellings (case-insensitive, whitespace-stripped). Anything else -> OFF.
 _TRUTHY = frozenset({"1", "true", "on", "yes"})
+#: Explicit-OFF spellings (case-insensitive, whitespace-stripped) for the default-ON anchor's escape.
+_FALSY = frozenset({"0", "false", "off", "no", ""})
+
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO: NO_REGRESSION 6/6 — the flip-safety gate;
+# FACULTY_LIVE 2/6 is EXPECTED and does not block, per the finding: a seed with extreme intrinsic asymmetry abstains
+# under both OFF and ON, moat-preserving). The production-integration anchor.
+_BIASED_COMPETITION_DEFAULT_ON = True
 
 
 def biased_competition_enabled(env=None) -> bool:
-    """Return True iff the ``BRAIN_BIASED_COMPETITION`` env flag is set to a truthy value.
+    """Return True iff selective-attention biased competition is armed at the live build sites.
 
-    Default (flag unset, or any non-truthy value such as ``"0"``/``"false"``/``"off"``/``""``) -> ``False`` ==
-    exactly the literal the live build sites pass today == byte-identical to the current production behavior. The
-    PARENT flips the production default (to ON) only after the 6-seed pool soak passes; until then this returns
-    ``False`` for an unset flag, so the wire-in ships dark.
+    Default-ON anchor (current, post-flip): unset -> ``_BIASED_COMPETITION_DEFAULT_ON`` (``True``);
+    ``BRAIN_BIASED_COMPETITION`` in {0,false,off,no,''} (explicitly set) is the byte-identical escape back to the
+    pre-flip OFF oracle; any other explicit value (1/true/on/yes/anything-else) stays ON. This mirrors the
+    _SWAP_DRIVES_DEFAULT_ON / _AFFECTIVE_TOM_DEFAULT_ON convention in webapp/server.py.
 
     ``env`` defaults to ``os.environ``; an explicit mapping is accepted so a test/soak can toggle the flag without
     mutating the process environment.
     """
     src = os.environ if env is None else env
-    return str(src.get(BRAIN_BIASED_COMPETITION_ENV, "")).strip().lower() in _TRUTHY
+    raw = src.get(BRAIN_BIASED_COMPETITION_ENV)
+    if _BIASED_COMPETITION_DEFAULT_ON:
+        if raw is None:
+            return True
+        return str(raw).strip().lower() not in _FALSY
+    return str(raw if raw is not None else "").strip().lower() in _TRUTHY

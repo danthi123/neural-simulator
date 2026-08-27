@@ -64,13 +64,19 @@ CONF_PA = 450.0          # a fixed confidence drive to keep the trial well-forme
 CONTENT_K = 0            # ignite a fixed workspace content; authorship is orthogonal to content (de-risk |corr|<0.16).
 
 
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO): the self-schema authorship marker ships as the
+# production default. BRAIN_SELF_SCHEMA=0 is the byte-identical escape to the pre-flip un-marked oracle.
+_SELF_SCHEMA_DEFAULT_ON = True
+
+
 def self_schema_enabled() -> bool:
-    """Default-OFF (the parent flips default-on after the pool soak passes). `BRAIN_SELF_SCHEMA` in
-    {1,true,on,yes} turns the faculty on."""
+    """Default-ON anchor (post wave-1/2 flip; 6-seed pool soak GO). Unset -> `_SELF_SCHEMA_DEFAULT_ON` (True).
+    `BRAIN_SELF_SCHEMA` in {0,false,off,no,''} (explicitly set) is the byte-identical escape back to the pre-flip
+    oracle (the organ is never built, no substrate step, no marker); any other explicit value stays ON."""
     v = os.environ.get("BRAIN_SELF_SCHEMA")
     if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "on", "yes")
+        return _SELF_SCHEMA_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
 
 
 def self_schema_lesioned() -> bool:

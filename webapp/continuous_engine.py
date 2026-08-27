@@ -328,21 +328,30 @@ def consolidate_used_memory(cache_key, episodic_organ, *, n_episodes: int | None
 # is NOT claimed here. The WHEN-order surfaced is the DECLARED host store-order recency residual (EpisodicRecallOrgan.
 # recency_rank), not a spiking recency signal — there is still no spiking WHEN code.
 #
-# STRICTLY ADDITIVE + DEFAULT-OFF behind BRAIN_SLEEP_REPLAY (pending the pool/GPU soak). Off -> consolidate_sleep_replay
-# returns immediately, the store is never touched, and no topic surfaces a sleep-replay strength -> every recall reply is
-# byte-identical to HEAD. The whole pass fires only on `_is_sleep_tick` AND only when new episodes were stored since the
-# last sleep (the batch is non-empty), so a truly idle server does not re-replay the same batch forever.
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 1/2 flip, 6-seed pool soak GO on cupy: 6/6, seeds 42/43/44/100/101/102 —
+# research/findings/raw/_sleep_replay_flip/soak_summary_6seed.json). BRAIN_SLEEP_REPLAY=0 is the byte-identical
+# escape to the pre-flip no-replay oracle: consolidate_sleep_replay returns immediately, the store is never touched,
+# and no topic surfaces a sleep-replay strength -> every recall reply is byte-identical to HEAD. The whole pass
+# fires only on `_is_sleep_tick` AND only when new episodes were stored since the last sleep (the batch is
+# non-empty), so a truly idle server does not re-replay the same batch forever.
 _SLEEP_SWR_WINDOW_STEPS = 60   # the quiescent AdEx SWR/sleep window length (the `sleep_cycle` default) — a host-timed
                                #  scaffold, like IDLE_SEC/SLEEP_IDLE_SEC; the sleep-depth bracket, not the write.
 
 
+# The production-integration anchor (2026-08-26 flip; mirrors _SELF_SCHEMA_DEFAULT_ON / _AFFECTIVE_TOM_DEFAULT_ON).
+_SLEEP_REPLAY_DEFAULT_ON = True
+
+
 def sleep_replay_enabled() -> bool:
-    """#64 (additive/default-OFF, pending the 6-seed pool/GPU soak). `BRAIN_SLEEP_REPLAY` in {1,true,on,yes} arms the
-    deep-idle sleep-replay batch consolidation. Unset/0/anything-else -> BYTE-IDENTICAL TO HEAD: consolidate_sleep_replay
-    is an immediate no-op (nothing replays, no store change), tick_idle_sessions never enters the branch, and no recall
-    surfaces a sleep-replay strength. Mirrors the substrate_homeostasis_sleep_trigger_enabled / d5_consolidate_enabled
-    contract."""
-    return os.environ.get("BRAIN_SLEEP_REPLAY", "0").strip().lower() in ("1", "true", "on", "yes")
+    """#64, DEFAULT-ON (post wave-1/2 flip; 6-seed pool/GPU soak GO). Unset -> `_SLEEP_REPLAY_DEFAULT_ON` (True):
+    the deep-idle sleep-replay batch consolidation is armed. `BRAIN_SLEEP_REPLAY` in {0,false,off,no,''} (explicitly
+    set) is the byte-identical escape to HEAD: consolidate_sleep_replay is an immediate no-op (nothing replays, no
+    store change), tick_idle_sessions never enters the branch, and no recall surfaces a sleep-replay strength. Any
+    other explicit value stays ON (redundant now, kept for parity with the other default-ON flags)."""
+    v = os.environ.get("BRAIN_SLEEP_REPLAY")
+    if v is None:
+        return _SLEEP_REPLAY_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
 
 
 def topic_sleep_replayed(cache_key, topic):
