@@ -178,3 +178,20 @@ instrument. Created #178 (Speech & language, Emotion & self-awareness, blocked) 
 spiking-mouth fix: confirmed GO on its own derisk instrument, but the production onebrain-composer soak
 came back NO-GO (inert on the real production voice), so it ships default-OFF
 (`_MOUTH_MOOD_DEFAULT_ON=False`). No existing task named this landing, so nothing pre-existing to close.
+
+## 2026-08-27  correction: mood-tone mouth fix survived TWO false alarms (concurrent landings, 5ad7d7889 + d8977e461)
+While the doc-sync above was in flight, two concurrent commits corrected 12722908a's "reverted to
+default-OFF" framing: 5ad7d7889 found the composer-regression NO-GO was a stale flip-soak instrument
+(`os.environ.pop`-as-OFF reading as ON after the wave-3 mouth-recall default flip), reproduced on a clean
+pre-merge worktree, fixed, GO 6/6; d8977e461 then found neither soak had ever actually tested the real
+production composer_kind="onebrain" (both used the lightweight "rf" fast-path) -- a direct check confirmed
+GO there too, since the mechanism never branches on composer kind. `_MOUTH_MOOD_DEFAULT_ON` is restored to
+True with no gap remaining. Corrected every place the earlier "reverted to default-OFF" / "doesn't reach
+production" framing had already been written this cycle -- GAP_CLOSURE_MISSION.md, ROADMAP.md, the
+MASTER-ROADMAP §7/§8, research/findings/INDEX.md, and Vikunja #178 (previous entry above, now retitled +
+re-described "confirmed live after a false alarm" + a follow-up append-desc naming the composer_kind
+clarification, marked DONE). This file (docs/.vikunja_sync) and several doc edits above were themselves
+overwritten mid-session by a concurrent automated `git rebase origin/main` on this shared primary
+checkout, which silently discarded uncommitted working-tree edits more than once -- re-applied here;
+flagged in the session report as an operational hazard of doing doc-sync on the live primary checkout
+while autonomous work is in flight on the same repo.

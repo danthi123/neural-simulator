@@ -781,14 +781,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   6-seed measurement confirms the tiered shard-routed path is already sublinear at scale (oracle byte-identity
 >   0-mismatch 816/816 checks, 0-confab moat); the DG sparse-index flag would be answers-identical 6/6 — a hollow
 >   no-op. Finding `2026-08-27-knowledge-100k-sublinear-sharded-retrieval-verified-no-flip`.
-> - **The mood→tone mouth-coloring fix is a real, confirmed mechanism that does not yet reach the production
->   composer.** Its own 6-seed onebrain-composer soak came back NO-GO (`surface_changed_off_on=False` — the
->   coloring only manifests on the lightweight rf composer the original de-risk used), so it ships default-OFF
->   (`_MOUTH_MOOD_DEFAULT_ON=False`, opt-in via `BRAIN_SPIKING_MOUTH_MOOD=1`). Along the way a stale flip-soak
->   instrument bug was found + fixed (its OFF-arm read as ON once the wave-3 mouth-recall default flipped),
->   and the corrected 6/6 re-run confirms the underlying coupling is genuine on its own instrument. Findings
+> - **The mood→tone mouth-coloring fix survived two false alarms and is CONFIRMED GO on the real production
+>   composer, default-ON.** First alarm: a soak read NO-GO (`surface_changed_off_on=False`), traced to a stale
+>   flip-soak instrument (its OFF-arm read as ON once the wave-3 mouth-recall default flipped) — reproduced on
+>   a clean pre-merge worktree, fixed, re-run GO 6/6. Second alarm: neither existing soak had ever actually
+>   built its `ChatBrain` with `composer_kind="onebrain"` (the real production default — both used the
+>   lightweight `"rf"` fast-path), so "confirmed on production" was itself premature; a direct check against
+>   `composer_kind="onebrain"` also came back GO (load-bearing, lesion reverts) because the mechanism (ChatBrain-
+>   level wrapper methods + `mouth_tone_marker`'s own independent bridge) never branches on composer kind.
+>   `_MOUTH_MOOD_DEFAULT_ON=True`; no gap remains. Findings
 >   `2026-08-27-affect-tone-coloring-restored-on-spiking-mouth`,
->   `2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`.
+>   `2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`; instrument-staleness class filed in
+>   `research/FAILURE_LOG.md`.
 > - **V1 BCM warm-up hardening lever (§7 "B1 self-organization", staged last window) ran on the GPU and came back
 >   VOID — an instrument failure, not a verdict on the lever.** All 6 seeds show `op_point_ok=False` and
 >   `dev_firing_fraction_mean=0.0`: the dev/pre-BCM operating-point check never found a valid baseline to warm up
@@ -990,10 +994,11 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   every seed failed to reach a valid operating point. **NEXT: re-run with a fixed instrument**, and write up the
   VOID result as its own finding + a `research/FAILURE_LOG.md` line (neither exists yet for this run — the
   committed design doc predates it and still reads "not yet executed").
-- **The mood→tone mouth fix is confirmed GO on its own derisk instrument but does NOT reach the production
-  `OneBrainComposer`** (`surface_changed_off_on=False`) — ships default-OFF
-  (`2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`). **NEXT (not yet queued): a production-
-  composer-side lever**, if this coupling is wanted live.
+- **The mood→tone mouth fix survived two false alarms (a stale flip-soak instrument, then an untested
+  composer-kind gap) and is CONFIRMED GO, default-ON, on the real production composer**
+  (`2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`). **NEXT (not yet queued): audit other
+  flip-soaks for the same `os.environ.pop`-as-OFF staleness pattern** — filed in `research/FAILURE_LOG.md`,
+  unaudited.
 - **THE MOUTH / read-SNR (#80) is still the #1 frontier, unchanged** — the ensemble/dendritic de-risk is staged
   (`research/runners/_mouth_readout_snr_ensemble_dendritic_derisk.py`) but not yet run.
 
