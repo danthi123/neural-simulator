@@ -4330,6 +4330,43 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             pass  # never let the vision coupling crash a turn -> fall through to the normal path
     # ── END faculty:vision-identity ──
 
+    # ── BEGIN faculty:bg-action-selection — SPEAK-vs-STAY-SILENT via the two-channel spiking BG selector, default-OFF ──
+    # The production consumer for the Gate-A v2 vocal action-selection GO (research/findings/2026-08-03-neural-vocal-
+    # selector-gateA-v2-4seed-GO.md). A discrete chat action decision — SPEAK this turn, or STAY-SILENT (hold) — is
+    # routed through a genuine two-channel basal-ganglia RACE (channel 0 = SPEAK, channel 1 = STAY-SILENT) instead of a
+    # host `if`. The composer's per-candidate salience biases each channel's striatal D1 pool; SHARED practice arousal
+    # drives the proposal->D1 barrage that brings both to threshold; the FIRST channel to cross the GPi->thalamus
+    # disinhibition commit burst IS the selected action (NOT a numpy argmax). Reuse-by-import (NO sim/ edit).
+    # Default-OFF: `BRAIN_BG_SELECT` unset -> the cheap env read below is the ONLY thing that runs -> the block imports
+    # nothing + returns nothing -> the turn is BYTE-IDENTICAL to today (the parent flips default-on after the pool
+    # soak). It is CONSULTED only on a content-empty turn (STAY-SILENT is a genuine contender there — a normal content
+    # message always favors SPEAK, so the selector is not even called on it), and it SHORT-CIRCUITS with a HOLD line
+    # ONLY when the BG race COMMITS to STAY-SILENT. A SPEAK commit / a non-commit / an ordinary content turn all return
+    # None from decide_action() -> the turn FALLS THROUGH to the normal path -> byte-identical to flag-off.
+    # LOAD-BEARING: on '...' the salience favors STAY-SILENT -> the race holds (output differs); give the turn real
+    # content -> SPEAK -> the hold vanishes. LESION (`BRAIN_BG_SELECT_LESION=arousal` or `=direct_path`): either lesion
+    # collapses the commit -> decide_action() returns None -> the hold VANISHES (byte-identical to flag-off), proving
+    # the BG cascade — not a host max — chose. See research/runners/bg_action_selection_production_organ.py. Guarded so
+    # a wiring failure can never crash a turn (degrades to the normal path).
+    if os.environ.get("BRAIN_BG_SELECT", "0").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            import research.runners.bg_action_selection_production_organ as _BG
+            _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
+            if _bg is not None:
+                return JSONResponse({
+                    "answer": _BG.HOLD_TEXT, "abstained": True, "recalled_svo": None,
+                    "verified": False, "renderer": rname, "brain": req.brain, "source": source,
+                    "rich": False, "activity": None, "affect": None,
+                    "bg_select": {
+                        "on": True, "action": _bg["action"], "winner": _bg["winner"],
+                        "speak_salience": _bg["speak_salience"], "silent_salience": _bg["silent_salience"],
+                        "decision_step": _bg["decision_step"], "lesioned": bool(_bg["lesion"]),
+                    },
+                })
+        except Exception:
+            pass  # never let the BG coupling crash a turn -> fall through to the normal path
+    # ── END faculty:bg-action-selection ──
+
     # ── AFFECT / EMOTION coloring (Gate-B, 2026-08-12) ──────────────────────────────────────────────────────
     # Read the brain's live MOOD off the co-resident spiking graded-affect ladder and prepare (a) a CONTENT plan
     # (forthcomingness — how many gate-matched facts to volunteer) and (b) a prose MANNER template (warmer/curter

@@ -1,0 +1,172 @@
+{
+  "probe": "bg_action_selection_flip_soak",
+  "backend": "numpy",
+  "device": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "trials": 12,
+  "lesion_trials": 8,
+  "salience_gain_pA": 600.0,
+  "selector_n_seed_ok": 6,
+  "selector_go": true,
+  "mean_intact_commit": 1.0,
+  "mean_arousal_lesion_commit": 0.0,
+  "mean_direct_lesion_commit": 0.0,
+  "attributable_to_arousal": 1.0,
+  "attributable_to_direct_path": 1.0,
+  "handler": null,
+  "overall_go": true,
+  "elapsed_s": 32.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 1.0,
+        "silent_win_rate": 0.0,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.08333333333333333,
+        "silent_win_rate": 0.9166666666666666,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.9
+    },
+    {
+      "seed": 43,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 1.0,
+        "silent_win_rate": 0.0,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.0,
+        "silent_win_rate": 1.0,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.6
+    },
+    {
+      "seed": 44,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 1.0,
+        "silent_win_rate": 0.0,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.0,
+        "silent_win_rate": 1.0,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.3
+    },
+    {
+      "seed": 100,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.8333333333333334,
+        "silent_win_rate": 0.16666666666666666,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.0,
+        "silent_win_rate": 1.0,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.1
+    },
+    {
+      "seed": 101,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 1.0,
+        "silent_win_rate": 0.0,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.0,
+        "silent_win_rate": 1.0,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.3
+    },
+    {
+      "seed": 102,
+      "seed_ok": true,
+      "speak_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 1.0,
+        "silent_win_rate": 0.0,
+        "n": 12
+      },
+      "silent_favored": {
+        "commit_rate": 1.0,
+        "speak_win_rate": 0.0,
+        "silent_win_rate": 1.0,
+        "n": 12
+      },
+      "arousal_lesion_commit": 0.0,
+      "direct_lesion_commit": 0.0,
+      "speak_ok": true,
+      "silent_ok": true,
+      "flip": true,
+      "arousal_floored": true,
+      "direct_floored": true,
+      "elapsed_s": 5.3
+    }
+  ]
+}
