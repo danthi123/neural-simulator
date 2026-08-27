@@ -51,7 +51,9 @@ def _set_flags(*, on: bool, lesion: bool = False):
     if on:
         os.environ["BRAIN_VALUE_CHOICE"] = "1"
     else:
-        os.environ.pop("BRAIN_VALUE_CHOICE", None)
+        # 2026-08-27 fix: BRAIN_VALUE_CHOICE defaults ON (wave-1/2 flip, _VALUE_CHOICE_DEFAULT_ON=True) -- unset no
+        # longer means OFF, so the OFF arm must set the byte-identical escape explicitly.
+        os.environ["BRAIN_VALUE_CHOICE"] = "0"
     if lesion:
         os.environ["BRAIN_VALUE_CHOICE_LESION"] = "1"
     else:

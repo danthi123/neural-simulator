@@ -1,0 +1,25 @@
+{
+  "runner": "ad-hoc audit script (research/findings/2026-08-27-flip-soak-off-arm-staleness-audit.md)",
+  "cmd": "python -c <inline, see finding>",
+  "purpose": "confirm each AT-RISK flag actual reader default",
+  "reader_returns_with_flag_UNSET": {
+    "BRAIN_BG_SELECT via bg_action_selection_production_organ.bg_select_enabled()": true,
+    "BRAIN_BG_SELECT via webapp.server._bg_select_flag_on()": true,
+    "BRAIN_GNW_MULTISTEP via webapp.gnw_multistep_deliberation own default(\"1\")": true,
+    "BRAIN_GNW_MULTISTEP via webapp.server._GNW_MULTISTEP_DEFAULT_ON": true,
+    "BRAIN_VALUE_CHOICE via value_choice_production_organ.value_choice_enabled()": true,
+    "BRAIN_VISION_IDENTITY via webapp.server._vision_identity_on() [ACTUAL production gate]": true,
+    "BRAIN_VISION_IDENTITY via vision_identity_production_organ.vision_identity_enabled() [unused for gating, STALE DOC]": false,
+    "BRAIN_CONTINUOUS_IDEATE via webapp.continuous_engine.ideation_enabled() [contradicts its own Default-OFF docstring]": true,
+    "BRAIN_GNW_3ORGAN via webapp.server inline check (line 4151, default \"1\") [the ACTUAL install gate]": true,
+    "BRAIN_GNW_3ORGAN via webapp.gnw_three_organ_bus.three_organ_enabled() [called INSIDE install_three_organ_gate -> makes the flip INERT]": false
+  },
+  "reader_returns_with_flag_explicit_0": {
+    "BRAIN_BG_SELECT=0 -> bg_select_enabled()": false,
+    "BRAIN_VALUE_CHOICE=0 -> value_choice_enabled()": false,
+    "BRAIN_VISION_IDENTITY=0 -> S._vision_identity_on()": false,
+    "BRAIN_GNW_MULTISTEP=0 -> module default check": false,
+    "BRAIN_CONTINUOUS_IDEATE=0 -> ideation_enabled()": false
+  },
+  "interpretation": "Every UNSET reader above returns True (ON) except the two explicitly marked unused-for-gating/inert-flip cases. Every explicit =0 reader returns False (OFF), confirming the fix pattern (pop -> explicit \"0\") is correct for all 5 AT-RISK soaks."
+}

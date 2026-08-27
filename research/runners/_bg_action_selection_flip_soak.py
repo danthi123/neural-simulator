@@ -120,7 +120,7 @@ def run_handler_no_regression():
               "BRAIN_COMPREHENSION_GATE", "BRAIN_SURPRISE", "BRAIN_METACOG", "BRAIN_WORLDMODEL", "BRAIN_PRAGMATIC",
               "BRAIN_RICH", "BRAIN_SWAP_DRIVES", "BRAIN_OPEN_ENDED", "BRAIN_VISION_IDENTITY", "BRAIN_GNW_SWAP"):
         os.environ.setdefault(k, "0")
-    os.environ.pop("BRAIN_BG_SELECT", None)
+    os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
     os.environ.pop("BRAIN_BG_SELECT_LESION", None)
     try:
         import webapp.server as S
@@ -156,7 +156,7 @@ def run_handler_no_regression():
 
     # BUILD-DETERMINISM self-check: is the tiny-demo brain identical across two fresh OFF sessions on the same message?
     # Only when it is can the FULL-JSON handler equality below be attributed to this flag rather than to build RNG.
-    os.environ.pop("BRAIN_BG_SELECT", None)
+    os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
     det_a = turn(ordinary_msgs[0])
     det_b = turn(ordinary_msgs[0])
     build_deterministic = (det_a == det_b)
@@ -164,24 +164,24 @@ def run_handler_no_regression():
     # per-message paired OFF/ON on FRESH sessions (each turn = first turn on a fresh brain).
     pairs = {}
     for m in ordinary_msgs:
-        os.environ.pop("BRAIN_BG_SELECT", None)
+        os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
         r_off = turn(m)
         os.environ["BRAIN_BG_SELECT"] = "1"
         r_on = turn(m)
-        os.environ.pop("BRAIN_BG_SELECT", None)
+        os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
         pairs[m] = (r_off, r_on)
     ordinary_identical = all(off == on for (off, on) in pairs.values())
     off_had_no_bg_key = all("bg_select" not in off for (off, _) in pairs.values())
 
     # '...' turn on fresh sessions: OFF (host path), ON intact (the HOLD fires), ON+arousal-lesion (the hold vanishes).
-    os.environ.pop("BRAIN_BG_SELECT", None)
+    os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
     off_dots = turn(dots)
     os.environ["BRAIN_BG_SELECT"] = "1"
     on_dots = turn(dots)
     os.environ["BRAIN_BG_SELECT_LESION"] = "arousal"
     on_dots_lesioned = turn(dots)
     os.environ.pop("BRAIN_BG_SELECT_LESION", None)
-    os.environ.pop("BRAIN_BG_SELECT", None)
+    os.environ["BRAIN_BG_SELECT"] = "0"   # 2026-08-27 fix: BRAIN_BG_SELECT defaults ON (wave-3 flip) -- pop no longer means OFF
 
     on_fired = (on_dots.get("bg_select", {}).get("action") == "STAY_SILENT"
                 and on_dots.get("answer") == BG.HOLD_TEXT

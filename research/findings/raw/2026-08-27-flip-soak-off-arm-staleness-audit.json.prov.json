@@ -1,0 +1,25 @@
+{
+ "run_id": "1787833030-3128799",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "5b262ef3a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T08:17:10",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/2026-08-27-flip-soak-off-arm-staleness-audit.json"
+}
