@@ -1,0 +1,41 @@
+{
+  "what": "Verification evidence for extracting the faculty-DRIVE coupling pipeline into ONE shared function (webapp.server.brain_reply, re-exported via webapp/brain_reply.py) so the FastAPI /api/brain-chat handler, the OpenAI /v1/chat/completions shim, and the standalone TUI all run the IDENTICAL coupling sequence.",
+  "provenance": {
+    "runner": "manual verification harness (hand-authored evidence summary)",
+    "seed": 42,
+    "command": "SIM_BACKEND=numpy BRAIN_COMPOSER_KIND=rf BRAIN_LTM_SHIP_DEFAULT=off .venv/bin/python <byteid_harness.py | tui_coupling_demo.py | shim_check.py>",
+    "config": {"SIM_BACKEND": "numpy", "BRAIN_COMPOSER_KIND": "rf", "BRAIN_LTM_SHIP_DEFAULT": "off", "renderer": "stub", "brain": "tiny-demo"},
+    "note": "byte-identity dump compared before-vs-after the webapp.server brain_chat->brain_reply extract; coupling + shim probes run post-refactor on the same tiny-demo brain",
+    "git_branch": "research/shared-faculty-pipeline"
+  },
+  "backend": "numpy",
+  "build_knobs": {"SIM_BACKEND": "numpy", "BRAIN_COMPOSER_KIND": "rf", "BRAIN_LTM_SHIP_DEFAULT": "off", "renderer": "stub"},
+  "gate_byte_identical_webapp": {
+    "method": "12 representative turns (self, knowledge recall x2, affect +/-, assertion/surprise, topic-swap, anaphora, abstain/curiosity, prospective formation, feel-readout) through webapp.server.brain_chat at production-default flags, captured BEFORE the refactor and AFTER, then diffed.",
+    "turns": ["what are you", "what do you use", "what does the dog chase", "what does the cat eat", "I am so happy today!", "this is terrible and awful", "the dog eats grass", "let's talk about the cat", "what does it eat", "what is the capital of france", "remind me to call mom when i see the river", "how do you feel"],
+    "result": "IDENTICAL (before == after, byte-for-byte on the serialized JSON, all 12 turns)"
+  },
+  "tui_fires_couplings": {
+    "method": "Same tiny-demo brain the TUI builds; compare ChatBrain.answer (legacy recall+moat core, what the TUI did BEFORE) vs webapp.brain_reply.reply_over_chat (the shared full pipeline, what the TUI does NOW).",
+    "turns": [
+      {"turn": "what does the dog chase", "legacy": "the dog chases the cat", "pipeline": "My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat — worth going further here.", "faculty_keys": ["affect", "affect_drives", "metacog", "da_drives", "swap_drives"], "differs": true},
+      {"turn": "this is terrible and awful", "legacy": "the dog chases the cat", "pipeline": "Honestly — My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat. — worth going further here.", "faculty_keys": ["affect", "affect_drives", "metacog", "da_drives", "swap_drives", "worldmodel"], "differs": true},
+      {"turn": "what is the capital of france", "legacy": "I don't know about that.", "pipeline": "Honestly — I don't know about that. My curiosity is piqued — I haven't learned about capital yet: what can you tell me about capital? — worth going further here.", "faculty_keys": ["affect", "affect_drives", "curiosity", "da_drives", "swap_drives"], "differs": true}
+    ]
+  },
+  "load_bearing": {
+    "coupling": "affect_drives (board #84)",
+    "lead_coupling_on": "Honestly — ",
+    "lead_lesioned": "",
+    "flag": "BRAIN_AFFECT_DRIVES_LESION=1",
+    "vanished_under_lesion": true
+  },
+  "shim_still_works": {
+    "endpoint": "/v1/chat/completions (openai_chat_completions handler, in-process, non-streaming)",
+    "object": "chat.completion",
+    "content": "the dog chases the cat the cat eats the fish — worth going further here.",
+    "reasoning_content_present": true,
+    "rides_shared_pipeline": "content carries the da_drives suffix '— worth going further here.', proving it runs the full brain_reply coupling sequence via brain_chat",
+    "ok": true
+  }
+}

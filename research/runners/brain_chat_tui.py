@@ -1642,6 +1642,18 @@ def run_repl(chat, source, n_facts, rich=None):
     rname = chat.renderer.name if chat.renderer is not None else "(none -- raw brain triples)"
     mode = "RICH (multi-sentence grounded; 'tell me more' elaborates)" if rich is not None else "single-fact"
     print(_BANNER.format(source=source, n_facts=n_facts, renderer=f"{rname}   |   answers: {mode}"), flush=True)
+    # THE SHARED FULL-FACULTY PIPELINE (2026-08-27): route every turn through webapp.brain_reply so the standalone
+    # TUI fires the SAME faculty-DRIVE couplings the webapp does (affect/swap/metacog/curiosity/surprise/world-model/
+    # prospective/... ), not just the recall+moat core `chat.answer` runs. Falls back to the local answer path if the
+    # webapp package is unavailable (keeps the TUI runnable in a minimal env). See webapp/brain_reply.py.
+    _shared = None
+    try:
+        from webapp import brain_reply as _shared
+    except Exception as _imp_e:
+        print(f"[tui] shared faculty pipeline unavailable ({type(_imp_e).__name__}: {_imp_e}); "
+              f"using the local recall-core answer path (no faculty couplings).", flush=True)
+        _shared = None
+    _renderer_label = chat.renderer.name if chat.renderer is not None else "raw"
     while True:
         try:
             line = input("you> ").strip()
@@ -1667,6 +1679,26 @@ def run_repl(chat, source, n_facts, rich=None):
             continue
         if chat.verbose_thinking and chat.renderer is not None and not chat.raw_mode:
             print("  brain> thinking...", flush=True)
+        # SHARED full-faculty pipeline (default): the couplings decorate/drive the reply exactly as they do on the
+        # webapp, so the TUI now exercises the WHOLE brain, not the recall core alone.
+        if _shared is not None:
+            try:
+                payload = _shared.reply_over_chat(
+                    chat, line, source=source, brain=source, renderer=_renderer_label,
+                    rich=(rich is not None), session="tui")
+                ans = payload.get("answer", "")
+                abstained = bool(payload.get("abstained"))
+                if rich is not None and payload.get("rich"):
+                    ns = int(payload.get("n_sentences", 0) or 0)
+                    tag = "  (abstained -- the moat)" if abstained else f"  [{ns} grounded sentences]"
+                else:
+                    tag = "  (abstained -- the moat)" if abstained else ""
+                print(f"brain> {ans}{tag}\n", flush=True)
+                continue
+            except Exception as _turn_e:
+                print(f"[tui] shared pipeline turn failed ({type(_turn_e).__name__}: {_turn_e}); "
+                      f"falling back to the local answer path.", flush=True)
+        # LOCAL fallback (recall+moat core only — no faculty couplings): used when the webapp package is unavailable.
         if rich is not None:
             r = rich.answer(line)
             tag = "  (abstained -- the moat)" if r["abstained"] else f"  [{r['n_sentences']} grounded sentences]"
