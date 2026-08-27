@@ -57,14 +57,27 @@ LESION-LOAD-BEARING (the honest-negative deliverable):
     recurrence zeroed -> even a full consensus cannot sustain -> abstain, while the forward-recall reflex survives)
     and `BRAIN_GNW_2ORGAN_ORGANB_LESION=1` (organ B withholds even on a match -> the consensus collapses).
 
-DE-RISK lever, DEFAULT-OFF, reused from `gnw_two_organ_bus.py` (2026-08-27, `BRAIN_GNW_ORGANB_LTM_EXEMPT`): organ
-B's expectation registry never covers the LTM tier (see that module's LTM-EXEMPTION docstring), so it withholds on
-EVERY LTM-sourced recall here too, exactly as in the 2-organ bus. With the flag ON, organ B corroborates instead
-of withholding for an LTM-sourced recall — organ C's OWN comprehension vote is UNCHANGED by this lever (it may
-still veto an LTM recall for its own reason: `_real_vocab_competence` reads `brain_vocab` from the SAME buffer-
-only `_chat_concepts`, so an LTM-only entity is "unknown" to organ C too, and the OOV fallback consults the
-comprehension organ's spiking margin, calibrated on the toy cue lexicon — a genuinely separate gap, not fixed
-here).
+DE-RISK lever, DEFAULT-OFF, reused from `gnw_two_organ_bus.py` AND NOW EXTENDED HERE to organ C (2026-08-27,
+`BRAIN_GNW_ORGANB_LTM_EXEMPT` — deliberately the SAME flag, no second flag was added, so ONE owner switch fixes
+the WHOLE stack). Organ B's expectation registry never covers the LTM tier (see that module's LTM-EXEMPTION
+docstring), so it withholds on EVERY LTM-sourced recall here too, exactly as in the 2-organ bus. Organ C carried
+the MIRROR-IMAGE gap: `_real_vocab_competence` reads `brain_vocab` from the SAME buffer-only `_chat_concepts`, so
+an LTM-only entity (e.g. `chelsea_fc`/`country`/`united_kingom`) is "unknown" to organ C too, and its OOV fallback
+then consults the D4 comprehension organ's spiking margin — an instrument calibrated on a toy cue lexicon that has
+never seen these tokens, so the margin reads exactly 0.0 on every LTM probe, below any real threshold. **THE
+FIX**: the SAME argument organ B's exemption already rests on applies verbatim to organ C — a STORED LTM fact IS
+comprehended, because its thematic roles are already RESOLVED by its stored engram (the brain knows `chelsea_fc`
+is the agent / `country` the relation / `united_kingom` the patient BECAUSE it stored that triple); judging
+whether an ALREADY-RECALLED proposition is comprehended is not "can a buffer-calibrated vocabulary-membership
+cue see these tokens", so organ C should not consult that instrument for an LTM-sourced recall at all. With the
+flag ON, `three_organ_combine` reuses the SAME `ltm_exempt_applied` boolean it computes for organ B (recall
+sourced from the stable LTM tier, per `TieredFactStore.query_patient_source`) to also make organ C CORROBORATE
+unconditionally for that recall — bypassing both `_real_vocab_competence` and the D4 spiking-margin fallback.
+A conversational-buffer recall is completely untouched (organ C reads its real-vocab / spiking-margin instrument
+exactly as today); a non-existent fact still abstains at organ A, before organ B or organ C is even consulted.
+DEFAULT OFF (unset/0/false/off/no): `ltm_exempt_applied` is always False (mirrors organ B's own byte-identical-
+when-off discipline exactly), so organ C's comprehension read is completely unchanged — byte-identical to today's
+production. See `research/findings/2026-08-27-organc-ltm-exempt-derisk-6seed-GO.md` for the verification.
 
 REUSE-BY-IMPORT (NO `sim/` edit, NO re-derivation): the workspace build + ignition-read + organ B (the surprise organ)
 + the calibrated subthreshold drive come from `gnw_two_organ_bus` (which reuses the de-risk parents); the N-organ
@@ -134,13 +147,18 @@ def _real_vocab_competence(agent: str, action: str, cand: str, brain_vocab) -> t
     return (len(unknown) == 0), unknown
 
 
-def _comprehension_vote(agent: str, action: str, cand: str, brain_vocab, *, seed: int, lesion: bool) -> dict:
+def _comprehension_vote(agent: str, action: str, cand: str, brain_vocab, *, seed: int, lesion: bool,
+                        ltm_exempt: bool = False) -> dict:
     """Organ C's vote on committing `cand`. VETO AUTHORITY = a REAL-VOCAB competence read over the recalled
     proposition (agent, action, cand): a RECALLED fact's roles are already RESOLVED by its stored engram, so
     comprehension of a recall is "are all its entities/roles KNOWN in the brain's learned vocab", NOT "can bottom-up
     cues separate the roles" (the toy-competition question that false-vetoed known two-animate recalls). Decision:
       * lesion=True (organc_lesion) -> the whole read is BYPASSED, organ C corroborates unconditionally (veto silenced
         -> the consensus reduces to the 2-organ decision).
+      * ltm_exempt=True (the `BRAIN_GNW_ORGANB_LTM_EXEMPT` lever, ALREADY confirmed by the caller that this recall's
+        provenance is the stable LTM tier) -> the SAME argument the caller applies to organ B applies here: a stored
+        LTM fact's roles are already resolved by its own engram, so treat it as COMPREHENDED without consulting the
+        buffer-calibrated real-vocab / D4 spiking-margin instrument at all -> corroborate unconditionally.
       * KNOWN (agent, action + the patient head all in the brain's learned vocab) -> COMPREHENDED -> corroborate.
         [THE FIX: `dog chase cat`, `cat eat fish` are all real-vocab-known -> vote, never false-vetoed.]
       * NOT known (a content entity/role OUTSIDE the learned vocab) -> genuine non-comprehension -> consult the spiking
@@ -149,8 +167,17 @@ def _comprehension_vote(agent: str, action: str, cand: str, brain_vocab, *, seed
         (the comprehension VETO). Keeps the spiking read load-bearing exactly where it is the right tool."""
     info = {"organ_c_competent": None, "organ_c_margin": None, "organ_c_threshold": None,
             "organ_c_comprehended": None, "organ_c_deferred": False, "organ_c_lesioned": bool(lesion),
-            "organ_c_real_vocab_known": None, "organ_c_unknown_tokens": None}
+            "organ_c_real_vocab_known": None, "organ_c_unknown_tokens": None,
+            "organ_c_ltm_exempt_applied": False}
     if lesion:                                        # the veto is silenced -> unconditional corroboration
+        info["votes"] = True
+        return info
+    if ltm_exempt:
+        # LTM-EXEMPTION (mirrors organ B's — see the module docstring's DE-RISK section): a STORED LTM fact IS
+        # comprehended, its roles resolved by its own stored engram, so corroborate WITHOUT touching the buffer-
+        # calibrated real-vocab read or the D4 spiking-margin fallback (neither instrument is consulted here).
+        info["organ_c_comprehended"] = True
+        info["organ_c_ltm_exempt_applied"] = True
         info["votes"] = True
         return info
     # ── THE FIX: real-vocab competence is the veto authority (replaces the toy cue-lexicon margin). ──────────────
@@ -194,8 +221,11 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
 
     `organb_ltm_exempt=True` (the `BRAIN_GNW_ORGANB_LTM_EXEMPT` de-risk lever, default off, defined in
     `gnw_two_organ_bus.py`) reuses the SAME organ-B LTM-exemption applied there: a recall sourced from the stable
-    cortical LTM tier makes organ B corroborate instead of withhold (organ C's OWN comprehension vote is untouched
-    by this lever — see that module's LTM-EXEMPTION docstring for the mechanism)."""
+    cortical LTM tier makes organ B corroborate instead of withhold. AS OF THIS SESSION the identical lever ALSO
+    exempts organ C's comprehension veto for the SAME LTM-sourced recall (the mirror-image fix — see this module's
+    DE-RISK docstring section and `_comprehension_vote`'s `ltm_exempt` branch): one flag now unblocks BOTH organs
+    for genuine long-term-memory knowledge, while a conversational-buffer recall or a non-existent fact is
+    unaffected either way."""
     composer = getattr(getattr(chat, "inner", None), "composer", None)
     _a, _v, all_concepts, e_b, stored_patients = _chat_concepts(chat)
     brain_vocab = set(all_concepts)
@@ -233,10 +263,16 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
     info["organb_ltm_exempt_applied"] = ltm_exempt_applied
 
     # organ C — the spiking comprehension monitor's corroboration of the recalled proposition (agent, action, cand).
-    c = _comprehension_vote(agent, action, cand, brain_vocab, seed=seed, lesion=bool(organc_lesion))
+    # Reuses the SAME `ltm_exempt_applied` boolean organ B was just gated by: when the recall is LTM-sourced AND
+    # the flag is on, organ C corroborates unconditionally too (the mirror-image fix — see the module docstring's
+    # DE-RISK section). Off (default) or a buffer-sourced recall: `ltm_exempt_applied` is False, so organ C's
+    # real-vocab / D4 spiking-margin read runs exactly as before — byte-identical.
+    c = _comprehension_vote(agent, action, cand, brain_vocab, seed=seed, lesion=bool(organc_lesion),
+                            ltm_exempt=ltm_exempt_applied)
     votes_c = bool(c["votes"])
     for k in ("organ_c_competent", "organ_c_margin", "organ_c_threshold", "organ_c_comprehended",
-              "organ_c_deferred", "organ_c_lesioned", "organ_c_real_vocab_known", "organ_c_unknown_tokens"):
+              "organ_c_deferred", "organ_c_lesioned", "organ_c_real_vocab_known", "organ_c_unknown_tokens",
+              "organ_c_ltm_exempt_applied"):
         info[k] = c[k]
     info["organ_c_votes"] = votes_c
 

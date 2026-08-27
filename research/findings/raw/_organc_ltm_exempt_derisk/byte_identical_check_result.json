@@ -1,0 +1,81 @@
+{
+  "three_organ_rows": [
+    {
+      "probe": "chelsea_fc|country",
+      "old_hash": "e8ba9140fe8dc0662dcb8e5edc34033b450685ed02cc7cd77493ddf841db8551",
+      "new_hash": "e8ba9140fe8dc0662dcb8e5edc34033b450685ed02cc7cd77493ddf841db8551",
+      "match": true,
+      "old_committed": null,
+      "new_committed": null,
+      "new_only_keys": {
+        "organ_c_ltm_exempt_applied": false
+      }
+    },
+    {
+      "probe": "definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+      "old_hash": "751e15df688c1a3c2b82a88a87522ec88ca0bf721132a7d655e1c03b4254e402",
+      "new_hash": "751e15df688c1a3c2b82a88a87522ec88ca0bf721132a7d655e1c03b4254e402",
+      "match": true,
+      "old_committed": null,
+      "new_committed": null,
+      "new_only_keys": {}
+    },
+    {
+      "probe": "zzz_test_agent|zzz_test_action",
+      "old_hash": "85ac133e553a06c1d21136197d96ca22c4fe75965961a6b4eba9297fabbfeac9",
+      "new_hash": "85ac133e553a06c1d21136197d96ca22c4fe75965961a6b4eba9297fabbfeac9",
+      "match": true,
+      "old_committed": null,
+      "new_committed": null,
+      "new_only_keys": {
+        "organ_c_ltm_exempt_applied": false
+      }
+    }
+  ],
+  "two_organ_bus_spotcheck": [
+    {
+      "probe": "chelsea_fc|country",
+      "committed": null,
+      "abstain_reason": "consensus_veto_organ_b_withheld"
+    },
+    {
+      "probe": "definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+      "committed": null,
+      "abstain_reason": "primary_recall_miss"
+    },
+    {
+      "probe": "zzz_test_agent|zzz_test_action",
+      "committed": null,
+      "abstain_reason": "consensus_veto_organ_b_withheld"
+    }
+  ],
+  "gate_rows": [
+    {
+      "q": "what country is chelsea fc from",
+      "old": null,
+      "new": null,
+      "match": true
+    },
+    {
+      "q": "what is chelsea fc",
+      "old": null,
+      "new": null,
+      "match": true
+    },
+    {
+      "q": "who are you",
+      "old": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "new": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "match": true
+    }
+  ],
+  "n_diffs": 0
+}
