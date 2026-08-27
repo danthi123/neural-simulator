@@ -1,0 +1,142 @@
+{
+  "mode": "onebrain_merge_framework_smoke",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    },
+    {
+      "seed": 43,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    },
+    {
+      "seed": 44,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    },
+    {
+      "seed": 100,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    },
+    {
+      "seed": 101,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    },
+    {
+      "seed": 102,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 1584,
+      "n_shipped": 1584,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg"
+      ]
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_go": true
+}

@@ -601,6 +601,18 @@ multi-turn stateful hold; causal_whatif: read-time live composer + build-time ST
 the MIGRATION gate (zero cross-synapses), NOT the one-brain INTEGRATION goal.
 (`2026-08-27-onebrain-merge-framework-organ-read-extension.md`)
 
+**2026-08-27 — the 4 bespoke pool organs (surprise/world-model/metacog/pragmatic) are now ALL registered +
+verified in the declarative registry (branch `research/onebrain-fold-pool-organs`, pushed, NOT yet merged to
+main).** Surprise+world-model were already registered by the framework's prototype; this rung adds METACOG +
+PRAGMATIC (pool #2's organs, reusing the shipped `MergedSubstrate2`'s own spec builders) and verifies all 4
+organs 6/6 seeds: the framework's internal merged-vs-coresident gate (substrate-init AND organ-read), a
+round-trip against the SHIPPED bespoke classes (`MergedSubstrate`/`MergedSubstrate2`, both init arrays and the
+real production reads), and build-twice determinism. Retiring `MergedSubstrate*` itself is NOT done — pool #1
+(`MergedSubstrate`) also carries production composer/parser wiring the registry does not model (out of scope
+this pass); pool #2 (`MergedSubstrate2`) is clean and retirement-READY but the class-body swap is deliberately
+deferred to its own regression-gated commit (it is a live default-ON production path).
+(`2026-08-27-onebrain-merge-framework-pool2-fold.md`)
+
 **⚖️ HONEST READING (2026-08-13 — square the celebratory batch log below with reality; the FORWARD plan is the refreshed
 MASTER ROADMAP `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §0, not this log).** The dated entries below record
 what LANDED — read them as HISTORY. The non-inflated state: ~12 spiking organ reads are default-on in production, but
