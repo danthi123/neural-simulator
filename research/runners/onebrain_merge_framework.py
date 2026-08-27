@@ -125,6 +125,17 @@ def _base_config(seed: int, legacy: bool = False):
     # It is byte-identical to the default whenever there is no summation-order variance, so it never regresses the
     # frozen-forward organs. (Legacy keeps it OFF so the discriminator still diverges on total-N as before.)
     cfg.deterministic_transpose_matvec = not legacy
+    # merge seam #3 (2026-08-27, the full-7 --keys all arc) — DEDUP the per-synapse ROUTING masks so they align
+    # with cp_connections even when the plan has DUPLICATE (pre,post) edges. cp_connections is built via
+    # coo->tocsr()+sum_duplicates(), which merges duplicates, but inject_explicit_wiring builds the nmda_slow /
+    # gaba_b / coincidence / graded / stp / plastic masks from the un-deduped `keyed` list -> when an organ's
+    # explicit_wiring_fn wires the SAME endpoints as a base RegionPathway (pmem's c2d/d2c, comprehension's
+    # cue_monitor), len(keyed) > nnz and every mask entry after the first duplicate coord addresses the WRONG
+    # synapse. That shift is co-residence-DEPENDENT (an organ alone may have no duplicates), so d6's nmda_slow
+    # AMPA-suppression lands on different synapses merged-vs-coresident -- the full-7 --keys all NO-GO. ON collapses
+    # `keyed` to one entry per unique (pre,post) so the masks are co-residence-invariant. Byte-identical to the
+    # default whenever the plan has no duplicate edges (frozen-forward organs are unaffected). Legacy keeps it OFF.
+    cfg.dedup_synapse_masks = not legacy
     return cfg
 
 

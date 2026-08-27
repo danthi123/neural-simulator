@@ -1,0 +1,58 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "provenance_exempt": "hand-written evidence summary of the localization probes + flag-off byte-identity SHA256 + the --keys all verify verdicts (repro/dupe/pmem probes in this session's scratchpad); not a single runner's --out artifact. The 6-seed --keys all artifact is research/findings/raw/_onebrain_merge_full7_dedup_6seed.json.",
+  "arc": "one-brain full-7 --keys all strict byte-identity — REAL cause localized to a duplicate-edge per-synapse-mask MISALIGNMENT in inject_explicit_wiring (NOT the co-residence-dependent nmda_slow RNG subset draw the prior finding hypothesized). Fix: cfg.dedup_synapse_masks (default OFF).",
+  "root_cause": {
+    "mechanism": "inject_explicit_wiring builds cp_connections via coo->tocsr()+sum_duplicates() (merges duplicate (pre,post) edges) but builds every per-synapse routing mask (nmda_slow/gaba_b/coincidence/graded/stp/plastic + gate index maps) from the un-deduped `keyed` list via np.fromiter(count=nnz)/positional alignment. When the plan has D duplicate coords, len(keyed)=nnz+D and every mask entry AFTER the first duplicate coord addresses the WRONG synapse.",
+    "why_co_residence_dependent": "an organ ALONE may have no duplicate edges (mask perfectly aligned) but co-resident behind an organ that DOES have them inherits the positional shift -> its nmda_slow tagging lands on different synapses merged-vs-coresident.",
+    "refutes_prior_hypothesis": "the 2026-08-27 matvec-hardening finding hypothesized a co-residence-DEPENDENT nmda_slow density=0.9 RNG subset draw. REFUTED here: with the plan's per-region-seamed draw UNCHANGED, d6-ALONE's mask is perfectly aligned (0 misaligned) — the draw is fine; only the merged pool's mask is misaligned, purely from OTHER organs' duplicate edges."
+  },
+  "localization_unfixed": {
+    "d6_nmda_tag_agree": 5671, "d6_nmda_tag_merged_only": 5148, "d6_nmda_tag_core_only": 5148,
+    "d6_nmda_tag_count_merged": 10819, "d6_nmda_tag_count_core": 10819,
+    "within_pool_merged_mask_true": 10819, "within_pool_merged_self_pathway": 5671, "within_pool_merged_NONself_misaligned": 5148,
+    "within_pool_core_mask_true": 10819, "within_pool_core_self_pathway": 10819, "within_pool_core_NONself_misaligned": 0,
+    "note": "differing tags include w_k->fs (density-0.6 AMPA) edges tagged nmda_slow -> proof of MASK MISALIGNMENT, not a receptor-draw difference"
+  },
+  "duplicate_edge_source": {
+    "merged_union_edges_total": 253532, "merged_union_unique_coords": 252117, "merged_duplicates": 1415, "merged_cp_connections_nnz": 252117,
+    "core_union_edges_total": 27935, "core_union_unique_coords": 27935, "core_duplicates": 0, "core_cp_connections_nnz": 27935,
+    "colliding_population_pairs": {
+      "c2d + pathway_cortex_ctx_to_dlpfc_wm": 468,
+      "d2c + pathway_dlpfc_wm_to_cortex_ctx": 459,
+      "cue_monitor + pathway_cortex_ctx_to_rel_A": 256,
+      "cue_monitor + pathway_cortex_ctx_to_rel_B": 232
+    },
+    "note": "pmem's c2d/d2c attractor-loop explicit_wiring_fn + comprehension's cue_monitor overlap the base RegionPathways at the SAME endpoints"
+  },
+  "fix": {
+    "sim_edit": "sim/config.py: dedup_synapse_masks: bool = False (additive). sim/bridge.py inject_explicit_wiring: when ON, collapse the (pre,post)-sorted `keyed` list's adjacent-duplicate runs to ONE entry (weights already summed in cp_connections; routing attrs aggregated: OR for boolean flags, routing-dominant for receptors, first-non-empty for gate names) BEFORE any mask is built -> len(keyed)==nnz, so every downstream mask aligns synapse-for-synapse with cp_connections regardless of co-residence.",
+    "framework_edit": "research/runners/onebrain_merge_framework.py _base_config: cfg.dedup_synapse_masks = not legacy (ON for the real seams, OFF for the legacy discriminator), mirroring per_region_threshold_heterogeneity + deterministic_transpose_matvec."
+  },
+  "flag_off_byte_identity": {
+    "method": "net exercising inject_explicit_wiring with DUPLICATE (pre,post) edges + every routing mask (nmda_slow+gaba_b+coincidence+graded+stp+plastic+gates), flag OFF, 40 steps, full-state SHA256 (membrane/recovery/firing/all conductances/all masks/cp_connections data+indices+indptr), EDITED (worktree) vs ORIGINAL (shared main checkout, no flag).",
+    "sha256_edited": "ea5a3991526f7c4fb8a0384eefde0b42e859e7612decc64356ef14b72fbe32b0",
+    "sha256_original": "ea5a3991526f7c4fb8a0384eefde0b42e859e7612decc64356ef14b72fbe32b0",
+    "identical": true,
+    "net_had_duplicates": true, "nnz": 14, "nmda_mask_sum": 3,
+    "determinism_suite": "tests/test_determinism.py (SIM_BACKEND=numpy): 9 passed, 2 skipped (cupy-only)"
+  },
+  "fix_on_mask_alignment": {
+    "d6_nmda_tag_agree": 10819, "d6_nmda_tag_merged_only": 0, "d6_nmda_tag_core_only": 0,
+    "within_pool_merged_NONself_misaligned": 0, "within_pool_core_NONself_misaligned": 0
+  },
+  "keys_all_verify_seed42": {
+    "organs_go": "6/7",
+    "d6_multiref_wm": "GO (read_byte 1/1) — CLOSED by the fix (was NO-GO)",
+    "prospective_memory": "NO-GO (read_byte 0/1) — residual, INDEPENDENT of this fix (see below)",
+    "others": "causal_whatif/comprehension/self_schema/source_provenance/curiosity all GO"
+  },
+  "pmem_residual_is_independent": {
+    "read_maxerr_baseline_merged_vs_core": 0.06666666666666667,
+    "worst_key": "fire_min",
+    "answer_merged": [false, false, false], "answer_core": [true, true, true],
+    "decisive_test": "forcing cp_nmda_recurrent_synapse_mask=None on the merged pool (disables the AMPA-suppression rebuild entirely) leaves pmem read_maxerr UNCHANGED at 0.06667 -> pmem's divergence is NOT the nmda_slow routing/AMPA-suppression this fix addresses; it is a SEPARATE co-residence seam (d6's REGION presence / total-N; pmem runs a dt=0.5 long spiking integration). The prior finding itself noted pmem's exact in-step coupling was NOT fully isolated.",
+    "honest_partial": true
+  }
+}

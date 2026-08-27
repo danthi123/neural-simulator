@@ -303,6 +303,27 @@ class CoreSimConfig:
     # shared-stream ORDER-dependent draw bit-for-bit (the flag OFF is byte-identical
     # to today). Deterministic under cfg.seed.
     per_region_wiring_seed: bool = False
+    # DEDUP SYNAPSE MASKS (2026-08-27; the one-substrate merge's FIFTH byte-identity
+    # cause -- co-residence-dependent per-synapse ROUTING, localized to inject_explicit_
+    # wiring). The per-synapse routing masks (nmda_slow, gaba_b, coincidence, graded,
+    # stp_disabled) + the plastic mask + the plasticity/transmission gate index maps are
+    # built from a `keyed` list sorted by (pre,post), on the ASSUMPTION that it aligns 1:1
+    # with cp_connections.data. But cp_connections is built via coo->tocsr()+sum_duplicates()
+    # which MERGES duplicate (pre,post) edges (the base RegionPathway and an organ's
+    # explicit_wiring_fn can wire the SAME endpoints), so when the plan has D duplicate
+    # coords, len(keyed) = nnz + D and `np.fromiter(..., count=nnz)` truncates -> every mask
+    # entry AFTER the first duplicate coord addresses the WRONG synapse. This is co-residence-
+    # DEPENDENT: an organ ALONE may have no duplicates (mask aligned) but co-resident behind
+    # an organ that DOES (pmem's c2d/d2c, comprehension's cue_monitor) inherits the shift ->
+    # its nmda_slow tagging (hence AMPA-suppression) lands on different synapses merged-vs-
+    # coresident (d6's slow-NMDA WM hold; the full-7 --keys all wall). When ON, `keyed` is
+    # COLLAPSED to one entry per unique (pre,post) (adjacent-duplicate runs aggregated: OR for
+    # the boolean routing flags, routing-dominant for the receptor fields, first-non-empty for
+    # gate names) BEFORE any mask/gate is built -> len(keyed) == nnz, so every downstream mask
+    # aligns synapse-for-synapse with cp_connections regardless of co-residence. DEFAULT-OFF
+    # preserves the legacy (pre-collapse) mask construction bit-for-bit (byte-identical to today;
+    # a plan with NO duplicate edges is already len(keyed)==nnz, so the collapse is a no-op there).
+    dedup_synapse_masks: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.

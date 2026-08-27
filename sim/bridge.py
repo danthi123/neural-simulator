@@ -4337,6 +4337,40 @@ class SimulationBridge:
                     all_stp_disabled),
                 key=lambda t: (t[0], t[1]),
             )
+            # DEDUP SYNAPSE MASKS (2026-08-27; cfg.dedup_synapse_masks, DEFAULT-OFF -> the block
+            # below is skipped and keyed is bit-for-bit the legacy list). cp_connections is built
+            # via coo->tocsr()+sum_duplicates(), which MERGES duplicate (pre,post) edges, so nnz =
+            # (unique coords) while len(keyed) = (all plan edges). When the plan has duplicate edges
+            # (a base RegionPathway + an organ's explicit_wiring_fn onto the SAME endpoints), the two
+            # differ and EVERY per-synapse mask/gate built below from `keyed` (which uses count=nnz /
+            # positional alignment) addresses the WRONG synapse from the first duplicate coord on.
+            # Since `keyed` is already sorted by (pre,post), duplicates are ADJACENT: collapse each run
+            # to ONE entry (weights are already summed in cp_connections; here we aggregate only the
+            # routing attributes) so len(keyed) == nnz and every downstream mask aligns synapse-for-
+            # synapse with cp_connections.data regardless of co-residence. Aggregation is deterministic
+            # and order-stable (routing-dominant receptors, OR of boolean flags, first-non-empty gate
+            # names), so a duplicate coord resolves identically alone vs co-resident. See
+            # 2026-08-27-per-region-nmda-slow... finding + the config field doc.
+            if getattr(self.core_config, "dedup_synapse_masks", False):
+                import itertools as _it
+                _collapsed = []
+                for _coord, _run in _it.groupby(keyed, key=lambda t: (t[0], t[1])):
+                    _g = list(_run)
+                    if len(_g) == 1:
+                        _collapsed.append(_g[0])
+                        continue
+                    _collapsed.append((
+                        _g[0][0], _g[0][1],                                   # pre, post
+                        any(t[2] for t in _g),                               # plastic: OR
+                        next((t[3] for t in _g if t[3]), ""),               # plasticity gate: first non-empty
+                        next((t[4] for t in _g if t[4]), ""),               # transmission gate: first non-empty
+                        "gaba_b" if any(t[5] == "gaba_b" for t in _g) else _g[0][5],       # receptor: gaba_b wins
+                        "nmda_slow" if any(t[6] == "nmda_slow" for t in _g) else _g[0][6], # exc_receptor: nmda_slow wins
+                        any(t[7] for t in _g),                               # coincidence: OR
+                        any(t[8] for t in _g),                               # graded: OR
+                        any(t[9] for t in _g),                               # stp_disabled: OR
+                    ))
+                keyed = _collapsed
         else:
             keyed = None
 
