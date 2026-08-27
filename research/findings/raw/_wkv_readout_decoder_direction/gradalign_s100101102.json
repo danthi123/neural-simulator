@@ -1,0 +1,184 @@
+{
+  "results": [
+    {
+      "seed": 100,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_batches": 10,
+      "sub_read_window": 64,
+      "gain": 10.72869,
+      "gain_substrate_vs_linear_corr": 0.9377,
+      "perword_frac_fallback": 0.0,
+      "cos_sub_host_mean": 0.9914,
+      "cos_calib_host_mean": 0.9878,
+      "cos_realign_gain": -0.0036,
+      "spurious_force_at_headw_sub": 0.926,
+      "spurious_force_at_headw_calib": 0.951,
+      "byte_identical_off_cos_lesion_vs_sub": 1.0,
+      "per_W": {
+        "init": {
+          "cos_sub_host": 1.0,
+          "cos_calib_host": 0.9999,
+          "gnorm_ratio_sub": 1.0,
+          "gnorm_ratio_calib": 1.0
+        },
+        "0.25xheadw": {
+          "cos_sub_host": 0.9998,
+          "cos_calib_host": 0.9995,
+          "gnorm_ratio_sub": 0.988,
+          "gnorm_ratio_calib": 0.982
+        },
+        "0.5xheadw": {
+          "cos_sub_host": 0.9969,
+          "cos_calib_host": 0.9952,
+          "gnorm_ratio_sub": 0.948,
+          "gnorm_ratio_calib": 0.938
+        },
+        "headw": {
+          "cos_sub_host": 0.9689,
+          "cos_calib_host": 0.9564,
+          "gnorm_ratio_sub": 0.926,
+          "gnorm_ratio_calib": 0.951
+        }
+      },
+      "seed_trap": {
+        "thr_hash_1": "0631f01e792680b2",
+        "thr_hash_2": "0631f01e792680b2",
+        "seeded": true
+      },
+      "go": false
+    },
+    {
+      "seed": 101,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_batches": 10,
+      "sub_read_window": 64,
+      "gain": 10.2679,
+      "gain_substrate_vs_linear_corr": 0.9624,
+      "perword_frac_fallback": 0.0,
+      "cos_sub_host_mean": 0.9915,
+      "cos_calib_host_mean": 0.988,
+      "cos_realign_gain": -0.0035,
+      "spurious_force_at_headw_sub": 0.984,
+      "spurious_force_at_headw_calib": 1.034,
+      "byte_identical_off_cos_lesion_vs_sub": 1.0,
+      "per_W": {
+        "init": {
+          "cos_sub_host": 1.0,
+          "cos_calib_host": 1.0,
+          "gnorm_ratio_sub": 1.0,
+          "gnorm_ratio_calib": 1.0
+        },
+        "0.25xheadw": {
+          "cos_sub_host": 0.9997,
+          "cos_calib_host": 0.9997,
+          "gnorm_ratio_sub": 0.983,
+          "gnorm_ratio_calib": 0.985
+        },
+        "0.5xheadw": {
+          "cos_sub_host": 0.9946,
+          "cos_calib_host": 0.9949,
+          "gnorm_ratio_sub": 0.932,
+          "gnorm_ratio_calib": 0.939
+        },
+        "headw": {
+          "cos_sub_host": 0.9719,
+          "cos_calib_host": 0.9573,
+          "gnorm_ratio_sub": 0.984,
+          "gnorm_ratio_calib": 1.034
+        }
+      },
+      "seed_trap": {
+        "thr_hash_1": "7cabcb320773ceb3",
+        "thr_hash_2": "7cabcb320773ceb3",
+        "seeded": true
+      },
+      "go": false
+    },
+    {
+      "seed": 102,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_batches": 10,
+      "sub_read_window": 64,
+      "gain": 11.41063,
+      "gain_substrate_vs_linear_corr": 0.9345,
+      "perword_frac_fallback": 0.0,
+      "cos_sub_host_mean": 0.9924,
+      "cos_calib_host_mean": 0.9763,
+      "cos_realign_gain": -0.0161,
+      "spurious_force_at_headw_sub": 0.996,
+      "spurious_force_at_headw_calib": 1.145,
+      "byte_identical_off_cos_lesion_vs_sub": 1.0,
+      "per_W": {
+        "init": {
+          "cos_sub_host": 1.0,
+          "cos_calib_host": 0.9999,
+          "gnorm_ratio_sub": 1.0,
+          "gnorm_ratio_calib": 1.0
+        },
+        "0.25xheadw": {
+          "cos_sub_host": 0.9999,
+          "cos_calib_host": 0.9995,
+          "gnorm_ratio_sub": 0.995,
+          "gnorm_ratio_calib": 0.982
+        },
+        "0.5xheadw": {
+          "cos_sub_host": 0.9974,
+          "cos_calib_host": 0.99,
+          "gnorm_ratio_sub": 0.974,
+          "gnorm_ratio_calib": 0.964
+        },
+        "headw": {
+          "cos_sub_host": 0.9723,
+          "cos_calib_host": 0.9158,
+          "gnorm_ratio_sub": 0.996,
+          "gnorm_ratio_calib": 1.145
+        }
+      },
+      "seed_trap": {
+        "thr_hash_1": "0b69d841bb382782",
+        "thr_hash_2": "0b69d841bb382782",
+        "seeded": true
+      },
+      "go": false
+    }
+  ],
+  "summary": {
+    "n_seeds": 3,
+    "go_count": 0,
+    "go_5of6": false,
+    "cos_calib_host_mean": 0.984,
+    "cos_sub_host_mean": 0.9918,
+    "cos_realign_gain_mean": -0.0077,
+    "spurious_force_at_headw_sub_mean": 0.969,
+    "spurious_force_at_headw_calib_mean": 1.043,
+    "byte_identical_off_all": true
+  },
+  "seeds": [
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "elapsed_s": 499.8,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_gradalign_derisk.py",
+    "--seeds",
+    "100,101,102",
+    "--B",
+    "8",
+    "--n-batches",
+    "10",
+    "--n-probes",
+    "24",
+    "--sub-read-window",
+    "64",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/gradalign_s100101102.json"
+  ]
+}

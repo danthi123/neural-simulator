@@ -1,0 +1,84 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_batches": 3,
+      "sub_read_window": 48,
+      "gain": 10.45819,
+      "gain_substrate_vs_linear_corr": 0.9436,
+      "perword_frac_fallback": 0.0,
+      "cos_sub_host_mean": 0.9926,
+      "cos_calib_host_mean": 0.9828,
+      "cos_realign_gain": -0.0098,
+      "spurious_force_at_headw_sub": 0.964,
+      "spurious_force_at_headw_calib": 0.991,
+      "byte_identical_off_cos_lesion_vs_sub": 1.0,
+      "per_W": {
+        "init": {
+          "cos_sub_host": 1.0,
+          "cos_calib_host": 0.9999,
+          "gnorm_ratio_sub": 1.0,
+          "gnorm_ratio_calib": 1.001
+        },
+        "0.25xheadw": {
+          "cos_sub_host": 0.9999,
+          "cos_calib_host": 0.9999,
+          "gnorm_ratio_sub": 0.992,
+          "gnorm_ratio_calib": 0.996
+        },
+        "0.5xheadw": {
+          "cos_sub_host": 0.9969,
+          "cos_calib_host": 0.9951,
+          "gnorm_ratio_sub": 0.949,
+          "gnorm_ratio_calib": 0.949
+        },
+        "headw": {
+          "cos_sub_host": 0.9734,
+          "cos_calib_host": 0.9363,
+          "gnorm_ratio_sub": 0.964,
+          "gnorm_ratio_calib": 0.991
+        }
+      },
+      "seed_trap": {
+        "thr_hash_1": "a45d2385f84619f0",
+        "thr_hash_2": "a45d2385f84619f0",
+        "seeded": true
+      },
+      "go": false
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "go_count": 0,
+    "go_5of6": false,
+    "cos_calib_host_mean": 0.9828,
+    "cos_sub_host_mean": 0.9926,
+    "cos_realign_gain_mean": -0.0098,
+    "spurious_force_at_headw_sub_mean": 0.964,
+    "spurious_force_at_headw_calib_mean": 0.991,
+    "byte_identical_off_all": true
+  },
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "elapsed_s": 64.0,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_gradalign_derisk.py",
+    "--seeds",
+    "42",
+    "--B",
+    "8",
+    "--n-batches",
+    "3",
+    "--n-probes",
+    "12",
+    "--sub-read-window",
+    "48",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/gradalign_smoke.json"
+  ]
+}
