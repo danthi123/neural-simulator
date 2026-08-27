@@ -1,0 +1,25 @@
+{
+ "run_id": "1787847337-3254962",
+ "runner": "research/findings/raw/_ltm_key_routing_alias_fix/build_verdict.py",
+ "argv": [
+  "research/findings/raw/_ltm_key_routing_alias_fix/build_verdict.py"
+ ],
+ "git_sha": "e1a9a6bcd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T12:15:37",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ltm_key_routing_alias_fix/verify_verdict.json"
+}
