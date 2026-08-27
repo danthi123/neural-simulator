@@ -1,0 +1,204 @@
+{
+  "results": [
+    {
+      "seed": 44,
+      "build_secs": 19.9,
+      "train_secs": 124.2,
+      "sweep_secs": 277.0,
+      "seed_hash_check": {
+        "thr_hash_1": "71f05e4a50636edf",
+        "thr_hash_2": "71f05e4a50636edf",
+        "seeded": true
+      },
+      "n_grad_steps": 80,
+      "host_matmul_on_forward": 0,
+      "forward_is_substrate": true,
+      "weight_cosine_learned_vs_copied": 0.122,
+      "gain_calib": 10.945154,
+      "gain_calib_corr": 0.9366,
+      "baseline_op": {
+        "op": "baseline",
+        "hid_gain": 120.0,
+        "read_window": 150,
+        "ou_std": 40.0,
+        "learned_recov": 0.2289,
+        "learned_agree": 0.1667,
+        "learned_spikes_per_neuron_window": 1.1259,
+        "copied_recov": 0.5351,
+        "copied_agree": 0.375,
+        "copied_spikes_per_neuron_window": 1.1264
+      },
+      "recov_spike_corr_learned": 0.0545,
+      "recov_spike_corr_copied": 0.5953,
+      "recov_learned_range": [
+        0.2074,
+        0.3408
+      ],
+      "recov_copied_range": [
+        0.0245,
+        0.871
+      ],
+      "spikes_learned_range": [
+        0.213,
+        3.498
+      ],
+      "spikes_copied_range": [
+        0.213,
+        3.492
+      ],
+      "rows": [
+        {
+          "op": "baseline",
+          "hid_gain": 120.0,
+          "read_window": 150,
+          "ou_std": 40.0,
+          "learned_recov": 0.2289,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 1.1259,
+          "copied_recov": 0.5351,
+          "copied_agree": 0.375,
+          "copied_spikes_per_neuron_window": 1.1264
+        },
+        {
+          "op": "rw60",
+          "hid_gain": 120.0,
+          "read_window": 60,
+          "ou_std": 40.0,
+          "learned_recov": 0.2305,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 0.5251,
+          "copied_recov": 0.4444,
+          "copied_agree": 0.2917,
+          "copied_spikes_per_neuron_window": 0.5237
+        },
+        {
+          "op": "rw300",
+          "hid_gain": 120.0,
+          "read_window": 300,
+          "ou_std": 40.0,
+          "learned_recov": 0.2289,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 2.186,
+          "copied_recov": 0.4834,
+          "copied_agree": 0.3333,
+          "copied_spikes_per_neuron_window": 2.1882
+        },
+        {
+          "op": "rw480",
+          "hid_gain": 120.0,
+          "read_window": 480,
+          "ou_std": 40.0,
+          "learned_recov": 0.23,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 3.498,
+          "copied_recov": 0.5307,
+          "copied_agree": 0.375,
+          "copied_spikes_per_neuron_window": 3.4917
+        },
+        {
+          "op": "gain30",
+          "hid_gain": 30.0,
+          "read_window": 150,
+          "ou_std": 40.0,
+          "learned_recov": 0.2302,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 0.213,
+          "copied_recov": 0.0245,
+          "copied_agree": 0.0,
+          "copied_spikes_per_neuron_window": 0.2134
+        },
+        {
+          "op": "gain60",
+          "hid_gain": 60.0,
+          "read_window": 150,
+          "ou_std": 40.0,
+          "learned_recov": 0.2213,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 0.5343,
+          "copied_recov": 0.0272,
+          "copied_agree": 0.0,
+          "copied_spikes_per_neuron_window": 0.5359
+        },
+        {
+          "op": "gain240",
+          "hid_gain": 240.0,
+          "read_window": 150,
+          "ou_std": 40.0,
+          "learned_recov": 0.2074,
+          "learned_agree": 0.125,
+          "learned_spikes_per_neuron_window": 2.1312,
+          "copied_recov": 0.871,
+          "copied_agree": 0.625,
+          "copied_spikes_per_neuron_window": 2.1286
+        },
+        {
+          "op": "ou10",
+          "hid_gain": 120.0,
+          "read_window": 150,
+          "ou_std": 10.0,
+          "learned_recov": 0.23,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 1.1058,
+          "copied_recov": 0.5351,
+          "copied_agree": 0.375,
+          "copied_spikes_per_neuron_window": 1.106
+        },
+        {
+          "op": "ou80",
+          "hid_gain": 120.0,
+          "read_window": 150,
+          "ou_std": 80.0,
+          "learned_recov": 0.234,
+          "learned_agree": 0.1667,
+          "learned_spikes_per_neuron_window": 1.2529,
+          "copied_recov": 0.4995,
+          "copied_agree": 0.3333,
+          "copied_spikes_per_neuron_window": 1.2568
+        },
+        {
+          "op": "ou160",
+          "hid_gain": 120.0,
+          "read_window": 150,
+          "ou_std": 160.0,
+          "learned_recov": 0.3408,
+          "learned_agree": 0.25,
+          "learned_spikes_per_neuron_window": 1.6768,
+          "copied_recov": 0.4147,
+          "copied_agree": 0.25,
+          "copied_spikes_per_neuron_window": 1.673
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "weight_cosine_mean": 0.122,
+    "recov_spike_corr_learned_mean": 0.0545,
+    "recov_spike_corr_copied_mean": 0.5953,
+    "baseline_learned_recov_mean": 0.2289,
+    "baseline_copied_recov_mean": 0.5351,
+    "baseline_spikes_per_neuron_window_learned_mean": 1.126,
+    "baseline_spikes_per_neuron_window_copied_mean": 1.126,
+    "recov_learned_range_over_all_seeds": [
+      0.2074,
+      0.3408
+    ],
+    "recov_copied_range_over_all_seeds": [
+      0.0245,
+      0.871
+    ],
+    "verdict": "AMBIGUOUS"
+  },
+  "seeds": [
+    44
+  ],
+  "backend": "numpy",
+  "elapsed_s": 437.0,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aca3627c2c69e945a/research/runners/_wkv_mouth_readout_rate_vs_bias_diagnostic.py",
+    "--seeds",
+    "44",
+    "--json",
+    "research/findings/raw/_wkv_mouth_readout_rate_vs_bias/seed44.json"
+  ]
+}
