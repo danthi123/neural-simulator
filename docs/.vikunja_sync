@@ -142,3 +142,10 @@ labeled `de-risked` (10); closed #151 (the 5-lane catalog-derisk parallel push) 
 verdict (joint-attention GO -> #153, inductive-coverage PARTIAL, cls-consolidation GO -> #154, metacog
 spiking_acc NO-GO, E-morph NO-GO/REFUTED). All other 2026-08-26 wave-3 flip tasks (#153-#170, #133, #143)
 were already correctly reconciled on the board prior to this cycle -- verified, not re-touched.
+
+## 2026-08-27  organ-read-extension
+board reconciled for the one-brain merge framework organ-READ extension landing (finding
+2026-08-27-onebrain-merge-framework-organ-read-extension.md): created #176 (organ-read byte-identity
+3/7 Group-A, comprehension added as a frozen-forward-pass shared= seam; MIGRATION gate, 6-seed GO),
+labeled `Big picture` (8), priority 2. Related open tasks #171 (twopool FULL organ-read) and #95
+(per-region tuning for two-organ-group merge) are a DISTINCT pool/track -- left as-is, not re-touched.

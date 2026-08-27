@@ -557,6 +557,18 @@ for now (a second shared pool for them is the named next step). Determinism 9/9,
 (`2026-08-13-onebrain-production-default-flip-SCOPED.md`)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
+**2026-08-27 — one-brain MERGE framework, ORGAN-READ byte-identity now 3/7 Group-A organs (6/6 GO).** The declarative
+N-organ merge engine (`research/runners/onebrain_merge_framework.py`) proves each registered organ's REAL production
+read is byte-identical whether the organ is alone or co-resident on ONE shared spiking bridge. This rung extends the
+organ-READ gate from 2 organs (self_schema + d6_multiref_wm) to a THIRD — the D4 COMPREHENSION monitor (a frozen
+Wong-Wang WTA forward pass: installed cue->role validities, plasticity frozen, read the sel-pool firing margin) —
+`read_maxerr` 0.0 + `answer_same` True every seed, co-resident with all 7 organs (N=4968). Substrate-init byte-identity
+stays 7/7. The other four organ-read deferrals now carry a PRECISE per-organ seam map (curiosity: neuromod-subsystem +
+per-neuron-OU-seed, the one `sim/` seam; source_provenance: per-query Hebbian-encode in the read path; prospective_memory:
+multi-turn stateful hold; causal_whatif: read-time live composer + build-time STDP/DA). HONEST boundary unchanged: this is
+the MIGRATION gate (zero cross-synapses), NOT the one-brain INTEGRATION goal.
+(`2026-08-27-onebrain-merge-framework-organ-read-extension.md`)
+
 **⚖️ HONEST READING (2026-08-13 — square the celebratory batch log below with reality; the FORWARD plan is the refreshed
 MASTER ROADMAP `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §0, not this log).** The dated entries below record
 what LANDED — read them as HISTORY. The non-inflated state: ~12 spiking organ reads are default-on in production, but

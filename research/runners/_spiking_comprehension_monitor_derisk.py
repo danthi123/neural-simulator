@@ -188,7 +188,7 @@ def roc_auc(scores, labels):
     return float((r_pos - n1 * (n1 + 1) / 2.0) / (n1 * n0))
 
 
-def _build_comp(seed, *, dt_ms=0.5, homeostasis=False, per_region_thresh=False):
+def _build_comp(seed, *, dt_ms=0.5, homeostasis=False, per_region_thresh=False, shared=None):
     """Build the installed-weight, frozen-plasticity comprehension competition.
 
     dt_ms / homeostasis / per_region_thresh are ADDITIVE and DEFAULT-PRESERVING: the defaults
@@ -199,7 +199,10 @@ def _build_comp(seed, *, dt_ms=0.5, homeostasis=False, per_region_thresh=False):
     heterogeneity ON) that the config-superset production merge de-risk sweeps -- reconciling the
     single global dt_ms / enable_homeostasis the Wong-Wang and surprise builders set differently."""
     comp = SpikingRoleCompetition(seed=seed, dt_ms=dt_ms, homeostasis=homeostasis,
-                                  per_region_thresh=per_region_thresh)
+                                  per_region_thresh=per_region_thresh, shared=shared)
+    # Install the pre-validated cue->role validities + freeze the cue plasticity gates. On the SHARED pool this
+    # overwrites the base-pathway cue->role weights (regenerated at cue_to_role_init) with the installed validities
+    # on the pool's own edges -- deterministic + identical merged-vs-coresident, so the read stays byte-identical.
     for c, w in INSTALLED_CUE_WEIGHTS.items():
         comp.set_cue_weight(c, w)
     comp.freeze_all_cue_plasticity()

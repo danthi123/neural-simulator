@@ -543,11 +543,13 @@ WORLDMODEL = OrganDescriptor(
 #  GROUP A — the declarative-NOW organs (DESIGN §5). Each is a registry ROW: a `spec_fn` that reuses the
 #  organ's OWN de-risk builder (throwaway bridge, we read its BrainRegion specs) + `param_het` where the
 #  organ's standalone uses parameter-heterogeneity (reconciled by the name-keyed per-region seam).
-#  ORGAN-READ status (2026-08-27): two of these — self_schema + d6_multiref_wm — now take a `shared=` kwarg and
-#  RUN their real read pipeline on the wired pool byte-identically (supports_shared=True; the descriptors carry
-#  organ_cls/read_fn/answer_fn + idx_fn + explicit_wiring_fn/region_flags). The other five are substrate-init GO
-#  but their read still needs a seam (GROUP_A_ORGANREAD_DEFERRED names each) — for those the batched gate stays the
-#  SUBSTRATE-INIT co-residence-invariance migration gate.
+#  ORGAN-READ status (2026-08-27): THREE of these — self_schema + d6_multiref_wm + comprehension — now take a
+#  `shared=` kwarg and RUN their real read pipeline on the wired pool byte-identically (supports_shared=True; the
+#  descriptors carry organ_cls/read_fn/answer_fn + config + idx_fn/explicit_wiring_fn/region_flags as needed).
+#  comprehension is a FROZEN forward pass (installed cue->role validities + frozen gates -> the Wong-Wang WTA read
+#  never mutates a weight). The other four are substrate-init GO but their read still needs a seam
+#  (GROUP_A_ORGANREAD_DEFERRED names each precisely) — for those the batched gate stays the SUBSTRATE-INIT
+#  co-residence-invariance migration gate.
 #
 #  Builders are imported LAZILY inside each spec_fn (avoid a heavy import at module load + circular imports).
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -758,6 +760,60 @@ def _d6_answer(organ):
     return tuple(res["recovered"].get(r) for r in range(res["n_referents"]))
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  D4 COMPREHENSION — the SpikingRoleCompetition Wong-Wang WTA read (a FROZEN forward pass). The organ's read
+#  drives the SEMANTIC cue votes for a transitive's two nouns, settles the sel_agent/sel_patient WTA under
+#  mutual inhibition, and reads the firing margin |agentEv_0 - agentEv_1| off cp_firing_states. Plasticity is
+#  frozen (the cue->role validities are INSTALLED, the cue gates are 0), so the read never mutates a weight and is
+#  a clean function of the frozen substrate slice -- exactly the closable shape self_schema/d6 have.
+# The config UNIONs compatibly with self_schema/d6 (enable_nmda ON -- the sel_* regions carry per-region
+# enable_nmda=True in the spec; every plasticity/noise flag OFF, matching the frozen pool). No MergeConflict: the
+# keys it shares with self_schema/d6 (enable_nmda + the plasticity-OFF flags) agree exactly. Homeostasis stays OFF
+# (the frozen-pool value); the read runs at the pool's dt=1.0 (the de-risk's declared merge operating point).
+_COMPREHENSION_CONFIG = {
+    "enable_nmda": True,
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, **_NOISE_OFF,
+}
+
+
+def _comprehension_organ(seed, shared):
+    from research.runners.comprehension_production_organ import ComprehensionProductionOrgan
+    return ComprehensionProductionOrgan(seed=seed, shared=shared)
+
+
+def _comprehension_battery(seed):
+    """A small deterministic in-scope battery (well- + ill-formed transitives) for the read, from the de-risk's
+    OWN battery builder so the items are guaranteed cue-covered + reproducible per seed."""
+    from research.runners._spiking_comprehension_monitor_derisk import build_battery
+    return build_battery(int(seed), n_per_cond=1)
+
+
+def _comprehension_reads(organ):
+    """The organ's REAL spiking comprehension read: the calibrated well-vs-ill threshold + the repair floor/lean,
+    plus the per-item SEMANTIC sel-pool margin |agentEv_0 - agentEv_1| read off cp_firing_states for each battery
+    item. Byte-identical merged-vs-coresident == the whole Wong-Wang WTA read is co-residence-invariant."""
+    organ.ensure_built()
+    out = {
+        "threshold": float(organ.threshold),
+        "role_floor": float(organ.role_floor),
+        "lean_margin": float(organ.lean_margin),
+        "calib.mean_well": float(organ.calib["mean_well"]),
+        "calib.mean_ill": float(organ.calib["mean_ill"]),
+    }
+    for i, (_lab, _tag, n0, v, n1) in enumerate(_comprehension_battery(organ.seed)):
+        out[f"margin_{i}"] = float(organ.read_margin(n0, v, n1))
+    return out
+
+
+def _comprehension_answer(organ):
+    """The rendered read-out: the per-item `comprehended` decision (margin >= threshold) over the battery."""
+    organ.ensure_built()
+    return tuple(bool(organ.read_margin(n0, v, n1) >= organ.threshold)
+                 for (_lab, _tag, n0, v, n1) in _comprehension_battery(organ.seed))
+
+
 GROUP_A = [
     OrganDescriptor(key="causal_whatif",
                     regions=("evt",),
@@ -767,7 +823,10 @@ GROUP_A = [
                     regions=("sel_agent", "sel_FS_agent", "sel_patient", "sel_FS_patient",
                              "cue_position_pos", "cue_position_neg", "cue_animacy_pos", "cue_animacy_neg",
                              "cue_verbfit_pos", "cue_verbfit_neg", "cue_lexbias_pos", "cue_lexbias_neg"),
-                    spec_fn=_spec_comprehension),
+                    spec_fn=_spec_comprehension,
+                    config=_COMPREHENSION_CONFIG,
+                    organ_cls=_comprehension_organ, read_fn=_comprehension_reads,
+                    answer_fn=_comprehension_answer, supports_shared=True),
     OrganDescriptor(key="self_schema",
                     regions=("workspace", "workspace_fs", "self_schema"),
                     spec_fn=_spec_self_schema, param_het=True,
@@ -812,31 +871,56 @@ GROUP_A_DEFERRED = {
                      "neuromodulator triad drives the read. Group-B OU/neuromod seam.",
 }
 
-# ORGAN-READ deferrals — the 5 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
+# ORGAN-READ deferrals — the 4 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
 # READ pipeline is not YET a clean function of the frozen shared substrate. Each names the concrete engine/wrapper
-# seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, closed for the 2
-# frozen bare-substrate organs; these 5 need a further seam and DO NOT block the batch).
+# seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, closed for THREE
+# frozen-forward-pass organs — self_schema, d6_multiref_wm, comprehension; these 4 need a further seam and DO NOT
+# block the batch). Refined 2026-08-27 from a per-organ read-path trace (each seam is now a precise, mapped edit).
 GROUP_A_ORGANREAD_DEFERRED = {
-    "curiosity": "NEUROMODULATOR-SUBSYSTEM + plasticity config seam — the read needs the `curiosity` neuromodulator "
-                 "(from_novelty -> ASK excitability_drive) + a spiking-SNc RPE critic (enable_stdp + "
-                 "enable_reward_modulation + gabab). Those global plasticity/neuromod flags CONFLICT with the frozen "
-                 "pool; needs a per-region neuromodulator/plasticity seam (Group-B neuromod).",
-    "source_provenance": "NEUROMODULATOR-CONTEXT-LINE seam — the read rides two encoding-context neuromod lines "
-                         "(ctx_perceived/ctx_generated) each gating a zero-init Hebbian episode->provenance trace "
-                         "(enable_hebbian at encode). The `ProvenanceBrain` wrapper must accept an injected bridge, "
-                         "and the hebbian-encode config conflicts with the frozen pool.",
-    "comprehension": "WRAPPER + OPERATING-POINT seam — the read is tied to the `SpikingRoleCompetition` wrapper "
-                     "(installed cue weights + per-cue index maps); it must accept an injected bridge+slice, and its "
-                     "merge operating point (dt=1.0, homeostasis ON, per-region-thresh ON) must reconcile the global "
-                     "enable_homeostasis the frozen pool holds OFF.",
-    "prospective_memory": "STATEFUL WRAPPER seam — a `SFANmdaProspectiveMemory` (HomeostaticProspectiveMemory "
-                          "hierarchy) with a homeostatic-bias calibration + SFA + dendritic plateau + a one-shot "
-                          "Hebbian FORMATION event, read across MULTIPLE turns (form -> hold -> present-cue). Needs "
-                          "the hierarchy to accept an injected bridge + a stateful multi-turn read protocol.",
-    "causal_whatif": "LIVE-COMPOSER GROUNDING + DA/STDP seam — the read enumerates events + moat-confirms answers "
-                     "against a live RFPhasorComposer, and the forward model trains temporal-order STDP + phasic-DA "
-                     "at build (enable_stdp + enable_reward_modulation, conflicting with the frozen pool). Needs a "
-                     "shared/stub composer surface + a per-region plasticity/DA seam.",
+    "curiosity": "NEUROMODULATOR-SUBSYSTEM + OU seam — the production read is a FROZEN forward pass (reward_learning "
+                 "forced 0, no weight mutation; the spiking-SNc/reward-critic is BUILT but NEVER exercised by the "
+                 "read, so enable_stdp/enable_reward_modulation are vestigial for it). The ONLY read-load-bearing "
+                 "dependency is the `curiosity` NEUROMODULATOR SUBSYSTEM (enable_neuromodulator_subsystem + a "
+                 "from_novelty production rule driving excitability_drive on group:ask — the ASK pool has NO afferent "
+                 "pathway, so it fires ONLY via the modulator). PLUS enable_ou_process defaults ON and perturbs the "
+                 "ASK read (averaged over 4 reps), and the global OU RNG is index-order => co-residence-DEPENDENT. "
+                 "Seam: enable+register the curiosity modulator on the pool (a global-subsystem config seam — verify "
+                 "a group:ask-scoped modulator leaves every co-resident slice byte-identical) + force OU off (or a "
+                 "per-neuron-seeded OU stream, a sim/ edit). The neuromod subsystem's internals live in sim/.",
+    "source_provenance": "PER-QUERY HEBBIAN-ENCODE seam — the read is encode(fact,provenance)+recall(fact); the "
+                         "ENCODE mutates cp_connections (a zero-init episode->prov Hebbian trace, gate `prov_learn`) "
+                         "and runs INLINE in the per-turn answer path on FIRST-encounter of a key (brain_agent calls "
+                         "encode_fact then judge_fact every turn), NOT once at build. recall() alone is a clean frozen "
+                         "forward pass. `ProvenanceBrain` hardcodes its own bridge (needs a shared= kwarg); recall() "
+                         "does `cp_external_input_current[:]=0` (stomps co-residents -> needs read_isolation). Its "
+                         "enable_nmda=False reconciles via the existing per-region mask (its regions opt OUT), but "
+                         "enable_hebbian_learning=True is GLOBAL and conflicts with the frozen pool. Seam: move the "
+                         "Hebbian encode to a per-region-gated BUILD-time step (recall-only read), OR a global-hebbian "
+                         "toggle with a universal gain-0 freeze of every non-prov edge during the encode.",
+    "prospective_memory": "MULTI-TURN-STATEFUL + FORMATION-mutation seam — NOT a single-call drive->settle->read. The "
+                          "faculty holds an intention across an a-priori-unbounded number of INDEPENDENT production "
+                          "turns (form -> hold through arbitrary intervening turns -> cue); the self-sustaining "
+                          "cortex<->dlpfc attractor + per-neuron SFA trace must persist UNRESET across those separate "
+                          "calls (`_reset_dynamics` fires only at a fresh formation), so it cannot be reconstructed "
+                          "from a rest snapshot per call. AND the default-ON formation (`form_intention_hebbian`) "
+                          "MUTATES cp_connections per FORMATION turn. Config (plastic_internal=False/pathway "
+                          "plastic=False, enable_nmda=True, ou off) IS frozen-pool-compatible per-region; SFA/plateau "
+                          "are host current-injection proxies (per-neuron state, fine). Seam: the "
+                          "SFANmda/Homeostatic hierarchy must accept an injected bridge + a STATEFUL multi-turn read "
+                          "protocol (persist live state across turns), plus (default path) a per-formation-turn "
+                          "weight-mutation seam; the `BRAIN_PMEM_HEBBIAN=0` escape gives a build-time-frozen binding "
+                          "but the multi-turn-hold persistence remains the blocker.",
+    "causal_whatif": "LIVE-COMPOSER (read-time) + BUILD-TIME DA/STDP-TRAIN seam — two independent blockers. (1) The "
+                     "read takes a live `RFPhasorComposer` as a per-call argument; `_recalled(composer,e)` "
+                     "(comp.query_patient) gates confirmed/confab/answer on EVERY what_if/why call (the substrate "
+                     "forward-pass diagnostics predicts_D/D_rate/cause ARE composer-independent + would run "
+                     "byte-identically once evt is trained, but the emitted ANSWER is 100% composer-load-bearing). "
+                     "(2) build_forward_model TRAINS temporal-order STDP + phasic-DA (three-factor, "
+                     "enable_stdp+enable_reward_modulation ON) at BUILD then freezes; the wire=True pool never runs "
+                     "that training, so the evt slice would be untrained. Seam: a stub/shared composer surface "
+                     "exposing query_patient faithfully + a per-region STDP+DA build-time training seam (train the evt "
+                     "slice while the pool stays frozen elsewhere). enable_nmda is OFF for this organ (its region "
+                     "opts out of the mask), which the existing per-region NMDA mask already handles.",
 }
 
 GROUP_A_KEYS = [d.key for d in GROUP_A]

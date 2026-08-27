@@ -168,8 +168,14 @@ class ComprehensionProductionOrgan:
     Each read drives the SEMANTIC cues for the two nouns, settles the Wong-Wang sel WTA, and reads the spiking
     margin `|agentEv_0 - agentEv_1|` off `cp_firing_states`. Cheap (~0.1-0.3 s/turn CPU)."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): when a MergedPool is injected, the
+        # comprehension `SpikingRoleCompetition` runs on the pool's sel_*/sel_FS_*/cue_* SLICE of the SHARED spiking
+        # bridge (already built, wired per-region-seamed, and settled-to-rest by the pool). The read is a FROZEN
+        # forward pass (plasticity gates 0, weights installed), so nothing mutates a co-resident slice; each read is
+        # wrapped in the pool's read_isolation. None -> the organ builds its own comp bridge exactly as today.
+        self._shared = shared
         self._built = False
         self.comp = None
         self.comp_lesion = None
@@ -179,10 +185,27 @@ class ComprehensionProductionOrgan:
         self.calib = None
         self._rest = {}          # comp-bridge id -> (rest_v, rest_u) resting snapshot for a hard per-turn reset
 
+    def _guard(self):
+        """The pool's read_isolation on the SHARED path (restores every co-resident organ's slice at the end so
+        only comprehension's slice may evolve during a read), else a no-op context."""
+        import contextlib
+        if self._shared is not None:
+            return self._shared.read_isolation("comprehension")
+        return contextlib.nullcontext()
+
     def _snapshot_rest(self, comp):
         """Snapshot a comp's resting state (after a brief settle) so every per-turn read starts IDENTICAL — the
         NMDA-slow Wong-Wang sel pools do not fully quiesce in the internal 8-step soft reset, so without a hard
-        reset the margin would depend on the PRIOR turn. Mirrors the surprise de-risk's _hard_reset protocol."""
+        reset the margin would depend on the PRIOR turn. Mirrors the surprise de-risk's _hard_reset protocol.
+
+        SHARED path: the pool already settled the WHOLE bridge to a quiescent rest and snapshotted it (`pool.snap`),
+        so the rest is that snapshot's (v,u) -- restoring it in _hard_reset returns EVERY slice to rest (co-residents
+        included, so no clobber), and no extra settle steps footprint the shared bridge."""
+        if self._shared is not None and self._shared.snap is not None:
+            snap = self._shared.snap
+            self._rest[id(comp)] = (np.asarray(snap["cp_membrane_potential_v"]).copy(),
+                                    np.asarray(snap["cp_recovery_variable_u"]).copy())
+            return
         b = comp.bridge
         b.cp_external_input_current[:] = 0.0
         for _ in range(40):
@@ -207,7 +230,9 @@ class ComprehensionProductionOrgan:
     def ensure_built(self):
         if self._built:
             return
-        self.comp = _build_comp(self.seed)             # intact learned cue->role competition
+        # SHARED path: build the comp as a view over the pool slice (installs the cue validities + freezes the cue
+        # plasticity gates on the pool's own edges). None -> its own learned cue->role competition, unchanged.
+        self.comp = _build_comp(self.seed, shared=self._shared)
         self._snapshot_rest(self.comp)
         # calibrate the well-vs-ill threshold from a small deterministic battery (AUC=1.000 => a clean gap). Each
         # item is read from the SAME hard-reset resting state (as production reads are), so the threshold is on
@@ -219,13 +244,16 @@ class ComprehensionProductionOrgan:
         # do, so `abs(a0 - a1)` reproduces the D4 margin EXACTLY and consumes the substrate RNG IDENTICALLY — the
         # D4 threshold (and every later production margin read) is unchanged. A SEPARATE read pass would advance the
         # bridge's stochastic state and perturb the production margins, so we must reuse this one.
+        # SHARED path: the whole calibration is wrapped in ONE read_isolation so the co-resident slices are restored
+        # (the per-noun reads hard-reset comprehension's slice to pool.snap first, so ordering within is immaterial).
         well_pairmax = []
-        for (lab, _tag, n0, v, n1) in items:
-            a0, a1 = self._read_per_noun(self.comp, n0, v, n1)
-            m = abs(a0 - a1)                             # == self._read(...) byte-identical (same call sequence)
-            (well if lab == 1 else ill).append(m)
-            if lab == 1:
-                well_pairmax.append(max(abs(a0), abs(a1)))
+        with self._guard():
+            for (lab, _tag, n0, v, n1) in items:
+                a0, a1 = self._read_per_noun(self.comp, n0, v, n1)
+                m = abs(a0 - a1)                         # == self._read(...) byte-identical (same call sequence)
+                (well if lab == 1 else ill).append(m)
+                if lab == 1:
+                    well_pairmax.append(max(abs(a0), abs(a1)))
         mean_well = float(np.mean(well)) if well else 0.30
         min_well = float(np.min(well)) if well else 0.30
         mean_ill = float(np.mean(ill)) if ill else 0.12
@@ -273,7 +301,12 @@ class ComprehensionProductionOrgan:
         `lesion` uses the zeroed-cue competition (-> ~chance)."""
         self.ensure_built()
         comp = self._lesion_comp() if lesion else self.comp
-        return self._read(comp, n0, v, n1)
+        # SHARED path (intact read): guard the sel-WTA settle so the co-resident slices are restored afterwards.
+        # The lesion twin is its OWN bridge (built standalone), so it needs no pool guard.
+        if lesion:
+            return self._read(comp, n0, v, n1)
+        with self._guard():
+            return self._read(comp, n0, v, n1)
 
     def competent(self, n0: str, v: str, n1: str, brain_vocab=None) -> bool:
         """Is the monitor COMPETENT to judge this transitive? It reads a RELIABLE signal only when the cues are
@@ -346,7 +379,11 @@ class ComprehensionProductionOrgan:
 
         # ── ROLE branch (spiking, load-bearing): the roles are covered but did not separate. ──
         comp = self._lesion_comp() if lesion else self.comp
-        a0, a1 = self._read_per_noun(comp, n0, v, n1)
+        if lesion:
+            a0, a1 = self._read_per_noun(comp, n0, v, n1)
+        else:
+            with self._guard():                          # SHARED path: restore co-resident slices after the read
+                a0, a1 = self._read_per_noun(comp, n0, v, n1)
         pair_max = max(abs(a0), abs(a1))
         net_lean = a0 + a1
         base.update(a0=float(a0), a1=float(a1), pair_max=float(pair_max), net_lean=float(net_lean),

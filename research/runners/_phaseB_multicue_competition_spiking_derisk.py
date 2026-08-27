@@ -201,7 +201,13 @@ class SpikingRoleCompetition:
                  hebbian_lr=0.02, hebbian_max=60.0,
                  with_snc=False, n_snc=40,
                  dt_ms=0.5, homeostasis=False, per_region_thresh=False,
-                 verbose=False):
+                 verbose=False, shared=None):
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): when a MergedPool is injected, the
+        # sel_*/sel_FS_*/cue_*_{pos,neg} regions are this monitor's SLICE of the SHARED spiking bridge (already
+        # built + wired by the pool's per-region-seamed inject, and settled-to-rest). The read (_noun_role_rates:
+        # drive the cue votes -> settle the Wong-Wang WTA -> read sel firing off cp_firing_states) runs on that
+        # slice; a co-resident organ is protected by the pool's read_isolation. None -> its own bridge, unchanged.
+        self._shared = shared
         # dt_ms / homeostasis / per_region_thresh: ADDITIVE, DEFAULT-PRESERVING (0.5 / False / False ->
         # byte-identical to the standalone comprehension monitor). They exist so the SAME circuit can be
         # built at the ONE-BRAIN MERGE shared operating point (dt=1.0, homeostasis ON, per-region threshold
@@ -222,6 +228,23 @@ class SpikingRoleCompetition:
         self.with_snc = bool(with_snc)
         self.n_snc = int(n_snc)
         self.verbose = verbose
+
+        # ONE-BRAIN MERGE shared-substrate path: adopt the pool bridge slice, discover the sel/cue index maps from
+        # the pool's region_manager (the pool built these regions from THIS class's spec + wired them per-region-
+        # seamed), and return. The installed cue->role validities + the frozen plasticity gates are applied by the
+        # caller (_build_comp) exactly as in the standalone flow, so the read is byte-identical merged-vs-coresident.
+        if shared is not None:
+            shared.ensure_built()
+            self.bridge = shared.bridge
+            rm = self.bridge.region_manager
+            self._sel_idx = {r: np.asarray(rm.indices(f"sel_{r}"), dtype=np.int64) for r in ROLES}
+            self._cue_idx = {(c, sgn): np.asarray(rm.indices(f"cue_{c}_{sgn}"), dtype=np.int64)
+                             for c in CUES for sgn in ("pos", "neg")}
+            self._snc_idx = None
+            self._n = self.bridge.core_config.num_neurons
+            if verbose:
+                print(f"[spiking role-competition | SHARED] {self._n} neurons on the merged pool", flush=True)
+            return
 
         # ---- regions ----
         regions = []
