@@ -76,6 +76,7 @@ if str(_REPO) not in sys.path:
 import numpy as np  # noqa: E402
 
 from sim.backend import to_host, get_backend  # noqa: E402
+from sim.kernels import fused_btsp_update  # noqa: E402  -- REUSE the substrate's BTSP kernel (gap#4, Bittner-Magee 2017)
 from research.runners._gap5_ecker_adex_ca3_stdp_band_derisk import (  # noqa: E402
     build_store, encode, rest_and_replay, measure_band, _score_periods, _load_weights,
 )
@@ -139,6 +140,90 @@ def consolidate_by_replay(store, steps, seed, *, swr_period, cue_pa, cue_steps, 
                 changed=bool(not np.array_equal(w0, w1)))
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# CONSOLIDATE-BY-REPLAY, BTSP-DIRECTIONAL-WRITE variant (2026-08-27). Replaces the substrate's ms-coincidence STDP
+# (which SYMMETRIZES the band -- reverse potentiates ~6x, the banked NO-GO) with a DIRECTIONAL BTSP write: a SECONDS-long
+# CAUSAL presynaptic eligibility trace x an all-or-none plateau instructive POST signal, fed to the substrate's OWN
+# fused_btsp_update kernel (dw = eta*Etilde_pre*IS_post*(w_max-w), PURE potentiation -- NO depression arm).
+#
+# WHY THIS IS DIRECTIONAL where ms-STDP is not. The eligibility e_pre is a CAUSAL, one-sided decaying trace: it is only
+# nonzero AFTER a cell fires. For a forward edge A->B (A leads B by the replay lag), when B's plateau gates the write
+# e_pre[A] is already high -> LTP. For a reverse edge B->A, when A's plateau gates the write e_pre[B] is still ~0 (B has
+# not fired yet); the reverse edge can only ride A's plateau TAIL overlapping B's later eligibility, so dw_rev/dw_fwd ~
+# exp(-lag/plat_tau). With PURE potentiation the WORST case is symmetric (rev==fwd); it structurally CANNOT make rev>>fwd
+# the way the antisymmetric STDP window did on the overlapping self-driven cascade. The op-point is plat_tau vs the lag.
+# Grounded: Gonzalez-Lacefield 2023 bioRxiv (BTSP = an ASYMMETRIC kernel of bidirectional changes around the plateau;
+# inputs in a seconds-long window preceding+following it potentiate) + Bittner-Magee 2017 + Milstein-Magee 2021.
+# seed_on=False = LESION-THE-REPLAY (identical: no ignition -> no replay -> no fwd-ordered pairs -> the write is a null).
+# ----------------------------------------------------------------------------------------------------------------------
+def consolidate_by_btsp_replay(store, steps, seed, *, swr_period, cue_pa, cue_steps, cue_frac, dt, seed_on=True,
+                               elig_tau_ms, plat_tau_ms, eta, w_min, w_max):
+    cp = store["cp"]; bridge = store["bridge"]; pc = store["pc"]; asm_local = store["asm_local"]; m = store["m_asm"]
+    asm_size = store["asm_size"]
+    fwd_pos = store["fwd_pos"]; rev_pos = store["rev_pos"]
+    row, col = store["pre_post"]                         # global-neuron pre/post index per edge (COO == .data order)
+    bet_pos = np.concatenate([fwd_pos, rev_pos])         # the PLASTIC between edges (within edges stay frozen)
+    bet_pos_dev = cp.asarray(bet_pos.astype(np.int64))
+    row_bet = cp.asarray(row[bet_pos].astype(np.int64))  # presynaptic (source) neuron of each between edge
+    col_bet = cp.asarray(col[bet_pos].astype(np.int64))  # postsynaptic (target) neuron of each between edge
+    # SAME cue-cell subsets + assembly-choice stream as the read/STDP-write -> consistent ignition.
+    cell_rng = np.random.default_rng(int(seed) * 314159 + 17)
+    k_cells = max(1, int(round(float(cue_frac) * asm_size)))
+    cue_cells_dev = []
+    for a_loc in asm_local:
+        sub = np.sort(cell_rng.choice(a_loc, min(k_cells, len(a_loc)), replace=False))
+        cue_cells_dev.append(cp.asarray(pc[sub], dtype=cp.int64))
+    choice_rng = np.random.default_rng(int(seed) * 271828 + 23)
+
+    nN = int(bridge.cp_firing_states.size)
+    e_pre = cp.zeros(nN, dtype=cp.float32)               # CAUSAL seconds-long presynaptic eligibility (latch-then-decay)
+    p_post = cp.zeros(nN, dtype=cp.float32)              # all-or-none plateau instructive POST signal (latch-then-decay)
+    decay_e = cp.float32(np.exp(-dt / max(elig_tau_ms, 1e-9)))
+    decay_p = cp.float32(np.exp(-dt / max(plat_tau_ms, 1e-9)))
+    eta_d = cp.float32(eta); wmin_d = cp.float32(w_min); wmax_d = cp.float32(w_max)
+
+    w0 = np.asarray(to_host(bridge.cp_connections.data)).copy()
+    dw_half = []
+    half = max(1, steps // 2)
+    bridge.core_config.enable_stdp = False               # the write is done HERE (host-side BTSP); substrate STDP OFF
+    bridge.runtime_state.current_time_ms = 0.0
+    cur_k = None; n_env = 0
+    for t in range(steps):
+        bridge.cp_external_input_current[:] = 0.0
+        phase = t % swr_period
+        if phase == 0 and seed_on:
+            cur_k = int(choice_rng.integers(0, m)); n_env += 1
+        if seed_on and phase < cue_steps and cur_k is not None:
+            bridge.cp_external_input_current[cue_cells_dev[cur_k]] += float(cue_pa)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += float(dt)   # ADVANCE THE CLOCK (kept identical to the STDP variant)
+        fired = bridge.cp_firing_states.astype(cp.float32)
+        e_pre = cp.maximum(e_pre * decay_e, fired)           # causal one-sided eligibility -> the DIRECTIONALITY source
+        p_post = cp.maximum(p_post * decay_p, fired)          # all-or-none plateau -> the instructive gate
+        w_edge = bridge.cp_connections.data[bet_pos_dev]
+        w_new = fused_btsp_update(w_edge, e_pre[row_bet], p_post[col_bet], eta_d, wmin_d, wmax_d)  # REUSE substrate kernel
+        bridge.cp_connections.data[bet_pos_dev] = w_new
+        if t + 1 == half:
+            wh = np.asarray(to_host(bridge.cp_connections.data))
+            dw_half.append(float((wh[fwd_pos] - w0[fwd_pos]).mean()))
+    w1 = np.asarray(to_host(bridge.cp_connections.data))
+    dw_fwd_first = dw_half[0] if dw_half else 0.0
+    dw_fwd_total = float((w1[fwd_pos] - w0[fwd_pos]).mean())
+    return dict(n_env=n_env, w_after=w1.copy(),
+                dw_fwd=dw_fwd_total, dw_rev=float((w1[rev_pos] - w0[rev_pos]).mean()),
+                dw_fwd_first_half=dw_fwd_first, dw_fwd_second_half=float(dw_fwd_total - dw_fwd_first),
+                changed=bool(not np.array_equal(w0, w1)))
+
+
+def _consolidate(store, steps, seed, a, *, seed_on, cons_kw):
+    """Dispatch to the STDP (default, byte-identical) or BTSP-directional write per --write-rule."""
+    if a.write_rule == "btsp":
+        return consolidate_by_btsp_replay(store, steps, seed, seed_on=seed_on,
+                                          elig_tau_ms=a.btsp_elig_tau, plat_tau_ms=a.btsp_plat_tau,
+                                          eta=a.btsp_eta, w_min=0.0, w_max=a.btsp_w_max, **cons_kw)
+    return consolidate_by_replay(store, steps, seed, seed_on=seed_on, **cons_kw)
+
+
 def _read(store_kw_build, seed, w_host, a, *, cue_pa, cue_frac, tag):
     """Fresh store, load weights, replay READ (STDP OFF -> frozen). Returns forward-replay quality."""
     s = build_store(seed, **store_kw_build)
@@ -193,7 +278,7 @@ def one_seed(seed, a):
 
     # 3. CONSOLIDATE-BY-REPLAY (seeded): STDP on, forward-ordered replay deepens the band
     st_c = build_store(seed, **bkw); _load_weights(st_c, w_learned)
-    cons = consolidate_by_replay(st_c, a.consol_steps, seed, seed_on=True, **cons_kw)
+    cons = _consolidate(st_c, a.consol_steps, seed, a, seed_on=True, cons_kw=cons_kw)
     w_consol = cons["w_after"]
     out["consolidate"] = dict(n_env=cons["n_env"], dw_fwd=cons["dw_fwd"], dw_rev=cons["dw_rev"],
                               dw_fwd_first_half=cons["dw_fwd_first_half"], dw_fwd_second_half=cons["dw_fwd_second_half"],
@@ -213,7 +298,7 @@ def one_seed(seed, a):
 
     # 5. LESION-THE-REPLAY: NO-SEED consolidation (STDP on, clock advances, NO ignition -> no replay)
     st_n = build_store(seed, **bkw); _load_weights(st_n, w_learned)
-    cons_ns = consolidate_by_replay(st_n, a.consol_steps, seed, seed_on=False, **cons_kw)
+    cons_ns = _consolidate(st_n, a.consol_steps, seed, a, seed_on=False, cons_kw=cons_kw)
     w_noseed = cons_ns["w_after"]
     band_noseed = measure_band_from(w_noseed, st_n)
     rd_weak_noseed = _read(bkw, seed, w_noseed, a, cue_pa=weak_pa, cue_frac=a.weak_cue_frac, tag="weak_noseed")
@@ -270,6 +355,16 @@ def main():
     ap.add_argument("--stdp-a-plus", type=float, default=0.05)
     ap.add_argument("--stdp-a-minus", type=float, default=0.06)
     ap.add_argument("--stdp-tau", type=float, default=20.0)
+    # REPLAY-TIME WRITE RULE: 'stdp' = the substrate's ms-coincidence STDP (default, byte-identical to the banked NO-GO);
+    # 'btsp' = the DIRECTIONAL BTSP-eligibility write (seconds-long causal eligibility x an all-or-none plateau, reusing
+    # sim.kernels.fused_btsp_update). btsp-* args are INERT unless --write-rule btsp.
+    ap.add_argument("--write-rule", choices=["stdp", "btsp"], default="stdp")
+    ap.add_argument("--btsp-elig-tau", type=float, default=20.0, help="tau_ms of the CAUSAL presynaptic eligibility "
+                    "(long vs the replay lag so the earlier-firing pre stays eligible; short vs the inter-event gap)")
+    ap.add_argument("--btsp-plat-tau", type=float, default=6.0, help="tau_ms of the all-or-none plateau instructive POST "
+                    "signal (the directionality knob: dw_rev/dw_fwd ~ exp(-lag/plat_tau) -> keep < the replay lag)")
+    ap.add_argument("--btsp-eta", type=float, default=0.02, help="BTSP learning rate (folds the eligibility/plateau gain)")
+    ap.add_argument("--btsp-w-max", type=float, default=900.0, help="BTSP saturation ceiling (w_max-w); match stdp_w_max")
     # ENCODE (moderate: fewer laps than the band-GO's 30, so there is headroom to deepen by replay)
     ap.add_argument("--n-laps", type=int, default=14)
     ap.add_argument("--enc-step", type=int, default=80)
@@ -299,7 +394,9 @@ def main():
     a = ap.parse_args()
 
     _, backend = get_backend()
-    print(f"[ecker-ltu] Ecker AdEx CA3 replay-driven learn-through-use | n_mem={a.n_mem} asm={a.asm_size} "
+    _wr = (f"WRITE=btsp elig_tau={a.btsp_elig_tau} plat_tau={a.btsp_plat_tau} eta={a.btsp_eta} w_max={a.btsp_w_max}"
+           if a.write_rule == "btsp" else "WRITE=stdp (ms-coincidence)")
+    print(f"[ecker-ltu] Ecker AdEx CA3 replay-driven learn-through-use | {_wr} | n_mem={a.n_mem} asm={a.asm_size} "
           f"within={a.w_within} between_init={a.between_init} | encode {a.n_laps}laps | STDP a+={a.stdp_a_plus} "
           f"a-={a.stdp_a_minus} tau={a.stdp_tau} w_max={a.stdp_w_max} | swr={a.swr_period} cue={a.cue_pa}@{a.cue_frac} "
           f"weak={a.cue_pa*a.weak_cue_mult}@{a.weak_cue_frac} | rest={a.rest_steps} consol={a.consol_steps} dt={a.dt} "
@@ -376,11 +473,14 @@ def main():
                "mechanism": "Ecker-2022 AdEx CA3 discrete forward SWR replay -> directional replay-driven STDP "
                             "consolidation (offline learn-through-use), lesion-the-replay controlled",
                "seeds": a.seeds, "n_mem": a.n_mem, "asm_size": a.asm_size,
+               "write_rule": a.write_rule,
                "cfg": dict(w_within=a.w_within, between_init=a.between_init, b_override=a.b_override, n_laps=a.n_laps,
                            stdp_w_max=a.stdp_w_max, stdp_a_plus=a.stdp_a_plus, stdp_a_minus=a.stdp_a_minus,
                            stdp_tau=a.stdp_tau, swr_period=a.swr_period, cue_pa=a.cue_pa, cue_frac=a.cue_frac,
                            weak_cue_mult=a.weak_cue_mult, weak_cue_frac=a.weak_cue_frac, ou_sigma=a.ou_sigma,
-                           rest_steps=a.rest_steps, consol_steps=a.consol_steps, dt=a.dt),
+                           rest_steps=a.rest_steps, consol_steps=a.consol_steps, dt=a.dt,
+                           write_rule=a.write_rule, btsp_elig_tau=a.btsp_elig_tau, btsp_plat_tau=a.btsp_plat_tau,
+                           btsp_eta=a.btsp_eta, btsp_w_max=a.btsp_w_max),
                "elapsed_seconds": round(time.time() - t0, 1), "verdict": verdict, "per_seed": per, **summary_extra}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))

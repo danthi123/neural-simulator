@@ -7,7 +7,29 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-08-27 (latest) — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
+## 2026-08-27 (latest) — offline replay-driven "learn through use" on the from-scratch replay store: a directional BTSP write PARTLY fixes it, and pins the real blocker to the volley OVERLAP
+
+The from-scratch sequence-replay store (the Ecker-style CA3 model that replays A→B→C in order) was pushed on
+the hard question: does REPLAYING a memory during rest make its forward order STRONGER? The prior week's answer
+was a clean NO-GO — the brain's own millisecond spike-timing learning rule, run during replay, SYMMETRIZED the
+memory (the backward links grew ~6× while the forward links actually WEAKENED), because replay uses a
+time-symmetric plasticity rule. This tried the named fix: swap that rule for a DIRECTIONAL one — the brain's
+behavioral-timescale plasticity (BTSP: a seconds-long "recently-active" tag on the input cell, gated by an
+all-or-none plateau on the target cell, pure strengthening only), reusing the substrate's existing BTSP kernel
+behind a default-off switch (the old rule stays byte-for-byte the default).
+
+Result (6 seeds): a real, honest PARTIAL. The forward links now STRENGTHEN instead of weakening (+25 vs −11),
+the backward-link overshoot more than HALVES (from ~6× to ~1.9×), and recall is preserved rather than degraded
+— but it still is NOT net-directional (the backward links still grow a bit more, 0/6 seeds pass the strict
+"forward wins" bar). A 14-point parameter sweep never flips it. The value is WHERE it fails: even with the
+plateau shrunk to a single instant, the backward links still grow — which can only happen if the replay
+volleys OVERLAP in time (the leading assembly keeps firing after the next one ignites), so NO
+fire-together learning rule can tell forward from backward. The blocker is no longer the learning rule; it is
+that the replay itself isn't cleanly time-separated. Named next step: add a forward conduction DELAY so each
+assembly ignites only AFTER the previous one goes quiet (zero overlap → directional under either rule), then
+inhibitory gap-coding. Finding: `2026-08-27-btsp-directional-write-learn-through-use-PARTIAL`.
+
+## 2026-08-27 — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
 
 A follow-up to the "reads back cleanly" check above closed its last honest gap. That earlier check proved each
 of the seven merged regions reads back correctly ALONE against the shared pool; a stricter version — all seven

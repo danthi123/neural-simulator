@@ -1,0 +1,137 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "script": "research/findings/raw/gap5_ecker_adex/btsp_directional_write_oppoint_sweep_s42.py",
+  "runner": "_gap5_ecker_replay_learn_through_use_derisk.consolidate_by_btsp_replay (seed-42 op-point sweep, SIM_BACKEND=numpy)",
+  "encoded_fwd": 319.35125732421875,
+  "encoded_rev": 11.498048782348633,
+  "any_directional": false,
+  "rows": [
+    {
+      "plat_tau": 0.1,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 9.56,
+      "dw_rev": 28.24,
+      "diff": -18.68,
+      "directional": false
+    },
+    {
+      "plat_tau": 0.1,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 20.82,
+      "dw_rev": 51.01,
+      "diff": -30.19,
+      "directional": false
+    },
+    {
+      "plat_tau": 0.5,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 28.73,
+      "dw_rev": 115.5,
+      "diff": -86.77,
+      "directional": false
+    },
+    {
+      "plat_tau": 0.5,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 62.17,
+      "dw_rev": 179.19,
+      "diff": -117.02,
+      "directional": false
+    },
+    {
+      "plat_tau": 1.0,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 47.56,
+      "dw_rev": 198.04,
+      "diff": -150.49,
+      "directional": false
+    },
+    {
+      "plat_tau": 1.0,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 95.75,
+      "dw_rev": 269.09,
+      "diff": -173.34,
+      "directional": false
+    },
+    {
+      "plat_tau": 2.0,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 69.73,
+      "dw_rev": 284.32,
+      "diff": -214.59,
+      "directional": false
+    },
+    {
+      "plat_tau": 2.0,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 132.02,
+      "dw_rev": 367.13,
+      "diff": -235.11,
+      "directional": false
+    },
+    {
+      "plat_tau": 4.0,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 102.26,
+      "dw_rev": 363.42,
+      "diff": -261.16,
+      "directional": false
+    },
+    {
+      "plat_tau": 4.0,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 173.57,
+      "dw_rev": 446.99,
+      "diff": -273.43,
+      "directional": false
+    },
+    {
+      "plat_tau": 8.0,
+      "elig_tau": 15.0,
+      "eta": 0.02,
+      "dw_fwd": 132.76,
+      "dw_rev": 412.95,
+      "diff": -280.2,
+      "directional": false
+    },
+    {
+      "plat_tau": 8.0,
+      "elig_tau": 40.0,
+      "eta": 0.02,
+      "dw_fwd": 249.45,
+      "dw_rev": 535.28,
+      "diff": -285.83,
+      "directional": false
+    },
+    {
+      "plat_tau": 0.1,
+      "elig_tau": 15.0,
+      "eta": 0.005,
+      "dw_fwd": 2.5,
+      "dw_rev": 7.07,
+      "diff": -4.56,
+      "directional": false
+    },
+    {
+      "plat_tau": 0.1,
+      "elig_tau": 15.0,
+      "eta": 0.05,
+      "dw_fwd": 22.52,
+      "dw_rev": 83.66,
+      "diff": -61.14,
+      "directional": false
+    }
+  ]
+}
