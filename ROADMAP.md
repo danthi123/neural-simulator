@@ -7,7 +7,89 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## ⭐⭐⭐ 2026-08-26 (later) — ten more faculties flip to production-default-on; the mouth is now the named frontier
+
+This session took ten already-proven brain mechanisms from "built and tested" to "live in the default
+conversation, no flag needed" — the biggest default-on batch yet — and synced that state to `main`, so it is what
+chatting with the brain actually gets. In one sentence each:
+
+- **Empathy:** a turn about someone ELSE's good or bad situation ("Sam's team lost") now gets a genuine comfort or
+  shared-joy lead, its warmth read off a dedicated neural population that tracks OTHER people's feelings
+  separately from the brain's own mood.
+- **Honest self-authorship:** when the brain volunteers a guess of its own, a dedicated neural region checks
+  whether the thought was self-generated or merely heard, and the "that's a guess of my own" marker now rides
+  that neural readback instead of a bare code flag.
+- **Attention:** an ambiguous "it" across two held discourse topics is now resolved by a competitive race between
+  the two held neural populations (biased toward whichever the verb favors), not a single fallback guess.
+- **Sight:** when a chat turn actually carries a visual percept, recognizing what is in it now runs through a real
+  spiking visual pipeline (an eye-like front end feeding a self-organized category population), not a shortcut
+  label.
+- **Value-driven choice:** when two recalled facts are equally strong ("the dog chases the cat" / "... the ball"),
+  the brain's own dopamine-trained value system now runs a competitive race and commits to whichever it has
+  learned matters more, instead of picking whichever came first.
+- **Sleep consolidation:** during a genuine idle stretch, the brain replays what it learned since its last rest
+  using the same plasticity rule ordinary learning uses, so those memories come back measurably stronger and in
+  the order they were learned.
+- **A second spiking mouth:** simple recalled facts ("the dog chases the cat") can now be spoken by the SAME
+  spiking-neuron "mouth" that already voices the brain's own guesses, instead of the outside language model — but
+  only for a narrow, safety-verified sentence shape; everything else still falls back to the old mouth.
+- **A clean mental "stop":** on a genuine conflict or hard topic change, the shared workspace is now cleared by an
+  actual neural mechanism (mutual inhibition plus synaptic fatigue) before the new topic takes over, instead of
+  letting the old one quietly bleed through, and it says so ("Setting the held thread aside").
+- **Silent working memory:** the brain can hold a conversational focus with no ongoing firing — just a fading
+  synaptic trace — across an interruption, and it honestly answers "I don't recall" if reactivating that focus
+  later is not decisive.
+- **Choosing to speak or stay quiet:** on a content-empty turn, whether to say something or hold silent is now
+  decided by an actual basal-ganglia-style race between a "speak" channel and a "stay-silent" channel, not a host
+  `if`.
+
+None of the ten retires a host scaffold — each still leans on some host-supplied trigger, label, or template,
+named in its own wire-in finding — so the count that matters for "fully done" (wired and default-on and
+scaffold-retired) does not move. The production ledger now tracks **54 faculties, 26 of them genuinely spiking
+and default-on, with `scaffold_retired` still 0**: most of the live chat's load-bearing cognition is still
+host/numpy.
+
+**Current frontier: the mouth.** With ten more faculties live, the number-one blocker to fluent, open-ended
+conversation is unchanged and is now the clear next target — open-ended prose still comes from the external Qwen
+language model, not the brain's own neurons. The wall is a signal-to-noise problem, not a lack of practice: the
+substrate's own moment-to-moment read of its firing is too noisy to teach a from-scratch spiking generator past
+roughly a third of target quality (board #80). The named next lever is a higher-signal read (pooling across more
+neurons, or reading dendrites — a wider time window was already tried and excluded). Secondary blockers: a
+sparse-index knowledge-scale speedup is built and de-risked but deliberately left off pending an owner review at
+scale, and most of the comprehension and routing glue between faculties is still host Python, not brain tissue.
+
+## ⭐ 2026-08-26 (perception) — the V1 oriented-receptive-field wall is broken on-bridge, partially; a fixed-inhibition lever is ruled out on a theorem
+
+Separately from the chat-faculty batch above, and landing slightly later the same evening, a three-lever push
+attacked a much older perception wall: growing real oriented edge-detectors (V1 "simple cells") directly on the
+spiking retina-to-cortex bridge, stuck since 2026-08-14 because the connection-strengthening rule only ever
+strengthens, so the light-sensing and dark-sensing channels (ON and OFF) learn the identical pattern and cancel
+out — no orientation preference ever emerges. Two of the three named levers reported back:
+
+- **Breaks the wall, partially.** Adding a sliding "how active have I been lately" threshold to the learning rule
+  (a BCM rule: strengthen above the threshold, genuinely WEAKEN below it) supplies the missing ingredient a
+  strengthen-only rule structurally cannot. Oriented receptive fields now emerge directly on the bridge for the
+  first time — a 62x lift in the fraction of clearly-oriented cells over the old rule, with no dead cells and a
+  healthy visual response. Honest caveat: it depends on how each cell's random starting point happens to break
+  the tie, so on three of six test runs it works decisively (roughly a third of cells sharply oriented) and on the
+  other three it barely moves the needle — a genuine partial, not yet a clean pass on the promotion bar. Finding
+  `research/findings/2026-08-26-b1-v1-selforg-onbridge-BCM-sliding-threshold.md`.
+- **Ruled out on a theorem, not just a measurement.** Sharpening the local competition between neighboring cells
+  (one inhibitory cell per position, verified to genuinely suppress and sparsen the response) does not help, and
+  the project's own earlier mathematical analysis says it cannot in principle: a fixed side-to-side inhibition can
+  only turn a whole neighborhood's activity up or down together, and the ON/OFF cancellation is exactly the kind
+  of correlation a same-for-everyone adjustment can never break. The literature-named fix — inhibition that itself
+  LEARNS, cell by cell — is banked as the next lever. Finding
+  `research/findings/2026-08-26-b1-v1-selforg-columnar-wta-competition-NOGO.md`.
+
+The third named lever — a whitening front end that removes the light/dark correlation before it reaches the
+learning rule, to try alongside the BCM rule — was queued to run concurrently; its verdict had not landed as of
+this writing. Both flags examined here stay off by default; this is research on the g11 perception path, separate
+from the live chat.
+
 ## ⭐ 2026-08-26 — the brain now SPEAKS its recalled answers on its own neurons for simple sentences (wired, default-OFF)
+
+*(Update, same day, see the entry above: this flipped to default-ON in the wave-3 batch. Left here as history.)*
 
 The "mouth" — the part that turns a recalled fact into a sentence — has been the biggest remaining scaffold: the
 brain reasons and recalls with its own spiking neurons, but a small language model (Qwen) or a fixed template did
