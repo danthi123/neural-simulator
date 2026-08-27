@@ -1,0 +1,27 @@
+{
+ "run_id": "1787835807-3161477",
+ "runner": "research/runners/_onebrain_integration_r2_threefactor_selforganized.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-acf8a26ab0ca78298/research/runners/_onebrain_integration_r2_threefactor_selforganized.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_integration_r2_threefactor_selforganized_6seed.json"
+ ],
+ "git_sha": "f1b0f3a04",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T09:03:27",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_integration_r2_threefactor_selforganized_6seed.json"
+}

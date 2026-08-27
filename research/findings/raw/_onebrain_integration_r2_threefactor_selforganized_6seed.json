@@ -1,0 +1,972 @@
+{
+  "probe": "onebrain_integration_r2_threefactor_selforganized",
+  "verdict": "GO \u2014 R2 three-factor + self-organized-topology cross-edge d6 WM referent -> comprehension role competition: 6/6 seeds pass ALL of F1-F4 + lesion-recovers-migration + R2-a(three-factor: intact selective, removed inert, shuffled degraded) + R2-b(topology tracks the per-seed RANDOM assignment, intact). Per-arm: {'F1.PASS': '6/6', 'F2.PASS': '6/6', 'F3.PASS': '6/6', 'F4.PASS': '6/6', 'lesion_recovers_migration.PASS': '6/6', 'emergence.R2a_three_factor_PASS': '6/6', 'emergence.R2b_topology_intact_tracks': '6/6', 'emergence.no_corruption_intact': '6/6'}. Shuffled-credit topology-match rate: 0/6 (control requires <= 4/6, vs intact's 6/6). Mechanism: reward-DEFERRED STDP (sim/bridge.py's existing three-factor block) on an UNBIASED 3-pool x 2-role candidate set; the true agent/patient/control-distractor pool identity is a PER-SEED RANDOM assignment the runner's wiring/verification code never hardcodes. numpy CPU; NO sim/ edit.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "per_arm": {
+    "F1.PASS": "6/6",
+    "F2.PASS": "6/6",
+    "F3.PASS": "6/6",
+    "F4.PASS": "6/6",
+    "lesion_recovers_migration.PASS": "6/6",
+    "emergence.R2a_three_factor_PASS": "6/6",
+    "emergence.R2b_topology_intact_tracks": "6/6",
+    "emergence.no_corruption_intact": "6/6"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "f2_lesion_removes_shift",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "the F2 shift must VANISH under lesion or it is a confound, not the cross-edges (the crux control)"
+    },
+    {
+      "kind": "require",
+      "name": "migration_byte_identity",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "lesion every candidate cross-edge -> comprehension reads == the plain merged pool"
+    },
+    {
+      "kind": "require",
+      "name": "three_factor_removed_control_inert",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "withholding credit entirely -> every candidate edge stays at W0 (the third factor is NECESSARY)"
+    },
+    {
+      "kind": "require",
+      "name": "three_factor_shuffled_control_degrades",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "decorrelating credit from correctness collapses selectivity (the third factor is SUFFICIENT to explain the intact mapping's correctness, not decorative)"
+    },
+    {
+      "kind": "require",
+      "name": "topology_intact_tracks_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "the winning wire follows the per-seed RANDOM role assignment, never a hardcoded w0/w1 pair"
+    },
+    {
+      "kind": "require",
+      "name": "topology_shuffled_control_degrades",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "a decorrelated credit signal tracks the true assignment on AT MOST 4/6 seeds, materially below intact's rate"
+    },
+    {
+      "kind": "require",
+      "name": "moat_no_winner_from_silence",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff5915999e0>",
+      "note": "a silent input + WM held stays sub-decision (F4 moat)"
+    }
+  ],
+  "n_shuffled_topology_matches": 0,
+  "topology_shuffle_control_ok": true,
+  "config": {
+    "W0": 0.05,
+    "stdp_w_max": 20.0,
+    "reward_learning_rate": 0.04,
+    "reward_eligibility_tau_ms": 20.0,
+    "r_pulse": 1.0,
+    "n_episode_pairs": 100,
+    "reward_tail_steps": 8,
+    "sel_floor_intact": 0.15,
+    "sel_removed_eps": 1e-06,
+    "sel_shuffle_ratio": 0.35,
+    "topology_shuffle_max_match": 4
+  },
+  "mechanism": "ONE shared merge pool [d6_multiref_wm + comprehension]; an UNBIASED 6-edge candidate topology w{0,1,2}->{sel_agent,sel_patient} (structurally identical, no host-favored pair), the SOLE plastic synapses (cp_plasticity_rate_gain whitelist). Plasticity = the substrate's OWN reward-DEFERRED STDP (enable_stdp + enable_reward_modulation + reward_defer_stdp_weight_update): STDP alone only tags an eligibility trace; a weight changes ONLY when a same-episode current_reward_signal pulse (task-success credit) is delivered (R2-a, three-factor). WHICH physical pool plays agent/patient/control-distractor is a PER-SEED RANDOM assignment computed before training and never hardcoded in the wiring or verification code (R2-b, self-organized topology); the winning wire is read off by argmax and checked against that random assignment.",
+  "scaffold_residuals": [
+    "host-CURATED experience STREAM persists: the runner still schedules correct-vs-distractor episodes and the reward pulse's TIMING/MAGNITUDE \u2014 the credit RULE is genuine (reward-gated STDP), but WHEN a trial counts as 'successful' is still runner-declared, not derived from the brain's own task performance/error signal (a self-computed task-success readout, e.g. from comprehension's own margin, is the next rung)",
+    "the candidate topology is still a HOST-CHOSEN REGION PAIR (d6 slot pools -> comprehension sel pools) \u2014 R2-b closes WHICH pool wins within that pair, not WHETHER d6->comprehension is the pair that gets tried at all",
+    "3-pool x 2-role is a small, hand-sized candidate set for tractability, not a dense/all-to-all block or genuine structural-plasticity synaptogenesis",
+    "the ambiguous item is a balanced-cue competition (a substrate stand-in for a full pronoun-resolution discourse), carried from R1"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "PASS": true,
+      "elapsed_s": 89.2,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w0",
+          "p_patient": "w2",
+          "p_ctrl": "w1"
+        },
+        "selectivity_intact": 9.820775000000001,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 1.8515500000000005,
+        "correct_mean_intact": 11.9234,
+        "incorrect_mean_intact": 2.1026249999999997,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.8114659993737765,
+        "argmax_agent_intact": "w0",
+        "argmax_patient_intact": "w2",
+        "argmax_agent_shuffled": "w1",
+        "argmax_patient_shuffled": "w1",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 11.9893,
+          "w0->P": 4.121,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 4.1895,
+          "w2->P": 11.8575
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 6.6788,
+          "w0->P": 2.3204,
+          "w1->A": 8.4588,
+          "w1->P": 8.9531,
+          "w2->A": 2.7849,
+          "w2->P": 8.2829
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.32847222222222217,
+        "mean_well": 0.40208333333333335,
+        "mean_ill": 0.055787037037037024,
+        "min_well": 0.40208333333333335,
+        "max_ill": 0.1506944444444444,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.0638888888888889,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 1.0,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": 0.0011111111111111183,
+          "agent": 0.013333333333333364,
+          "patient": -0.013333333333333364
+        },
+        "margins_lesion": {
+          "none": 0.0011111111111111183,
+          "agent": 0.0011111111111111183,
+          "patient": 0.0011111111111111183
+        },
+        "delta_agent_intact": 0.012222222222222245,
+        "delta_patient_intact": -0.014444444444444482,
+        "delta_agent_lesion": 0.0,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w0": 0.08100000000000006,
+          "w2": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w0": 0.08100000000000006,
+          "w2": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.9234,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.64645,
+        "last_window_dw": 0.06345000000000134,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555554,
+        "wm_only_patient": -0.06666666666666667,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.2344827586206896,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.3333333333333333,
+        "clear_wrongWM": 0.3189814814814815,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.46597222222222223,
+          0.19374999999999998,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46944444444444444,
+          0.18124999999999997,
+          0.032638888888888884,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.01597222222222222,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 43,
+      "PASS": true,
+      "elapsed_s": 81.6,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w1",
+          "p_patient": "w2",
+          "p_ctrl": "w0"
+        },
+        "selectivity_intact": 9.5262,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 1.2333999999999996,
+        "correct_mean_intact": 11.728449999999999,
+        "incorrect_mean_intact": 2.20225,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.8705254980999769,
+        "argmax_agent_intact": "w1",
+        "argmax_patient_intact": "w2",
+        "argmax_agent_shuffled": "w0",
+        "argmax_patient_shuffled": "w0",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 11.8355,
+          "w1->P": 4.3709,
+          "w2->A": 4.3381,
+          "w2->P": 11.6214
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 9.2259,
+          "w0->P": 8.8914,
+          "w1->A": 7.0448,
+          "w1->P": 2.5192,
+          "w2->A": 2.3481,
+          "w2->P": 6.9143
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.3059027777777778,
+        "mean_well": 0.3868055555555555,
+        "mean_ill": 0.06898148148148148,
+        "min_well": 0.3868055555555555,
+        "max_ill": 0.1736111111111111,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.052777777777777785,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 1.0,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": -0.0008333333333332971,
+          "agent": 0.012592592592592636,
+          "patient": -0.012777777777777796
+        },
+        "margins_lesion": {
+          "none": -0.0008333333333332971,
+          "agent": -0.0008333333333332971,
+          "patient": -0.0008333333333332971
+        },
+        "delta_agent_intact": 0.013425925925925933,
+        "delta_patient_intact": -0.011944444444444499,
+        "delta_agent_lesion": 0.0,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26740740740740737,
+          "w1": 0.0813333333333334,
+          "w2": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26740740740740737,
+          "w1": 0.0813333333333334,
+          "w2": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.728449999999999,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6209499999999999,
+        "last_window_dw": 0.06259999999999977,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555554,
+        "wm_only_patient": -0.06018518518518518,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.2344827586206896,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.3333333333333333,
+        "clear_wrongWM": 0.32,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4666666666666667,
+          0.17708333333333331,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46388888888888885,
+          0.17708333333333331,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.0027777777777778234,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 44,
+      "PASS": true,
+      "elapsed_s": 88.8,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w2",
+          "p_patient": "w1",
+          "p_ctrl": "w0"
+        },
+        "selectivity_intact": 9.565024999999999,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 1.934099999999999,
+        "correct_mean_intact": 11.7839,
+        "incorrect_mean_intact": 2.2188749999999997,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.7977945692771321,
+        "argmax_agent_intact": "w2",
+        "argmax_patient_intact": "w1",
+        "argmax_agent_shuffled": "w0",
+        "argmax_patient_shuffled": "w0",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 4.2959,
+          "w1->P": 11.7622,
+          "w2->A": 11.8056,
+          "w2->P": 4.4796
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 8.1612,
+          "w0->P": 9.0454,
+          "w1->A": 2.9206,
+          "w1->P": 8.4056,
+          "w2->A": 6.7691,
+          "w2->P": 2.4858
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.3173611111111111,
+        "mean_well": 0.3930555555555556,
+        "mean_ill": 0.07175925925925924,
+        "min_well": 0.3930555555555556,
+        "max_ill": 0.1819444444444444,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.06944444444444445,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 1.0,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": 0.0009259259259259226,
+          "agent": 0.013333333333333364,
+          "patient": -0.013333333333333364
+        },
+        "margins_lesion": {
+          "none": 0.0008333333333333526,
+          "agent": 0.0008333333333333526,
+          "patient": 0.0008333333333333526
+        },
+        "delta_agent_intact": 0.012407407407407442,
+        "delta_patient_intact": -0.014259259259259286,
+        "delta_agent_lesion": 0.0,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w2": 0.08000000000000007,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w2": 0.08000000000000007,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.7839,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6289,
+        "last_window_dw": 0.06099999999999994,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555556,
+        "wm_only_patient": -0.06666666666666667,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.23448275862068965,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.3333333333333333,
+        "clear_wrongWM": 0.3174074074074074,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.45694444444444443,
+          0.17777777777777776,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46249999999999997,
+          0.1826388888888889,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.005555555555555536,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 100,
+      "PASS": true,
+      "elapsed_s": 85.4,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w0",
+          "p_patient": "w1",
+          "p_ctrl": "w2"
+        },
+        "selectivity_intact": 9.675725,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 1.9348999999999998,
+        "correct_mean_intact": 11.830200000000001,
+        "incorrect_mean_intact": 2.1544750000000006,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.8000253210999693,
+        "argmax_agent_intact": "w0",
+        "argmax_patient_intact": "w1",
+        "argmax_agent_shuffled": "w2",
+        "argmax_patient_shuffled": "w2",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 11.9213,
+          "w0->P": 4.1956,
+          "w1->A": 4.3223,
+          "w1->P": 11.7391,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 7.6862,
+          "w0->P": 2.5592,
+          "w1->A": 2.5993,
+          "w1->P": 7.4927,
+          "w2->A": 9.1085,
+          "w2->P": 8.3512
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.32361111111111107,
+        "mean_well": 0.4027777777777778,
+        "mean_ill": 0.0722222222222222,
+        "min_well": 0.4027777777777778,
+        "max_ill": 0.1833333333333333,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.061111111111111116,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 0.9795918367346947,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": -0.0002777777777777657,
+          "agent": 0.013333333333333364,
+          "patient": -0.013333333333333364
+        },
+        "margins_lesion": {
+          "none": -0.0005555555555555314,
+          "agent": -0.0002777777777777657,
+          "patient": -0.0005555555555555314
+        },
+        "delta_agent_intact": 0.01361111111111113,
+        "delta_patient_intact": -0.013055555555555598,
+        "delta_agent_lesion": 0.0002777777777777657,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w0": 0.07788888888888891,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w0": 0.07788888888888891,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.830200000000001,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6347499999999999,
+        "last_window_dw": 0.06330000000000169,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555554,
+        "wm_only_patient": -0.06666666666666667,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.2344827586206896,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.3325925925925926,
+        "clear_wrongWM": 0.31333333333333335,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4597222222222222,
+          0.16666666666666663,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46458333333333335,
+          0.1833333333333333,
+          0.033333333333333326,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.016666666666666663,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 101,
+      "PASS": true,
+      "elapsed_s": 81.6,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w2",
+          "p_patient": "w0",
+          "p_ctrl": "w1"
+        },
+        "selectivity_intact": 9.620825,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 2.4499999999999993,
+        "correct_mean_intact": 11.773,
+        "incorrect_mean_intact": 2.1521749999999997,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.7453440843170934,
+        "argmax_agent_intact": "w2",
+        "argmax_patient_intact": "w0",
+        "argmax_agent_shuffled": "w1",
+        "argmax_patient_shuffled": "w1",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 4.4003,
+          "w0->P": 11.6619,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 11.8841,
+          "w2->P": 4.1084
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 2.7469,
+          "w0->P": 7.9709,
+          "w1->A": 8.188,
+          "w1->P": 8.2056,
+          "w2->A": 7.8417,
+          "w2->P": 2.6847
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.3194444444444444,
+        "mean_well": 0.3993055555555556,
+        "mean_ill": 0.055555555555555546,
+        "min_well": 0.3993055555555556,
+        "max_ill": 0.14999999999999997,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.055555555555555566,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 1.0,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": 0.00037037037037037274,
+          "agent": 0.013333333333333364,
+          "patient": -0.013333333333333364
+        },
+        "margins_lesion": {
+          "none": 0.00037037037037037274,
+          "agent": 0.00037037037037037274,
+          "patient": 0.00037037037037037274
+        },
+        "delta_agent_intact": 0.01296296296296299,
+        "delta_patient_intact": -0.013703703703703737,
+        "delta_agent_lesion": 0.0,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w2": 0.07933333333333335,
+          "w0": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.28,
+          "sel_patient": 0.26666666666666666,
+          "w2": 0.07933333333333335,
+          "w0": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.773,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6249499999999999,
+        "last_window_dw": 0.06390000000000029,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555556,
+        "wm_only_patient": -0.0649074074074074,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.23448275862068965,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.3333333333333333,
+        "clear_wrongWM": 0.315,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.45694444444444443,
+          0.18125000000000002,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46597222222222223,
+          0.17986111111111114,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.009027777777777801,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 102,
+      "PASS": true,
+      "elapsed_s": 82.6,
+      "emergence": {
+        "role_assignment": {
+          "p_agent": "w2",
+          "p_patient": "w0",
+          "p_ctrl": "w1"
+        },
+        "selectivity_intact": 9.582450000000001,
+        "selectivity_removed": 0.0,
+        "selectivity_shuffled": 2.286600000000001,
+        "correct_mean_intact": 11.75805,
+        "incorrect_mean_intact": 2.1755999999999998,
+        "removed_max_deviation_from_W0": 0.0,
+        "removed_formed_nothing": true,
+        "frac_attributable_removed_control": 1.0,
+        "frac_attributable_shuffled_control": 0.7613762659862561,
+        "argmax_agent_intact": "w2",
+        "argmax_patient_intact": "w0",
+        "argmax_agent_shuffled": "w1",
+        "argmax_patient_shuffled": "w1",
+        "topology_tracks_true_assignment_intact": true,
+        "topology_tracks_true_assignment_shuffled": false,
+        "intact_final": {
+          "w0->A": 4.2928,
+          "w0->P": 11.8302,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 11.6859,
+          "w2->P": 4.3096
+        },
+        "removed_final": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "shuffled_final": {
+          "w0->A": 2.6991,
+          "w0->P": 7.9743,
+          "w1->A": 8.4176,
+          "w1->P": 8.1426,
+          "w2->A": 7.635,
+          "w2->P": 2.8129
+        },
+        "R2a_three_factor_PASS": true,
+        "R2b_topology_intact_tracks": true,
+        "frozen_weight_maxdrift_intact": 0.0,
+        "no_corruption_intact": true
+      },
+      "F1": {
+        "threshold": 0.31909722222222214,
+        "mean_well": 0.39861111111111114,
+        "mean_ill": 0.0761574074074074,
+        "min_well": 0.39861111111111114,
+        "max_ill": 0.19513888888888886,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.061111111111111116,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_agent": 1.0,
+        "frac_attributable_patient": 1.0,
+        "margins_intact": {
+          "none": 0.0002777777777777657,
+          "agent": 0.013148148148148167,
+          "patient": -0.013333333333333364
+        },
+        "margins_lesion": {
+          "none": 0.0005555555555555314,
+          "agent": 0.0005555555555555314,
+          "patient": 0.0005555555555555314
+        },
+        "delta_agent_intact": 0.012870370370370402,
+        "delta_patient_intact": -0.01361111111111113,
+        "delta_agent_lesion": 0.0,
+        "delta_patient_lesion": 0.0,
+        "rates_intact_agent": {
+          "sel_agent": 0.2853703703703704,
+          "sel_patient": 0.2722222222222222,
+          "w2": 0.08166666666666673,
+          "w0": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "agent_shift_toward_agent": true,
+        "patient_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.2853703703703704,
+          "sel_patient": 0.2722222222222222,
+          "w2": 0.08166666666666673,
+          "w0": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.2333333333333333
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.75805,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.601,
+        "last_window_dw": 0.06280000000000108,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_agent": 0.07555555555555554,
+        "wm_only_patient": -0.06657407407407408,
+        "decision_scale_clear": 0.32222222222222224,
+        "wm_only_frac_of_decision": 0.2344827586206896,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32222222222222224,
+        "clear_rightWM": 0.32990740740740737,
+        "clear_wrongWM": 0.31777777777777777,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4611111111111111,
+          0.1833333333333333,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4631944444444444,
+          0.1833333333333333,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.002083333333333326,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    }
+  ]
+}
