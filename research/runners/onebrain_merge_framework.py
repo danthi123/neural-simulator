@@ -136,6 +136,22 @@ def _base_config(seed: int, legacy: bool = False):
     # `keyed` to one entry per unique (pre,post) so the masks are co-residence-invariant. Byte-identical to the
     # default whenever the plan has no duplicate edges (frozen-forward organs are unaffected). Legacy keeps it OFF.
     cfg.dedup_synapse_masks = not legacy
+    # merge seam #4 (2026-08-27, isolating prospective_memory's organ-read residual, PROVEN independent of
+    # the nmda_slow/dedup seam by forcing cp_nmda_recurrent_synapse_mask=None) — name-key each region's
+    # INHIBITORY-CELL selection. RegionManager.initialize() draws `rng.sample(idx_list, n_inh)` from ONE
+    # shared random.Random(seed) threaded through every region in list order, so WHICH neurons of a region
+    # are inhibitory depends on how much RNG the regions BEFORE it in the (co-residence-dependent) list
+    # consumed. Invisible to substrate-init byte-identity (thresholds/V/u/izh params untouched) — it only
+    # shows once a step runs: inject_explicit_wiring's output_inhibitory_indices reassigns cp_traits from
+    # region_manager.inhibitory_indices(), so the SAME firing neuron is excitatory in one arm and inhibitory
+    # in the other, routing to g_e vs g_i — a clean, LARGE (not sub-ULP) per-step delta on any region with
+    # exc_fraction < 1.0. Measured: pmem's dlpfc_wm target neuron's g_e read 0.002 (core) vs 0.0005 (merged),
+    # a clean 4x, from a 5-vs-8 inhibitory mismatch among the SAME 27 identically-firing, identically-weighted
+    # pre-neurons — amplified by the hundreds-of-steps spiking read into the (T,T,T)->(F,F,F) answer flip. ON
+    # name-keys the draw per region NAME (byte-identical to the default whenever exc_fraction==1.0 pool-wide,
+    # or the region set/order is unchanged — a no-op case pmem's OWN prior GO organs never triggered). Legacy
+    # keeps it OFF (further discriminator strength).
+    cfg.per_region_inhibitory_seed = not legacy
     return cfg
 
 
@@ -231,6 +247,7 @@ class MergedPool:
             cfg.per_region_threshold_heterogeneity = False
             cfg.per_region_parameter_heterogeneity = False
             cfg.per_region_wiring_seed = False
+            cfg.per_region_inhibitory_seed = False
 
         # (4) PER-REGION FLAGS — the diffbuilder pattern: reconcile a would-be global conflict into a masked one.
         for rg in regions:

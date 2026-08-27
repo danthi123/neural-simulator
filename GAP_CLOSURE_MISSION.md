@@ -15,6 +15,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (READ FIRST; LATEST anchor — supersedes every header below)
 
+**UPDATE — 2026-08-27, LATEST: the one-brain full-7 STRICT-simultaneous migration batch is CLOSED, 7/7 organs GO
+6/6 seeds.** Every prior reference below to "the full-7 strict batch" needing `deterministic_transpose_matvec`
+across all matvec paths, or "closes when nmda_slow lands," is SUPERSEDED — that characterization was refuted by
+direct reproduction. Two SEPARATE co-residence seams, neither FP-summation-order: (1) `cfg.dedup_synapse_masks`
+(already on `main`, `2898185dd`) fixed a duplicate-edge per-synapse MASK MISALIGNMENT in `inject_explicit_wiring`,
+closing `d6_multiref_wm` (6/7 organs GO). (2) `cfg.per_region_inhibitory_seed` (branch
+`research/pmem-fp-accumulation-full7`, pushed both remotes, **NOT YET MERGED to `main`**) then closed
+`prospective_memory`'s remaining residual — `RegionManager.initialize()` drew each region's inhibitory-cell
+subset from ONE shared RNG stream in region-list order (never name-keyed, unlike the wiring/threshold seams), so
+the SAME firing neuron routed to `g_e` in one arm and `g_i` in the other purely from co-residence — a clean 4x
+conductance delta, not sub-ULP jitter. Name-keying it (the SAME crc32-per-region-name substream mechanism
+already used for wiring) closed it: pmem `read_maxerr` 0.06667->0.0, `answer_same=True`, 6/6 seeds. Both fixes
+additive/DEFAULT-OFF/byte-identical-when-off (SHA256 + `tests/test_determinism.py` green). `onebrain_merge_verify
+--keys all --seeds 42,43,44,100,101,102`: **`all_go: true`, 7/7 organs, 6/6 seeds each.** This is still the
+MIGRATION-safety gate, not the INTEGRATION goal (cross-region synapses) — that remains the next rung. Findings:
+`2026-08-27-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow.md`, `2026-08-27-pmem-fp-accumulation-full7-GO.md`.
+
 **CURRENT ARC unchanged: the FLUENCY WALL (the mouth) is the frontier.** An overnight autonomous session (owner: work all night, high memory-aware parallelization, best judgment) advanced 4 frontiers. **Latest `main` = `09dce0ef7`** (knowledge-in-chat now complete end-to-end + the matvec `sim/` edit pushed — see the ~12:30 continuation at the bottom of the REVISED NEXT ACTIONS block).
 
 **TONIGHT'S LANDINGS:**

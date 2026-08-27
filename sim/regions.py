@@ -597,10 +597,35 @@ class RegionManager:
         # Empty when coordinate_dim == 0 for that region.
         self._coordinates: Dict[str, List[Tuple[float, ...]]] = {}
 
-    def initialize(self, seed: int = 0) -> None:
+    def initialize(self, seed: int = 0, per_region_seed: bool = False) -> None:
         """Allocate contiguous index ranges for each region and pick
         inhibitory cells deterministically from `seed`. Also assigns
-        topographic coordinates when coordinate_dim > 0 (Cluster E v1)."""
+        topographic coordinates when coordinate_dim > 0 (Cluster E v1).
+
+        `per_region_seed` (opt-in, DEFAULT-OFF -> byte-identical to the legacy
+        single shared-stream draw; 2026-08-27, the one-brain merge's SIXTH
+        byte-identity seam, found isolating `prospective_memory`'s organ-read
+        divergence). Legacy: ONE shared `random.Random(seed)` is threaded
+        through every region's `rng.sample(idx_list, n_inh)` call in REGION-
+        LIST order, so a region's inhibitory-cell SELECTION depends on how
+        much RNG the regions BEFORE it in the list consumed -- co-residence-
+        DEPENDENT (a pool with MORE regions ahead of this one in the merged
+        list draws a DIFFERENT subset than the same region built alone), even
+        though `region_manager.indices()` stays a simple positional cursor.
+        This does NOT show up in substrate-init byte-identity (thresholds/V/u/
+        izh params are unaffected) -- it only shows up once a step actually
+        runs: the SAME firing neuron is `cp_traits`-classified excitatory in
+        one arm and inhibitory in the other (`inject_explicit_wiring`'s
+        `output_inhibitory_indices` reassigns `cp_traits` from
+        `region_manager.inhibitory_indices()`), so it routes to `g_e` in one
+        arm and `g_i` in the other -- a clean, LARGE (not sub-ULP) delta on
+        any region with `exc_fraction < 1.0`, amplified by a long spiking
+        integration. When True, each region's inhibitory-cell draw uses its
+        OWN substream keyed on a stable crc32 hash of the region NAME
+        (`_wiring_substream`, `_INHIBITORY_SEED_STRIDE`), so the SAME subset
+        of a region's neurons is chosen inhibitory regardless of which/how
+        many other regions are co-resident. When False the legacy shared-
+        stream draw is unchanged bit-for-bit."""
         rng = random.Random(seed)
         # Use a separate RNG for coordinates so adding/removing topography
         # doesn't perturb inhibitory selection.
@@ -618,7 +643,11 @@ class RegionManager:
             # Pick inhibitory subset deterministically
             n_inh = int(round((1.0 - region.exc_fraction) * region.n_neurons))
             n_inh = max(0, min(region.n_neurons, n_inh))
-            inh_chosen = sorted(rng.sample(idx_list, n_inh)) if n_inh > 0 else []
+            inh_rng = (
+                self._wiring_substream(seed, region.name, self._INHIBITORY_SEED_STRIDE)
+                if per_region_seed else rng
+            )
+            inh_chosen = sorted(inh_rng.sample(idx_list, n_inh)) if n_inh > 0 else []
             self._inhibitory[region.name] = inh_chosen
 
             # Cluster E v1: assign coordinates if coordinate_dim > 0
@@ -785,6 +814,11 @@ class RegionManager:
     # a pathway's seed never coincide at the same base seed.
     _WIRING_REGION_SEED_STRIDE = 2_000_003
     _WIRING_PATHWAY_SEED_STRIDE = 5_000_011
+    # Stride for the per-region INHIBITORY-CELL-SELECTION substream seed (opt-in via
+    # initialize(per_region_seed=True)). A THIRD, distinct large prime so a region's
+    # inhibitory draw never coincides with its own internal-wiring draw at the same
+    # base seed (2026-08-27, the one-brain merge's SIXTH byte-identity seam).
+    _INHIBITORY_SEED_STRIDE = 7_000_003
 
     @classmethod
     def _wiring_substream(cls, seed: int, name: str, stride: int) -> "random.Random":

@@ -1,0 +1,31 @@
+{
+ "run_id": "1787852537-3314703",
+ "runner": "research/runners/onebrain_merge_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a7453fe9a7877c177/research/runners/onebrain_merge_verify.py",
+  "--keys",
+  "all",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_merge_full7_inhibseed_6seed.json"
+ ],
+ "git_sha": "c641264ba",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T13:42:17",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_merge_full7_inhibseed_6seed.json"
+}
