@@ -173,3 +173,4 @@ research/experiment-runtime/
 .preserved-findings/
 research/coordination/backlog.json
 research/coordination/ratchet_dispatched.jsonl
+_scratch/

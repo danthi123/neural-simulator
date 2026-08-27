@@ -1,0 +1,299 @@
+{
+  "probe": "gap5_swr_envelope_6seed_characterization",
+  "mechanism": "SWR-state E/I-transient envelope replay op-point on the DECOUPLED bistable-completion store",
+  "runner": "_scratch/swr_6seed_char.py (reuses research.runners._gap5_swr_envelope_replay_derisk helpers)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_ca3": 2000,
+  "n_mem": 3,
+  "rest_steps": 800,
+  "backend": "cupy",
+  "rows": [
+    {
+      "seed": 42,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.081,
+        "co_active_frac": 0.967,
+        "any_on_frac": 0.868,
+        "peaks": [
+          2.29,
+          2.54,
+          2.8
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.954,
+        "any_on_frac": 0.999,
+        "peaks": [
+          1.93,
+          2.17,
+          2.15
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.071,
+        "co_active_frac": 0.972,
+        "any_on_frac": 0.887,
+        "peaks": [
+          2.32,
+          2.41,
+          2.66
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.973,
+        "any_on_frac": 1.0,
+        "peaks": [
+          1.97,
+          1.91,
+          2.12
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.089,
+        "co_active_frac": 0.972,
+        "any_on_frac": 0.882,
+        "peaks": [
+          2.32,
+          2.61,
+          2.67
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.992,
+        "any_on_frac": 0.999,
+        "peaks": [
+          1.81,
+          2.2,
+          2.23
+        ]
+      }
+    },
+    {
+      "seed": 100,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.092,
+        "co_active_frac": 0.978,
+        "any_on_frac": 0.87,
+        "peaks": [
+          2.51,
+          2.8,
+          2.5
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.996,
+        "any_on_frac": 0.999,
+        "peaks": [
+          2.09,
+          1.8,
+          1.71
+        ]
+      }
+    },
+    {
+      "seed": 101,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.086,
+        "co_active_frac": 0.927,
+        "any_on_frac": 0.886,
+        "peaks": [
+          2.45,
+          2.89,
+          2.6
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.996,
+        "any_on_frac": 0.999,
+        "peaks": [
+          2.08,
+          1.88,
+          1.92
+        ]
+      }
+    },
+    {
+      "seed": 102,
+      "default": {
+        "name": "default",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.064,
+        "co_active_frac": 0.981,
+        "any_on_frac": 0.866,
+        "peaks": [
+          2.26,
+          2.36,
+          2.61
+        ]
+      },
+      "designed": {
+        "name": "designed_latch_fwd4_randcue",
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "fwd": 0.0,
+        "rev": 0.0,
+        "duty": 0.0,
+        "nmulti": 0,
+        "nev": 0,
+        "silence": 0.003,
+        "co_active_frac": 0.987,
+        "any_on_frac": 0.999,
+        "peaks": [
+          1.79,
+          2.02,
+          2.05
+        ]
+      }
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "default_silence_mean": 0.08,
+    "default_co_active_frac_mean": 0.966,
+    "default_discrete_events_any": 0,
+    "designed_silence_mean": 0.003,
+    "designed_co_active_frac_mean": 0.983,
+    "designed_forward_ordered_go": 0,
+    "per_asm_active_all": "[0,0,0]"
+  }
+}
