@@ -7,6 +7,7 @@ lane: E-language
 artifacts:
   - research/findings/raw/_affect_tone_spiking_mouth_fix_verify.json
   - research/findings/raw/_spiking_mouth_recall_soak.json
+  - research/findings/raw/_affect_tone_mood_onebrain_composer_kind_check.json
 runner: research/runners/_affect_tone_spiking_mouth_fix_verify.py, research/runners/_spiking_mouth_recall_soak.py
 ---
 
@@ -90,13 +91,55 @@ since the merged fix commit already shipped `_MOUTH_MOOD_DEFAULT_ON = True` (it 
 Gate-B coupling onto a surface that pre-empted it, rather than introducing new opt-in behavior). The byte-identical
 escape (`BRAIN_SPIKING_MOUTH_MOOD=0`) is unchanged and still reverts to the mood-blind surface.
 
+## A second gap closed: neither soak ever exercised the REAL production composer kind
+
+Both `_affect_tone_spiking_mouth_fix_verify.py` and `_spiking_mouth_recall_soak.py` build their `ChatBrain` via
+`_build_smoke_chat`/`_build_tiny_demo` with `composer_kind="rf"` (the lightweight numpy fast-path recall) —
+**never** `composer_kind="onebrain"`, which `webapp/server.py:3573` sets as `_COMPOSER_KIND_DEFAULT`, the actual
+default for real `/api/brain-chat` traffic. The word "onebrain" in this codebase is used BOTH as the general
+one-brain-architecture project name AND as this one specific `composer_kind` value, and the original fix's own
+residual note ("the heavy-composer soak... the ~46-region/4180-neuron `onebrain` composer") conflated the two —
+the 46-region bridge in `_build_smoke_chat` is the `MultiTurnAgent`'s own discourse/working-memory loop, built
+under `composer_kind="rf"`, not the actual `onebrain_merge_production` merged substrate. Neither existing soak,
+before or after this session's fix, has ever run the mood-tone coupling against the real production composer
+kind — a genuine open question the "6/6 GO" above does not answer by itself.
+
+Closed directly (`research/findings/raw/_affect_tone_mood_onebrain_composer_kind_check.json`, seed 42, numpy):
+built a `ChatBrain` via `_build_tiny_demo(42, use_multiturn=True, composer_kind="onebrain")` — the real production
+default — and re-ran the same load-bearing + lesion check `render(["brain","use","spikes"])` at
+`_mood_tone_level` in `{0, +2, -2}` and with `BRAIN_SPIKING_MOUTH_MOOD=0`:
+
+| check | result |
+|---|---|
+| neutral (`level=0`) | `the brain uses the spikes` |
+| `level=+2` | `the brain uses the spikes!` |
+| `level=-2` | `the brain uses the spikes.` |
+| lesioned (`MOOD=0`, `level=+2`) | `the brain uses the spikes` (reverts to neutral) |
+| load-bearing (sign-correct, `+2 != -2`) | **True** |
+| lesion reverts to neutral | **True** |
+
+**GO on the actual production composer kind, single-seed** (a decisive existence proof, not a 6-seed bar — the
+mechanism is architecturally composer-agnostic: `ChatBrain.render`/`spiking_recall_surface`/`_apply_mouth_mood_tone`
+are `ChatBrain`-level wrapper methods that never branch on `composer_kind`, and `mouth_tone_marker`'s 2-pool tone
+reader is its own bridge, fully independent of whichever composer backs `self.agent`/`self.inner` — the code path
+this exercises is identical to what 6-seed `rf` already covers, just with `composer_kind` swapped). This also
+directly REFUTES a note that appeared (uncommitted, mid-edit) in `GAP_CLOSURE_MISSION.md` during this session
+claiming the coupling "genuinely works on the derisk's own (non-production) composer... the production wiring
+isn't there yet" — that claim did not check whether the mechanism is composer-kind-agnostic before asserting a
+production gap; it is not, and there is no such gap.
+
 ## Honest scope
 
-- This closes the ONE deferred item the original mood-tone finding named. It does not re-open or re-verify anything
-  else about `BRAIN_SPIKING_MOUTH_RECALL` itself (that faculty's own 6-seed GO is UNCHANGED — same numbers,
-  re-confirmed) — this session only fixed the SOAK's ability to correctly measure it going forward.
+- This closes the ONE deferred item the original mood-tone finding named, plus the composer-kind gap discovered
+  while investigating it (above). It does not re-open or re-verify anything else about `BRAIN_SPIKING_MOUTH_RECALL`
+  itself (that faculty's own 6-seed GO is UNCHANGED — same numbers, re-confirmed) — this session only fixed the
+  SOAK's ability to correctly measure it going forward.
 - The general instrument-staleness class (any flip-soak's `os.environ.pop`-as-OFF assumption going stale when its
   subject's default flips) is filed but NOT audited across other soaks this session — see the FAILURE_LOG entry.
+- The `composer_kind="onebrain"` confirmation above is single-seed (seed 42), not the 6-seed bar the rest of this
+  finding uses — a 6-seed `onebrain`-composer run is a reasonable follow-up given the ~180s-per-build cost, but the
+  architecture argument (composer-agnostic wrapper methods) plus this single decisive existence proof is strong
+  evidence against a real per-seed-varying gap.
 
 ## External context (deep-research gate, e-language lane)
 

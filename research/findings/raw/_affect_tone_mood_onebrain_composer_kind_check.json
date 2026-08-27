@@ -1,0 +1,20 @@
+{
+  "backend": "numpy",
+  "elapsed_seconds": 210,
+  "provenance": "ad hoc verification script, run directly (not via -m research.runners.X): builds a ChatBrain with composer_kind='onebrain' (webapp/server.py._COMPOSER_KIND_DEFAULT, the REAL production default) via research.runners.brain_chat_tui._build_tiny_demo(42, use_multiturn=True, enable_neural_render=False, composer_kind='onebrain'), then exercises chat.render(['brain','use','spikes']) at _mood_tone_level in {0, +2, -2} and with BRAIN_SPIKING_MOUTH_MOOD=0 (lesion). SIM_BACKEND=numpy, seed=42.",
+  "purpose": "Both the lightweight verify (_affect_tone_spiking_mouth_fix_verify.py) and the heavy regression soak (_spiking_mouth_recall_soak.py) build their ChatBrain via composer_kind='rf' (the lightweight numpy fast-path recall), never composer_kind='onebrain' (the actual production default per webapp/server.py:3573). This check closes that gap directly: does the mood-tone coupling actually fire through the real production composer kind?",
+  "cmd": "SIM_BACKEND=numpy .venv/bin/python <ad hoc script, see 'script_source' below>",
+  "seed": 42,
+  "composer_kind": "onebrain",
+  "results": {
+    "neutral_level_0": "the brain uses the spikes",
+    "level_plus_2": "the brain uses the spikes!",
+    "level_minus_2": "the brain uses the spikes.",
+    "lesioned_MOOD_0_level_plus_2": "the brain uses the spikes",
+    "load_bearing_positive_ne_negative_sign_correct": true,
+    "lesion_reverts_to_neutral": true,
+    "spiking_recall_surface_reached": true,
+    "verdict": "GO"
+  },
+  "script_source": "import os, sys\nsys.path.insert(0, '/home/dant123/Projects/sim')\nos.environ.setdefault('SIM_BACKEND', 'numpy')\nos.environ.setdefault('SIM_DISABLE_LLM', '1')\nos.environ['BRAIN_SPIKING_MOUTH_RECALL'] = '1'\nos.environ['BRAIN_SPIKING_MOUTH_MOOD'] = '1'\nfrom research.runners.brain_chat_tui import _build_tiny_demo, ChatBrain, StubRenderer, DEFAULT_SELF_ALIASES\nagent, aliases, n = _build_tiny_demo(42, use_multiturn=True, enable_neural_render=False, composer_kind='onebrain')\nchat = ChatBrain(agent, self_aliases=DEFAULT_SELF_ALIASES, renderer=StubRenderer())\na, v, p = ('brain', 'use', 'spikes')\nchat._mood_tone_level = 0; neutral = chat.render([a, v, p])\nchat._mood_tone_level = 2; positive = chat.render([a, v, p])\nchat._mood_tone_level = -2; negative = chat.render([a, v, p])\nos.environ['BRAIN_SPIKING_MOUTH_MOOD'] = '0'\nchat._mood_tone_level = 2; lesioned = chat.render([a, v, p])\n"
+}
