@@ -1,0 +1,121 @@
+{
+  "diagnosis": {
+    "seed": 42,
+    "V": 1000,
+    "D": 128,
+    "head_w_norm": 37.533,
+    "w_target": 40.0,
+    "batch": 48,
+    "sub_read_window": 360,
+    "probe_A_random_0.12": {
+      "gain": 9.379277,
+      "corr": 0.9482,
+      "resid_ratio": 1.2814,
+      "probe_norm": 42.945,
+      "margin_sub_norm": 7753.212,
+      "host_probe_norm": 508.554
+    },
+    "probe_B_random_at_hwnorm": {
+      "gain": 10.729831,
+      "corr": 0.9483,
+      "resid_ratio": 1.2746,
+      "probe_norm": 37.533,
+      "margin_sub_norm": 7726.072,
+      "host_probe_norm": 444.459
+    },
+    "probe_C_random_at_cap": {
+      "gain": 10.070955,
+      "corr": 0.9483,
+      "resid_ratio": 1.2753,
+      "probe_norm": 40.0,
+      "margin_sub_norm": 7730.969,
+      "host_probe_norm": 473.676
+    },
+    "probe_D_headw_itself": {
+      "gain": -4.194132,
+      "corr": -0.0028,
+      "resid_ratio": 2.7579,
+      "probe_norm": 37.533,
+      "margin_sub_norm": 7748.286,
+      "host_probe_norm": 629.734
+    },
+    "probe_E_headwdir_at_Anorm": {
+      "gain": -3.660148,
+      "corr": -0.0026,
+      "resid_ratio": 2.7602,
+      "probe_norm": 42.945,
+      "margin_sub_norm": 7742.464,
+      "host_probe_norm": 720.547
+    },
+    "headw_direction_scale_sweep": [
+      {
+        "gain": -41.916999,
+        "corr": -0.0023,
+        "resid_ratio": 2.7589,
+        "probe_norm": 3.753,
+        "margin_sub_norm": 7746.106,
+        "host_probe_norm": 62.973,
+        "frac_of_headw": 0.1
+      },
+      {
+        "gain": -16.738513,
+        "corr": -0.0027,
+        "resid_ratio": 2.761,
+        "probe_norm": 9.383,
+        "margin_sub_norm": 7738.213,
+        "host_probe_norm": 157.433,
+        "frac_of_headw": 0.25
+      },
+      {
+        "gain": -8.372696,
+        "corr": -0.0019,
+        "resid_ratio": 2.761,
+        "probe_norm": 18.766,
+        "margin_sub_norm": 7741.44,
+        "host_probe_norm": 314.867,
+        "frac_of_headw": 0.5
+      },
+      {
+        "gain": -5.570711,
+        "corr": -0.0023,
+        "resid_ratio": 2.7642,
+        "probe_norm": 28.15,
+        "margin_sub_norm": 7734.012,
+        "host_probe_norm": 472.3,
+        "frac_of_headw": 0.75
+      },
+      {
+        "gain": -4.181954,
+        "corr": -0.0022,
+        "resid_ratio": 2.7631,
+        "probe_norm": 37.533,
+        "margin_sub_norm": 7738.471,
+        "host_probe_norm": 629.734,
+        "frac_of_headw": 1.0
+      }
+    ],
+    "direct_underread_ratio_headw_via_gainA": 1.3118,
+    "structure_effect_at_hwnorm_D_over_B": -0.3909,
+    "structure_effect_at_Anorm_E_over_A": -0.3902,
+    "magnitude_effect_random_C_over_A": 1.0737,
+    "seed_hash_check": {
+      "seed": 42,
+      "thr_hash_1": "1d90c97348ccaf4a",
+      "thr_hash_2": "1d90c97348ccaf4a",
+      "seeded": true
+    },
+    "verdict_structure_compression": true,
+    "verdict_magnitude_compression_random_dir": false,
+    "verdict_direct_underread": false
+  },
+  "short_train": null,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-a8c784147ed626360/research/runners/_wkv_mouth_readout_softmax_confidence_derisk.py",
+    "--seed",
+    "42",
+    "--json",
+    "research/findings/raw/_wkv_softmax_confidence/diag_hg120_s42.json"
+  ],
+  "backend": "cupy",
+  "elapsed_s": 159.3
+}
