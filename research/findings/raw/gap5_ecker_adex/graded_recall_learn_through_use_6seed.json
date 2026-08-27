@@ -1,0 +1,1229 @@
+{
+  "probe": "gap5_graded_recall_learn_through_use",
+  "mechanism": "GRADED (non-binary-order) recall instrument -- sequence-completion DEPTH + Kendall-tau trajectory fidelity -- applied to the established BTSP+forward-conduction-delay directional replay write",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "cfg": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "n_mem": 6,
+    "asm_size": 80,
+    "within_density": 0.5,
+    "rest_steps": 9000,
+    "consol_steps": 6500,
+    "dt": 0.1,
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "btsp_elig_tau": 80.0,
+    "btsp_plat_tau": 1.0,
+    "btsp_eta": 0.001,
+    "btsp_w_max": 900.0,
+    "fwd_delay_steps": 90,
+    "n_laps": 14,
+    "enc_step": 80,
+    "enc_dwell": 40,
+    "enc_gap": 600,
+    "enc_cue_pa": 9000.0,
+    "enc_cue_frac": 0.6,
+    "swr_period": 650,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "weak_cue_mult": 0.5,
+    "weak_cue_frac": 0.35,
+    "ou_sigma": 40.0,
+    "read_swr_period": 0,
+    "window": 30,
+    "active_frac": 0.1,
+    "onset_frac": 0.06,
+    "dw_min": 5.0,
+    "headroom_max": 0.9,
+    "depth_gain_min": 0.05,
+    "tau_gain_min": 0.05,
+    "noseed_max_frac": 0.2,
+    "verify_only": false,
+    "skip_verify": false,
+    "verify_cue_mults": [
+      1.0,
+      0.85,
+      0.7,
+      0.5,
+      0.35,
+      0.2
+    ],
+    "verify_min_range": 0.15,
+    "out": "research/findings/raw/gap5_ecker_adex/graded_recall_learn_through_use_6seed.json",
+    "verify_out": "/home/dant123/Projects/sim/.claude/worktrees/agent-a5f4412525f160651/research/findings/raw/gap5_ecker_adex/graded_recall_instrument_verify.json"
+  },
+  "elapsed_seconds": 166.7,
+  "verdict": "GRADED-RECALL-INSTRUMENT NO-GO 0/6 -- the write stays directional (6/6, dw_fwd 203.6 vs dw_rev 170.9) and headroom holds (6/6 weak-cue depth_frac_before <= 0.9: 0.586), but even the GRADED instrument does not show a durable weak-cue recall gain: depth_frac 0.586->0.497 (tau 1.000->0.762), lesion-null 6/6. Legacy forward_frac 1.000->0.807. => this is a GENUINE negative (not the metric artifact): the directional write does not durably deepen weak-cue recall on this substrate even with headroom available.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "band_before": {
+        "adj_fwd": 319.35125732421875,
+        "adj_rev": 11.498048782348633,
+        "adj_within": 60.0,
+        "ratio": 27.774387060739787,
+        "fwd_max": 872.9390258789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 245.5580291748047,
+        "dw_rev": 219.4591064453125,
+        "volley_overlap": 0.29272659833748466,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 564.9093017578125,
+        "adj_rev": 230.95716857910156,
+        "adj_within": 60.0,
+        "ratio": 2.4459483342009114,
+        "fwd_max": 893.7723388671875
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.4423076923076923,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.1736111111111111,
+          "n_multi": 9,
+          "depth_mean": 3.230769230769231,
+          "depth_frac": 0.708974358974359,
+          "tau": 1.0,
+          "n_tau_events": 9,
+          "per_asm_active": [
+            3,
+            8,
+            8,
+            7,
+            9,
+            7
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 319.35125732421875,
+            "adj_rev": 11.498048782348633,
+            "adj_within": 60.0,
+            "ratio": 27.774387060739787,
+            "fwd_max": 872.9390258789062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.014814814814814814,
+          "n_multi": 3,
+          "depth_mean": 2.0,
+          "depth_frac": 0.4423076923076923,
+          "tau": 1.0,
+          "n_tau_events": 3,
+          "per_asm_active": [
+            3,
+            7,
+            4,
+            4,
+            5,
+            3
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 319.35125732421875,
+            "adj_rev": 11.498048782348633,
+            "adj_within": 60.0,
+            "ratio": 27.774387060739787,
+            "fwd_max": 872.9390258789062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.18179012345679013,
+          "n_multi": 9,
+          "depth_mean": 3.0,
+          "depth_frac": 0.6487179487179487,
+          "tau": 1.0,
+          "n_tau_events": 9,
+          "per_asm_active": [
+            3,
+            8,
+            8,
+            8,
+            8,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 564.9093017578125,
+            "adj_rev": 230.95716857910156,
+            "adj_within": 60.0,
+            "ratio": 2.4459483342009114,
+            "fwd_max": 893.7723388671875,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8333333333333334,
+          "reverse": 0.0,
+          "chance": 0.12662037037037036,
+          "n_multi": 6,
+          "depth_mean": 2.230769230769231,
+          "depth_frac": 0.49102564102564106,
+          "tau": 0.8333333333333334,
+          "n_tau_events": 6,
+          "per_asm_active": [
+            3,
+            8,
+            6,
+            4,
+            5,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 564.9093017578125,
+            "adj_rev": 230.95716857910156,
+            "adj_within": 60.0,
+            "ratio": 2.4459483342009114,
+            "fwd_max": 893.7723388671875,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 245.558,
+        "dw_rev": 219.459,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.442,
+        "weak_depth_frac_after": 0.491,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.833,
+        "weak_depth_frac_noseed": 0.442
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "band_before": {
+        "adj_fwd": 320.0132141113281,
+        "adj_rev": 11.548107147216797,
+        "adj_within": 60.0,
+        "ratio": 27.71131320758955,
+        "fwd_max": 873.7046508789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 145.64154052734375,
+        "dw_rev": 114.00756072998047,
+        "volley_overlap": 0.3083242026206252,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 465.6547546386719,
+        "adj_rev": 125.55567169189453,
+        "adj_within": 60.0,
+        "ratio": 3.708751252443286,
+        "fwd_max": 888.1193237304688
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.6717948717948719,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.20300925925925925,
+          "n_multi": 6,
+          "depth_mean": 2.230769230769231,
+          "depth_frac": 0.6820512820512821,
+          "tau": 1.0,
+          "n_tau_events": 6,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            6,
+            6,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.0132141113281,
+            "adj_rev": 11.548107147216797,
+            "adj_within": 60.0,
+            "ratio": 27.71131320758955,
+            "fwd_max": 873.7046508789062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2518518518518518,
+          "n_multi": 6,
+          "depth_mean": 2.3076923076923075,
+          "depth_frac": 0.6717948717948719,
+          "tau": 1.0,
+          "n_tau_events": 6,
+          "per_asm_active": [
+            2,
+            4,
+            6,
+            6,
+            6,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.0132141113281,
+            "adj_rev": 11.548107147216797,
+            "adj_within": 60.0,
+            "ratio": 27.71131320758955,
+            "fwd_max": 873.7046508789062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.17281746031746031,
+          "n_multi": 7,
+          "depth_mean": 2.230769230769231,
+          "depth_frac": 0.6987179487179488,
+          "tau": 0.8095238095238095,
+          "n_tau_events": 7,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            7,
+            6,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 465.6547546386719,
+            "adj_rev": 125.55567169189453,
+            "adj_within": 60.0,
+            "ratio": 3.708751252443286,
+            "fwd_max": 888.1193237304688,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8,
+          "reverse": 0.0,
+          "chance": 0.08361111111111111,
+          "n_multi": 5,
+          "depth_mean": 1.9230769230769231,
+          "depth_frac": 0.5256410256410257,
+          "tau": 0.7333333333333334,
+          "n_tau_events": 5,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            7,
+            4,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 465.6547546386719,
+            "adj_rev": 125.55567169189453,
+            "adj_within": 60.0,
+            "ratio": 3.708751252443286,
+            "fwd_max": 888.1193237304688,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 145.642,
+        "dw_rev": 114.008,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.672,
+        "weak_depth_frac_after": 0.526,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.733,
+        "weak_depth_frac_noseed": 0.672
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "band_before": {
+        "adj_fwd": 320.32623291015625,
+        "adj_rev": 11.51583194732666,
+        "adj_within": 60.0,
+        "ratio": 27.816160775472092,
+        "fwd_max": 876.070556640625,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 239.19464111328125,
+        "dw_rev": 205.0043182373047,
+        "volley_overlap": 0.36413863407431896,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 559.5208740234375,
+        "adj_rev": 216.5201416015625,
+        "adj_within": 60.0,
+        "ratio": 2.5841516169570053,
+        "fwd_max": 891.5625
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.6730769230769231,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2557291666666667,
+          "n_multi": 8,
+          "depth_mean": 2.6923076923076925,
+          "depth_frac": 0.846153846153846,
+          "tau": 1.0,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            3,
+            3,
+            4,
+            8,
+            8,
+            9
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.32623291015625,
+            "adj_rev": 11.51583194732666,
+            "adj_within": 60.0,
+            "ratio": 27.816160775472092,
+            "fwd_max": 876.070556640625,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.1673611111111111,
+          "n_multi": 4,
+          "depth_mean": 2.0,
+          "depth_frac": 0.6730769230769231,
+          "tau": 1.0,
+          "n_tau_events": 4,
+          "per_asm_active": [
+            3,
+            2,
+            3,
+            7,
+            5,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.32623291015625,
+            "adj_rev": 11.51583194732666,
+            "adj_within": 60.0,
+            "ratio": 27.816160775472092,
+            "fwd_max": 876.070556640625,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.17321428571428574,
+          "n_multi": 7,
+          "depth_mean": 2.6153846153846154,
+          "depth_frac": 0.8205128205128205,
+          "tau": 0.8095238095238095,
+          "n_tau_events": 7,
+          "per_asm_active": [
+            3,
+            3,
+            4,
+            9,
+            7,
+            9
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 559.5208740234375,
+            "adj_rev": 216.5201416015625,
+            "adj_within": 60.0,
+            "ratio": 2.5841516169570053,
+            "fwd_max": 891.5625,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.6,
+          "reverse": 0.0,
+          "chance": 0.058611111111111114,
+          "n_multi": 5,
+          "depth_mean": 1.7692307692307692,
+          "depth_frac": 0.532051282051282,
+          "tau": 0.6,
+          "n_tau_events": 5,
+          "per_asm_active": [
+            3,
+            2,
+            5,
+            6,
+            4,
+            5
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 559.5208740234375,
+            "adj_rev": 216.5201416015625,
+            "adj_within": 60.0,
+            "ratio": 2.5841516169570053,
+            "fwd_max": 891.5625,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 239.195,
+        "dw_rev": 205.004,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.673,
+        "weak_depth_frac_after": 0.532,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.6,
+        "weak_depth_frac_noseed": 0.673
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "band_before": {
+        "adj_fwd": 314.6484069824219,
+        "adj_rev": 11.613385200500488,
+        "adj_within": 60.0,
+        "ratio": 27.093599458740233,
+        "fwd_max": 874.7079467773438,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 233.26736450195312,
+        "dw_rev": 219.99163818359375,
+        "volley_overlap": 0.24360571569071443,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 547.915771484375,
+        "adj_rev": 231.6050262451172,
+        "adj_within": 60.0,
+        "ratio": 2.3657335091877196,
+        "fwd_max": 893.2240600585938
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.5628205128205128,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.10625,
+          "n_multi": 8,
+          "depth_mean": 2.769230769230769,
+          "depth_frac": 0.6987179487179487,
+          "tau": 1.0,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            3,
+            6,
+            7,
+            8,
+            6,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.6484069824219,
+            "adj_rev": 11.613385200500488,
+            "adj_within": 60.0,
+            "ratio": 27.093599458740233,
+            "fwd_max": 874.7079467773438,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.11861111111111111,
+          "n_multi": 5,
+          "depth_mean": 2.230769230769231,
+          "depth_frac": 0.5628205128205128,
+          "tau": 1.0,
+          "n_tau_events": 5,
+          "per_asm_active": [
+            3,
+            6,
+            5,
+            6,
+            5,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.6484069824219,
+            "adj_rev": 11.613385200500488,
+            "adj_within": 60.0,
+            "ratio": 27.093599458740233,
+            "fwd_max": 874.7079467773438,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8181818181818182,
+          "reverse": 0.09090909090909091,
+          "chance": 0.25075757575757573,
+          "n_multi": 11,
+          "depth_mean": 2.4615384615384617,
+          "depth_frac": 0.6333333333333333,
+          "tau": 0.7272727272727273,
+          "n_tau_events": 11,
+          "per_asm_active": [
+            3,
+            6,
+            9,
+            7,
+            6,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 547.915771484375,
+            "adj_rev": 231.6050262451172,
+            "adj_within": 60.0,
+            "ratio": 2.3657335091877196,
+            "fwd_max": 893.2240600585938,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.1630952380952381,
+          "n_multi": 7,
+          "depth_mean": 2.076923076923077,
+          "depth_frac": 0.45000000000000007,
+          "tau": 0.9047619047619048,
+          "n_tau_events": 7,
+          "per_asm_active": [
+            3,
+            6,
+            7,
+            7,
+            4,
+            3
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 547.915771484375,
+            "adj_rev": 231.6050262451172,
+            "adj_within": 60.0,
+            "ratio": 2.3657335091877196,
+            "fwd_max": 893.2240600585938,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 233.267,
+        "dw_rev": 219.992,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.563,
+        "weak_depth_frac_after": 0.45,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.905,
+        "weak_depth_frac_noseed": 0.563
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "band_before": {
+        "adj_fwd": 321.66363525390625,
+        "adj_rev": 11.509712219238281,
+        "adj_within": 60.0,
+        "ratio": 27.94714838449663,
+        "fwd_max": 874.6446533203125,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 163.8805694580078,
+        "dw_rev": 117.09072875976562,
+        "volley_overlap": 0.18433909172001978,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 485.5442199707031,
+        "adj_rev": 128.60044860839844,
+        "adj_within": 60.0,
+        "ratio": 3.77560284761708,
+        "fwd_max": 891.2525024414062
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.6307692307692307,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2625,
+          "n_multi": 8,
+          "depth_mean": 2.3846153846153846,
+          "depth_frac": 0.8,
+          "tau": 1.0,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            0,
+            3,
+            8,
+            5,
+            6,
+            9
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 321.66363525390625,
+            "adj_rev": 11.509712219238281,
+            "adj_within": 60.0,
+            "ratio": 27.94714838449663,
+            "fwd_max": 874.6446533203125,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01944444444444444,
+          "n_multi": 3,
+          "depth_mean": 1.8461538461538463,
+          "depth_frac": 0.6307692307692307,
+          "tau": 1.0,
+          "n_tau_events": 3,
+          "per_asm_active": [
+            0,
+            3,
+            7,
+            3,
+            5,
+            6
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 321.66363525390625,
+            "adj_rev": 11.509712219238281,
+            "adj_within": 60.0,
+            "ratio": 27.94714838449663,
+            "fwd_max": 874.6446533203125,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.23645833333333333,
+          "n_multi": 8,
+          "depth_mean": 2.3846153846153846,
+          "depth_frac": 0.8,
+          "tau": 1.0,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            0,
+            3,
+            8,
+            5,
+            7,
+            8
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 485.5442199707031,
+            "adj_rev": 128.60044860839844,
+            "adj_within": 60.0,
+            "ratio": 3.77560284761708,
+            "fwd_max": 891.2525024414062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01944444444444444,
+          "n_multi": 3,
+          "depth_mean": 1.6923076923076923,
+          "depth_frac": 0.5153846153846154,
+          "tau": 1.0,
+          "n_tau_events": 3,
+          "per_asm_active": [
+            0,
+            3,
+            7,
+            3,
+            4,
+            5
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 485.5442199707031,
+            "adj_rev": 128.60044860839844,
+            "adj_within": 60.0,
+            "ratio": 3.77560284761708,
+            "fwd_max": 891.2525024414062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 163.881,
+        "dw_rev": 117.091,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.631,
+        "weak_depth_frac_after": 0.515,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 1.0,
+        "weak_depth_frac_noseed": 0.631
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "band_before": {
+        "adj_fwd": 320.1249084472656,
+        "adj_rev": 11.497782707214355,
+        "adj_within": 60.0,
+        "ratio": 27.842316783948373,
+        "fwd_max": 873.2434692382812,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 193.91322326660156,
+        "dw_rev": 149.94790649414062,
+        "volley_overlap": 0.28547852869097834,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 514.0381469726562,
+        "adj_rev": 161.44569396972656,
+        "adj_within": 60.0,
+        "ratio": 3.1839693852042035,
+        "fwd_max": 890.5186767578125
+      },
+      "no_seed": {
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "weak_depth_frac": 0.5371794871794872,
+        "weak_tau": 1.0,
+        "weak_forward_legacy": 1.0
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.37621527777777775,
+          "n_multi": 8,
+          "depth_mean": 2.1538461538461537,
+          "depth_frac": 0.6358974358974359,
+          "tau": 1.0,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            1,
+            4,
+            5,
+            8,
+            5,
+            5
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.1249084472656,
+            "adj_rev": 11.497782707214355,
+            "adj_within": 60.0,
+            "ratio": 27.842316783948373,
+            "fwd_max": 873.2434692382812,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01712962962962963,
+          "n_multi": 3,
+          "depth_mean": 1.9230769230769231,
+          "depth_frac": 0.5371794871794872,
+          "tau": 1.0,
+          "n_tau_events": 3,
+          "per_asm_active": [
+            1,
+            4,
+            4,
+            7,
+            5,
+            4
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.1249084472656,
+            "adj_rev": 11.497782707214355,
+            "adj_within": 60.0,
+            "ratio": 27.842316783948373,
+            "fwd_max": 873.2434692382812,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.875,
+          "reverse": 0.125,
+          "chance": 0.23975694444444443,
+          "n_multi": 8,
+          "depth_mean": 2.230769230769231,
+          "depth_frac": 0.6461538461538462,
+          "tau": 0.75,
+          "n_tau_events": 8,
+          "per_asm_active": [
+            1,
+            4,
+            5,
+            9,
+            7,
+            5
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 514.0381469726562,
+            "adj_rev": 161.44569396972656,
+            "adj_within": 60.0,
+            "ratio": 3.1839693852042035,
+            "fwd_max": 890.5186767578125,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.75,
+          "reverse": 0.25,
+          "chance": 0.09409722222222222,
+          "n_multi": 4,
+          "depth_mean": 1.6923076923076923,
+          "depth_frac": 0.46794871794871795,
+          "tau": 0.5,
+          "n_tau_events": 4,
+          "per_asm_active": [
+            1,
+            4,
+            4,
+            8,
+            4,
+            3
+          ],
+          "frozen": true,
+          "band": {
+            "adj_fwd": 514.0381469726562,
+            "adj_rev": 161.44569396972656,
+            "adj_within": 60.0,
+            "ratio": 3.1839693852042035,
+            "fwd_max": 890.5186767578125,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_controlled": true,
+        "dw_fwd": 193.913,
+        "dw_rev": 149.948,
+        "dw_noseed": 0.0,
+        "weak_depth_frac_before": 0.537,
+        "weak_depth_frac_after": 0.468,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.5,
+        "weak_depth_frac_noseed": 0.537
+      },
+      "seed_go": false
+    }
+  ],
+  "GO": false,
+  "n_go": 0,
+  "status": "NO-GO",
+  "dw_fwd": 203.57589467366537,
+  "dw_rev": 170.91687647501627,
+  "dw_fwd_noseed": 0.0,
+  "weak_depth_frac_before": 0.5863247863247864,
+  "weak_depth_frac_after": 0.497008547008547,
+  "weak_depth_frac_noseed": 0.5863247863247864,
+  "weak_tau_before": 1.0,
+  "weak_tau_after": 0.7619047619047619,
+  "full_depth_frac_before": 0.7286324786324787,
+  "full_depth_frac_after": 0.7079059829059831,
+  "weak_forward_legacy_before": 1.0,
+  "weak_forward_legacy_after": 0.8067460317460317,
+  "n_headroom": 6,
+  "n_directional": 6,
+  "n_lesion_ok": 6,
+  "instrument_verify": {
+    "seed": 42,
+    "band": {
+      "adj_fwd": 319.35125732421875,
+      "adj_rev": 11.498048782348633,
+      "adj_within": 60.0,
+      "ratio": 27.774387060739787,
+      "fwd_max": 872.9390258789062,
+      "fwd_min": 15.0
+    },
+    "rows": [
+      {
+        "cue_mult": 1.0,
+        "forward": 1.0,
+        "reverse": 0.0,
+        "chance": 0.1736111111111111,
+        "n_multi": 9,
+        "depth_mean": 3.230769230769231,
+        "depth_frac": 0.708974358974359,
+        "tau": 1.0,
+        "n_tau_events": 9
+      },
+      {
+        "cue_mult": 0.85,
+        "forward": 1.0,
+        "reverse": 0.0,
+        "chance": 0.13697916666666665,
+        "n_multi": 8,
+        "depth_mean": 3.076923076923077,
+        "depth_frac": 0.655128205128205,
+        "tau": 1.0,
+        "n_tau_events": 8
+      },
+      {
+        "cue_mult": 0.7,
+        "forward": 1.0,
+        "reverse": 0.0,
+        "chance": 0.13697916666666665,
+        "n_multi": 8,
+        "depth_mean": 3.076923076923077,
+        "depth_frac": 0.655128205128205,
+        "tau": 1.0,
+        "n_tau_events": 8
+      },
+      {
+        "cue_mult": 0.5,
+        "forward": 1.0,
+        "reverse": 0.0,
+        "chance": 0.09236111111111112,
+        "n_multi": 6,
+        "depth_mean": 2.769230769230769,
+        "depth_frac": 0.5833333333333334,
+        "tau": 1.0,
+        "n_tau_events": 6
+      },
+      {
+        "cue_mult": 0.35,
+        "forward": 1.0,
+        "reverse": 0.0,
+        "chance": 0.003125,
+        "n_multi": 4,
+        "depth_mean": 2.4615384615384617,
+        "depth_frac": 0.5102564102564103,
+        "tau": 1.0,
+        "n_tau_events": 4
+      },
+      {
+        "cue_mult": 0.2,
+        "forward": 0.0,
+        "reverse": 0.0,
+        "chance": 1e-06,
+        "n_multi": 0,
+        "depth_mean": 0.0,
+        "depth_frac": 0.0,
+        "tau": 0.0,
+        "n_tau_events": 0
+      }
+    ],
+    "graded": true,
+    "legacy_flat": false,
+    "depth_frac_range": 0.708974358974359,
+    "tau_range": 1.0,
+    "forward_frac_range": 1.0,
+    "n_intermediate": 5
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the GRADED instrument itself reads graded on a known-good store (pre-flight verify_instrument)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "weak-cue depth_frac BEFORE has headroom (not at ceiling) on >= bar seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fe869586480>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the write is DIRECTIONAL (dw_fwd > dw_rev + dw_min) on >= bar seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fe869586480>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "LESION-THE-REPLAY: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER",
+      "ok": true,
+      "detail": "treatment=203.576 control=0 |sep|=203.576 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: does the ESTABLISHED directional (BTSP+delay) replay-driven write produce a GRADED weak-cue recall GAIN (headroom + lesion-controlled)?",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "the GRADED instrument itself reads graded on a known-good store (pre-flight verify_instrument)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "weak-cue depth_frac BEFORE has headroom (not at ceiling) on >= bar seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fe869586480>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "the write is DIRECTIONAL (dw_fwd > dw_rev + dw_min) on >= bar seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fe869586480>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "LESION-THE-REPLAY: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER",
+        "ok": true,
+        "detail": "treatment=203.576 control=0 |sep|=203.576 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "within-assembly recurrence + assembly identity; ONLY the inter-assembly SEQUENCE band is plastic (same scope as the conduction-delay PARTIAL)",
+        "why": "scope: reuses the established write unmodified -- only the READ instrument is new"
+      }
+    ],
+    "chance": null
+  }
+}
