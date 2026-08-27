@@ -11,6 +11,8 @@ runner: research/runners/_onebrain_integration_r3_spiking_dopamine_credit.py
 
 # One-brain INTEGRATION R3 — the cross-edge credit signal becomes a SPIKING dopamine population (R2-a residual closed at the mechanism level), but the clean integration into the full gate is NOT yet achieved — PARTIAL (UNDEFINED on the full gate — precondition failed)
 
+> **⚠️ DIAGNOSIS CORRECTED 2026-08-27 by [`R3v2`](2026-08-27-onebrain-integration-R3v2-noncorrupting-dopamine-credit-NO-GO.md).** This doc's causal attribution — that `da_credit`'s fixed coincidence synapses (`sel/teach -> snc`) CORRUPT the shared merge pool — is WRONG: instrumented per-mask before/after diffing shows those synapses carry EXACTLY 0.0 diff every seed. The real corruption was two snapshot/freeze ORDERING bugs (surfaced only because `da_credit` permanently registers a `dopamine` NeuromodulatorConfig, tripping `sim/bridge.py`'s reward-modulated weight-clip on an unfrozen baseline pool). R3v2 fixes the ordering (no mechanism change, no `sim/` edit): `migration_byte_identity` 0/6->6/6, `no_corruption` 0/6->6/6, dopamine-lesion stays 6/6 (mechanism confirmed load-bearing). The full F1-F4 gate is then validly DEFINED as a clean NO-GO on F2 alone (F2's signal is real but under R2's larger-pathway pre-registered floor). **The MEASUREMENTS below are valid; the "da_credit corrupts the pool" INTERPRETATION is superseded — read R3v2 for the corrected verdict.**
+
 **One-line:** R3 closes R2-a's one declared residual AT THE MECHANISM LEVEL — the third-factor credit's VALUE is
 now the firing of a co-located SPIKING dopamine/coincidence population (an SNc-style AND-gate reading the network's
 OWN resolved WTA decision `sel_agent`/`sel_patient` in coincidence with a teacher-confirmation drive), fed to the
