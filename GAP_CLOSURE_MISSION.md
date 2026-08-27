@@ -13,7 +13,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-25 EVENING (READ FIRST; LATEST anchor — supersedes the LATER header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-26 LATE (READ FIRST; LATEST anchor — supersedes every header below)
+
+**CURRENT ARC = FACULTY-INTEGRATION LARGELY DONE → the FLUENCY WALL is now the frontier.** This session drove 10 validated faculties to PRODUCTION-DEFAULT-ON and made them LIVE (the primary checkout was synced to `main`, owner-approved): affective empathy (W5 ToM), self-authorship honesty (DR-3), biased-competition attention, vision-identity readout, value-driven choice, sleep-replay consolidation (#64), spiking Broca mouth (bounded SVO), global-workspace STOP, activity-silent WM, BG action-selection. PI-ledger = 54 faculties / 26 default-on-spiking / scaffold_retired 0.
+The production brain now feels, remembers, hedges honestly, attends, chooses, deliberates, consolidates in sleep, and speaks BOUNDED sentences on its own neurons — but FLUENT OPEN-ENDED prose is STILL the external Qwen-0.5B mouth, and "most load-bearing cognition is still host/numpy" (the ledger's own note).
+
+**CURRENT FRONTIER (the #1 blocker to fluent, open-ended conversation):** the MOUTH — retire Qwen for a LEARNED brain-native generator, walled by the READ-SNR problem (#80 / true-wall #3): the substrate's noisy moment-to-moment read of its own spikes caps learned speech at ~1/3 quality; the noise, NOT lack of practice, is the limit. Secondary blockers: knowledge breadth (the #66 sparse-index sublinear-retrieval flip is de-risked + wired but DEFAULT-OFF, owner-gated review at scale); the comprehension/orchestration glue is still host; the one-brain merge is partial (scaffold_retired is still 0).
+
+**PRE-DECIDED NEXT ACTIONS (ordered):**
+1. V1 oriented-RF wall-search — a 3-mechanism no-defer search (LGN-whitening+window / BCM sliding threshold / lateral-inhibition) is RUNNING on the GPU (workflow `wf_341ab87d`); harvest verdicts + land.
+2. THE MOUTH / read-SNR (the long game, #80): the named open lever is an ensemble/dendritic read (the integration-window lever was already excluded); attack the read-SNR so a learned spiking generator can replace Qwen.
+3. #66 knowledge-scale: the `BRAIN_SPARSE_INDEX_RETRIEVAL` default-on flip is OWNER-GATED (review at scale) — surface the decision.
+4. Retire the comprehension/orchestration host scaffolds toward the one-brain merge (scaffold_retired = 0 today).
+
+**LAST DECISION: 2026-08-26 — primary checkout synced to `main` (owner-approved), making the 10 default-on flips LIVE; full catalog validation closed (6 verdicts: 2 GO / 2 PARTIAL / 2 NO-GO); 4 infra/governance fixes landed. Latest `main` = `75a3a96ee`.**
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-25 EVENING (history — superseded by the 2026-08-26 LATE header above)
 
 **NORTH-STAR MILESTONE LANDED — the brain REASONS TO ITS OWN CONCLUSION in production, by default.** A live
 diagnostic first FALSIFIED the north-star (the integrated brain recalled one fact and never reasoned); this
