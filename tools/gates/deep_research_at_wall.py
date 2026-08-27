@@ -122,8 +122,25 @@ def _lane_count_in_window(root, lane, center_epoch):
     return n
 
 
+_LOCATOR_RE = re.compile(r"https?://|10\.\d{3,}/|arxiv|doi[:\s/]|pmid|pmc\d|/articles/|biorxiv|pubmed|consensus\.app", re.I)
+
+
+def _source_is_locatable(src):
+    """A hammered-lane source must be a LOCATABLE external hit (a URL / DOI / arXiv / PMID / PMC / db link),
+    OR the honest 'none-found: <why>' / 'no-external-needed' escape. A bare recalled author-year with NO
+    locator no longer clears the gate. Closes the recalled-vs-searched hole (owner-flagged 2026-08-27): the
+    gate could previously not tell a LIVE search hit from a from-MEMORY citation, and a bare '(Author, YEAR)'
+    cleared it as well as a real hit. A real search hit (Consensus/PubMed/bioRxiv/a paper) always carries its
+    locator; a lazy from-memory recall usually does not. NOT airtight (a DOI can be recalled) but it raises the
+    floor from 'a source string exists' toward 'a real search hit was actually found'."""
+    s = (src or "").strip().lower()
+    if s.startswith(("none-found", "none found", "no-external-needed", "no external needed")):
+        return True
+    return bool(_LOCATOR_RE.search(s))
+
+
 def _fresh_external_source(root, center_epoch, lane=None, log=None):
-    """True iff `.external_searches.jsonl` has an in-window entry with a NON-EMPTY source that is VALID FOR `lane`.
+    """True iff `.external_searches.jsonl` has an in-window LOCATABLE source (URL/DOI/... or 'none-found') VALID FOR `lane`.
 
     LANE-SCOPING (closes the over-clearing hole found 2026-08-09): a source recorded WITH a `lane` clears ONLY
     that lane — so a forgetting-lane source no longer satisfies a read-out-lane finding when both walls are
@@ -148,6 +165,8 @@ def _fresh_external_source(root, center_epoch, lane=None, log=None):
                 src = str(rec.get("source") or "").strip()
                 if not src:
                     continue
+                if not _source_is_locatable(src):
+                    continue  # a bare recalled author-year (no URL/DOI) is not evidence of a live external search
                 rec_lane = str(rec.get("lane") or "").strip().lower()
                 # a lane-tagged source clears ONLY its own lane; an untagged source is general (clears any)
                 if rec_lane and want and rec_lane != want:
@@ -210,22 +229,32 @@ def selftest():
         probs = check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl"))
         if not probs:
             out.append("FAIL: hammered lane with no external source did not block")
-        # (B) PASSING case: add a fresh UNTAGGED (general) external source -> MUST clear
+        # (B) PASSING case: a fresh UNTAGGED (general) LOCATABLE external source (carries a URL) -> MUST clear
         with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
-            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "PS-SNN Hu 2026 Sci Reports"}) + "\n")
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "PS-SNN Hu 2026 https://doi.org/10.1038/s41598-026-00000-0"}) + "\n")
         if check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
-            out.append("FAIL: a fresh real (untagged) external source did not clear the gate")
+            out.append("FAIL: a fresh locatable (untagged) external source did not clear the gate")
+        # (B2) FAILING case: a bare recalled author-year with NO locator MUST NOT clear (the recalled-vs-searched hole)
+        with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "Recalled Author 2026 (from memory, no link)"}) + "\n")
+        if not check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
+            out.append("FAIL: a bare recalled author-year with no locator cleared the gate (recalled-vs-searched hole)")
+        # (B3) PASSING case: the honest 'none-found' escape MUST clear
+        with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "none-found: genuinely novel wall, no external literature"}) + "\n")
+        if check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
+            out.append("FAIL: the honest none-found escape did not clear the gate")
         # (C) below threshold -> no problem
         if check(staged[:1], root=d, log=os.path.join(qd, ".external_searches.jsonl")):
             out.append("FAIL: a single lever (below threshold) fired the gate")
         # (D) OVER-CLEARING HOLE CLOSED: a source tagged for a DIFFERENT lane must NOT clear 'the-wall'
         with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
-            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "unrelated", "source": "Some Paper 2026", "lane": "other-lane"}) + "\n")
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "unrelated", "source": "Some Paper 2026 https://example.org/p", "lane": "other-lane"}) + "\n")
         if not check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
             out.append("FAIL: a source tagged for a DIFFERENT lane cleared this lane (the over-clearing hole)")
         # (E) a source tagged for the SAME lane MUST clear
         with open(os.path.join(qd, ".external_searches.jsonl"), "w") as fh:
-            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "Some Paper 2026", "lane": "the-wall"}) + "\n")
+            fh.write(json.dumps({"ts": now + "T00:00:00Z", "query": "the wall", "source": "Some Paper 2026 https://example.org/p", "lane": "the-wall"}) + "\n")
         if check(staged, root=d, log=os.path.join(qd, ".external_searches.jsonl")):
             out.append("FAIL: a source tagged for the SAME lane did not clear the gate")
     return out
