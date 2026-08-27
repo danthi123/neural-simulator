@@ -1,0 +1,1121 @@
+{
+  "probe": "onebrain_integration_r1_wm_comprehension",
+  "verdict": "GO \u2014 R1 learned cross-edge d6 WM referent -> comprehension role competition: 6/6 seeds pass ALL of F1(faculty-still-works) + F2(vary-then-lesion, both directions) + F3(no-runaway) + F4(moat) + emergence(LEARNED mapping) + lesion-recovers-migration. Per-arm: {'F1.PASS': '6/6', 'F2.PASS': '6/6', 'F3.PASS': '6/6', 'F4.PASS': '6/6', 'emergence.PASS': '6/6', 'lesion_recovers_migration.PASS': '6/6'}. The cross-edge GROWS from near-zero (0.05) by the substrate's OWN rate-window Hebbian to ~11-14 (LEARNED, not hand-set); the referent->role MAPPING is set by co-activity (the mismatched pairs stay at 0.05) under a HOST-CURATED experience stream (declared scaffold-residual, per design \u00a72 -- NOT strict self-organization: the host schedules which referent co-fires with which role). The WM-held referent shifts the signed sel margin toward its learned role and the shift VANISHES on lesion (load-bearing, plasticity frozen during the read so the zeroed edge cannot regrow); the moat holds (no winner from silence; a clear item is not flipped). numpy CPU; NO sim/ edit.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "per_arm": {
+    "F1.PASS": "6/6",
+    "F2.PASS": "6/6",
+    "F3.PASS": "6/6",
+    "F4.PASS": "6/6",
+    "emergence.PASS": "6/6",
+    "lesion_recovers_migration.PASS": "6/6"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "f2_lesion_removes_shift",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7efcf31c71a0>",
+      "note": "the F2 shift must VANISH under lesion or it is a confound, not the cross-edge (the crux control)"
+    },
+    {
+      "kind": "require",
+      "name": "migration_byte_identity",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7efcf31c71a0>",
+      "note": "lesion the cross-edge -> comprehension reads == the plain merged pool (integration added ONLY it)"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_self_organized",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7efcf31c71a0>",
+      "note": "the RIGHT referent->role pairs grew from ~0.05 while the WRONG pairs stayed low (learned, not hand-set)"
+    },
+    {
+      "kind": "require",
+      "name": "moat_no_winner_from_silence",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7efcf31c71a0>",
+      "note": "a silent input + WM held stays sub-decision (F4 moat)"
+    }
+  ],
+  "config": {
+    "W0": 0.05,
+    "hebbian_max_weight": 40.0,
+    "n_episodes": 40,
+    "ambig_pA": 2200.0,
+    "read_steps": 100,
+    "n_reads": 3,
+    "f2_intact_floor": 0.008,
+    "f2_lesion_ratio": 0.34,
+    "f4a_frac": 0.5,
+    "f4b_retain": 0.5,
+    "migration_tol": 0.03
+  },
+  "mechanism": "ONE shared merge pool [d6_multiref_wm + comprehension] (merge_organs wire=True); a SINGLE plastic cross-edge set w{0,1}->{sel_agent,sel_patient} seeded ~0.05, the SOLE plastic synapse (cp_plasticity_rate_gain=0 everywhere then wm_to_sel=1 -- the design's whitelist inversion, so every migrated edge is byte-frozen), GROWN by the substrate's rate-window Hebbian over held-referent-while-role-fires episodes; the referent->role MAPPING (w0->agent, w1->patient) is LEARNED from co-activity (mismatched pairs stay 0.05) under a host-curated experience stream (scaffold-residual: host-chosen topology + curated pairing schedule -- not strict self-organization).",
+  "scaffold_residuals": [
+    "host-chosen cross-edge TOPOLOGY (which regions connect)",
+    "host-CURATED experience stream (the training schedules which referent co-fires with which role) -- the faithful end state has the pairing emerge from raw dialogue; on the same burn-down as the framework's masks (design \u00a72)",
+    "two-factor Hebbian (R2 is the three-factor neuromodulator-gated upgrade)",
+    "the ambiguous item is a balanced-cue competition (baseline signed margin ~0), a substrate stand-in for a full pronoun-resolution discourse"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "PASS": true,
+      "elapsed_s": 16.0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 2.3501,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 2.0011
+          },
+          {
+            "ep": 10,
+            "w0->A": 4.2868,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.6951
+          },
+          {
+            "ep": 15,
+            "w0->A": 5.9511,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 5.1725
+          },
+          {
+            "ep": 20,
+            "w0->A": 7.4777,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 6.6173
+          },
+          {
+            "ep": 25,
+            "w0->A": 9.131,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.1877
+          },
+          {
+            "ep": 30,
+            "w0->A": 10.7147,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 9.6848
+          },
+          {
+            "ep": 35,
+            "w0->A": 12.2034,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 11.1018
+          },
+          {
+            "ep": 40,
+            "w0->A": 13.606,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 12.439
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 13.606,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 12.439
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.32847222222222217,
+        "mean_well": 0.4041666666666667,
+        "mean_ill": 0.07199074074074073,
+        "min_well": 0.4041666666666667,
+        "max_ill": 0.18263888888888885,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.0638888888888889,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": 0.0013888888888888469,
+          "ref0": 0.02847222222222222,
+          "ref1": -0.01999999999999999
+        },
+        "margins_lesion": {
+          "none": 0.0016666666666666219,
+          "ref0": 0.0016666666666666219,
+          "ref1": 0.0016666666666666219
+        },
+        "delta_ref0_intact": 0.027083333333333376,
+        "delta_ref1_intact": -0.021388888888888836,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.25805555555555554,
+          "sel_patient": 0.22958333333333333,
+          "w0": 0.08916666666666663,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.25805555555555554,
+          "sel_patient": 0.22958333333333333,
+          "w0": 0.08916666666666663,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 13.0225,
+        "bounded_by_hmax": true,
+        "first_window_dw": 2.1256000000000004,
+        "last_window_dw": 1.3699000000000012,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.08000000000000002,
+        "wm_only_ref1": -0.07,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.25000000000000006,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.31736111111111115,
+        "clear_wrongWM": 0.3,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.46597222222222223,
+          0.19374999999999998,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4631944444444444,
+          0.19513888888888886,
+          0.033333333333333326,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.016666666666666663,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 43,
+      "PASS": true,
+      "elapsed_s": 16.3,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 1.9873,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 2.098
+          },
+          {
+            "ep": 10,
+            "w0->A": 3.6408,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.9764
+          },
+          {
+            "ep": 15,
+            "w0->A": 5.0754,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 5.6132
+          },
+          {
+            "ep": 20,
+            "w0->A": 6.4357,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 7.0444
+          },
+          {
+            "ep": 25,
+            "w0->A": 7.8649,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.529
+          },
+          {
+            "ep": 30,
+            "w0->A": 9.2944,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 10.0132
+          },
+          {
+            "ep": 35,
+            "w0->A": 10.6836,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 11.417
+          },
+          {
+            "ep": 40,
+            "w0->A": 12.0056,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 12.7429
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 12.0056,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 12.7429
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.3059027777777778,
+        "mean_well": 0.38402777777777775,
+        "mean_ill": 0.06921296296296296,
+        "min_well": 0.38402777777777775,
+        "max_ill": 0.17430555555555555,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.052777777777777785,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": -0.0018055555555555418,
+          "ref0": 0.01999999999999999,
+          "ref1": -0.01999999999999999
+        },
+        "margins_lesion": {
+          "none": -0.0012499999999999734,
+          "ref0": -0.0012499999999999734,
+          "ref1": -0.0012499999999999734
+        },
+        "delta_ref0_intact": 0.021805555555555533,
+        "delta_ref1_intact": -0.018194444444444447,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08549999999999998,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08549999999999998,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 12.37425,
+        "bounded_by_hmax": true,
+        "first_window_dw": 1.99265,
+        "last_window_dw": 1.32395,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.07,
+        "wm_only_ref1": -0.06999999999999999,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.21875000000000003,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.31,
+        "clear_wrongWM": 0.3,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4666666666666667,
+          0.17708333333333331,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4611111111111111,
+          0.1819444444444444,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.005555555555555591,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 44,
+      "PASS": true,
+      "elapsed_s": 15.4,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 2.522,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 2.0813
+          },
+          {
+            "ep": 10,
+            "w0->A": 4.4872,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.9685
+          },
+          {
+            "ep": 15,
+            "w0->A": 6.2189,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 5.5718
+          },
+          {
+            "ep": 20,
+            "w0->A": 7.9279,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 6.9691
+          },
+          {
+            "ep": 25,
+            "w0->A": 9.6832,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.3419
+          },
+          {
+            "ep": 30,
+            "w0->A": 11.3435,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 9.7385
+          },
+          {
+            "ep": 35,
+            "w0->A": 12.9313,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 11.0834
+          },
+          {
+            "ep": 40,
+            "w0->A": 14.5271,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 12.3545
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 14.5271,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 12.3545
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.3173611111111111,
+        "mean_well": 0.4041666666666667,
+        "mean_ill": 0.07152777777777776,
+        "min_well": 0.4041666666666667,
+        "max_ill": 0.18124999999999997,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.06944444444444445,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": 0.0012500000000000011,
+          "ref0": 0.03,
+          "ref1": -0.01999999999999999
+        },
+        "margins_lesion": {
+          "none": 0.0012500000000000011,
+          "ref0": 0.0012500000000000011,
+          "ref1": 0.0012500000000000011
+        },
+        "delta_ref0_intact": 0.028749999999999998,
+        "delta_ref1_intact": -0.02124999999999999,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.26,
+          "sel_patient": 0.23,
+          "w0": 0.08799999999999997,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.26,
+          "sel_patient": 0.23,
+          "w0": 0.08799999999999997,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 13.4408,
+        "bounded_by_hmax": true,
+        "first_window_dw": 2.25165,
+        "last_window_dw": 1.4334500000000006,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.08597222222222223,
+        "wm_only_ref1": -0.07,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.2686631944444445,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.32,
+        "clear_wrongWM": 0.3,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.45694444444444443,
+          0.17777777777777776,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4618055555555555,
+          0.14444444444444443,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.033333333333333326,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 100,
+      "PASS": true,
+      "elapsed_s": 15.4,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 1.8542,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 1.7834
+          },
+          {
+            "ep": 10,
+            "w0->A": 3.5154,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.3659
+          },
+          {
+            "ep": 15,
+            "w0->A": 5.0332,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 4.7562
+          },
+          {
+            "ep": 20,
+            "w0->A": 6.3314,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 6.0383
+          },
+          {
+            "ep": 25,
+            "w0->A": 7.4945,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 7.263
+          },
+          {
+            "ep": 30,
+            "w0->A": 8.5216,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.4921
+          },
+          {
+            "ep": 35,
+            "w0->A": 9.5997,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 9.7541
+          },
+          {
+            "ep": 40,
+            "w0->A": 10.7885,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 10.9884
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 10.7885,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 10.9884
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.32361111111111107,
+        "mean_well": 0.40694444444444444,
+        "mean_ill": 0.07129629629629629,
+        "min_well": 0.40694444444444444,
+        "max_ill": 0.18055555555555552,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.05555555555555555,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": -0.0012500000000000011,
+          "ref0": 0.01999999999999999,
+          "ref1": -0.01999999999999999
+        },
+        "margins_lesion": {
+          "none": -0.0012500000000000011,
+          "ref0": -0.0012500000000000011,
+          "ref1": -0.0012500000000000011
+        },
+        "delta_ref0_intact": 0.02124999999999999,
+        "delta_ref1_intact": -0.01874999999999999,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08433333333333332,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08433333333333332,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 10.88845,
+        "bounded_by_hmax": true,
+        "first_window_dw": 1.7688,
+        "last_window_dw": 1.2115500000000008,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.06055555555555555,
+        "wm_only_ref1": -0.06125,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.19140625,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.31666666666666665,
+        "clear_wrongWM": 0.30513888888888885,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4597222222222222,
+          0.16666666666666663,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.46041666666666664,
+          0.1819444444444444,
+          0.033333333333333326,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.016666666666666663,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 101,
+      "PASS": true,
+      "elapsed_s": 16.0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 1.8299,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 1.8943
+          },
+          {
+            "ep": 10,
+            "w0->A": 3.3812,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.6025
+          },
+          {
+            "ep": 15,
+            "w0->A": 4.7385,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 5.0786
+          },
+          {
+            "ep": 20,
+            "w0->A": 5.9862,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 6.3874
+          },
+          {
+            "ep": 25,
+            "w0->A": 7.1702,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 7.5531
+          },
+          {
+            "ep": 30,
+            "w0->A": 8.3786,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.7875
+          },
+          {
+            "ep": 35,
+            "w0->A": 9.6592,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 10.1022
+          },
+          {
+            "ep": 40,
+            "w0->A": 10.8835,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 11.3519
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 10.8835,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 11.3519
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.3194444444444444,
+        "mean_well": 0.40625,
+        "mean_ill": 0.06226851851851852,
+        "min_well": 0.40625,
+        "max_ill": 0.1701388888888889,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.05833333333333335,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": 0.0001388888888888551,
+          "ref0": 0.01999999999999999,
+          "ref1": -0.02111111111111111
+        },
+        "margins_lesion": {
+          "none": -0.00041666666666670404,
+          "ref0": -0.00041666666666670404,
+          "ref1": -0.00041666666666670404
+        },
+        "delta_ref0_intact": 0.019861111111111135,
+        "delta_ref1_intact": -0.021249999999999963,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08499999999999998,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08499999999999998,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.1177,
+        "bounded_by_hmax": true,
+        "first_window_dw": 1.8121,
+        "last_window_dw": 1.2369999999999983,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.060000000000000005,
+        "wm_only_ref1": -0.06625000000000002,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.20703125000000006,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.3169444444444445,
+        "clear_wrongWM": 0.30597222222222226,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.45694444444444443,
+          0.18125000000000002,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4583333333333333,
+          0.15000000000000002,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.03125,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 102,
+      "PASS": true,
+      "elapsed_s": 14.8,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05
+          },
+          {
+            "ep": 5,
+            "w0->A": 1.6086,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 1.7873
+          },
+          {
+            "ep": 10,
+            "w0->A": 2.9507,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 3.2907
+          },
+          {
+            "ep": 15,
+            "w0->A": 4.2264,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 4.6779
+          },
+          {
+            "ep": 20,
+            "w0->A": 5.5034,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 6.0635
+          },
+          {
+            "ep": 25,
+            "w0->A": 6.8138,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 7.5344
+          },
+          {
+            "ep": 30,
+            "w0->A": 8.1039,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 8.9393
+          },
+          {
+            "ep": 35,
+            "w0->A": 9.3387,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 10.2718
+          },
+          {
+            "ep": 40,
+            "w0->A": 10.5188,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 11.5359
+          }
+        ],
+        "final": {
+          "ep": 40,
+          "w0->A": 10.5188,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 11.5359
+        },
+        "correct_pairs_grew": true,
+        "mapping_selective": true,
+        "PASS": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true
+      },
+      "F1": {
+        "threshold": 0.32013888888888886,
+        "mean_well": 0.40555555555555556,
+        "mean_ill": 0.07546296296296295,
+        "min_well": 0.40555555555555556,
+        "max_ill": 0.19305555555555554,
+        "well_all_comprehended": true,
+        "ill_all_abstained": true,
+        "d6_all_recovered": true,
+        "d6_hold_alive_min": 0.058333333333333334,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable_ref0": 1.0,
+        "frac_attributable_ref1": 1.0,
+        "margins_intact": {
+          "none": 0.0006944444444444883,
+          "ref0": 0.01999999999999999,
+          "ref1": -0.01999999999999999
+        },
+        "margins_lesion": {
+          "none": 0.0008333333333333803,
+          "ref0": 0.0008333333333333803,
+          "ref1": 0.0008333333333333803
+        },
+        "delta_ref0_intact": 0.019305555555555503,
+        "delta_ref1_intact": -0.020694444444444477,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0,
+        "rates_intact_ref0": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08583333333333336,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "ref0_shift_toward_agent": true,
+        "ref1_shift_toward_patient": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "sel_agent": 0.25,
+          "sel_patient": 0.23,
+          "w0": 0.08583333333333336,
+          "w1": 0.0,
+          "fs": 0.0,
+          "cue_animacy_pos": 0.24
+        },
+        "in_band": true,
+        "grown_correct_mean": 11.02735,
+        "bounded_by_hmax": true,
+        "first_window_dw": 1.64795,
+        "last_window_dw": 1.2220999999999993,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "wm_only_ref0": 0.06,
+        "wm_only_ref1": -0.06847222222222223,
+        "decision_scale_clear": 0.32,
+        "wm_only_frac_of_decision": 0.21397569444444445,
+        "f4a_no_winner_from_silence": true,
+        "clear_noWM": 0.32,
+        "clear_rightWM": 0.32,
+        "clear_wrongWM": 0.3,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "baseline_margins": [
+          0.4611111111111111,
+          0.1833333333333333,
+          0.016666666666666663,
+          0.0
+        ],
+        "lesioned_margins": [
+          0.4541666666666666,
+          0.18055555555555552,
+          0.016666666666666663,
+          0.0
+        ],
+        "base_connectivity_byte_identical": true,
+        "read_maxerr": 0.006944444444444475,
+        "decisions_preserved": true,
+        "fp_floor_below_decision_gap": true,
+        "PASS": true
+      }
+    }
+  ]
+}
