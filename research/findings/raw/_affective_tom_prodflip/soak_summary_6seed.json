@@ -1,0 +1,1540 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "go": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "backend": "numpy",
+  "results": {
+    "42": {
+      "seed": 42,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 494.3
+    },
+    "43": {
+      "seed": 43,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 328.2
+    },
+    "44": {
+      "seed": 44,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 298.2
+    },
+    "100": {
+      "seed": 100,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 336.4
+    },
+    "101": {
+      "seed": 101,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 330.9
+    },
+    "102": {
+      "seed": 102,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lead_present_on": true,
+      "lesion_collapsed": true,
+      "vary_ok": true,
+      "sign_ok": true,
+      "bad_leads": [
+        "That sounds really hard for Maria -- ",
+        "That sounds really hard for Sam -- "
+      ],
+      "good_leads": [
+        "That's wonderful for Tom -- "
+      ],
+      "on_tones": {
+        "trigger_bad": -1,
+        "trigger_good": 1
+      },
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is devastated",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Tom is delighted",
+          "kind": "trigger_good",
+          "off": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That's wonderful for Tom -- That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That's wonderful for Tom -- ",
+            "tom_tone": 1
+          },
+          "lesion": {
+            "answer": "That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. I don't know about that. My curiosity is piqued \u2014 I haven't learned about tom yet: what can you tell me about tom?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That's wonderful for Tom -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Sam's team lost",
+          "kind": "trigger_bad",
+          "off": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "That sounds really hard for Sam -- I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Sam -- ",
+            "tom_tone": -1
+          },
+          "lesion": {
+            "answer": "I followed the shape of that, but I don't know the words 'sam's' or 'lost' yet \u2014 what do they refer to?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_tone": 0
+          },
+          "content_same": true,
+          "answer_is_lead_plus_off": true,
+          "on_lead": "That sounds really hard for Sam -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "off": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "on": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "lesion": {
+            "answer": "The dog chases cat.",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_tone": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 266.5
+    }
+  }
+}

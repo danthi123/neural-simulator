@@ -1,0 +1,596 @@
+{
+  "probe": "value_choice_flip_soak",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "composer": "onebrain",
+    "no_organ": false,
+    "ordinary_turns": [
+      "what does cat eat",
+      "what does fox hunt",
+      "what do you know about it"
+    ],
+    "trigger_turn": "what does dog chase",
+    "ambiguous": [
+      "dog",
+      "chase",
+      [
+        "cat",
+        "ball"
+      ]
+    ]
+  },
+  "sim_backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ordinary turns byte-identical OFF-vs-ON (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "load-bearing: engagement-VARY flips the commit + LESION reverts to inner (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "skipped-as-True when --no-organ (ordinary panel only)"
+    }
+  ],
+  "detail": {
+    "n_seeds": 6,
+    "ordinary_byte_identical_pass": 6,
+    "load_bearing_pass": 6,
+    "seed_pass": 6
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            33.75,
+            16.528
+          ],
+          "fed_spread_hz": 17.222,
+          "wta_counts": [
+            88.0,
+            53.0
+          ],
+          "wta_margin": 35.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            16.944,
+            27.222
+          ],
+          "fed_spread_hz": 10.278,
+          "wta_counts": [
+            62.0,
+            84.0
+          ],
+          "wta_margin": 22.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 351.6,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 43,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            34.583,
+            16.111
+          ],
+          "fed_spread_hz": 18.472,
+          "wta_counts": [
+            90.0,
+            48.0
+          ],
+          "wta_margin": 42.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            18.472,
+            27.5
+          ],
+          "fed_spread_hz": 9.028,
+          "wta_counts": [
+            74.0,
+            82.0
+          ],
+          "wta_margin": 8.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 340.7,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 44,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            35.0,
+            14.583
+          ],
+          "fed_spread_hz": 20.417,
+          "wta_counts": [
+            93.0,
+            45.0
+          ],
+          "wta_margin": 48.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            15.694,
+            30.0
+          ],
+          "fed_spread_hz": 14.306,
+          "wta_counts": [
+            46.0,
+            87.0
+          ],
+          "wta_margin": 41.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 314.5,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 100,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            27.778,
+            21.528
+          ],
+          "fed_spread_hz": 6.25,
+          "wta_counts": [
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            17.639,
+            25.278
+          ],
+          "fed_spread_hz": 7.639,
+          "wta_counts": [
+            75.0,
+            82.0
+          ],
+          "wta_margin": 7.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 298.4,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 101,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            32.639,
+            17.5
+          ],
+          "fed_spread_hz": 15.139,
+          "wta_counts": [
+            85.0,
+            62.0
+          ],
+          "wta_margin": 23.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            17.778,
+            25.278
+          ],
+          "fed_spread_hz": 7.5,
+          "wta_counts": [
+            76.0,
+            81.0
+          ],
+          "wta_margin": 5.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 329.0,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 102,
+      "composer": "onebrain",
+      "ordinary_off": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "The cat eats fish.",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_off": "The dog chases cat.",
+      "trigger_off_abstains": false,
+      "value_choice_lastA": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "cat",
+        "meta": {
+          "V_hz": [
+            36.806,
+            15.556
+          ],
+          "fed_spread_hz": 21.25,
+          "wta_counts": [
+            99.0,
+            46.0
+          ],
+          "wta_margin": 53.0,
+          "wta_choice": 0,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "value_choice_lastB": {
+        "agent": "dog",
+        "action": "chase",
+        "candidates": [
+          "cat",
+          "ball"
+        ],
+        "chosen": "ball",
+        "meta": {
+          "V_hz": [
+            16.667,
+            29.306
+          ],
+          "fed_spread_hz": 12.639,
+          "wta_counts": [
+            54.0,
+            85.0
+          ],
+          "wta_margin": 31.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "inner_result": [
+          "dog",
+          "chase",
+          "cat"
+        ]
+      },
+      "trigger_favour0": "The dog chases cat.",
+      "trigger_favour1": "The dog chases ball.",
+      "trigger_lesion": "The dog chases cat.",
+      "trigger_commits_stored_patient": true,
+      "trigger_vary_flips_commit": true,
+      "trigger_lesion_reverts_to_inner": true,
+      "elapsed_s": 313.7,
+      "load_bearing_ok": true,
+      "seed_pass": true
+    }
+  ],
+  "elapsed_total_s": 1947.7943997383118
+}
