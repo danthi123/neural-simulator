@@ -1,0 +1,132 @@
+{
+  "seeds": [
+    44
+  ],
+  "cfg": {
+    "seeds": [
+      44
+    ],
+    "n_mem": 6,
+    "asm_size": 80,
+    "within_density": 0.5,
+    "rest_steps": 9000,
+    "consol_steps": 6500,
+    "dt": 0.1,
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "btsp_elig_tau": 80.0,
+    "btsp_plat_tau": 1.0,
+    "btsp_eta": 0.001,
+    "btsp_w_max": 900.0,
+    "fwd_delay_steps": 90,
+    "lam_dep": 0.0,
+    "n_laps": 14,
+    "enc_step": 80,
+    "enc_dwell": 40,
+    "enc_gap": 600,
+    "enc_cue_pa": 9000.0,
+    "enc_cue_frac": 0.6,
+    "swr_period": 650,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "weak_cue_mult": 0.5,
+    "weak_cue_frac": 0.35,
+    "ou_sigma": 40.0,
+    "read_swr_period": 0,
+    "window": 30,
+    "active_frac": 0.1,
+    "onset_frac": 0.06,
+    "dw_min": 5.0,
+    "rev_ratio_max": 0.8,
+    "headroom_max": 0.9,
+    "depth_gain_min": 0.05,
+    "tau_gain_min": 0.05,
+    "noseed_max_frac": 0.2,
+    "skip_verify": false,
+    "verify_cue_mults": [
+      1.0,
+      0.85,
+      0.7,
+      0.5,
+      0.35,
+      0.2
+    ],
+    "verify_min_range": 0.15,
+    "byte_identical_check": false,
+    "scan_lam_dep": true,
+    "scan_mults": [
+      0.05,
+      0.1,
+      0.2,
+      0.5,
+      1.0
+    ],
+    "out": "/home/dant123/Projects/sim/.claude/worktrees/agent-a9c0ac362f6ea2fc4/research/findings/raw/gap5_ecker_adex/reverse_edge_hetero_depression_ltu.json",
+    "scan_out": "research/findings/raw/gap5_ecker_adex/reverse_edge_hetero_depression_lamdep_scan_seed44.json"
+  },
+  "seed": 44,
+  "weak_depth_frac_before": 0.6730769230769231,
+  "rows": [
+    {
+      "lam_dep": 0.05,
+      "dw_fwd": 238.5933074951172,
+      "dw_rev": 15.036380767822266,
+      "rev_fwd_ratio": 0.06302096620262487,
+      "weak_depth_frac_before": 0.6730769230769231,
+      "weak_depth_frac_after": 0.6794871794871794,
+      "depth_gain": 0.0064102564102562765,
+      "weak_tau_before": 1.0,
+      "weak_tau_after": 1.0
+    },
+    {
+      "lam_dep": 0.1,
+      "dw_fwd": 238.3621063232422,
+      "dw_rev": -0.4750401973724365,
+      "rev_fwd_ratio": -0.0019929350545687652,
+      "weak_depth_frac_before": 0.6730769230769231,
+      "weak_depth_frac_after": 0.6794871794871794,
+      "depth_gain": 0.0064102564102562765,
+      "weak_tau_before": 1.0,
+      "weak_tau_after": 1.0
+    },
+    {
+      "lam_dep": 0.2,
+      "dw_fwd": 238.3362579345703,
+      "dw_rev": -8.217101097106934,
+      "rev_fwd_ratio": -0.03447692419238515,
+      "weak_depth_frac_before": 0.6730769230769231,
+      "weak_depth_frac_after": 0.6794871794871794,
+      "depth_gain": 0.0064102564102562765,
+      "weak_tau_before": 1.0,
+      "weak_tau_after": 1.0
+    },
+    {
+      "lam_dep": 0.5,
+      "dw_fwd": 238.3667449951172,
+      "dw_rev": -11.251965522766113,
+      "rev_fwd_ratio": -0.047204426619982594,
+      "weak_depth_frac_before": 0.6730769230769231,
+      "weak_depth_frac_after": 0.6794871794871794,
+      "depth_gain": 0.0064102564102562765,
+      "weak_tau_before": 1.0,
+      "weak_tau_after": 1.0
+    },
+    {
+      "lam_dep": 1.0,
+      "dw_fwd": 238.345703125,
+      "dw_rev": -11.506754875183105,
+      "rev_fwd_ratio": -0.04827758471965575,
+      "weak_depth_frac_before": 0.6730769230769231,
+      "weak_depth_frac_after": 0.6794871794871794,
+      "depth_gain": 0.0064102564102562765,
+      "weak_tau_before": 1.0,
+      "weak_tau_after": 1.0
+    }
+  ]
+}

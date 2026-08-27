@@ -1,0 +1,38 @@
+{
+ "run_id": "1787871845-3506049",
+ "runner": "research/runners/_gap5_reverse_edge_hetero_depression_ltu_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9c0ac362f6ea2fc4/research/runners/_gap5_reverse_edge_hetero_depression_ltu_derisk.py",
+  "--scan-lam-dep",
+  "--seeds",
+  "101",
+  "--scan-mults",
+  "0.05",
+  "0.1",
+  "0.2",
+  "0.4",
+  "0.8",
+  "1.5",
+  "--scan-out",
+  "research/findings/raw/gap5_ecker_adex/reverse_edge_hetero_depression_lamdep_scan_seed101.json"
+ ],
+ "git_sha": "20b4b475c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T19:04:05",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1250.2,
+ "corpus_check_query": "reverse-edge heterosynaptic depression BTSP write recall directionality",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap5_ecker_adex/reverse_edge_hetero_depression_lamdep_scan_seed101.json"
+}

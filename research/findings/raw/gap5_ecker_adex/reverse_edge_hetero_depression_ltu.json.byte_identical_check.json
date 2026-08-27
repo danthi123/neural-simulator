@@ -1,0 +1,13 @@
+[
+  {
+    "seed": 42,
+    "sha256_old": "47291ba278ebdd708d444011643aacd360065a222af5edfa4df14b9b951f641f",
+    "sha256_new": "47291ba278ebdd708d444011643aacd360065a222af5edfa4df14b9b951f641f",
+    "exact_hash_match": true,
+    "max_abs_diff": 0.0,
+    "dw_fwd_old": 245.5580291748047,
+    "dw_fwd_new": 245.5580291748047,
+    "dw_rev_old": 219.4591064453125,
+    "dw_rev_new": 219.4591064453125
+  }
+]
