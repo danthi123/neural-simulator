@@ -772,13 +772,26 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 >   edit, `cfg.per_neuron_ou_seed`, that makes OU noise co-residence-invariant). This is the MIGRATION-safety gate
 >   (byte-identical behavior before/after merging organs onto shared neurons) — it is NOT the one-brain
 >   INTEGRATION goal (organs actually influencing each other via cross-region synapses). The full 7-organ
->   STRICT-simultaneous batch remains a named, precisely-characterized residual: adding the largest organ (pmem)
->   pushes other long-integration reads past an FP summation-order floor in the engine's non-flagged
->   conductance-matvec paths — closing it needs a `deterministic_transpose_matvec` `sim/` edit across all matvec
->   paths, flagged for a careful pass, not autonomous. Findings
->   `2026-08-27-onebrain-merge-framework-organ-read-byte-identity` /
+>   STRICT-simultaneous batch — once characterized as an FP-summation-order residual needing a
+>   `deterministic_transpose_matvec` sweep across all matvec paths — **is now CLOSED, 7/7 organs GO 6/6 seeds.**
+>   That characterization was REFUTED by direct reproduction: the wall was TWO separate co-residence seams, not
+>   FP order. (1) `cfg.dedup_synapse_masks` fixed a duplicate-`(pre,post)`-edge per-synapse MASK MISALIGNMENT in
+>   `inject_explicit_wiring` (`d6`'s `nmda_slow` AMPA-suppression tagging the wrong synapses merged-vs-alone),
+>   closing `d6_multiref_wm` (6/7 organs GO). (2) `cfg.per_region_inhibitory_seed` then fixed `prospective_
+>   memory`'s remaining residual: `RegionManager.initialize()` drew each region's inhibitory-cell subset from
+>   ONE shared `random.Random(seed)` threaded through every region in list order (never name-keyed, unlike the
+>   wiring/threshold seams) — co-residence-dependent, so the SAME firing neuron routed to `g_e` in one arm and
+>   `g_i` in the other (a clean 4x conductance delta, not sub-ULP jitter). Name-keying it (the SAME
+>   `_wiring_substream` crc32-per-region-name mechanism `build_wiring_plan` already uses) closed it: `pmem`
+>   `read_maxerr` 0.06667->0.0, `answer_same=True`, 6/6 seeds. Both fixes are additive, DEFAULT-OFF,
+>   byte-identical-when-off (SHA256-verified + `tests/test_determinism.py` green). **All seven Group-A organs**
+>   (causal_whatif, comprehension, self_schema, source_provenance, curiosity, prospective_memory,
+>   d6_multiref_wm) **now read GO 6/6 simultaneously** (`onebrain_merge_verify --keys all`, `all_go: true`) — the
+>   one-brain MIGRATION gate is complete at full scale; the INTEGRATION goal below is still the next rung.
+>   Findings `2026-08-27-onebrain-merge-framework-organ-read-byte-identity` /
 >   `-organ-read-engine-seams` / `-organ-read-extension` / `-multiturn-stateful-read` /
->   `-per-neuron-ou-seed-closes-curiosity-organ-read`.
+>   `-per-neuron-ou-seed-closes-curiosity-organ-read` /
+>   `-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow` / `-pmem-fp-accumulation-full7-GO`.
 > - **The INTEGRATION phase (what replaces byte-identity) is now DESIGNED** — a FUNCTIONAL gate (F1 faculty-
 >   still-works / F2 vary-then-lesion / F3 no-runaway / F4 moat) plus a lesion-recovers-migration invariant;
 >   cross-edges seed near-zero and GROW via the substrate's own Hebbian/STDP/BTSP under three-factor neuromod

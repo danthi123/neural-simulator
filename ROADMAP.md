@@ -7,6 +7,25 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-27 (latest) — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
+
+A follow-up to the "reads back cleanly" check above closed its last honest gap. That earlier check proved each
+of the seven merged regions reads back correctly ALONE against the shared pool; a stricter version — all seven
+merged and read back TOGETHER, at once — still failed for one region (working memory / prospective memory),
+and the earlier guess for why (rounding-error drift in a math step that runs for hundreds of simulated
+instants) turned out to be wrong when actually measured.
+
+The real cause: a region's population of inhibitory (quieting) cells is chosen by a single shared shuffle that
+runs once per region, in list order — so whether a given neuron ends up "quieting" or "activating" depends on
+how many OTHER regions were shuffled before it, i.e. on which other regions happen to be merged alongside it.
+Two neurons that fire identically, wired identically, disagreed on which chemical channel their output should
+route through purely because of build order — a clean, large effect (roughly 4x), not the tiny rounding drift
+first suspected. Fixed by giving each region's inhibitory-cell shuffle its own private, name-keyed source
+(the same fix already used elsewhere for wiring and thresholds), off by default. With it on, all seven regions
+now read back correctly at once — the "did merging break anything" check is complete at full scale. It is
+still only the safety check, not the actual goal of regions influencing each other. Findings:
+`2026-08-27-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow`, `2026-08-27-pmem-fp-accumulation-full7-GO`.
+
 ## 2026-08-27 (later still) — the "brain says I don't know to facts it holds" bug is traced and mostly closed; the first LEARNED cross-region edge lands; a hollow production flip is fixed; a vision self-organization warm-up comes back instrument-void
 
 Seven more findings landed the same overnight session, after the merge-safety / knowledge-scale / mood-coloring items below:

@@ -324,6 +324,32 @@ class CoreSimConfig:
     # preserves the legacy (pre-collapse) mask construction bit-for-bit (byte-identical to today;
     # a plan with NO duplicate edges is already len(keyed)==nnz, so the collapse is a no-op there).
     dedup_synapse_masks: bool = False
+    # PER-REGION INHIBITORY SEED (2026-08-27; the one-substrate merge's SIXTH
+    # byte-identity cause -- localized isolating `prospective_memory`'s organ-read
+    # divergence, PROVEN independent of the nmda_slow/dedup seam). RegionManager.
+    # initialize() (regions.py) picks each region's inhibitory-cell SUBSET via
+    # `rng.sample(idx_list, n_inh)` from ONE shared random.Random(seed) threaded
+    # through every region in REGION-LIST order (the SAME "one shared stream"
+    # pattern build_wiring_plan had before per_region_wiring_seed) -- so WHICH
+    # neurons of a region are inhibitory depends on how much RNG the regions
+    # BEFORE it in the list consumed. This is invisible to substrate-init byte-
+    # identity (thresholds/V/u/izh params are untouched) -- it only shows up once
+    # a step actually runs: inject_explicit_wiring's output_inhibitory_indices
+    # reassigns cp_traits from region_manager.inhibitory_indices(), so the SAME
+    # firing neuron is classified excitatory in one arm and inhibitory in the
+    # other, routing to g_e in one arm and g_i in the other -- a clean, LARGE (not
+    # sub-ULP) per-step delta on any region with exc_fraction < 1.0 (measured:
+    # prospective_memory's dlpfc_wm target neuron's g_e read 0.002 vs 0.0005, a
+    # clean 4x, from a 5-vs-8 inhibitory-count mismatch among the SAME 27
+    # identically-firing, identically-weighted pre-neurons), amplified by the
+    # hundreds-of-steps spiking integration into a rendered-answer flip. When ON,
+    # each region's inhibitory-cell draw uses its OWN substream keyed on a stable
+    # zlib.crc32 hash of the region NAME (RegionManager._wiring_substream,
+    # _INHIBITORY_SEED_STRIDE -- a THIRD stride, distinct from the wiring region/
+    # pathway strides), so the SAME subset of a region's neurons is inhibitory
+    # regardless of co-residence. DEFAULT-OFF preserves the legacy shared-stream
+    # draw bit-for-bit (byte-identical to today). Deterministic under cfg.seed.
+    per_region_inhibitory_seed: bool = False
     # Diagnostic correction: draw every stochastic Izhikevich population field
     # from one host-side NumPy contract before transferring it to the backend.
     # Default-off preserves the established backend-native initialization path.

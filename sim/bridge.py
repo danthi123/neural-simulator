@@ -1785,7 +1785,10 @@ class SimulationBridge:
             getattr(cfg, "region_pathways", []) or [],
         )
         seed_val = cfg.seed if cfg.seed >= 0 else 0
-        self.region_manager.initialize(seed=seed_val)
+        self.region_manager.initialize(
+            seed=seed_val,
+            per_region_seed=getattr(cfg, "per_region_inhibitory_seed", False),
+        )
         cfg.num_neurons = self.region_manager.total_neurons()
         self._log_console(
             f"Brain-region framework: {len(cfg.brain_regions)} regions, "
