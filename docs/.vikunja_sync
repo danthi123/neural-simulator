@@ -222,3 +222,5 @@ reconciled: 2026-08-27 board synced through the ~15:50 batch (learn-through-use 
 reconciled: 2026-08-27 ~16:10 mouth magnitude-NULL + correction merged; learn-through-use Ecker NO-GO #107; BTSP directional-write dispatched.
 
 ## 2026-08-27 ~18:15 reconcile — #104 (wander PARTIAL scaled+wired), #107 (Braun NO-GO -> graded-instrument in flight), #80 (mouth characterization backend-confound, eigen-alignment lever, GPU re-run staged). Findings: continuous-life wander PARTIAL, Braun gapcoding NO-GO, mouth structure-characterization backend-confound, dendritic screen soft-NO-GO, open-ended honesty same-sentence GO, mouth softmax NO-GO. Main 5fdc8e41 + the characterization merge.
+
+## 2026-08-27 ~19:05 reconcile — #112 (generation-time honesty PARTIAL, mechanism GO), #80/#107/#104/#177 already synced this session. Merges since last stamp: R4 integration GO (20b4b475), engine-ref cross-backend-seed-trap (289cad10), scoping doc (ba7af674), generation-time honesty PARTIAL (5eec2633). One-brain production integration (frozen->live) in flight per owner directive.
