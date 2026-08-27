@@ -204,3 +204,17 @@ but does NOT close it -- the real cause is a co-residence-dependent nmda_slow WI
 by seeding the wiring per-region (same recipe as the noise streams). Did NOT touch #171 (4-organ pool byte-identity,
 still open) or #177 (cross-region integration, its own rungs). Branch research/deterministic-transpose-matvec-full,
 not merged. Finding: 2026-08-27-deterministic-conductance-matvec-hardening-and-the-real-onebrain-full7-wall.
+
+## 2026-08-27  mouth read-SNR: ensemble + hidfb decorrelation both closed (Phase-0 negative), redirect named
+Reconciled #80 (Close the speak-with-own-neurons gap) and #37 (Teach the brain to speak through its own
+neurons) with append-desc: the population-averaging/ensemble read lever is inert by construction (already
+filed 2026-08-27), and a follow-on recurrent-inhibition decorrelation lever (hidfb, E-to-I-to-E on the
+hidden population) was diagnosed CHEAPLY before being built -- the hidden population's trial-to-trial noise
+already reads as statistically independent (rho ~ -0.001 to +0.002 across seeds 42/43/44 and two drive
+regimes, at or below the ~0.03 "already decorrelated" reference point), so a decorrelation circuit has
+nothing to decorrelate. No hidfb mechanism was built. Named next candidates on both tasks: the apical/
+predictive-prior two-pathway read (in flight on the GPU) and a rate/gain lever (raise spikes/neuron/window,
+genuinely untested). No ladder-label change (both tasks stay de-risked/open; this closes one sub-lever, not
+the capability). Branch research/mouth-readsnr-hid-decorrelation; runner
+research/runners/_wkv_mouth_hid_correlation_diagnostic.py; finding
+research/findings/2026-08-27-mouth-readsnr-hid-decorrelation-PHASE0-NEG.md.
