@@ -108,6 +108,17 @@ def _base_config(seed: int, legacy: bool = False):
     # legacy -> OFF (the DISCRIMINATOR): the global-RNG threshold draw depends on total-N + build order, so
     # merged-vs-coresident DIVERGE -> proves the seam-ON byte-identity is NOT vacuous.
     cfg.per_region_threshold_heterogeneity = not legacy
+    # merge seam #2 (2026-08-27, the MULTI-TURN-READ arc) — DETERMINISTIC transpose SpMV for the synaptic input.
+    # The default synaptic-input path is `connections.T @ fired_2col`, a TRANSPOSE sparse matmul whose FP
+    # summation ORDER varies with the matrix layout (total-N / edge interleaving). For a FROZEN-forward read this
+    # is below the answer margin, but a SPIKING-DYNAMICS read integrated over hundreds of steps (prospective_
+    # memory's attractor hold; d6's slow-NMDA reverberation) AMPLIFIES a single-ULP per-step delta into a
+    # 1-spike read divergence -- so a co-resident organ's slice read differs from its alone read purely because
+    # the OTHER organs enlarged the shared matrix (a NON-synaptic, layout-mediated coupling, not a cross-synapse).
+    # ON pins the byte-identical CSR path (sim/bridge.py:8730), making the merged-vs-coresident spiking read exact.
+    # It is byte-identical to the default whenever there is no summation-order variance, so it never regresses the
+    # frozen-forward organs. (Legacy keeps it OFF so the discriminator still diverges on total-N as before.)
+    cfg.deterministic_transpose_matvec = not legacy
     return cfg
 
 
@@ -342,7 +353,13 @@ class MergedPool:
 
     def read_isolation(self, active):
         """Name-keyed over N organs (identical mechanism to onebrain_merge_production.MergedSubstrate): snapshot
-        the full per-neuron state, let `active`'s slice evolve, restore every OTHER organ's slice at the end."""
+        the full per-neuron state, let `active`'s slice evolve, restore every OTHER organ's slice at the end.
+
+        PER-CALL scope: this is the isolation for a read that is a SINGLE drive->settle->read. It restores every
+        other organ's slice on exit BUT keeps `active`'s -- so wrapping a MULTI-TURN read in ONE read_isolation
+        already lets the active slice persist across the turns inside it (form -> hold -> cue). For a stateful
+        organ whose read ALSO mutates per-SYNAPSE / timing state (e.g. a whole-bridge reset between sub-sequences),
+        use `sequence_isolation` (below), which additionally snapshots+restores that state so nothing leaks."""
         import contextlib
         @contextlib.contextmanager
         def _guard():
@@ -357,6 +374,62 @@ class MergedPool:
                     if snap is None:
                         continue
                     setattr(b, nm, self.xp.where(keep, getattr(b, nm), snap))
+        return _guard()
+
+    # per-SYNAPSE + non-_PER_NEURON_STATE arrays a MULTI-TURN stateful read can mutate (synaptic pulse timers, the
+    # nmda/gabab rise+recurrent buffers) -- snapshotted by sequence_isolation SO a whole-bridge reset between an
+    # organ's own sub-sequences (e.g. pmem's _reset_dynamics) leaves NO co-resident organ perturbed at guard exit.
+    _SEQ_EXTRA_STATE = (
+        "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
+        "cp_conductance_g_gabab_slow", "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise",
+        "cp_synapse_pulse_timers", "cp_synapse_pulse_progress",
+    )
+
+    def sequence_isolation(self):
+        """SEQUENCE-scoped isolation for a MULTI-TURN STATEFUL read -- the general resolution of the per-call-
+        isolation vs stateful-hold tension. read_isolation is per-CALL (snapshot at enter, restore OTHERS at exit).
+        A stateful organ (self-sustaining attractor + per-neuron SFA trace) must instead hold its slice UNRESET
+        across the turns of ONE read (form -> hold through arbitrary intervening turns -> cue) AND may reset the
+        whole bridge between its own sub-sequences. sequence_isolation spans the WHOLE sequence: snapshot EVERY
+        mutable array (per-neuron + per-synapse pulse/rise buffers) AND the runtime timing counters at enter, let
+        the active organ's slice evolve freely across every turn, and at exit restore the FULL snapshot -- so no
+        co-resident organ is perturbed even by a whole-bridge reset. The organ caches its numeric reads BEFORE the
+        guard exits; byte-identity merged-vs-coresident is then exact (zero cross-organ synapses => the active
+        slice evolves identically alone or co-resident). GENERAL: any organ whose read is multi-turn declares it
+        this way -- the harness is not pmem-specific."""
+        import contextlib
+        import random as _random
+        @contextlib.contextmanager
+        def _guard():
+            b = self.bridge
+            names = list(self._PER_NEURON_STATE) + list(self._SEQ_EXTRA_STATE)
+            snaps = [(nm, getattr(b, nm).copy() if getattr(b, nm, None) is not None else None) for nm in names]
+            t_step = getattr(b.runtime_state, "current_time_step", None)
+            t_ms = getattr(b.runtime_state, "current_time_ms", None)
+            # ALSO snapshot the GLOBAL RNG state (np.random + Python random): a multi-turn read's calibration can
+            # CONSUME the global RNG (e.g. a Python random.random() draw), which would then perturb a LATER organ's
+            # read on the shared bridge -- an order-dependent leak invisible to the per-array restore (the bridge
+            # state is untouched; only the RNG cursor advanced). Restoring it makes the read RNG-transparent to
+            # every co-resident organ. (Caught 2026-08-27: pmem's read broke a downstream d6 read this exact way.)
+            np_state = np.random.get_state()
+            py_state = _random.getstate()
+            try:
+                yield
+            finally:
+                for nm, snap in snaps:
+                    if snap is None:
+                        continue
+                    cur = getattr(b, nm, None)
+                    if cur is not None and cur.shape == snap.shape:
+                        cur[:] = snap
+                    else:
+                        setattr(b, nm, snap)
+                if t_step is not None:
+                    b.runtime_state.current_time_step = t_step
+                if t_ms is not None:
+                    b.runtime_state.current_time_ms = t_ms
+                np.random.set_state(np_state)
+                _random.setstate(py_state)
         return _guard()
 
 
@@ -606,8 +679,14 @@ def _spec_curiosity(seed):
 
 
 def _spec_prospective_memory(seed):
-    from research.runners._pmem_sfa_nmda_amplifier_derisk import SFANmdaProspectiveMemory
-    pm = SFANmdaProspectiveMemory(["A", "B"], ["d0", "d1", "d2", "d3"], seed=int(seed))
+    # base ProspectiveMemory (NOT the SFANmda subclass) reads the region specs WITHOUT running the multi-stage
+    # homeostat/plateau calibration (the subclass's __init__ steps the substrate) -- the regions are identical
+    # across the hierarchy. The rel pools are built with the POOL-GAINED recurrence (num_traits=1 delivers ~6x
+    # less current per unit weight -> the rel accumulator needs the gained recurrence to ramp; only region EDGE
+    # weights change, not the per-neuron INIT arrays, so substrate-init byte-identity is unaffected).
+    from research.runners._pmem_intention_latch_derisk import ProspectiveMemory
+    pm = ProspectiveMemory(["A", "B"], ["d0", "d1", "d2", "d3"], seed=int(seed),
+                           rel_recurrent_weight=_PMEM_REL_RECURRENT)
     cfg = _cfg_of(getattr(pm, "bridge", None)) or _cfg_of(pm)
     return list(cfg.brain_regions), list(cfg.region_pathways), {}
 
@@ -1197,6 +1276,259 @@ def _causal_answer(organ):
     return (float(r["fwd_acc"]) >= 1.0, predicts_D, x_not_cause)
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  PROSPECTIVE MEMORY (faculty-map Tier-2) — the ONE MULTI-TURN STATEFUL read. Unlike the frozen-forward-pass and
+#  the build-time-plasticity-then-frozen organs, its read is a SEQUENCE of turns whose STATE (a self-sustaining
+#  cortex<->dlpfc attractor holding a deferred intention + a per-neuron SFA trace on the rel cue-monitor pools)
+#  must PERSIST UNRESET across the turns (form the intention -> hold through N intervening distractor turns -> the
+#  cue releases it). Two seams the finding named, both now closed:
+#   (1) DEEP-HIERARCHY injection — the read runs on base ProspectiveMemory -> HomeostaticProspectiveMemory ->
+#       SFANmdaProspectiveMemory; each builds/steps the substrate in __init__ (a multi-STAGE homeostat + NMDA-
+#       plateau CALIBRATION). Threaded with an additive `shared=None` through all three (byte-identical when None):
+#       the base ADOPTS pool.bridge, the attractor + cue-monitor edges move to this descriptor's explicit_wiring_fn
+#       (build-time, both arms identical), and each subclass's calibration re-homes onto the pool slice. The
+#       per-seed bias/theta module caches are BYPASSED when shared (each arm calibrates independently -> the
+#       byte-identity is genuine, not a cache hit).
+#   (2) MULTI-TURN HOLD — the whole calibrate + form/hold/cue SEQUENCE runs inside ONE pool.sequence_isolation()
+#       guard (the general per-SEQUENCE scope): the pmem slice evolves UNRESET across every turn, and the full
+#       snapshot (per-neuron + per-synapse + timing) is restored at guard exit so no co-resident organ is
+#       perturbed even by the whole-bridge _reset_dynamics the read calls between its sub-sequences.
+#  enable_nmda: every pmem region opts IN per-region (loop_reg / rel BrainRegions carry enable_nmda=True), so the
+#  per-region NMDA mask includes the pmem slice in BOTH arms; every plasticity flag OFF (config-compatible union).
+#  HOST-SCAFFOLD (flagged, unchanged from the de-risk): the cue->action CONTENT binding is installed synaptically;
+#  the SFA K-adaptation current + the NMDA-plateau boost are host current-injection PROXIES. The MECHANISM
+#  (hold-across-turns + coincidence-gated release + homeostatic operating-point control) is brain-based.
+_PMEM_CONFIG = {
+    "enable_nmda": True,
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, "fast_spike_reset": True, **_NOISE_OFF,
+}
+# pmem's attractor + SFA timescales are tuned at dt=0.5 (the de-risk operating point); the pool's global dt is 1.0
+# (the other 5 organs' verified point). Reconciled pmem-LOCALLY: the read organ sets cc.dt_ms + the delay horizon
+# to 0.5 (and rescales the cached conductance decays exactly, decay**(new/old)=exp(-new/tau)) INSIDE its
+# sequence_isolation guard, restoring at exit -- so ONLY pmem's slice runs at dt=0.5, the other organs stay
+# byte-identical at dt=1.0, and the read is byte-identical merged-vs-coresident (both arms set 0.5).
+_PMEM_DT = 0.5
+# POOL SYNAPTIC GAIN. The merge substrate uses num_traits=1 (REQUIRED for co-residence byte-identity: with
+# num_traits>1 the per-neuron trait draw is a global-RNG index-order draw -> co-residence-DEPENDENT). The pmem
+# de-risk was tuned at num_traits=5, whose multi-type trait draw delivers ~6x MORE effective synaptic current per
+# unit weight (empirically: the cortex<->dlpfc attractor needs weight ~300 to self-sustain on the pool vs 50
+# standalone). Since the homeostat's tonic bias is EXTERNAL current (pA, trait-independent), the balance between
+# synaptic drive and bias is restored by scaling EVERY pmem SYNAPTIC weight (attractor, cue-monitor, rel-recurrent)
+# by this one gain -> the delivered currents match the standalone's, so the whole tuned attractor+cue-monitor+
+# homeostat+plateau balance transfers. Byte-identical merged-vs-coresident (both arms use the SAME gained weights).
+_PMEM_POOL_GAIN = 6.0
+# the pmem build defaults (must match base ProspectiveMemory.__init__ so the pool slice trains BYTE-IDENTICALLY to
+# a coresident slice AND functionally reproduces the standalone edge structure), scaled by the pool gain.
+_PMEM_ACTIONS = ["A", "B"]
+_PMEM_DISTRACTORS = ["d0", "d1", "d2", "d3"]
+_PMEM_PSIZE = 40
+_PMEM_NREL = 60
+_PMEM_N = 800
+_PMEM_ATTRACTOR_W = 50.0 * _PMEM_POOL_GAIN
+_PMEM_HOLD_W = 3.2 * _PMEM_POOL_GAIN
+_PMEM_CUE_W = 4.2 * _PMEM_POOL_GAIN
+_PMEM_REL_RECURRENT = 0.10 * _PMEM_POOL_GAIN
+_PMEM_N_INTERVENING = 5
+# SFANmdaProspectiveMemory params re-tuned for the num_traits=1 / noise-off pool operating point (the de-risk's
+# defaults assume the more-excitable num_traits=5 + conductance-noise standalone). Two seam-forced changes:
+#   * homeostat_bias_max > 0 -> BIDIRECTIONAL homeostasis (Turrigiano's set-point control lifts a hypo-excitable
+#     pool too, not only hyperpolarizes) -- the noise-free pool's rel accumulator sits BELOW rheobase at bias 0.
+#   * stronger SFA (sfa_g) + plateau (plateau_g/cap) -> the sustained-hold ramp is adapted away and the transient
+#     coincidence is supralinearly amplified, so the release clears the single-input silence on the weaker pool.
+# Identical for every seed (label-free); byte-identical merged-vs-coresident (both arms use the SAME params).
+_PMEM_READ_PARAMS = dict(homeostat_bias_max=4000.0, homeostat_r_set=0.035,
+                         sfa_g=20000.0, sfa_tau=60.0, plateau_g=40000.0, plateau_cap=30000.0)
+
+
+def _pmem_wiring(bridge, rm):
+    """explicit_wiring_fn: regenerate the base ProspectiveMemory's outer-product attractor loops (c2d + d2c) and
+    the cue-monitor coincidence edges (act->rel + cue->rel) on the pool's cortex/dlpfc/rel slices. Uses the SAME
+    np.random.default_rng(seed).permutation(n) assembly assignment + the SAME weights as the standalone __init__,
+    so the edge set is byte-identical (structurally) whether the pmem slice is alone or co-resident (name-keyed
+    region indices; the base 0-weight pathways + the rel-internal recurrence come from build_wiring_plan)."""
+    import numpy as np
+    seed = int(bridge.core_config.seed)
+    cidx = np.asarray(rm.indices("cortex_ctx"), dtype=np.int64)
+    didx = np.asarray(rm.indices("dlpfc_wm"), dtype=np.int64)
+    n = int(cidx.size)
+    ps = _PMEM_PSIZE
+    attractor_concepts = list(_PMEM_ACTIONS) + list(_PMEM_DISTRACTORS)
+    cue_names = [f"cue_{a}" for a in _PMEM_ACTIONS]
+    all_asm = attractor_concepts + cue_names
+    perm = np.random.default_rng(seed).permutation(n)
+    cpat, dpat = {}, {}
+    for i, name in enumerate(all_asm):
+        p = perm[i * ps:(i + 1) * ps]
+        cpat[name] = cidx[p]
+        if name in attractor_concepts:
+            dpat[name] = didx[p]
+    # c2d / d2c attractor outer products (per attractor concept)
+    c2d_pre, c2d_post, d2c_pre, d2c_post = [], [], [], []
+    for name in attractor_concepts:
+        cp_, dp_ = cpat[name], dpat[name]
+        c2d_pre.append(np.repeat(cp_, ps)); c2d_post.append(np.tile(dp_, ps))
+        d2c_pre.append(np.repeat(dp_, ps)); d2c_post.append(np.tile(cp_, ps))
+    c2d_pre = np.concatenate(c2d_pre).astype(np.int64); c2d_post = np.concatenate(c2d_post).astype(np.int64)
+    d2c_pre = np.concatenate(d2c_pre).astype(np.int64); d2c_post = np.concatenate(d2c_post).astype(np.int64)
+    aw = np.full(c2d_pre.size, np.float32(_PMEM_ATTRACTOR_W), np.float32)
+    # cue-monitor coincidence edges (act->rel at hold_w, cue->rel at cue_w) per action
+    cm_pre, cm_post, cm_w = [], [], []
+    for a in _PMEM_ACTIONS:
+        relX = np.asarray(rm.indices(f"rel_{a}"), dtype=np.int64)
+        actc = cpat[a]; cuec = cpat[f"cue_{a}"]
+        cm_pre.append(np.repeat(actc, relX.size)); cm_post.append(np.tile(relX, actc.size))
+        cm_w.append(np.full(actc.size * relX.size, np.float32(_PMEM_HOLD_W), np.float32))
+        cm_pre.append(np.repeat(cuec, relX.size)); cm_post.append(np.tile(relX, cuec.size))
+        cm_w.append(np.full(cuec.size * relX.size, np.float32(_PMEM_CUE_W), np.float32))
+    cm_pre = np.concatenate(cm_pre).astype(np.int64); cm_post = np.concatenate(cm_post).astype(np.int64)
+    cm_w = np.concatenate(cm_w).astype(np.float32)
+    mk = lambda pre, post, w: {"pre_indices": pre, "post_indices": post, "initial_weights": w,
+                               "plastic": False, "conn_type": "E_TO_E", "count": int(pre.size)}
+    return {"c2d": mk(c2d_pre, c2d_post, aw), "d2c": mk(d2c_pre, d2c_post, aw),
+            "cue_monitor": mk(cm_pre, cm_post, cm_w)}
+
+
+def _pmem_organ(seed, shared):
+    return _PMemReadOrgan(int(seed), shared)
+
+
+class _PMemReadOrgan:
+    """Wraps the 3-class prospective-memory hierarchy for the organ-read gate: constructs SFANmdaProspectiveMemory
+    against the pool (which re-homes the homeostat + NMDA-plateau CALIBRATION onto the pmem slice) and runs the
+    MULTI-TURN form->hold->cue read SEQUENCE, ALL inside ONE pool.sequence_isolation() guard so the held intention
+    + SFA trace persist unreset across the turns while no co-resident organ is perturbed. Numeric reads are cached
+    eagerly (before the guard exits). shared=None -> the standalone build+read, byte-identical to the de-risk."""
+
+    def __init__(self, seed, shared=None):
+        self.seed = int(seed)
+        self._shared = shared
+        self._reads = None
+        self._built = False
+
+    def _guard(self):
+        import contextlib
+        if self._shared is not None:
+            return self._shared.sequence_isolation()
+        return contextlib.nullcontext()
+
+    @staticmethod
+    def _enter_local_dt(b, new_dt):
+        """Set the pmem operating-point dt on the shared bridge WITHOUT rebuilding: pmem's attractor/SFA timescales
+        are tuned at dt=0.5 while the pool runs at dt=1.0 (the other organs' point). The conductance decays are
+        CACHED at build as exp(-dt/tau); rescale each EXACTLY as decay**(new_dt/old_dt)=exp(-new_dt/tau) (no tau
+        needed) so g_e/g_i/g_nmda dynamics move to the new dt, and set the delay horizon. Returns a restore token."""
+        cc = b.core_config
+        old_dt = float(cc.dt_ms)
+        saved = {"dt": old_dt, "mds": b.runtime_state.max_delay_steps, "caches": {}}
+        ratio = float(new_dt) / old_dt if old_dt > 0 else 1.0
+        for k in [k for k in list(vars(b)) if k.startswith("_cached_decay_")]:
+            v = getattr(b, k, None)
+            saved["caches"][k] = v
+            if isinstance(v, (int, float)) and v > 0.0:
+                setattr(b, k, float(v) ** ratio)
+        cc.dt_ms = float(new_dt)
+        b.runtime_state.max_delay_steps = int(cc.max_synaptic_delay_ms / new_dt) if new_dt > 0 else 200
+        return saved
+
+    @staticmethod
+    def _exit_local_dt(b, saved):
+        b.core_config.dt_ms = saved["dt"]
+        b.runtime_state.max_delay_steps = saved["mds"]
+        for k, v in saved["caches"].items():
+            setattr(b, k, v)
+
+    def ensure_built(self):
+        if self._built:
+            return
+        from research.runners._pmem_sfa_nmda_amplifier_derisk import SFANmdaProspectiveMemory
+        params = dict(_PMEM_READ_PARAMS) if self._shared is not None else {}
+        with self._guard():
+            restore = self._enter_local_dt(self._shared.bridge, _PMEM_DT) if self._shared is not None else None
+            try:
+                pm = SFANmdaProspectiveMemory(list(_PMEM_ACTIONS), list(_PMEM_DISTRACTORS),
+                                              homeostat_on=True, sfa_on=True, plateau_on=True,
+                                              seed=self.seed, shared=self._shared, **params)
+                self._reads = self._run_multiturn(pm)
+            finally:
+                if restore is not None:
+                    self._exit_local_dt(self._shared.bridge, restore)
+        self._built = True
+
+    def _run_multiturn(self, pm):
+        """The genuine multi-turn stateful read: three form/hold/cue sub-sequences on ONE pm (the slice reset to
+        rest between them via pm._reset_dynamics), exercising the cross-turn hold. Reports the RAW rel firing rates
+        so byte-identity merged-vs-coresident is exact and the fire-vs-silent SEPARATION is non-degenerate:
+          FIRE       : form A, HOLD N intervening distractor turns, present cue A -> rel_A must ramp (the release).
+          WRONG-CUE  : form A, HOLD N turns, present cue B -> rel_A/rel_B silent (the monitor is cue-specific).
+          NO-INTENT  : never form, present cue A -> rel_A silent (the fire is gated by the HELD intention, not the
+                       cue alone -> the coincidence is real). held_min over the FIRE hold witnesses persistence."""
+        N = _PMEM_N_INTERVENING
+        dists = list(_PMEM_DISTRACTORS)
+        inter = [dists[i % len(dists)] for i in range(N)]
+        out = {}
+        # FIRE-ON-CUE (+ persistence + no-fire-before)
+        pm._reset_dynamics()
+        pm.encode_intention("A")
+        held_trace, before_trace = [], []
+        for d in inter:
+            r = pm.intervening_turn(d)
+            held_trace.append(float(r["held"]["A"])); before_trace.append(float(r["rel"]["A"]))
+        fire = pm.present_cue("A")
+        out["fire_A_on_cueA"] = float(fire["rel"]["A"])
+        out["fire_B_on_cueA"] = float(fire["rel"]["B"])
+        out["held_min"] = float(min(held_trace)) if held_trace else 0.0
+        out["rel_before_max"] = float(max(before_trace)) if before_trace else 0.0
+        # WRONG-CUE (form A, present cue B)
+        pm._reset_dynamics()
+        pm.encode_intention("A")
+        for d in inter:
+            pm.intervening_turn(d)
+        wrong = pm.present_cue("B")
+        out["wrongcue_rel_A"] = float(wrong["rel"]["A"])
+        out["wrongcue_rel_B"] = float(wrong["rel"]["B"])
+        # NO-INTENTION (never form, present cue A)
+        pm._reset_dynamics()
+        for d in inter:
+            pm.intervening_turn(d)
+        noint = pm.present_cue("A")
+        out["noint_rel_A"] = float(noint["rel"]["A"])
+        out["max_silent"] = float(max(out["fire_B_on_cueA"], out["rel_before_max"], out["wrongcue_rel_A"],
+                                      out["wrongcue_rel_B"], out["noint_rel_A"]))
+        out["fire_min"] = float(out["fire_A_on_cueA"])
+        # SAME-POOL non-degeneracy: the correct-cue release vs rel_A's OWN silence (before-cue hold ramp, wrong-cue,
+        # no-intention) -- the coincidence-gated release on the TARGET pool, independent of the off-pool (rel_B)
+        # lift-bias baseline. This is the clean margin (5-10x on 5/6 seeds); fire_B_on_cueA is the cross-pool
+        # specificity residual (the positive homeostat bias needed to lift the hypo-excitable noise-free pool).
+        out["same_pool_silent"] = float(max(out["rel_before_max"], out["wrongcue_rel_A"], out["noint_rel_A"]))
+        return out
+
+
+def _pmem_reads(organ):
+    """The organ's REAL multi-turn prospective-memory read battery (RAW rel firing rates + the held-min
+    persistence witness). Byte-identical merged-vs-coresident == the whole stateful form/hold/cue pipeline (deep-
+    hierarchy calibration included) is co-residence-invariant."""
+    organ.ensure_built()
+    return dict(organ._reads)
+
+
+def _pmem_answer(organ):
+    """The rendered read-out: (released_on_correct_cue, silent_on_wrong_cue_same_pool, silent_with_no_intention) —
+    the prospective-memory verdict. `released` is a coincidence-gated SAME-POOL decision (the correct-cue release
+    clears 2x its own single-input/no-intention silence AND an absolute floor), NOT the de-risk's absolute
+    FIRE_THR=0.20: the noise-free num_traits=1 pool operates at a lower release amplitude (~0.05-0.09 vs ~0.4), so
+    the faithful read-out is the coincidence SEPARATION, not the standalone's absolute magnitude. Deterministic ->
+    byte-identical merged-vs-coresident (both arms agree)."""
+    organ.ensure_built()
+    r = organ._reads
+    fire = r["fire_A_on_cueA"]
+    released = bool(fire >= max(2.0 * r["same_pool_silent"], 0.03))
+    silent_wrong = bool(r["wrongcue_rel_A"] < fire and r["wrongcue_rel_A"] <= 0.03)
+    silent_noint = bool(r["noint_rel_A"] < fire)
+    return (released, silent_wrong, silent_noint)
+
+
 GROUP_A = [
     OrganDescriptor(key="causal_whatif",
                     regions=("evt",),
@@ -1238,7 +1570,14 @@ GROUP_A = [
                     spec_fn=_spec_curiosity, param_het=True),
     OrganDescriptor(key="prospective_memory",
                     regions=("cortex_ctx", "dlpfc_wm", "rel_A", "rel_B"),
-                    spec_fn=_spec_prospective_memory),
+                    spec_fn=_spec_prospective_memory,
+                    config=_PMEM_CONFIG,
+                    explicit_wiring_fn=_pmem_wiring,
+                    organ_cls=_pmem_organ, read_fn=_pmem_reads, answer_fn=_pmem_answer,
+                    supports_shared=True,
+                    scaffold_residuals=("host-installed cue->action content binding (Gollwitzer one-shot Hebbian "
+                                        "potentiation is the named follow-on); SFA + NMDA-plateau host current-"
+                                        "injection proxies for the K-adaptation conductance + dendritic NMDA spike",)),
     OrganDescriptor(key="d6_multiref_wm",
                     regions=(),                          # region names live in build_persistent_slot; discovered at build
                     spec_fn=_spec_d6_multiref_wm,
@@ -1264,12 +1603,14 @@ GROUP_A_DEFERRED = {
                      "neuromodulator triad drives the read. Group-B OU/neuromod seam.",
 }
 
-# ORGAN-READ deferrals — the 2 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
+# ORGAN-READ deferrals — the Group-A organ(s) that ARE substrate-init byte-identical (migration-safe) but whose
 # READ pipeline is not YET a clean function of the frozen shared substrate. Each names the concrete engine/wrapper
 # seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, now closed for
-# FIVE organs — self_schema, d6_multiref_wm, comprehension [frozen forward passes] + source_provenance,
-# causal_whatif [build-time-plasticity-then-frozen-read via the toggle + gain-0-freeze seam]; these 2 need a
-# further seam and DO NOT block the batch). Refined 2026-08-27 from a per-organ read-path trace + the two closes.
+# SIX organs — self_schema, d6_multiref_wm, comprehension [frozen forward passes] + source_provenance, causal_whatif
+# [build-time-plasticity-then-frozen-read via the toggle + gain-0-freeze seam] + prospective_memory [the MULTI-TURN
+# stateful read via sequence_isolation + dt-local + the pool-gain seam, 2026-08-27] — closed IN CO-RESIDENCE with
+# the frozen-forward organs, 6-seed GO). Only `curiosity` remains organ-read-deferred (a further seam), and it does
+# NOT block the batch. Refined 2026-08-27.
 GROUP_A_ORGANREAD_DEFERRED = {
     "curiosity": "NEUROMODULATOR-SUBSYSTEM + OU seam — the production read is a FROZEN forward pass (reward_learning "
                  "forced 0, no weight mutation; the spiking-SNc/reward-critic is BUILT but NEVER exercised by the "
@@ -1281,26 +1622,18 @@ GROUP_A_ORGANREAD_DEFERRED = {
                  "Seam: enable+register the curiosity modulator on the pool (a global-subsystem config seam — verify "
                  "a group:ask-scoped modulator leaves every co-resident slice byte-identical) + force OU off (or a "
                  "per-neuron-seeded OU stream, a sim/ edit). The neuromod subsystem's internals live in sim/.",
-    "prospective_memory": "MULTI-TURN-STATEFUL hold + DEEP-HIERARCHY injection — the ONE genuinely-remaining organ. "
-                          "The FORMATION-mutation half is now a SOLVED pattern (source_provenance's Hebbian encode + "
-                          "causal_whatif's STDP+DA train both close via the build-time config toggle + universal "
-                          "gain-0 freeze of every non-organ edge + read_isolation, plus allocating the plasticity "
-                          "STATE arrays the frozen pool leaves None) — so `form_intention_hebbian` per FORMATION turn "
-                          "is no longer the blocker. The TWO residual blockers: (1) DEPTH — the read runs on a "
-                          "3-class hierarchy (`base` -> HomeostaticProspectiveMemory -> SFANmdaProspectiveMemory) "
-                          "that BUILDS its own bridge AND runs a multi-STAGE homeostat+plateau CALIBRATION (stepping "
-                          "the substrate) in __init__; a shared= injection must thread the bridge + discovered index "
-                          "maps through all three and re-home the calibration on the pool slice. (2) MULTI-TURN HOLD "
-                          "— fire_on_cue is NOT a single drive->settle->read: the self-sustaining cortex<->dlpfc "
-                          "attractor + per-neuron SFA trace must persist UNRESET across an a-priori-unbounded number "
-                          "of INDEPENDENT production turns (form -> hold through arbitrary intervening turns -> cue), "
-                          "which is architecturally at odds with read_isolation's per-call co-resident snapshot/"
-                          "restore (closable by spanning ONE guard across all turns of a single read, but the "
-                          "calibrate-then-multi-turn-read structure over the deep hierarchy is the intricate part). "
-                          "Config (plastic_internal=False/pathway plastic=False, enable_nmda=True, ou off) IS "
-                          "frozen-pool-compatible per-region; SFA/plateau are host current-injection proxies (fine). "
-                          "Deferred for SCOPE (the deep-hierarchy shared-bridge injection), NOT a substrate limit.",
 }
+
+# prospective_memory's MULTI-TURN stateful read is now CLOSED in co-residence with the frozen-forward organs
+# (organ_cls=_pmem_organ; sequence_isolation + the dt-local + pool-gain seams; 6-seed GO, read_maxerr=0 +
+# answer_same, held robust 0.329..0.344, coincidence-gated release 3.2..8.5x same-pool margin). The FULL 7-organ
+# strict batch is NO-GO for a SCALE reason, not a pmem defect: adding pmem (the LARGEST organ, 1720 neurons) pushes
+# total-N=4968 past the point where the OTHER LONG-INTEGRATION reads (source_provenance / causal_whatif / d6) stay
+# byte-identical, because the engine's non-flagged conductance-matvec paths (notably the slow-NMDA-recurrent
+# `_nr_mat.T @ prev_firing`, sim/bridge.py:8973, used ONLY by d6) carry an FP summation-order variance that a
+# hundreds-of-steps spiking read amplifies into a 1-spike divergence. Merge seam #2 (deterministic_transpose_matvec)
+# pins the MAIN synaptic matvec (recovers pmem; the original 5 stay 5/5 GO without pmem), but closing the full batch
+# needs deterministic variants of ALL matvec paths — a sim/ edit. See the 2026-08-27 multi-turn-stateful-read finding.
 
 # causal_whatif's SUBSTRATE read (predicts_D / directed-ratio / cause-separation / DO-intervention) is now CLOSED
 # via the build-time STDP+DA train seam (organ_cls=_causal_organ). Blocker (2) — the BUILD-TIME train — is solved

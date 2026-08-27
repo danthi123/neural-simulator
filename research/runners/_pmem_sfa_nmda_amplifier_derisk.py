@@ -134,13 +134,18 @@ class SFANmdaProspectiveMemory(homeo.HomeostaticProspectiveMemory):
         super().__init__(actions, distractors, **kw)   # stage-1: homeostat bias calibrated WITH SFA on
 
         if self._want_plateau and self.homeostat_on:
-            cached = _THETA_CACHE.get(self._seed)
-            if cached is not None:
-                self._theta = dict(cached["theta"])
-                self._diag = dict(cached["diag"])
+            # SHARED (one-brain merge): BYPASS the module cache -- calibrate theta independently per arm on its OWN
+            # pool slice, so the byte-identity of the plateau threshold is genuine (mirrors the homeostat-bias bypass).
+            if self._shared is not None:
+                self._calibrate_plateau()
             else:
-                self._calibrate_plateau()      # stage-2: pool threshold above the worst single input
-                _THETA_CACHE[self._seed] = {"theta": dict(self._theta), "diag": dict(self._diag)}
+                cached = _THETA_CACHE.get(self._seed)
+                if cached is not None:
+                    self._theta = dict(cached["theta"])
+                    self._diag = dict(cached["diag"])
+                else:
+                    self._calibrate_plateau()      # stage-2: pool threshold above the worst single input
+                    _THETA_CACHE[self._seed] = {"theta": dict(self._theta), "diag": dict(self._diag)}
             self._plateau_on = True
 
     # ---- SFA state ----

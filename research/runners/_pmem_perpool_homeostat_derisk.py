@@ -126,15 +126,21 @@ class HomeostaticProspectiveMemory(base.ProspectiveMemory):
                            self._h["r_set"], self._h["eta"], self._h["iters"], self._cal_N,
                            self._h["bmin"], self._h["bmax"])
         if self.homeostat_on:
-            cached = _BIAS_CACHE.get(self._cache_key)
-            if cached is not None:
-                self._bias_pool = dict(cached["bias"])
-                self._bias_trace = {a: round(self._bias_pool[a], 1) for a in self.actions}
-                self._cue_alone_trace = dict(cached["trace"])
-            else:
+            # SHARED (one-brain merge): BYPASS the module cache -- each arm (merged vs coresident) must calibrate
+            # INDEPENDENTLY on its OWN pool slice so the byte-identity of the calibrated bias is a genuine result,
+            # not a cache hit. (The standalone keeps the cache: the 5 fresh condition-builds re-derive one bias.)
+            if self._shared is not None:
                 self._calibrate_all()
-                _BIAS_CACHE[self._cache_key] = {"bias": dict(self._bias_pool),
-                                                "trace": dict(self._cue_alone_trace)}
+            else:
+                cached = _BIAS_CACHE.get(self._cache_key)
+                if cached is not None:
+                    self._bias_pool = dict(cached["bias"])
+                    self._bias_trace = {a: round(self._bias_pool[a], 1) for a in self.actions}
+                    self._cue_alone_trace = dict(cached["trace"])
+                else:
+                    self._calibrate_all()
+                    _BIAS_CACHE[self._cache_key] = {"bias": dict(self._bias_pool),
+                                                    "trace": dict(self._cue_alone_trace)}
 
     def _step(self, drive_idx=None, drive_pA=0.0):
         """Same as the parent, but the tonic rel bias is PER POOL (the homeostat's adapted set-point) when ON."""

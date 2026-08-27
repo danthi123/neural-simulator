@@ -109,7 +109,7 @@ class ProspectiveMemory:
     def __init__(self, actions, distractors, n=800, pattern_size=40, attractor_weight=50.0,
                  n_rel=60, rel_recurrent_weight=0.10, rel_recurrent_density=0.5,
                  hold_to_rel_weight=3.2, cue_to_rel_weight=4.2, rel_bias_pA=-1050.0,
-                 seed=42, verbose=False):
+                 seed=42, verbose=False, shared=None):
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
@@ -124,6 +124,11 @@ class ProspectiveMemory:
         self._rel_bias_pA = float(rel_bias_pA)   # tonic hyperpolarizing bias on the rel readout (models tonic
                                                  # inhibition setting the operating point) -> a single ff input
                                                  # stays sub-rheobase; only the COINCIDENCE crosses = a real AND.
+        # shared -> a one-brain-merge MergedPool: ADOPT its bridge slice instead of building a private bridge, and
+        # let the pool's explicit_wiring_fn install the attractor + cue-monitor edges (build-time, both the merged
+        # and coresident arms identical). shared=None -> the ORIGINAL standalone path, byte-identical: this whole
+        # __init__ is purely ADDITIVE (the shared branch is skipped, every install runs exactly as before).
+        self._shared = shared
 
         # concepts that get a self-sustaining loop attractor: the intentions + the distractors.
         self._attractor_concepts = list(self.actions) + list(self.distractors)
@@ -131,55 +136,68 @@ class ProspectiveMemory:
         self._cue_names = [f"cue_{a}" for a in self.actions]
         all_cortex_assemblies = self._attractor_concepts + self._cue_names
 
-        def loop_reg(name):
-            return BrainRegion(name=name, n_neurons=n, exc_fraction=0.8, internal_density=0.0,
-                               exc_weight_mean=2.0, inh_weight_mean=4.0, weight_jitter=0.2,
-                               plastic_internal=False,
-                               izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name, enable_nmda=True)
+        if shared is None:
+            def loop_reg(name):
+                return BrainRegion(name=name, n_neurons=n, exc_fraction=0.8, internal_density=0.0,
+                                   exc_weight_mean=2.0, inh_weight_mean=4.0, weight_jitter=0.2,
+                                   plastic_internal=False,
+                                   izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name, enable_nmda=True)
 
-        regions = [loop_reg("cortex_ctx"), loop_reg("dlpfc_wm")]
-        for a in self.actions:
-            # rel_X : soft NMDA-recurrent accumulator (the sel-pool idiom, used as a coincidence detector).
-            # alpha<1 soft-WTA -> ramps/holds under converging evidence, never self-ignites from zero.
-            regions.append(BrainRegion(
-                name=f"rel_{a}", n_neurons=n_rel, exc_fraction=1.0,
-                internal_density=rel_recurrent_density, exc_weight_mean=rel_recurrent_weight,
-                inh_weight_mean=0.0, weight_jitter=0.2, plastic_internal=False, enable_nmda=True,
-                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
+            regions = [loop_reg("cortex_ctx"), loop_reg("dlpfc_wm")]
+            for a in self.actions:
+                # rel_X : soft NMDA-recurrent accumulator (the sel-pool idiom, used as a coincidence detector).
+                # alpha<1 soft-WTA -> ramps/holds under converging evidence, never self-ignites from zero.
+                regions.append(BrainRegion(
+                    name=f"rel_{a}", n_neurons=n_rel, exc_fraction=1.0,
+                    internal_density=rel_recurrent_density, exc_weight_mean=rel_recurrent_weight,
+                    inh_weight_mean=0.0, weight_jitter=0.2, plastic_internal=False, enable_nmda=True,
+                    izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
 
-        cfg = CoreSimConfig()
-        cfg.enable_brain_region_framework = True
-        cfg.brain_regions = regions
-        pathways = [
-            # loop pathways seeded at weight 0 (as build_loop_wm_bridge with loop_weight=0): a non-empty CSR so
-            # the per-concept attractors + the cue-monitor edges can be installed via set_pathway_weights.
-            RegionPathway(from_region="cortex_ctx", to_region="dlpfc_wm", density=0.05,
-                          weight_mean=0.0, weight_jitter=0.2, plastic=False),
-            RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=0.05,
-                          weight_mean=0.0, weight_jitter=0.2, plastic=False),
-        ]
-        for a in self.actions:
-            # seed a 0-weight cortex_ctx -> rel_X pathway so the CSR has the rows; the SPECIFIC evidence edges
-            # (act_X.cortex->rel_X, cue_X.cortex->rel_X) are then installed at real weight via add_missing.
-            pathways.append(RegionPathway(from_region="cortex_ctx", to_region=f"rel_{a}", density=0.05,
-                                          weight_mean=0.0, weight_jitter=0.2, plastic=False))
-        cfg.region_pathways = pathways
-        cfg.dt_ms = 0.5
-        cfg.seed = seed
-        cfg.enable_nmda = True
-        cfg.enable_ou_process = False          # quiet clean hold (the validated multi-concept-WM config)
-        cfg.enable_structural_plasticity = False
-        cfg.enable_hebbian_learning = False
-        cfg.enable_short_term_plasticity = False
-        cfg.stdp_w_max = 60.0
-        cfg.fast_spike_reset = True
-        bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                                  runtime_state=RuntimeState(), gpu_config=GPUConfig())
-        bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
-        bridge._initialize_simulation_data(called_from_playback_init=False)
-        self.bridge = bridge
+            cfg = CoreSimConfig()
+            cfg.enable_brain_region_framework = True
+            cfg.brain_regions = regions
+            pathways = [
+                # loop pathways seeded at weight 0 (as build_loop_wm_bridge with loop_weight=0): a non-empty CSR so
+                # the per-concept attractors + the cue-monitor edges can be installed via set_pathway_weights.
+                RegionPathway(from_region="cortex_ctx", to_region="dlpfc_wm", density=0.05,
+                              weight_mean=0.0, weight_jitter=0.2, plastic=False),
+                RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=0.05,
+                              weight_mean=0.0, weight_jitter=0.2, plastic=False),
+            ]
+            for a in self.actions:
+                # seed a 0-weight cortex_ctx -> rel_X pathway so the CSR has the rows; the SPECIFIC evidence edges
+                # (act_X.cortex->rel_X, cue_X.cortex->rel_X) are then installed at real weight via add_missing.
+                pathways.append(RegionPathway(from_region="cortex_ctx", to_region=f"rel_{a}", density=0.05,
+                                              weight_mean=0.0, weight_jitter=0.2, plastic=False))
+            cfg.region_pathways = pathways
+            cfg.dt_ms = 0.5
+            cfg.seed = seed
+            cfg.enable_nmda = True
+            cfg.enable_ou_process = False          # quiet clean hold (the validated multi-concept-WM config)
+            cfg.enable_structural_plasticity = False
+            cfg.enable_hebbian_learning = False
+            cfg.enable_short_term_plasticity = False
+            cfg.stdp_w_max = 60.0
+            cfg.fast_spike_reset = True
+            bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                                      runtime_state=RuntimeState(), gpu_config=GPUConfig())
+            bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+            bridge._initialize_simulation_data(called_from_playback_init=False)
+            self.bridge = bridge
+        else:
+            # SHARED: adopt the pool's already-built bridge slice. cortex_ctx/dlpfc_wm/rel_* live on the pool at the
+            # SAME names/sizes (the descriptor's spec_fn reuses THIS class's region build), and the attractor +
+            # cue-monitor edges are installed by the pool's explicit_wiring_fn (pmem_explicit_wiring in the merge
+            # framework -- build-time, both arms identical). This branch NEVER builds a bridge, edits sim/, or steps
+            # the substrate: it only discovers index maps + edge references. The homeostat/plateau calibration
+            # (subclasses) then re-homes onto this slice inside the pool's per-sequence read_isolation guard.
+            shared.ensure_built()
+            self.bridge = shared.bridge
+            if int(np.asarray(self.bridge.region_manager.indices("cortex_ctx")).size) != n:
+                raise ValueError(f"shared pool cortex_ctx size != n={n} (config drift in the pmem descriptor)")
 
-        rm = bridge.region_manager
+        rm = self.bridge.region_manager
+        bridge = self.bridge
         cidx = np.asarray(rm.indices("cortex_ctx"))
         didx = np.asarray(rm.indices("dlpfc_wm"))
         rng = np.random.default_rng(seed)
@@ -205,8 +223,11 @@ class ProspectiveMemory:
         c2d_pre = np.concatenate(c2d_pre).astype(np.int64); c2d_post = np.concatenate(c2d_post).astype(np.int64)
         d2c_pre = np.concatenate(d2c_pre).astype(np.int64); d2c_post = np.concatenate(d2c_post).astype(np.int64)
         ww = np.full(c2d_pre.size, np.float32(attractor_weight), np.float32)
-        bridge.set_pathway_weights("c2d", pre_indices=c2d_pre, post_indices=c2d_post, weights=ww, add_missing=True)
-        bridge.set_pathway_weights("d2c", pre_indices=d2c_pre, post_indices=d2c_post, weights=ww, add_missing=True)
+        if shared is None:
+            # standalone: install the attractor edges here. (SHARED: the pool's explicit_wiring_fn installed the
+            # SAME edges at build time via the SAME perm/weights, so this slice already carries them.)
+            bridge.set_pathway_weights("c2d", pre_indices=c2d_pre, post_indices=c2d_post, weights=ww, add_missing=True)
+            bridge.set_pathway_weights("d2c", pre_indices=d2c_pre, post_indices=d2c_post, weights=ww, add_missing=True)
 
         # store the ATTRACTOR EDGES per attractor-concept so the latch-lesion can zero exactly its edges.
         self._attr_edges = {}
@@ -229,9 +250,11 @@ class ProspectiveMemory:
             w_all.append(np.full(actc.size * relX.size, np.float32(hold_to_rel_weight), np.float32))
             pre_all.append(np.repeat(cuec, relX.size)); post_all.append(np.tile(relX, cuec.size))
             w_all.append(np.full(cuec.size * relX.size, np.float32(cue_to_rel_weight), np.float32))
-        bridge.set_pathway_weights("cue_monitor", pre_indices=np.concatenate(pre_all),
-                                   post_indices=np.concatenate(post_all), weights=np.concatenate(w_all),
-                                   add_missing=True)
+        if shared is None:
+            # standalone: install the cue-monitor coincidence edges. (SHARED: installed by explicit_wiring_fn.)
+            bridge.set_pathway_weights("cue_monitor", pre_indices=np.concatenate(pre_all),
+                                       post_indices=np.concatenate(post_all), weights=np.concatenate(w_all),
+                                       add_missing=True)
         if verbose:
             print(f"[pmem] latch loop n={n}, {len(self.actions)} actions, {len(self.distractors)} distractors, "
                   f"rel/action={n_rel}, hold_w={hold_to_rel_weight}, cue_w={cue_to_rel_weight}", flush=True)

@@ -1,0 +1,89 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "runner": "research.runners.onebrain_merge_framework._pmem_organ (multi-turn stateful read)",
+  "command": "SIM_BACKEND=numpy python -c 'F._pmem_organ(seed, merge_organs([pmem], wire=True)).ensure_built()'",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "note": "per-seed prospective_memory multi-turn read on the pmem-alone wired pool (dt-local 0.5, pool-gain 6x, bidirectional homeostat) \u2014 the non-degeneracy of the coincidence-gated release; byte-identity is the companion _onebrain_merge_multiturn_pmem_6seed.json (pmem co-resident with self_schema+comprehension).",
+  "results": {
+    "42": {
+      "fire_A_on_cueA": 0.0878,
+      "held_min": 0.335,
+      "same_pool_silent": 0.0144,
+      "fire_over_samepool": 6.1,
+      "fire_B_offpool": 0.0294,
+      "answer": [
+        true,
+        true,
+        true
+      ]
+    },
+    "43": {
+      "fire_A_on_cueA": 0.0783,
+      "held_min": 0.3287,
+      "same_pool_silent": 0.01,
+      "fire_over_samepool": 7.8,
+      "fire_B_offpool": 0.0256,
+      "answer": [
+        true,
+        true,
+        true
+      ]
+    },
+    "44": {
+      "fire_A_on_cueA": 0.025,
+      "held_min": 0.3287,
+      "same_pool_silent": 0.0078,
+      "fire_over_samepool": 3.2,
+      "fire_B_offpool": 0.0272,
+      "answer": [
+        false,
+        true,
+        true
+      ]
+    },
+    "100": {
+      "fire_A_on_cueA": 0.0717,
+      "held_min": 0.3438,
+      "same_pool_silent": 0.0122,
+      "fire_over_samepool": 5.9,
+      "fire_B_offpool": 0.0317,
+      "answer": [
+        true,
+        true,
+        true
+      ]
+    },
+    "101": {
+      "fire_A_on_cueA": 0.0756,
+      "held_min": 0.3287,
+      "same_pool_silent": 0.0089,
+      "fire_over_samepool": 8.5,
+      "fire_B_offpool": 0.0311,
+      "answer": [
+        true,
+        true,
+        true
+      ]
+    },
+    "102": {
+      "fire_A_on_cueA": 0.045,
+      "held_min": 0.3337,
+      "same_pool_silent": 0.0083,
+      "fire_over_samepool": 5.4,
+      "fire_B_offpool": 0.0233,
+      "answer": [
+        true,
+        true,
+        true
+      ]
+    }
+  }
+}
