@@ -35,6 +35,27 @@ LOAD-BEARING (the lesion oracle, proven in `_spiking_mouth_recall_soak`):
   - rate-read lesion: intact per-pool spiking-RATE ranking -> correct slot ORDER; the EMERGE anti-cheats
                     (equal_drive: rates tie / permute_order: fixed wrong order) SCRAMBLE the ORDER with the same
                     content words -> proves the SPIKING READ authored the ORDER, not a fixed host template.
+
+MOOD-TONE COUPLING (2026-08-27 fix -- closes a cross-faculty regression). The Gate-B affect faculty
+(`affect_production_organ.MoodConditionedRenderer`, default-ON since 2026-08-12) colors the fluent Qwen/template
+mouth's PROSE by injecting a manner clause into `render_svo`'s constrain prompt -- but `render_svo` is exactly
+the call THIS module's recall mouth pre-empts (`ChatBrain.render` / `RichAnswerComposer._render_one_verified`
+both return `spiking_recall_surface(...)` BEFORE `self.renderer.render_svo` is ever reached). Once
+BRAIN_SPIKING_MOUTH_RECALL flipped default-ON (2026-08-26), the manner-coloring silently went dead for every
+bounded-transitive recall turn -- a validated cross-faculty coupling made inert by a later flip (confirmed by a
+CPU-only crossed-A/B probe, see `research/findings/2026-08-27-affect-tone-coloring-restored-on-spiking-mouth.md`).
+
+The fix makes the SAME mood signal (`affect_production_organ.tone_level`) load-bearing on the spiking mouth's
+OWN surface instead: `mouth_tone_marker(level)` reads a tiny (2-pool) spiking population -- REUSE-BY-IMPORT of
+the EMERGE-59 driven-pool primitives (`build_slot_bridge` / `slot_pool_rates`), a bridge fully SEPARATE from the
+SpikingClauseProducer's own word-order mechanism (which is untouched) -- and appends '!' (warm) / '.' (curt) to
+the recall surface. `level` only selects WHICH pool receives the graded drive (mirrors the sign-routing
+`AffectProductionOrgan.read_differential` already uses for the V+/V- ladder rungs); the discrete marker is a
+genuine rate-vs-rate comparison with a dead margin, not a bare host threshold on the mood float. NEUTRAL
+(level == 0, the default for every caller that never sets `ChatBrain._mood_tone_level` -- the TUI, unit tests, a
+disabled BRAIN_AFFECT) skips the read entirely -> BYTE-IDENTICAL to the pre-fix surface. Escape:
+`BRAIN_SPIKING_MOUTH_MOOD=0` reverts the spiking recall mouth to mood-BLIND (the exact regressed surface) even
+with BRAIN_SPIKING_MOUTH_RECALL on.
 """
 from __future__ import annotations
 
@@ -78,6 +99,96 @@ def frame_supported(a, v, p):
     if v.lower() in _COPULA:
         return False
     return True
+
+
+# The DEFAULT-ON escape gate for the mood-tone coupling (2026-08-27 fix). See the module docstring's "MOOD-TONE
+# COUPLING" section for the regression this closes.
+_MOUTH_MOOD_DEFAULT_ON = True
+
+
+def mouth_mood_enabled():
+    """True IFF the spiking recall mouth should color its surface with the Gate-B mood signal. Default-ON.
+    `BRAIN_SPIKING_MOUTH_MOOD` in {0,false,off,no,''} -> the mouth reverts to mood-BLIND (the exact regressed
+    surface) even though `recall_mouth_enabled()` stays True. The master mouth kill BRAIN_SPIKING_MOUTH=0 also
+    forces this OFF (no recall mouth -> nothing to color)."""
+    if os.environ.get("BRAIN_SPIKING_MOUTH", "1") == "0":
+        return False
+    v = os.environ.get("BRAIN_SPIKING_MOUTH_MOOD")
+    if _MOUTH_MOOD_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
+    return v is not None and v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+# ── the tiny (2-pool) spiking tone-read: REUSE-BY-IMPORT of the EMERGE-59 driven-pool primitives, a bridge fully
+# SEPARATE from the SpikingClauseProducer's own (the word-order mechanism above is untouched). ──────────────────
+_TONE_WARM, _TONE_CURT = 0, 1
+_TONE_N_POOLS = 2
+# the rate SEPARATION the read must clear to flip from neutral (else: '' -- safe no-op). Measured empirically
+# across seeds 42/43/44/100/101/102 at |level|==1 (the smallest drive this reads): the intact warm-vs-curt rate
+# gap is >= 0.025 in every seed (range 0.025..0.15), so 0.015 clears with margin while still requiring a genuine
+# separation (the equal-drive anti-cheat pattern this mirrors: a tie must NOT flip the marker).
+_TONE_DEAD_MARGIN = 0.015
+
+
+class _MoodToneReader:
+    """A tiny (2 pools x N_PER neurons), lazily-built spiking population that converts a Gate-B tone LEVEL
+    (-3..+3, `affect_production_organ.tone_level`) into a discrete surface marker for the spiking recall mouth.
+    `level` only selects WHICH pool receives the graded drive (mirrors the sign-routing
+    `AffectProductionOrgan.read_differential` already uses for the V+/V- ladder rungs, `_set()` there); the
+    discrete OUTCOME is a genuine rate-vs-rate comparison against `_TONE_DEAD_MARGIN`, not a bare threshold on
+    `level` itself -- a spiking read decides whether the drive separated enough to flip from neutral."""
+
+    def __init__(self, seed=42):
+        self.seed = int(seed)
+        self._bridge = None
+        self._idx = None
+
+    def _ensure_built(self):
+        if self._bridge is None:
+            from research.runners._emerge59_spiking_broca_frame_slots_derisk import build_slot_bridge
+            self._bridge, self._idx = build_slot_bridge(self.seed, n_slot_pools=_TONE_N_POOLS)
+
+    def marker(self, level: int) -> str:
+        """'!' (warm) / '.' (curt) / '' (neutral, or the spiking read did not separate -> safe no-op)."""
+        lvl = int(level)
+        if lvl == 0:
+            return ""                                          # neutral -> NO read at all -> byte-identical
+        self._ensure_built()
+        from research.runners._emerge59_spiking_broca_frame_slots_derisk import (
+            slot_pool_rates, PRIMACY_pA, EQUAL_pA)
+        mag = min(1.0, abs(lvl) / 3.0)
+        driven_pA = EQUAL_pA + mag * (PRIMACY_pA[0] - EQUAL_pA)
+        if lvl > 0:
+            drive = {_TONE_WARM: driven_pA, _TONE_CURT: EQUAL_pA}
+        else:
+            drive = {_TONE_WARM: EQUAL_pA, _TONE_CURT: driven_pA}
+        rate = slot_pool_rates(self._bridge, self._idx, drive, n_slot_pools=_TONE_N_POOLS)
+        warm_r, curt_r = float(rate[_TONE_WARM]), float(rate[_TONE_CURT])
+        if warm_r > curt_r + _TONE_DEAD_MARGIN:
+            return "!"
+        if curt_r > warm_r + _TONE_DEAD_MARGIN:
+            return "."
+        return ""                                              # the read did not separate -> safe fallback
+
+
+_TONE_READER = None
+
+
+def _get_tone_reader(seed=42):
+    global _TONE_READER
+    if _TONE_READER is None:
+        _TONE_READER = _MoodToneReader(seed=seed)
+    return _TONE_READER
+
+
+def mouth_tone_marker(level: int, seed: int = 42) -> str:
+    """Public entry: the spiking tone marker for this turn's Gate-B mood LEVEL (a process-shared reader, built
+    once). Never raises -- an internal failure degrades to '' (no marker, byte-identical), matching the mouth's
+    own fail-safe convention (a wiring failure never blocks a turn)."""
+    try:
+        return _get_tone_reader(seed=seed).marker(level)
+    except Exception:
+        return ""
 
 
 class SpikingRecallMouth:

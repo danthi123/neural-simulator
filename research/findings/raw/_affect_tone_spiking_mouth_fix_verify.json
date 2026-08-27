@@ -1,0 +1,411 @@
+{
+  "label": "affect-tone-coloring restored on the spiking recall mouth (2026-08-27 fix)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PART A: flag-OFF (Qwen path) mood-manner reaches the renderer",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART A: flag-OFF (Qwen path) positive vs negative differ",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART A: flag-ON (spiking mouth, post-fix) positive vs negative differ",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART A: flag-ON never falls back to the Qwen-like mouth",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=42: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=42: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=42: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=43: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=43: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=43: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=44: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=44: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=44: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=100: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=100: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=100: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=101: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=101: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=101: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=102: neutral content recovers the recalled SVO",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=102: mood is load-bearing on the spiking mouth's own surface",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B seed=102: BRAIN_SPIKING_MOUTH_MOOD=0 lesion reverts to byte-identical neutral",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART C: the tone read is sign-correct on every seed at the smallest drive (|level|=1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART C: _TONE_DEAD_MARGIN clears on every seed at the smallest drive (|level|=1)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "part_a_confirm": {
+    "rows": [
+      {
+        "label": "positive",
+        "flag_on": false,
+        "mood_level": 2,
+        "recall_mouth_enabled": false,
+        "qwen_like_fac_calls": 1,
+        "surface": "The dog happily chases the cat!"
+      },
+      {
+        "label": "negative",
+        "flag_on": false,
+        "mood_level": -2,
+        "recall_mouth_enabled": false,
+        "qwen_like_fac_calls": 1,
+        "surface": "The dog chases the cat."
+      },
+      {
+        "label": "positive",
+        "flag_on": true,
+        "mood_level": 2,
+        "recall_mouth_enabled": true,
+        "qwen_like_fac_calls": 0,
+        "surface": "the dog chases the cat!"
+      },
+      {
+        "label": "negative",
+        "flag_on": true,
+        "mood_level": -2,
+        "recall_mouth_enabled": true,
+        "qwen_like_fac_calls": 0,
+        "surface": "the dog chases the cat."
+      }
+    ],
+    "off_differs": true,
+    "off_manner_reached": true,
+    "on_differs_post_fix": true,
+    "on_never_reaches_qwen": true
+  },
+  "part_b_fix_verify": [
+    {
+      "seed": 42,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    },
+    {
+      "seed": 43,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    },
+    {
+      "seed": 44,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    },
+    {
+      "seed": 100,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    },
+    {
+      "seed": 101,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    },
+    {
+      "seed": 102,
+      "neutral": "the dog chases the cat",
+      "pos": "the dog chases the cat!",
+      "neg": "the dog chases the cat.",
+      "pos_lesion": "the dog chases the cat",
+      "neg_lesion": "the dog chases the cat",
+      "content_ok": true,
+      "load_bearing_ok": true,
+      "lesion_ok": true
+    }
+  ],
+  "part_c_dead_margin_tuning": {
+    "dead_margin_used": 0.015,
+    "rows": [
+      {
+        "seed": 42,
+        "level": 1,
+        "warm_rate": 0.3458333333333333,
+        "curt_rate": 0.3125,
+        "abs_separation": 0.033333333333333326,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 42,
+        "level": -1,
+        "warm_rate": 0.18,
+        "curt_rate": 0.2975,
+        "abs_separation": 0.1175,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 43,
+        "level": 1,
+        "warm_rate": 0.36083333333333334,
+        "curt_rate": 0.27,
+        "abs_separation": 0.09083333333333332,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 43,
+        "level": -1,
+        "warm_rate": 0.19833333333333333,
+        "curt_rate": 0.2791666666666667,
+        "abs_separation": 0.08083333333333334,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 44,
+        "level": 1,
+        "warm_rate": 0.36083333333333334,
+        "curt_rate": 0.30166666666666664,
+        "abs_separation": 0.0591666666666667,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 44,
+        "level": -1,
+        "warm_rate": 0.19333333333333333,
+        "curt_rate": 0.30166666666666664,
+        "abs_separation": 0.10833333333333331,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 100,
+        "level": 1,
+        "warm_rate": 0.3516666666666667,
+        "curt_rate": 0.29,
+        "abs_separation": 0.0616666666666667,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 100,
+        "level": -1,
+        "warm_rate": 0.17333333333333334,
+        "curt_rate": 0.2816666666666667,
+        "abs_separation": 0.10833333333333334,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 101,
+        "level": 1,
+        "warm_rate": 0.37416666666666665,
+        "curt_rate": 0.3066666666666667,
+        "abs_separation": 0.06749999999999995,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 101,
+        "level": -1,
+        "warm_rate": 0.22166666666666668,
+        "curt_rate": 0.30416666666666664,
+        "abs_separation": 0.08249999999999996,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 102,
+        "level": 1,
+        "warm_rate": 0.3466666666666667,
+        "curt_rate": 0.32166666666666666,
+        "abs_separation": 0.025000000000000022,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      },
+      {
+        "seed": 102,
+        "level": -1,
+        "warm_rate": 0.16833333333333333,
+        "curt_rate": 0.3183333333333333,
+        "abs_separation": 0.14999999999999997,
+        "sign_correct": true,
+        "clears_dead_margin": true
+      }
+    ],
+    "min_abs_separation_at_|level|=1": 0.025000000000000022,
+    "max_abs_separation_at_|level|=1": 0.14999999999999997,
+    "all_sign_correct": true,
+    "all_clear_dead_margin": true
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ]
+}

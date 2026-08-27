@@ -1222,7 +1222,11 @@ class ChatBrain:
 
         Gated on `spiking_mouth_recall_prod.recall_mouth_enabled()` (flag BRAIN_SPIKING_MOUTH_RECALL, default OFF) +
         `frame_supported` (bounded transitive SVO). OFF or unsupported -> None -> the surface is byte-identical to the
-        pre-wire Qwen/template path."""
+        pre-wire Qwen/template path.
+
+        MOOD-TONE COUPLING (2026-08-27 fix): once verified, `_apply_mouth_mood_tone` may append a spiking-read tone
+        marker so the Gate-B mood signal stays load-bearing on THIS mouth too (see `spiking_mouth_recall_prod`'s
+        module docstring). A neutral / absent mood is a no-op -> byte-identical to the pre-fix surface."""
         from research.runners.spiking_mouth_recall_prod import recall_mouth_enabled, frame_supported
         if self.raw_mode or self.renderer is None:
             return None                                   # GPU-free / --raw: keep the brain's raw triple path
@@ -1230,8 +1234,30 @@ class ChatBrain:
             return None                                   # flag OFF / open prose -> byte-identical fallback
         surface = self._spiking_recall_mouth().render(a, v, p)
         if self._verify(surface, None, [a, v, p]):        # the moat: the spiking sentence must recover THIS (a, v, p)
-            return surface
+            return self._apply_mouth_mood_tone(surface)
         return None                                       # verify miss -> caller falls back (NEVER a leak)
+
+    def _apply_mouth_mood_tone(self, surface):
+        """LOAD-BEARING mood coupling on the spiking mouth's OWN surface (2026-08-27 fix). Closes a cross-faculty
+        regression: the Gate-B affect faculty (`affect_production_organ.MoodConditionedRenderer`, default-ON since
+        2026-08-12) colors PROSE only inside `self.renderer.render_svo` -- a call `spiking_recall_surface` pre-empts
+        whenever it returns a verified surface, so once BRAIN_SPIKING_MOUTH_RECALL flipped default-ON (2026-08-26)
+        the manner-coloring silently went dead for every bounded-transitive recall turn. `_mood_tone_level` is an
+        additive per-turn attribute set ONLY by webapp.server's Gate-B affect block (the SAME `tone_level()` the
+        Qwen path already colors with); every other caller (the TUI, unit tests, a disabled BRAIN_AFFECT) never
+        sets it, so `getattr(..., 0)` defaults to neutral -> `surface` returned UNCHANGED (byte-identical). A
+        nonzero level drives `spiking_mouth_recall_prod.mouth_tone_marker` -- a genuine spiking rate-vs-rate read,
+        not a host if/else on the mood float -- which appends '!' (warm) / '.' (curt) / '' (undecided, safe no-op).
+        Escape: `BRAIN_SPIKING_MOUTH_MOOD=0` reverts to mood-BLIND (today's regressed surface) even with the recall
+        mouth itself ON."""
+        level = int(getattr(self, "_mood_tone_level", 0) or 0)
+        if level == 0:
+            return surface                                # neutral / never set -> byte-identical, no spiking read
+        from research.runners.spiking_mouth_recall_prod import mouth_mood_enabled, mouth_tone_marker
+        if not mouth_mood_enabled():
+            return surface                                # lesion escape -> mood-BLIND, byte-identical
+        marker = mouth_tone_marker(level, seed=int(getattr(self.inner, "seed", 42)))
+        return surface + marker if marker else surface
 
     # --- discourse event tracking (who is doing it now / who was doing it before) ---
     def _discourse_turn(self, line):

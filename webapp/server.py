@@ -4412,6 +4412,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # response for the debug trace (the tone TOKEN lives here ONLY, never on the user-facing surface).
     affect_info = None
     affect_plan = None
+    # `_mood_tone_level` is the additive per-turn hook the spiking recall mouth reads (2026-08-27 fix for the
+    # MoodConditionedRenderer-bypass regression: BRAIN_SPIKING_MOUTH_RECALL pre-empts `chat.renderer.render_svo`
+    # for a bounded-transitive recall, so the manner-coloring below never ran on that surface). Reset to neutral
+    # EVERY turn before the block below (which only sets it when affect is genuinely on this turn) so a stale
+    # non-neutral value can never leak from a prior turn / a different flag state into this one (`chat` is a
+    # per-session cached ChatBrain) -- BRAIN_AFFECT=0 or an exception here leaves it at 0 -> the mouth is a no-op.
+    chat._mood_tone_level = 0
     try:
         import research.runners.affect_production_organ as _AO
         _affect_on = _AO.affect_enabled()
@@ -4450,9 +4457,13 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             wrapped = getattr(chat, "renderer", None)
             if isinstance(wrapped, _AO.MoodConditionedRenderer):
                 wrapped.manner = manner_tmpl
+            # ALSO drive the spiking recall mouth's OWN tone (2026-08-27 fix) with the SAME level, so a
+            # bounded-transitive recall that never reaches `wrapped.render_svo` still carries the mood.
+            chat._mood_tone_level = int(level)
         except Exception as _e:  # never let affect crash a turn — degrade to the un-colored answer
             affect_info = {"on": True, "error": f"{type(_e).__name__}: {_e}"}
             affect_plan = None
+            chat._mood_tone_level = 0
 
     # HONEST inner-state READ-OUT (Wire-2): 'how do you feel' -> answered by the live valence differential (a
     # functional read, never a phenomenal claim). Gated on an explicit feel-query so it never hijacks a recall turn.
