@@ -1,0 +1,105 @@
+{
+  "probe": "ecker_replay_ltu_oppoint_sweep_seed42",
+  "note": "seed-42 adaptation(b) x STDP-tau sweep: dw_rev EXCEEDS dw_fwd at EVERY op-point -> replay-driven coincidence STDP erodes the forward asymmetry; no reachable op-point gives forward-directional consolidation. Higher b (faster self-termination) monotonically shrinks the reverse excess but never flips it.",
+  "seed": 42,
+  "rows": [
+    {
+      "b": 120.0,
+      "tau": 4.0,
+      "n_laps": 20,
+      "dw_fwd": 0.47,
+      "dw_rev": 13.29,
+      "band_fwd_before": 228.4,
+      "band_fwd_after": 228.9,
+      "band_rev_after": 24.4,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 350.0,
+      "tau": 8.0,
+      "n_laps": 20,
+      "dw_fwd": -1.29,
+      "dw_rev": 12.67,
+      "band_fwd_before": 289.0,
+      "band_fwd_after": 287.7,
+      "band_rev_after": 22.8,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 120.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": -12.06,
+      "dw_rev": 50.45,
+      "band_fwd_before": 328.2,
+      "band_fwd_after": 316.1,
+      "band_rev_after": 61.9,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 350.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": -6.94,
+      "dw_rev": 27.27,
+      "band_fwd_before": 322.4,
+      "band_fwd_after": 315.5,
+      "band_rev_after": 38.7,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 500.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": 3.67,
+      "dw_rev": 18.83,
+      "band_fwd_before": 287.9,
+      "band_fwd_after": 291.6,
+      "band_rev_after": 37.9,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 700.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": 5.38,
+      "dw_rev": 15.36,
+      "band_fwd_before": 282.8,
+      "band_fwd_after": 288.2,
+      "band_rev_after": 26.5,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 1000.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": 6.42,
+      "dw_rev": 13.02,
+      "band_fwd_before": 265.5,
+      "band_fwd_after": 272.0,
+      "band_rev_after": 23.6,
+      "dw_noseed": 0.0,
+      "directional": false
+    },
+    {
+      "b": 1400.0,
+      "tau": 20.0,
+      "n_laps": 20,
+      "dw_fwd": 7.88,
+      "dw_rev": 12.1,
+      "band_fwd_before": 226.6,
+      "band_fwd_after": 234.5,
+      "band_rev_after": 24.0,
+      "dw_noseed": 0.0,
+      "directional": false
+    }
+  ],
+  "backend": "numpy",
+  "device": "cpu"
+}

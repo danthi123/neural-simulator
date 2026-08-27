@@ -1,0 +1,1077 @@
+{
+  "probe": "gap5_ecker_replay_learn_through_use",
+  "mechanism": "Ecker-2022 AdEx CA3 discrete forward SWR replay -> directional replay-driven STDP consolidation (offline learn-through-use), lesion-the-replay controlled",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "cfg": {
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "n_laps": 20,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "swr_period": 325,
+    "cue_pa": 9000.0,
+    "cue_frac": 0.6,
+    "weak_cue_mult": 0.5,
+    "weak_cue_frac": 0.35,
+    "ou_sigma": 40.0,
+    "rest_steps": 13000,
+    "consol_steps": 13000,
+    "dt": 0.1
+  },
+  "elapsed_seconds": 267.7,
+  "verdict": "ECKER-REPLAY-LEARN-THROUGH-USE NO-GO 0/6 -- the store SEGMENTS (full-cue forward 0.914 vs chance 0.252) and replay drives DURABLE LESION-CONTROLLED plasticity (NO-SEED dw_fwd 0.00~0), but replay-driven STDP does NOT strengthen forward recall: it SYMMETRIZES the band (dw_fwd -11.0 vs dw_rev 65.6; adj_fwd 328.2->317.2); weak forward 0.870->0.775 (noseed 0.870). 0/6 directional. Next method: separated-volley conduction delay / inhibitory gap-coding / BTSP-eligibility write.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 328.16265869140625,
+        "adj_rev": 11.424851417541504,
+        "adj_within": 60.0,
+        "ratio": 28.723582189222295,
+        "fwd_max": 892.3872680664062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -0.9412572383880615,
+        "dw_rev": 51.453792572021484,
+        "dw_fwd_first_half": -18.644805908203125,
+        "dw_fwd_second_half": 17.703548669815063,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 327.2214050292969,
+        "adj_rev": 62.87864303588867,
+        "adj_within": 60.0,
+        "ratio": 5.204015055517844,
+        "fwd_max": 893.3172607421875
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 328.16265869140625,
+          "adj_rev": 11.424851417541504,
+          "adj_within": 60.0,
+          "ratio": 28.723582189222295,
+          "fwd_max": 892.3872680664062
+        },
+        "weak_forward": 0.8888888888888888,
+        "weak_multi": 9
+      },
+      "reads": {
+        "full_before": {
+          "forward": 0.9565217391304348,
+          "reverse": 0.0,
+          "chance": 0.27179951690821263,
+          "n_multi": 23,
+          "per_asm_active": [
+            8,
+            18,
+            14,
+            13,
+            16,
+            16
+          ],
+          "seed_first": 0.9565217391304348,
+          "duty": 0.06553846153846153,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.16265869140625,
+            "adj_rev": 11.424851417541504,
+            "adj_within": 60.0,
+            "ratio": 28.723582189222295,
+            "fwd_max": 892.3872680664062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 0.8888888888888888,
+          "reverse": 0.0,
+          "chance": 0.1529320987654321,
+          "n_multi": 9,
+          "per_asm_active": [
+            8,
+            13,
+            9,
+            13,
+            10,
+            11
+          ],
+          "seed_first": 1.0,
+          "duty": 0.00676923076923077,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.16265869140625,
+            "adj_rev": 11.424851417541504,
+            "adj_within": 60.0,
+            "ratio": 28.723582189222295,
+            "fwd_max": 892.3872680664062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.291729797979798,
+          "n_multi": 22,
+          "per_asm_active": [
+            8,
+            18,
+            14,
+            13,
+            14,
+            15
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06438461538461539,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 327.2214050292969,
+            "adj_rev": 62.87864303588867,
+            "adj_within": 60.0,
+            "ratio": 5.204015055517844,
+            "fwd_max": 893.3172607421875,
+            "fwd_min": 12.757482528686523
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.7272727272727273,
+          "reverse": 0.0,
+          "chance": 0.23510101010101012,
+          "n_multi": 11,
+          "per_asm_active": [
+            8,
+            13,
+            10,
+            11,
+            12,
+            11
+          ],
+          "seed_first": 0.7272727272727273,
+          "duty": 0.007846153846153846,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 327.2214050292969,
+            "adj_rev": 62.87864303588867,
+            "adj_within": 60.0,
+            "ratio": 5.204015055517844,
+            "fwd_max": 893.3172607421875,
+            "fwd_min": 12.757482528686523
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": true,
+        "recall_change": true,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -0.941,
+        "dw_rev": 51.454,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 328.85504150390625,
+        "adj_rev": 11.486371040344238,
+        "adj_within": 60.0,
+        "ratio": 28.630020774085207,
+        "fwd_max": 893.3602294921875,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -12.414800643920898,
+        "dw_rev": 68.88072204589844,
+        "dw_fwd_first_half": -14.284677505493164,
+        "dw_fwd_second_half": 1.8698768615722656,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 316.4402160644531,
+        "adj_rev": 80.36709594726562,
+        "adj_within": 60.0,
+        "ratio": 3.937434995437577,
+        "fwd_max": 893.3602294921875
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 328.85504150390625,
+          "adj_rev": 11.486371040344238,
+          "adj_within": 60.0,
+          "ratio": 28.630020774085207,
+          "fwd_max": 893.3602294921875
+        },
+        "weak_forward": 0.8823529411764706,
+        "weak_multi": 17
+      },
+      "reads": {
+        "full_before": {
+          "forward": 0.95,
+          "reverse": 0.0,
+          "chance": 0.32805555555555554,
+          "n_multi": 20,
+          "per_asm_active": [
+            6,
+            13,
+            15,
+            17,
+            13,
+            15
+          ],
+          "seed_first": 0.95,
+          "duty": 0.064,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.85504150390625,
+            "adj_rev": 11.486371040344238,
+            "adj_within": 60.0,
+            "ratio": 28.630020774085207,
+            "fwd_max": 893.3602294921875,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 0.8823529411764706,
+          "reverse": 0.0,
+          "chance": 0.28978758169934643,
+          "n_multi": 17,
+          "per_asm_active": [
+            6,
+            11,
+            12,
+            17,
+            13,
+            14
+          ],
+          "seed_first": 0.9411764705882353,
+          "duty": 0.008615384615384615,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.85504150390625,
+            "adj_rev": 11.486371040344238,
+            "adj_within": 60.0,
+            "ratio": 28.630020774085207,
+            "fwd_max": 893.3602294921875,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.9375,
+          "reverse": 0.0,
+          "chance": 0.31579861111111107,
+          "n_multi": 16,
+          "per_asm_active": [
+            6,
+            13,
+            13,
+            14,
+            12,
+            14
+          ],
+          "seed_first": 0.9375,
+          "duty": 0.06615384615384616,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 316.4402160644531,
+            "adj_rev": 80.36709594726562,
+            "adj_within": 60.0,
+            "ratio": 3.937434995437577,
+            "fwd_max": 893.3602294921875,
+            "fwd_min": 10.046302795410156
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8333333333333334,
+          "reverse": 0.0,
+          "chance": 0.22939814814814816,
+          "n_multi": 12,
+          "per_asm_active": [
+            6,
+            13,
+            11,
+            15,
+            13,
+            10
+          ],
+          "seed_first": 0.9166666666666666,
+          "duty": 0.009307692307692308,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 316.4402160644531,
+            "adj_rev": 80.36709594726562,
+            "adj_within": 60.0,
+            "ratio": 3.937434995437577,
+            "fwd_max": 893.3602294921875,
+            "fwd_min": 10.046302795410156
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": false,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -12.415,
+        "dw_rev": 68.881,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 329.18829345703125,
+        "adj_rev": 11.465364456176758,
+        "adj_within": 60.0,
+        "ratio": 28.71154202862579,
+        "fwd_max": 894.001953125,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -19.73443603515625,
+        "dw_rev": 74.31038665771484,
+        "dw_fwd_first_half": -22.20984649658203,
+        "dw_fwd_second_half": 2.4754104614257812,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 309.453857421875,
+        "adj_rev": 85.77574920654297,
+        "adj_within": 60.0,
+        "ratio": 3.6077080093667067,
+        "fwd_max": 894.1261596679688
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 329.18829345703125,
+          "adj_rev": 11.465364456176758,
+          "adj_within": 60.0,
+          "ratio": 28.71154202862579,
+          "fwd_max": 894.001953125
+        },
+        "weak_forward": 0.8333333333333334,
+        "weak_multi": 12
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2228395061728395,
+          "n_multi": 18,
+          "per_asm_active": [
+            8,
+            13,
+            15,
+            16,
+            14,
+            16
+          ],
+          "seed_first": 1.0,
+          "duty": 0.062461538461538464,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 329.18829345703125,
+            "adj_rev": 11.465364456176758,
+            "adj_within": 60.0,
+            "ratio": 28.71154202862579,
+            "fwd_max": 894.001953125,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 0.8333333333333334,
+          "reverse": 0.0,
+          "chance": 0.19965277777777776,
+          "n_multi": 12,
+          "per_asm_active": [
+            8,
+            9,
+            13,
+            15,
+            14,
+            15
+          ],
+          "seed_first": 0.8333333333333334,
+          "duty": 0.01223076923076923,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 329.18829345703125,
+            "adj_rev": 11.465364456176758,
+            "adj_within": 60.0,
+            "ratio": 28.71154202862579,
+            "fwd_max": 894.001953125,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.3053362573099415,
+          "n_multi": 19,
+          "per_asm_active": [
+            8,
+            13,
+            14,
+            14,
+            13,
+            14
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06953846153846154,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 309.453857421875,
+            "adj_rev": 85.77574920654297,
+            "adj_within": 60.0,
+            "ratio": 3.6077080093667067,
+            "fwd_max": 894.1261596679688,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.7272727272727273,
+          "reverse": 0.0,
+          "chance": 0.14962121212121213,
+          "n_multi": 11,
+          "per_asm_active": [
+            8,
+            10,
+            13,
+            12,
+            15,
+            15
+          ],
+          "seed_first": 0.7272727272727273,
+          "duty": 0.016307692307692308,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 309.453857421875,
+            "adj_rev": 85.77574920654297,
+            "adj_within": 60.0,
+            "ratio": 3.6077080093667067,
+            "fwd_max": 894.1261596679688,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": false,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -19.734,
+        "dw_rev": 74.31,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 323.5242919921875,
+        "adj_rev": 11.500381469726562,
+        "adj_within": 60.0,
+        "ratio": 28.131613968095593,
+        "fwd_max": 893.8670654296875,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -8.556748390197754,
+        "dw_rev": 63.20006561279297,
+        "dw_fwd_first_half": -12.396932601928711,
+        "dw_fwd_second_half": 3.840184211730957,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 314.96759033203125,
+        "adj_rev": 74.70044708251953,
+        "adj_within": 60.0,
+        "ratio": 4.216408370141282,
+        "fwd_max": 893.8670654296875
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 323.5242919921875,
+          "adj_rev": 11.500381469726562,
+          "adj_within": 60.0,
+          "ratio": 28.131613968095593,
+          "fwd_max": 893.8670654296875
+        },
+        "weak_forward": 0.9166666666666666,
+        "weak_multi": 12
+      },
+      "reads": {
+        "full_before": {
+          "forward": 0.8125,
+          "reverse": 0.0,
+          "chance": 0.17812499999999998,
+          "n_multi": 16,
+          "per_asm_active": [
+            3,
+            14,
+            14,
+            16,
+            16,
+            14
+          ],
+          "seed_first": 0.9375,
+          "duty": 0.057923076923076924,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 323.5242919921875,
+            "adj_rev": 11.500381469726562,
+            "adj_within": 60.0,
+            "ratio": 28.131613968095593,
+            "fwd_max": 893.8670654296875,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 0.9166666666666666,
+          "reverse": 0.0,
+          "chance": 0.17430555555555552,
+          "n_multi": 12,
+          "per_asm_active": [
+            3,
+            13,
+            11,
+            14,
+            14,
+            14
+          ],
+          "seed_first": 0.9166666666666666,
+          "duty": 0.004153846153846154,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 323.5242919921875,
+            "adj_rev": 11.500381469726562,
+            "adj_within": 60.0,
+            "ratio": 28.131613968095593,
+            "fwd_max": 893.8670654296875,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.9411764705882353,
+          "reverse": 0.0,
+          "chance": 0.22401960784313724,
+          "n_multi": 17,
+          "per_asm_active": [
+            3,
+            14,
+            14,
+            16,
+            14,
+            15
+          ],
+          "seed_first": 0.9411764705882353,
+          "duty": 0.05876923076923077,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.96759033203125,
+            "adj_rev": 74.70044708251953,
+            "adj_within": 60.0,
+            "ratio": 4.216408370141282,
+            "fwd_max": 893.8670654296875,
+            "fwd_min": 14.486555099487305
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8333333333333334,
+          "reverse": 0.0,
+          "chance": 0.23611111111111105,
+          "n_multi": 12,
+          "per_asm_active": [
+            3,
+            14,
+            12,
+            12,
+            11,
+            12
+          ],
+          "seed_first": 0.9166666666666666,
+          "duty": 0.004,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.96759033203125,
+            "adj_rev": 74.70044708251953,
+            "adj_within": 60.0,
+            "ratio": 4.216408370141282,
+            "fwd_max": 893.8670654296875,
+            "fwd_min": 14.486555099487305
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": false,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -8.557,
+        "dw_rev": 63.2,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 330.4563293457031,
+        "adj_rev": 11.484270095825195,
+        "adj_within": 60.0,
+        "ratio": 28.77469152052004,
+        "fwd_max": 892.031005859375,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -5.589076995849609,
+        "dw_rev": 57.20863723754883,
+        "dw_fwd_first_half": -5.763387203216553,
+        "dw_fwd_second_half": 0.17431020736694336,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 324.8672790527344,
+        "adj_rev": 68.69291687011719,
+        "adj_within": 60.0,
+        "ratio": 4.729268953114702,
+        "fwd_max": 892.4666748046875
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 330.4563293457031,
+          "adj_rev": 11.484270095825195,
+          "adj_within": 60.0,
+          "ratio": 28.77469152052004,
+          "fwd_max": 892.031005859375
+        },
+        "weak_forward": 0.7,
+        "weak_multi": 10
+      },
+      "reads": {
+        "full_before": {
+          "forward": 0.7647058823529411,
+          "reverse": 0.0,
+          "chance": 0.2618464052287582,
+          "n_multi": 17,
+          "per_asm_active": [
+            6,
+            11,
+            13,
+            13,
+            16,
+            20
+          ],
+          "seed_first": 0.8823529411764706,
+          "duty": 0.06123076923076923,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 330.4563293457031,
+            "adj_rev": 11.484270095825195,
+            "adj_within": 60.0,
+            "ratio": 28.77469152052004,
+            "fwd_max": 892.031005859375,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 0.7,
+          "reverse": 0.0,
+          "chance": 0.13111111111111112,
+          "n_multi": 10,
+          "per_asm_active": [
+            6,
+            10,
+            11,
+            12,
+            14,
+            17
+          ],
+          "seed_first": 0.9,
+          "duty": 0.006384615384615384,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 330.4563293457031,
+            "adj_rev": 11.484270095825195,
+            "adj_within": 60.0,
+            "ratio": 28.77469152052004,
+            "fwd_max": 892.031005859375,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8888888888888888,
+          "reverse": 0.0,
+          "chance": 0.26211419753086423,
+          "n_multi": 18,
+          "per_asm_active": [
+            6,
+            12,
+            14,
+            13,
+            16,
+            17
+          ],
+          "seed_first": 0.9444444444444444,
+          "duty": 0.06092307692307692,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 324.8672790527344,
+            "adj_rev": 68.69291687011719,
+            "adj_within": 60.0,
+            "ratio": 4.729268953114702,
+            "fwd_max": 892.4666748046875,
+            "fwd_min": 14.551685333251953
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.7272727272727273,
+          "reverse": 0.0,
+          "chance": 0.16527777777777777,
+          "n_multi": 11,
+          "per_asm_active": [
+            6,
+            11,
+            12,
+            13,
+            13,
+            14
+          ],
+          "seed_first": 0.7272727272727273,
+          "duty": 0.009461538461538462,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 324.8672790527344,
+            "adj_rev": 68.69291687011719,
+            "adj_within": 60.0,
+            "ratio": 4.729268953114702,
+            "fwd_max": 892.4666748046875,
+            "fwd_min": 14.551685333251953
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": true,
+        "recall_change": true,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -5.589,
+        "dw_rev": 57.209,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "seed_hash_ok": true,
+      "band_before": {
+        "adj_fwd": 328.9128112792969,
+        "adj_rev": 11.438271522521973,
+        "adj_within": 60.0,
+        "ratio": 28.755464550012395,
+        "fwd_max": 892.6808471679688,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 40,
+        "dw_fwd": -18.755983352661133,
+        "dw_rev": 78.30731201171875,
+        "dw_fwd_first_half": -20.515750885009766,
+        "dw_fwd_second_half": 1.7597675323486328,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 310.1568298339844,
+        "adj_rev": 89.7455825805664,
+        "adj_within": 60.0,
+        "ratio": 3.455956504104816,
+        "fwd_max": 892.9418334960938
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 328.9128112792969,
+          "adj_rev": 11.438271522521973,
+          "adj_within": 60.0,
+          "ratio": 28.755464550012395,
+          "fwd_max": 892.6808471679688
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 7
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.251984126984127,
+          "n_multi": 14,
+          "per_asm_active": [
+            3,
+            9,
+            11,
+            19,
+            16,
+            16
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06353846153846154,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.9128112792969,
+            "adj_rev": 11.438271522521973,
+            "adj_within": 60.0,
+            "ratio": 28.755464550012395,
+            "fwd_max": 892.6808471679688,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.1732142857142857,
+          "n_multi": 7,
+          "per_asm_active": [
+            3,
+            9,
+            7,
+            16,
+            14,
+            12
+          ],
+          "seed_first": 1.0,
+          "duty": 0.014692307692307692,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 328.9128112792969,
+            "adj_rev": 11.438271522521973,
+            "adj_within": 60.0,
+            "ratio": 28.755464550012395,
+            "fwd_max": 892.6808471679688,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.9230769230769231,
+          "reverse": 0.0,
+          "chance": 0.23803418803418802,
+          "n_multi": 13,
+          "per_asm_active": [
+            3,
+            9,
+            11,
+            17,
+            18,
+            13
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06615384615384616,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 310.1568298339844,
+            "adj_rev": 89.7455825805664,
+            "adj_within": 60.0,
+            "ratio": 3.455956504104816,
+            "fwd_max": 892.9418334960938,
+            "fwd_min": 11.538368225097656
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8,
+          "reverse": 0.0,
+          "chance": 0.31708333333333333,
+          "n_multi": 10,
+          "per_asm_active": [
+            3,
+            9,
+            7,
+            15,
+            15,
+            13
+          ],
+          "seed_first": 0.8,
+          "duty": 0.01853846153846154,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 310.1568298339844,
+            "adj_rev": 89.7455825805664,
+            "adj_within": 60.0,
+            "ratio": 3.455956504104816,
+            "fwd_max": 892.9418334960938,
+            "fwd_min": 11.538368225097656
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": false,
+        "directional": false,
+        "recall_maintained": true,
+        "robustness_gain": true,
+        "recall_change": true,
+        "lesion_controlled": true,
+        "bounded": false,
+        "dw_fwd": -18.756,
+        "dw_rev": 78.307,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": true
+      },
+      "seed_go": false
+    }
+  ],
+  "GO": false,
+  "n_go": 0,
+  "status": "NO-GO",
+  "dw_fwd": -10.998717109362284,
+  "dw_rev": 65.56015268961589,
+  "dw_fwd_noseed": 0.0,
+  "band_adj_fwd_before": 328.18323771158856,
+  "band_adj_fwd_after": 317.1845296223958,
+  "band_adj_rev_after": 77.0267391204834,
+  "full_forward_before": 0.9139546035805627,
+  "full_forward_after": 0.9484403804256747,
+  "weak_forward_before": 0.8702069716775599,
+  "weak_forward_after": 0.7747474747474747,
+  "weak_forward_noseed": 0.8702069716775599,
+  "chance": 0.2524416851415821,
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "the store SEGMENTS: full-cue forward replay ignites above chance (a memory to consolidate exists)",
+      "ok": true,
+      "detail": "0.913955 vs floor 0.252442",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity is LIVE during replay: seeded consolidation moved the forward band (|dw_fwd| > 0)",
+      "ok": true,
+      "detail": "measured=10.998717109362284 expect=<function main.<locals>.<lambda> at 0x7f085858a480>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "LESION-THE-REPLAY ENGAGED: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER, so the NO-SEED arm is a true null and the negative is about the replay's DIRECTION, not a dead lever",
+      "ok": true,
+      "detail": "treatment=-10.9987 control=0 |sep|=10.9987 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: does OFFLINE replay durably STRENGTHEN forward-ordered recall via replay-driven STDP (lesion-the-replay controlled)?",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "the store SEGMENTS: full-cue forward replay ignites above chance (a memory to consolidate exists)",
+        "ok": true,
+        "detail": "0.913955 vs floor 0.252442",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "plasticity is LIVE during replay: seeded consolidation moved the forward band (|dw_fwd| > 0)",
+        "ok": true,
+        "detail": "measured=10.998717109362284 expect=<function main.<locals>.<lambda> at 0x7f085858a480>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "LESION-THE-REPLAY ENGAGED: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER, so the NO-SEED arm is a true null and the negative is about the replay's DIRECTION, not a dead lever",
+        "ok": true,
+        "detail": "treatment=-10.9987 control=0 |sep|=10.9987 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "within-assembly recurrence + assembly identity (pre-formed cell groups; only the inter-assembly SEQUENCE band is plastic)",
+        "why": "scope: this tests replay-driven consolidation of the learned forward sequence, not assembly formation"
+      }
+    ],
+    "chance": 0.2524416851415821
+  }
+}
