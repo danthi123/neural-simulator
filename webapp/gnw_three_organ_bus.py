@@ -75,9 +75,11 @@ sourced from the stable LTM tier, per `TieredFactStore.query_patient_source`) to
 unconditionally for that recall — bypassing both `_real_vocab_competence` and the D4 spiking-margin fallback.
 A conversational-buffer recall is completely untouched (organ C reads its real-vocab / spiking-margin instrument
 exactly as today); a non-existent fact still abstains at organ A, before organ B or organ C is even consulted.
-DEFAULT OFF (unset/0/false/off/no): `ltm_exempt_applied` is always False (mirrors organ B's own byte-identical-
-when-off discipline exactly), so organ C's comprehension read is completely unchanged — byte-identical to today's
-production. See `research/findings/2026-08-27-organc-ltm-exempt-derisk-6seed-GO.md` for the verification.
+DEFAULT-ON since 2026-08-27 (flipped with organ B under the ONE shared flag `BRAIN_GNW_ORGANB_LTM_EXEMPT`, per
+owner approval, after both de-risks landed 6/6 GO): `ltm_exempt_applied` is True for an LTM-sourced recall, so
+organ C corroborates it instead of vetoing on its buffer-only vocab — genuine knowledge-base facts commit through
+the whole 3-organ consensus. `BRAIN_GNW_ORGANB_LTM_EXEMPT=0` is the byte-identical escape (reverts organ C's read
+to today's production). See `research/findings/2026-08-27-organc-ltm-exempt-derisk-6seed-GO.md` for the verification.
 
 REUSE-BY-IMPORT (NO `sim/` edit, NO re-derivation): the workspace build + ignition-read + organ B (the surprise organ)
 + the calibrated subthreshold drive come from `gnw_two_organ_bus` (which reuses the de-risk parents); the N-organ

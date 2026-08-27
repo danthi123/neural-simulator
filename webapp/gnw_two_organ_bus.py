@@ -113,11 +113,14 @@ def organb_lesion_on() -> bool:
 def organb_ltm_exempt_enabled() -> bool:
     """`BRAIN_GNW_ORGANB_LTM_EXEMPT` truthy -> a recall whose PROVENANCE is the STABLE cortical LTM tier (not the
     small conversational buffer) makes organ B CORROBORATE instead of WITHHOLD (see the LTM-EXEMPTION section of
-    this module's docstring). DEFAULT OFF: unset/0/false/off/no == today's production behavior (organ B's
-    registry never sees the LTM tier -> withholds on EVERY LTM fact) -- byte-identical when off. Never touches a
-    conversational-buffer recall, and never overrides organ A's own moat (a non-existent fact still abstains
-    before organ B is consulted, flag on or off)."""
-    return os.environ.get("BRAIN_GNW_ORGANB_LTM_EXEMPT", "").strip().lower() in ("1", "true", "on", "yes")
+    this module's docstring). DEFAULT-ON since 2026-08-27 (flipped per owner approval, after both organ-B and
+    organ-C LTM-exempt de-risks landed 6/6 GO): genuine knowledge-base facts now COMMIT in live chat instead of
+    being vetoed by the consensus stack. `BRAIN_GNW_ORGANB_LTM_EXEMPT=0` is the byte-identical escape (reverts to
+    the pre-flip behavior: organ B withholds on every LTM fact). This ONE flag also governs organ C on the 3-organ
+    bus. SAFETY (proven 6/6 in the de-risk, and that proof is exactly this now-default state): never touches a
+    conversational-buffer recall, and never overrides organ A's own moat -- a NON-EXISTENT fact still ABSTAINS
+    (primary_recall_miss) before organ B or C is ever consulted, so the anti-confab moat is intact."""
+    return os.environ.get("BRAIN_GNW_ORGANB_LTM_EXEMPT", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def _organ_backend_neutral_init_on() -> bool:
