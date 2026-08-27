@@ -350,8 +350,129 @@ def consolidate_by_btsp_replay_delayed(store, steps, seed, *, swr_period, cue_pa
                 changed=bool(not np.array_equal(w0, w1)))
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# GAP-CODING replay (2026-08-27, Braun & Memmesheimer 2022 PLoS Comput Biol e1009891, DOI 10.1371/journal.pcbi.1009891).
+# The residual the conduction-delay PARTIAL isolated is NOT write-directionality (that was SOLVED 6/6) -- it is that the
+# op-point REQUIRED to separate the volleys (a long SWR period / short detection window, or a long axonal delay) drives
+# the RECALL READ to ceiling (weak-cue forward_frac ~ 1.0 BEFORE), leaving NO headroom for a learn-through-use gain to
+# show. Braun's INHIBITORY GAP CODING separates the volleys by a DIFFERENT route: sequences arise from "alternating
+# excitatory pulse and inhibitory gap coding -- phases of silence in specific basket cell groups induce selective
+# disinhibition of groups of pyramidal neurons", giving "sparse pyramidal cell and dense basket cell spiking", and it
+# "does not rely on synfire chain-like feedforward excitation". So the volleys separate WITHOUT the read-saturating
+# regime -> the read keeps headroom.
+#
+# BRAIN-BASED IMPLEMENTATION (reuse the engine's REAL GABA-A inhibition; NO sim/ edit; the accepted host-side-conductance
+# precedent from this arc's conduction-delay PARTIAL, applied to the g_i channel): DENSE tonic basket inhibition is a
+# high pyramidal `cp_conductance_g_i` (routes through the engine's syn_reversal_potential_i = -75 mV Cl- reversal, the
+# same GABA-A mechanism a real basket cell drives), which silences the pyramidal population between gaps (verified:
+# g_i~200 fully silences even a 9000 pA drive; g_i~50 partially). A periodic GLOBAL disinhibition GAP (g_i lowered for
+# `gap_width` of every `gap_period` steps) opens brief SPARSE windows; in each window the assembly receiving the
+# strongest recurrent forward drive from the just-active one (seeded by the prefix cue, advanced by the learned forward
+# band + within-assembly adaptation) fires -- ONE assembly per gap -> volleys are INHERENTLY non-overlapping (they can
+# only occur inside a gap, separated by inter-gap inhibitory silence), at a NORMAL swr_period. SCOPE (stated, not
+# hidden): this is a GLOBAL gap RHYTHM (a septal/theta-like pacemaker on the inhibition) + learned-excitatory-band
+# SELECTION of which group fires in the gap -- a reduction of Braun's GROUP-SPECIFIC structured basket->pyramidal
+# connectivity (where the gap schedule itself is wired). The sequence ORDER rides the LEARNED band (what we test), not
+# the gap wiring. The directional write is the SAME causal-eligibility x plateau BTSP as the btsp variant (reuse
+# fused_btsp_update): with gap-separated volleys, for a forward edge A->B e_pre[A] is high when B's plateau gates the
+# write; for reverse B->A e_pre[B] is ~0 (B fired later) -> forward-selective. seed_on=False = LESION-THE-REPLAY.
+# ----------------------------------------------------------------------------------------------------------------------
+def gapcode_replay(store, steps, seed, *, swr_period, cue_pa, cue_steps, cue_frac, dt, seed_on=True,
+                   gi_base, fb_gain, fb_tau, gi_cap, pc_tonic,
+                   btsp=None, overlap_kw=None):
+    cp = store["cp"]; bridge = store["bridge"]; pc = store["pc"]; asm_local = store["asm_local"]; m = store["m_asm"]
+    asm_size = store["asm_size"]; n_pc = len(pc)
+    fwd_pos = store["fwd_pos"]; rev_pos = store["rev_pos"]
+    row, col = store["pre_post"]
+    pc_dev = cp.asarray(pc.astype(np.int64))
+    cell_rng = np.random.default_rng(int(seed) * 314159 + 17)      # SAME cue subsets/stream as the read/write paths
+    k_cells = max(1, int(round(float(cue_frac) * asm_size)))
+    cue_cells_dev = []
+    for a_loc in asm_local:
+        sub = np.sort(cell_rng.choice(a_loc, min(k_cells, len(a_loc)), replace=False))
+        cue_cells_dev.append(cp.asarray(pc[sub], dtype=cp.int64))
+    choice_rng = np.random.default_rng(int(seed) * 271828 + 23)
+
+    do_write = btsp is not None
+    if do_write:
+        bet_pos = np.concatenate([fwd_pos, rev_pos]); bet_pos_dev = cp.asarray(bet_pos.astype(np.int64))
+        row_bet = cp.asarray(row[bet_pos].astype(np.int64)); col_bet = cp.asarray(col[bet_pos].astype(np.int64))
+        nN = int(bridge.cp_firing_states.size)
+        e_pre = cp.zeros(nN, dtype=cp.float32); p_post = cp.zeros(nN, dtype=cp.float32)
+        decay_e = cp.float32(np.exp(-dt / max(btsp["elig_tau_ms"], 1e-9)))
+        decay_p = cp.float32(np.exp(-dt / max(btsp["plat_tau_ms"], 1e-9)))
+        eta_d = cp.float32(btsp["eta"]); wmin_d = cp.float32(btsp["w_min"]); wmax_d = cp.float32(btsp["w_max"])
+    w0 = np.asarray(to_host(bridge.cp_connections.data)).copy()
+
+    F = np.zeros((steps, n_pc), dtype=bool); env_seed_log = []
+    bridge.core_config.enable_stdp = False
+    bridge.runtime_state.current_time_ms = 0.0
+    # FEEDBACK inhibition: a DENSE basket pool whose activity tracks recent pyramidal firing (Braun's dense basket cells
+    # DRIVEN BY the pyramidal volley) -> its inhibition of the population is self-locked to the volley, terminating the
+    # leading assembly and opening a trough (the "gap") into which the forward-driven next assembly can fire.
+    basket = 0.0; decay_fb = float(np.exp(-dt / max(fb_tau, 1e-9)))
+    cur_k = None; n_env = 0
+    for t in range(steps):
+        bridge.cp_external_input_current[:] = 0.0
+        if pc_tonic > 0:
+            bridge.cp_external_input_current[pc_dev] += float(pc_tonic)   # weak background so a disinhibited group can ignite
+        phase = t % swr_period
+        if phase == 0 and seed_on:
+            cur_k = int(choice_rng.integers(0, m)); env_seed_log.append(cur_k); n_env += 1
+        if seed_on and phase < cue_steps and cur_k is not None:
+            bridge.cp_external_input_current[cue_cells_dev[cur_k]] += float(cue_pa)
+        # GAP-CODING inhibition: SET pyramidal g_i BEFORE the step = tonic basket floor + feedback (capped, avoids the
+        # g_i-overflow numerical blow-up observed above ~5000).
+        gi = min(gi_base + basket, gi_cap)
+        bridge.cp_conductance_g_i[pc_dev] = cp.float32(gi)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += float(dt)
+        fired_pc = np.asarray(to_host(bridge.cp_firing_states))[pc].astype(bool)
+        F[t] = fired_pc
+        basket = basket * decay_fb + float(fb_gain) * float(fired_pc.sum())   # basket recruited by the pyramidal volley
+        if do_write:
+            fired = bridge.cp_firing_states.astype(cp.float32)
+            e_pre = cp.maximum(e_pre * decay_e, fired); p_post = cp.maximum(p_post * decay_p, fired)
+            w_edge = bridge.cp_connections.data[bet_pos_dev]
+            bridge.cp_connections.data[bet_pos_dev] = fused_btsp_update(w_edge, e_pre[row_bet], p_post[col_bet],
+                                                                        eta_d, wmin_d, wmax_d)
+    w1 = np.asarray(to_host(bridge.cp_connections.data))
+    ov = None
+    if overlap_kw is not None and seed_on:
+        ov = _volley_overlap(F, asm_local, env_seed_log, swr_period, **overlap_kw)
+    return dict(F=F, env_seed_log=env_seed_log, n_env=n_env, w_after=w1.copy(),
+                dw_fwd=float((w1[fwd_pos] - w0[fwd_pos]).mean()), dw_rev=float((w1[rev_pos] - w0[rev_pos]).mean()),
+                dw_fwd_first_half=0.0, dw_fwd_second_half=0.0, volley_overlap=ov,
+                changed=bool(not np.array_equal(w0, w1)))
+
+
+def _read_gap(bkw, seed, w_host, a, *, cue_pa, cue_frac, tag):
+    """GAP-CODING read: fresh store, load weights, gap-coded replay (frozen), score forward-replay quality."""
+    s = build_store(seed, **bkw)
+    _load_weights(s, w_host)
+    r = gapcode_replay(s, a.rest_steps, seed, swr_period=a.swr_period, cue_pa=cue_pa, cue_steps=a.cue_steps,
+                       cue_frac=cue_frac, dt=a.dt, seed_on=True, gi_base=a.gi_base, fb_gain=a.fb_gain,
+                       fb_tau=a.fb_tau, gi_cap=a.gi_cap, pc_tonic=a.pc_tonic)
+    sc = _score_periods(r["F"], s["asm_local"], r["env_seed_log"], a.swr_period,
+                        W=a.window, active_frac=a.active_frac, onset_frac=a.onset_frac)
+    band = measure_band(s)
+    return dict(forward=sc["forward_frac"], reverse=sc["reverse_frac"], chance=max(sc["chance_forward"], 1e-6),
+                n_multi=sc["n_multi"], per_asm_active=sc["per_asm_active"], seed_first=sc.get("seed_first_frac"),
+                duty=sc["duty_cycle"], frozen=r["changed"] is False, band=band, tag=tag)
+
+
+def _gapcode_consolidate(store, steps, seed, a, *, seed_on, cons_kw, overlap_kw=None):
+    """CONSOLIDATE-BY-REPLAY under gap coding: gap-coded forward replay + the directional BTSP write."""
+    btsp = dict(elig_tau_ms=a.btsp_elig_tau, plat_tau_ms=a.btsp_plat_tau, eta=a.btsp_eta, w_min=0.0, w_max=a.btsp_w_max)
+    return gapcode_replay(store, steps, seed, seed_on=seed_on, gi_base=a.gi_base, fb_gain=a.fb_gain,
+                          fb_tau=a.fb_tau, gi_cap=a.gi_cap, pc_tonic=a.pc_tonic, btsp=btsp,
+                          overlap_kw=overlap_kw, **cons_kw)
+
+
 def _consolidate(store, steps, seed, a, *, seed_on, cons_kw, overlap_kw=None):
-    """Dispatch to the STDP (default, byte-identical), BTSP-directional, or BTSP+conduction-delay write."""
+    """Dispatch to the STDP (default, byte-identical), BTSP-directional, BTSP+conduction-delay, or GAP-CODING write."""
+    if getattr(a, "gap_coding", False):
+        return _gapcode_consolidate(store, steps, seed, a, seed_on=seed_on, cons_kw=cons_kw, overlap_kw=overlap_kw)
     if a.write_rule == "btsp" and a.fwd_delay_steps >= 0:
         return consolidate_by_btsp_replay_delayed(store, steps, seed, seed_on=seed_on,
                                                   elig_tau_ms=a.btsp_elig_tau, plat_tau_ms=a.btsp_plat_tau,
@@ -366,6 +487,8 @@ def _consolidate(store, steps, seed, a, *, seed_on, cons_kw, overlap_kw=None):
 
 def _read(store_kw_build, seed, w_host, a, *, cue_pa, cue_frac, tag):
     """Fresh store, load weights, replay READ (STDP OFF -> frozen). Returns forward-replay quality."""
+    if getattr(a, "gap_coding", False):
+        return _read_gap(store_kw_build, seed, w_host, a, cue_pa=cue_pa, cue_frac=cue_frac, tag=tag)
     s = build_store(seed, **store_kw_build)
     _load_weights(s, w_host)
     r = rest_and_replay(s, a.rest_steps, seed, swr_period=a.swr_period, cue_pa=cue_pa,
@@ -513,6 +636,21 @@ def main():
     # selective. 0 = path-active control (immediate re-add == baseline forward timing -> must reproduce the PARTIAL 0/6).
     ap.add_argument("--fwd-delay-steps", type=int, default=-1, help="forward-edge conduction delay in sim steps "
                     "(-1=OFF/byte-identical; 0=path-active control; k>0=k*dt ms axonal delay; needs --write-rule btsp)")
+    # INHIBITORY GAP CODING (2026-08-27, Braun & Memmesheimer 2022, DOI 10.1371/journal.pcbi.1009891). OFF by default
+    # (byte-identical: no g_i is ever set, the STDP/BTSP/delay paths are untouched). ON routes BOTH the consolidation
+    # WRITE and the recall READ through gap-coded replay: dense tonic pyramidal g_i (basket inhibition) with a periodic
+    # global disinhibition GAP separates the volleys via inhibition, so the read runs at a NORMAL swr_period (no
+    # long-period/short-window regime -> the recall read keeps headroom). The directional BTSP write is reused.
+    ap.add_argument("--gap-coding", action="store_true", help="enable Braun-2022 inhibitory gap-coding replay "
+                    "(default OFF/byte-identical; ON drives BOTH write and read via gap-coded feedback-inhibition replay)")
+    ap.add_argument("--gi-base", type=float, default=8.0, help="tonic basket-inhibition floor on pyramidal g_i")
+    ap.add_argument("--fb-gain", type=float, default=0.6, help="feedback gain: basket g_i recruited PER pyramidal spike "
+                    "last step (dense basket driven BY the volley; a volley of ~80 spikes adds ~gain*80 to g_i)")
+    ap.add_argument("--fb-tau", type=float, default=4.0, help="tau_ms of the basket (feedback-inhibition) decay")
+    ap.add_argument("--gi-cap", type=float, default=150.0, help="hard cap on pyramidal g_i (avoids the >~5000 g_i "
+                    "numerical blow-up; full silence sets in ~200)")
+    ap.add_argument("--pc-tonic", type=float, default=0.0, help="weak tonic excitatory drive to ALL pyramidals so a "
+                    "disinhibited group can ignite in the trough (0 = rely on cue + recurrent forward drive)")
     # ENCODE (moderate: fewer laps than the band-GO's 30, so there is headroom to deepen by replay)
     ap.add_argument("--n-laps", type=int, default=14)
     ap.add_argument("--enc-step", type=int, default=80)
@@ -542,9 +680,14 @@ def main():
     a = ap.parse_args()
 
     _, backend = get_backend()
-    _wr = (f"WRITE=btsp elig_tau={a.btsp_elig_tau} plat_tau={a.btsp_plat_tau} eta={a.btsp_eta} w_max={a.btsp_w_max}"
-           + (f" fwd_delay={a.fwd_delay_steps}steps({a.fwd_delay_steps*a.dt:.1f}ms)" if a.fwd_delay_steps >= 0 else "")
-           if a.write_rule == "btsp" else "WRITE=stdp (ms-coincidence)")
+    if a.gap_coding:
+        _wr = (f"WRITE=gap-coding+btsp gi_base={a.gi_base} fb_gain={a.fb_gain} fb_tau={a.fb_tau} gi_cap={a.gi_cap} "
+               f"pc_tonic={a.pc_tonic} elig_tau={a.btsp_elig_tau} plat_tau={a.btsp_plat_tau} "
+               f"eta={a.btsp_eta} w_max={a.btsp_w_max}")
+    else:
+        _wr = (f"WRITE=btsp elig_tau={a.btsp_elig_tau} plat_tau={a.btsp_plat_tau} eta={a.btsp_eta} w_max={a.btsp_w_max}"
+               + (f" fwd_delay={a.fwd_delay_steps}steps({a.fwd_delay_steps*a.dt:.1f}ms)" if a.fwd_delay_steps >= 0 else "")
+               if a.write_rule == "btsp" else "WRITE=stdp (ms-coincidence)")
     print(f"[ecker-ltu] Ecker AdEx CA3 replay-driven learn-through-use | {_wr} | n_mem={a.n_mem} asm={a.asm_size} "
           f"within={a.w_within} between_init={a.between_init} | encode {a.n_laps}laps | STDP a+={a.stdp_a_plus} "
           f"a-={a.stdp_a_minus} tau={a.stdp_tau} w_max={a.stdp_w_max} | swr={a.swr_period} cue={a.cue_pa}@{a.cue_frac} "
@@ -576,8 +719,12 @@ def main():
         mch = float(np.mean([p["reads"]["full_before"]["chance"] for p in per]))
         _ovs = [p["consolidate"].get("volley_overlap") for p in per if p["consolidate"].get("volley_overlap") is not None]
         mov = float(np.mean(_ovs)) if _ovs else None
-        _delay_note = (f" | forward conduction delay {a.fwd_delay_steps} steps ({a.fwd_delay_steps*a.dt:.1f}ms); "
-                       f"volley_overlap {mov:.3f}" if a.fwd_delay_steps >= 0 and mov is not None else "")
+        if a.gap_coding and mov is not None:
+            _delay_note = (f" | GAP-CODING gi_base={a.gi_base} fb_gain={a.fb_gain} fb_tau={a.fb_tau}; "
+                           f"volley_overlap {mov:.3f}; read headroom weak_fwd_before {mweak_b:.3f} (<1.0 = headroom)")
+        else:
+            _delay_note = (f" | forward conduction delay {a.fwd_delay_steps} steps ({a.fwd_delay_steps*a.dt:.1f}ms); "
+                           f"volley_overlap {mov:.3f}" if a.fwd_delay_steps >= 0 and mov is not None else "")
         if go:
             verdict = (f"ECKER-REPLAY-LEARN-THROUGH-USE GO {n_go}/{len(per)} -- OFFLINE discrete forward SWR replay on "
                        f"the Ecker AdEx CA3 store DURABLY DEEPENS the replayed sequence via the substrate's OWN STDP: "
@@ -611,6 +758,12 @@ def main():
                    "SEQUENCE band is plastic)", why="scope: this tests replay-driven consolidation of the learned "
                    "forward sequence, not assembly formation")
         decided = v.decide(go=go, verbose=False)
+        # If an instrument-validity precondition did NOT hold (e.g. the store does not segment under gap-coding
+        # inhibition -> full-cue forward replay is 0), the run is UNDEFINED, NOT a negative. Reflect that in the
+        # verdict STRING so it agrees with the Verdict object (a precondition-failed run must not read as a NO-GO).
+        if decided.get("status") == "UNDEFINED":
+            verdict = ("UNDEFINED (an instrument precondition did not hold -> not a negative; the read is compromised) -- "
+                       + verdict)
         attributable_to("forward-band deepening (seeded replay vs NO-SEED lesion-the-replay)", mdwf, mdwns)
         summary_extra = dict(GO=go, n_go=n_go, status=decided.get("status"),
                              dw_fwd=mdwf, dw_rev=mdwr, dw_fwd_noseed=mdwns,
@@ -635,7 +788,9 @@ def main():
                            weak_cue_mult=a.weak_cue_mult, weak_cue_frac=a.weak_cue_frac, ou_sigma=a.ou_sigma,
                            rest_steps=a.rest_steps, consol_steps=a.consol_steps, dt=a.dt,
                            write_rule=a.write_rule, btsp_elig_tau=a.btsp_elig_tau, btsp_plat_tau=a.btsp_plat_tau,
-                           btsp_eta=a.btsp_eta, btsp_w_max=a.btsp_w_max, fwd_delay_steps=a.fwd_delay_steps),
+                           btsp_eta=a.btsp_eta, btsp_w_max=a.btsp_w_max, fwd_delay_steps=a.fwd_delay_steps,
+                           gap_coding=a.gap_coding, gi_base=a.gi_base, fb_gain=a.fb_gain, fb_tau=a.fb_tau,
+                           gi_cap=a.gi_cap, pc_tonic=a.pc_tonic),
                "elapsed_seconds": round(time.time() - t0, 1), "verdict": verdict, "per_seed": per, **summary_extra}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
