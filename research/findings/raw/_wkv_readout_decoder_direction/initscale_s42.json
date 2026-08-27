@@ -1,0 +1,202 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_train_pos": 128,
+      "epochs": 4,
+      "sub_read_window": 64,
+      "gain": 10.51882,
+      "head_w_norm": 37.53,
+      "A_init_scale_sweep": {
+        "substrate": [
+          {
+            "arm": "substrate",
+            "init_scale": 0.3,
+            "w_target": 40.0,
+            "init_norm": 1.075,
+            "final_norm": 16.61,
+            "weight_cosine": 0.0741,
+            "hostlinear_recov": 0.4512,
+            "n_substrate_reads": 64,
+            "secs": 125.0
+          },
+          {
+            "arm": "substrate",
+            "init_scale": 1.0,
+            "w_target": 40.0,
+            "init_norm": 3.582,
+            "final_norm": 16.92,
+            "weight_cosine": 0.0736,
+            "hostlinear_recov": 0.3886,
+            "n_substrate_reads": 64,
+            "secs": 141.0
+          },
+          {
+            "arm": "substrate",
+            "init_scale": 3.0,
+            "w_target": 40.0,
+            "init_norm": 10.746,
+            "final_norm": 19.37,
+            "weight_cosine": 0.0635,
+            "hostlinear_recov": 0.3728,
+            "n_substrate_reads": 64,
+            "secs": 106.0
+          },
+          {
+            "arm": "substrate",
+            "init_scale": 10.0,
+            "w_target": 40.0,
+            "init_norm": 35.819,
+            "final_norm": 38.09,
+            "weight_cosine": 0.0339,
+            "hostlinear_recov": 0.3631,
+            "n_substrate_reads": 64,
+            "secs": 106.3
+          }
+        ],
+        "host_proxy": [
+          {
+            "arm": "host_proxy",
+            "init_scale": 0.3,
+            "w_target": 40.0,
+            "init_norm": 1.075,
+            "final_norm": 16.6,
+            "weight_cosine": 0.079,
+            "hostlinear_recov": 0.4674,
+            "n_substrate_reads": 0,
+            "secs": 0.7
+          },
+          {
+            "arm": "host_proxy",
+            "init_scale": 1.0,
+            "w_target": 40.0,
+            "init_norm": 3.582,
+            "final_norm": 16.9,
+            "weight_cosine": 0.0766,
+            "hostlinear_recov": 0.4567,
+            "n_substrate_reads": 0,
+            "secs": 0.2
+          },
+          {
+            "arm": "host_proxy",
+            "init_scale": 3.0,
+            "w_target": 40.0,
+            "init_norm": 10.746,
+            "final_norm": 19.15,
+            "weight_cosine": 0.0663,
+            "hostlinear_recov": 0.4722,
+            "n_substrate_reads": 0,
+            "secs": 0.1
+          },
+          {
+            "arm": "host_proxy",
+            "init_scale": 10.0,
+            "w_target": 40.0,
+            "init_norm": 35.819,
+            "final_norm": 37.3,
+            "weight_cosine": 0.0326,
+            "hostlinear_recov": 0.4941,
+            "n_substrate_reads": 0,
+            "secs": 0.4
+          }
+        ]
+      },
+      "B_hostproxy_wtarget_sweep": [
+        {
+          "arm": "host_proxy",
+          "init_scale": 1.0,
+          "w_target": 40.0,
+          "init_norm": 3.582,
+          "final_norm": 16.9,
+          "weight_cosine": 0.0766,
+          "hostlinear_recov": 0.4567,
+          "n_substrate_reads": 0,
+          "secs": 0.5
+        },
+        {
+          "arm": "host_proxy",
+          "init_scale": 1.0,
+          "w_target": 120.0,
+          "init_norm": 3.582,
+          "final_norm": 16.9,
+          "weight_cosine": 0.0766,
+          "hostlinear_recov": 0.4567,
+          "n_substrate_reads": 0,
+          "secs": 0.4
+        },
+        {
+          "arm": "host_proxy",
+          "init_scale": 1.0,
+          "w_target": 400.0,
+          "init_norm": 3.582,
+          "final_norm": 16.9,
+          "weight_cosine": 0.0766,
+          "hostlinear_recov": 0.4567,
+          "n_substrate_reads": 0,
+          "secs": 0.5
+        },
+        {
+          "arm": "host_proxy",
+          "init_scale": 1.0,
+          "w_target": 1200.0,
+          "init_norm": 3.582,
+          "final_norm": 16.9,
+          "weight_cosine": 0.0766,
+          "hostlinear_recov": 0.4567,
+          "n_substrate_reads": 0,
+          "secs": 0.5
+        }
+      ],
+      "substrate_wcos_1x": 0.0736,
+      "substrate_wcos_10x": 0.0339,
+      "substrate_wcos_10x_over_1x": 0.461,
+      "hostproxy_wcos_1x": 0.0766,
+      "hostproxy_wcos_10x": 0.0326,
+      "hostproxy_wcos_wt40": 0.0766,
+      "hostproxy_wcos_wtmax": 0.0766,
+      "hostproxy_wcos_wtmax_over_wt40": 1.0,
+      "seed_trap": {
+        "thr_hash_1": "a45d2385f84619f0",
+        "thr_hash_2": "a45d2385f84619f0",
+        "seeded": true
+      },
+      "substrate_aligned_signal": false,
+      "hostproxy_aligned_signal": false
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "substrate_aligned_signal_count": 0,
+    "hostproxy_aligned_signal_count": 0,
+    "substrate_wcos_1x_mean": 0.0736,
+    "substrate_wcos_10x_mean": 0.0339,
+    "hostproxy_wcos_wt40_mean": 0.0766,
+    "hostproxy_wcos_wtmax_mean": 0.0766
+  },
+  "seeds": [
+    42
+  ],
+  "external_source": "Schuessler et al. 2023 eLife https://elifesciences.org/articles/93060 (aligned/oblique)",
+  "backend": "numpy",
+  "elapsed_s": 510.9,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_init_scale_sweep_derisk.py",
+    "--seeds",
+    "42",
+    "--B",
+    "8",
+    "--n-train-pos",
+    "128",
+    "--n-eval-pos",
+    "400",
+    "--epochs",
+    "4",
+    "--sub-read-window",
+    "64",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/initscale_s42.json"
+  ]
+}
