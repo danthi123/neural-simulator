@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "byte_identical": true,
+  "max_init_delta": 0.0,
+  "worst_where": null,
+  "n_engine": 1584,
+  "n_shipped": 1584,
+  "organs": [
+    "cue",
+    "patient_expected",
+    "patient_asserted",
+    "surprise",
+    "state",
+    "pred_pos",
+    "pred_neg",
+    "obs_pos",
+    "obs_neg",
+    "surprise_pos",
+    "surprise_neg"
+  ]
+}
