@@ -118,3 +118,14 @@ no framing-faculty regression. #141 CLOSED (production-default + confirmed live)
 the diagnostic): reasoning + recall over the brain's OWN 15k knowledge via NATURAL language (today the
 route reasons over just-taught facts + the possessive 2-hop shape; the 15k core still needs exact tokens,
 and compound/inverse/3+hop phrasings don't parse) -> new board task. Residuals tracked on #141's ref.
+
+## 2026-08-26 (autonomous, activity-silent-WM wire-in agent) — PARTIAL stamp
+Landed: activity-silent working memory (Mongillo 2008) PRODUCTION WIRE-IN as a maintenance-mode swap on the anaphora
+referent store — organ `research/runners/activity_silent_wm_production_organ.py`, 6-seed flip-soak GO
+(`research/runners/_activity_silent_wm_production_soak.py`), wired behind `BRAIN_SILENT_WM` (DEFAULT-OFF, byte-identical
+when off; parent flips after the pool soak). Finding
+`research/findings/2026-08-26-activity-silent-wm-production-wirein-GO.md`.
+HONEST SCOPE: this stamp records THIS faculty only. The board is over the staleness budget from ~17 prior findings that
+this focused wire-in agent did NOT reconcile (no board network/token access in this worktree). A full `vikunja` board
+reconcile (mark shipped tasks done, add next-rungs, advance ladder labels) across the recent findings batch is STILL
+OWED — flagged for the next session's board sync. This entry resets the local marker only; it is NOT a full reconcile.

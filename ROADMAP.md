@@ -7,6 +7,21 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-26 (autonomous) — a second, "silent" way to remember a topic across a distraction is built and wired (off by default, awaiting its flip)
+
+The brain already keeps track of who "it" refers to by holding that topic actively in mind — a group of neurons that
+must keep firing. Biology has a second, cheaper way (Mongillo 2008): the memory can rest in the *synapses* themselves
+(a brief chemical "primed" state) with the neurons SILENT, and be snapped back by a generic nudge that carries no
+content of its own. This build adds that mode as an alternative for the conversation's topic memory: name a topic, let a
+distraction turn go by, then ask "what did we start with?" — a nonspecific ping revives the primed topic and the brain
+answers it. It genuinely depends on the silent hold: with the priming chemistry weakened, the same ping recovers nothing
+and the brain honestly says "I don't recall" — the reply flips correct-topic ↔ "I don't recall" on all six random seeds
+(6/6), and 95.6% of the revival is owed to the priming, not to bookkeeping. It reuses the already-validated mechanism
+(no engine change), is wired behind an OFF-by-default switch (`BRAIN_SILENT_WM`), and is byte-for-byte identical to today
+when off. The production-default flip comes after the pool soak. Finding:
+`research/findings/2026-08-26-activity-silent-wm-production-wirein-GO.md`. (Note: the roadmap/board still owe a fuller
+batch sync across the recent findings run — flagged for the next `sync-documentation` pass.)
+
 ## ⭐⭐⭐ 2026-08-25 (evening) — the brain now REASONS to its own conclusion when you chat, on by default
 
 The biggest step toward the north-star landed. Until now, asking the brain something that needs two facts
