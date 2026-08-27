@@ -1,0 +1,33 @@
+{
+ "run_id": "1787860323-3391038",
+ "runner": "research/runners/_wkv_mouth_readout_hostproxy_magnitude_sweep.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_hostproxy_magnitude_sweep.py",
+  "--seeds",
+  "42",
+  "--n-train-pos",
+  "9600",
+  "--n-eval-pos",
+  "800",
+  "--epochs",
+  "8",
+  "--json",
+  "research/findings/raw/_wkv_readout_decoder_direction/hostproxy_mag_s42.json"
+ ],
+ "git_sha": "030fec4a2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T15:52:03",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_readout_decoder_direction/hostproxy_mag_s42.json"
+}

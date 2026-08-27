@@ -1477,3 +1477,5 @@ off) + sustained tonic-DA exploration. See `research/findings/2026-08-06-gateB-s
 ---
 
 *This is a living document. When a de-risk returns GO, mark the faculty HAVE and cite the finding; when it hits a wall, add the wall to §7 with its named biological surpass and keep going — closure cannot be deferred.*
+
+<!-- sync 2026-08-27 ~16:10 batch: mouth read-SNR located (under-read -> ||W|| clamp; recov 0.37 vs 0.86; dendritic-objective decisive queued); learn-through-use wall moved (Ecker store SEGMENTS, write-rule non-directional -> BTSP directional write in flight); 7/7 migration + R3 integration GO; online-research-at-wall now gate-enforced. See ROADMAP.md 2026-08-27 (newest). -->

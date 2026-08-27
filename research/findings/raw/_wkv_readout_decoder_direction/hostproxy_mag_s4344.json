@@ -1,0 +1,205 @@
+{
+  "results": [
+    {
+      "seed": 43,
+      "V": 1000,
+      "D": 128,
+      "n_train_pos": 9600,
+      "epochs": 8,
+      "wtarget_sweep": [
+        {
+          "init_scale": 1.0,
+          "w_target": 40.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 120.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 400.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 1200.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 0.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        }
+      ],
+      "init_scale_sweep": [
+        {
+          "init_scale": 0.3,
+          "w_target": 40.0,
+          "init_norm": 1.072,
+          "final_norm": 23.95,
+          "weight_cosine": 0.3971,
+          "hostlinear_recov": 0.881
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 40.0,
+          "init_norm": 3.575,
+          "final_norm": 23.96,
+          "weight_cosine": 0.3969,
+          "hostlinear_recov": 0.8796
+        },
+        {
+          "init_scale": 3.0,
+          "w_target": 40.0,
+          "init_norm": 10.724,
+          "final_norm": 24.09,
+          "weight_cosine": 0.395,
+          "hostlinear_recov": 0.8761
+        },
+        {
+          "init_scale": 10.0,
+          "w_target": 40.0,
+          "init_norm": 35.747,
+          "final_norm": 25.56,
+          "weight_cosine": 0.3748,
+          "hostlinear_recov": 0.8738
+        }
+      ],
+      "wcos_wt40": 0.3969,
+      "wcos_uncapped": 0.3969,
+      "wcos_uncapped_over_wt40": 1.0,
+      "aligned_signal": false
+    },
+    {
+      "seed": 44,
+      "V": 1000,
+      "D": 128,
+      "n_train_pos": 9600,
+      "epochs": 8,
+      "wtarget_sweep": [
+        {
+          "init_scale": 1.0,
+          "w_target": 40.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 120.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 400.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 1200.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 0.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        }
+      ],
+      "init_scale_sweep": [
+        {
+          "init_scale": 0.3,
+          "w_target": 40.0,
+          "init_norm": 1.07,
+          "final_norm": 23.86,
+          "weight_cosine": 0.4006,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 1.0,
+          "w_target": 40.0,
+          "init_norm": 3.568,
+          "final_norm": 23.87,
+          "weight_cosine": 0.4003,
+          "hostlinear_recov": 0.8601
+        },
+        {
+          "init_scale": 3.0,
+          "w_target": 40.0,
+          "init_norm": 10.704,
+          "final_norm": 24.01,
+          "weight_cosine": 0.3984,
+          "hostlinear_recov": 0.8598
+        },
+        {
+          "init_scale": 10.0,
+          "w_target": 40.0,
+          "init_norm": 35.679,
+          "final_norm": 25.46,
+          "weight_cosine": 0.378,
+          "hostlinear_recov": 0.8615
+        }
+      ],
+      "wcos_wt40": 0.4003,
+      "wcos_uncapped": 0.4003,
+      "wcos_uncapped_over_wt40": 1.0,
+      "aligned_signal": false
+    }
+  ],
+  "summary": {
+    "n_seeds": 2,
+    "aligned_signal_count": 0,
+    "wcos_wt40_mean": 0.3986,
+    "wcos_uncapped_mean": 0.3986,
+    "wcos_uncapped_over_wt40_mean": 1.0
+  },
+  "seeds": [
+    43,
+    44
+  ],
+  "external_source": "Schuessler et al. 2023 eLife https://elifesciences.org/articles/93060 (aligned/oblique)",
+  "backend": "numpy",
+  "elapsed_s": 343.4,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_hostproxy_magnitude_sweep.py",
+    "--seeds",
+    "43,44",
+    "--n-train-pos",
+    "9600",
+    "--n-eval-pos",
+    "800",
+    "--epochs",
+    "8",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/hostproxy_mag_s4344.json"
+  ]
+}
