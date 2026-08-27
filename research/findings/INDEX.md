@@ -12,6 +12,7 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 
 | Date | Finding | Verdict |
 |------|---------|---------|
+|------|---------|---------|
 | 2026-08-26 | **Wave-3 production-default flip (10 faculties)** — see [`ROADMAP.md`](../../ROADMAP.md#2026-08-26-later--ten-more-faculties-flip-to-production-default-on-the-mouth-is-now-the-named-frontier) | **DONE / production-default-on.** Empathy (W5 ToM), self-authorship (DR-3), biased-competition attention, vision-identity, value-driven choice, sleep-replay consolidation ([finding](2026-08-26-gap5-sleep-replay-production-wirein-GO.md)), spiking Broca mouth-recall, GNW global-stop ([finding](2026-08-26-gnw-global-workspace-stop-production-wirein-GO.md)), activity-silent WM, BG action-selection all flip default-ON. `scaffold_retired` stays 0. |
 | 2026-08-26 | [**Comprehension cue-lexicon — open-vocabulary ANIMACY is learnable from real-corpus co-occurrence**](2026-08-26-comprehension-cue-lexicon-open-vocab-animacy-learnable-GO.md) | **GO, 6-seed.** Label-propagation over a PPMI word graph on real TinyStories assigns animacy to held-out words (learned 0.837 vs shuffled-graph 0.504, gap +0.333); lifts the shared comprehension-organ vocab-ceiling scaffold. De-risked, not yet wired into the comprehension organs. |
 | 2026-08-26 | [**B1 V1 self-organization — BCM sliding threshold breaks the on-bridge common-mode boundary**](2026-08-26-b1-v1-selforg-onbridge-BCM-sliding-threshold.md) | **PARTIAL, 6-seed (3/6 clear the gate, seed-variable).** Oriented RFs emerge on the production bridge for the first time (a real BOUNDARY-break, not a clean GO) — companion columnar k-WTA lever NO-GO'd the same session. Needs hardening to a robust 6/6, not yet wired. |
@@ -22,6 +23,651 @@ For chronological + thematic context, see [`docs/SCIENCE_ROADMAP.md`](../../docs
 | 2026-08-26 | [**Metacognition — fully-spiking-presynaptic confidence read (`spiking_acc`)**](2026-08-26-metacog-spiking-acc-6seed-NOGO.md) | **NO-GO, 6-seed (mission_go=False; PARTIAL 4/6).** The spiking read itself is sound (anti-cheats clean, AUC parity 5/6) but building the extra ACC population shifts the shared RNG stream and pushes 2 seeds' first-order accuracy out of the valid window. `plastic_acc` remains the standing metacognition GO. |
 | 2026-08-26 | [**Four-day window negatives roundup — source-monitoring / replay / self-ignition / DA-encoding**](2026-08-26-four-day-window-negatives-roundup-source-monitor-replay-self-ignition-da-encoding.md) | **Synthesis (banked negatives + their named next mechanisms).** Each of the four is a verdict on a METHOD, not the capability; three (#129 source-monitoring, #130 replay order, DA-encoding lever-2) were later SUPERSEDED by same-window GO fixes — see the finding for the corrected pointers. |
 | 2026-08-26 | [**Knowledge core ships as the default cortical LTM (board #133)**](2026-08-26-knowledge-core-shipped-as-default-cortical-ltm-soak-go-byte-identical.md) | **DONE / production-default-on.** The curated 15k-Wikidata core loads by default; soak GO 6/6 (0 byte-identity mismatches vs the unsharded oracle, 0-confab moat, recall 1.0, ~0.4s). Residual: host-hash shard router + numpy VSA composer, `scaffold_retired` still 0. |
+| 2026-08-21 | [The closed-form bulk bind removes the fact-store's build wall](2026-08-21-closed-form-bulk-bind-removes-the-fact-store-build-wall-LLM-scale-knowledge.md) | unclear |
+| 2026-08-21 | [Continuous IDEATION: the brain occasionally GENERATES a novel blended thought between turns (default-OFF) — GO](2026-08-21-continuous-ideation-novel-between-turn-thought-GO.md) | GO |
+| 2026-08-21 | [The between-turn CONTINUOUS LIFE is FLIPPED DEFAULT-ON](2026-08-21-continuous-life-flipped-default-on-the-brain-wanders-and-feels-between-turns-GO.md) | GO |
+| 2026-08-21 | [A CONTRADICTION filter catches the known-topic WRONG-supplement residual of open-ended chat (GO, validated on saved r...](2026-08-21-contradiction-filter-catches-known-topic-wrong-supplements-GO.md) | GO |
+| 2026-08-21 | [The graded apical read makes D5 learn-through-use conversation-visible AT THE PRODUCTION encode](2026-08-21-d5-graded-apical-read-conversation-visible-in-production-flip-blocked-on-emergent-assembly-crosstalk.md) | unclear |
+| 2026-08-21 | [D5 learn-through-use default-ON flip is a GO (5/6, +1 moat-abstaining self-ignition build)](2026-08-21-d5-learn-through-use-flip-GO-per-topic-strength-surfacing-the-prior-NO-GO-was-a-surfacing-artifact-not-substrate-crosstalk.md) | NO-GO |
+| 2026-08-21 | [D5 learn-through-use default-ON flip is NO-GO](2026-08-21-d5-learn-through-use-flip-NO-GO-separator-closes-graded-crosstalk-but-quantized-binary-readout-residual-remains.md) | NO-GO |
+| 2026-08-21 | [The D5 surfaced-read noise is a PERIOD-2 limit cycle a complete-reset (snapshot-isolated) read removes ENTIRELY (deterministic, 6/6)](2026-08-21-d5-stabilized-read-NEGATIVE.md) | NEGATIVE |
+| 2026-08-21 | [DA/engagement-gated curiosity crave-threshold wired into the live chat](2026-08-21-da-gated-curiosity-threshold-wired-GO.md) | GO |
+| 2026-08-21 | [DA-gated-encoding default-ON flip gate is UNDEFINED](2026-08-21-da-gated-encoding-flip-gate-UNDEFINED-moat-leak-and-sigma-dependent-benefit.md) | unclear |
+| 2026-08-21 | [DA-gated encoding wired into the live chat store](2026-08-21-da-gated-encoding-wired-into-chat-GO.md) | GO |
+| 2026-08-21 | [GO: the GNW ignition bus commits a recall only when it RECALLS it, is NOT surprised by it, AND COMPREHENDED it](2026-08-21-gnw-three-organ-bus-d4-comprehension-GO.md) | GO |
+| 2026-08-21 | [GNW three-organ ignition bus flipped default-ON — the D4 over-veto is fixed by a real-vocab comprehension read (GO)](2026-08-21-gnw-three-organ-realvocab-flip-GO.md) | GO |
+| 2026-08-21 | [The knowledge-scale flip's no-regression soak is GO](2026-08-21-knowledge-scale-flip-soak-tiered-ltm-byte-identical-scales-flip-rests-on-owner-ux.md) | GO |
+| 2026-08-21 | [Open-ended state-driven generation IS conversational](2026-08-21-open-ended-state-driven-generation-conversational-but-prompt-only-honesty-FAILS-verify-moat-must-stay.md) | unclear |
+| 2026-08-21 | [Recovered overnight pool de-risks](2026-08-21-recovered-overnight-pool-de-risks-function-word-discovery-V1-RF-curiosity-GO.md) | GO |
+| 2026-08-21 | [The spiking-Broca producer's sentence-FRAME structure self-organizes from experience](2026-08-21-spiking-broca-frame-structure-self-organizes-slot-inventory-6seed-GO-slot-order-signal.md) | GO |
+| 2026-08-21 | [WAVE-0/1 default-on flip: 2 flipped, 2 held (2026-08-21)](2026-08-21-three-wave-faculties-flip-decision.md) | unclear |
+| 2026-08-21 | [A VERIFY post-filter RESTORES honesty to open-ended generation](2026-08-21-verify-post-filter-restores-honesty-to-open-ended-generation-GO.md) | GO |
+| 2026-08-20 | [A GPU faculty silently mis-behaved because per-neuron thresholds are drawn from the ACTIVE backend's RNG](2026-08-20-backend-dependent-RNG-thresholds-broke-the-surprise-organ-on-cupy-backend-neutral-init-fix.md) | unclear |
+| 2026-08-20 | [The continuous-state engine runs LIVE on the cupy production chat server, and BOTH between-turn drives are load-bearing](2026-08-20-continuous-engine-LIVE-on-cupy-server-both-drives-loadbearing.md) | unclear |
+| 2026-08-20 | [Continuous-state engine v1](2026-08-20-continuous-state-engine-v1-mood-evolves-between-turns.md) | unclear |
+| 2026-08-20 | [HONEST NEGATIVE: the between-turn wander is content-DEGENERATE (6/6 'cat' on cupy)](2026-08-20-continuous-wander-content-degenerate-always-cat-inhibition-of-return-next.md) | unclear |
+| 2026-08-20 | [The full-faculty GPU chat server hung on a cupy sim-step crash (scipy connections on the cupy backend)](2026-08-20-cupy-sim-step-scipy-hybrid-connections-crash-FIXED-full-faculty-gpu-server.md) | unclear |
+| 2026-08-20 | [GO (6/6): D5's persistent dendritic latch SELF-TERMINATES into a discrete apical-plateau window](2026-08-20-d5-dendritic-latch-self-terminates-into-discrete-apical-plateau-BTSP-window-6seed-GO.md) | GO |
+| 2026-08-20 | [A GRADED apical read makes learn-through-use RELIABLY conversation-visible (5/6 strict, 6/6 on move+faithful+specific)](2026-08-20-d5-graded-apical-read-makes-learn-through-use-reliably-conversation-visible.md) | GO |
+| 2026-08-20 | [Learn-through-use CAN be made CONVERSATION-VISIBLE](2026-08-20-d5-learn-through-use-CAN-be-conversation-visible-weak-encode-4of6-graded-read-for-reliable.md) | GO |
+| 2026-08-20 | [GO (6/6): USING a memory STRENGTHENS it on the real D5 organ](2026-08-20-d5-learn-through-use-recall-driven-plateau-gated-BTSP-strengthens-a-memory-6seed-GO-arc1-closed.md) | GO |
+| 2026-08-20 | [D5 live-consolidation is WIRED (default-off, ON-path-safe) and strengthens a used memory's ROBUSTNESS RESERVE](2026-08-20-d5-live-consolidation-wired-default-off-strengthens-robustness-reserve-NOT-yet-conversation.md) | GO |
+| 2026-08-20 | [GO (6-seed): an Ecker-style AdEx CA3 does DISCRETE forward SWR replay that RIDES the weight asymmetry](2026-08-20-ecker-adex-ca3-forward-replay-6seed-GO-closes-the-swr-wall.md) | unclear |
+| 2026-08-20 | [GO (6-seed 5/6): the Ecker CA3 forward-replay band is now LEARNED by STDP, not hand-wired — the SWR replay is EMERGENT](2026-08-20-ecker-ca3-forward-band-LEARNED-by-STDP-emergent-swr-replay-6seed-GO.md) | GO |
+| 2026-08-20 | [A REAL D5-stored assembly does NOT reactivate via AdEx SOMA recurrence at its true scale](2026-08-20-ecker-real-d5-store-does-NOT-reactivate-via-soma-recurrence-dendritic-latch-is-the-read.md) | GO |
+| 2026-08-20 | [Wiring the emergent SWR replay into the D5 episodic store is FEASIBLE](2026-08-20-ecker-replay-into-D5-integration-FEASIBLE-by-composition-not-replacement.md) | unclear |
+| 2026-08-20 | [6-seed GO: emergent pattern-completion replay CLOSES the idle-consolidation specificity gap (learn-through-use advances)](2026-08-20-emergent-pattern-completion-replay-closes-idle-consolidation-specificity-6seed-GO.md) | GO |
+| 2026-08-20 | [Widening Qwen to fluent prose is NOT yet moat-safe](2026-08-20-fluent-paraphrase-verify-suppress-hedge-bypass-safety-gap.md) | unclear |
+| 2026-08-20 | [Generative attractor-wandering de-risk: a blended cue settles to a NOVEL (never-stored) stable state](2026-08-20-generative-attractor-wander-derisk-blended-cue-settles-to-novel-state.md) | unclear |
+| 2026-08-20 | [The GNW two-genuinely-distinct-organs bus is now PRODUCTION DEFAULT-ON, verified load-bearing on both backends](2026-08-20-gnw-two-organ-bus-DEFAULT-ON-in-production-both-backends.md) | GO |
+| 2026-08-20 | [GO (6-seed): the workspace bus integrates TWO GENUINELY DISTINCT organs](2026-08-20-gnw-workspace-integrates-two-genuinely-distinct-organs-6seed-GO.md) | GO |
+| 2026-08-20 | [CLOSED: the hedge-bypass moat safety gap — a hedged assertion is now VERIFIED, not waved through](2026-08-20-hedge-bypass-safety-gap-CLOSED-verify-under-hedge.md) | unclear |
+| 2026-08-20 | [NO-GO: content-blind DG/EC-afferent replay does NOT reactivate the real D5 store](2026-08-20-idle-replay-dgec-afferent-on-real-D5-NO-GO-wrong-locus-SWR-state-is-the-path.md) | NO-GO |
+| 2026-08-20 | [UNDEFINED: emergent-replay onto the REAL D5 episodic bridge](2026-08-20-idle-replay-on-d5-episodic-transfer-UNDEFINED-substrate-present-instrument-first.md) | GO |
+| 2026-08-20 | [BOUNDARY: idle-tick replay gives a DIRECTIONAL but sub-bar, NON-SPECIFIC recall boost](2026-08-20-idle-replay-trace-stabilization-directional-but-subbar-nonspecific-UNDEFINED.md) | unclear |
+| 2026-08-20 | [GO: inhibition-of-return breaks the degenerate between-turn wander (fixed 'cat' -> a varied train)](2026-08-20-inhibition-of-return-breaks-the-degenerate-wander-GO.md) | GO |
+| 2026-08-20 | [Open-text moat verifier de-risk: catching confabulation in FREE Qwen prose is feasible as extract-then-entail](2026-08-20-open-text-moat-verifier-derisk-extract-then-entail-feasible.md) | GO |
+| 2026-08-20 | [Open-text spiking-extraction de-risk: BridgeParser reaches canonical 3-word SVO, not free noun phrases](2026-08-20-open-text-spiking-extraction-derisk-reaches-canonical-svo-not-free-np.md) | unclear |
+| 2026-08-20 | [The per-neuron INTRINSIC SFA current is the WRONG fatigue locus — the wander winner is STEERING-dominated](2026-08-20-per-neuron-SFA-wrong-locus-wander-winner-is-steering-dominated.md) | unclear |
+| 2026-08-20 | [Fluency residual #3 CLOSED — the reporting-clause frame is stripped; all THREE fluency-moat residuals now done](2026-08-20-reporting-clause-strip-closes-fluency-residual-3-trilogy-complete.md) | unclear |
+| 2026-08-20 | [RETIRE SUPERSEDED LEGACY](2026-08-20-retire-superseded-legacy-swap-observer.md) | unclear |
+| 2026-08-20 | [Sharding removes the O(K) query wall](2026-08-20-sharded-fact-store-removes-the-O-K-query-wall-knowledge-scales-to-LLM-scale.md) | unclear |
+| 2026-08-20 | [GO (6-seed): offline sleep-replay consolidation defeats sequential forgetting](2026-08-20-sleep-replay-consolidation-6seed-GO-on-the-principle-host-hippocampus-scaffold.md) | GO |
+| 2026-08-20 | [A spiking NP-boundary binder closes the free-prose extraction gap the canonical-SVO parser left open](2026-08-20-spiking-np-boundary-binding-closes-free-prose-extraction.md) | GO |
+| 2026-08-20 | [Fluency residual #2 CLOSED: synonym expansion lets true rewordings entail, without loosening the polarity reject](2026-08-20-synonym-expansion-closes-fluency-residual-2-polarity-safe.md) | unclear |
+| 2026-08-20 | [The tiered fact store wires LLM-scale knowledge into the LIVE CHAT](2026-08-20-tiered-fact-store-wires-LLM-scale-knowledge-into-the-live-chat.md) | unclear |
+| 2026-08-20 | [The fluency trilogy COMPOSES into one verifier, ready to wire into the live moat](2026-08-20-unified-fluent-verifier-composes-ready-to-wire-live.md) | unclear |
+| 2026-08-20 | [GO: a curiosity-gain FLOOR closes the wander store-coverage residual — full 4/4 concepts now surface](2026-08-20-wander-gain-floor-closes-store-coverage-full-4of4-GO.md) | GO |
+| 2026-08-19 | [The affect appraisal missed strong-emotion words, so BOTH affect faculties went dormant exactly when emotion was stro...](2026-08-19-affect-appraisal-lexicon-missed-strong-emotion-both-affect-faculties-dormant.md) | unclear |
+| 2026-08-19 | [Affect DRIVES the live chat — the #81 graded-affect ladder read is LOAD-BEARING on what/how the brain responds (GO)](2026-08-19-affect-drives-chat-load-bearing-GO.md) | GO |
+| 2026-08-19 | [An INDEPENDENT correctness oracle for the vanilla spiking core](2026-08-19-brian2-cross-validation-oracle-vanilla-spiking-core.md) | unclear |
+| 2026-08-19 | [DA-MODE DRIVES THE LIVE RESPONSE](2026-08-19-da-mode-drives-chat-load-bearing-GO.md) | GO |
+| 2026-08-19 | [A POPULATION-activity set-point STABILIZES DG sparsity (kills the dense-collapse the per-cell homeostat could not) but does NOT make two similar memories both-discriminable](2026-08-19-dg-population-setpoint-NOGO-relocalizes-residual-to-readout.md) | NO-GO |
+| 2026-08-19 | [Embodied affect — a simulated interoceptive BODY-STATE causally drives the neural affect attractor (6-seed GO)](2026-08-19-embodied-affect-interoception-GO.md) | GO |
+| 2026-08-19 | [GNW coincidence-integrator](2026-08-19-gnw-coincidence-integrator-subthreshold-window-6seed-GO-corrected-shuffle-control.md) | GO |
+| 2026-08-19 | [THE KEYSTONE'S DEFERRED RUNG, WIRED LIVE (T1-1 rung d): a MULTI-STEP re-entrant deliberation loop on the LIVE brain-chat recall path whose re-entrant CYCLE COUNT emerges from the substrate's OWN spiking ignition read](2026-08-19-gnw-multistep-reentrant-deliberation-GO.md) | GO |
+| 2026-08-19 | [GNW NEURAL SWAP INTENTION](2026-08-19-gnw-neural-swap-intention-GO.md) | GO |
+| 2026-08-19 | [GNW NEURAL VACANCY GATE](2026-08-19-gnw-neural-vacancy-gate-GO.md) | GO |
+| 2026-08-19 | [GNW quench-evict OVERWRITE](2026-08-19-gnw-quench-evict-overwrite-NOGO.md) | NO-GO |
+| 2026-08-19 | [GNW single-move THOUGHT-SWAP](2026-08-19-gnw-recurrence-weaken-swap-GO.md) | GO |
+| 2026-08-19 | [GNW NEURAL THOUGHT-SWAP reaches the LIVE /api/brain-chat brain](2026-08-19-gnw-swap-into-chat-GO.md) | GO |
+| 2026-08-19 | [Graded affect — a bistable-LADDER attractor reads the body-state as a SMOOTH valence x arousal (6-seed GO)](2026-08-19-graded-affect-attractor-GO.md) | GO |
+| 2026-08-19 | [An intrinsic-excitability HOMEOSTAT does NOT stabilize the DG k-WTA](2026-08-19-kwta-stability-homeostat-NOGO.md) | NO-GO |
+| 2026-08-19 | [Cross-position OR-pooling on the lane-D trace-pooler front end (board #44): the innate complex-cell pool DOES make identity position-tolerant (held decode 0.11 -> 0.92, 6-seed, scramble-controlled)](2026-08-19-laneD-cross-position-OR-pool-opens-invariance-trace-pooler-degrades-margin-instrument-underreads.md) | GO |
+| 2026-08-19 | [A BCM SELECTIVITY-GATED dg→answer WRITE writes the discriminative private-granule signal into the weights and breaks the anti-symmetry (6/6)](2026-08-19-memory-separator-BCM-selectivity-write-writes-private-granule-but-NOGO-relocalizes-to-read-reactivation.md) | NO-GO |
+| 2026-08-19 | [A COMPETITIVE (heterosynaptic) dg→answer WRITE does NOT close the memory-separator readout residual](2026-08-19-memory-separator-readout-competitive-write-NOGO-relocalizes-to-private-granule-underwrite.md) | NO-GO |
+| 2026-08-19 | [Mouth read-out via e-prop through a batched-substrate FORWARD — margin-clean 6-seed: NO-GO on parity](2026-08-19-mouth-readout-eprop-batched-substrate-marginclean-6seed-NOGO.md) | NO-GO |
+| 2026-08-19 | [Fluid mouth read-out](2026-08-19-mouth-substrate-forward-40k-coverage-EXCLUDED-real-credit-limit.md) | GO |
+| 2026-08-19 | [MULTI-STEP re-entrant deliberation is now ON BY DEFAULT in the live brain](2026-08-19-multistep-production-default-GO.md) | GO |
+| 2026-08-19 | [The neural "was I wrong?" error drives the LIVE spiking read-out](2026-08-19-neural-error-onbridge-GO.md) | GO |
+| 2026-08-19 | [The "was I wrong?" teaching error is a neuron's OWN somato-dendritic mismatch (Urbanczik-Senn), not a host formula](2026-08-19-neural-error-population-GO.md) | GO |
+| 2026-08-19 | [A neuromodulator RECONFIGURES the effective circuit on fixed wiring — not just its gain (6-seed GO)](2026-08-19-neuromod-reconfiguration-GO.md) | GO |
+| 2026-08-19 | [The brain's OWN spiking dopamine nucleus decides its mode from reward/context — self-driven (6-seed GO)](2026-08-19-neuromod-spiking-da-mode-GO.md) | GO |
+| 2026-08-19 | [Observe-vs-drive audit of the whole live /api/brain-chat turn](2026-08-19-observe-vs-drive-faculty-audit.md) | unclear |
+| 2026-08-19 | [Perturb-and-measure functional connectivity DIFFERS from the anatomical weight graph](2026-08-19-perturb-and-measure-GO.md) | GO |
+| 2026-08-19 | [The production GPU chat path was 400-crashing: set_pathway_weights called SciPy .tocoo() on a cupy-hybrid CSR](2026-08-19-production-gpu-chat-was-400-crashing-onebrain-parser-tocoo-cupy.md) | unclear |
+| 2026-08-19 | [A DG-style sparse-expansive separator on the replay stream keeps similar memories discriminable — 6-seed GO](2026-08-19-replay-pattern-separation-DG-separator-keeps-similar-memories-discriminable-6seed-GO.md) | GO |
+| 2026-08-19 | [Porting the DG replay-separator to the Izhikevich substrate](2026-08-19-replay-separator-bridge-rebound-and-write-runaway-FIXED-single-recall-ceiling-kWTA-stability-residual.md) | unclear |
+| 2026-08-19 | [SWAP DRIVES THE LIVE RESPONSE](2026-08-19-swap-drives-chat-load-bearing-GO.md) | GO |
+| 2026-08-19 | [Position-invariant CONFIGURAL recognition (board #44): the HMAX S->C hierarchy CLEARS the wall the flat learned pool could not, but the invariance is carried by the innate COMPOSED-POOLING TOPOLOGY, not by template-learning (random == learned)](2026-08-19-vision-hmax-hierarchy-composed-pooling-solves-position-invariance-learning-not-load-bearing.md) | GO |
+| 2026-08-19 | [Position-invariant object recognition (board #44): complex-cell POOLING opens the invariance, but its POOLING TOPOLOGY is carried by innate retinotopy](2026-08-19-vision-pooling-invariance-topology-not-learning-NOGO.md) | NO-GO |
+| 2026-08-19 | [REWARD-MODULATED STDP readout on the fully-spiking HMAX vision path (board #75)](2026-08-19-vision-rstdp-readout-reframe-confirmed-capability-partial.md) | unclear |
+| 2026-08-19 | [SPIKING port of the position-invariant CONFIGURAL HMAX hierarchy (board #72): the LIF-spiking S1->C1 FRONT END preserves the capability at near-rate accuracy, but FULL spike-coding of the S2->C2 configural readout is QUANTIZATION-LIMITED + position-leaky](2026-08-19-vision-spiking-hierarchy-frontend-holds-configural-readout-quantization-limited.md) | GO |
+| 2026-08-19 | [Weight-shuffle DEPENDENCY control — an anti-cheat instrument, demonstrated on the gap#5 WHEN recency pathway](2026-08-19-weight-shuffle-dependency-control-gap5-when-Wctx.md) | unclear |
+| 2026-08-18 | [The DMN consolidated multi-basin store, folded into the production self-initiated-utterance organ, makes ALL N basins self-initiable](2026-08-18-dmn-consolidated-store-folded-into-self-init-production-GO.md) | GO |
+| 2026-08-18 | [Episodic memory gains a SENSE OF WHEN (6-seed GO): a drifting temporal-context signal (Howard-Kahana TCM) as LEC time cells (Tsao 2018), bound to each CA3 assembly at encode, produces a RECENCY gradient + TEMPORAL CONTIGUITY](2026-08-18-episodic-temporal-context-when-GO.md) | GO |
+| 2026-08-18 | [gap#4: the Sacramento-Senn dendritic MICROCIRCUIT under the coincidence-plateau reliable expander does NOT rescue deep credit (6-seed NOT-GO)](2026-08-18-gap4-microcircuit-expander-6seed-NOTGO.md) | GO |
+| 2026-08-18 | [The #3E open-ended GENERATE channel gets a clean master switch, wired + verified through the real /api/brain-chat han...](2026-08-18-generate-channel-wired-brain-chat-GO.md) | GO |
+| 2026-08-18 | [GNW active OVERWRITE](2026-08-18-gnw-active-overwrite-NOGO.md) | NO-GO |
+| 2026-08-18 | [GNW active OVERWRITE via a per-slot BG-THALAMUS GATE](2026-08-18-gnw-bg-thalamus-gate-overwrite-NOGO.md) | NO-GO |
+| 2026-08-18 | [THE KEYSTONE, WIRED](2026-08-18-gnw-deliberation-wired-brain-chat-GO.md) | GO |
+| 2026-08-18 | [GNW distributed workspace](2026-08-18-gnw-distributed-overwrite-workspace-PARTIAL.md) | PARTIAL |
+| 2026-08-18 | [THE KEYSTONE](2026-08-18-gnw-reentrant-metacog-gated-deliberation-GO-caveat.md) | BOUNDARY |
+| 2026-08-18 | [GNW Rung-2d](2026-08-18-gnw-rung2d-weakenable-recurrence-GO.md) | GO |
+| 2026-08-18 | [GNW STN->GPi hyperdirect reactive STOP-SIGNAL veto](2026-08-18-gnw-stn-stop-veto-NOGO.md) | NO-GO |
+| 2026-08-18 | [lane D perception: the V1-pooler trace-invariance operating point is TRACE-ROUTED-PARTIAL only 2/6 at blind seeds, and NO-GO 0/6 under a harder held-2-position task](2026-08-18-laneD-v1-pooler-blind-seeds-PARTIAL-2of6.md) | PARTIAL |
+| 2026-08-18 | [lane D perception: a LEARNED anti-Hebbian lateral-inhibition DECORRELATION stage on the V1-complex features does NOT open invariant identity (NO-GO)](2026-08-18-laneD-v1-pooler-learned-decorrelation-NOGO.md) | NO-GO |
+| 2026-08-18 | [Self-initiated utterance WIRED into production /api/brain-chat (GO): the first INTERNALLY-GENERATED turn class](2026-08-18-self-initiated-utterance-wired-brain-chat-GO.md) | GO |
+| 2026-08-18 | [self organized metacog monitor GO](2026-08-18-self-organized-metacog-monitor-GO.md) | GO |
+| 2026-08-17 | [Per-basin encode equalization CLOSES the all-basins-ignite boundary](2026-08-17-dmn-per-basin-encode-equalization-GO.md) | GO |
+| 2026-08-17 | [GNW Rung-2c](2026-08-17-gnw-rung2c-salience-disinhibition-BOUNDARY.md) | BOUNDARY |
+| 2026-08-17 | [Fluid mouth](2026-08-17-mouth-readout-eprop-batched-substrate-forward-PARTIAL.md) | PARTIAL |
+| 2026-08-17 | [wave1 burndown_3E generation GO](2026-08-17-wave1-burndown_3E-generation-GO.md) | GO |
+| 2026-08-17 | [wave1 emerge stream eprop 6 NEGATIVE](2026-08-17-wave1-emerge-stream-eprop-6-NEGATIVE.md) | NEGATIVE |
+| 2026-08-17 | [wave1 gap4 rep_fwd_credit micro+KP 6+6 NEGATIVE](2026-08-17-wave1-gap4-rep_fwd_credit-micro+KP-6+6-NEGATIVE.md) | NEGATIVE |
+| 2026-08-17 | [wave1 longitudinal 6seed SMOKE ONLY](2026-08-17-wave1-longitudinal-6seed-SMOKE-ONLY.md) | unclear |
+| 2026-08-17 | [REPLAY-V3 calibration: UNDEFINED (BOUNDARY) -- replay fires, cortical recovery is zero, target FS loop never recruits](2026-08-17-wave1-replay-v3-calibration-BOUNDARY.md) | BOUNDARY |
+| 2026-08-17 | [wave1 reslm generator companion 6 PARTIAL](2026-08-17-wave1-reslm-generator-companion-6-PARTIAL.md) | PARTIAL |
+| 2026-08-17 | [wave1 second order metacog 6 GO](2026-08-17-wave1-second-order-metacog-6-GO.md) | GO |
+| 2026-08-17 | [wave1 self schema metacog 6 PARTIAL](2026-08-17-wave1-self-schema-metacog-6-PARTIAL.md) | PARTIAL |
+| 2026-08-14 | [Higher-order (second-order) evaluative conditioning](2026-08-14-affect-second-order-conditioning-BOUNDARY.md) | BOUNDARY |
+| 2026-08-14 | [B1 on-bridge V1 orientation self-org, operating-point-first re-test: the prior 6-seed NEGATIVE was NOT dead-forward](2026-08-14-b1-v1-selforg-onbridge-operating-point-BOUNDARY.md) | BOUNDARY |
+| 2026-08-14 | [Config-superset surprise residual: BOTH mapped levers (robust margin read, higher cross gain) fall short](2026-08-14-configsuperset-surprise-residual-PARTIAL.md) | PARTIAL |
+| 2026-08-14 | [Fluid mouth](2026-08-14-fluid-mouth-readout-eprop-learned-GO.md) | GO |
+| 2026-08-14 | [GNW Rung-2b](2026-08-14-gnw-rung2b-sfa-workspace-eviction-BOUNDARY.md) | BOUNDARY |
+| 2026-08-14 | [The PRODUCTION-DEFAULT composer JOINS pool #1 by DEFAULT — the DEFAULT FLIP (GO)](2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO.md) | GO |
+| 2026-08-14 | [One-brain config-SUPERSET production merge (surprise GABA_B + Wong-Wang comprehension NMDA)](2026-08-14-onebrain-configsuperset-production-merge-BOUNDARY.md) | BOUNDARY |
+| 2026-08-14 | [OneBrainComposer PARSER joins production pool #1 — Track-1 one-substrate, 6/6 GO, DEFAULT FLIPPED ON](2026-08-14-onebrain-parser-on-pool-GO.md) | GO |
+| 2026-08-14 | [Per-region homeostasis RESOLVES the config-superset homeostasis conflict (comprehension 6/6)](2026-08-14-per-region-homeostasis-reconciles-configsuperset-BOUNDARY.md) | BOUNDARY |
+| 2026-08-14 | [All-basins-ignite via adaptation-driven itinerancy (ca3->ca3 short-term depression) does NOT close the multibasin/utterance "3 of 4 basins ignite" residual -- and the SOLO diagnosis CORRECTS the cause](2026-08-14-self-initiated-all-basins-ignite-PARTIAL.md) | PARTIAL |
+| 2026-08-13 | [Gate-B / T1-6: an honest OTHER-REPAIR clarification on a low-comprehension turn (repair, don't dead-end)](2026-08-13-T1-6-other-repair-production-chat.md) | unclear |
+| 2026-08-13 | [W4 Task#12: the spiking graded-implicature belief read (no host argmax) IS delivered, but the pragmatic-alignment metric still does NOT move](2026-08-13-W4-spiking-graded-implicature-belief-magnitude-metric-detector-baserate-wall-6seed.md) | GO |
+| 2026-08-13 | [DR-2b](2026-08-13-affect-appraisal-origin-self-organizes-from-reinforcement-6seed-GO.md) | GO |
+| 2026-08-13 | [A SEPARATE emergent AROUSAL/intensity channel](2026-08-13-affect-arousal-channel-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [A graded DA-magnitude third factor does NOT close the affect graded-STRENGTH residual](2026-08-13-affect-graded-strength-third-factor-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [A RICHER emergent arousal source](2026-08-13-affect-lc-arousal-population-GO.md) | GO |
+| 2026-08-13 | [Composed affect: the spiking opponent weights DERIVE FROM the self-organized valence map](2026-08-13-affect-opponent-weights-self-organized-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [The causal WHY / WHAT-IF organ, WIRED into the default /api/brain-chat turn (T1-4, 2026-08-13)](2026-08-13-causal-whatif-production-organ-wired-into-brain-chat.md) | unclear |
+| 2026-08-13 | [gap#1 / A1 — composing the mouth's two substrate graded reads END-TO-END + head_b as a spiking synapse (GO, 6-seed 6/6)](2026-08-13-fluid-mouth-endtoend-substrate-read-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1 — the FULL mouth state->logits path on the substrate END-TO-END (GO, 6-seed 6/6)](2026-08-13-fluid-mouth-full-substrate-pipeline-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-graded-conductance-read-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-input-projection-substrate-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1 — closing the fluid-mouth graded read's last ~8% (recov 0.921 -> 0.978): it was NOT the accumulator (GO, 6/6)](2026-08-13-fluid-mouth-read-parity-close-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1 — the mouth r_h gate on the substrate (divisive shunting inhibition)](2026-08-13-fluid-mouth-rh-shunt-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-signed-read-parity-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-signed-shadow-readout-BOUNDARY-LIFTED.md) | BOUNDARY |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-upstream-output-projection-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-fluid-mouth-wkv-state-graded-conductance-integrator-GO.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-gap1-A1-fewspike-izhikevich-read-of-fluent-wkv-generation-population-coding-is-the-companion-process.md) | GO |
+| 2026-08-13 | [gap#1 / A1](2026-08-13-gap1-A1-fswta-lowers-spike-budget-3x-synaptic-logit-readout-boundary.md) | GO |
+| 2026-08-13 | [GNW N-organ ignition bus — FLIPPED from shadow to the DEFAULT organ-combination on production brain_chat](2026-08-13-gnw-bus-default-flip-substrate-authors-organ-combination.md) | unclear |
+| 2026-08-13 | [GNW ignition bus — a HETEROGENEOUS NON-COMPOSER organ as one of the N ignition votes (6-seed GO)](2026-08-13-gnw-bus-heterogeneous-organ-GO.md) | GO |
+| 2026-08-13 | [GNW N-organ ignition bus](2026-08-13-gnw-bus-scaffold-retirement-SCOPED.md) | unclear |
+| 2026-08-13 | [GNW N-organ ignition bus](2026-08-13-gnw-norgan-bus-shadow-wired-into-production-brain-chat.md) | unclear |
+| 2026-08-13 | [GNW N-organ ignition bus — the SUBSTRATE combines N>=3 organ reads via consensus-ignition + WTA + re-entry (6-seed GO)](2026-08-13-gnw-norgan-ignition-bus-substrate-combines-N-organ-reads.md) | GO |
+| 2026-08-13 | [The learned causal forward model, GROUNDED in the brain's real fact store](2026-08-13-grounded-causal-forward-model-real-fact-why-whatif-6seed-GO.md) | GO |
+| 2026-08-13 | [Divisive/gain predictive coding surpasses the world-model VoE-magnitude boundary](2026-08-13-intuitive-world-model-divisive-gain-pc-surpasses-voe-magnitude-boundary-6seed.md) | unclear |
+| 2026-08-13 | [An intuitive-world-model rung on spikes](2026-08-13-intuitive-world-model-object-permanence-violation-of-expectation-6seed.md) | BOUNDARY |
+| 2026-08-13 | [The GO'd graded dendritic-plateau read-out is VERIFIED magnitude-preserving (6/6) but closes NEITHER 2026-08-13 boundary](2026-08-13-magnitude-preserving-plateau-readout-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [Merge → production, RUNG 1 (GO, opt-in): the SURPRISE + WORLD-MODEL production organs run on ONE shared spiking bridge, byte-identical to co-resident](2026-08-13-merge-production-integration-rung1-GO.md) | GO |
+| 2026-08-13 | [Merge → production, RUNG 2: a 3rd FACULTY (reconsolidation) joins the shared pool byte-identically (GO); the next REGION-OWNING organ (comprehension) is a MEASURED dt BOUNDARY](2026-08-13-merge-production-rung2-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [Metacog robust confidence (GO): a DIVISIVE-NORMALIZED NMDA-CONDUCTANCE balance read makes the confident/uncertain decision INVARIANT to the pool-#2 per-region init re-draw](2026-08-13-metacog-robust-confidence-GO.md) | GO |
+| 2026-08-13 | [One-brain MERGE de-risk: TWO organ bridges (surprise + recall) on ONE shared spiking substrate](2026-08-13-one-brain-merge-2organ-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [One-brain 2-organ MERGE](2026-08-13-one-brain-merge-CLOSED-per-region-threshold.md) | GO |
+| 2026-08-13 | [One-brain MERGE SCALES: 3 organs on one pool + DIFFERENT-builder organs (GABA_B + NMDA) via a config SUPERSET](2026-08-13-one-brain-merge-Norgan-GO.md) | GO |
+| 2026-08-13 | [One-brain 2-organ MERGE: the SECOND byte-identity cause (homeostatic threshold adaptation) is CLOSED](2026-08-13-one-brain-merge-homeostasis-GO.md) | GO |
+| 2026-08-13 | [One-brain merge — the RECALL COMPOSER bridge + the SURPRISE organ on ONE shared spiking substrate (GO)](2026-08-13-onebrain-composer-merge-GO.md) | GO |
+| 2026-08-13 | [One-brain merge — the COMPOSER (+ transducer cleanup) joins POOL #1 (SURPRISE + WORLD-MODEL) on ONE pool (GO)](2026-08-13-onebrain-composer-pool1-merge-GO.md) | GO |
+| 2026-08-13 | [The RECALL COMPOSER can JOIN production POOL #1 (surprise + world-model) — opt-in, DEFAULT-OFF (GO)](2026-08-13-onebrain-composer-pool1-production-wire-GO.md) | GO |
+| 2026-08-13 | [One-brain transducer — the RF-phasor RECALL drives the cross-organ synapse on the shared substrate (GO)](2026-08-13-onebrain-composer-transducer-GO.md) | GO |
+| 2026-08-13 | [One-brain pool #2 flip (GO): metacog + pragmatic are now wired into production on ONE shared spiking bridge, default-ON](2026-08-13-onebrain-pool2-flip-GO.md) | GO |
+| 2026-08-13 | [One-substrate PRODUCTION-DEFAULT flip (SCOPED): the D2 SURPRISE + E2 WORLD-MODEL organs now build on ONE shared spiking bridge BY DEFAULT](2026-08-13-onebrain-production-default-flip-SCOPED.md) | GO |
+| 2026-08-13 | [One-substrate SECOND pool (SCOPED): the metacog + pragmatic production organs share ONE spiking bridge BYTE-IDENTICALLY end-to-end (the first two-FULLY-WIRED-organ merge, per_region_wiring_seed exercised)](2026-08-13-onebrain-second-pool-SCOPED.md) | GO |
+| 2026-08-13 | [Per-region OU-noise + wiring seed (guarded sim/ edits)](2026-08-13-per-region-ou-wiring-affect-GO.md) | GO |
+| 2026-08-13 | [Per-region parameter-heterogeneity (guarded sim/ edit)](2026-08-13-per-region-param-het-cluster-GO.md) | GO |
+| 2026-08-13 | [Prospective memory's cue->action binding is RETIRED from the build-time install](2026-08-13-prospective-hebbian-binding-GO.md) | GO |
+| 2026-08-13 | [Prospective memory (Tier-2)](2026-08-13-prospective-memory-intention-latch-cue-monitor-derisk.md) | GO |
+| 2026-08-13 | [Prospective memory is PRODUCTION-WIRED](2026-08-13-prospective-memory-production-wired.md) | GO |
+| 2026-08-13 | [Prospective memory fire_on_cue: a per-pool intrinsic-homeostatic set-point GUARANTEES silence and normalizes the operating point](2026-08-13-prospective-perpool-homeostat-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [Prospective memory fire_on_cue CLOSES 6/6](2026-08-13-prospective-sfa-nmda-amplifier-GO.md) | GO |
+| 2026-08-13 | [Self-initiated / spontaneous thought (a DMN correlate) is 6-seed GO](2026-08-13-self-initiated-spontaneous-thought-GO.md) | GO |
+| 2026-08-13 | [Self-initiated utterance](2026-08-13-self-initiated-utterance-GO.md) | GO |
+| 2026-08-13 | [Self-initiation SELECTS among multiple balanced basins: 6-seed GO](2026-08-13-self-initiation-multibasin-GO.md) | GO |
+| 2026-08-13 | [Spiking appraisal → discrete emotion attractors + a vmPFC reappraisal gate — de-risk (faculty-map T1-5)](2026-08-13-spiking-appraisal-discrete-emotion-reappraisal-derisk.md) | GO |
+| 2026-08-13 | [Surprise organ — a per-block homeostatic prediction-gain companion closes the read-precision residual (6-seed GO)](2026-08-13-surprise-organ-homeostat-GO.md) | GO |
+| 2026-08-13 | [The W4 implicature ~2x OVERSHOOT is a READ-TOPOGRAPHY artifact (the whole-population landscape read sums off-target b...](2026-08-13-w4-belief-magnitude-calibration-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [W4 Task#12](2026-08-13-w4-detector-k-recalibration-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [The W4 seed-44 implicature collapse was a PER-DETECTOR OPERATING-POINT artifact, not a belief/objective/read-topograp...](2026-08-13-w4-detector-operating-point-homeostat-GO.md) | GO |
+| 2026-08-13 | [The RSA-informativeness-weighted pragmatic objective (Frank-Goodman 2012) REMOVES 86.8% of one-hot's advantage on the W4 metric -- confirming the residual WAS the objective aggregation -- but does NOT flip to a 6/6 graded win](2026-08-13-w4-informativeness-objective-BOUNDARY.md) | BOUNDARY |
+| 2026-08-13 | [Task-#12](2026-08-13-w4-pragmatic-belief-production-scoped.md) | GO |
+| 2026-08-12 | [B3 non-contradiction assertion-gate](2026-08-12-B3-noncontradiction-production-organ-built-and-verified.md) | GO |
+| 2026-08-12 | [D1](2026-08-12-D1-affect-appraisal-value-learned-DR2-not-hardcoded-lexicon.md) | unclear |
+| 2026-08-12 | [D5-EPISODIC](2026-08-12-D5-episodic-production-organ-spiking-recall-gate-wireable.md) | GO |
+| 2026-08-12 | [D6 multi-referent WM: a co-resident spiking buffer holds >=2 discourse referents across a span (lesion-load-bearing), wireable into production as an honest hold read-out](2026-08-12-D6-multiref-WM-production-organ-holds-two-plus-referents-lesion-load-bearing.md) | GO |
+| 2026-08-12 | [Gate-B: AFFECT/EMOTION wired into the production /api/brain-chat turn](2026-08-12-GateB-affect-colors-production-chat.md) | BOUNDARY |
+| 2026-08-12 | [Gate-B (D4): COMPREHENSION MEASUREMENT wired into the production /api/brain-chat turn](2026-08-12-GateB-comprehension-monitor-production-chat.md) | unclear |
+| 2026-08-12 | [Gate-B / D3: an honest curiosity FOLLOW-UP QUESTION on a novel topic (crave, don't refuse)](2026-08-12-GateB-curiosity-followup-production-chat.md) | GO |
+| 2026-08-12 | [Gate-B / E1: an honest functional metacognitive confidence read-out on the default chat turn](2026-08-12-GateB-metacog-confidence-readout-production-chat.md) | unclear |
+| 2026-08-12 | [Gate-B (D2): EXPECTATION-VIOLATION / SURPRISE wired into the production /api/brain-chat turn](2026-08-12-GateB-surprise-expectation-violation-production-chat.md) | BOUNDARY |
+| 2026-08-12 | [Gate-B / E2: a queryable spiking affective forward model on the default chat turn](2026-08-12-GateB-worldmodel-affective-forward-model-production-chat.md) | unclear |
+| 2026-08-12 | [#1 CHOOSE — the question→(agent,action) comprehension is now NEURAL; the host router is retired for factual questions](2026-08-12-INTEGRATION-1-CHOOSE-neural-question-parse-router-retired-for-factual.md) | unclear |
+| 2026-08-12 | [INTEGRATION: the CLAIM-LEVEL entailment moat wired into production](2026-08-12-INTEGRATION-claim-level-entailment-moat-wired-multiclause.md) | unclear |
+| 2026-08-12 | [The default /api/brain-chat turn is now a fluent multi-sentence reply](2026-08-12-INTEGRATION-default-chat-turn-is-fluent-multi-sentence-mouth-is-external-qwen-cupy.md) | GO |
+| 2026-08-12 | [The GENERATE channel's hypothesis SURFACE is now spoken by FIRING NEURONS (spiking Broca), not the external transformer](2026-08-12-INTEGRATION-generate-channel-surface-brain-native-spiking-broca.md) | GO |
+| 2026-08-12 | [The production chat recall is now GENUINELY SPIKING by default — the #0 one-brain flip](2026-08-12-INTEGRATION-onebrain-is-now-the-production-default-genuinely-spiking-recall.md) | unclear |
+| 2026-08-12 | [Open-ended generation on the DEFAULT chat — the brain volunteers novel grounded propositions, moat intact](2026-08-12-INTEGRATION-open-ended-generation-brain-volunteers-novel-propositions-on-default-chat.md) | GO |
+| 2026-08-12 | [The brain's GENERATED open-ended content now speaks as FLUENT PROSE — a flagged, moat-safe guess](2026-08-12-INTEGRATION-open-ended-generation-renders-FLUENT-flagged-guess.md) | unclear |
+| 2026-08-12 | [INTEGRATION #1 (CHOOSE)](2026-08-12-INTEGRATION1-CHOOSE-substrate-decides-direct-questions-host-confab-retired-lesion-verified.md) | unclear |
+| 2026-08-12 | [INTEGRATION #2](2026-08-12-INTEGRATION2-in-loop-learning-substrate-first-recall-the-turn-LEARNS-lesion-verified.md) | unclear |
+| 2026-08-12 | [INTEGRATION #3 (GENERATE)](2026-08-12-INTEGRATION3-GENERATE-associative-topic-generation-all-three-acts-on.md) | unclear |
+| 2026-08-12 | [Internal worldview / affective world-model — a spiking VALENCE FORWARD MODEL, 6/6-seed GO (2026-08-12)](2026-08-12-affective-world-model-spiking-valence-forward-model-6seed-GO.md) | GO |
+| 2026-08-12 | [The brain OWNS open-ended generation — 6-seed GO: novel grounded propositions via replay, moat intact](2026-08-12-brain-owns-open-ended-generation-6seed-GO-novel-propositions-via-replay-moat-intact.md) | GO |
+| 2026-08-12 | [gap#1 / A1 mouth-burn-down residual](2026-08-12-gap1-A1-deep-context-credit-on-diagonal-WKV-store-local-rule-ties-BPTT-no-credit-wall.md) | GO |
+| 2026-08-12 | [Gap#4 / E3](2026-08-12-gap4-BTSP-plateau-lasting-trace-recall-after-delay-6seed-GO.md) | GO |
+| 2026-08-12 | [gap#4 crux](2026-08-12-gap4-birdsong-two-stage-tutor-NEGATIVE-6seed.md) | NEGATIVE |
+| 2026-08-12 | [gap#4 Q5](2026-08-12-gap4-obligatory-depth3-credit-instrument-NOT-constructible-reframes-the-assault-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-12 | [gap#4 SoftHebb](2026-08-12-gap4-softhebb-soft-wta-hebbian-NEGATIVE-6seed.md) | NEGATIVE |
+| 2026-08-12 | [GNW coincidence-integrator](2026-08-12-gnw-coincidence-integrator-substrate-combines-two-organ-reads.md) | GO |
+| 2026-08-12 | [lane-C metacognition](2026-08-12-laneC-metacog-INSTRUMENT-FIX-and-balance-of-evidence-pure-spiking-meta-d.md) | GO |
+| 2026-08-12 | [lane-C self-model is a BOUNDARY — metacognition at chance despite a GO label; self-schema seed-fragile](2026-08-12-laneC-self-model-BOUNDARY-metacog-type2-at-chance-despite-GO-selfschema-3of6.md) | BOUNDARY |
+| 2026-08-12 | [A learned CAUSAL FORWARD MODEL on the spiking substrate](2026-08-12-learned-causal-forward-model-directed-state-prediction-DO-intervention-6seed-GO.md) | GO |
+| 2026-08-12 | [Moat generalization: a claim-level entailment gate lets multi-clause fluent prose pass IFF grounded — GO (de-risk)](2026-08-12-moat-claim-entailment-derisk-multiclause-fluent-prose-passes-iff-grounded-GO.md) | GO |
+| 2026-08-12 | [Genuinely-SPIKING chat recall + runtime new-word LEARN — RESOLVED via recruit-an-assembly (the #0 one-brain step)](2026-08-12-onebrain-spiking-store-breaks-runtime-newword-LEARN-de-risk.md) | NO-GO |
+| 2026-08-12 | [Reconsolidation production organ — D2-spiking-surprise-gated in-place belief revision — WIREABLE (GO)](2026-08-12-reconsolidation-production-organ-belief-revision-wireable.md) | GO |
+| 2026-08-12 | [self-schema honesty is NOT a clean production integration on the current small KB — NO-GO (honest, measured)](2026-08-12-self-schema-honesty-NOT-a-clean-production-integration-on-the-small-KB-NO-GO.md) | GO |
+| 2026-08-12 | [Spiking comprehension-success monitor](2026-08-12-spiking-comprehension-success-monitor-GO.md) | GO |
+| 2026-08-12 | [A genuine SPIKING expectation-violation (surprise) signal, readable at conversation time](2026-08-12-spiking-expectation-violation-surprise-conversational-6seed-GO-mechanism.md) | unclear |
+| 2026-08-12 | [Spiking fluent surface (A1): the brain's GENERATED hypothesis rendered grammatically + faithfully ON SPIKES](2026-08-12-spiking-fluent-surface-compose-broca-render-with-novel-draw-6seed-GO.md) | GO |
+| 2026-08-12 | [Vocab-agnostic spiking open-ended generation — 6-seed GO (the spiking draw generalizes to arbitrary vocab)](2026-08-12-vocab-agnostic-spiking-openended-generation-6seed.md) | GO |
+| 2026-08-11 | [INTEGRATION #7 burn-down #1](2026-08-11-INTEGRATION-7-burndown1-one-brain-merge-coresidency-6seed.md) | unclear |
+| 2026-08-11 | [The CURRENT production conversation pipeline is largely HOST, not one spiking brain](2026-08-11-PRODUCTION-chat-pipeline-is-largely-HOST-not-one-brain-spiking-code-traced-honest-inventory.md) | GO |
+| 2026-08-11 | [W4 graded-implicature RSA wired as the speaking-pipeline belief source: the INTEGRATION is real (belief now carries the "some→not all" content, 12× better calibrated, moat intact) but it does NOT move the argmax pragmatic-alignment metric](2026-08-11-W4-RSA-belief-source-into-speaking-pipeline-6seed.md) | unclear |
+| 2026-08-11 | [Benna-Fusi multi-timescale CHAIN does NOT beat single-variable metaplasticity (6-seed NEGATIVE)](2026-08-11-benna-fusi-multitimescale-chain-does-not-beat-single-var-metaplasticity-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-11 | [Combining disjoint fact-codes + metaplastic consolidation does NOT compound (6-seed)](2026-08-11-continual-combine-disjoint-codes-plus-consolidation-does-NOT-compound-6seed.md) | unclear |
+| 2026-08-11 | [continual_forgetting_eval retention is a flat 100% across N and sleep](2026-08-11-continual-forgetting-eval-is-not-the-7-crux-word-learning-retention-robust.md) | unclear |
+| 2026-08-11 | [Interleaved generative replay is a NEGATIVE on continual retention — the interleaving is not the lever <!--derived-->](2026-08-11-continual-retention-interleaved-generative-replay-N50fact-NEGATIVE.md) | NEGATIVE |
+| 2026-08-11 | [The continuous loop — a fact learned mid-conversation changes a later reply on ONE persistent brain (1-seed smoke)](2026-08-11-continuous-learn-within-a-conversation-closed-loop-1seed-smoke.md) | unclear |
+| 2026-08-11 | [Corpus-breadth SCALING → the VSA no-confab moat CAPACITY CEILING (6-seed GO)](2026-08-11-corpus-breadth-scaling-capacity-ceiling-6seed.md) | GO |
+| 2026-08-11 | [Cross-region synaptic INTERACTION on the one-brain bridge — co-residency becomes true one-brain (6/6 GO)](2026-08-11-cross-region-synaptic-interaction-true-one-brain-6seed.md) | unclear |
+| 2026-08-11 | [Neural-WTA channel reads](2026-08-11-emergence-WM-hybrid-neural-WTA-reads-GO.md) | GO |
+| 2026-08-11 | [Separate-channel WM+HTM hybrid](2026-08-11-emergence-WM-hybrid-separate-channel-GO-working-hybrid-6seed.md) | GO |
+| 2026-08-11 | [Emergence engine](2026-08-11-emergence-engine-heterosynaptic-competition-allocation-rescues-regimeC-starvation-1seed-SMOKE.md) | unclear |
+| 2026-08-11 | [Emergence engine (on-bridge HTM Temporal-Memory)](2026-08-11-emergence-engine-htm-horizon-nonfading-but-finite-shrinks-with-interference-3seed-SMOKE.md) | REFUTED |
+| 2026-08-11 | [Emergence engine + WM afferent](2026-08-11-emergence-engine-plus-WM-afferent-hybrid-PARTIAL-fusion-combines-but-corrupts-subject-6seed.md) | PARTIAL |
+| 2026-08-11 | [Emergence engine](2026-08-11-emergence-engine-selective-write-store-restores-interference-broken-horizon-1seed-SMOKE.md) | GO |
+| 2026-08-11 | [Emergence engine](2026-08-11-emergence-engine-stream-language-htm-memorises-not-generalises-long-range-agreement-3seed-SMOKE.md) | unclear |
+| 2026-08-11 | [Emergent causal composition](2026-08-11-emergent-causal-composition-chain-6seed.md) | GO |
+| 2026-08-11 | [Emergent neural-WTA fresh-slot ALLOCATION replaces the multi-slot WM's host free-counter — 6-seed GO](2026-08-11-emergent-neural-WTA-slot-allocation-GO.md) | GO |
+| 2026-08-11 | [A LEARNED relational/spatial code makes the causal chain's grounding EMERGE](2026-08-11-emergent-relational-spatial-code-GO.md) | GO |
+| 2026-08-11 | [gap#4 ALL-IN](2026-08-11-gap4-ALLIN-ARC-SUMMARY-a-spiking-deep-credit-WALL-was-a-hyperparameter-READ-BEFORE-RE-ATTACKING.md) | unclear |
+| 2026-08-11 | [gap#4](2026-08-11-gap4-DECOLLE-local-readouts-deep-spiking-GO-6seed-enters-the-learning-regime-where-topdown-collapses.md) | unclear |
+| 2026-08-11 | [gap#4 deep-credit-on-spikes](2026-08-11-gap4-SPATIAL-DEPTH2-CREDIT-LOAD-BEARING-at-small-T-but-depth3-rung-is-instrument-limited-task-is-depth2-solvable-1seed-smoke.md) | unclear |
+| 2026-08-11 | [gap#4 deep-credit-on-spikes](2026-08-11-gap4-TEMPORAL-DEPTH-FLOOR-ISOLATED-reducing-T-defeats-it-spatial-deep-credit-obligatory-1seed-smoke.md) | GO |
+| 2026-08-11 | [gap#4 deep-credit](2026-08-11-gap4-depth3-obligatory-task-is-provably-impossible-reframe-to-layer3-credit-fidelity.md) | unclear |
+| 2026-08-11 | [gap#4](2026-08-11-gap4-forward-forward-local-contrastive-ENTERS-the-deep-spiking-learning-regime-where-topdown-credit-could-not-6seed.md) | GO |
+| 2026-08-11 | [gap#4 LAYER-3 CREDIT FIDELITY](2026-08-11-gap4-layer3-credit-fidelity-transport-free-DFA-does-NOT-reach-the-3rd-layer-6seed-HONEST-NEGATIVE.md) | NEGATIVE |
+| 2026-08-11 | [gap#4 LEARNED FEEDBACK](2026-08-11-gap4-learned-feedback-KP-reaches-the-3rd-hidden-layer-where-fixed-DFA-could-not-smoke-GO.md) | GO |
+| 2026-08-11 | [gap#4 ON-SPIKES](2026-08-11-gap4-onspikes-KP-learned-feedback-ALIGNS-on-the-spiking-substrate-and-beats-fixed-DFA-smoke-plus-mapping.md) | GO |
+| 2026-08-11 | [gap#4 deep-credit ON SPIKES at genuine DEPTH-3](2026-08-11-gap4-onspikes-depth3-KP-aligns-on-spikes-cos-0.99-but-no-clean-depth3-obligatory-spiking-instrument.md) | GO |
+| 2026-08-11 | [gap#4](2026-08-11-gap4-the-LIF-chained-FAKP-wall-is-a-per-arm-lr-artifact-6seed.md) | unclear |
+| 2026-08-11 | [gap#4 wave-1 verification](2026-08-11-gap4-wave1-verification-corrected-the-FA-KP-wall-is-partly-an-lr-artifact.md) | unclear |
+| 2026-08-11 | [Gate B Stage 2p: FIX G (a striatal feedforward-inhibition / MSN down-state homeostat) is REFUTED at the mechanism level, and it CORRECTS Stage 2m's diagnosis](2026-08-11-gateB-stage2p-striatal-FFI-refuted-no-precue-lock-MSN-rebound-residual-is-commit-timing.md) | unclear |
+| 2026-08-11 | [lane D perception](2026-08-11-laneD-v1-pooler-harder-kWTA-contributes-but-insufficient-and-exposes-readout-quantization-confound.md) | GO |
+| 2026-08-11 | [Metaplastic e-prop against continual acquisition-at-scale forgetting](2026-08-11-metaplastic-acquisition-continual-learning-6seed-NOGO-mechanism-real-but-subthreshold.md) | NO-GO |
+| 2026-08-11 | [Multi-slot variable-binding WORKING MEMORY: R disjoint NMDA banks (one shared FS) HOLD k role-filler bindings simultaneously, each recovered across novel fillers](2026-08-11-multi-slot-variable-binding-working-memory-holds-k-bindings-no-crosstalk-ceiling-k5-6seed-GO.md) | GO |
+| 2026-08-11 | [INTEGRATION burn-down — the patient-word decision in the live chat is now on SPIKES (6/6 GO)](2026-08-11-neural-spiking-patient-readout-in-live-chat-6seed.md) | unclear |
+| 2026-08-11 | [Reconsolidation on a SUPERPOSED (shared-synapse) store — the lossy / learned-binder path (WALL: reconsolidation)](2026-08-11-reconsolidation-superposed-lossy-store-derisk.md) | GO |
+| 2026-08-11 | [Role-based write-gate on a same-pool positional grammar](2026-08-11-role-based-write-gate-same-pool-positional-grammar-recurrent-latch-learns-role-1seed-SMOKE.md) | GO |
+| 2026-08-11 | [LEVER 3 (competitive forward stabilizer): the fire-everything basin is eliminated](2026-08-11-rolegate-competitive-forward-stabilizer-eliminates-fire-everything-basin-but-STRUCTURALLY-onset-gate-not-transport-free-credit-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-11 | [Role-gate x gap#4 deep credit](2026-08-11-rolegate-gap4-deep-credit-resolves-role-at-ceiling-transport-free-alignment-STRUCTURAL-not-dimensional-6seed.md) | GO |
+| 2026-08-11 | [Role-gate x hidden-layer + chained-FA + sigma'](2026-08-11-rolegate-hidden-layer-chained-FA-sigmaprime-transport-free-reliability-NEGATIVE-ceiling-clears-6seed.md) | NEGATIVE |
+| 2026-08-11 | [Role-gate LEVER 5](2026-08-11-rolegate-transport-free-feedback-alignment-reliability-GO-weight-mirror-warmup.md) | GO |
+| 2026-08-11 | [Role-gate LEVER 4](2026-08-11-rolegate-variable-subject-position-credit-test-NEGATIVE-credit-cant-ceiling-can.md) | NEGATIVE |
+| 2026-08-11 | [Per-parameter heterogeneity reseed](2026-08-11-sim-per-parameter-heterogeneity-reseed-append-last-invariant.md) | unclear |
+| 2026-08-11 | [The ~0.55 self-replay cap is the known bdsp_wmax=6 BOUND-TRAP, not engram fidelity: de-clamping lifts replay-based continual retention to 1.00 on both tested seeds](2026-08-11-sleep-replay-bdsp-declamp-lifts-continual-retention-past-055-cap-clamp-artifact.md) | GO |
+| 2026-08-11 | [Source monitoring](2026-08-11-source-monitor-competitive-encoding-heterosynaptic-LTD-fixes-weak-encoding-crux-6seed.md) | GO |
+| 2026-08-11 | [The source-monitor no-harm boundary is an OPERATING-POINT (f-I saturation of under-provisioned pools), not a competition problem](2026-08-11-source-monitor-no-harm-boundary-is-an-operating-point-population-coding-derisk.md) | GO |
+| 2026-08-11 | [Sparse DISJOINT fact codes for continual acquisition](2026-08-11-sparse-disjoint-fact-codes-continual-PARTIAL-beat-vanilla-load-bearing-but-below-metaplasticity.md) | PARTIAL |
+| 2026-08-11 | [The spiking Hebbian short-term-potentiation BIND reproduces the RUNG6c host binder on a real substrate](2026-08-11-spiking-hebbian-STP-bind-on-substrate-reproduces-RUNG6c-heldout-1.000-0collisions-6seed-GO.md) | GO |
+| 2026-08-11 | [Mouth burn-down (smoke) — the SEAM-C tone token the mouth SPEAKS is now decided on SPIKES](2026-08-11-spiking-wta-tone-token-render-mouth-burndown-smoke.md) | unclear |
+| 2026-08-11 | [value-critic-neural: the fully-neural per-intent critic is real + already on main, but its strict-gate score is 3/6 (not the finding's headline 6/6); a homeostatic critic-readout gain cleanly kills the dominant YOKED-leak failure mode (1-seed smoke)](2026-08-11-value-critic-neural-homeostatic-readout-gain-kills-yoked-leak-PARTIAL.md) | PARTIAL |
+| 2026-08-11 | [Variable-binding working memory (gated bistable slot + fast-weight bind) SURPASSES the emergence-engine failure](2026-08-11-variable-binding-working-memory-gated-slot-surpasses-HTM-heldout-1.000-vs-0.000-6seed-GO.md) | GO |
+| 2026-08-10 | [INTEGRATION #2 (live chat): the two silent/deflected inner-state probes (turn 5 "how do you feel", turn 13 "you are a simulated brain") now answer as HONEST FUNCTIONAL READ-OUTS](2026-08-10-INTEGRATION-3-honest-inner-state-readouts-turns-5-13-affect-and-self-model.md) | unclear |
+| 2026-08-10 | [INTEGRATION #3b: the self_schema confidence relay now DISCRIMINATES (settle-read)](2026-08-10-INTEGRATION-3b-self-schema-relay-settle-read-discriminates-turn13-grades-certainty.md) | unclear |
+| 2026-08-10 | [INTEGRATION #3c: the certainty-band OPPONENT comparator makes the self-model's confidence read ROBUST](2026-08-10-INTEGRATION-3c-certainty-band-opponent-margin-robust-turn13-all6-clear-002.md) | unclear |
+| 2026-08-10 | [INTEGRATION #5](2026-08-10-INTEGRATION-5-honest-causal-query-disclaimer-turn4-6seed.md) | unclear |
+| 2026-08-10 | [INTEGRATION #6 — corpus-LEARNED grounded facts wired into the live chat (6-seed GO): the brain says MORE, the moat holds](2026-08-10-INTEGRATION-6-corpus-learned-facts-into-live-chat-6seed.md) | GO |
+| 2026-08-10 | [INTEGRATION #7 burn-down #2 — the no-confab moat is now decided on SPIKES (6/6 GO)](2026-08-10-INTEGRATION-7-burndown2-spiking-familiarity-gate-moat-fully-spiking-6seed.md) | unclear |
+| 2026-08-10 | [INTEGRATION #7](2026-08-10-INTEGRATION-7-plasticity-learned-facts-into-live-chat-6seed.md) | GO |
+| 2026-08-10 | [INTEGRATION #1 CONFIRMED (6 seeds)](2026-08-10-INTEGRATION1-subclausal-moat-live-chat-confab-6seed.md) | unclear |
+| 2026-08-10 | [NE / LC multiplicative gain on the REAL substrate](2026-08-10-NE-LC-gain-vigilance-REAL-SUBSTRATE-does-not-robustly-transfer-3of6.md) | GO |
+| 2026-08-10 | [CA3 recurrent-LTP attractor completion hits the magnitude-vs-specificity TRILEMMA on the point neuron (favorable-case NEGATIVE)](2026-08-10-ca3-point-neuron-attractor-completion-trilemma-NEGATIVE-redirect-dendritic-plateau.md) | NEGATIVE |
+| 2026-08-10 | [The composer is REPRESENTATION-robust to naturalistic (correlated) codes: an offset-invariant resonator readout (and an ML-exhaustive witness) recall 1.00 across the whole correlation sweep where the Euclidean ruler craters](2026-08-10-composer-representation-robust-resonator-readout-recovers-naturalistic-break-is-the-ruler.md) | unclear |
+| 2026-08-10 | [Episodic neural cortical cue-recall GENERALIZES (6-seed GO): completion-driven, specific, neural](2026-08-10-episodic-cortical-cue-recall-completion-6seed-GO-neural-WTA-inert.md) | GO |
+| 2026-08-10 | [episodic dialogue recall wired to spiking dAP readout numpy backend honest negative](2026-08-10-episodic-dialogue-recall-wired-to-spiking-dAP-readout-numpy-backend-honest-negative.md) | GO |
+| 2026-08-10 | [The faithful spiking-dendrite BIND: a temporal Larkum-BAC coincidence closes the residual the rate sigma-pi could not](2026-08-10-faithful-spiking-dendrite-bind-temporal-BAC-coincidence-GO.md) | GO |
+| 2026-08-10 | [Gap #5 emergent-formation residual REACHES GO](2026-08-10-gap5-BTSP-emergently-forms-the-slow-nmda-reverberatory-attractor-6seed-GO-preassigned-assemblies.md) | GO |
+| 2026-08-10 | [Gap #5 end-to-end episodic loop](2026-08-10-gap5-e2e-episodic-loop-emergent-selection-composes-but-completion-operating-point-is-assembly-size-SEAM-NEGATIVE.md) | NEGATIVE |
+| 2026-08-10 | [gap#5 LEVER B GO (6-seed)](2026-08-10-gap5-lever-B-dendritic-dAP-readout-completes-emergent-small-assembly-6seed-GO.md) | GO |
+| 2026-08-10 | [Gap #5 completion seam, LEVER A](2026-08-10-gap5-leverA-DG-detonator-gain-grows-emergent-assembly-to-72-but-recurrent-self-drive-coupling-is-scale-not-size-NEGATIVE.md) | NEGATIVE |
+| 2026-08-10 | [Gap #5 completion seam](2026-08-10-gap5-size-aware-FF-completion-closes-permuted-cue-specificity-but-small-emergent-assembly-bistability-residual-PARTIAL.md) | PARTIAL |
+| 2026-08-10 | [Gap #5 lead (b) reaches GO](2026-08-10-gap5-somatic-slow-nmda-reverberatory-attractor-bistable-specific-completion-6seed-GO.md) | GO |
+| 2026-08-10 | [INTEGRATION #2 (live chat episodic memory): turn 7 "you mentioned a cat" is no longer a SILENT abstain](2026-08-10-integration2-episodic-dialogue-memory-turn7.md) | unclear |
+| 2026-08-10 | [Learn-to-speak-from-communicative-success: the per-context STATE-VALUE baseline PASSES the contingency gate 5/6 (verified)](2026-08-10-learn-to-speak-state-value-baseline-passes-contingency-5of6-the-learning-wall-fixed.md) | unclear |
+| 2026-08-10 | [Research gate](2026-08-10-neural-WTA-afferent-winner-common-mode-removal-research-gate.md) | unclear |
+| 2026-08-10 | [The neural WTA readout is weight-controllable at learnable magnitudes](2026-08-10-neural-WTA-separable-assemblies-weight-controllable-homeostat-premise-REFRAMED.md) | unclear |
+| 2026-08-10 | [Neural WTA word-decode replaces the host cosine-argmax in the PRODUCTION speaker at vocab-16 (6-seed GO, parity 1.000)](2026-08-10-neural-wta-word-decode-burns-host-cosine-argmax-production-speaker-16word.md) | GO |
+| 2026-08-10 | [Parallel de-risk batch (3 frontiers)](2026-08-10-parallel-derisk-batch-composer-robust-CA3-readout-capped-value-critic-is-a-learning-wall.md) | GO |
+| 2026-08-10 | [Parallel-push results](2026-08-10-parallel-push-results-activity-silent-WM-GO-NE-gain-positive-CA3-transmission-refuted-3rd.md) | GO |
+| 2026-08-10 | [The learn-to-speak reward-misspecification is a PARTIAL win with a decisive RE-DIAGNOSIS: it is a substrate coincidence-DETECTOR artifact (per-pool base-rate + per-(t,u) heterogeneity), NOT an RSA/Gricean belief gap](2026-08-10-reward-misspec-distinctiveness-PARTIAL-rediagnosed-as-detector-artifact-not-RSA-belief.md) | PARTIAL |
+| 2026-08-10 | [The shared-channel "capacity break" was a readout DC-offset artifact — corrected, superposition is far more robust](2026-08-10-shared-channel-arity-capacity-CORRECTED-DC-offset-artifact.md) | unclear |
+| 2026-08-10 | [Shared-channel arity capacity: M is located and scales with dimension — this closes the last composer residual](2026-08-10-shared-channel-arity-capacity-located-M-star-grows-with-dimension.md) | unclear |
+| 2026-08-10 | [The firing-rate HOMEOSTAT does NOT rescue the value-critic SNR wall](2026-08-10-value-critic-homeostat-NEGATIVE-suprathreshold-pinning-no-graded-lever.md) | NEGATIVE |
+| 2026-08-10 | [Research gate](2026-08-10-value-critic-statevalue-baseline-and-composer-resonator-readout-research-gate.md) | unclear |
+| 2026-08-09 | [Arity-3 composition is GO on disjoint channels; the real capacity limit (interfering terms) is untested](2026-08-09-arity3-composition-GO-on-disjoint-channels-but-capacity-untested.md) | unclear |
+| 2026-08-09 | [The bdsp_wmax=6 bound-trap silences the teacher-loop reservoir; de-clamping recovers 75% of N=20 retention](2026-08-09-bound-trap-bdsp-wmax6-silences-teacher-loop-reservoir-declamp-recovers-75pct-of-N20-retention.md) | unclear |
+| 2026-08-09 | [The capacity resolution of the teacher-loop breadth crux holds at N=50 (2.5× scale)](2026-08-09-capacity-resolution-of-breadth-crux-holds-at-N50-scaling.md) | unclear |
+| 2026-08-09 | [Capacity-scaling: real at every N, but the ceiling slips at N=100 — capacity alone is not the lifetime answer](2026-08-09-capacity-scaling-holds-to-N50-but-SLIPS-at-N100-capacity-alone-insufficient-for-lifetime.md) | unclear |
+| 2026-08-09 | [CLS two-store](2026-08-09-cls-two-store-bounded-fast-store-does-not-decouple-retention-from-lifetime.md) | unclear |
+| 2026-08-09 | [Composition INTERFERENCE: neural superposition generalizes zero-shot through MILD non-linear mixing, breaks by strong mixing](2026-08-09-composition-interference-superposition-breaks-under-nonlinear-mixing-PARTIAL.md) | PARTIAL |
+| 2026-08-09 | [Compositionality gives sub-linear storage with neural composition — mechanism GO, retention-advantage pending large N](2026-08-09-compositional-generator-gives-sublinear-storage-neural-composition-PARTIAL-GO.md) | GO |
+| 2026-08-09 | [Dendritic-bind is a functional rate dendritic-AND, NOT yet a spiking-membrane coincidence (verify-caught)](2026-08-09-dendritic-bind-rate-sigma-pi-recovers-conjunction-but-NOT-spiking-yet-PARTIAL.md) | PARTIAL |
+| 2026-08-09 | [Homeostatic drive-scaling closes the read-out under-drive: 0.18→0.82 at n_pool=1000 (6-seed GO)](2026-08-09-drive-scaled-readout-fixes-under-drive-GO-6seed.md) | GO |
+| 2026-08-09 | [The world-model read-out WINNER as a genuine load-bearing NEURAL WTA (lateral inhibition)](2026-08-09-fm-neural-wta-readout-lateral-inhibition-winner-load-bearing-but-underperforms-host-argmax-NEGATIVE.md) | NEGATIVE |
+| 2026-08-09 | [Generative replay: the right direction, two honest residuals (the generator's own forgetting + compute still O(N))](2026-08-09-generative-replay-beats-buffer-but-generator-itself-forgets-and-bounds-storage-not-compute-PARTIAL.md) | PARTIAL |
+| 2026-08-09 | [HONEST NEGATIVE](2026-08-09-noise-driven-unsupervised-stdp-sleep-does-not-beat-supervised-self-replay-on-the-teacher-loop.md) | unclear |
+| 2026-08-09 | [A NON-FORGETTING fixed-size generative-replay generator matches the flat O(N) store (0.958 vs 0.950), with a bounded store](2026-08-09-non-forgetting-generative-replay-generator-matches-flat-store.md) | unclear |
+| 2026-08-09 | [Prioritized replay at a FIXED budget k bounds compute but loses coverage at scale — NEGATIVE on the core claim](2026-08-09-prioritized-replay-fixed-k-fails-at-scale-compute-half-NEGATIVE.md) | NEGATIVE |
+| 2026-08-09 | [The read-out evidence ceiling is capacity-limited; the fixed WTA inhibition is what fails to exploit it](2026-08-09-readout-evidence-ceiling-IS-capacity-limited-but-fixed-WTA-inhibition-does-not-scale.md) | GO |
+| 2026-08-09 | [Population-scaled normalization rescues the large-reservoir read-out collapse, but the residual is under-drive (PARTIAL)](2026-08-09-scaled-norm-readout-rescues-collapse-at-scale-but-residual-is-under-drive-PARTIAL.md) | PARTIAL |
+| 2026-08-09 | [Spiking pattern-completing engram store MATCHES (does not beat) the host mean-vector for sleep-replay consolidation](2026-08-09-spiking-pattern-completing-engram-store-matches-not-beats-host-mean-vector-consolidation.md) | GO |
+| 2026-08-09 | [Sub-clausal post-hoc verify catches the discourse-level confabulation the SVO moat was blind to](2026-08-09-subclausal-posthoc-verify-catches-discourse-confabulation.md) | unclear |
+| 2026-08-09 | [Teacher-loop breadth crux: a FIXED ORTHOGONAL-TARGET pattern-separation readout (PS-SNN) raises sequential retention and is load-bearing, but is reservoir-gated and does NOT surpass self-replay on this substrate](2026-08-09-teacher-loop-fixed-orthogonal-target-pattern-separation-catastrophic-forgetting.md) | unclear |
+| 2026-08-09 | [Teacher-loop breadth crux: GROWING the DG-expansion reservoir (adult-born granule units, DSD-SNN style) lifts N=20 retention past the self-replay baseline and INTEGRATION is load-bearing](2026-08-09-teacher-loop-neurogenesis-capacity-expansion-lifts-retention-but-is-capacity-not-timing.md) | GO |
+| 2026-08-09 | [NEGATIVE (with teeth)](2026-08-09-teacher-loop-sleep-replay-budget-sweep-more-replay-does-not-reach-ceiling-NEGATIVE.md) | NEGATIVE |
+| 2026-08-09 | [Weight protection does NOT stack on top of self-replay — an honest negative with teeth](2026-08-09-weight-protection-does-not-stack-on-self-replay-honest-negative.md) | unclear |
+| 2026-08-09 | [Zero-shot NEURAL composition: never-taught combinations recalled from primitives seen elsewhere (6-seed GO)](2026-08-09-zero-shot-neural-composition-heldout-combinations-GO.md) | GO |
+| 2026-08-08 | [Episodic B: CA3 recurrent COMPLETION now LOAD-BEARING (within-assembly attractor potentiation)](2026-08-08-episodic-CA3-completion-CLOSED-within-assembly-attractor-potentiation-loadbearing-WTA-still-negative.md) | unclear |
+| 2026-08-08 | [Research gate](2026-08-08-episodic-cortical-cue-recall-research-gate-heteroassoc-WTA-on-bistable-CA3.md) | unclear |
+| 2026-08-08 | [Episodic cortical readout IGNITES (fan-in fix)](2026-08-08-episodic-cortical-readout-IGNITION-fan-in-fixes-wave1-silence-heteroassoc-not-completion.md) | unclear |
+| 2026-08-08 | [LEARNED two-pathway spiking read-out burns the host ridge shortcut down from CHANCE to ~11-15x chance](2026-08-08-fm-learned-twopath-spiking-readout-burns-down-dale-shift-wall.md) | NO-GO |
+| 2026-08-08 | [BIOLOGIZING the world-model READ-OUT (host ridge/argmax → a spiking synaptic read-out + neural WTA)](2026-08-08-fm-spiking-synaptic-readout-vs-ridge-resolution-wall-NO-GO.md) | GO |
+| 2026-08-08 | [FORWARD MODEL on the SPIKING RESERVOIR](2026-08-08-forward-model-reservoir-simulates-not-retrieves-smoke-GO.md) | GO |
+| 2026-08-08 | [Graded affect persistence](2026-08-08-graded-affect-persistence-research-gate-bistable-ladder-robust-integrator.md) | unclear |
+| 2026-08-08 | [Graded affect via a STAGGERED BISTABLE LADDER — 6-seed GO (a drift-robust QUANTIZED value code, not a continuum)](2026-08-08-graded-affect-staggered-bistable-ladder-6seed-GO.md) | GO |
+| 2026-08-08 | [Path-T generator: the spiking-LLM as a CONDITIONED, GATED articulation mouth — faculties LOAD-BEARING, single-seed GO](2026-08-08-pathT-conditioned-generator-articulation-mouth-loadbearing-GO.md) | GO |
+| 2026-08-08 | [Communicative success is a two-input NEURAL coincidence detector (belief × intent), 6/6-seed GO — Leg 1](2026-08-08-pragmatics-communicative-success-neural-coincidence-detector-leg1-6seed-GO.md) | GO |
+| 2026-08-08 | [Leg 2 (read success back to TRAIN a WTA speaker) is a NEGATIVE](2026-08-08-pragmatics-readback-leg2-WTA-speaker-NEGATIVE-value-critic-fallback.md) | NEGATIVE |
+| 2026-08-08 | [Leg 2 v2](2026-08-08-pragmatics-readback-leg2-v2-oracle-RESOLVED-convergence-NEGATIVE-critic-value-fallback.md) | NEGATIVE |
+| 2026-08-08 | [Wave-2 pragmatics research gate — a NEURAL communicative-success coincidence detector READ BACK into the speaking policy](2026-08-08-pragmatics-wave2-neural-coincidence-success-read-back-into-speaking-RESEARCH-GATE.md) | unclear |
+| 2026-08-08 | [Stage-A FULL single-bridge live integration](2026-08-08-stageA-full-single-bridge-live-integration-true-one-brain-conversation-GO.md) | GO |
+| 2026-08-08 | [Stage-A: the conditioned spiking generator WIRED into the live turn loop as the articulation MOUTH](2026-08-08-stageA-generator-mouth-wired-live-prose-lesion-battery-3seed.md) | unclear |
+| 2026-08-08 | [Stage-A seams A + C integrated onto the ONE merged bridge](2026-08-08-stageA-seams-A-C-forward-model-graded-affect-coresident-integration-GO.md) | GO |
+| 2026-08-08 | [Stage-A seams A (forward-model world-model) + C (graded-affect ladder) routed LIVE in the multi-turn loop](2026-08-08-stageA-seams-A-C-live-in-the-turn-loop-loadbearing-on-conversation-GO.md) | GO |
+| 2026-08-08 | [Teacher-loop: the learned-moat leak is CLOSED 6/6 — contrastive teaching + a learned familiarity/source-monitor gate](2026-08-08-teacher-loop-contrastive-familiarity-moat-closes-the-learned-moat-leak-6seed-GO.md) | GO |
+| 2026-08-08 | [Developmental teacher-loop, first de-risk: the brain LEARNS ONE new fact by CORRECTION (its OWN synaptic weights move, no host store-write) and RE-USES it through the unchanged live-loop read](2026-08-08-teacher-loop-corrective-acquisition-brain-learns-ONE-new-fact-by-plasticity-and-reuses-it-in-loop-but-learned-moat-leaks-6seed.md) | unclear |
+| 2026-08-08 | [Developmental TEACHER-LOOP](2026-08-08-teacher-loop-first-derisk-DESIGN-corrective-acquisition-synaptic-use.md) | unclear |
+| 2026-08-08 | [Self-replay of the brain's OWN hippocampal engrams beats catastrophic forgetting in the sequential teacher-loop (sing...](2026-08-08-teacher-loop-sleep-replay-consolidation-self-replay-beats-catastrophic-forgetting.md) | unclear |
+| 2026-08-08 | [Teacher-loop breadth crux: a NEURAL k-WTA sparse-gated readout allocation SEPARATES the engrams but does NOT raise sequential retention over the dense readout](2026-08-08-teacher-loop-sparse-gated-readout-allocation-catastrophic-forgetting.md) | unclear |
+| 2026-08-07 | [Lane A · SELF-SCHEMA (BORN adoption): a LEARNED bodily self-model](2026-08-07-BORN-learned-bodily-self-model-forward-model-agency-smoke-GO.md) | GO |
+| 2026-08-07 | [gap#4 adoption D1: Astera Axon's CaP−CaD rule does NOT beat our microcircuit at rate](2026-08-07-gap4-axon-capd-rule-rate-NO-GO-microcircuit-already-surpasses-the-bidirectional-target-depth-wall.md) | NO-GO |
+| 2026-08-07 | [Gate B Stage 2i](2026-08-07-gateB-stage2i-RPE-floor-closes-730704-str_d1-dead-pathway-730705.md) | NO-GO |
+| 2026-08-07 | [Gate B Stage 2j: an adaptive (rewarded-gated) RPE floor is the first config to clear steer >=5/6 on BOTH dev and held-out](2026-08-07-gateB-stage2j-adaptive-RPE-floor-smoke-and-MSN-k-homeostat.md) | unclear |
+| 2026-08-07 | [Gate B Stage 2k: a novelty-gated commit-WTA release (FIX D) gets the un-sampled action SELECTED, REWARDED and its D1 route strongly potentiated on 730705](2026-08-07-gateB-stage2k-commit-WTA-release-selects-730705-but-cannot-express-at-test.md) | unclear |
+| 2026-08-07 | [Gate B Stage 2l: a soft (non-latching) cortical commit WTA does NOT flip 730705](2026-08-07-gateB-stage2l-commit-normalization-refuted-residual-relocated-to-BG-output-readout.md) | unclear |
+| 2026-08-07 | [Gate B Stage 2m: FIX E (a BG-output intrinsic-excitability homeostat) INVERTS the thalamic drive that Stage 2l called the wall, but is NECESSARY-NOT-SUFFICIENT to flip 730705 standalone](2026-08-07-gateB-stage2m-bg-output-homeostat-inverts-thalamus-but-necessary-not-sufficient.md) | unclear |
+| 2026-08-07 | [Gate B Stage 2n: FIX F ports the record-grounded accumulate-then-commit readout (NMDA-slow recurrent integration on the commit pools) onto the vocal Gate B commit stage](2026-08-07-gateB-stage2n-accumulate-then-commit-NMDA-integration-closes-730705.md) | BOUNDARY |
+| 2026-08-07 | [Gate B Stage 2o: a learning-gated FIX-F commit-integration threshold CANNOT close 730705](2026-08-07-gateB-stage2o-learning-gated-commit-threshold-boundary.md) | unclear |
+| 2026-08-07 | [Grounded message-to-word: a brain-native naming path replaces the host semantic decoder (CPU de-risk GO)](2026-08-07-grounded-message-to-word-brain-native-naming-replaces-host-decoder.md) | unclear |
+| 2026-08-07 | [Grounded message-to-word ON THE SHARED SPIKING BRIDGE](2026-08-07-grounded-message-to-word-onbridge-spiking-naming-map.md) | GO |
+| 2026-08-07 | [Driving the naming map from the NEURAL RETINA: raw V1 firing grounds the percept but does NOT clear the naming bar](2026-08-07-grounded-retina-percept-naming-raw-V1-boundary.md) | BOUNDARY |
+| 2026-08-07 | [lane B curiosity: learning-progress-MAXIMIZING ask selection is immune to the noisy-TV trap by construction](2026-08-07-laneB-curiosity-learning-progress-MAXIMIZING-selection-CPU-proxy-6seed-GO.md) | GO |
+| 2026-08-07 | [lane C honesty-as-behavior: a NEURAL abstain/hedge gate from the learned metacognitive-confidence pool](2026-08-07-laneC-neural-abstain-hedge-gate-learned-metacog-confidence-single-seed-derisk.md) | GO |
+| 2026-08-07 | [lane D perception](2026-08-07-laneD-v1-pooler-trace-homeostatic-scaling-REGRESSES-not-the-companion-process.md) | unclear |
+| 2026-08-07 | [Open-ended fluent GROUNDED conversation](2026-08-07-open-ended-conversation-faculty-state-and-blockers-SCOPING.md) | GO |
+| 2026-08-07 | [STEP-0 closability gate is NO-GO: a single label-free regime statistic cannot set the retest competition point](2026-08-07-replay-consolidation-v7-step0-label-free-setpoint-NO-GO.md) | GO |
+| 2026-08-07 | [Rubicon delayed-credit](2026-08-07-rubicon-delayed-credit-maintained-goal-bridge-PARTIAL.md) | PARTIAL |
+| 2026-08-07 | [Rubicon HALF-2](2026-08-07-rubicon-half2-vspatch-reward-timed-value-maintenance-GO-looking.md) | GO |
+| 2026-08-07 | [Source-monitor RECALL-SIDE CA3-attractor-competition: single-g_comp knob NO-GO (smoke)](2026-08-07-source-monitor-attractor-competition-NO-GO-single-gcomp-knob-wta-does-not-track-cue-joint-storage-separation-knob-needed.md) | NO-GO |
+| 2026-08-07 | [Source-monitor conjunctive source-tag NO-GO (smoke)](2026-08-07-source-monitor-conjunctive-tag-NO-GO-encoding-differentiates-which-cells-fire-but-recall-must-drive-the-whole-shared-pattern.md) | NO-GO |
+| 2026-08-07 | [Source-monitor hetero-encoding NO-GO (smoke)](2026-08-07-source-monitor-hetero-encoding-NO-GO-shared-core-fires-in-every-recall-so-pedestal-depression-redistributes-not-removes-rival-burden.md) | NO-GO |
+| 2026-08-07 | [The joint attractor-competition x storage-separation x SCALE de-risk is a NO-GO at n=96](2026-08-07-source-monitor-joint-scale-NO-GO-identity-is-not-a-point-neuron-rate-quantity.md) | NO-GO |
+| 2026-08-07 | [Source-monitor JOINT knob (uniq_emphasis × g_comp): NO-GO (smoke)](2026-08-07-source-monitor-joint-uniq-emphasis-x-gcomp-NO-GO-selectivity-gain-redistributes-margin-weakest-source-pinned-at-n12.md) | NO-GO |
+| 2026-08-07 | [Stage A — the co-resident conversation-integration DESIGN (orchestrated scope + adversarial premortem, 2026-08-07)](2026-08-07-stageA-conversation-integration-DESIGN.md) | unclear |
+| 2026-08-07 | [Stage-A FOUNDATION (STEP 0 + STEP 1) — the honesty floor routes the CALIBRATED monitor, single-seed smoke](2026-08-07-stageA-foundation-honesty-floor-calibrated-monitor-3way-arbiter-single-seed.md) | unclear |
+| 2026-08-07 | [Stage-A honesty floor is 6/6-SAFE via a conservative NON-PEEKING edge-margin guard](2026-08-07-stageA-honesty-floor-6of6-SAFE-conservative-nonpeeking-edge-margin-guard-seed43-regression-eliminated.md) | unclear |
+| 2026-08-07 | [Stage-A honesty floor STRENGTHENED + axis-separated](2026-08-07-stageA-honesty-floor-strengthen-axis-separated-familiar-wrong-catch-4of6-fit-guard.md) | unclear |
+| 2026-08-07 | [Stage-A STEP 2 — affect-coloring of real composer speech UNDER the honesty floor, single-seed smoke (GO)](2026-08-07-stageA-step2-affect-coloring-under-honesty-floor-single-seed.md) | unclear |
+| 2026-08-07 | [Stage-A STEP 3](2026-08-07-stageA-step3-curiosity-wh-question-emission-feeding-3way-arbiter-single-seed.md) | GO |
+| 2026-08-06 | [Gate B Stage-0 tonic-output substrate is seed-robust and cross-backend; re-anchor to Stage 1](2026-08-06-gateB-stage0-tonic-output-seed-robustness-and-stage1-reanchor.md) | unclear |
+| 2026-08-06 | [Gate B Stage 1: continuous center-surround BG selector is a cross-backend CONSTRUCTION GO](2026-08-06-gateB-stage1-continuous-bg-selector-CONSTRUCTION-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2: global-dopamine three-factor reward-credit is NOT reward-contingent on the continuous selector](2026-08-06-gateB-stage2-local-reward-credit-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2: local reward-credit learning on the continuous BG selector (preregistration)](2026-08-06-gateB-stage2-local-reward-credit-PREREGISTRATION.md) | unclear |
+| 2026-08-06 | [Gate B Stage 2b](2026-08-06-gateB-stage2b-per-action-da-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2b: per-action compartmentalised dopamine (preregistration)](2026-08-06-gateB-stage2b-per-action-da-PREREGISTRATION.md) | NO-GO |
+| 2026-08-06 | [Gate B Stage 2c: the opponent (negative-RPE) arm FIXES reversal but does NOT pass the contingency (yoked) gate](2026-08-06-gateB-stage2c-opponent-negative-rpe-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2d](2026-08-06-gateB-stage2d-uncertainty-gated-exploration-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2e](2026-08-06-gateB-stage2e-directed-novelty-exploration-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2f](2026-08-06-gateB-stage2f-contingency-gated-exploration-NO-GO.md) | GO |
+| 2026-08-06 | [Gate B Stage 2g](2026-08-06-gateB-stage2g-hammond-deltap-dev-GO-heldout-NO-GO-critic-saturation.md) | NO-GO |
+| 2026-08-06 | [Gate B Stage 2h: a proposal-level forced-sampling floor does NOT close the extreme-bias residual](2026-08-06-gateB-stage2h-forced-sampling-extreme-bias-NO-GO.md) | GO |
+| 2026-08-06 | [Selective CA1-to-cortex target reinstatement — research gate](2026-08-06-replay-consolidation-selective-CA1-to-cortex-reinstatement-research-gate.md) | unclear |
+| 2026-08-06 | [Learned CA1->cortex reinstatement makes replay consolidation work on one calibration seed, not yet both](2026-08-06-replay-cortical-consolidation-v5-learned-CA1-to-cortex-reinstatement.md) | unclear |
+| 2026-08-06 | [Intrinsic SFA one-of-N eviction CLOSES the shared-cue-cell interference wall on both seeds; the residual is the repla...](2026-08-06-replay-cortical-consolidation-v5-sfa-eviction-closes-interference-wall-order-control-is-next.md) | unclear |
+| 2026-08-06 | [Multiseed validation is NO-GO: the FROZEN v6 order-STDP operating point does NOT generalize past the 2 calibration seeds](2026-08-06-replay-cortical-consolidation-v6-multiseed-NO-GO-operating-point-overfit.md) | NO-GO |
+| 2026-08-06 | [Order-sensitive STDP consolidation CLOSES the replay-order control on BOTH calibration seeds](2026-08-06-replay-cortical-consolidation-v6-order-sensitive-STDP-closes-order-control-GO.md) | GO |
+| 2026-08-06 | [Source monitoring: whole-brain functional role and the acceptable no-harm tradeoff (P3 spec)](2026-08-06-source-monitor-P3-functional-role-and-tradeoff-spec.md) | unclear |
+| 2026-08-06 | [v5 calibration NO-GO: the bounded-loss tradeoff is validated; the residual is an isolated learning-off leak](2026-08-06-source-monitor-coresidency-v5-calibration-NO-GO-tradeoff-validated-learning-off-leak-isolated.md) | NO-GO |
+| 2026-08-06 | [Source-monitor v5 calibration: preregistration](2026-08-06-source-monitor-coresidency-v5-calibration-PREREGISTRATION.md) | unclear |
+| 2026-08-06 | [v6 calibration GO: the learning-off leak is closed, silent by construction; the bounded-loss win holds](2026-08-06-source-monitor-coresidency-v6-calibration-GO-learning-off-silent-by-construction.md) | unclear |
+| 2026-08-06 | [v6 development NO-GO: silent-by-construction generalizes, the redistributive-win criterion does not](2026-08-06-source-monitor-coresidency-v6-development-NO-GO-redistributive-win-does-not-generalize.md) | NO-GO |
+| 2026-08-06 | [v7 development NO-GO: region-scoped threshold homeostasis breaks the fixed GABA-A competition](2026-08-06-source-monitor-coresidency-v7-development-NO-GO-homeostasis-masking-breaks-competition.md) | NO-GO |
+| 2026-08-06 | [v8 NO-GO: Turrigiano synaptic scaling toward an activity set-point COMPRESSES the discrimination margins](2026-08-06-source-monitor-coresidency-v8-development-NO-GO-synaptic-scaling-compresses-discrimination-margins.md) | NO-GO |
+| 2026-08-06 | [v9 NO-GO](2026-08-06-source-monitor-coresidency-v9-development-NO-GO-inhibitory-plasticity-inert-no-rival-burden-stepping-history-artifact.md) | NO-GO |
+| 2026-08-06 | [Episode-pattern OVERLAP makes the weakest-source margin criterion SATISFIABLE (rival burden > 0), but the fixed symmetric GABA-A competition FAILS it](2026-08-06-source-monitor-episode-overlap-makes-criterion-satisfiable-but-symmetric-GABA-A-competition-fails-weakest-source-NO-GO.md) | GO |
+| 2026-08-06 | [Self-normalised "fair" inhibition does NOT reverse the rich-get-richer direction in a spiking substrate, and the own-gain alternative is inert](2026-08-06-source-monitor-fair-inhibition-and-own-gain-both-NO-GO-margin-is-a-shared-cell-pattern-separation-problem.md) | NO-GO |
+| 2026-08-06 | [Instrument fix](2026-08-06-source-monitor-stepping-history-instrument-FIXED-v6-and-v9-calibration-GO-were-artifacts.md) | GO |
+| 2026-08-05 | [Khaliq source-native initialization correction](2026-08-05-v14-khaliq-native-initialization-CORRECTION.md) | unclear |
+| 2026-08-05 | [Stage B fast-channel local source audit](2026-08-05-v14-stageB-fast-channel-local-source-audit.md) | unclear |
+| 2026-08-05 | [Stage B fast-channel source transfer: structural NO-GO](2026-08-05-v14-stageB-fast-channel-source-transfer-STRUCTURAL-NO-GO.md) | GO |
+| 2026-08-05 | [Stage B fast-channel state-family research gate](2026-08-05-v14-stageB-fast-channel-state-family-research-gate.md) | unclear |
+| 2026-08-05 | [Stage B four-extractor population targets remain unresolved](2026-08-05-v14-stageB-four-way-population-target-UNRESOLVED.md) | unclear |
+| 2026-08-05 | [Kinetic identification readiness: target waveforms still required](2026-08-05-v14-stageB-kinetic-identification-readiness-BLOCKED.md) | unclear |
+| 2026-08-05 | [Kinetic parameter authority: source vectors are points, not ranges](2026-08-05-v14-stageB-kinetic-parameter-authority-RESEARCH.md) | unclear |
+| 2026-08-05 | [Stage B Kv3 candidate source review](2026-08-05-v14-stageB-kv3-candidate-source-review.md) | unclear |
+| 2026-08-05 | [V14 Stage B missing protocol authority: RESOLVED-PARTIAL](2026-08-05-v14-stageB-missing-protocol-authority-RESOLVED-PARTIAL.md) | PARTIAL |
+| 2026-08-05 | [Stage B source-model parameter-identification bounds: evidence review](2026-08-05-v14-stageB-parameter-identification-bounds-research.md) | unclear |
+| 2026-08-05 | [V14 Stage B phased NaP GPU screen - IMPLEMENTED](2026-08-05-v14-stageB-phased-nap-gpu-screen-IMPLEMENTED.md) | unclear |
+| 2026-08-05 | [Fresh V3 Stage B Sobol GPU screen: engineering NO-GO](2026-08-05-v14-stageB-sobol-v3-fresh-gpu-screen-ENGINEERING-NO-GO.md) | GO |
+| 2026-08-05 | [Stage B sodium candidate source review](2026-08-05-v14-stageB-sodium-candidate-source-review.md) | unclear |
+| 2026-08-05 | [Stage B source-model transfer: no unmodified candidate](2026-08-05-v14-stageB-source-model-transfer-NO-CANDIDATE.md) | unclear |
+| 2026-08-05 | [Stage B structural-successor preregistration correction](2026-08-05-v14-stageB-successor-preregistration-audit-CORRECTION.md) | unclear |
+| 2026-08-05 | [V14 Stage B two-survivor NumPy confirmation: resolved checks pass, full contract unavailable](2026-08-05-v14-stageB-two-survivor-numpy-confirmation-UNAVAILABLE.md) | unclear |
+| 2026-08-05 | [Stage B V3 failure diagnostic: structural engineering NO-GO](2026-08-05-v14-stageB-v3-failure-diagnostic-STRUCTURAL-NO-GO.md) | GO |
+| 2026-08-04 | [Microphone to cochlea to tonotopic A1: construction package](2026-08-04-auditory-cochlea-tonotopic-a1-frontend-v1-CONSTRUCTION.md) | unclear |
+| 2026-08-04 | [GPi/SNr autonomous pacemaking: evidence-bounded biophysical fallback](2026-08-04-gpi-snr-autonomous-pacemaking-biophysical-fallback-RESEARCH.md) | unclear |
+| 2026-08-04 | [Graded affect diagnostic retains clearing but selects no operating point](2026-08-04-laneA-graded-affect-quench-v1-DIAGNOSTIC-RESULT.md) | unclear |
+| 2026-08-04 | [Lane A graded affect plus active clearing](2026-08-04-laneA-graded-affect-quench-v1-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V11 action boundary self-activates without a motor action](2026-08-04-neural-vocal-credit-gateB-v11-action-boundary-CONSTRUCTION-NO-GO.md) | GO |
+| 2026-08-04 | [Gate B v11: neural action boundary engagement](2026-08-04-neural-vocal-credit-gateB-v11-action-boundary-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V12 disinhibitory boundary fails quiet startup and action release](2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-CONSTRUCTION-NO-GO.md) | GO |
+| 2026-08-04 | [Gate B v12: motor-disinhibited action boundary](2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [Gate B v12 research gate: open the action boundary only from motor output](2026-08-04-neural-vocal-credit-gateB-v12-disinhibitory-boundary-RESEARCH-GATE.md) | unclear |
+| 2026-08-04 | [V13 backend arithmetic correction: diagnostic design](2026-08-04-neural-vocal-credit-gateB-v13-backend-arithmetic-correction-DIAGNOSTIC-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 strict-arithmetic matched-state replay](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-arithmetic-replay-DIAGNOSTIC-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 strict-arithmetic replay v1 reaches step 1,114 before a recovery-state difference](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-arithmetic-replay-v1-DIAGNOSTIC-RESULT.md) | unclear |
+| 2026-08-04 | [V13 strict-arithmetic matched-state replay v2](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-arithmetic-replay-v2-DIAGNOSTIC-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 strict-arithmetic replay v2 is byte-exact across NumPy and CuPy](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-arithmetic-replay-v2-DIAGNOSTIC-RESULT.md) | unclear |
+| 2026-08-04 | [V13 backend-neutral Izhikevich initialization correction diagnostic](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-initialization-correction-DIAGNOSTIC-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 backend-neutral initialization is exact at step zero](2026-08-04-neural-vocal-credit-gateB-v13-backend-neutral-izh-initialization-correction-DIAGNOSTIC-RESULT.md) | unclear |
+| 2026-08-04 | [V13 backend state-transplant diagnostic](2026-08-04-neural-vocal-credit-gateB-v13-backend-state-transplant-DIAGNOSTIC-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 backend state transplant: initialization dominates, execution also diverges](2026-08-04-neural-vocal-credit-gateB-v13-backend-state-transplant-DIAGNOSTIC-RESULT.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 calibration order is undefined](2026-08-04-neural-vocal-credit-gateB-v13-calibration-order-UNDEFINED.md) | unclear |
+| 2026-08-04 | [Gate B v13: repair the continuous selector, not its boundary](2026-08-04-neural-vocal-credit-gateB-v13-continuous-bg-selector-RESEARCH-GATE.md) | unclear |
+| 2026-08-04 | [V13 deterministic compatibility correction earns GO](2026-08-04-neural-vocal-credit-gateB-v13-deterministic-compatibility-GO.md) | GO |
+| 2026-08-04 | [V13 deterministic compatibility correction](2026-08-04-neural-vocal-credit-gateB-v13-deterministic-compatibility-correction-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process-order correction](2026-08-04-neural-vocal-credit-gateB-v13-process-order-correction-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 v8 fixes v2 overhead but remains overall NO-GO](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-confirmation-v8-NO-GO.md) | GO |
+| 2026-08-04 | [V13 Stage-0 performance confirmation v8](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-confirmation-v8-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 v7 misses two performance limits](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-continuation-v7-NO-GO.md) | GO |
+| 2026-08-04 | [V13 Stage-0 performance continuation v7](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-continuation-v7-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 v9 performance diagnostic preregistration](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-diagnostic-v9-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 v9 diagnostic completed without changing the sealed NO-GO](2026-08-04-neural-vocal-credit-gateB-v13-stage0-performance-diagnostic-v9-RESULT.md) | NO-GO |
+| 2026-08-04 | [V13 Stage-0 process correction v1](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v1-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v1 is undefined](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v1-UNDEFINED.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v2](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v2-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v2 is undefined](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v2-UNDEFINED.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v3 aborted before measurement](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v3-ABORTED.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v3](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v3-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v4 stops after calibration GO](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v4-PARTIAL.md) | PARTIAL |
+| 2026-08-04 | [V13 Stage-0 process correction v4](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v4-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v5](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v5-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v5 is undefined](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v5-UNDEFINED.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 process correction v6 completes physiology](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v6-PARTIAL.md) | PARTIAL |
+| 2026-08-04 | [V13 Stage-0 process correction v6](2026-08-04-neural-vocal-credit-gateB-v13-stage0-process-correction-v6-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [V13 tonic-output substrate stops at CuPy compatibility](2026-08-04-neural-vocal-credit-gateB-v13-tonic-output-COMPATIBILITY-NO-GO.md) | GO |
+| 2026-08-04 | [V13 Stage-0 replication earns NO-GO](2026-08-04-neural-vocal-credit-gateB-v13-tonic-output-REPLICATION-NO-GO.md) | GO |
+| 2026-08-04 | [Gate B v13 Stage 0: autonomous tonic-output substrate](2026-08-04-neural-vocal-credit-gateB-v13-tonic-output-substrate-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [Gate B v14: explicit SNr pacemaking before selector retuning](2026-08-04-neural-vocal-credit-gateB-v14-explicit-snr-pacemaker-RESEARCH-GATE.md) | unclear |
+| 2026-08-04 | [Gate B v14 Stage A: engineering GO](2026-08-04-neural-vocal-credit-gateB-v14-stageA-ENGINEERING-GO.md) | GO |
+| 2026-08-04 | [Gate B v14 Stage A performance attempt 1 timed out without a measurement](2026-08-04-neural-vocal-credit-gateB-v14-stageA-PERFORMANCE-INFRASTRUCTURE-FAILURE.md) | unclear |
+| 2026-08-04 | [Gate B v14 Stage A: region-scoped SNr conductance substrate](2026-08-04-neural-vocal-credit-gateB-v14-stageA-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [Gate B V14 Stage B Readiness](2026-08-04-neural-vocal-credit-gateB-v14-stageB-READINESS-PREREGISTRATION.md) | unclear |
+| 2026-08-04 | [Parameter Research Full-Text Retrieval Smoke](2026-08-04-parameter-research-fulltext-retrieval-smoke.md) | unclear |
+| 2026-08-04 | [Parameter Research Live Discovery Smoke](2026-08-04-parameter-research-live-discovery-smoke.md) | unclear |
+| 2026-08-04 | [V13 backend-neutral GPi/SNr heterogeneity contract](2026-08-04-v13-backend-neutral-heterogeneity-RESEARCH.md) | unclear |
+| 2026-08-04 | [V13 replacement calibration: biological and experimental basis](2026-08-04-v13-replacement-calibration-research.md) | unclear |
+| 2026-08-04 | [V13 Stage-0 replacement calibration readiness](2026-08-04-v13-stage0-replacement-calibration-readiness-RESULT.md) | unclear |
+| 2026-08-04 | [V14 authenticated SNr packet runtime equations](2026-08-04-v14-snr-packet-runtime-equations-ENGINEERING.md) | unclear |
+| 2026-08-04 | [V14 Dispatch Cache Passes Active Speed But Fails Default Overhead](2026-08-04-v14-stageA-dispatch-cache-default-overhead-NO-GO.md) | GO |
+| 2026-08-04 | [V14 Stage A HH State Fusion Remains Below Performance Gate](2026-08-04-v14-stageA-hh-state-fusion-performance-NO-GO.md) | GO |
+| 2026-08-04 | [V14 Stage A Historical Control Construction Failed](2026-08-04-v14-stageA-performance-control-config-compatibility-failure.md) | unclear |
+| 2026-08-04 | [V14 Stage A Direct-Output Performance Is Insufficient](2026-08-04-v14-stageA-performance-direct-output-NO-GO.md) | GO |
+| 2026-08-04 | [V14 Stage A Immutable Performance Worker Timed Out](2026-08-04-v14-stageA-performance-immutable-worker-timeout.md) | unclear |
+| 2026-08-04 | [V14 Stage A Moving-Worktree Attempt Aborted](2026-08-04-v14-stageA-performance-moving-worktree-ABORTED.md) | unclear |
+| 2026-08-04 | [V14 Performance V2 Exposes Unstable Benchmark Environment](2026-08-04-v14-stageA-performance-v2-INFRASTRUCTURE-INVALID.md) | unclear |
+| 2026-08-04 | [V14 Performance V3 Passes The Sealed Engineering Gate](2026-08-04-v14-stageA-performance-v3-GO.md) | GO |
+| 2026-08-04 | [V14 Stage B SNr executable-parameter evidence](2026-08-04-v14-stageB-executable-parameter-evidence-RESEARCH.md) | unclear |
+| 2026-08-04 | [V14 Stage B full GPU campaign: engineering screen complete](2026-08-04-v14-stageB-full-GPU-campaign-ENGINEERING.md) | unclear |
+| 2026-08-04 | [V14 Stage B intrinsic-lesion readiness transport](2026-08-04-v14-stageB-intrinsic-readiness-ENGINEERING.md) | unclear |
+| 2026-08-04 | [V14 Stage B raw scorer and readiness transport](2026-08-04-v14-stageB-raw-scorer-readiness-transport-ENGINEERING.md) | unclear |
+| 2026-08-04 | [V14 Stage B source-bound endpoint execution](2026-08-04-v14-stageB-source-bound-event-count-endpoints-ENGINEERING.md) | unclear |
+| 2026-08-04 | [V14 Stage B two-candidate transport: completed engineering check](2026-08-04-v14-stageB-two-candidate-transport-ENGINEERING.md) | unclear |
+| 2026-08-03 | [A shared spiking brain learns a small vocal convention from consequences](2026-08-03-developmental-vocal-convention-6seed-GO.md) | GO |
+| 2026-08-03 | [Grounded speech-action loop: hunger, learned perception, request, and satiety GO](2026-08-03-grounded-speech-action-loop-6seed-GO.md) | GO |
+| 2026-08-03 | [Intrinsic vocal exploration and same-brain reversal are not reliable](2026-08-03-intrinsic-vocal-reversal-4seed-NO-GO.md) | GO |
+| 2026-08-03 | [Lane C neural source-consistency echo: six-seed GO for the first source-metadata burn-down](2026-08-03-laneC-neural-source-consistency-echo-GO-independent-source-memory-burn-down.md) | unclear |
+| 2026-08-03 | [Lane C plastic source memory: learned source support and production wire-in GO](2026-08-03-laneC-plastic-source-memory-GO-learned-source-support-production-wirein.md) | unclear |
+| 2026-08-03 | [Lane C plastic source memory: research gate](2026-08-03-laneC-plastic-source-memory-research-gate.md) | unclear |
+| 2026-08-03 | [Lane C source-consistency floor: production scaffold GO, not final biological honesty](2026-08-03-laneC-source-consistency-floor-scaffold-GO-production-safety-not-biological-honesty.md) | PARTIAL |
+| 2026-08-03 | [Vocal credit v1 fails the yoked-reward control](2026-08-03-neural-vocal-credit-gateB-v1-yoked-NO-GO.md) | GO |
+| 2026-08-03 | [Gate B v10 research gate: make reward change the selector's policy](2026-08-03-neural-vocal-credit-gateB-v10-corticostriatal-policy-RESEARCH-GATE.md) | unclear |
+| 2026-08-03 | [Gate B v10: action-local eligibility in the selector policy](2026-08-03-neural-vocal-credit-gateB-v10-policy-eligibility-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [V10 policy eligibility is undefined because actions did not remain exclusive](2026-08-03-neural-vocal-credit-gateB-v10-policy-eligibility-UNDEFINED.md) | unclear |
+| 2026-08-03 | [Gate B v11 research gate: make action completion a neural state](2026-08-03-neural-vocal-credit-gateB-v11-action-boundary-RESEARCH-GATE.md) | unclear |
+| 2026-08-03 | [Action-value critic changes the arbitrary winner but does not neutralize yoked reward](2026-08-03-neural-vocal-credit-gateB-v2-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Vocal credit Gate B v3: omission error and local critic normalization](2026-08-03-neural-vocal-credit-gateB-v3-PREREGISTRATION.md) | NO-GO |
+| 2026-08-03 | [Omission circuit remains silent under intact critic normalization](2026-08-03-neural-vocal-credit-gateB-v3-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Host-timed action trace makes Gate B v4 unsafe to promote](2026-08-03-neural-vocal-credit-gateB-v4-smoke-NO-GO.md) | GO |
+| 2026-08-03 | [Neural commit and arousal tag passes a frozen-dynamics v5 smoke on CPU and GPU](2026-08-03-neural-vocal-credit-gateB-v5-cross-backend-smoke-QUALIFIED.md) | unclear |
+| 2026-08-03 | [Gate B v5 learning: action trace to local reward prediction](2026-08-03-neural-vocal-credit-gateB-v5-learning-PREREGISTRATION.md) | NO-GO |
+| 2026-08-03 | [Local reward expectation learns, but its prediction-error output is too weak](2026-08-03-neural-vocal-credit-gateB-v5-learning-smoke-NO-GO.md) | GO |
+| 2026-08-03 | [Gate B v6: stronger sparse trace input does not create a prediction](2026-08-03-neural-vocal-credit-gateB-v6-engagement-NO-GO.md) | GO |
+| 2026-08-03 | [Gate B v6: learned expectation must precede and overlap reward](2026-08-03-neural-vocal-credit-gateB-v6-persistent-expectation-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Gate B v7: a larger single learned afferent does not create a prediction](2026-08-03-neural-vocal-credit-gateB-v7-dense-convergence-NO-GO.md) | GO |
+| 2026-08-03 | [Gate B v7: dense convergent neural action context](2026-08-03-neural-vocal-credit-gateB-v7-dense-convergence-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Gate B v8: fixed convergence does not provide a learned operating point](2026-08-03-neural-vocal-credit-gateB-v8-dual-afferent-NO-GO.md) | GO |
+| 2026-08-03 | [Gate B v8: subthreshold state plus learned action context](2026-08-03-neural-vocal-credit-gateB-v8-dual-afferent-PREREGISTRATION.md) | NO-GO |
+| 2026-08-03 | [Gate B v9: learned action context through a graded dendrite](2026-08-03-neural-vocal-credit-gateB-v9-graded-dendritic-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Gate B v9 research gate: let the learned route enter through a dendrite](2026-08-03-neural-vocal-credit-gateB-v9-graded-dendritic-RESEARCH-GATE.md) | unclear |
+| 2026-08-03 | [Gate B v9: a learned action route recruits pre-reward expectation through a dendrite](2026-08-03-neural-vocal-credit-gateB-v9-graded-dendritic-engagement-GO.md) | GO |
+| 2026-08-03 | [Gate B v9 Phase 2: neural expectation must change reward and omission](2026-08-03-neural-vocal-credit-gateB-v9-output-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [The first v9 output run is undefined because protocol and action coverage failed](2026-08-03-neural-vocal-credit-gateB-v9-output-UNDEFINED-action-mismatch.md) | unclear |
+| 2026-08-03 | [Gate B v9 Phase 2 v2: fixed contingent probe blocks](2026-08-03-neural-vocal-credit-gateB-v9-output-v2-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [V9 output remains undefined because the trained action was never expressed](2026-08-03-neural-vocal-credit-gateB-v9-output-v2-UNDEFINED-no-trained-action.md) | unclear |
+| 2026-08-03 | [Neural vocal selection is causal but misses the repeatability gate](2026-08-03-neural-vocal-selector-gateA-4seed-NO-GO.md) | GO |
+| 2026-08-03 | [Neural vocal selection passes the four-seed physiology gate](2026-08-03-neural-vocal-selector-gateA-v2-4seed-GO.md) | GO |
+| 2026-08-03 | [Replay consolidation is causal but not yet reliable](2026-08-03-replay-cortical-consolidation-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Local inhibition improves replay specificity but consolidation remains fragile](2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Replay consolidation v3: learned cortical index and local replay balance](2026-08-03-replay-cortical-consolidation-v3-calibration-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Replay consolidation v3 calibration is undefined](2026-08-03-replay-cortical-consolidation-v3-calibration-UNDEFINED.md) | unclear |
+| 2026-08-03 | [Replay consolidation v4: dendritic target reinstatement](2026-08-03-replay-cortical-consolidation-v4-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Source memory works on the shared monitoring substrate](2026-08-03-source-monitor-coresidency-calibration-GO.md) | GO |
+| 2026-08-03 | [Source-memory co-residency misses the development repeatability gate](2026-08-03-source-monitor-coresidency-development-NO-GO.md) | GO |
+| 2026-08-03 | [Source-monitor co-residency development gate: preregistration](2026-08-03-source-monitor-coresidency-development-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Local source competition clears the margin floor but misses its no-harm control](2026-08-03-source-monitor-coresidency-v2-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Local threshold homeostasis does not solve the source-margin tradeoff](2026-08-03-source-monitor-coresidency-v3-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Source-monitor v3 local-homeostasis calibration: preregistration](2026-08-03-source-monitor-coresidency-v3-calibration-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Source monitoring v4: adaptive inhibitory competition](2026-08-03-source-monitor-coresidency-v4-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Adaptive source inhibition calibration is undefined](2026-08-03-source-monitor-coresidency-v4-calibration-UNDEFINED.md) | unclear |
+| 2026-08-03 | [Visual hierarchical part identity: calibration preregistration](2026-08-03-visual-hierarchical-part-identity-PREREGISTRATION.md) | unclear |
+| 2026-08-03 | [Hierarchical visual identity remains silent under intact inhibition](2026-08-03-visual-hierarchical-part-identity-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Spike latency removes visual top-k selection but identity remains unstable](2026-08-03-visual-identity-spike-latency-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Temporal binding does not yet produce stable visual identity](2026-08-03-visual-identity-temporal-binding-calibration-NO-GO.md) | GO |
+| 2026-08-03 | [Visual identity temporal binding: calibration preregistration](2026-08-03-visual-identity-temporal-binding-calibration-PREREGISTRATION.md) | unclear |
+| 2026-08-02 | [gap#1 WKV scale ladder: width buys fluency, and run4 d2048 clears the six-seed RF spiking-forward gate](2026-08-02-gap1-wkv-width-ladder-scale-read-run4-d2048-is-the-next-spiking-forward-target.md) | unclear |
+| 2026-08-02 | [gap#4 crux](2026-08-02-gap4-DFA-eprop-is-depth-robust-scales-to-N4-where-chained-multihop-FA-collapses-the-chain-was-the-depth-wall.md) | unclear |
+| 2026-08-02 | [gap#4 production-bridge deep-credit](2026-08-02-gap4-FA-convergence-is-the-onbridge-credit-root-cause-6of6-LIF-converge-0of6-izhikevich.md) | unclear |
+| 2026-08-02 | [gap#4 crux](2026-08-02-gap4-crux-transport-free-rule-gets-matched-capacity-purchase-on-a-TRAINABLE-LIF-SNN-where-reservoir-gave-zero-6seed.md) | unclear |
+| 2026-08-02 | [gap#4 crux](2026-08-02-gap4-crux-wall-LOCATED-at-the-spiking-read-regime-even-perfect-Wtranspose-oracle-gives-no-directed-credit-6seed.md) | unclear |
+| 2026-08-02 | [gap#4 crux](2026-08-02-gap4-depth-rescue-untestable-on-spikes-the-wall-is-upstream-deep-local-rule-does-not-enter-the-learning-regime.md) | unclear |
+| 2026-08-02 | [gap#4 production-bridge deep-credit attribution](2026-08-02-gap4-production-bridge-deep-credit-NOT-closed-by-XOR-the-wall-is-deeper-than-task-decodability-on-bridge-forward.md) | unclear |
+| 2026-08-02 | [gap#4](2026-08-02-gap4-representable-forward-does-NOT-let-eprop-train-on-a-dense-codon-the-wall-is-the-onbridge-credit-plus-codon-sparsity.md) | GO |
+| 2026-08-02 | [lane A (affect axes): the three neuromodulator affect axes DO dissociate](2026-08-02-laneA-affect-axes-DISSOCIATE-6seed-GO-first-attempt-negative-was-a-measurement-artifact.md) | GO |
+| 2026-08-02 | [lane B curiosity: learning-progress slope separates slow-but-improving from unlearnable in a 6-seed CPU proxy](2026-08-02-laneB-curiosity-learning-progress-slope-CPU-proxy-6seed-GO-next-onbridge-realization.md) | GO |
+| 2026-08-02 | [lane B (curiosity reward-omission veto): the "protective reserve rescues the veto" lever is a GENUINE honest-negative, not a tuning gap](2026-08-02-laneB-curiosity-reserve-rescue-REFUTED-genuine-tradeoff-next-is-learning-progress-slope.md) | REFUTED |
+| 2026-08-02 | [lane C metacognition: dynamic ACC/aPFC conflict monitor clears the 6-seed type-2 gate](2026-08-02-laneC-metacog-margin-comparator-PARTIAL-real-signal-not-robust-next-is-symmetric-or-learned-error-monitor.md) | PARTIAL |
+| 2026-08-02 | [lane C (metacognition / self-awareness): the first-attempt NEGATIVE was a TYPE-1 SETUP BUG, not a monitor failure](2026-08-02-laneC-metacog-type1-winner-inversion-bug-FIXED-unmasks-the-real-meta_d-question.md) | GO |
+| 2026-08-02 | [lane C self-schema honesty: production wire-in is moat-safe, but only partial as a truth signal](2026-08-02-laneC-self-schema-honesty-production-wirein-PARTIAL-moat-safe-but-trace-confidence-not-enough.md) | PARTIAL |
+| 2026-08-02 | [lane D (perception V2/IT invariance): the first-attempt trace-rule 6-seed NEGATIVE is a DEAD-FORWARD-PASS artifact (VOID as a trace-rule verdict)](2026-08-02-laneD-perception-trace-rule-negative-is-a-DEAD-FORWARD-artifact-deployed-V2IT-is-inert-per-scoping-residual3.md) | GO |
+| 2026-08-02 | [lane D perception: routing the trace rule through V1 -> OnSubstratePooler is built, but default CPU settings are NOGO](2026-08-02-laneD-v1-pooler-trace-route-NOGO-default-3seed-needs-op-point-or-normalization.md) | NO-GO |
+| 2026-08-01 | [E·Language: dual-route past-tense](2026-08-01-E-language-dual-route-morphology-declarative-route-works-procedural-rule-does-not-generalize-6seed-NOGO.md) | NO-GO |
+| 2026-08-01 | [E·Language: the dual-route fix via a SINGLE pool + whole-form→affix inhibition does NOT separate the routes](2026-08-01-E-language-dual-route-single-pool-plus-inhibition-does-NOT-separate-routes-reg-caps-0p25-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [E·Language dual-route morphology](2026-08-01-E-language-two-pool-structural-separation-real-advance-but-residual-reg-vs-irr-tradeoff-1seed.md) | GO |
+| 2026-08-01 | [W4 (lane C): RECURSIVE theory of mind](2026-08-01-W4-recursive-theory-of-mind-2nd-order-false-belief-plus-depth2-scalar-implicature-6seed-GO.md) | GO |
+| 2026-08-01 | [W5 affective theory of mind — 6/6-seed GO, adversarially verified (2026-08-01)](2026-08-01-W5-affective-theory-of-mind-6seed-GO.md) | GO |
+| 2026-08-01 | [The affect ratchet is evicted by a BRAIN-BASED spiking clear](2026-08-01-affect-BRAIN-BASED-active-clear-spiking-quench-fs-gate-6seed-GO-operating-region-mapped.md) | GO |
+| 2026-08-01 | [Active-clear / quench gate EVICTS the affect ratchet](2026-08-01-affect-active-clear-quench-gate-evicts-the-ratchet-6seed-physics-GO-host-shortcut.md) | GO |
+| 2026-08-01 | [The affect ratchet is a BISTABLE saturated attractor: STP depression annihilates it across every τ_d and strength](2026-08-01-affect-ratchet-STP-annihilates-across-all-tau_d-and-U-the-loop-is-bistable-brakes-cannot-grade-evict.md) | unclear |
+| 2026-08-01 | [Lane A · Affect (Phase-0 self-model): AGENCY / AUTHORSHIP 1-bit source tag](2026-08-01-agency-authorship-tag-corollary-discharge-source-monitor-6seed-GO.md) | GO |
+| 2026-08-01 | [Arc A first de-risk: the integrated brain LEARNS from a CONTINGENT teacher via e-prop on the production spiking substrate](2026-08-01-arcA-integrated-brain-learns-from-contingent-teacher-via-eprop-on-spikes-5of6.md) | unclear |
+| 2026-08-01 | [A spiking reward-omission circuit computes the DR-1 curiosity veto](2026-08-01-curiosity-reward-omission-veto-spiking-circuit-6seed.md) | unclear |
+| 2026-08-01 | [The curiosity veto cannot be read off the spiking striosome VALUE — it inverts (honest negative, 6 seeds)](2026-08-01-curiosity-veto-cannot-be-read-off-the-spiking-striosome-value-it-inverts.md) | unclear |
+| 2026-08-01 | [gap#4: the 6-seed bar RAN](2026-08-01-gap4-6seed-bar-RUN-deep-credit-control-shuffleDFA-leaks-forward-learning-real-attribution-not.md) | GO |
+| 2026-08-01 | [gap#4 crux: on a HARDER task the coincidence-gated BDSP gives a WEAK but CONSISTENT positive transport-free credit signal on real spikes](2026-08-01-gap4-BDSP-weak-consistent-positive-on-harder-task-regime-confirmed-6seed.md) | unclear |
+| 2026-08-01 | [gap#4 crux](2026-08-01-gap4-DEPTH2-BDSP-generalizes-where-FA-memorizes-but-same-ceiling-depth-wall-consolidated-6seed.md) | unclear |
+| 2026-08-01 | [gap#4 crux: transport-free DEEP FEEDBACK CONTROL (DFC) overfits the movable plateau hidden](2026-08-01-gap4-DFC-transport-free-deep-feedback-control-overfits-movable-hidden-instrument-verified-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#4 crux: the coincidence-gated BDSP rule TIES the frozen reservoir on real spikes](2026-08-01-gap4-coincidence-gated-BDSP-ties-reservoir-on-real-spikes-no-reliable-credit-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#4](2026-08-01-gap4-eprop-K8-reproduces-closure-with-provenance-decorrelation-noise-REFUTED.md) | REFUTED |
+| 2026-08-01 | [gap#4: a LARGER/richer task does NOT rescue supervised deep credit](2026-08-01-gap4-larger-task-does-NOT-rescue-supervised-deep-credit-movable-hidden-foothold-does-not-scale-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#4 crux](2026-08-01-gap4-multihop-chained-spiking-port-6seed-NEGATIVE-depth-rescue-does-not-transfer-to-spiking-read-regime.md) | NEGATIVE |
+| 2026-08-01 | [gap#4: a local UNSUPERVISED transport-free plasticity rule on the MOVABLE plateau hidden beats a frozen random reservoir at the sweet spot](2026-08-01-gap4-plastic-plateau-local-unsupervised-plasticity-beats-frozen-reservoir-at-sweet-spot-5of6.md) | unclear |
+| 2026-08-01 | [gap#4: the degenerate-forward-pass boundary is CLEARED for the movable-plateau substrate](2026-08-01-gap4-realspikes-pregate-degenerate-forward-pass-boundary-CLEARED-for-movable-plateau.md) | unclear |
+| 2026-08-01 | [gap#4 crux](2026-08-01-gap4-spiking-port-sigmaprime-KP-single-layer-does-NOT-beat-frozen-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#4: DIRECTED error (DFA) on the movable plateau hidden TRAINS it (train 0.81 vs tonic 0.34) but does NOT beat unsupervised sharpening on held-out](2026-08-01-gap4-supervised-directed-error-does-not-beat-unsupervised-on-heldout-movable-hidden-trains-but-overfits-6seed.md) | unclear |
+| 2026-08-01 | [gap#4: the on-bridge SWEET SPOT is LOCATED (forward-representable AND reservoir-fails)](2026-08-01-gap4-sweet-spot-LOCATED-forward-representable-reservoir-fails-but-credit-cannot-train-there-6seed.md) | unclear |
+| 2026-08-01 | [gap#4 crux](2026-08-01-gap4-transport-free-ceiling-FALSIFIED-chained-FA-sigmaprime-clears-it-plus-MNIST-depth4-KP-rescue-6seed.md) | unclear |
+| 2026-08-01 | [gap#4 crux: the unsupervised movable-plateau rule does NOT survive the port to REAL SPIKES](2026-08-01-gap4-unsupervised-rule-does-NOT-survive-port-to-real-spikes-degrades-below-reservoir-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#5 RANK 3 (imagination)](2026-08-01-gap5-RANK3-gamma-organized-recombination-extracted-matrix-proxy-sits-at-chance.md) | GO |
+| 2026-08-01 | [gap#5 RANK 3 (imagination)](2026-08-01-gap5-RANK3-gamma-recombination-DIRECT-simulation-scramble-exceeds-main-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-08-01 | [gap#5 RANK 3 (imagination)](2026-08-01-gap5-RANK3-spiking-recombination-boundary-is-the-encode-not-the-read.md) | GO |
+| 2026-08-01 | [Perception (lane D): the V1→V2→IT object path RETIRES 6/6](2026-08-01-perception-v2it-IT-object-path-RETIRES-inert-decode-at-chance-ground-on-v1-pooler-6seed.md) | unclear |
+| 2026-07-31 | [Affect eviction: slow GABA_B feedback is KILLED as a method — on a sweep that is actually valid](2026-07-31-affect-eviction-slow-GABAB-KILLED-as-a-method-on-a-valid-sweep-sAHP-is-next.md) | NO-GO |
+| 2026-07-31 | [The affect ratchet: the processes that would evict it were SWITCHED OFF, not missing](2026-07-31-affect-ratchet-the-eviction-processes-were-SWITCHED-OFF-not-missing.md) | unclear |
+| 2026-07-31 | [TRIAGE of the 11 lever-efficacy artifacts: 2 load-bearing (both anti-cheat claims, both SUSPECT), 9 incidental](2026-07-31-audit-lever-11-artifacts-triaged.md) | unclear |
+| 2026-07-31 | [AUDIT: 40 identical-arm pairs in banked artifacts — lesions and controls that may never have engaged](2026-07-31-audit-lever-efficacy-40-identical-arm-pairs-in-banked-artifacts.md) | GO |
+| 2026-07-31 | [Tier-2 audit](2026-07-31-audit-tier2-no-artifact-triage.md) | unclear |
+| 2026-07-31 | [The curiosity veto survives its critic lesion at 6/6 seeds — so the striosome is not what computes it](2026-07-31-curiosity-veto-survives-the-critic-lesion-6seed-the-striosome-is-not-load-bearing.md) | unclear |
+| 2026-07-31 | [gap#4: the crux was never askable — the idealised ceiling cannot fit its own training set](2026-07-31-gap4-the-crux-was-never-askable-the-idealised-ceiling-cannot-fit-its-own-training-set.md) | unclear |
+| 2026-07-31 | [gap#4](2026-07-31-gap4-the-plateau-expansion-TRADES-THE-CEILING-FOR-THE-FLOOR-and-it-is-the-expansion-not-the-threshold.md) | unclear |
+| 2026-07-31 | [⭐ gap#5 SOLVED at the mechanism level: place-specificity comes from ONE induction pass, and repeated laps ERASE it](2026-07-31-gap5-place-specificity-is-ONE-INDUCTION-PASS-laps-erase-it.md) | unclear |
+| 2026-07-31 | [gap#5 — the STEP C place-specificity control had NO POWER in the density sweep; its ⛔ verdicts are VOID, not negative](2026-07-31-gap5-stepC-control-void-at-small-dW-and-the-fix.md) | unclear |
+| 2026-07-31 | [⛔ gap#5: the TUNED circ_dW headline is increment CONCENTRATION, not place-specificity](2026-07-31-gap5-tuned-circdW-is-concentration-not-place-specificity.md) | GO |
+| 2026-07-31 | [⛔⛔ gap#5: the TUNED operating point sits INSIDE the documented bound trap](2026-07-31-gap5-tuned-point-is-INSIDE-the-bound-trap-97pct-of-dW-is-the-clamp.md) | unclear |
+| 2026-07-31 | [lane D: both normalization rules degrade every metric](2026-07-31-laneD-normalization-arms-are-RATE-CONFOUNDED-not-a-clean-refutation.md) | unclear |
+| 2026-07-31 | [Why we hit walls: the biology is a SYSTEM of processes and we implement ONE, substituting a constant for the rest](2026-07-31-why-we-hit-walls-the-missing-companion-process.md) | unclear |
+| 2026-07-30 | [⛔ CRITICAL: the gap#4 crux is ~14x over its runtime estimate — I checked LIVENESS all session and never THROUGHPUT](2026-07-30-CRITICAL-crux-throughput-14x-over-estimate-liveness-is-not-progress.md) | unclear |
+| 2026-07-30 | [Two measured results: density=1.0 destroys the BTSP learning structure, and lane D is 6/6 NEGATIVE](2026-07-30-density1-destroys-learning-structure-and-laneD-6seed-NEGATIVE.md) | NEGATIVE |
+| 2026-07-30 | [gap#5 OPT-0: the DC-clamp diagnosis is REFUTED by measurement — and my over-read of that measurement is retracted](2026-07-30-gap5-OPT0-measured-DC-clamp-refuted-and-my-own-overread-retracted.md) | unclear |
+| 2026-07-30 | [gap#5: my plateau-terminator recommendation REFUTED 4/4 — the instructive signal is a saturated DC clamp](2026-07-30-gap5-REFUTED-4of4-the-instructive-signal-is-a-DC-clamp.md) | REFUTED |
+| 2026-07-30 | [gap#5: the robust-firing operating point CORRECTS my own O'Keefe-Nadel "confirmation"](2026-07-30-gap5-firing-operating-point-corrects-the-fragmentation-diagnosis.md) | REFUTED |
+| 2026-07-30 | [gap#5 residual: plateau termination is INTRINSIC in the biology, and the engine already has the machinery](2026-07-30-gap5-plateau-termination-is-INTRINSIC-and-the-machinery-already-exists.md) | unclear |
+| 2026-07-30 | [Lane B (Curiosity): DR-1 on-bridge is 6/6 seeds GO — every anti-cheat control collapses](2026-07-30-lane-B-curiosity-DR1-onbridge-6seed-GO.md) | GO |
+| 2026-07-30 | [Lane E (Language) actual state, 2026-07-30: two runners PASS at 6 seeds, two are BLOCKED BY ENVIRONMENT not science](2026-07-30-lane-E-language-state-two-pass-two-blocked-by-environment.md) | unclear |
+| 2026-07-30 | [Lane D DIAGNOSED: three config defects saturate every synapse — and my "numpy toys sit at ceiling" reading was invalid](2026-07-30-laneD-DIAGNOSED-three-config-defects-and-my-numpy-comparison-was-invalid.md) | unclear |
+| 2026-07-26 | [Cortical slot addressability](2026-07-26-cortical-slot-addressability-research-gate.md) | unclear |
+| 2026-07-25 | [🔴 CRITICAL (2026-07-25): comp_apical_R = 50.0 is a 333× miscalibration of a pA→mV units constant](2026-07-25-CRITICAL-apical-R-333x-miscalibration-invalidates-consolidation-operating-point.md) | GO |
+| 2026-07-25 | [M1′ BUILD](2026-07-25-M1prime-windowed-count-gate-build.md) | NO-GO |
+| 2026-07-25 | [CA1 sparsification research-gate scope](2026-07-25-ca1-sparsification-research-gate-scope.md) | unclear |
+| 2026-07-25 | [Consolidation A1 selectivity boundary RE-ATTRIBUTED (adversarial-verify + direct weight probe): it is NOT a WRITE failure](2026-07-25-consolidation-boundary-REATTRIBUTED-dense-CA1-code-not-the-write.md) | unclear |
+| 2026-07-25 | [Consolidation de-risk (1-seed indicator): the CO-ACTIVATION replay fix CLEARS the A1 frozen-wire failure (directional potentiation confirmed) + the dedicated attractor region ignites/holds, BUT selective one-of-N binding hits the point-neuron single-dominant-winner boundary (robust to potentiation strength)](2026-07-25-consolidation-coactivation-potentiation-fix-CONFIRMED-selectivity-hits-point-neuron-single-winner-boundary.md) | unclear |
+| 2026-07-25 | [Consolidation dendritic surpass](2026-07-25-consolidation-dendritic-surpass-DESIGN-weighted-coincidence-bistable-apical-on-slots-reuse-no-sim-edit.md) | unclear |
+| 2026-07-25 | [Consolidation frontier](2026-07-25-consolidation-frontier-research-gate-scoping-dedicated-attractor-region-plus-coactivation-replay.md) | unclear |
+| 2026-07-25 | [Consolidation dendritic op-sweep](2026-07-25-consolidation-opsweep-INTERIM-write-nonselective-plateau-saturates.md) | unclear |
+| 2026-07-25 | [Claude-downtime dispatch MANIFEST — consolidation dendritic operating-point sweep on the mini-PC pool (2026-07-25)](2026-07-25-consolidation-opsweep-downtime-MANIFEST.md) | GO |
+| 2026-07-25 | [Consolidation write-side thresholded eligibility de-risk](2026-07-25-consolidation-thresholded-write-eligibility-derisk.md) | NO-GO |
+| 2026-07-25 | [Consolidation two-sided-read GENERALIZATION de-risk → NO-GO](2026-07-25-consolidation-two-sided-read-generalization-derisk.md) | NO-GO |
+| 2026-07-25 | [Research gate](2026-07-25-dendritic-spike-count-read-research-gate.md) | unclear |
+| 2026-07-25 | [gap#4 forward-representability boundary SURPASSED ON-BRIDGE (spiking, 6-seed GO): the coincidence dendritic-PLATEAU reliable expander breaks the input-drivenness↔reliability tradeoff](2026-07-25-gap4-forward-representability-SURPASSED-ON-BRIDGE-coincidence-plateau-reliable-expander-6seed-GO.md) | GO |
+| 2026-07-25 | [gap#5 Ecker-2022 CA3 replay model-build](2026-07-25-gap5-ecker-ca3-model-build-READY-TO-BUILD-spec-cheapest-first-derisk.md) | BOUNDARY |
+| 2026-07-25 | [gap#5 imaginative replay CLOSED](2026-07-25-gap5-ecker-nS-recurrent-model-SCAFFOLD-built-dt-fixed-recurrent-transmission-blocker.md) | GO |
+| 2026-07-25 | [gap#5 Ecker-regime replay: the boundary is LOCALIZED to PVBC feedback inhibition](2026-07-25-gap5-ecker-regime-replay-boundary-localized-to-PVBC-feedback-ignition-band-transient-seed-demonstrated.md) | REFUTED |
+| 2026-07-25 | [gap#5 learned replay band](2026-07-25-gap5-learned-band-emergence-STDP-directed-traversal-6seed-GO.md) | GO |
+| 2026-07-25 | [gap#5 one-brain MERGE](2026-07-25-gap5-onebrain-end-to-end-capstone-converse-sleep-replay-converse.md) | GO |
+| 2026-07-25 | [gap#5 one-brain MERGE](2026-07-25-gap5-onebrain-production-sleepcycle-merge-6seed-GO.md) | GO |
+| 2026-07-25 | [gap#5 one-brain MERGE de-risk: the localized traveling replay is AdEx-substrate-SPECIFIC](2026-07-25-gap5-replay-onebrain-merge-derisk-replay-is-AdEx-substrate-specific.md) | GO |
+| 2026-07-25 | [gap#5 one-brain merge core mechanism](2026-07-25-gap5-wake-sleep-phase-switch-6seed-GO.md) | GO |
+| 2026-07-25 | [gap#5 one-brain MERGE](2026-07-25-gap5-wake-sleep-roundtrip-coresident-merge-6seed-GO.md) | GO |
 | 2026-08-26 | [**Knowledge grounding — natural-language questions reach the shipped Wikidata core (frontier A)**](2026-08-26-knowledge-grounding-natural-language.md) | **Live, code landed.** Fixes two host front-end gaps (multi-word entity phrases, `"what is X"` → `instance_of`) so a plain-English question reaches the same exact-token store the reasoning route already verified false-hop-free. Production activation pending an owner latency call (board #143). |
 | 2026-07-24 | [**W3 false-belief register (theory-of-mind) — agent-keyed belief store predicts belief, not reality**](2026-07-24-W3-false-belief-register-6seed-GO-adversarially-verified-immunity-claim-corrected.md) | **GO, 6-seed (adversarially verified).** Sally-Anne passes: predicts where the other *believes*, witnessed-move→follows reality, self-belief stays correct (self-other dissociation). Immunity over-claim corrected. |
 | 2026-07-24 | [**P1.2 GNW workspace + affect-directed deliberation — the integrator consolidated, steered by REAL affect**](2026-07-24-P1.2-GNW-workspace-deliberation-6seed-GO-adversarially-verified.md) | **GO, 6-seed (adversarially verified).** 4 GNW rungs consolidated into one persistent workspace region + deliberation loop; the real spiking P0.3 affect state drives directedness (biases WHICH conclusion, not WHETHER), replacing the host salience scalar. |
