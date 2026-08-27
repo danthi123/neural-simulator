@@ -30,7 +30,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 3. THE MOUTH / read-SNR (#80, still the #1 frontier): run the staged ensemble/dendritic read-SNR de-risk; attack the noise so a learned spiking generator can replace Qwen.
 4. CONTINUE the one-brain framework migration: Group A organ-READ → fold the existing 4 pool organs (retire MergedSubstrate*) → Group B/C seams → integration cross-edges under a FUNCTIONAL gate → the production flip.
 
-**LAST DECISION: 2026-08-27 OVERNIGHT — framework+GroupA+V1-warmup on main; knowledge #2 CLOSED (no-flip); comprehension/one-brain-organ-read/mood-fix validated on branches; mouth read-SNR staged. Memory-conservative hold (swap-stressed). Latest `main` = `1f092371f`.**
+**LAST DECISION: 2026-08-27 OVERNIGHT — framework+GroupA on main, now WITH organ-READ byte-identity for 2/7 Group-A organs (self_schema, d6_multiref_wm, 6-seed GO; the `shared=` pattern works end-to-end; 5/7 deferred with named seams); V1-warmup on main + GPU-staged; knowledge #2 CLOSED (no-flip); comprehension/one-brain-organ-read/mood-fix validated on branches; mouth read-SNR staged. NEXT framework rungs (fold the 4 existing pool organs → retire `MergedSubstrate*` → Group B/C seams → integration → production flip) approach the PRODUCTION FLIP + some need `sim/` edits (per-neuron-seeded OU) — owner-review territory, not 2am autonomous. Memory-conservative hold (swap ~42G). Latest `main` = `fa8a2968a`.**
 
 ---
 
