@@ -7,6 +7,14 @@ date: 2026-08-27
 
 # Deterministic conductance-matvec hardening (nmda_recurrent + gabab + graded_plateau) — and the REAL one-brain full-7 `--keys all` wall is co-residence-dependent nmda_slow ROUTING, not matvec summation-order
 
+> **⚠️ ATTRIBUTION REFINED 2026-08-27 by [the dedup finding](2026-08-27-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow.md).**
+> This finding correctly localized the wall to `nmda_slow` ROUTING (not matvec summation-order — that part stands), but its
+> DEEPER attribution — a co-residence-dependent `nmda_slow` density-0.9 RNG SUBSET DRAW — is REFUTED by direct reproduction:
+> d6 built ALONE has a perfectly aligned `nmda_slow` mask (0/10819 misaligned), so the DRAW is fine.
+> The real mechanism is a duplicate-edge per-synapse MASK MISALIGNMENT (`keyed` pre-dedup vs `cp_connections`
+> post-`sum_duplicates`), closed by `cfg.dedup_synapse_masks` (d6 NO-GO -> GO 6/6, merged `b2228616`).
+> Read the dedup finding for the corrected mechanism; `prospective_memory` remains a SEPARATE FP-accumulation seam.
+
 Status: the sim/ hardening is VERIFIED CORRECT on its own bar — additive, guarded, byte-identical when off
 (hash-verified in the data). The full-7 strict `onebrain_merge_verify --keys all` gate remains NO-GO, and the
 hardening does NOT change that: this finding REFUTES the hypothesis that the remaining conductance-matvec paths
