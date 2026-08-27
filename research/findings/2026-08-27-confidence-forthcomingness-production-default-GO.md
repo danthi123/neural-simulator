@@ -1,6 +1,6 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-08-27
 mechanism: confidence-caps-forthcomingness
 lane: introspection-self-model
@@ -12,7 +12,17 @@ artifacts:
 runner: research/findings/raw/_confidence_forthcoming_prodflip/verify_confidence_forthcoming_prodflip.py
 ---
 
-# Confidence-caps-forthcomingness (board #94) is now ON BY DEFAULT (GO)
+> ⛔ **SUPERSEDED same-day (2026-08-27)** by
+> [`2026-08-27-confidence-forthcomingness-chain-trace-fix-still-default-OFF-NOGO.md`](2026-08-27-confidence-forthcomingness-chain-trace-fix-still-default-OFF-NOGO.md).
+> This doc's PARTIAL claim survives: checks A-F genuinely pass WITH forced evidence (the mechanism itself
+> works). The claim that died: "ON BY DEFAULT" / "genuinely load-bearing" — the owner's hard rule against
+> hollow default-on flips applies, because (undisclosed here) the coupling's cap/grant NEVER fires on real,
+> unforced production traffic (`mean_role_confidence` was structurally None on every real turn at the time this
+> doc was written). The superseding doc fixes that structural bug too, and finds the coupling STILL never
+> fires on real traffic for a different reason (confidence saturates at 1.0 on this demo's clean vocabulary).
+> `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s `confidence-forthcomingness` row now reads `on_by_default: NO`.
+
+# Confidence-caps-forthcomingness (board #94) — ⛔ SUPERSEDED, the default-ON flip attempted here was REVERTED same-day (see banner above)
 
 ## Result
 `BRAIN_CONFIDENCE_FORTHCOMING` flips from default-OFF to default-ON. `webapp/confidence_forthcoming_chat.py`

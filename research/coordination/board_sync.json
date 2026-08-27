@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-08-27T23:15:54Z",
+ "updated_at": "2026-08-27T23:46:58Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -608,6 +608,18 @@
    "op": "update-task",
    "args": "task=94 done=true",
    "head": "fc5e9dcb9"
+  },
+  {
+   "at": "2026-08-27T23:46:49Z",
+   "op": "append-desc",
+   "args": "task=94",
+   "head": "a77cc10d0"
+  },
+  {
+   "at": "2026-08-27T23:46:58Z",
+   "op": "update-task",
+   "args": "task=94 done=false",
+   "head": "a77cc10d0"
   }
  ]
 }
