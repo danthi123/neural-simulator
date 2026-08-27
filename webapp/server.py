@@ -3307,7 +3307,20 @@ def _get_multiref_organ(cache_key):
     org = _SESSION_MULTIREF.get(cache_key)
     if org is None:
         from research.runners.d6_multiref_wm_production_organ import MultiReferentWMOrgan
-        org = MultiReferentWMOrgan(seed=42)
+        # ONE-BRAIN CROSS-EDGE (opt-in): when BRAIN_ONEBRAIN_XEDGE is ON, this PER-SESSION organ shares the PROCESS
+        # xedge pool's d6 slice (so the frozen w{k}->sel cross-edge is live) while KEEPING its own per-session
+        # referent codebook -> referent-isolation preserved (no bleed across sessions; the shared spiking slice
+        # carries only transient bumps, no cross-session meaning). OFF (default) or on any failure -> shared=None,
+        # byte-identical to before (its own bridge).
+        shared = None
+        try:
+            from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool
+            if xedge_enabled():
+                _xp = get_xedge_pool(42)
+                shared = _xp.pool if _xp is not None else None
+        except Exception:
+            shared = None
+        org = MultiReferentWMOrgan(seed=42, shared=shared)
         _SESSION_MULTIREF[cache_key] = org
     return org
 

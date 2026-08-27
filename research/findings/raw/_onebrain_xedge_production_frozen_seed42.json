@@ -1,0 +1,71 @@
+{
+  "probe": "onebrain_xedge_production_frozen",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "results": [
+    {
+      "seed": 42,
+      "cross_weights": {
+        "w0->A": 13.5881,
+        "w0->P": 4.3168,
+        "w1->A": 0.05,
+        "w1->P": 0.05,
+        "w2->A": 4.2447,
+        "w2->P": 13.1919
+      },
+      "selftest": {
+        "role": {
+          "p_agent": "w0",
+          "p_patient": "w2",
+          "p_ctrl": "w1"
+        },
+        "intact": [
+          {
+            "item": "bird/watch/bird",
+            "tag": "ambig_2animate",
+            "dNet": -0.009027777777777801,
+            "dMargin": -0.014583333333333337
+          },
+          {
+            "item": "ball/kick/apple",
+            "tag": "ambig_2inanim",
+            "dNet": 0.000694444444444553,
+            "dMargin": 0.000694444444444442
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "dNet": -0.00347222222222221,
+            "dMargin": 0.036805555555555564
+          }
+        ],
+        "lesioned": [
+          {
+            "item": "bird/watch/bird",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "ball/kick/apple",
+            "tag": "ambig_2inanim",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          }
+        ],
+        "max_abs_dNet_intact": 0.009027777777777801,
+        "max_abs_dNet_lesioned": 0.0,
+        "lesion_attributable": true
+      }
+    }
+  ],
+  "note": "frozen pre-grown d6-WM->comprehension cross-edge wired into the live pool; the DRIVE is lesion-attributable on the real production comprehension read (differential hold p_agent-pool vs p_patient-pool, exactly 0 lesioned). Semantic referent->pool binding is a declared residual (positional live focus)."
+}
