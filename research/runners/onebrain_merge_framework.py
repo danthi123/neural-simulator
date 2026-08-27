@@ -19,6 +19,7 @@ Run the smoke (CPU, bit-exact):
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -52,6 +53,13 @@ class OrganDescriptor:
     isolation: str = "per_slice"               # "per_slice" | "full_snapshot" (the two existing protocols)
     idx_fn: Callable = None                    # (bridge) -> the idx map the organ's shared= read path consumes
     organ_cls: type = None                     # the shipped *_ProductionOrgan (constructed with shared=<pool>)
+    read_fn: Callable = None                   # (organ_instance) -> dict of numeric reads (organ-read byte battery)
+    answer_fn: Callable = None                 # (organ_instance) -> the rendered chat answer(s) (answer-preservation)
+    supports_shared: bool = False              # True == the shipped class runs UNMODIFIED against a MergedPool
+    param_het: bool = False                    # organ's standalone uses param-het -> reconcile via the name-keyed
+                                               #   per-region seam (global OFF + enable_heterogeneity on ITS regions)
+    scaffold_residuals: tuple = ()             # host-scaffold flagged for self-organization burn-down (DESIGN §6)
+    defer_reason: str = ""                     # non-empty == Group-B/C deferred; why (the engine seam it needs)
 
 
 class MergeConflict(ValueError):
@@ -60,13 +68,27 @@ class MergeConflict(ValueError):
     corrupts a slice. The reconciliation is a per-region seam (see the twopool branch), declared per organ."""
 
 
+# spec extraction re-runs an organ's de-risk builder (a throwaway bridge just to read its BrainRegion specs),
+# which is the batched verify's dominant cost. Cache the raw specs per (key, seed); deepcopy on use so the
+# per-region flag masking in ensure_built mutates a FRESH copy, never the cached originals.
+_SPEC_CACHE: dict = {}
+
+
+def _cached_spec(descriptor, seed):
+    ck = (descriptor.key, int(seed))
+    if ck not in _SPEC_CACHE:
+        _SPEC_CACHE[ck] = descriptor.spec_fn(int(seed))
+    r, p, m = _SPEC_CACHE[ck]
+    return copy.deepcopy(list(r)), copy.deepcopy(list(p)), m
+
+
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  2. THE MERGE ENGINE — merge_organs([descriptors], seed) -> MergedPool.
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 # The engine-UNIVERSAL config (dt / model / profile / seeds / the always-on per-region seam + framework).
 # Everything organ-family-specific (hebbian block, gabab, the disable flags) is declared PER DESCRIPTOR and
 # UNIONED, so a new family is a descriptor's `config`, not an engine edit.
-def _base_config(seed: int):
+def _base_config(seed: int, legacy: bool = False):
     from sim.config import CoreSimConfig
     from sim.enums import NeuronModel
     cfg = CoreSimConfig()
@@ -77,7 +99,11 @@ def _base_config(seed: int):
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
     cfg.connections_per_neuron = 0
     cfg.enable_brain_region_framework = True
-    cfg.per_region_threshold_heterogeneity = True     # merge seam #1 (name-keyed init byte-identity)
+    # merge seam #1 — the name-keyed firing-threshold draw. ON: a region's thresholds key on its NAME
+    # (crc32), so a slice is co-residence + RNG-order invariant (the substrate-init byte-identity property).
+    # legacy -> OFF (the DISCRIMINATOR): the global-RNG threshold draw depends on total-N + build order, so
+    # merged-vs-coresident DIVERGE -> proves the seam-ON byte-identity is NOT vacuous.
+    cfg.per_region_threshold_heterogeneity = not legacy
     return cfg
 
 
@@ -92,12 +118,22 @@ class MergedPool:
         "cp_neuron_firing_thresholds", "cp_neuron_activity_ema", "cp_external_input_current",
     )
 
-    def __init__(self, seed, descriptors):
+    def __init__(self, seed, descriptors, config_descriptors=None, legacy=False, force_het_off=False):
         self.seed = int(seed)
-        self.descriptors = list(descriptors)
+        self.descriptors = list(descriptors)                       # which regions the pool INSTANTIATES
+        # which descriptors' `config` dicts UNION into the global config. For the MERGED pool this is the
+        # same list; for a CORESIDENT baseline it is the FULL registry, so a solo organ sits on the SAME
+        # superset config as the merged pool -> a non-zero slice delta isolates CO-RESIDENCE, not config.
+        self.config_descriptors = list(config_descriptors) if config_descriptors is not None else list(descriptors)
+        self.legacy = bool(legacy)
+        # LOAD-BEARING control: same reconciled config but CLEAR the per-region param-het mask, so a param-het
+        # organ's izh params revert to the non-jittered preset. A non-zero delta vs the normal merged pool proves
+        # the mask is genuinely DOING WORK (the reconciliation is not a vacuous all-zero het).
+        self.force_het_off = bool(force_het_off)
         self._by_key = {d.key: d for d in descriptors}
         self.bridge = self.cfg = self.xp = None
         self.meta = {}
+        self.organ_regions = {}
         self._keep_mask_cache = {}
         self._built = False
 
@@ -112,29 +148,54 @@ class MergedPool:
         # (1) SPEC EXTRACTION — reuse-by-import; UNION regions/pathways in descriptor order. Every seam keys on
         #     region NAME (crc32), so per-neuron init is co-residence + RNG-order invariant (the whole point).
         regions, pathways = [], []
+        owner = {}                                  # region-name -> owning descriptor key
+        het_regions = set()                         # regions whose organ opts into the param-het seam
+        self.organ_regions = {}                     # descriptor key -> [region names it owns] (build-discovered)
         for d in self.descriptors:
-            r, p, m = d.spec_fn(self.seed)
+            r, p, m = _cached_spec(d, self.seed)
+            self.organ_regions[d.key] = [rg.name for rg in r]
+            for rg in r:
+                if rg.name in owner:
+                    raise MergeConflict(
+                        f"region-name collision {rg.name!r}: {owner[rg.name]} vs {d.key} (rename forbidden — "
+                        f"the seams key on the name; a shared name changes a slice's init -> own-pool, DESIGN §5)")
+                owner[rg.name] = d.key
+                if d.param_het:
+                    het_regions.add(rg.name)
             regions += list(r); pathways += list(p); self.meta[d.key] = m
 
-        # (2) NAME-DISJOINTNESS — a rename is forbidden (the seams key on the name); a collision would change a
-        #     slice's init. This is the exact reason affect is scoped to its own pool (DESIGN §5 GROUP C).
-        names = [rg.name for rg in regions]
-        dup = {n for n in names if names.count(n) > 1}
-        if dup:
-            raise MergeConflict(f"region-name collision across organs: {sorted(dup)} (rename forbidden)")
-
-        # (3) CONFIG UNION — base + each descriptor's requirements; a key at two values is a real conflict.
-        cfg = _base_config(self.seed)
+        # (3) CONFIG UNION — base + each config-descriptor's requirements; a key at two values is a real
+        #     conflict. config_descriptors (not descriptors) so a coresident baseline unions the FULL registry.
+        cfg = _base_config(self.seed, legacy=self.legacy)
         union, provenance = {}, {}
-        for d in self.descriptors:
+        for d in self.config_descriptors:
             for k, v in d.config.items():
                 if k in union and union[k] != v:
                     raise MergeConflict(f"{k!r}: {provenance[k]}={union[k]!r} vs {d.key}={v!r}")
                 union[k] = v; provenance[k] = d.key
         for k, v in union.items():
             setattr(cfg, k, v)
+        # PARAM-HET SEAM — an organ whose standalone uses param-het reconciles it the twopool way: GLOBAL
+        #   enable_parameter_heterogeneity OFF + name-keyed per-region draw ON, masked to ITS regions only. The
+        #   name-keyed draw is co-residence-invariant, so the masked slice carries byte-identical het merged-vs-solo.
+        #   The GLOBAL seam flag keys on config_descriptors (so a coresident baseline sets the SAME global config as
+        #   the merged pool); the per-region MASK (het_regions) keys on the instantiated descriptors.
+        het_config = any(getattr(d, "param_het", False) for d in self.config_descriptors)
+        if het_config and not self.legacy:
+            cfg.enable_parameter_heterogeneity = False
+            cfg.per_region_parameter_heterogeneity = True
+
+        if self.legacy:
+            # DISCRIMINATOR: force the name-keyed seams OFF regardless of what a descriptor declared, so a
+            # co-resident slice's init draws depend on total-N + build order and DIVERGE from the solo slice.
+            cfg.per_region_threshold_heterogeneity = False
+            cfg.per_region_parameter_heterogeneity = False
+            cfg.per_region_wiring_seed = False
 
         # (4) PER-REGION FLAGS — the diffbuilder pattern: reconcile a would-be global conflict into a masked one.
+        for rg in regions:
+            if rg.name in het_regions and not self.legacy and not self.force_het_off:
+                rg.enable_heterogeneity = True            # opt this slice into the name-keyed param-het draw
         for d in self.descriptors:
             for rname, flags in (d.region_flags or {}).items():
                 for rg in regions:
@@ -231,12 +292,83 @@ class MergedPool:
         return _guard()
 
 
-def merge_organs(descriptors, seed: int = 42) -> MergedPool:
+def merge_organs(descriptors, seed: int = 42, config_descriptors=None, legacy: bool = False,
+                 force_het_off: bool = False) -> MergedPool:
     """Build ONE shared spiking bridge holding all `descriptors`' regions. The N-organ generalization of the
-    bespoke per-pool MergedSubstrate (DESIGN §2). Returns a MergedPool ready for `desc.organ_cls(shared=pool)`."""
-    pool = MergedPool(seed, descriptors)
+    bespoke per-pool MergedSubstrate (DESIGN §2). Returns a MergedPool ready for `desc.organ_cls(shared=pool)`.
+
+    config_descriptors -> whose `config` dicts union into the global cfg (default: `descriptors`). Pass the
+    FULL registry to build a CORESIDENT baseline (one organ's regions on the merged pool's superset config).
+    legacy=True -> the DISCRIMINATOR (name-keyed seams OFF; merged-vs-coresident should diverge).
+    force_het_off=True -> the LOAD-BEARING control (per-region param-het mask cleared)."""
+    pool = MergedPool(seed, descriptors, config_descriptors=config_descriptors, legacy=legacy,
+                      force_het_off=force_het_off)
     pool.ensure_built()
     return pool
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  SUBSTRATE-INIT byte-identity — the MIGRATION-SAFETY gate that scales to ANY registered organ
+#  (needs only spec_fn+config; NO shared= plumbing). Promoted from _onebrain_twopool_merge_derisk.byte_identity.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# every per-neuron INIT array a merge seam could perturb (the two gate masks included).
+_INIT_ARRAYS = (
+    "cp_neuron_firing_thresholds", "cp_membrane_potential_v", "cp_recovery_variable_u",
+    "cp_izh_a", "cp_izh_b", "cp_izh_C", "cp_izh_c_reset", "cp_izh_d_increment",
+    "cp_izh_vpeak", "cp_izh_vt", "cp_izh_vr",
+    "cp_heterogeneity_neuron_mask", "cp_homeostasis_neuron_mask",
+)
+# a gate mask is None when NO region opts in; semantically None == all-False, so coerce before slicing
+# (else merged (mask present, this slice False) vs solo (mask None) would spuriously read as a mismatch).
+_MASK_ARRAYS = ("cp_heterogeneity_neuron_mask", "cp_homeostasis_neuron_mask")
+
+
+def _region_indices(bridge, name):
+    return np.asarray(sorted(int(i) for i in _idx(bridge, name)), dtype=np.int64)
+
+
+def _slice_arrays(bridge, idx):
+    n = int(_host(bridge.cp_membrane_potential_v).shape[0])
+    out = {}
+    for a in _INIT_ARRAYS:
+        arr = _host(getattr(bridge, a, None))
+        if arr is None and a in _MASK_ARRAYS:
+            arr = np.zeros(n, dtype=np.float64)
+        out[a] = None if arr is None else np.asarray(arr)[idx]
+    return out
+
+
+def _maxerr(x, y):
+    if x is None and y is None:
+        return 0.0, "both-none"
+    if (x is None) != (y is None):
+        return float("inf"), "one-none"
+    x = x.astype(np.float64); y = y.astype(np.float64)
+    if x.shape != y.shape:
+        return float("inf"), f"shape {x.shape}!={y.shape}"
+    return (float(np.max(np.abs(x - y))) if x.size else 0.0), "ok"
+
+
+def substrate_byte_identity(merged: MergedPool, coresident: MergedPool, regions) -> dict:
+    """Per-array max |delta| between an organ's region slice in the MERGED pool vs the same organ's slice in
+    its CORESIDENT pool (alone, same superset config). 0.0 over every region+array == migration byte-identity."""
+    organ_max, detail = 0.0, {}
+    for rname in regions:
+        mi = _region_indices(merged.bridge, rname)
+        si = _region_indices(coresident.bridge, rname)
+        if mi.size != si.size:
+            detail[rname] = {"maxerr": float("inf"), "note": f"size {mi.size}!={si.size}"}
+            organ_max = float("inf"); continue
+        ma = _slice_arrays(merged.bridge, mi)
+        sa = _slice_arrays(coresident.bridge, si)
+        rmax, worst = 0.0, None
+        for a in _INIT_ARRAYS:
+            e, note = _maxerr(ma[a], sa[a])
+            if e > rmax:
+                rmax, worst = e, (a, note)
+        detail[rname] = {"maxerr": rmax, "worst": worst}
+        organ_max = max(organ_max, rmax)
+    return {"maxerr": organ_max, "regions": detail}
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -264,6 +396,55 @@ def _name_idx(bridge, names):
     from sim.backend import get_backend
     xp, _ = get_backend()
     return {n: xp.asarray(_idx(bridge, n)) for n in names}
+
+
+def _cfg_of(obj):
+    """Find the CoreSimConfig on whatever a builder returned/produced: the object itself, a `.cfg`/`.core_config`
+    attribute, or (for a bridge) `.core_config`. Returns None if none carries `brain_regions`."""
+    if obj is None:
+        return None
+    if hasattr(obj, "brain_regions") and hasattr(obj, "region_pathways"):
+        return obj
+    for attr in ("cfg", "core_config", "config"):
+        c = getattr(obj, attr, None)
+        if c is not None and hasattr(c, "brain_regions"):
+            return c
+    return None
+
+
+def _spec_from_builder(builder, **kw):
+    """Adapt an organ's existing de-risk builder into a descriptor `spec_fn` (reuse-by-import; no new mechanism).
+    Robust to every return shape a builder here uses: `(bridge, cfg, meta)`, `(bridge, cfg)`, a bare cfg, or a
+    class instance whose `.bridge`/`.cfg`/`.core_config` carries the config. spec_fn(seed) -> (regions, pathways, meta)."""
+    def spec(seed):
+        out = builder(int(seed), **kw)
+        elts = list(out) if isinstance(out, tuple) else [out]
+        cfg = None
+        for e in elts:                                             # a returned cfg / bridge / instance ...
+            cfg = _cfg_of(e) or (_cfg_of(getattr(e, "bridge", None)) if e is not None else None)
+            if cfg is not None:
+                break
+        if cfg is None:
+            raise MergeConflict(f"{getattr(builder, '__name__', builder)}: no CoreSimConfig with brain_regions "
+                                f"in the builder's return -- give this organ a custom spec_fn")
+        meta = next((e for e in elts if isinstance(e, dict)), {})
+        return list(cfg.brain_regions), list(cfg.region_pathways), meta
+    return spec
+
+
+def _spec_from_instance(factory):
+    """spec_fn for an organ whose 'builder' is a CLASS constructed with args (e.g. ProvenanceBrain(seed)); `factory`
+    is a callable seed -> object, and we read the config off the object or its `.bridge`/`.sb`/`._bridge`."""
+    def spec(seed):
+        obj = factory(int(seed))
+        cfg = _cfg_of(obj)
+        for attr in ("bridge", "sb", "_bridge"):
+            if cfg is None:
+                cfg = _cfg_of(getattr(obj, attr, None))
+        if cfg is None:
+            raise MergeConflict("instance builder exposed no CoreSimConfig with brain_regions")
+        return list(cfg.brain_regions), list(cfg.region_pathways), {}
+    return spec
 
 
 # The pool-#1 organ-family config (surprise + world-model share it verbatim -> a clean union). Mirrors
@@ -302,7 +483,111 @@ WORLDMODEL = OrganDescriptor(
                                    "surprise_pos", "surprise_neg")),
 )
 
-REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL)}
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  GROUP A — the declarative-NOW organs (DESIGN §5). Each is a registry ROW: a `spec_fn` that reuses the
+#  organ's OWN de-risk builder (throwaway bridge, we read its BrainRegion specs) + `param_het` where the
+#  organ's standalone uses parameter-heterogeneity (reconciled by the name-keyed per-region seam). NONE of
+#  these shipped classes takes `shared=` today, so `supports_shared=False` and the batched gate is the
+#  SUBSTRATE-INIT co-residence-invariance migration gate (organ-read is the named next rung, DESIGN §4).
+#
+#  Builders are imported LAZILY inside each spec_fn (avoid a heavy import at module load + circular imports).
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+def _spec_causal_whatif(seed):
+    from research.runners._causal_forward_model_derisk import build_forward_model
+    _b, cfg, meta = build_forward_model(int(seed))
+    return list(cfg.brain_regions), list(cfg.region_pathways), meta
+
+
+def _spec_comprehension(seed):
+    from research.runners._spiking_comprehension_monitor_derisk import _build_comp
+    comp = _build_comp(int(seed))
+    cfg = _cfg_of(comp) or _cfg_of(getattr(comp, "bridge", None))
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+def _spec_self_schema(seed):
+    from research.runners._self_schema_region_derisk import build_self_schema_bridge
+    bridge = build_self_schema_bridge(seed=int(seed))[0]
+    cfg = _cfg_of(bridge)
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+def _spec_source_provenance(seed):
+    from research.runners._laneC_source_provenance_opponent_derisk import ProvenanceBrain
+    pb = ProvenanceBrain(int(seed))
+    cfg = _cfg_of(getattr(pb, "_bridge", None)) or _cfg_of(pb)
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+def _spec_curiosity(seed):
+    from research.runners._curiosity_seek_learn_onbridge_derisk import build_curiosity_bridge
+    out = build_curiosity_bridge(int(seed), 4)
+    cfg = _cfg_of(out[1])
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+def _spec_prospective_memory(seed):
+    from research.runners._pmem_sfa_nmda_amplifier_derisk import SFANmdaProspectiveMemory
+    pm = SFANmdaProspectiveMemory(["A", "B"], ["d0", "d1", "d2", "d3"], seed=int(seed))
+    cfg = _cfg_of(getattr(pm, "bridge", None)) or _cfg_of(pm)
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+def _spec_d6_multiref_wm(seed):
+    from research.runners._multi_slot_binding_derisk import MultiSlotHold
+    hold = MultiSlotHold(int(seed), 5, 6)
+    cfg = _cfg_of(getattr(hold, "sb", None)) or _cfg_of(hold)
+    return list(cfg.brain_regions), list(cfg.region_pathways), {}
+
+
+GROUP_A = [
+    OrganDescriptor(key="causal_whatif",
+                    regions=("evt",),
+                    spec_fn=_spec_causal_whatif,
+                    scaffold_residuals=("host-injected DA sign at train time (declared teacher signal)",)),
+    OrganDescriptor(key="comprehension",
+                    regions=("sel_agent", "sel_FS_agent", "sel_patient", "sel_FS_patient",
+                             "cue_position_pos", "cue_position_neg", "cue_animacy_pos", "cue_animacy_neg",
+                             "cue_verbfit_pos", "cue_verbfit_neg", "cue_lexbias_pos", "cue_lexbias_neg"),
+                    spec_fn=_spec_comprehension),
+    OrganDescriptor(key="self_schema",
+                    regions=("workspace", "workspace_fs", "self_schema"),
+                    spec_fn=_spec_self_schema, param_het=True,
+                    scaffold_residuals=("hand-declared GNW assembly loops (post_build, self-organize later)",)),
+    OrganDescriptor(key="source_provenance",
+                    regions=("episode", "content_readout", "ctx_perceived", "ctx_generated",
+                             "prov_perceived", "prov_generated", "inh_perceived", "inh_generated"),
+                    spec_fn=_spec_source_provenance, param_het=True),
+    OrganDescriptor(key="curiosity",
+                    regions=("cue", "striosome_value", "reward_us", "snc", "ask"),
+                    spec_fn=_spec_curiosity, param_het=True),
+    OrganDescriptor(key="prospective_memory",
+                    regions=("cortex_ctx", "dlpfc_wm", "rel_A", "rel_B"),
+                    spec_fn=_spec_prospective_memory),
+    OrganDescriptor(key="d6_multiref_wm",
+                    regions=(),                          # region names live in build_persistent_slot; discovered at build
+                    spec_fn=_spec_d6_multiref_wm),
+]
+
+# Group-B/C DEFERRALS (registered as data so the report + board carry the honest reason + the seam each needs).
+GROUP_A_DEFERRED = {
+    "b3_noncontradiction": "STATELESS — owns no substrate; rides the live composer's spiking polarity recall "
+                           "via a `recall` callable. Nothing to co-locate (no BrainRegions).",
+    "reconsolidation": "Owns no circuit — reuses the D2 SURPRISE organ's slice + rewrites the composer store. "
+                       "Its substrate migrates WHEN surprise does; no distinct regions.",
+    "repair": "No class — functions composing the D4 COMPREHENSION organ. Its substrate == comprehension's; "
+              "migrates when comprehension does.",
+    "d3_discourse_event_register": "Multi-bridge — builds FOUR FS-WTA discretizer bridges + a host rate-RNN "
+                                   "transition. Not a single shared-pool slice; needs a multi-bridge seam.",
+    "d5_episodic": "Heavy own-pool — a ~2000-neuron CA3 with two-compartment apical dendritic-dAP + slow-NMDA "
+                   "reverberation + BTSP formation. Group-C own-pool + apical/NMDA-slow seam.",
+    "affective_tom": "OU + NEUROMODULATOR-subsystem seam — enable_ou_process=True + a bespoke `appraisal` "
+                     "neuromodulator triad drives the read. Group-B OU/neuromod seam.",
+}
+
+GROUP_A_KEYS = [d.key for d in GROUP_A]
+
+REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL, *GROUP_A)}
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
