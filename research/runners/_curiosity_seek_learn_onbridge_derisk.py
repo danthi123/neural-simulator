@@ -101,7 +101,7 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
                            gabab_prop=0.22, gabab_tau_decay=150.0, reward_learning_rate=0.30,
                            curiosity_prod_sensitivity=0.10,
                            curiosity_excit_sensitivity=320.0, curiosity_decay_tau=50.0,
-                           enable_heterogeneity=True):
+                           enable_heterogeneity=True, per_neuron_ou_seed=False):
     """One SimulationBridge holding BOTH the spiking-SNc RPE value critic (reward_us->snc<-striosome(GABA_B),
     cue->striosome PLASTIC) AND the ASK/curiosity pool driven by the `curiosity` neuromodulator (from_novelty
     -> excitability_drive on group:ask). Per-concept `cue` slices give disjoint credit assignment.
@@ -124,6 +124,11 @@ def build_curiosity_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_rewa
 
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
+    # PER-NEURON OU SEED (opt-in; default OFF -> byte-identical to the legacy global
+    # OU draw). ON -> the ASK pool's OU background drive is co-residence-invariant
+    # (each ask neuron keyed on (region, within-region rank), not its absolute pool
+    # index), which is what lets curiosity's organ-read close in a merged pool.
+    cfg.per_neuron_ou_seed = bool(per_neuron_ou_seed)
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name

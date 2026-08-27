@@ -1529,6 +1529,163 @@ def _pmem_answer(organ):
     return (released, silent_wrong, silent_noint)
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  CURIOSITY organ-read plumbing (2026-08-27) — the NEUROMODULATOR-SUBSYSTEM + OU seam, closed. The read is a
+#  FROZEN forward pass of the spiking ASK-pool WANT (Hz) at a NOVEL vs FAMILIAR epistemic gap, driven by the
+#  `from_novelty` -> excitability_drive `curiosity` neuromodulator (the ASK pool has NO afferent -> it fires ONLY
+#  via the modulator + its OU background drive). Its ONE co-residence-dependent input was the ASK pool's OU: the
+#  global cp.random.randn(n) draw is index-order, so a merged offset changed the ASK realization. CLOSED by the
+#  per-neuron-seeded OU stream (cfg.per_neuron_ou_seed, sim/bridge.py) — each ASK neuron keyed on (region,
+#  within-region rank), co-residence-invariant. BOTH the OU process AND the neuromodulator subsystem are built
+#  LOCALLY in the read window (the pool config keeps enable_ou_process + the neuromod subsystem OFF, so it unions
+#  cleanly with the OU-off frozen organs and leaves every co-resident slice untouched), inside sequence_isolation
+#  (restores the full per-neuron/per-synapse state + the RNG cursor on exit) — the source_provenance/causal_whatif
+#  local-toggle pattern, adapted to OU + neuromod. NON-DEGENERATE: want(novel) >> want(familiar) by design, so the
+#  ASK drive genuinely tracks the gap.
+_CUR_NOVEL = 0.95       # an ABSTAIN: the brain holds NO answer -> maximal epistemic gap (novel)
+_CUR_FAMILIAR = 0.0     # a held concept: no gap (the calibration low anchor)
+_CUR_READ_REPS = 4      # average the ASK-pool want over N reads (denoises the OU jitter; the read is drift-free)
+
+
+def _curiosity_modulator_cfg():
+    """The single `curiosity` neuromodulator: from_novelty -> excitability_drive on group:ask (exactly the DR-1
+    fill build_curiosity_bridge registers; rebuilt here so the read owns it locally on the pool bridge)."""
+    from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+    return NeuromodulatorConfig(
+        name="curiosity", baseline=0.0, decay_tau_ms=50.0,
+        concentration_min=0.0, concentration_max=5.0,
+        targets=[ModulatorTarget(target_type="excitability_drive", scope="group:ask", sensitivity=320.0)],
+        production_rules=[ProductionRule(rule_type="from_novelty", sensitivity=0.10)])
+
+
+class _CuriosityReadOrgan:
+    """Organ-read wrapper for the spiking curiosity (crave) faculty. shared=None -> the shipped production organ's
+    own-bridge read (byte-identical). shared=<MergedPool> -> the LOCAL-INIT read on the pool slice (OU per-neuron +
+    neuromod built + torn down inside sequence_isolation)."""
+
+    def __init__(self, seed, shared=None):
+        self.seed = int(seed)
+        self._shared = shared
+        self._reads = None
+        self._answer = None
+        self._built = False
+
+    def ensure_built(self):
+        if self._built:
+            return
+        if self._shared is None:
+            self._build_standalone()
+        else:
+            self._build_shared()
+        self._built = True
+
+    def _build_standalone(self):
+        from research.runners.curiosity_production_organ import CuriosityProductionOrgan
+        org = CuriosityProductionOrgan(self.seed)
+        jn = org.judge(novelty=_CUR_NOVEL)
+        jf = org.judge(novelty=_CUR_FAMILIAR)
+        self._finalize(jn["want_hz"], jf["want_hz"])
+
+    def _build_shared(self):
+        from research.runners._curiosity_seek_learn_onbridge_derisk import (
+            _settle, _snapshot_state, _restore_state, _advance, W_WANT, W_SETTLE)
+        from sim.neuromodulators import NeuromodulatorManager
+        pool = self._shared
+        pool.ensure_built()
+        b = pool.bridge
+        cfg = b.core_config
+        xp = pool.xp
+        n = int(b.cp_membrane_potential_v.shape[0])
+        idx_ask = np.asarray(sorted(int(i) for i in _region_indices(b, "ask")), dtype=np.int64)
+        idx_ask_x = xp.asarray(idx_ask)
+        n_ask = int(len(idx_ask))
+        wn = wf = 0.0
+        with pool.sequence_isolation():
+            saved = {k: getattr(cfg, k, None) for k in (
+                "enable_ou_process", "per_neuron_ou_seed", "ou_seed", "ou_std_current_pA",
+                "ou_mean_current_pA", "ou_tau_ms", "enable_neuromodulator_subsystem",
+                "neuromodulators", "reward_learning_rate", "current_novelty_signal")}
+            saved_nm = b.neuromodulator_manager
+            try:
+                # OU (per-neuron seeded -> co-residence-invariant ASK drive), built LOCALLY on the pool slice.
+                cfg.enable_ou_process = True
+                cfg.per_neuron_ou_seed = True
+                cfg.ou_seed = int(self.seed)
+                cfg.ou_std_current_pA = 100.0
+                cfg.ou_mean_current_pA = 0.0
+                cfg.ou_tau_ms = 15.0
+                b._initialize_ou_process_state(cfg, n)
+                # neuromod subsystem (the from_novelty -> excitability_drive curiosity modulator), built LOCALLY.
+                cfg.enable_neuromodulator_subsystem = True
+                cfg.neuromodulators = [_curiosity_modulator_cfg()]
+                b.neuromodulator_manager = NeuromodulatorManager(cfg.neuromodulators, cfg.dt_ms)
+                b.neuromodulator_manager.initialize(n, xp)
+                if b.region_manager is not None:
+                    b.neuromodulator_manager.set_group_indices(b.region_manager.region_indices_dict())
+                cfg.reward_learning_rate = 0.0
+                _settle(b, W_SETTLE)
+                snap0 = _snapshot_state(b)
+
+                def read_want(novelty):
+                    vals = []
+                    for _ in range(_CUR_READ_REPS):
+                        _restore_state(b, snap0)
+                        cfg.current_novelty_signal = float(novelty)
+                        cfg.reward_learning_rate = 0.0
+                        spk = 0
+                        for _ in range(W_WANT):
+                            _advance(b)
+                            spk += int(b.cp_firing_states[idx_ask_x].sum())
+                        vals.append(spk / max(n_ask, 1) / (W_WANT * 1e-3))
+                    _restore_state(b, snap0)
+                    return float(np.mean(vals))
+
+                wn = read_want(_CUR_NOVEL)
+                wf = read_want(_CUR_FAMILIAR)
+            finally:
+                # tear down every locally-installed piece so no co-resident organ's read is perturbed.
+                b.neuromodulator_manager = saved_nm
+                b.cp_ou_current = None
+                b._region_ou_streams = None
+                b._ou_neuron_key_idx = None
+                b._ou_neuron_keys = None
+                b._ou_pn_step = 0
+                for k, v in saved.items():
+                    setattr(cfg, k, v)
+        self._finalize(wn, wf)
+
+    def _finalize(self, want_novel, want_familiar):
+        nondegen = bool(want_novel > want_familiar + 1.0)
+        threshold = 0.5 * (want_novel + want_familiar) if nondegen else float(want_familiar)
+        curious = bool(want_novel >= threshold) and nondegen
+        self._reads = {"want_novel_hz": float(want_novel), "want_familiar_hz": float(want_familiar),
+                       "threshold_hz": float(threshold)}
+        from research.runners.curiosity_production_organ import followup_question
+        # the rendered answer: the honest curiosity FOLLOW-UP QUESTION when the ASK pool craves (topic fixed so the
+        # answer-preservation compare isolates the spiking crave verdict, not the language scaffold).
+        self._answer = followup_question("wombats") if curious else ""
+
+    def reads(self):
+        self.ensure_built()
+        return dict(self._reads)
+
+    def answer(self):
+        self.ensure_built()
+        return self._answer
+
+
+def _curiosity_organ(seed, shared=None):
+    return _CuriosityReadOrgan(int(seed), shared=shared)
+
+
+def _curiosity_reads(organ):
+    return organ.reads()
+
+
+def _curiosity_answer(organ):
+    return organ.answer()
+
+
 GROUP_A = [
     OrganDescriptor(key="causal_whatif",
                     regions=("evt",),
@@ -1567,7 +1724,13 @@ GROUP_A = [
                                         "(the learned trace is the encode; unchanged from the de-risk)",)),
     OrganDescriptor(key="curiosity",
                     regions=("cue", "striosome_value", "reward_us", "snc", "ask"),
-                    spec_fn=_spec_curiosity, param_het=True),
+                    spec_fn=_spec_curiosity, param_het=True,
+                    organ_cls=_curiosity_organ, read_fn=_curiosity_reads,
+                    answer_fn=_curiosity_answer, supports_shared=True,
+                    scaffold_residuals=("host-derived novelty scalar (the abstain = the epistemic gap, a declared "
+                                        "host boundary; a graded familiarity-gate novelty is the next rung); fixed "
+                                        "wh-frame follow-up language scaffold; the learning-progress SELECTOR + "
+                                        "noisy-TV veto are not wired (a single-topic follow-up needs neither)",)),
     OrganDescriptor(key="prospective_memory",
                     regions=("cortex_ctx", "dlpfc_wm", "rel_A", "rel_B"),
                     spec_fn=_spec_prospective_memory,
@@ -1611,18 +1774,13 @@ GROUP_A_DEFERRED = {
 # stateful read via sequence_isolation + dt-local + the pool-gain seam, 2026-08-27] — closed IN CO-RESIDENCE with
 # the frozen-forward organs, 6-seed GO). Only `curiosity` remains organ-read-deferred (a further seam), and it does
 # NOT block the batch. Refined 2026-08-27.
-GROUP_A_ORGANREAD_DEFERRED = {
-    "curiosity": "NEUROMODULATOR-SUBSYSTEM + OU seam — the production read is a FROZEN forward pass (reward_learning "
-                 "forced 0, no weight mutation; the spiking-SNc/reward-critic is BUILT but NEVER exercised by the "
-                 "read, so enable_stdp/enable_reward_modulation are vestigial for it). The ONLY read-load-bearing "
-                 "dependency is the `curiosity` NEUROMODULATOR SUBSYSTEM (enable_neuromodulator_subsystem + a "
-                 "from_novelty production rule driving excitability_drive on group:ask — the ASK pool has NO afferent "
-                 "pathway, so it fires ONLY via the modulator). PLUS enable_ou_process defaults ON and perturbs the "
-                 "ASK read (averaged over 4 reps), and the global OU RNG is index-order => co-residence-DEPENDENT. "
-                 "Seam: enable+register the curiosity modulator on the pool (a global-subsystem config seam — verify "
-                 "a group:ask-scoped modulator leaves every co-resident slice byte-identical) + force OU off (or a "
-                 "per-neuron-seeded OU stream, a sim/ edit). The neuromod subsystem's internals live in sim/.",
-}
+# curiosity's organ-read is now CLOSED (2026-08-27): its NEUROMODULATOR-SUBSYSTEM + OU seam is resolved by the
+# per-neuron-seeded OU stream (cfg.per_neuron_ou_seed, sim/bridge.py) + a LOCAL-INIT read that builds+tears down
+# BOTH the OU process and the curiosity neuromodulator on the pool slice inside sequence_isolation (organ_cls=
+# _curiosity_organ). The pool config keeps enable_ou_process + the neuromod subsystem OFF, so it unions cleanly
+# with the OU-off frozen organs and every co-resident slice stays byte-identical. See the descriptor + the
+# 2026-08-27 per-neuron-OU finding. No Group-A organ remains organ-read-deferred.
+GROUP_A_ORGANREAD_DEFERRED = {}
 
 # prospective_memory's MULTI-TURN stateful read is now CLOSED in co-residence with the frozen-forward organs
 # (organ_cls=_pmem_organ; sequence_isolation + the dt-local + pool-gain seams; 6-seed GO, read_maxerr=0 +

@@ -270,6 +270,24 @@ class CoreSimConfig:
     # region), adapted to the per-STEP OU noise. Deterministic under cfg.ou_seed
     # (else cfg.seed).
     per_region_ou_seed: bool = False
+    # PER-NEURON OU SEED (2026-08-27; the one-substrate merge's OU seam at NEURON
+    # granularity -- what `curiosity`'s organ-read needs). per_region_ou_seed makes a
+    # REGION's OU stream co-residence-invariant by drawing one region batch in
+    # within-region rank order; this goes one step finer: EACH neuron gets its OWN
+    # independent OU white-noise stream, keyed on a STABLE per-neuron id
+    # (base seed  x  region-name crc32  x  within-region RANK), realized by a
+    # counter-based splitmix64 hash of (per-neuron key, step counter). Because a
+    # neuron's key depends only on (region, rank) -- never on its absolute pool index
+    # or how many neurons precede it -- its per-step OU realization is INVARIANT to
+    # its co-residents / position (the property per_region also has, at neuron
+    # granularity and additionally invariant to the region's OTHER members). The
+    # legacy global cp.random.randn(n) draw still runs FIRST (global-RNG consumption
+    # preserved bit-for-bit; any neuron NOT owned by a region keeps its legacy value),
+    # then each region-owned neuron's slot is OVERWRITTEN from its own hashed stream.
+    # DEFAULT-OFF is byte-identical to today (no keys built, the per-neuron branch is
+    # never entered). Deterministic under cfg.ou_seed (else cfg.seed). Mirrors the
+    # per-region threshold / param-het / OU seams, at neuron resolution.
+    per_neuron_ou_seed: bool = False
     # PER-REGION WIRING SEED (2026-08-13; the one-substrate merge's FOURTH
     # byte-identity cause -- the co-residence ORDER dependence a fully-wired
     # same-region_manager merge hits). build_wiring_plan (regions.py) samples EVERY

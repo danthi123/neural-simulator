@@ -180,6 +180,25 @@ def _backend_neutral_random_state(seed, *, stream_name):
     return np.random.RandomState(seed)
 
 
+def _splitmix64(x):
+    """Vectorized SplitMix64 finalizer (host uint64 -> host uint64), used by the
+    opt-in per-neuron OU stream (cfg.per_neuron_ou_seed).
+
+    A stateless bijective integer hash: a per-neuron key mixed with a per-step
+    counter maps to a well-distributed uint64, from which a per-neuron N(0,1) is
+    formed (Box-Muller). Stateless + counter-based => a neuron's per-step draw is a
+    pure function of (its stable key, the step counter), so it is invariant to the
+    neuron's absolute pool index / co-residents. Host NumPy uint64 wraps mod 2**64
+    (silent), matching the reference SplitMix64. Deterministic; no global RNG state.
+    """
+    x = np.asarray(x, dtype=np.uint64)
+    z = (x + np.uint64(0x9E3779B97F4A7C15)).astype(np.uint64)
+    z = ((z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)).astype(np.uint64)
+    z = ((z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)).astype(np.uint64)
+    z = (z ^ (z >> np.uint64(31))).astype(np.uint64)
+    return z
+
+
 _SNR_CONDUCTANCE_MAX_ARRAYS = (
     "cp_snr_g_nalcn_max",
     "cp_snr_g_nap_max",
@@ -3834,6 +3853,90 @@ class SimulationBridge:
         if getattr(cfg, "per_region_ou_seed", False) and self.region_manager is not None:
             self._region_ou_streams = self._build_region_ou_streams(cfg, n)
 
+        # PER-NEURON OU streams (opt-in via cfg.per_neuron_ou_seed; DEFAULT OFF ->
+        # keys None -> the per-neuron branch in _draw_ou_noise_samples is never
+        # entered -> byte-identical to today). When ON, EACH region-owned neuron gets
+        # its OWN independent OU white-noise stream keyed on a STABLE per-neuron id
+        # (base seed x region-name crc32 x within-region RANK), realized by a
+        # counter-based splitmix64 hash of (key, step). A neuron's key never depends
+        # on its absolute pool index / how many neurons precede it, so its per-step
+        # OU realization is co-residence-invariant -- one granularity finer than
+        # per_region_ou_seed (invariant to the region's OTHER members too). Neurons in
+        # no region keep the legacy global draw (co-residence-DEPENDENT fallback).
+        self._ou_neuron_key_idx = None
+        self._ou_neuron_keys = None
+        self._ou_pn_step = 0
+        if getattr(cfg, "per_neuron_ou_seed", False) and self.region_manager is not None:
+            self._ou_neuron_key_idx, self._ou_neuron_keys = \
+                self._build_per_neuron_ou_keys(cfg, n)
+
+    def _build_per_neuron_ou_keys(self, cfg, n):
+        """Build the per-neuron OU stream keys (opt-in via cfg.per_neuron_ou_seed).
+
+        Returns (backend_index_array, host_uint64_key_array) covering every neuron
+        owned by a brain region with >=1 in-range neuron. A neuron's key is a
+        splitmix64 mix of (resolved base seed, region-name crc32 x stride,
+        within-region RANK x an odd multiplier) -- so it is a STABLE function of
+        (region, rank) alone, never of the neuron's absolute pool index. That makes
+        each neuron's per-step OU draw (see _per_neuron_ou_gaussians) invariant to its
+        co-residents / position. Keyed on cfg.ou_seed (else cfg.seed). The within-
+        region rank is co-residence-invariant for the same reason the per-region seam
+        is valid: a region is a contiguous block whose j-th logical member is always
+        at sorted rank j whether the region is alone or offset in a merged pool.
+        """
+        import zlib
+        ou_seed = cfg.ou_seed if cfg.ou_seed >= 0 else cfg.seed
+        resolved = ou_seed if ou_seed >= 0 else self.runtime_state.actual_seed_used
+        if resolved is None or resolved < 0:
+            resolved = 0
+        base = np.uint64(int(resolved) & 0xFFFFFFFFFFFFFFFF)
+        all_idx, all_keys = [], []
+        for region in self.region_manager.regions():
+            indices = self.region_manager.indices(region.name)
+            if not indices:
+                continue
+            idx_arr = np.asarray(sorted(int(i) for i in indices), dtype=np.int64)
+            if idx_arr.size == 0 or int(idx_arr.max()) >= n:
+                continue
+            name_key = np.uint64(int(zlib.crc32(region.name.encode("utf-8"))) & 0xFFFFFFFF)
+            ranks = np.arange(idx_arr.size, dtype=np.uint64)
+            seed_field = (
+                base
+                ^ (name_key * np.uint64(self._OU_REGION_SEED_STRIDE)).astype(np.uint64)
+                ^ (ranks * np.uint64(0x2545F4914F6CDD1D)).astype(np.uint64)
+            ).astype(np.uint64)
+            keys = _splitmix64(seed_field)
+            all_idx.append(idx_arr)
+            all_keys.append(keys)
+        if not all_idx:
+            return None, None
+        idx_concat = np.concatenate(all_idx)
+        keys_concat = np.concatenate(all_keys).astype(np.uint64)
+        return cp.asarray(idx_concat), keys_concat
+
+    def _per_neuron_ou_gaussians(self, keys, step):
+        """Per-neuron N(0,1) draw for the opt-in per-neuron OU stream.
+
+        keys: host uint64 array (one stable key per region-owned neuron).
+        step: the current OU step counter (>=1). Returns a host float32 N(0,1) vector
+        the same length as `keys`, computed purely from (keys, step) via two
+        independent splitmix64 hashes + a Box-Muller transform. Pure/stateless =>
+        deterministic and co-residence-invariant (no dependence on n or index order).
+        Computed in host NumPy (like the per-region seam's host draws) then assigned
+        into the backend noise vector by the caller.
+        """
+        c = np.uint64(step & 0xFFFFFFFFFFFFFFFF)
+        h1 = _splitmix64(keys ^ (c * np.uint64(0x9E3779B97F4A7C15)).astype(np.uint64))
+        h2 = _splitmix64(
+            (keys ^ ((c + np.uint64(1)) * np.uint64(0xD1B54A32D192ED03)).astype(np.uint64)
+             ^ np.uint64(0xA0761D6478BD642F)).astype(np.uint64)
+        )
+        # 53-bit uniforms; u1 in (0,1] (never 0 -> log is finite), u2 in [0,1).
+        u1 = ((h1 >> np.uint64(11)).astype(np.float64) + 1.0) * (1.0 / 9007199254740993.0)
+        u2 = (h2 >> np.uint64(11)).astype(np.float64) * (1.0 / 9007199254740992.0)
+        z = np.sqrt(-2.0 * np.log(u1)) * np.cos(2.0 * np.pi * u2)
+        return z.astype(np.float32)
+
     def _build_region_ou_streams(self, cfg, n):
         """Build the per-region OU host RNG streams (opt-in via cfg.per_region_ou_seed).
 
@@ -3888,6 +3991,16 @@ class SimulationBridge:
                 k = int(idx_backend.shape[0])
                 host = region_rng.standard_normal(k).astype(np.float32)
                 noise_samples[idx_backend] = cp.asarray(host, dtype=cp.float32)
+        # PER-NEURON overwrite (cfg.per_neuron_ou_seed). The global draw above already
+        # consumed n from the global RNG (consumption preserved bit-for-bit); now
+        # OVERWRITE each region-owned neuron with its own hashed, co-residence-
+        # invariant N(0,1). The step counter advances once per draw call, so it is the
+        # same in an alone vs a co-resident pool -> co-residence-invariant.
+        pn_keys = getattr(self, "_ou_neuron_keys", None)
+        if pn_keys is not None:
+            self._ou_pn_step += 1
+            host_z = self._per_neuron_ou_gaussians(pn_keys, self._ou_pn_step)
+            noise_samples[self._ou_neuron_key_idx] = cp.asarray(host_z, dtype=cp.float32)
         return noise_samples
 
     def _calculate_distances_3d_gpu(self, pos_i_cp, pos_neighbors_cp):
