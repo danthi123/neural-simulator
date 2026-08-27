@@ -1,0 +1,12 @@
+{
+  "runner": "research.runners.onebrain_merge_verify",
+  "argv": ["-m", "research.runners.onebrain_merge_verify", "--keys", "all", "--seeds", "42,43,44,100,101,102", "--out", "research/findings/raw/2026-08-27-onebrain-merge-verify-6seed-after-matvec-hardening.json"],
+  "git_sha": "9402f0aeb",
+  "git_dirty": true,
+  "env": {"SIM_BACKEND": "numpy"},
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy",
+  "sim_backend_cupy_importable": true,
+  "note": "Hand-written provenance sidecar. The run was produced during the deterministic-conductance-matvec-hardening arc with SIM_BACKEND=numpy (CPU, bit-exact); the artifact was copied from the session scratchpad into research/findings/raw/, so the automatic provenance door (research/runners/__init__.py) did not stamp it at write time. Backend recorded here honestly (numpy). Result: full-7 --keys all NO-GO across 6 seeds (pmem read 0/6, d6 read 1/6).",
+  "artifact": "research/findings/raw/2026-08-27-onebrain-merge-verify-6seed-after-matvec-hardening.json"
+}

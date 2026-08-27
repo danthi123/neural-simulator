@@ -1,0 +1,46 @@
+{
+  "provenance_exempt": "hand-written evidence summary of the flag-off byte-identity SHA256 hashes + the root-cause diagnostic probes (repro/lockstep/matvec/mask probes in this session's scratchpad); not a single runner's --out artifact",
+  "arc": "deterministic conductance-matvec hardening (all remaining flag-guarded paths) + honest characterization of the real one-brain full-7 --keys all batch wall",
+  "sim_edit": "sim/bridge.py: the nmda_recurrent (slow-NMDA), gabab, and graded_dendritic_plateau conductance transpose matvecs now use the segmented add.reduceat _deterministic_csr_matvec reduction under cfg.deterministic_transpose_matvec (default OFF), matching the already-hardened main + coincidence paths. Additive, guarded, byte-identical when off. (The GPU-only read-only step-megakernel matvec was left unchanged: is_gpu_backend()-gated so unverifiable on numpy while the GPU is busy -> deferred to a cupy-verified follow-up rather than shipped unverified.)",
+  "flag_off_byte_identity": {
+    "method_1": "200-step run exercising main + nmda_recurrent with deterministic_transpose_matvec=False, full-state SHA256, EDITED (worktree) vs ORIGINAL (shared/main)",
+    "sha256_edited_1": "3c4f18b99a7d5401df8805643afae7552a1d614ec218b541aaa607626123be38",
+    "sha256_original_1": "3c4f18b99a7d5401df8805643afae7552a1d614ec218b541aaa607626123be38",
+    "method_2": "150-step net exercising ALL edited paths live (nmda_recurrent + gabab + coincidence + graded_dendritic_plateau + main; masks all present), flag OFF, full conductance-state SHA256, EDITED vs ORIGINAL",
+    "sha256_edited_2": "db03fc14b06d76c92033ac11d442e19851092e1ad2f373723800eebcdb73c5e0",
+    "sha256_original_2": "db03fc14b06d76c92033ac11d442e19851092e1ad2f373723800eebcdb73c5e0",
+    "identical": true,
+    "determinism_suite": "tests/test_determinism.py (SIM_BACKEND=numpy): 9 passed, 2 skipped (cupy-only) on the final code"
+  },
+  "batch_result_after_edit_seed42": {
+    "backend": "numpy",
+    "organs_go": "5/7",
+    "prospective_memory": {"read_maxerr": 0.06666666666666667, "worst_key": "fire_A_on_cueA", "answer_same": false},
+    "d6_multiref_wm": {"read_maxerr": 0.0027777777777778095, "worst_key": "hold_alive_min", "answer_same": true},
+    "note": "read_maxerr is IDENTICAL to the pre-edit baseline -> the matvec hardening does NOT change the numpy read divergence"
+  },
+  "root_cause_diagnosis": {
+    "on_numpy_the_transpose_matvecs_are_already_co_residence_invariant": {
+      "pmem_main_matvec_raw_and_eff": "max|merged-core| = 0.0 (det True and False)",
+      "d6_main_matvec_raw": "max|merged-core| = 0.0"
+    },
+    "the_real_divergence_is_effective_connectivity": {
+      "d6_main_matvec_AMPA_suppressed": "max|merged-core| = 225.1 (suppress True) vs 0.0 (suppress False)",
+      "d6_within_slice_edge_set_identical": true,
+      "d6_nmda_slow_tag_count_merged": 10819,
+      "d6_nmda_slow_tag_count_core": 10819,
+      "d6_nmda_slow_tagged_in_merged_only": 5148,
+      "d6_nmda_slow_tagged_in_core_only": 5148,
+      "d6_nmda_slow_tags_agree": 5671,
+      "d6_cross_edges": 0,
+      "pmem_cross_edges": 0
+    },
+    "lockstep_first_divergence": {
+      "d6": {"step": 8, "arrays": ["cp_conductance_g_e (5.10)", "cp_conductance_g_nmda (2.04)", "cp_conductance_g_nmda_recurrent (5.05)"], "prev_firing_and_input_identical_at_that_step": true},
+      "pmem": {"step": 7, "arrays": ["cp_conductance_g_e (6.30)", "cp_conductance_g_i (13.23)", "cp_conductance_g_nmda (2.52)"], "prev_firing_and_input_identical_at_that_step": true, "g_nmda_recurrent_diff": 0.0}
+    },
+    "reads_are_reproducible_run_to_run_on_merged": {"d6": 0.0, "pmem": 0.0, "meaning": "divergence is deterministic co-residence, not unseeded host RNG"},
+    "trigger": "enable_nmda_recurrent (unioned from d6). At N=3442 (pmem+self_schema+comprehension) the flag is ABSENT and pmem is byte-identical; adding d6 unions enable_nmda_recurrent=True, which activates the pool-wide AMPA-suppression rebuild whose nmda_slow synapse mask is co-residence-dependent for d6 (density-0.9 nmda_slow self-excitation wiring in build_persistent_slot).",
+    "conclusion": "The full-7 batch NO-GO is NOT a conductance-matvec summation-order effect (invariant on numpy). It is a co-residence-dependent EFFECTIVE CONNECTIVITY: d6's nmda_slow receptor routing assigns a different subset of edges merged-vs-core. The 2026-08-27 multiturn finding attributed it to the matvec because it checked per-neuron arrays + edge WEIGHTS (identical) but not the receptor TAGS (differ). The matvec-atomic summation-order mechanism it cited is a cupy-only effect (cuSPARSE atomics), absent on numpy where this batch runs."
+  }
+}

@@ -195,3 +195,12 @@ overwritten mid-session by a concurrent automated `git rebase origin/main` on th
 checkout, which silently discarded uncommitted working-tree edits more than once -- re-applied here;
 flagged in the session report as an operational hazard of doing doc-sync on the live primary checkout
 while autonomous work is in flight on the same repo.
+
+## 2026-08-27  one-brain STRICT full-7 batch wall re-characterized (deterministic-matvec hardening shipped, does NOT close it)
+Added #180 (Big picture): the strict "all seven merged regions read back at once" check (onebrain_merge_verify
+--keys all) is a 6-seed NO-GO on two organs (prospective-memory + multi-referent WM). The transpose-matvec
+determinism engine hardening (nmda_recurrent/gabab/graded_plateau, byte-identical-when-off) was built + verified
+but does NOT close it -- the real cause is a co-residence-dependent nmda_slow WIRING draw (density 0.9), fixable
+by seeding the wiring per-region (same recipe as the noise streams). Did NOT touch #171 (4-organ pool byte-identity,
+still open) or #177 (cross-region integration, its own rungs). Branch research/deterministic-transpose-matvec-full,
+not merged. Finding: 2026-08-27-deterministic-conductance-matvec-hardening-and-the-real-onebrain-full7-wall.

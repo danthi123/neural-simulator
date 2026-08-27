@@ -7,6 +7,16 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-27 (latest) — the STRICTEST "all seven merged regions at once, bit-for-bit" check still fails on two regions, and the cause is a wiring randomness, NOT the number-crunching order a prior note assumed
+
+A companion to the merge-safety work below, on the strictest form of the "did merging break anything" check: all seven first-wave regions merged into ONE shared brain and read back at the SAME time (not one-at-a-time or in small groups, which do pass).
+
+- Two regions — a prospective-memory organ and a multi-item working-memory organ — still read back slightly differently depending on which others are merged alongside. A prior note guessed the cause was the ORDER a sparse-matrix sum runs in, and queued an engine fix for the remaining number-crunching paths.
+- That engine fix WAS built and verified harmless (bit-for-bit unchanged when its switch is off — proven by matching hashes) and it does complete the intended GPU speed-vs-reproducibility guarantee — but it does NOT fix the strict check, because on the CPU (where the check runs) those sums were already order-stable, so the fix changes the result by exactly zero.
+- The real cause, pinned precisely: one region wires ~90%-dense internal connections at RANDOM, and in a merged brain that draw lands at a different point in the shared random stream, so a DIFFERENT set of those connections gets built. Same "shared random stream depends on who else is merged" problem already fixed for the noise streams, but missed here for the wiring. Fix = the same recipe (seed the wiring per-region); named for the next arc. Kept on its own branch, not merged.
+
+Finding: `2026-08-27-deterministic-conductance-matvec-hardening-and-the-real-onebrain-full7-wall`.
+
 ## 2026-08-27 (later) — the one-brain merge's "did merging break anything" check now passes for all seven first-wave regions; a knowledge-scale worry is resolved; the mood-coloring fix is confirmed working on the real production voice (an earlier "doesn't reach production" reading was a stale test)
 
 Four more things landed later the same overnight session, after the animacy work below:
