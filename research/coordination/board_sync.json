@@ -544,6 +544,12 @@
    "head": "f042aaf60"
   },
   {
+   "at": "2026-08-27T04:53:01Z",
+   "op": "create-task",
+   "args": "proj=2 title=Convert VERB_SELECTS to a corpus-learned open-vocab cue (comprehension organs)",
+   "head": "fb725a180"
+  },
+  {
    "at": "2026-08-27T07:10:09Z",
    "op": "create-task",
    "args": "proj=2 title=More abilities proven to behave identically when merged into one shared brain (language-understanding added, 3 of 7)",
