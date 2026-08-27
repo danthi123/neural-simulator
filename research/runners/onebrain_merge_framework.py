@@ -52,10 +52,14 @@ class OrganDescriptor:
     freeze_regions: tuple = ()                 # regions whose INTERNAL edges get cp_plasticity_rate_gain=0
     isolation: str = "per_slice"               # "per_slice" | "full_snapshot" (the two existing protocols)
     idx_fn: Callable = None                    # (bridge) -> the idx map the organ's shared= read path consumes
+    explicit_wiring_fn: Callable = None        # (bridge, region_manager) -> dict of extra wiring populations UNIONED
+                                               #   into the pool's ONE per-region-seamed inject (assembly loops /
+                                               #   member->attend / block-diagonal edges that are NOT plain pathways)
+    post_inject_fn: Callable = None            # (bridge) -> None; runs AFTER the wiring inject (e.g. set_plasticity_gate)
     organ_cls: type = None                     # the shipped *_ProductionOrgan (constructed with shared=<pool>)
     read_fn: Callable = None                   # (organ_instance) -> dict of numeric reads (organ-read byte battery)
     answer_fn: Callable = None                 # (organ_instance) -> the rendered chat answer(s) (answer-preservation)
-    supports_shared: bool = False              # True == the shipped class runs UNMODIFIED against a MergedPool
+    supports_shared: bool = False              # True == the shipped class runs (with a `shared=` kwarg) on a MergedPool
     param_het: bool = False                    # organ's standalone uses param-het -> reconcile via the name-keyed
                                                #   per-region seam (global OFF + enable_heterogeneity on ITS regions)
     scaffold_residuals: tuple = ()             # host-scaffold flagged for self-organization burn-down (DESIGN §6)
@@ -118,8 +122,16 @@ class MergedPool:
         "cp_neuron_firing_thresholds", "cp_neuron_activity_ema", "cp_external_input_current",
     )
 
-    def __init__(self, seed, descriptors, config_descriptors=None, legacy=False, force_het_off=False):
+    def __init__(self, seed, descriptors, config_descriptors=None, legacy=False, force_het_off=False, wire=False):
         self.seed = int(seed)
+        # wire=True == the ORGAN-READ substrate: after the base build, rebuild cp_connections from ONE
+        # per-region-seamed wiring plan (`build_wiring_plan(per_region_seed=True)`, co-residence + order INVARIANT)
+        # UNIONed with every descriptor's explicit_wiring_fn (assembly loops / member->attend / block-diagonals),
+        # then settle-to-rest + snapshot (`self.snap`). Both the MERGED and the CORESIDENT pools take this same
+        # path, so an organ's slice + its read is byte-identical merged-vs-coresident. Left OFF for the
+        # substrate-INIT gate (init arrays are inject-invariant, so that gate needs no wiring).
+        self.wire = bool(wire)
+        self.snap = None
         self.descriptors = list(descriptors)                       # which regions the pool INSTANTIATES
         # which descriptors' `config` dicts UNION into the global config. For the MERGED pool this is the
         # same list; for a CORESIDENT baseline it is the FULL registry, so a solo organ sits on the SAME
@@ -213,6 +225,15 @@ class MergedPool:
         bridge.runtime_state.actual_seed_used = self.seed
         bridge._initialize_simulation_data(called_from_playback_init=False)
 
+        # (5b) ORGAN-READ WIRING (wire=True only) — ONE order-INVARIANT inject that replaces cp_connections with the
+        #      base pathways REGENERATED per-region-seamed (`build_wiring_plan(per_region_seed=True)`, so every edge
+        #      keys on its endpoints' NAMES, not build order) UNION each organ's explicit_wiring_fn (assembly loops /
+        #      member->attend). The CORESIDENT pool runs the identical path, so a slice's WEIGHTS (not just its init
+        #      arrays) are byte-identical merged-vs-coresident -- the precondition the organ-read reads need. Skipped
+        #      for the substrate-init gate (cp_connections does not enter those init arrays).
+        if self.wire:
+            self._install_organ_read_wiring(bridge, xp)
+
         # (6) POST-BUILD WIRING — block-diagonal / assembly loops, in descriptor order (weights, not init arrays).
         for d in self.descriptors:
             if d.post_build is not None:
@@ -230,7 +251,40 @@ class MergedPool:
         bridge._rest_v = bridge.cp_membrane_potential_v.copy()
         bridge._rest_u = bridge.cp_recovery_variable_u.copy()
 
+        # (9) ORGAN-READ REST SNAPSHOT (wire=True) — settle every region to a true quiescent rest under zero input,
+        #     then snapshot the full per-neuron state (the EMERGE-61 / GNW Rung-1 wash-out an organ's read restores
+        #     before each trial). Deterministic (the pool config has OU + conductance noise OFF), so the snapshot's
+        #     per-organ slice is byte-identical merged-vs-coresident (a slice's dynamics never couple across organs
+        #     -- zero cross-synapses). Exposed as `self.snap` for a `shared=` organ whose read restores it.
+        if self.wire:
+            from research.runners._gnw_rung1_ignition_curve_derisk import _snapshot_state, SETTLE_STEPS
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(SETTLE_STEPS):
+                bridge._run_one_simulation_step()
+            bridge.cp_external_input_current[:] = 0.0
+            self.snap = _snapshot_state(bridge, xp)
+
         self.bridge, self.cfg, self.xp, self._built = bridge, cfg, xp, True
+
+    def _install_organ_read_wiring(self, bridge, xp):
+        """The wire=True inject: rebuild cp_connections from the per-region-seamed base plan UNION every descriptor's
+        explicit wiring, then run each descriptor's post_inject_fn (plasticity gates). Mirrors the standalone build of
+        an inject-organ (self_schema / MergedSubstrate4) but for the WHOLE pool, so every organ's slice is wired
+        order-invariantly and identically whether it is alone or co-resident."""
+        rm = bridge.region_manager
+        union = dict(rm.build_wiring_plan(seed=self.seed, per_region_seed=True))
+        for d in self.descriptors:
+            if d.explicit_wiring_fn is not None:
+                extra = d.explicit_wiring_fn(bridge, rm)
+                if extra:
+                    union.update(extra)
+        inh = []
+        for region in rm.regions():
+            inh.extend(rm.inhibitory_indices(region.name))
+        bridge.inject_explicit_wiring(union, output_inhibitory_indices=inh or None)
+        for d in self.descriptors:
+            if d.post_inject_fn is not None:
+                d.post_inject_fn(bridge)
 
     def _apply_gain0_freeze(self, bridge, frozen_regions, xp):
         idx = set()
@@ -293,16 +347,18 @@ class MergedPool:
 
 
 def merge_organs(descriptors, seed: int = 42, config_descriptors=None, legacy: bool = False,
-                 force_het_off: bool = False) -> MergedPool:
+                 force_het_off: bool = False, wire: bool = False) -> MergedPool:
     """Build ONE shared spiking bridge holding all `descriptors`' regions. The N-organ generalization of the
     bespoke per-pool MergedSubstrate (DESIGN §2). Returns a MergedPool ready for `desc.organ_cls(shared=pool)`.
 
     config_descriptors -> whose `config` dicts union into the global cfg (default: `descriptors`). Pass the
     FULL registry to build a CORESIDENT baseline (one organ's regions on the merged pool's superset config).
     legacy=True -> the DISCRIMINATOR (name-keyed seams OFF; merged-vs-coresident should diverge).
-    force_het_off=True -> the LOAD-BEARING control (per-region param-het mask cleared)."""
+    force_het_off=True -> the LOAD-BEARING control (per-region param-het mask cleared).
+    wire=True -> the ORGAN-READ substrate (one per-region-seamed wiring inject + settle-to-rest snapshot; needed
+    when a `shared=` organ actually RUNS its read/judge pipeline on the pool, not just the substrate-init gate)."""
     pool = MergedPool(seed, descriptors, config_descriptors=config_descriptors, legacy=legacy,
-                      force_het_off=force_het_off)
+                      force_het_off=force_het_off, wire=wire)
     pool.ensure_built()
     return pool
 
@@ -486,9 +542,12 @@ WORLDMODEL = OrganDescriptor(
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  GROUP A — the declarative-NOW organs (DESIGN §5). Each is a registry ROW: a `spec_fn` that reuses the
 #  organ's OWN de-risk builder (throwaway bridge, we read its BrainRegion specs) + `param_het` where the
-#  organ's standalone uses parameter-heterogeneity (reconciled by the name-keyed per-region seam). NONE of
-#  these shipped classes takes `shared=` today, so `supports_shared=False` and the batched gate is the
-#  SUBSTRATE-INIT co-residence-invariance migration gate (organ-read is the named next rung, DESIGN §4).
+#  organ's standalone uses parameter-heterogeneity (reconciled by the name-keyed per-region seam).
+#  ORGAN-READ status (2026-08-27): two of these — self_schema + d6_multiref_wm — now take a `shared=` kwarg and
+#  RUN their real read pipeline on the wired pool byte-identically (supports_shared=True; the descriptors carry
+#  organ_cls/read_fn/answer_fn + idx_fn + explicit_wiring_fn/region_flags). The other five are substrate-init GO
+#  but their read still needs a seam (GROUP_A_ORGANREAD_DEFERRED names each) — for those the batched gate stays the
+#  SUBSTRATE-INIT co-residence-invariance migration gate.
 #
 #  Builders are imported LAZILY inside each spec_fn (avoid a heavy import at module load + circular imports).
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -540,6 +599,165 @@ def _spec_d6_multiref_wm(seed):
     return list(cfg.brain_regions), list(cfg.region_pathways), {}
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  GROUP-A ORGAN-READ plumbing — the `shared=` read surface for the two organs whose read pipeline is a
+#  CLEAN function of the substrate (frozen plasticity, no neuromodulator subsystem, config-compatible):
+#  DR-3 self_schema authorship + D6 multi-referent WM. Each descriptor supplies: a config (its cfg needs,
+#  UNIONed compatibly), an idx_fn (region-name -> the dev-index map its read consumes), and for the
+#  inject-organ (self_schema) an explicit_wiring_fn + post_inject_fn (assembly loops / member->attend /
+#  the frozen loop gate). The read_fn/answer_fn run the organ's REAL production read battery.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+# config UNIONs (compatible: both frozen + NMDA-on; only self_schema declares nmda_ratio, only d6 the
+# nmda_recurrent slow-hold, so the keys they share (enable_nmda + the plasticity-OFF flags) agree exactly).
+# enable_conductance_noise + enable_ou_process draw from a SINGLE global RNG stream in neuron-index order, so a
+# neuron's noise depends on its ABSOLUTE index -> it is inherently co-residence-DEPENDENT (an organ built second
+# sits at a different offset -> a different draw). Making it invariant needs a per-neuron-seeded noise stream (a
+# sim/ engine edit, out of scope here), so the frozen migration pool reconciles it by running the noise OFF -- a
+# per-pool config decision exactly like the per-region threshold-het seam. Both organs declare the SAME value, so
+# there is no MergeConflict, and every read stays deterministic + byte-identical merged-vs-coresident.
+_NOISE_OFF = {"enable_conductance_noise": False, "enable_ou_process": False, "ou_std_current_pA": 0.0}
+# nmda_ratio is a GLOBAL scalar, but the engine applies it PER-REGION once any region opts into parameter
+# heterogeneity (self_schema does): a non-het co-resident (d6) then reads the DEFAULT ratio in the merged arm but
+# the global override in the alone arm -> the override bleeds across co-residence. self_schema's attractor works
+# at the default ratio (0.4) too (author read still self>>heard, verified), so we DO NOT override it -- keeping the
+# global at its default makes d6's nmda-ratio identical in both arms. (A per-region nmda_ratio field is the faithful
+# long-term seam; the default is the correct value here, so no override is needed.)
+_SELF_SCHEMA_CONFIG = {
+    "enable_nmda": True,
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, **_NOISE_OFF,
+}
+_D6_CONFIG = {
+    "enable_nmda": True, "enable_nmda_recurrent": True, "nmda_recurrent_tau_decay_ms": 100.0,
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, "enable_input_divisive_norm": False, **_NOISE_OFF,
+}
+# The engine builds a per-neuron NMDA mask the moment ANY region sets BrainRegion.enable_nmda=True (self_schema's
+# `workspace` does), after which regular NMDA applies ONLY to masked neurons. d6's standalone has NO per-region
+# enable_nmda, so it runs GLOBAL NMDA (every neuron). Co-resident with self_schema the mask would EXCLUDE d6 ->
+# d6 silently loses its regular NMDA in the merged arm only. Marking every d6 region enable_nmda=True restores
+# d6's faithful global-NMDA operating point AND makes the mask identical merged-vs-coresident. (K = R_MAX*N_SLOT
+# = 5*6 slot pools `w0..w29` + the shared `fs`, from d6_multiref_wm_production_organ.)
+_D6_REGION_FLAGS = {**{f"w{k}": {"enable_nmda": True} for k in range(5 * 6)}, "fs": {"enable_nmda": True}}
+
+
+def _ordered_region_idx(bridge, name):
+    """Region indices in the ORDER the standalone self_schema build reads them (`rm.indices(name)`), so the
+    dev-index map + the explicit loop wiring reference the SAME neuron ordering the read expects."""
+    return np.asarray(bridge.region_manager.indices(name), dtype=np.int64)
+
+
+def _self_schema_geom():
+    from research.runners._self_schema_region_derisk import (
+        ASSEMBLY_SIZE, K_CONTENTS, ATTEND_SIZE, CONFID_SIZE, AUTHOR_SIZE, MEMBER_TO_ATTEND_W, WS_LOOP_GATE)
+    from research.runners._gnw_rung1_ignition_curve_derisk import DEFAULT_ATTRACTOR_WEIGHT
+    return dict(A=ASSEMBLY_SIZE, K=K_CONTENTS, AT=ATTEND_SIZE, CF=CONFID_SIZE, AU=AUTHOR_SIZE,
+                MTA=float(MEMBER_TO_ATTEND_W), GATE=WS_LOOP_GATE, LOOP_W=float(DEFAULT_ATTRACTOR_WEIGHT))
+
+
+def _self_schema_member_attend(bridge):
+    g = _self_schema_geom()
+    ws = _ordered_region_idx(bridge, "workspace")
+    ss = _ordered_region_idx(bridge, "self_schema")
+    member = {k: ws[k * g["A"]:(k + 1) * g["A"]] for k in range(g["K"])}
+    attend = {k: ss[k * g["AT"]:(k + 1) * g["AT"]] for k in range(g["K"])}
+    base = g["AT"] * g["K"]
+    confid = ss[base:base + g["CF"]]
+    author = ss[base + g["CF"]:base + g["CF"] + g["AU"]]
+    return g, member, attend, confid, author
+
+
+def _self_schema_idx(bridge):
+    """The dev-index map `SelfSchemaAuthorshipOrgan._author_rate` consumes (member/attend/confid/author),
+    computed from the pool's region slices exactly as `build_self_schema_bridge` computes it standalone."""
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    _g, member, attend, confid, author = _self_schema_member_attend(bridge)
+    return {
+        "member_dev": {k: xp.asarray(v) for k, v in member.items()},
+        "attend_dev": {k: xp.asarray(v) for k, v in attend.items()},
+        "confid_dev": xp.asarray(confid),
+        "author_dev": xp.asarray(author),
+    }
+
+
+def _self_schema_wiring(bridge, rm):
+    """The explicit edges the base pathways do NOT carry: the K dense self-recurrent workspace assembly loops
+    (the GNW Rung-1 attractor) + the fixed member->attend read projection. Reproduces exactly the `union`
+    `build_self_schema_bridge` adds before its own inject, keyed on the pool's region slices."""
+    from research.runners._gnw_rung1_ignition_curve_derisk import _build_assembly_loop_population
+    from research.runners._gnw_rung3_report_reasoning_identity_derisk import _dense_projection
+    g, member, attend, _confid, _author = _self_schema_member_attend(bridge)
+    union = {}
+    for k in range(g["K"]):
+        union[f"loop_{k}"] = _build_assembly_loop_population(member[k], g["LOOP_W"])
+        union[f"member{k}_to_attend"] = _dense_projection(member[k], attend[k], g["MTA"], g["GATE"])
+    return union
+
+
+def _self_schema_post_inject(bridge):
+    from research.runners._self_schema_region_derisk import WS_LOOP_GATE
+    bridge.set_plasticity_gate(WS_LOOP_GATE, 0.0)   # freeze the loop (per-turn reads never learn)
+
+
+def _self_schema_reads(organ):
+    """The organ's REAL author-pool read battery: the SELF (volunteered) + HEARD (recalled) author firing
+    rates + the calibrated threshold. Byte-identical merged-vs-coresident == the read is co-residence-invariant."""
+    organ.ensure_built()
+    r_self = organ._author_rate(authored=True, lesion=False)
+    r_heard = organ._author_rate(authored=False, lesion=False)
+    ra = organ.read_author(authored=True)
+    return {
+        "author_rate_self": float(r_self), "author_rate_heard": float(r_heard),
+        "threshold": float(organ.threshold),
+        "calib.self_rate": float(organ.calib["self_rate"]),
+        "calib.heard_rate": float(organ.calib["heard_rate"]),
+        "read_author.rate": float(ra["author_rate"]),
+        "read_author.is_self": float(bool(ra["is_self"])),
+    }
+
+
+def _self_schema_answer(organ):
+    organ.ensure_built()
+    return (organ.read_author(authored=True)["label"], organ.read_author(authored=False)["label"])
+
+
+# D6 multi-referent WM — a bare-bridge MultiSlotHold whose reads run directly on the pool slice.
+_D6_BATTERY = ("dog", "cat", "bird")
+
+
+def _d6_organ(seed, shared):
+    from research.runners.d6_multiref_wm_production_organ import MultiReferentWMOrgan
+    return MultiReferentWMOrgan(seed=seed, shared=shared)
+
+
+def _self_schema_organ(seed, shared):
+    from research.runners.self_schema_production_organ import SelfSchemaAuthorshipOrgan
+    return SelfSchemaAuthorshipOrgan(seed=seed, shared=shared)
+
+
+def _d6_reads(organ):
+    """The organ's REAL multi-referent LOAD+HOLD+READ pipeline over a fixed 3-referent battery: the min held
+    bump amplitude, the recovery success + the per-register bump amplitudes read off the spiking buffer."""
+    organ.ensure_built()
+    res = organ.load(list(_D6_BATTERY), lesion=False)
+    out = {
+        "n_referents": float(res["n_referents"]),
+        "hold_alive_min": float(res["hold_alive_min"]),
+        "all_recovered": float(bool(res["all_recovered"])),
+        "zero_input_ok": float(bool(res["zero_input_ok"])),
+    }
+    return out
+
+
+def _d6_answer(organ):
+    organ.ensure_built()
+    res = organ.load(list(_D6_BATTERY), lesion=False)
+    return tuple(res["recovered"].get(r) for r in range(res["n_referents"]))
+
+
 GROUP_A = [
     OrganDescriptor(key="causal_whatif",
                     regions=("evt",),
@@ -553,7 +771,12 @@ GROUP_A = [
     OrganDescriptor(key="self_schema",
                     regions=("workspace", "workspace_fs", "self_schema"),
                     spec_fn=_spec_self_schema, param_het=True,
-                    scaffold_residuals=("hand-declared GNW assembly loops (post_build, self-organize later)",)),
+                    config=_SELF_SCHEMA_CONFIG,
+                    idx_fn=_self_schema_idx,
+                    explicit_wiring_fn=_self_schema_wiring, post_inject_fn=_self_schema_post_inject,
+                    organ_cls=_self_schema_organ, read_fn=_self_schema_reads, answer_fn=_self_schema_answer,
+                    supports_shared=True,
+                    scaffold_residuals=("hand-declared GNW assembly loops (explicit_wiring_fn, self-organize later)",)),
     OrganDescriptor(key="source_provenance",
                     regions=("episode", "content_readout", "ctx_perceived", "ctx_generated",
                              "prov_perceived", "prov_generated", "inh_perceived", "inh_generated"),
@@ -566,7 +789,11 @@ GROUP_A = [
                     spec_fn=_spec_prospective_memory),
     OrganDescriptor(key="d6_multiref_wm",
                     regions=(),                          # region names live in build_persistent_slot; discovered at build
-                    spec_fn=_spec_d6_multiref_wm),
+                    spec_fn=_spec_d6_multiref_wm,
+                    config=_D6_CONFIG, param_het=True,   # co-reside under the SAME name-keyed per-region param-het
+                    region_flags=_D6_REGION_FLAGS,       # seam self_schema uses, so a co-resident's het STATE is
+                    organ_cls=_d6_organ, read_fn=_d6_reads, answer_fn=_d6_answer,  # symmetric (co-residence-invariant);
+                    supports_shared=True),               # region_flags keep d6's NMDA-mask membership identical too
 ]
 
 # Group-B/C DEFERRALS (registered as data so the report + board carry the honest reason + the seam each needs).
@@ -583,6 +810,33 @@ GROUP_A_DEFERRED = {
                    "reverberation + BTSP formation. Group-C own-pool + apical/NMDA-slow seam.",
     "affective_tom": "OU + NEUROMODULATOR-subsystem seam — enable_ou_process=True + a bespoke `appraisal` "
                      "neuromodulator triad drives the read. Group-B OU/neuromod seam.",
+}
+
+# ORGAN-READ deferrals — the 5 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
+# READ pipeline is not YET a clean function of the frozen shared substrate. Each names the concrete engine/wrapper
+# seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, closed for the 2
+# frozen bare-substrate organs; these 5 need a further seam and DO NOT block the batch).
+GROUP_A_ORGANREAD_DEFERRED = {
+    "curiosity": "NEUROMODULATOR-SUBSYSTEM + plasticity config seam — the read needs the `curiosity` neuromodulator "
+                 "(from_novelty -> ASK excitability_drive) + a spiking-SNc RPE critic (enable_stdp + "
+                 "enable_reward_modulation + gabab). Those global plasticity/neuromod flags CONFLICT with the frozen "
+                 "pool; needs a per-region neuromodulator/plasticity seam (Group-B neuromod).",
+    "source_provenance": "NEUROMODULATOR-CONTEXT-LINE seam — the read rides two encoding-context neuromod lines "
+                         "(ctx_perceived/ctx_generated) each gating a zero-init Hebbian episode->provenance trace "
+                         "(enable_hebbian at encode). The `ProvenanceBrain` wrapper must accept an injected bridge, "
+                         "and the hebbian-encode config conflicts with the frozen pool.",
+    "comprehension": "WRAPPER + OPERATING-POINT seam — the read is tied to the `SpikingRoleCompetition` wrapper "
+                     "(installed cue weights + per-cue index maps); it must accept an injected bridge+slice, and its "
+                     "merge operating point (dt=1.0, homeostasis ON, per-region-thresh ON) must reconcile the global "
+                     "enable_homeostasis the frozen pool holds OFF.",
+    "prospective_memory": "STATEFUL WRAPPER seam — a `SFANmdaProspectiveMemory` (HomeostaticProspectiveMemory "
+                          "hierarchy) with a homeostatic-bias calibration + SFA + dendritic plateau + a one-shot "
+                          "Hebbian FORMATION event, read across MULTIPLE turns (form -> hold -> present-cue). Needs "
+                          "the hierarchy to accept an injected bridge + a stateful multi-turn read protocol.",
+    "causal_whatif": "LIVE-COMPOSER GROUNDING + DA/STDP seam — the read enumerates events + moat-confirms answers "
+                     "against a live RFPhasorComposer, and the forward model trains temporal-order STDP + phasic-DA "
+                     "at build (enable_stdp + enable_reward_modulation, conflicting with the frozen pool). Needs a "
+                     "shared/stub composer surface + a per-region plasticity/DA seam.",
 }
 
 GROUP_A_KEYS = [d.key for d in GROUP_A]

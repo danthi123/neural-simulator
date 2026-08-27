@@ -36,7 +36,7 @@ from pathlib import Path
 import numpy as np
 
 from research.runners.onebrain_merge_framework import (
-    REGISTRY, GROUP_A_KEYS, GROUP_A_DEFERRED, merge_organs, substrate_byte_identity,
+    REGISTRY, GROUP_A_KEYS, GROUP_A_DEFERRED, GROUP_A_ORGANREAD_DEFERRED, merge_organs, substrate_byte_identity,
     _region_indices, _host,
 )
 
@@ -94,6 +94,11 @@ def verify_seed(keys, seed: int, verbose: bool = True) -> dict:
     # LOAD-BEARING control: same pool with the param-het mask cleared (only rebuilt if some organ is param-het).
     any_het = any(getattr(d, "param_het", False) for d in descs)
     het_off = merge_organs(descs, seed, force_het_off=True) if any_het else None
+    # ORGAN-READ substrate (wire=True: the per-region-seamed wiring inject + settle-to-rest snapshot) — built ONCE
+    # for the whole batch when at least one organ actually runs its read pipeline (`supports_shared`).
+    any_read = any(getattr(d, "supports_shared", False) and d.organ_cls is not None and d.read_fn is not None
+                   for d in descs)
+    merged_w = merge_organs(descs, seed, wire=True) if any_read else None
 
     organs = {}
     for d in descs:
@@ -117,11 +122,14 @@ def verify_seed(keys, seed: int, verbose: bool = True) -> dict:
             entry["het_loadbearing_delta"] = hd
             entry["het_loadbearing_ok"] = bool(hd > 0.0)
 
-        # (2) ORGAN-READ byte-identity — only where the shipped class runs UNMODIFIED against a MergedPool.
+        # (2) ORGAN-READ byte-identity — only where the shipped class runs (with a shared= kwarg) on a MergedPool.
+        #     Runs on the WIRED pools (merged_w == the full co-resident substrate; core_w == this organ ALONE on the
+        #     superset config), so a non-zero delta isolates CO-RESIDENCE, not a config or wiring change.
         if d.supports_shared and d.organ_cls is not None and d.read_fn is not None:
             try:
-                m_org = d.organ_cls(seed=seed, shared=merged)
-                c_org = d.organ_cls(seed=seed, shared=core)
+                core_w = merge_organs([d], seed, config_descriptors=descs, wire=True)
+                m_org = d.organ_cls(seed=seed, shared=merged_w)
+                c_org = d.organ_cls(seed=seed, shared=core_w)
                 rd, rk, miss = _max_delta(d.read_fn(m_org), d.read_fn(c_org))
                 entry["read_checked"] = True
                 entry["read_maxerr"] = rd
@@ -208,7 +216,14 @@ def main():
     print(f"\n  pool legacy discriminator diverges: {out['n_legacy_diverges']}/{len(seeds)}  "
           f"(EVERY organ diverges: {out['n_all_organ_legacy_diverges']}/{len(seeds)})")
     n_go = sum(out["per_organ"][k]["verdict"] == "GO" for k in keys)
-    print(f"  ORGANS GO: {n_go}/{len(keys)}   POOL ALL-GO: {out['all_go']}")
+    n_read = sum(out["per_organ"][k]["read_checked"] for k in keys)
+    print(f"  ORGANS GO: {n_go}/{len(keys)}  (organ-READ byte-identity wired for {n_read})   POOL ALL-GO: {out['all_go']}")
+    organread_defer = {k: why for k, why in GROUP_A_ORGANREAD_DEFERRED.items()
+                       if k in keys and not out["per_organ"][k]["read_checked"]}
+    if organread_defer:
+        print("\n  ORGAN-READ DEFERRED (substrate-init GO; read pipeline needs the named seam):")
+        for k, why in organread_defer.items():
+            print(f"    - {k}: {why}")
     if GROUP_A_DEFERRED:
         print("\n  GROUP-B/C DEFERRED (honest, with the seam each needs):")
         for k, why in GROUP_A_DEFERRED.items():
@@ -226,12 +241,21 @@ def main():
     if het_keys:
         v.require("param-het reconciliation is load-bearing for every param-het organ, every seed",
                   sum(out["per_organ"][k]["n_het_loadbearing"] for k in het_keys), expect=len(het_keys) * n)
+    # ORGAN-READ: for every organ whose shipped class now runs its real read on the pool (`supports_shared`),
+    # require its numeric read battery byte-identical AND its rendered answer preserved, merged-vs-coresident.
+    read_keys = [k for k in keys if out["per_organ"][k]["read_checked"]]
+    if read_keys:
+        v.require("organ-READ byte-identity for every shared= organ's real read pipeline, every seed",
+                  sum(out["per_organ"][k]["n_read_byte_identical"] for k in read_keys), expect=len(read_keys) * n)
     v.require("every organ's per-seed GO gate holds, every seed",
               sum(out["per_organ"][k]["n_go"] for k in keys), expect=len(keys) * n)
     v.disabled("cross-region interaction (the one-brain INTEGRATION goal)",
                why="MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION (DESIGN §4)")
-    v.disabled("organ-read / answer equivalence (no shipped Group-A class takes shared= today)",
-               why="the substrate-init co-residence-invariance gate; organ-read needs shared= plumbing (next rung)")
+    unwired = [k for k in keys if not out["per_organ"][k]["read_checked"]]
+    if unwired:
+        v.disabled(f"organ-read for {len(unwired)} organ(s) without a shared= read path yet: {unwired}",
+                   why="substrate-init co-residence-invariance is gated; their read pipelines need a shared= seam "
+                       "(neuromodulator-subsystem / wrapper / composer-grounding) — the honest deferrals below")
     decided = v.decide(go=out["all_go"])
 
     payload = {"mode": "onebrain_merge_batched_verify", **out}

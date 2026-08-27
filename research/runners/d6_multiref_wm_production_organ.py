@@ -139,8 +139,12 @@ class MultiReferentWMOrgan:
     disjoint registers (role-by-position) and HOLDS; `read_all` reads each register's HELD bump off cp_firing_states.
     The read-back is what is surfaced (the brain reports what its SPIKING WM holds), so the lesion is load-bearing."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): a MergedPool whose region slice hosts this
+        # buffer's R_MAX banks + shared FS; passed through to the MultiSlotHold core so the HOLD runs on the shared
+        # spiking bridge. None -> the organ builds its own bridge exactly as today.
+        self._shared = shared
         self._built = False
         self.buf = None          # intact MultiSlotHold (recur>0)
         self.buf_lesion = None   # recur=0 MultiSlotHold (killed hold)
@@ -153,7 +157,7 @@ class MultiReferentWMOrgan:
     def ensure_built(self):
         if self._built:
             return
-        self.buf = MultiSlotHold(self.seed, R_MAX, N_SLOT)
+        self.buf = MultiSlotHold(self.seed, R_MAX, N_SLOT, shared=self._shared)
         self.binder = HebbianBinder()
         # pre-mint a barcode pool (>= _BINDER_K distinct referents; deterministic from the seed)
         self._codes = _mint_codes(np.random.default_rng(self.seed + 7), max(_BINDER_K, N_SLOT))
@@ -187,22 +191,28 @@ class MultiReferentWMOrgan:
         self.ensure_built()
         refs = list(referents)[:min(R_MAX, _BINDER_K)]
         buf = self._lesion_buf() if lesion else self.buf
-        buf.reset()
-        locals_ = [self._local_slot(r) for r in refs]
-        # role-by-position WRITE MARKER: referent r -> register r; interleave a HOLD after each write (the intervening
-        # span) so the earlier registers must SUSTAIN while later ones load (the durability stress).
-        for r, loc in enumerate(locals_):
-            buf.write(r, loc)
+        # ONE-BRAIN MERGE: keep this buffer's whole-bridge reset+step protocol from leaving a footprint on a
+        # co-resident organ's slice (only the buffer's own slice evolves; every other slice is restored at exit).
+        import contextlib
+        guard = (self._shared.read_isolation("d6_multiref_wm")
+                 if (self._shared is not None and not lesion) else contextlib.nullcontext())
+        with guard:
+            buf.reset()
+            locals_ = [self._local_slot(r) for r in refs]
+            # role-by-position WRITE MARKER: referent r -> register r; interleave a HOLD after each write (the
+            # intervening span) so the earlier registers must SUSTAIN while later ones load (the durability stress).
+            for r, loc in enumerate(locals_):
+                buf.write(r, loc)
+                buf.hold()
+            # an extra held span (the "... it chased her" gap) with input asserted zero
             buf.hold()
-        # an extra held span (the "... it chased her" gap) with input asserted zero
-        buf.hold()
-        buf.hold()
-        recovered = {}
-        alive = []
-        for r in range(len(refs)):
-            loc, amp = buf.read(r)
-            alive.append(float(amp))
-            recovered[r] = self._ref_of_slot.get(loc, None)
+            buf.hold()
+            recovered = {}
+            alive = []
+            for r in range(len(refs)):
+                loc, amp = buf.read(r)
+                alive.append(float(amp))
+                recovered[r] = self._ref_of_slot.get(loc, None)
         return {
             "n_referents": len(refs),
             "input_order": refs,
