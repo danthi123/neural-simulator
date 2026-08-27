@@ -104,7 +104,9 @@ def run_handler_no_regression():
               "BRAIN_COMPREHENSION_GATE", "BRAIN_SURPRISE", "BRAIN_METACOG", "BRAIN_WORLDMODEL", "BRAIN_PRAGMATIC",
               "BRAIN_RICH", "BRAIN_SWAP_DRIVES", "BRAIN_OPEN_ENDED"):
         os.environ.setdefault(k, "0")
-    os.environ.pop("BRAIN_VISION_IDENTITY", None)
+    # 2026-08-27 fix: BRAIN_VISION_IDENTITY defaults ON through webapp.server._vision_identity_on()
+    # (_VISION_IDENTITY_DEFAULT_ON=True, wave-1/2 flip) -- unset no longer means OFF.
+    os.environ["BRAIN_VISION_IDENTITY"] = "0"
     os.environ.pop("BRAIN_VISION_IDENTITY_LESION", None)
     try:
         import webapp.server as S

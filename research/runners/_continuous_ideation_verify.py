@@ -162,8 +162,12 @@ def _integration():
     fp0 = _store_fingerprint(organ)
     mood = {"valence": 0.6, "arousal": 0.4}
 
-    # (A) OFF: BRAIN_CONTINUOUS_IDEATE unset -> byte-identical to today's recall wander.
-    os.environ.pop("BRAIN_CONTINUOUS_IDEATE", None)
+    # (A) OFF: BRAIN_CONTINUOUS_IDEATE=0 -> byte-identical to today's recall wander.
+    # 2026-08-27 fix: webapp.continuous_engine.ideation_enabled() reads os.environ.get("BRAIN_CONTINUOUS_IDEATE", "1")
+    # -- unset measures ON (confirmed directly), contradicting its own "Default-OFF anchor" docstring one line above
+    # the read. That production-code default/docstring mismatch is a separate issue (flagged, not fixed here); this
+    # soak no longer relies on "unset" for its OFF arm either way.
+    os.environ["BRAIN_CONTINUOUS_IDEATE"] = "0"
     os.environ.pop("BRAIN_CONTINUOUS_IDEATE_EVERY", None)
     os.environ["BRAIN_CONTINUOUS"] = "1"
     k_off = "ideation_off"; CE.forget_session(k_off)

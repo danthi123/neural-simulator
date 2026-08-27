@@ -250,7 +250,9 @@ def _gate_multistep_arms(chain=("zorp", "blib", "krad", "munt")):
     q_chase = "what does %s %s all the way?" % (edges[0], REL)
     q_plain = "what does %s %s?" % (edges[0], REL)
 
-    os.environ.pop("BRAIN_GNW_MULTISTEP", None)                  # OFF: chase-form passes through -> first hop
+    # 2026-08-27 fix: BRAIN_GNW_MULTISTEP defaults ON (_GNW_MULTISTEP_DEFAULT_ON=True; webapp/gnw_multistep_
+    # deliberation.py's own reader also defaults "1") -- unset no longer means OFF, so the OFF arm must be explicit.
+    os.environ["BRAIN_GNW_MULTISTEP"] = "0"                       # OFF: chase-form passes through -> first hop
     off_chase = wired.gate(q_chase)
     os.environ["BRAIN_GNW_MULTISTEP"] = "1"                      # ON: chase-form -> the terminal leaf
     on_chase = wired.gate(q_chase)
@@ -314,7 +316,8 @@ def _handler_multistep(chain=("zorp", "blib", "krad", "munt")):
         return resp
 
     on = _arm("ms_on", {"BRAIN_GNW_MULTISTEP": "1"})
-    off = _arm("ms_off", {})
+    # 2026-08-27 fix: BRAIN_GNW_MULTISTEP defaults ON, so an empty env (unset) is NOT the OFF arm -- explicit "0".
+    off = _arm("ms_off", {"BRAIN_GNW_MULTISTEP": "0"})
     lesion = _arm("ms_les", {"BRAIN_GNW_MULTISTEP": "1", "BRAIN_GNW_MULTISTEP_LESION": "1"})
     leaf, first = edges[-1], edges[1]
 
