@@ -225,6 +225,20 @@ class MergedPool:
         bridge.runtime_state.actual_seed_used = self.seed
         bridge._initialize_simulation_data(called_from_playback_init=False)
 
+        # (5a) NMDA-MASK RECONCILIATION (a co-residence seam, like the per-region threshold/het seams). The engine
+        #      builds a per-neuron NMDA mask the moment ANY region opts in (BrainRegion.enable_nmda=True), after
+        #      which regular NMDA applies ONLY to masked neurons; with global enable_nmda=True but NO region opting
+        #      in it falls back to GLOBAL NMDA (v1 back-compat). That fallback is co-residence-DEPENDENT: an organ
+        #      whose regions ALL opt OUT (source_provenance, causal_whatif) gets NO NMDA when co-resident with an
+        #      NMDA organ (masked out) but SPURIOUS global NMDA when ALONE on the enable_nmda=True superset config.
+        #      Pin it: global-on + no-opt-in => install an ALL-ZERO mask (no neuron gets NMDA), so a no-NMDA organ's
+        #      slice reads byte-identically alone vs co-resident. Organs that WANT global NMDA opt every region in
+        #      via region_flags (d6), so a mask is already built and this never fires; and any pool that already
+        #      has an opting-in region (self_schema present) also skips it. Init arrays are untouched.
+        if getattr(cfg, "enable_nmda", False) and getattr(bridge, "cp_nmda_neuron_mask", None) is None:
+            n_all = int(bridge.cp_membrane_potential_v.shape[0])
+            bridge.cp_nmda_neuron_mask = xp.zeros(n_all, dtype=xp.float32)
+
         # (5b) ORGAN-READ WIRING (wire=True only) — ONE order-INVARIANT inject that replaces cp_connections with the
         #      base pathways REGENERATED per-region-seamed (`build_wiring_plan(per_region_seed=True)`, so every edge
         #      keys on its endpoints' NAMES, not build order) UNION each organ's explicit_wiring_fn (assembly loops /
@@ -543,13 +557,17 @@ WORLDMODEL = OrganDescriptor(
 #  GROUP A — the declarative-NOW organs (DESIGN §5). Each is a registry ROW: a `spec_fn` that reuses the
 #  organ's OWN de-risk builder (throwaway bridge, we read its BrainRegion specs) + `param_het` where the
 #  organ's standalone uses parameter-heterogeneity (reconciled by the name-keyed per-region seam).
-#  ORGAN-READ status (2026-08-27): THREE of these — self_schema + d6_multiref_wm + comprehension — now take a
-#  `shared=` kwarg and RUN their real read pipeline on the wired pool byte-identically (supports_shared=True; the
-#  descriptors carry organ_cls/read_fn/answer_fn + config + idx_fn/explicit_wiring_fn/region_flags as needed).
-#  comprehension is a FROZEN forward pass (installed cue->role validities + frozen gates -> the Wong-Wang WTA read
-#  never mutates a weight). The other four are substrate-init GO but their read still needs a seam
-#  (GROUP_A_ORGANREAD_DEFERRED names each precisely) — for those the batched gate stays the SUBSTRATE-INIT
-#  co-residence-invariance migration gate.
+#  ORGAN-READ status (2026-08-27): FIVE of these — self_schema + d6_multiref_wm + comprehension + source_provenance
+#  + causal_whatif — now take a `shared=` kwarg and RUN their real read pipeline on the wired pool byte-identically
+#  (supports_shared=True; the descriptors carry organ_cls/read_fn/answer_fn + config + idx_fn/explicit_wiring_fn/
+#  region_flags as needed). Three are FROZEN forward passes (comprehension's installed cue->role validities +
+#  frozen gates; self_schema; d6). source_provenance + causal_whatif add a BUILD-TIME plasticity step that mutates
+#  their OWN slice's weights (a Hebbian episode->prov encode; a temporal-order-STDP + phasic-DA forward-model
+#  train) under a config toggle (the plasticity flags are read live per step) + a universal gain-0 freeze of every
+#  non-organ edge + read_isolation, then read FROZEN — the encode/train is confined to the organ's slice and is
+#  co-residence-invariant. The remaining TWO (curiosity, prospective_memory) are substrate-init GO but their read
+#  still needs a seam (GROUP_A_ORGANREAD_DEFERRED names each precisely) — for those the batched gate stays the
+#  SUBSTRATE-INIT co-residence-invariance migration gate.
 #
 #  Builders are imported LAZILY inside each spec_fn (avoid a heavy import at module load + circular imports).
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -814,11 +832,381 @@ def _comprehension_answer(organ):
                  for (_lab, _tag, n0, v, n1) in _comprehension_battery(organ.seed))
 
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  SOURCE-PROVENANCE (laneC #129) — a LEARNED, context-gated OPPONENT trace. Unlike the frozen-forward-pass
+#  organs, its read is encode(fact,provenance) then recall(fact): the ENCODE mutates a zero-init episode->prov
+#  Hebbian trace. The seam (finding 2026-08-27 organ-read-extension): move that encode to a per-region-gated
+#  BUILD-TIME step under a GLOBAL-HEBBIAN TOGGLE (enable_hebbian_learning is read live each step, so the read
+#  organ flips it True + sets the hebbian hyperparams ONLY around the build-time encode, then restores False;
+#  every non-prov edge stays inert — the other organs' plastic edges are quiescent, the pool has zero cross-organ
+#  synapses, and the prov/content edges are the only gated-plastic edges in the slice). recall() is then a clean
+#  FROZEN forward pass. The whole encode + every recall runs in the pool's read_isolation("source_provenance") so
+#  co-resident slices are restored -> the read is byte-identical merged-vs-coresident. enable_nmda reconciles via
+#  the existing per-region mask (its regions carry enable_nmda=False -> opt OUT). param_het reconciles via the
+#  name-keyed per-region seam (its standalone uses parameter heterogeneity), exactly as self_schema/d6.
+# config: enable_hebbian_learning=False (union with the frozen organs; toggled True only at build-time encode);
+#   every other plasticity/noise flag OFF; the hebbian hyperparams are inert while the toggle is off. enable_nmda
+#   is NOT set here (unions to whatever the batch declares; the slice opts out per-region regardless).
+_SOURCE_PROV_CONFIG = {
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, **_NOISE_OFF,
+}
+
+
+def _source_prov_organ(seed, shared):
+    return _SourceProvReadOrgan(int(seed), shared)
+
+
+class _SourceProvReadOrgan:
+    """Wraps `ProvenanceBrain` for the organ-read gate: a BUILD-TIME Hebbian encode of the 8-item paired battery
+    (under the global-hebbian toggle + read_isolation) then a FROZEN recall read of each item's opponent
+    provenance rates. shared=None -> the brain builds its own bridge and the encode runs at its own (already-on)
+    enable_hebbian_learning, so the read is byte-identical to the standalone."""
+
+    def __init__(self, seed, shared=None):
+        self.seed = int(seed)
+        self._shared = shared
+        self.brain = None
+        self.patterns = None
+        self._built = False
+        self._items = None
+
+    def _guard(self):
+        import contextlib
+        if self._shared is not None:
+            return self._shared.read_isolation("source_provenance")
+        return contextlib.nullcontext()
+
+    def ensure_built(self):
+        if self._built:
+            return
+        from research.runners._laneC_source_provenance_opponent_derisk import (
+            ProvenanceBrain, make_paired_patterns, _encode_all, HEBB_LR, HEBB_WMAX)
+        self.brain = ProvenanceBrain(self.seed, shared=self._shared)
+        self.patterns = make_paired_patterns(self.seed)
+        with self._guard():
+            if self._shared is not None:
+                # GLOBAL-HEBBIAN TOGGLE — the pool config keeps enable_hebbian_learning False (frozen, unions
+                # with the other organs); flip it (and the hebbian hyperparams the encode needs) True ONLY for
+                # the build-time encode, then restore. The flag is read live per step, so this is exact.
+                cc = self.brain._bridge.core_config
+                saved = {k: getattr(cc, k) for k in (
+                    "enable_hebbian_learning", "hebbian_learning_rate", "hebbian_max_weight",
+                    "hebbian_min_weight", "hebbian_weight_decay", "hebbian_symmetric")}
+                cc.enable_hebbian_learning = True
+                cc.hebbian_learning_rate = float(HEBB_LR)
+                cc.hebbian_max_weight = float(HEBB_WMAX)
+                cc.hebbian_min_weight = 0.0
+                cc.hebbian_weight_decay = 0.0
+                cc.hebbian_symmetric = True
+                # UNIVERSAL GAIN-0 FREEZE of every NON-prov edge during the encode (the finding's named seam): the
+                # global enable_hebbian_learning toggle makes the whole bridge's plastic edges eligible, and a
+                # co-resident organ's installed weights (e.g. comprehension's cue validities) then couple weakly
+                # into the encode. Zero cp_plasticity_rate_gain everywhere first; the encode's own
+                # set_plasticity_gate("prov_learn"/"content_learn", 1.0) re-opens ONLY the prov/content edges via
+                # the gate->rate_gain path -> only those edges can move, deterministically + co-residence-invariant.
+                b = self.brain._bridge
+                saved_gain = None
+                g = getattr(b, "cp_plasticity_rate_gain", None)
+                if g is not None:
+                    saved_gain = g.copy()
+                    g[:] = 0.0
+                try:
+                    _encode_all(self.brain, self.patterns, learning=True)
+                finally:
+                    for k, v in saved.items():
+                        setattr(cc, k, v)
+                    if saved_gain is not None:
+                        b.cp_plasticity_rate_gain[:] = saved_gain
+            else:
+                _encode_all(self.brain, self.patterns, learning=True)
+        self._built = True
+
+    def _recall_items(self):
+        """Recall each of the 8 items from content alone (contexts silent) and read its opponent provenance rates.
+        Winner + signed discriminability are computed DETERMINISTICALLY (no host tie-break rng) so the read is a
+        pure function of the frozen trained substrate slice -> byte-identical merged-vs-coresident."""
+        from research.runners._laneC_source_provenance_opponent_derisk import PROVENANCES, N_PAIRS
+        if self._items is not None:
+            return self._items
+        self.ensure_built()
+        items = []
+        with self._guard():
+            for prov in PROVENANCES:
+                for i in range(N_PAIRS):
+                    rec = self.brain.recall(self.patterns[prov][i])
+                    rp, rg = rec["rate_perceived"], rec["rate_generated"]
+                    winner = "perceived" if rp >= rg else "generated"
+                    d_perc = (rp - rg) / (rp + rg + 1e-9)
+                    d_true = d_perc if prov == "perceived" else -d_perc
+                    items.append({"prov": prov, "pair": i, "winner": winner,
+                                  "correct": bool(winner == prov), "d_true": float(d_true),
+                                  "rate_perceived": float(rp), "rate_generated": float(rg),
+                                  "content_rate": float(rec["content_rate"])})
+        self._items = items
+        return items
+
+
+def _source_prov_reads(organ):
+    """The organ's REAL opponent-provenance read battery: per-item perceived/generated/content rates + the signed
+    discriminability, plus the aggregate min |d| and sign accuracy. Byte-identical merged-vs-coresident == the
+    encode+recall provenance pipeline is co-residence-invariant."""
+    import numpy as _np
+    items = organ._recall_items()
+    out = {}
+    for k, it in enumerate(items):
+        out[f"rate_perc_{k}"] = it["rate_perceived"]
+        out[f"rate_gen_{k}"] = it["rate_generated"]
+        out[f"content_{k}"] = it["content_rate"]
+        out[f"d_true_{k}"] = it["d_true"]
+    out["min_d_true"] = float(_np.min([it["d_true"] for it in items]))
+    out["acc"] = float(_np.mean([it["correct"] for it in items]))
+    return out
+
+
+def _source_prov_answer(organ):
+    """The rendered read-out: the per-item provenance verdict (which source the opponent comparator names)."""
+    items = organ._recall_items()
+    return tuple(it["winner"] for it in items)
+
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  CAUSAL WHAT-IF (T1-4) — a LEARNED, DIRECTED spiking forward model. Two seams (finding 2026-08-27):
+#  (1) BUILD-TIME STDP+DA TRAIN — build_forward_model TRAINS temporal-order STDP + phasic-DA at BUILD then freezes;
+#      the wire=True pool never runs that training, so the evt slice would be untrained. Seam: run the train as a
+#      build-time step under a config toggle (enable_stdp/enable_reward_modulation are read live per step) + a
+#      universal gain-0 freeze of every NON-evt edge (only the evt xblock edges stay plastic, so the STDP tags +
+#      DA-gated three-factor updates are confined to the evt slice, co-residence-invariant), then freeze (enable_stdp
+#      OFF) for the read. propagation_strength + current_time_step + the plasticity flags are SAVED and RESTORED so
+#      no co-resident read on the shared bridge is perturbed.
+#  (2) LIVE-COMPOSER answer — DECLARED RESIDUAL, NOT closed here. The production what_if/why ANSWER is rendered by a
+#      live RFPhasorComposer (`_recalled(composer,e)` gates the emitted sentence). The organ-read gate closes the
+#      SUBSTRATE forward-pass diagnostics (predicts_D / directed-ratio / cause-separation / do-intervention), which
+#      the finding names as composer-INDEPENDENT + byte-identical once evt is trained; the NL rendering rides the
+#      composer-grounding burn-down. The evt region carries NO RegionPathways (its xblock edges are injected
+#      separately), so this organ supplies an explicit_wiring_fn to regenerate them per-region-seamed on the pool.
+#  enable_nmda: evt opts OUT (region default False) -> the per-region mask + the pool's all-zero-mask reconciliation.
+_CAUSAL_CONFIG = {
+    "enable_stdp": False, "enable_hebbian_learning": False, "enable_homeostasis": False,
+    "enable_short_term_plasticity": False, "enable_structural_plasticity": False,
+    "enable_reward_modulation": False, **_NOISE_OFF,
+}
+# build_forward_model's build defaults (the xblock topology + the train/read operating point), reproduced here so
+# the pool's evt slice trains BYTE-IDENTICALLY to a coresident evt slice (same rng, same reps, same protocol).
+_CAUSAL_BLK = 30
+_CAUSAL_N_EVENTS = 6
+
+
+def _causal_wiring(bridge, rm):
+    """explicit_wiring_fn: regenerate build_forward_model's cross-block `xblock` edges on the pool's evt slice.
+    Cross-block only (i!=j), weak + plastic, NO within-block. Uses the SAME RandomState(seed+17) + loop order as
+    build_forward_model, so the edge set is byte-identical (structurally) whether evt is alone or co-resident."""
+    import numpy as np
+    seed = int(bridge.core_config.seed)
+    blk, n_events, init_w, xblock_density = _CAUSAL_BLK, _CAUSAL_N_EVENTS, 0.2, 0.6
+    evt = np.asarray(rm.indices("evt"), dtype=np.int64)
+    blocks = [evt[e * blk:(e + 1) * blk] for e in range(n_events)]
+    rng = np.random.RandomState(seed + 17)
+    pre, post, w = [], [], []
+    for i in range(n_events):
+        for j in range(n_events):
+            if i == j:
+                continue
+            for a_ in blocks[i]:
+                for b_ in blocks[j]:
+                    if xblock_density >= 1.0 or rng.rand() < xblock_density:
+                        pre.append(int(a_)); post.append(int(b_)); w.append(float(init_w))
+    return {"xblock": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
+                       "plastic": True, "conn_type": "ff"}}
+
+
+def _causal_organ(seed, shared):
+    return _CausalReadOrgan(int(seed), shared)
+
+
+class _CausalReadOrgan:
+    """Wraps the causal forward-model for the organ-read gate: a BUILD-TIME temporal-order-STDP + phasic-DA train of
+    the evt slice (under a config toggle + a gain-0 freeze of every non-evt edge + read_isolation), then the FROZEN
+    substrate forward-pass reads (forward prediction, unseen-consequence rollout, DO-intervention). The composer-
+    grounded NL answer is a declared residual; the substrate causal verdicts are the rendered read-out here."""
+
+    def __init__(self, seed, shared=None):
+        self.seed = int(seed)
+        self._shared = shared
+        self.bridge = None
+        self.meta = None
+        self._reads = None
+        self._built = False
+
+    def _guard(self):
+        import contextlib
+        if self._shared is not None:
+            return self._shared.read_isolation("causal_whatif")
+        return contextlib.nullcontext()
+
+    def _freeze_non_evt(self, b, evt_arr, xp):
+        """Universal gain-0 freeze of every edge that is NOT evt-internal (both endpoints in evt). tocoo() preserves
+        cp_connections.data order, so the mask aligns with cp_plasticity_rate_gain (the framework's own freeze
+        relies on this). Only the evt xblock edges keep gain 1.0 -> STDP+DA train the evt slice alone."""
+        import numpy as np
+        coo = b.cp_connections.tocoo()
+        row = np.asarray(_host(coo.row)); col = np.asarray(_host(coo.col))
+        row_in = np.isin(row, evt_arr); col_in = np.isin(col, evt_arr)
+        both = row_in & col_in
+        ng = np.zeros(row.shape[0], dtype=np.float32)
+        ng[both] = 1.0
+        b.cp_plasticity_rate_gain = xp.asarray(ng, dtype=xp.float32)
+
+    def ensure_built(self):
+        if self._built:
+            return
+        import numpy as np
+        from sim.backend import get_backend
+        from research.runners._causal_forward_model_derisk import (
+            build_forward_model, train, OBS_EPISODES)
+        xp, _ = get_backend()
+        if self._shared is None:
+            # standalone (for parity/testing): the de-risk's own build+train, then freeze + maturation gain.
+            self.bridge, cc, self.meta = build_forward_model(self.seed)
+            train(self.bridge, cc, self.meta, xp, OBS_EPISODES, obs_reps=30, interv_reps=30)
+            cc.enable_stdp = False; cc.enable_reward_modulation = False
+            cc.current_reward_signal = 0.0; cc.propagation_strength = 0.50
+            self._reads = self._read_substrate(xp)
+            self._built = True
+            return
+
+        pool = self._shared
+        pool.ensure_built()
+        b = pool.bridge
+        cc = b.core_config
+        blk, n_events = _CAUSAL_BLK, _CAUSAL_N_EVENTS
+        evt = np.asarray(b.region_manager.indices("evt"), dtype=np.int64)
+        blocks = [evt[e * blk:(e + 1) * blk] for e in range(n_events)]
+        b._blocks = blocks
+        b._blk = blk
+        snap = pool.snap or {}
+        b._rest_v = (np.asarray(snap["cp_membrane_potential_v"]).copy()
+                     if "cp_membrane_potential_v" in snap else b.cp_membrane_potential_v.copy())
+        b._rest_u = (np.asarray(snap["cp_recovery_variable_u"]).copy()
+                     if "cp_recovery_variable_u" in snap else b.cp_recovery_variable_u.copy())
+        self.bridge = b
+        self.meta = dict(n_events=n_events, blk=blk)
+
+        _cfg_keys = ("enable_stdp", "stdp_a_plus", "stdp_a_minus", "stdp_tau_plus_ms", "stdp_tau_minus_ms",
+                     "stdp_w_max", "stdp_w_min", "enable_reward_modulation", "reward_defer_stdp_weight_update",
+                     "reward_learning_rate", "reward_eligibility_tau_ms", "reward_baseline",
+                     "current_reward_signal", "reward_aversive_scale", "propagation_strength")
+        saved = {k: getattr(cc, k) for k in _cfg_keys}
+        saved_tstep = b.runtime_state.current_time_step
+        saved_tms = b.runtime_state.current_time_ms
+        g0 = getattr(b, "cp_plasticity_rate_gain", None)
+        saved_gain = g0.copy() if g0 is not None else None
+        # The plasticity STATE arrays are allocated at BUILD only when the flags are on; the frozen pool builds with
+        # them None, so toggling enable_stdp/enable_reward_modulation at train-time would silently no-op (the STDP
+        # timing base + the DA eligibility trace never exist). Allocate them here (the exact shapes _initialize_
+        # simulation_data uses under those flags), and restore to None after so no co-resident read is perturbed.
+        saved_elig = getattr(b, "cp_eligibility_trace", None)
+        saved_lst = getattr(b, "cp_last_spike_time", None)
+        nnz = int(b.cp_connections.nnz)
+        n_all = int(b.cp_membrane_potential_v.shape[0])
+        with self._guard():
+            try:
+                # build_forward_model's DIRECTED-plasticity operating point (temporal-order STDP + DA three-factor)
+                cc.enable_stdp = True
+                cc.stdp_a_plus = 0.02; cc.stdp_a_minus = 0.010
+                cc.stdp_tau_plus_ms = 12.0; cc.stdp_tau_minus_ms = 12.0
+                cc.stdp_w_max = 24.0; cc.stdp_w_min = 0.0
+                cc.enable_reward_modulation = True
+                cc.reward_defer_stdp_weight_update = True
+                cc.reward_learning_rate = 0.18; cc.reward_eligibility_tau_ms = 150.0
+                cc.reward_baseline = 0.0; cc.current_reward_signal = 0.0
+                cc.reward_aversive_scale = 1.0; cc.propagation_strength = 0.05
+                if saved_elig is None:
+                    b.cp_eligibility_trace = xp.zeros(nnz, dtype=xp.float32)
+                if saved_lst is None:
+                    b.cp_last_spike_time = xp.full(n_all, -1000.0, dtype=xp.float32)
+                self._freeze_non_evt(b, evt, xp)
+                train(b, cc, self.meta, xp, OBS_EPISODES, obs_reps=30, interv_reps=30)
+                # FREEZE the learned structure + the uniform maturation gain (the de-risk read protocol).
+                cc.enable_stdp = False; cc.enable_reward_modulation = False
+                cc.current_reward_signal = 0.0; cc.propagation_strength = 0.50
+                self._reads = self._read_substrate(xp)
+            finally:
+                for k, v in saved.items():
+                    setattr(cc, k, v)
+                b.runtime_state.current_time_step = saved_tstep
+                b.runtime_state.current_time_ms = saved_tms
+                if saved_gain is not None:
+                    b.cp_plasticity_rate_gain[:] = saved_gain
+                b.cp_eligibility_trace = saved_elig
+                b.cp_last_spike_time = saved_lst
+        self._built = True
+
+    def _read_substrate(self, xp):
+        """RAW (unrounded) spiking substrate diagnostics on the FROZEN trained evt slice — the composer-independent
+        causal reads. All are `cp_firing_states` reads via the de-risk's held-read primitive."""
+        from research.runners._causal_forward_model_derisk import (
+            _held_read, _xblock_weight, CHAIN_EDGES, A, B, C, D, X, Y)
+        b, blocks = self.bridge, self.bridge._blocks
+        out = {}
+        # 1-step forward prediction on the chain edges (raw successor rate + argmax correctness)
+        n_correct = 0
+        for src, tgt in CHAIN_EDGES:
+            rates = _held_read(b, blocks, xp, src)
+            pred = max((e for e in range(len(blocks)) if e != src), key=lambda e: rates[e])
+            n_correct += int(pred == tgt)
+            out[f"succ_rate_{src}_{tgt}"] = float(rates[tgt])
+        out["fwd_acc"] = float(n_correct / len(CHAIN_EDGES))
+        # directedness: hold B -> D fires; hold D -> B does not
+        rb = _held_read(b, blocks, xp, B)
+        rd = _held_read(b, blocks, xp, D)
+        out["directed_fwd_BtoD"] = float(rb[D])
+        out["directed_rev_DtoB"] = float(rd[B])
+        # unseen 2-step consequence (roll A->B->D forward)
+        ra = _held_read(b, blocks, xp, A, read_steps=20)
+        out["D_rate"] = float(ra[D]); out["B_rate"] = float(ra[B])
+        out["offchain_max"] = float(max(ra[C], ra[X], ra[Y]))
+        # DO-intervention cause vs correlation
+        out["Y_do_X"] = float(_held_read(b, blocks, xp, X)[Y])
+        out["Y_do_C"] = float(_held_read(b, blocks, xp, C)[Y])
+        # learned-weight probes (the DIRECT A->D must stay unlearned; the chain + genuine C->Y consolidate)
+        out["w_AB"] = float(_xblock_weight(b, A, B))
+        out["w_CY"] = float(_xblock_weight(b, C, Y))
+        out["w_XY"] = float(_xblock_weight(b, X, Y))
+        out["w_AD"] = float(_xblock_weight(b, A, D))
+        return out
+
+
+def _causal_reads(organ):
+    """The organ's REAL directed-forward-model read battery (RAW rates + learned weights). Byte-identical
+    merged-vs-coresident == the whole STDP+DA-trained forward model reads co-residence-invariantly."""
+    organ.ensure_built()
+    return dict(organ._reads)
+
+
+def _causal_answer(organ):
+    """The rendered SUBSTRATE causal verdict (composer-independent): forward prediction correct, the unseen 2-step
+    consequence D predicted, and X-not-a-cause-of-Y under the DO-intervention. The composer-grounded NL rendering
+    is the declared residual (rides the composer-grounding burn-down)."""
+    organ.ensure_built()
+    r = organ._reads
+    predicts_D = bool(r["D_rate"] > max(r["offchain_max"], 1.0) * 1.5
+                      and r["B_rate"] >= r["D_rate"] * 0.8 and r["w_AD"] < 1.0)
+    x_not_cause = bool(r["Y_do_X"] < max(r["Y_do_C"], 1.0) * 0.5)
+    return (float(r["fwd_acc"]) >= 1.0, predicts_D, x_not_cause)
+
+
 GROUP_A = [
     OrganDescriptor(key="causal_whatif",
                     regions=("evt",),
                     spec_fn=_spec_causal_whatif,
-                    scaffold_residuals=("host-injected DA sign at train time (declared teacher signal)",)),
+                    config=_CAUSAL_CONFIG,
+                    explicit_wiring_fn=_causal_wiring,
+                    organ_cls=_causal_organ, read_fn=_causal_reads, answer_fn=_causal_answer,
+                    supports_shared=True,
+                    scaffold_residuals=("host-injected DA sign at train time (declared teacher signal); "
+                                        "composer-grounded NL what-if answer (substrate causal verdict is closed)",)),
     OrganDescriptor(key="comprehension",
                     regions=("sel_agent", "sel_FS_agent", "sel_patient", "sel_FS_patient",
                              "cue_position_pos", "cue_position_neg", "cue_animacy_pos", "cue_animacy_neg",
@@ -839,7 +1227,12 @@ GROUP_A = [
     OrganDescriptor(key="source_provenance",
                     regions=("episode", "content_readout", "ctx_perceived", "ctx_generated",
                              "prov_perceived", "prov_generated", "inh_perceived", "inh_generated"),
-                    spec_fn=_spec_source_provenance, param_het=True),
+                    spec_fn=_spec_source_provenance, param_het=True,
+                    config=_SOURCE_PROV_CONFIG,
+                    organ_cls=_source_prov_organ, read_fn=_source_prov_reads,
+                    answer_fn=_source_prov_answer, supports_shared=True,
+                    scaffold_residuals=("caller-supplied sparse episode/content activity + innate context routing "
+                                        "(the learned trace is the encode; unchanged from the de-risk)",)),
     OrganDescriptor(key="curiosity",
                     regions=("cue", "striosome_value", "reward_us", "snc", "ask"),
                     spec_fn=_spec_curiosity, param_het=True),
@@ -871,11 +1264,12 @@ GROUP_A_DEFERRED = {
                      "neuromodulator triad drives the read. Group-B OU/neuromod seam.",
 }
 
-# ORGAN-READ deferrals — the 4 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
+# ORGAN-READ deferrals — the 2 Group-A organs that ARE substrate-init byte-identical (migration-safe) but whose
 # READ pipeline is not YET a clean function of the frozen shared substrate. Each names the concrete engine/wrapper
-# seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, closed for THREE
-# frozen-forward-pass organs — self_schema, d6_multiref_wm, comprehension; these 4 need a further seam and DO NOT
-# block the batch). Refined 2026-08-27 from a per-organ read-path trace (each seam is now a precise, mapped edit).
+# seam it needs (honest boundary: substrate-init is the migration gate; organ-read is this rung, now closed for
+# FIVE organs — self_schema, d6_multiref_wm, comprehension [frozen forward passes] + source_provenance,
+# causal_whatif [build-time-plasticity-then-frozen-read via the toggle + gain-0-freeze seam]; these 2 need a
+# further seam and DO NOT block the batch). Refined 2026-08-27 from a per-organ read-path trace + the two closes.
 GROUP_A_ORGANREAD_DEFERRED = {
     "curiosity": "NEUROMODULATOR-SUBSYSTEM + OU seam — the production read is a FROZEN forward pass (reward_learning "
                  "forced 0, no weight mutation; the spiking-SNc/reward-critic is BUILT but NEVER exercised by the "
@@ -887,41 +1281,33 @@ GROUP_A_ORGANREAD_DEFERRED = {
                  "Seam: enable+register the curiosity modulator on the pool (a global-subsystem config seam — verify "
                  "a group:ask-scoped modulator leaves every co-resident slice byte-identical) + force OU off (or a "
                  "per-neuron-seeded OU stream, a sim/ edit). The neuromod subsystem's internals live in sim/.",
-    "source_provenance": "PER-QUERY HEBBIAN-ENCODE seam — the read is encode(fact,provenance)+recall(fact); the "
-                         "ENCODE mutates cp_connections (a zero-init episode->prov Hebbian trace, gate `prov_learn`) "
-                         "and runs INLINE in the per-turn answer path on FIRST-encounter of a key (brain_agent calls "
-                         "encode_fact then judge_fact every turn), NOT once at build. recall() alone is a clean frozen "
-                         "forward pass. `ProvenanceBrain` hardcodes its own bridge (needs a shared= kwarg); recall() "
-                         "does `cp_external_input_current[:]=0` (stomps co-residents -> needs read_isolation). Its "
-                         "enable_nmda=False reconciles via the existing per-region mask (its regions opt OUT), but "
-                         "enable_hebbian_learning=True is GLOBAL and conflicts with the frozen pool. Seam: move the "
-                         "Hebbian encode to a per-region-gated BUILD-time step (recall-only read), OR a global-hebbian "
-                         "toggle with a universal gain-0 freeze of every non-prov edge during the encode.",
-    "prospective_memory": "MULTI-TURN-STATEFUL + FORMATION-mutation seam — NOT a single-call drive->settle->read. The "
-                          "faculty holds an intention across an a-priori-unbounded number of INDEPENDENT production "
-                          "turns (form -> hold through arbitrary intervening turns -> cue); the self-sustaining "
-                          "cortex<->dlpfc attractor + per-neuron SFA trace must persist UNRESET across those separate "
-                          "calls (`_reset_dynamics` fires only at a fresh formation), so it cannot be reconstructed "
-                          "from a rest snapshot per call. AND the default-ON formation (`form_intention_hebbian`) "
-                          "MUTATES cp_connections per FORMATION turn. Config (plastic_internal=False/pathway "
-                          "plastic=False, enable_nmda=True, ou off) IS frozen-pool-compatible per-region; SFA/plateau "
-                          "are host current-injection proxies (per-neuron state, fine). Seam: the "
-                          "SFANmda/Homeostatic hierarchy must accept an injected bridge + a STATEFUL multi-turn read "
-                          "protocol (persist live state across turns), plus (default path) a per-formation-turn "
-                          "weight-mutation seam; the `BRAIN_PMEM_HEBBIAN=0` escape gives a build-time-frozen binding "
-                          "but the multi-turn-hold persistence remains the blocker.",
-    "causal_whatif": "LIVE-COMPOSER (read-time) + BUILD-TIME DA/STDP-TRAIN seam — two independent blockers. (1) The "
-                     "read takes a live `RFPhasorComposer` as a per-call argument; `_recalled(composer,e)` "
-                     "(comp.query_patient) gates confirmed/confab/answer on EVERY what_if/why call (the substrate "
-                     "forward-pass diagnostics predicts_D/D_rate/cause ARE composer-independent + would run "
-                     "byte-identically once evt is trained, but the emitted ANSWER is 100% composer-load-bearing). "
-                     "(2) build_forward_model TRAINS temporal-order STDP + phasic-DA (three-factor, "
-                     "enable_stdp+enable_reward_modulation ON) at BUILD then freezes; the wire=True pool never runs "
-                     "that training, so the evt slice would be untrained. Seam: a stub/shared composer surface "
-                     "exposing query_patient faithfully + a per-region STDP+DA build-time training seam (train the evt "
-                     "slice while the pool stays frozen elsewhere). enable_nmda is OFF for this organ (its region "
-                     "opts out of the mask), which the existing per-region NMDA mask already handles.",
+    "prospective_memory": "MULTI-TURN-STATEFUL hold + DEEP-HIERARCHY injection — the ONE genuinely-remaining organ. "
+                          "The FORMATION-mutation half is now a SOLVED pattern (source_provenance's Hebbian encode + "
+                          "causal_whatif's STDP+DA train both close via the build-time config toggle + universal "
+                          "gain-0 freeze of every non-organ edge + read_isolation, plus allocating the plasticity "
+                          "STATE arrays the frozen pool leaves None) — so `form_intention_hebbian` per FORMATION turn "
+                          "is no longer the blocker. The TWO residual blockers: (1) DEPTH — the read runs on a "
+                          "3-class hierarchy (`base` -> HomeostaticProspectiveMemory -> SFANmdaProspectiveMemory) "
+                          "that BUILDS its own bridge AND runs a multi-STAGE homeostat+plateau CALIBRATION (stepping "
+                          "the substrate) in __init__; a shared= injection must thread the bridge + discovered index "
+                          "maps through all three and re-home the calibration on the pool slice. (2) MULTI-TURN HOLD "
+                          "— fire_on_cue is NOT a single drive->settle->read: the self-sustaining cortex<->dlpfc "
+                          "attractor + per-neuron SFA trace must persist UNRESET across an a-priori-unbounded number "
+                          "of INDEPENDENT production turns (form -> hold through arbitrary intervening turns -> cue), "
+                          "which is architecturally at odds with read_isolation's per-call co-resident snapshot/"
+                          "restore (closable by spanning ONE guard across all turns of a single read, but the "
+                          "calibrate-then-multi-turn-read structure over the deep hierarchy is the intricate part). "
+                          "Config (plastic_internal=False/pathway plastic=False, enable_nmda=True, ou off) IS "
+                          "frozen-pool-compatible per-region; SFA/plateau are host current-injection proxies (fine). "
+                          "Deferred for SCOPE (the deep-hierarchy shared-bridge injection), NOT a substrate limit.",
 }
+
+# causal_whatif's SUBSTRATE read (predicts_D / directed-ratio / cause-separation / DO-intervention) is now CLOSED
+# via the build-time STDP+DA train seam (organ_cls=_causal_organ). Blocker (2) — the BUILD-TIME train — is solved
+# (config toggle + gain-0 freeze + allocating the plasticity state arrays). Blocker (1) — the composer-grounded NL
+# what_if/why ANSWER — is the DECLARED residual (the substrate causal VERDICT is the rendered read-out here); it
+# rides the composer-grounding burn-down and does NOT block the organ-read migration gate. See the descriptor's
+# scaffold_residuals + the 2026-08-27 organ-read-engine-seams finding.
 
 GROUP_A_KEYS = [d.key for d in GROUP_A]
 

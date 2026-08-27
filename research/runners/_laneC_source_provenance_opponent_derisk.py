@@ -166,12 +166,23 @@ class ProvenanceBrain:
     """episode(content) -> {content_readout, prov_perceived, prov_generated}; ctx_* -> prov_*; opponent FS
     cross-inhibition between the two prov pools. ONE numpy Izhikevich SimulationBridge."""
 
-    def __init__(self, seed):
+    def __init__(self, seed, shared=None):
         from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
         from sim.config import CoreSimConfig
         from sim.regions import BrainRegion, RegionPathway
 
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): when a MergedPool is injected, this
+        # ProvenanceBrain runs on the pool's episode/ctx_*/prov_*/inh_* SLICE of the SHARED spiking bridge
+        # (already built, wired per-region-seamed, and settled-to-rest by the pool). It builds NO own bridge and
+        # sets NO config — it adopts the pool's. The provenance ENCODE (a Hebbian episode->prov trace) is a
+        # BUILD-TIME step run by the read organ under a global-hebbian toggle + read_isolation (every non-prov
+        # edge stays inert: they are plastic=False or quiescent, and the pool has zero cross-organ synapses); the
+        # recall read is then a clean frozen forward pass. None -> the organ builds its own bridge exactly as today.
+        self._shared = shared
+        if shared is not None:
+            self._attach_shared(shared)
+            return
         cfg = CoreSimConfig()
         cfg.enable_brain_region_framework = True
         cfg.enable_neuromodulator_subsystem = False
@@ -267,16 +278,56 @@ class ProvenanceBrain:
         # starts from rest -> no cross-trial adaptation carryover (weights are NOT snapshotted: they persist)
         self._rest_state = self._snapshot_dynamics()
 
+    # -- shared (one-brain-merge) attach --------------------------------------------------------------------------
+    def _attach_shared(self, pool):
+        """Adopt a MergedPool's SHARED spiking bridge instead of building an own one. Discover the episode /
+        ctx_* / prov_* / inh_* SLICE index maps from the pool's region_manager, set the same gate defaults the
+        standalone sets, ZERO the provenance traces (they start at zero on the pool's own edges too, but the
+        pool's per-region-seamed wiring clamps a zero-init weight to 0.01 -> zero it explicitly, byte-identically
+        merged-vs-coresident), and snapshot the pool's at-rest dynamical state as the reset baseline. NO config is
+        touched — the read organ toggles enable_hebbian_learning only around the build-time encode."""
+        pool.ensure_built()
+        b = pool.bridge
+        self._bridge = b
+        rid = b.region_manager.region_indices_dict()
+        self._idx = {n: np.asarray(rid[n], dtype=np.int64) for n in (
+            "episode", "content_readout", "ctx_perceived", "ctx_generated",
+            "prov_perceived", "prov_generated", "inh_perceived", "inh_generated")}
+        b.set_plasticity_gate("prov_learn", 0.0)
+        b.set_plasticity_gate("content_learn", 0.0)
+        b.set_transmission_gate("prov_recall", 1.0)
+        b.set_transmission_gate("content_recall", 1.0)
+        b.set_transmission_gate("ctx_drive", 1.0)
+        b.set_transmission_gate("opp", 1.0)
+        self._zero_learned("prov_learn")
+        # SHARED path: the reset baseline is the pool's PRISTINE settle-to-rest snapshot (`pool.snap`), NOT the
+        # current bridge state. A co-resident organ's read (run EARLIER on the shared bridge in the batched verify)
+        # steps the WHOLE bridge and leaves residuals in arrays the pool's read_isolation does not restore; snapshot-
+        # ting the bridge AS-IS here would capture those as source_provenance's "rest" and make the encode+recall
+        # ORDER-dependent (co-residence-dependent). pool.snap is deterministic + identical merged-vs-coresident, so
+        # resetting every encode/recall to it makes the read history-INDEPENDENT of any prior organ. Arrays not in
+        # the snapshot (the Hebbian coactivity trace + the external-input current) rest at zero.
+        snap = getattr(pool, "snap", None) or {}
+        rest = {}
+        for _name, _arr in snap.items():
+            if getattr(b, _name, None) is not None:
+                rest[_name] = np.asarray(to_host(_arr)).copy()
+        for _name in ("cp_hebb_coactivity_trace", "cp_external_input_current"):
+            _cur = getattr(b, _name, None)
+            if _cur is not None:
+                rest[_name] = np.zeros_like(np.asarray(to_host(_cur)))
+        self._rest_state = rest
+
     # -- helpers --------------------------------------------------------------------------------------------------
     _DYN_ATTRS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_conductance_g_e",
                   "cp_conductance_g_i", "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
                   "cp_firing_states", "cp_prev_firing_states", "cp_refractory_timers",
                   "cp_hebb_coactivity_trace", "cp_external_input_current")
 
-    def _snapshot_dynamics(self):
+    def _snapshot_dynamics(self, attrs=None):
         b = self._bridge
         snap = {}
-        for name in self._DYN_ATTRS:
+        for name in (attrs or self._DYN_ATTRS):
             arr = getattr(b, name, None)
             if arr is not None:
                 snap[name] = arr.copy()
