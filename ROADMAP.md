@@ -7,6 +7,18 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-27 (later) — the one-brain merge's "did merging break anything" check now passes for all seven first-wave regions; a knowledge-scale worry is resolved; a mood-coloring fix turns out not to reach the production voice yet
+
+Four more things landed later the same overnight session, after the animacy work below:
+
+- **The one-brain merge project's safety check now passes on what a merged region READS BACK, not just how it's built, for all seven first-wave regions.** The last of the seven to prove this was curiosity, closed by giving it its own private random-noise stream per neuron — previously all merged regions sharing neurons drew from ONE shared noise stream, so a region's answers could shift slightly depending on which OTHER regions happened to be merged alongside it (an off-by-default fix). This finishes the "merging is safe" phase for those seven regions. It is NOT the actual goal — the regions still don't talk to each other — that is the next phase, and it has now been DESIGNED (see below) but not yet built.
+- **A worry about the brain's growing knowledge store slowing down at scale is resolved: it does not need the fix that was queued for it.** A 100,000-fact test confirmed the existing "route to the right shelf first" lookup already scales the way a bigger, separate indexing scheme was going to provide — so that bigger scheme would be extra machinery for no benefit, and will not be built.
+- **A fix that makes the brain's spoken-recall voice carry its mood (upbeat vs. flat) was re-tested on the real production voice and turns out not to change anything there** — it only showed an effect on a simpler stand-in voice used during testing. Along the way, the test itself was found to have gone stale (its "off" condition had silently started reading as "on") and was repaired. The fix stays available behind a switch but ships off by default until it is re-targeted at the real voice.
+- **The next phase — letting merged regions actually influence and LEARN from each other, replacing "nothing crosses over" — has been designed**: what to test before trusting it, how new cross-region connections should grow from near-nothing via the brain's own learning rule rather than being hand-set, and a first concrete pairing (working memory telling the understanding-check organ which earlier person a pronoun refers to). This design is not yet on the project's main line — it is saved on its own branch, awaiting a decision to bring it in.
+- Separately, a homeostatic warm-up meant to make the vision system's edge-detectors reliably self-organize (previously working on only half of test runs) was run on the GPU and came back invalid — the measuring instrument itself failed to find a valid baseline on any of the six runs. That is not a negative result on the idea, just an unanswered question needing a fixed instrument before it is re-run.
+
+Findings: `2026-08-27-per-neuron-ou-seed-closes-curiosity-organ-read`, `2026-08-27-knowledge-100k-sublinear-sharded-retrieval-verified-no-flip`, `2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`, `2026-08-27-onebrain-merge-framework-DESIGN` (plus the organ-read seam findings it builds on), `2026-08-27-b1-v1-selforg-bcm-warmup-hardening-SCOPING`.
+
 ## 2026-08-27 — the comprehension organs' toy vocabulary ceiling starts lifting: ANIMACY is now corpus-learned, spiking-realized, wired default-OFF
 
 Every comprehension organ (understanding-check, multi-referent memory, other-repair, and others) judged a

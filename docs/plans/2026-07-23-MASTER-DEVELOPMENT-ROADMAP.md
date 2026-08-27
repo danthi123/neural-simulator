@@ -503,7 +503,7 @@ The four mechanism GOs (bundle/bind/faithful-spiking-bind/arity-3) survived the 
 
 | Faculty | Tag | HAVE (cite) | WALL → SURPASS |
 |---|---|---|---|
-| **Comprehension (Wernicke, thematic roles)** | HAVE | voice-invariant `BridgeParser`; multi-cue Competition-Model parser (`case_aware_role_parser.py`, `attributed_parser.py`); **reservoir form→role** (`2026-07-03-emerge78-reservoir-form-to-role-GO.md`, non-local rel-clause 1.000; spiking `OnBridgeLSM` emerge80/82); wh-questions; nested clauses; D3 discourse | deep recursion (reservoir d\*=2) → **theta-gamma WM buffer+stack-match** (emerge85, d\*=3, faithful human bound); no abstain → **route parser through familiarity gate** ("didn't follow that") |
+| **Comprehension (Wernicke, thematic roles)** | HAVE | voice-invariant `BridgeParser`; multi-cue Competition-Model parser (`case_aware_role_parser.py`, `attributed_parser.py`); **reservoir form→role** (`2026-07-03-emerge78-reservoir-form-to-role-GO.md`, non-local rel-clause 1.000; spiking `OnBridgeLSM` emerge80/82); wh-questions; nested clauses; D3 discourse | deep recursion (reservoir d\*=2) → **theta-gamma WM buffer+stack-match** (emerge85, d\*=3, faithful human bound); no abstain → **route parser through familiarity gate** ("didn't follow that"). **Sub-wall closed at de-risk+wire level (2026-08-27):** the ~19-word hand-typed ANIMACY vocab-ceiling shared by 5 comprehension organs is now corpus-learned (PPMI label-propagation, 6-seed GO) and spiking-realized through the gap#3-A1 F_anim/F_inanim pools, wired behind `BRAIN_LEARNED_ANIMACY_CUE` (default OFF) — `2026-08-26-comprehension-cue-lexicon-open-vocab-animacy-learnable-GO`, `2026-08-27-comprehension-cue-lexicon-spiking-realized-and-wired`. `VERB_SELECTS` (the other half of the same ceiling) is still hand-typed. |
 | **Production (Broca, grammar, lexicon)** | HAVE (fully emergent, on spikes) | spiking competitive-queuing serial order (EMERGE-59); **entire grammar self-organized** (function words/order/inventory EMERGE-62..65); fully spiking render content+function words one process (EMERGE-67..71); 7 constructions incl. ditransitive (EMERGE-72..77) | open prose (R4, ~4-orders scale gap) → **scale spiking HTM Temporal-Memory generator** (`fused_htm_permanence_update`) + gap#4, retire transformer; productive morphology → **learned affixation construction** (EMERGE-62c invariance cue is the hook) |
 | **Mental lexicon** | HAVE (core) | PPMI concept codes; grounded Gabor/V1 codes; verb frames (`argstructure_composer.FRAME_LEXICON`); bidirectional word↔concept (v14/v16) | depth vs breadth → **multi-modal convergence (ATL hub-and-spoke)** for deep meaning; on-demand tail fast-mapping (EMERGE-76 one-shot) |
 | **Deductive inference** | HAVE (emergent, spiking) | inheritance/taxonomy/cancellation (EMERGE-26/27); **transitive over EMERGENT codes 6-seed** (`2026-07-08-emerge28-...GO.md`); multi-hop `query_chain` moat/hop | caller-supplied query plan → **workspace-routed re-entrant chaining** (P1.2, GNW global broadcast) |
@@ -755,6 +755,47 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-08-27 — the one-brain merge's individual-organ MIGRATION-safety gate is COMPLETE (7/7 Group-A organ-READ byte-identity); a knowledge-scale flip is resolved (no-op, don't flip); the INTEGRATION phase (cross-region synapses) is DESIGNED but sits on an unmerged branch; one hardening lever came back VOID (instrument, not a verdict).**
+> - **One-brain merge organ-READ byte-identity now 7/7, ALL Group-A organs** (self_schema, d6_multiref_wm,
+>   comprehension, source_provenance, causal_whatif, prospective_memory via a reusable multi-turn
+>   `sequence_isolation()` harness, and curiosity — closed by an additive DEFAULT-OFF per-neuron-seeded-OU `sim/`
+>   edit, `cfg.per_neuron_ou_seed`, that makes OU noise co-residence-invariant). This is the MIGRATION-safety gate
+>   (byte-identical behavior before/after merging organs onto shared neurons) — it is NOT the one-brain
+>   INTEGRATION goal (organs actually influencing each other via cross-region synapses). The full 7-organ
+>   STRICT-simultaneous batch remains a named, precisely-characterized residual: adding the largest organ (pmem)
+>   pushes other long-integration reads past an FP summation-order floor in the engine's non-flagged
+>   conductance-matvec paths — closing it needs a `deterministic_transpose_matvec` `sim/` edit across all matvec
+>   paths, flagged for a careful pass, not autonomous. Findings
+>   `2026-08-27-onebrain-merge-framework-organ-read-byte-identity` /
+>   `-organ-read-engine-seams` / `-organ-read-extension` / `-multiturn-stateful-read` /
+>   `-per-neuron-ou-seed-closes-curiosity-organ-read`.
+> - **The INTEGRATION phase (what replaces byte-identity) is now DESIGNED** — a FUNCTIONAL gate (F1 faculty-
+>   still-works / F2 vary-then-lesion / F3 no-runaway / F4 moat) plus a lesion-recovers-migration invariant;
+>   cross-edges seed near-zero and GROW via the substrate's own Hebbian/STDP/BTSP under three-factor neuromod
+>   gating (not hand-set weights); the first concrete interaction named is d6 WM held-referent → comprehension
+>   role competition (anaphora/pronoun resolution). A smoke (not a GO gate) shows a learned cross-edge growing
+>   0.05→~9.7 and shifting the target read. **This design is on branch `research/onebrain-integration-design`
+>   (`77867aee7`, `8b3d013ae`, pushed to both remotes) and is NOT YET MERGED to `main`** — nothing built on
+>   `sim/` yet, no GO claimed.
+> - **Knowledge blocker #2 (the #66 `BRAIN_SPARSE_INDEX_RETRIEVAL` flip) is RESOLVED: do not flip.** A 100k-fact,
+>   6-seed measurement confirms the tiered shard-routed path is already sublinear at scale (oracle byte-identity
+>   0-mismatch 816/816 checks, 0-confab moat); the DG sparse-index flag would be answers-identical 6/6 — a hollow
+>   no-op. Finding `2026-08-27-knowledge-100k-sublinear-sharded-retrieval-verified-no-flip`.
+> - **The mood→tone mouth-coloring fix is a real, confirmed mechanism that does not yet reach the production
+>   composer.** Its own 6-seed onebrain-composer soak came back NO-GO (`surface_changed_off_on=False` — the
+>   coloring only manifests on the lightweight rf composer the original de-risk used), so it ships default-OFF
+>   (`_MOUTH_MOOD_DEFAULT_ON=False`, opt-in via `BRAIN_SPIKING_MOUTH_MOOD=1`). Along the way a stale flip-soak
+>   instrument bug was found + fixed (its OFF-arm read as ON once the wave-3 mouth-recall default flipped),
+>   and the corrected 6/6 re-run confirms the underlying coupling is genuine on its own instrument. Findings
+>   `2026-08-27-affect-tone-coloring-restored-on-spiking-mouth`,
+>   `2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`.
+> - **V1 BCM warm-up hardening lever (§7 "B1 self-organization", staged last window) ran on the GPU and came back
+>   VOID — an instrument failure, not a verdict on the lever.** All 6 seeds show `op_point_ok=False` and
+>   `dev_firing_fraction_mean=0.0`: the dev/pre-BCM operating-point check never found a valid baseline to warm up
+>   FROM. Needs a re-eval with a fixed instrument before the BCM-hardening question (3/6 seed-variable PARTIAL →
+>   6/6) is actually answered. Not yet written up as its own finding or logged in `research/FAILURE_LOG.md` — the
+>   committed design doc (`2026-08-27-b1-v1-selforg-bcm-warmup-hardening-SCOPING`) predates the run.
+
 > **⭐ 2026-08-26 (four-day window HARVEST) — one wall CLEARED to production-default, four boundaries mapped with named surpasses (no-defer).**
 > - **KNOWLEDGE-SCALE (tiered-knowledge-ltm) — CLEARED to production-default (#133 DONE).** The curated 15k wikidata
 >   core ships as the default cortical LTM (`webapp/server.py _resolve_ltm_bundle`, `_LTM_SHIP_DEFAULT_ON=True`);
@@ -933,6 +974,28 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 ---
 
 ## 8. IMMEDIATE NEXT ACTIONS
+
+**2026-08-27 (LATER, same overnight session — supersedes the items below):**
+- **One-brain merge: the individual-organ MIGRATION-safety gate (organ-READ byte-identity) is now COMPLETE, 7/7
+  Group-A organs** (self_schema, d6_multiref_wm, comprehension, source_provenance, causal_whatif,
+  prospective_memory, curiosity — the last closed by an additive default-OFF per-neuron-seeded-OU `sim/` edit,
+  `2026-08-27-per-neuron-ou-seed-closes-curiosity-organ-read`). **NEXT: decide whether to merge
+  `research/onebrain-integration-design`** (`77867aee7`/`8b3d013ae`, pushed to both remotes, NOT yet on `main`) —
+  it designs the FUNCTIONAL gate (F1-F4) that replaces byte-identity + the first learned cross-edge (d6 WM →
+  comprehension) — then build it.
+- **Knowledge blocker #2 (the #66 sparse-index flip) is RESOLVED — do not flip.** The 100k sharded path is
+  already sublinear by shard-routing (6-seed verified); the DG flag would be a hollow no-op
+  (`2026-08-27-knowledge-100k-sublinear-sharded-retrieval-verified-no-flip`). No further action needed here.
+- **V1 BCM warm-up hardening lever ran on GPU and came back VOID (instrument-invalid), not a hardening verdict** —
+  every seed failed to reach a valid operating point. **NEXT: re-run with a fixed instrument**, and write up the
+  VOID result as its own finding + a `research/FAILURE_LOG.md` line (neither exists yet for this run — the
+  committed design doc predates it and still reads "not yet executed").
+- **The mood→tone mouth fix is confirmed GO on its own derisk instrument but does NOT reach the production
+  `OneBrainComposer`** (`surface_changed_off_on=False`) — ships default-OFF
+  (`2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed`). **NEXT (not yet queued): a production-
+  composer-side lever**, if this coupling is wanted live.
+- **THE MOUTH / read-SNR (#80) is still the #1 frontier, unchanged** — the ensemble/dendritic de-risk is staged
+  (`research/runners/_mouth_readout_snr_ensemble_dendritic_derisk.py`) but not yet run.
 
 **2026-08-25 (EVENING — THE NORTH-STAR MILESTONE; this is the top priority, supersedes the items below):**
 - ~~Make the brain reason to its own conclusion~~ **DONE + PRODUCTION-DEFAULT** (`3bb9bfdf`): the reasoning

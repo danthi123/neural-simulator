@@ -159,3 +159,22 @@ specific vocab-ceiling residual, so nothing to mark done; created task #175 (Con
 corpus-learned open-vocab cue) as the genuinely-new next-rung this landing opens -- the verb-selectional
 half of the same scaffold stays hand-coded pending its own de-risk. Finding
 2026-08-27-comprehension-cue-lexicon-spiking-realized-and-wired.
+
+## 2026-08-27  doc-sync reconciliation (organ-read 7/7, knowledge #2 closed, mood-mouth reverted, onebrain-integration design, V1 BCM warmup VOID)
+Reconciled the overnight+morning landings that shipped AFTER the previous #176 entry above. Advanced #176's
+title/description to "7 of 7 done" and marked it DONE (curiosity closed the last Group-A organ-read via
+2026-08-27-per-neuron-ou-seed-closes-curiosity-organ-read.md; the individual-organ MIGRATION-safety gate is
+now COMPLETE). Created #177 (Big picture) for the newly-DESIGNED integration phase (functional gate +
+learned cross-edges) that replaces byte-identity next -- it lives on branch
+research/onebrain-integration-design (commits 77867aee7, 8b3d013ae), pushed to both remotes but NOT merged
+to main; flagged as a judgment-fork for the owner (merge decision), not resolved here. Updated #174
+(animacy cue) to note it is now WIRED default-OFF (was "not yet wired"). Updated #150 (knowledge-scale
+crux) to correct its stale "owner-gated sparse-index flip" framing: the flip decision is RESOLVED as
+do-not-flip (2026-08-27-knowledge-100k-sublinear-sharded-retrieval-verified-no-flip.md -- the DG
+sparse-index mechanism is redundant on the already-sublinear tiered/shard-routed path). Updated #173 (V1
+BCM PARTIAL) with the warm-up hardening lever's GPU eval outcome: VOID (instrument-invalid, every seed
+failed to reach a valid operating point), not a verdict on the lever -- needs a re-eval with a fixed
+instrument. Created #178 (Speech & language, Emotion & self-awareness, blocked) for the mood-tone
+spiking-mouth fix: confirmed GO on its own derisk instrument, but the production onebrain-composer soak
+came back NO-GO (inert on the real production voice), so it ships default-OFF
+(`_MOUTH_MOOD_DEFAULT_ON=False`). No existing task named this landing, so nothing pre-existing to close.
