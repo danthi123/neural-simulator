@@ -30,6 +30,31 @@ THE MECHANISM (this variant): BCM sliding metaplastic threshold
   env passthrough (HEBB_BCM etc.) + a BCM-appropriate operating point (synaptic scaling OFF, since
   theta_M is itself the competitive/homeostatic normalization; no global weight decay).
 
+THE PARTIAL (research/findings/2026-08-26-b1-v1-selforg-onbridge-BCM-sliding-threshold.md)
+--------------------------------------------------------------------------------------------
+  BCM decisively breaks the common mode (osi_post_frac 0.173 mean, ~62x the potentiation-only
+  control) but is SEED-VARIABLE: only 3/6 seeds clear the +0.15 margin over BOTH controls (2 of
+  them by ~0.32); osi_post_frac splits BIMODALLY (~0.33 strong mode vs ~0.03 weak mode) -- "the
+  classic BCM/Hebbian INITIAL-CONDITION dependence" per that finding. k-WTA/fixed-lateral-inhibition
+  was separately tried as a companion competition mechanism and 6-seed NO-GO'd (theorem-grounded:
+  a diagonal gain-control op cannot rotate away the ON/OFF common mode's off-diagonal correlation --
+  commit fa89d09b4); that lever is NOT retried here.
+
+THE HARDENING LEVER (this file, --warmup-steps): a pre-BCM homeostatic-scaling warm-up
+----------------------------------------------------------------------------------------
+  See `homeostatic_warmup()` in the base runner for the full mechanism + citation (Turrigiano &
+  Nelson 2004). One-line version: BCM's LTP/LTD split only produces a genuine stimulus-driven
+  symmetry break when a cell's postsynaptic response starts in a workable dynamic range around
+  theta_M; a cell whose RANDOM initial weight norm is by chance too small or too large starts
+  outside that range and either never escapes LTD or re-saturates via runaway LTP -- an accident of
+  initialization, not of the stimulus, that plausibly explains the observed bimodality. This lever
+  adds an OPTIONAL pre-development phase (`--warmup-steps N`, 0 = OFF = byte-identical) that runs
+  the bridge's OWN Turrigiano multiplicative synaptic-scaling mechanism with Hebbian/BCM learning
+  FROZEN, equalizing each cell's overall firing-rate operating point BEFORE oriented BCM development
+  begins (scaling rescales a cell's synapses UNIFORMLY, so it changes gain only, never the relative
+  RF pattern BCM will read). Applied identically to the learn AND shuffle-control bridges (matched
+  treatment). NOT k-WTA, NOT lateral inhibition, NOT LGN whitening.
+
 GO BAR (unchanged, the base runner's; the spec's pre-registered margin)
 -----------------------------------------------------------------------
   osi_post_frac must clear BOTH freeze (pre-random) AND shuffle by +0.15, on >= 2/3 seeds, with the
@@ -39,10 +64,16 @@ GO BAR (unchanged, the base runner's; the spec's pre-registered margin)
   INSTRUMENT CHECK: the freeze (pre) and shuffle arms must genuinely differ from the learned arm; if
   learn==freeze the test is void (the base runner reports all three).
 
-Run:
+Run (the PARTIAL, unchanged, warmup OFF):
   SIM_BACKEND=cupy python -u -m research.runners._b1_v1_selforg_bcm_derisk \
       --seeds 42 43 44 45 46 47 --dev-steps 40000 --bcm-gain 200 \
       --out research/findings/raw/_b1_v1_selforg_bcm_6seed.json
+
+Run (the HARDENING LEVER, warmup ON):
+  SIM_BACKEND=cupy python -u -m research.runners._b1_v1_selforg_bcm_derisk \
+      --seeds 42 43 44 100 101 102 --dev-steps 40000 --bcm-gain 800 --bcm-pre-floor 0.002 \
+      --warmup-steps 4000 \
+      --out research/findings/raw/_b1_v1_selforg_bcm_warmup_6seed.json
 """
 from __future__ import annotations
 
@@ -127,6 +158,13 @@ def main():
                     help="EMA rate of the sliding threshold theta_M=<y^2> (slow vs the coactivity trace)")
     ap.add_argument("--bcm-pre-floor", type=float, default=0.02,
                     help="presynaptic-activity floor: only x_j>floor synapses change (the x_j gate)")
+    # --- SEED-VARIANCE HARDENING LEVER (2026-08-27): pre-BCM homeostatic-scaling warm-up ---
+    ap.add_argument("--warmup-steps", type=int, default=0,
+                    help="0 (default) = OFF = byte-identical to the 2026-08-26 PARTIAL. >0 runs an "
+                         "additional pre-development phase (Hebbian/BCM frozen, Turrigiano synaptic "
+                         "scaling forced ON) that equalizes each V1 cell's firing-rate operating "
+                         "point BEFORE oriented BCM development begins -- see homeostatic_warmup() "
+                         "in the base on-bridge runner for the full mechanism + citation.")
     ap.add_argument("--dev-active-lo", type=float, default=0.005)
     ap.add_argument("--dev-active-hi", type=float, default=0.05)
     ap.add_argument("--n-categories", type=int, default=4)
@@ -145,6 +183,7 @@ def main():
 
     print(f"[B1 on-bridge V1 self-org -- BCM] seeds={a.seeds} dev_steps={a.dev_steps} "
           f"bcm_gain={a.bcm_gain} theta_alpha={a.bcm_theta_alpha} pre_floor={a.bcm_pre_floor} "
+          f"warmup_steps={a.warmup_steps} "
           f"arch={a.n_orient}x{a.n_freq}x{a.n_pos}x{a.n_pos} radius={a.radius}", flush=True)
 
     per_seed = []
@@ -176,8 +215,9 @@ def main():
 
     summary = dict(
         overall_verdict=overall,
-        mechanism="bcm-sliding-threshold",
+        mechanism="bcm-sliding-threshold" if a.warmup_steps == 0 else "bcm-sliding-threshold+homeostatic-warmup",
         bcm=dict(gain=a.bcm_gain, theta_alpha=a.bcm_theta_alpha, pre_floor=a.bcm_pre_floor),
+        warmup_steps=a.warmup_steps,
         seeds=a.seeds,
         per_seed_verdicts=[r["verdict"] for r in per_seed],
         op_point_ok=op_ok,
