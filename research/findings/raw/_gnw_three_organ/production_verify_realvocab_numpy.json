@@ -1,0 +1,394 @@
+{
+  "runner": "_gnw_three_organ_bus_verify",
+  "go": true,
+  "status": "GO",
+  "verdict": {
+    "label": "GNW three-distinct-organs consensus bus \u2014 production verify, D4 real-vocab fix (rf/numpy)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "backend-recognized",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "production-chat-built",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "the real production ChatBrain built + the well-formed high-comprehension fact taught"
+      },
+      {
+        "kind": "require",
+        "name": "install-off-is-noop",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag OFF -> install_three_organ_gate is a no-op (the flag genuinely gates installation)"
+      },
+      {
+        "kind": "require",
+        "name": "install-on-installs",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "flag ON -> install_three_organ_gate wraps chat.gate on the real production chat"
+      },
+      {
+        "kind": "require",
+        "name": "q3-unanimity-window",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "on the shared workspace bridge 2*d_sub=2000->rate=0.030 < THR=0.167 <= 3*d_sub=3000->rate=0.333 (a withheld organ C -> abstain; corroborating -> commit)"
+      },
+      {
+        "kind": "require",
+        "name": "real-vocab-discriminates-known-from-unknown",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "organ C corroborates every real-vocab-KNOWN proposition (incl. dog-chase-cat / cat-eat-fish) and vetoes an OOV-entity proposition (wizard/dragon) \u2014 the veto fires ONLY on genuine non-comprehension, not on a role-ambiguous surface form"
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "full per-turn organ-stepping brain_chat handler",
+        "why": "tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME BRAIN_GNW_3ORGAN flag; =0 to skip -> never imported)"
+      },
+      {
+        "process": "a full-combine (three_organ_combine) OOV-recall veto",
+        "why": "the recall composer (both rf and onebrain) is EXACT-MATCH: organ A returns a cand ONLY for a stored (agent, action), so on this path a recalled proposition's entities are always in-vocab and the moat independently abstains on an unknown (agent, action). Organ C's genuine non-comprehension veto is therefore exercised at the _comprehension_vote level (the real vote fn the combine calls) + mapped to abstain via the proven Q=3 window; it becomes a live full-combine guard only when a noisier composer path returns an ungrounded recalled token"
+      }
+    ],
+    "chance": null
+  },
+  "backend": "numpy",
+  "fix": "d4-real-vocab-competence-veto",
+  "byte_identical_when_off": {
+    "install_noop_when_off": true,
+    "runtime_flip_off_matches_two_organ": true,
+    "two_organ_out": [
+      [
+        "dog",
+        "eat",
+        "apple"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      null,
+      null,
+      [
+        "brain",
+        "use",
+        "spikes"
+      ]
+    ],
+    "three_organ_off_out": [
+      [
+        "dog",
+        "eat",
+        "apple"
+      ],
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "learn",
+        "words"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ],
+      [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      null,
+      null,
+      [
+        "brain",
+        "use",
+        "spikes"
+      ]
+    ],
+    "panel": [
+      "what does dog eat?",
+      "what does brain use?",
+      "what does brain learn?",
+      "what does brain store?",
+      "what does dog chase?",
+      "what does cat eat?",
+      "what does fish fly?",
+      "what does cat chase?",
+      "what are you"
+    ]
+  },
+  "no_regression": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does dog eat?",
+        "tag": "high_comp",
+        "two_organ": "apple",
+        "three_organ": "apple",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain use?",
+        "tag": "untabled_known",
+        "two_organ": "spikes",
+        "three_organ": "spikes",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain learn?",
+        "tag": "untabled_known",
+        "two_organ": "words",
+        "three_organ": "words",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does brain store?",
+        "tag": "untabled_known",
+        "two_organ": "memory",
+        "three_organ": "memory",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does dog chase?",
+        "tag": "was_falsely_vetoed_2animate",
+        "two_organ": "cat",
+        "three_organ": "cat",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      },
+      {
+        "q": "what does cat eat?",
+        "tag": "was_falsely_vetoed_verbfit",
+        "two_organ": "fish",
+        "three_organ": "fish",
+        "commits_unchanged": true,
+        "organ_c_votes": true,
+        "organ_c_real_vocab_known": true,
+        "organ_c_unknown_tokens": [],
+        "n_votes": 3,
+        "n_ignited": 1
+      }
+    ]
+  },
+  "non_comprehension_veto": {
+    "veto_ok": true,
+    "reverts_under_lesion_ok": true,
+    "known_control_ok": true,
+    "real_vocab_discriminates": true,
+    "veto_rows": [
+      {
+        "prop": [
+          "wizard",
+          "chase",
+          "cat"
+        ],
+        "tag": "oov_agent",
+        "votes": false,
+        "real_vocab_known": false,
+        "unknown_tokens": [
+          "wizard"
+        ],
+        "competent": false,
+        "margin": null,
+        "vetoed": true,
+        "votes_under_lesion": true,
+        "reverts_under_lesion": true
+      },
+      {
+        "prop": [
+          "dragon",
+          "eat",
+          "apple"
+        ],
+        "tag": "oov_agent",
+        "votes": false,
+        "real_vocab_known": false,
+        "unknown_tokens": [
+          "dragon"
+        ],
+        "competent": false,
+        "margin": null,
+        "vetoed": true,
+        "votes_under_lesion": true,
+        "reverts_under_lesion": true
+      }
+    ],
+    "known_rows": [
+      {
+        "prop": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "tag": "known_2animate",
+        "votes": true,
+        "real_vocab_known": true,
+        "corroborates": true
+      },
+      {
+        "prop": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "tag": "known_verbfit",
+        "votes": true,
+        "real_vocab_known": true,
+        "corroborates": true
+      }
+    ]
+  },
+  "moat": {
+    "ok": true,
+    "rows": [
+      {
+        "q": "what does fish fly?",
+        "two_organ": null,
+        "three_organ": null,
+        "both_abstain": true,
+        "organ_a_recall": null,
+        "reason": "primary_recall_miss"
+      },
+      {
+        "q": "what does cat chase?",
+        "two_organ": null,
+        "three_organ": null,
+        "both_abstain": true,
+        "organ_a_recall": null,
+        "reason": "primary_recall_miss"
+      }
+    ]
+  },
+  "q3_unanimity_window": {
+    "ok": true,
+    "d_sub": 1000.0,
+    "rate_2votes": 0.030303030303030304,
+    "rate_3votes": 0.3333333333333333,
+    "THR": 0.16666666666666666
+  },
+  "attributable": {
+    "noncomp_veto_intact_vs_organc_lesion": 1.0,
+    "intact_veto_rate": 1.0,
+    "lesion_veto_rate": 0.0
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "backend-recognized",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "production-chat-built",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the real production ChatBrain built + the well-formed high-comprehension fact taught"
+    },
+    {
+      "kind": "require",
+      "name": "install-off-is-noop",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag OFF -> install_three_organ_gate is a no-op (the flag genuinely gates installation)"
+    },
+    {
+      "kind": "require",
+      "name": "install-on-installs",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "flag ON -> install_three_organ_gate wraps chat.gate on the real production chat"
+    },
+    {
+      "kind": "require",
+      "name": "q3-unanimity-window",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "on the shared workspace bridge 2*d_sub=2000->rate=0.030 < THR=0.167 <= 3*d_sub=3000->rate=0.333 (a withheld organ C -> abstain; corroborating -> commit)"
+    },
+    {
+      "kind": "require",
+      "name": "real-vocab-discriminates-known-from-unknown",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "organ C corroborates every real-vocab-KNOWN proposition (incl. dog-chase-cat / cat-eat-fish) and vetoes an OOV-entity proposition (wizard/dragon) \u2014 the veto fires ONLY on genuine non-comprehension, not on a role-ambiguous surface form"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "full per-turn organ-stepping brain_chat handler",
+      "why": "tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the server hook is gated by the SAME BRAIN_GNW_3ORGAN flag; =0 to skip -> never imported)"
+    },
+    {
+      "process": "a full-combine (three_organ_combine) OOV-recall veto",
+      "why": "the recall composer (both rf and onebrain) is EXACT-MATCH: organ A returns a cand ONLY for a stored (agent, action), so on this path a recalled proposition's entities are always in-vocab and the moat independently abstains on an unknown (agent, action). Organ C's genuine non-comprehension veto is therefore exercised at the _comprehension_vote level (the real vote fn the combine calls) + mapped to abstain via the proven Q=3 window; it becomes a live full-combine guard only when a noisier composer path returns an ungrounded recalled token"
+    }
+  ],
+  "undefined_reasons": []
+}

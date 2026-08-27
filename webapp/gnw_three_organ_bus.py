@@ -89,10 +89,14 @@ _D_SUB_3 = float(D_SUB_UNANIMITY[3])   # the calibrated Q=3 UNANIMITY drive: 2*d
 
 # ── flags (all DEFAULT-OFF) ──────────────────────────────────────────────────────────────────────────────────────
 def three_organ_enabled() -> bool:
-    """The master switch. `BRAIN_GNW_3ORGAN` in {1,true,on,yes} enables the THREE-distinct-organs consensus combine.
-    DEFAULT-OFF (unset -> OFF): the module installs nothing and the turn is byte-identical to today's production (the
-    DEFAULT-ON 2-organ bus authors the combine). This is the review gate for a genuinely-distinct THIRD organ."""
-    return os.environ.get("BRAIN_GNW_3ORGAN", "").strip().lower() in ("1", "true", "on", "yes")
+    """The master switch. `BRAIN_GNW_3ORGAN` in {1,true,on,yes} (THE DEFAULT) enables the THREE-distinct-organs
+    consensus combine. DEFAULT-ON since 2026-08-21 (the real-vocab over-veto fix met the flip gate; finding
+    2026-08-21-gnw-three-organ-realvocab-flip-GO, ledger on_by_default: YES). `BRAIN_GNW_3ORGAN=0` is the
+    byte-identical escape -> installs nothing, the turn delegates to the DEFAULT-ON 2-organ bus.
+    NOTE (fixed 2026-08-27): this inner gate was mistakenly left DEFAULT-OFF (`""`) while server.py's OUTER gate +
+    the PI-ledger both read default-ON — a HOLLOW two-gate flip: the outer block ran but this inner veto silently
+    installed nothing, so the ledger's on_by_default:YES was false in production. Aligned to `"1"` here."""
+    return os.environ.get("BRAIN_GNW_3ORGAN", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def organc_lesion_on() -> bool:

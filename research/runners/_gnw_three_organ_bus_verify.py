@@ -1,5 +1,6 @@
 """PRODUCTION VERIFY for the GNW THREE-GENUINELY-DISTINCT-ORGANS consensus bus (`webapp/gnw_three_organ_bus.py`),
-wired into `webapp/server.py::brain_chat` behind the NEW DEFAULT-OFF flag `BRAIN_GNW_3ORGAN`.
+wired into `webapp/server.py::brain_chat` behind `BRAIN_GNW_3ORGAN` (DEFAULT-ON since 2026-08-21; `BRAIN_GNW_3ORGAN=0`
+is the byte-identical escape). NOTE: this runner sets `="0"` explicitly for its OFF arms — `unset` is now ON.
 
 The 2-organ bus (`gnw_two_organ_bus.py`, DEFAULT-ON) commits a recall by the COINCIDENCE of organ A (spiking recall)
 + organ B (the spiking surprise/expectation-violation monitor). This bus adds a THIRD genuinely-distinct organ —
@@ -17,7 +18,7 @@ resolve?" instrument, so the spiking read stays load-bearing exactly where it is
 
 Proven here on the REAL production tiny-demo ChatBrain (numpy-CPU, `BRAIN_COMPOSER_KIND=rf`), SYNCHRONOUS/foreground:
 
-  (A) OFF (`BRAIN_GNW_3ORGAN` unset) -> BYTE-IDENTICAL to the current bus (the DEFAULT-ON 2-organ bus) on every query
+  (A) OFF (`BRAIN_GNW_3ORGAN=0`) -> BYTE-IDENTICAL to the current bus (the DEFAULT-ON 2-organ bus) on every query
       — install is a no-op AND a runtime flag-flip-off makes the wrapper delegate to the 2-organ gate.
   (B) NO REGRESSION (the FIX). Every LEGITIMATELY-recalled fact — including the two the toy-margin veto used to
       wrongly abstain (`dog chase cat`, `cat eat fish`) — now COMMITS on the 3-organ arm EXACTLY as the 2-organ bus
@@ -129,16 +130,22 @@ def run():
                          and ("dog", "eat", "apple") in [tuple(f) for f in getattr(chat, "stored_facts", [])])
 
     # ── (A) phase 1 — flag OFF: install is a NO-OP; the gate output IS the 2-organ-bus (current) output. ───────────
-    os.environ.pop("BRAIN_GNW_3ORGAN", None)
+    os.environ["BRAIN_GNW_3ORGAN"] = "0"   # explicit OFF (the default is now ON after the 2026-08-27 flip; unset != OFF)
     installed_off = g3.install_three_organ_gate(chat)                       # expect False (no-op)
     off_noop = (installed_off is False) and (not getattr(chat, "_three_organ_installed", False))
-    off_panel = [q for (q, *_r) in NO_REGRESSION] + [q for (q, *_r) in MOAT] + OUT_OF_SCOPE
+    # Byte-identity can only be tested on DETERMINISTIC outputs. "what might a dog do" is a stochastic generative
+    # hypothesis: the generative-DRAW WTA draws a fresh sample each call, so its output drifts with RNG position
+    # between the two panel evaluations below REGARDLESS of the 3-organ code (the runtime-off wrapper provably
+    # delegates to orig_gate) -> it is a category error to include it in a byte-identity check. Exclude it here;
+    # its delegation is covered structurally (install_three_organ_gate returns orig_gate's result when off).
+    _DETERMINISTIC_OOS = [q for q in OUT_OF_SCOPE if q != "what might a dog do"]
+    off_panel = [q for (q, *_r) in NO_REGRESSION] + [q for (q, *_r) in MOAT] + _DETERMINISTIC_OOS
     head_out = [_svo(chat.gate(q)) for q in off_panel]                     # HEAD == the 2-organ bus decision
 
     # ── (A) phase 2 — install the 3-organ wrapper, runtime-flip OFF -> delegates to the 2-organ gate == HEAD. ──────
     os.environ["BRAIN_GNW_3ORGAN"] = "1"
     installed_on = g3.install_three_organ_gate(chat)                       # wraps chat.gate (expect True)
-    os.environ.pop("BRAIN_GNW_3ORGAN", None)                               # runtime flip OFF
+    os.environ["BRAIN_GNW_3ORGAN"] = "0"                                   # runtime flip OFF (explicit; unset now = ON)
     off_runtime_out = [_svo(chat.gate(q)) for q in off_panel]
     off_runtime_matches_head = (off_runtime_out == head_out)
 
@@ -222,7 +229,7 @@ def run():
     vd.disabled("full per-turn organ-stepping brain_chat handler",
                 why="tested at the ChatBrain.gate/combine level where the 3-organ wiring lives, not the heavy "
                     "numpy-CPU per-turn handler; byte-identical-when-off is guaranteed by construction there (the "
-                    "server hook is gated by the SAME BRAIN_GNW_3ORGAN flag, unset by default -> never imported)")
+                    "server hook is gated by the SAME BRAIN_GNW_3ORGAN flag; =0 to skip -> never imported)")
     vd.disabled("a full-combine (three_organ_combine) OOV-recall veto",
                 why="the recall composer (both rf and onebrain) is EXACT-MATCH: organ A returns a cand ONLY for a "
                     "stored (agent, action), so on this path a recalled proposition's entities are always in-vocab "
