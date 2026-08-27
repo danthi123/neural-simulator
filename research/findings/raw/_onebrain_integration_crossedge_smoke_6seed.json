@@ -1,0 +1,118 @@
+{
+  "provenance": {
+    "runner": "research.runners._onebrain_integration_crossedge_smoke",
+    "argv": [
+      "/home/dant123/Projects/sim/research/runners/_onebrain_integration_crossedge_smoke.py",
+      "42,43,44,100,101,102"
+    ],
+    "backend": "numpy"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "all_pass": true,
+  "n_seeds": 6,
+  "runs": [
+    {
+      "seed": 42,
+      "w_init": 0.05000000819563866,
+      "w_grown": 10.143754959106445,
+      "edge_grew": true,
+      "rate_on": 0.10305555555555555,
+      "rate_off": 0.0008333333333333334,
+      "delta": 0.10222222222222221,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    },
+    {
+      "seed": 43,
+      "w_init": 0.05000000819563866,
+      "w_grown": 9.784088134765625,
+      "edge_grew": true,
+      "rate_on": 0.10027777777777777,
+      "rate_off": 0.0,
+      "delta": 0.10027777777777777,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    },
+    {
+      "seed": 44,
+      "w_init": 0.05000000819563866,
+      "w_grown": 9.113883018493652,
+      "edge_grew": true,
+      "rate_on": 0.09972222222222223,
+      "rate_off": 0.0,
+      "delta": 0.09972222222222223,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    },
+    {
+      "seed": 100,
+      "w_init": 0.05000000819563866,
+      "w_grown": 10.078434944152832,
+      "edge_grew": true,
+      "rate_on": 0.10138888888888889,
+      "rate_off": 0.0011111111111111111,
+      "delta": 0.10027777777777779,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    },
+    {
+      "seed": 101,
+      "w_init": 0.05000000819563866,
+      "w_grown": 10.035484313964844,
+      "edge_grew": true,
+      "rate_on": 0.10111111111111111,
+      "rate_off": 0.0,
+      "delta": 0.10111111111111111,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    },
+    {
+      "seed": 102,
+      "w_init": 0.05000000819563866,
+      "w_grown": 8.854203224182129,
+      "edge_grew": true,
+      "rate_on": 0.1,
+      "rate_off": 0.0,
+      "delta": 0.1,
+      "rate_on_lesion": 0.0,
+      "rate_off_lesion": 0.0,
+      "delta_lesion": 0.0,
+      "frac_attributable_to_edge": 1.0,
+      "load_bearing": true,
+      "lesion_removes_effect": true,
+      "PASS": true
+    }
+  ]
+}
