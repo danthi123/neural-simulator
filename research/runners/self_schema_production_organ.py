@@ -46,6 +46,7 @@ bridge builds in ~0.07s and each read is ~0.02s, so it is cheap enough per turn)
 """
 from __future__ import annotations
 
+import contextlib
 import os
 
 from research.runners._self_schema_region_derisk import (
@@ -97,8 +98,14 @@ class SelfSchemaAuthorshipOrgan:
     The read-time `lesion` flag passes `schema_access=False` into `_run_trial` (the de-risk's authorship
     self-lesion: author drive severed while the workspace still ignites), so the read collapses to 'heard'."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(self, seed: int = 42, shared=None):
         self.seed = int(seed)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): when a MergedPool is injected, the workspace
+        # + shared inhibition + self_schema regions are this organ's SLICE of the SHARED spiking bridge (already
+        # built, wired with the assembly loops + member->attend + WS_LOOP_GATE, and settled-to-rest by the pool's
+        # per-region-seamed wiring inject). The organ then only computes its idx map + calibration on the shared
+        # substrate; each read is guarded by the pool's read_isolation. None -> its own bridge exactly as today.
+        self._shared = shared
         self._built = False
         self.bridge = self.xp = self.idx = self.snap = None
         self.threshold = None
@@ -109,8 +116,14 @@ class SelfSchemaAuthorshipOrgan:
             return
         # lesion_schema=False at BUILD: the authorship self-lesion is applied at READ time (schema_access=False),
         # which is the whole lesion for the author axis (member->attend `lesion_schema` only touches attention).
-        self.bridge, self.xp, self.idx, self.snap = build_self_schema_bridge(
-            seed=self.seed, lesion_schema=False)
+        if self._shared is not None:
+            self._shared.ensure_built()
+            self.bridge, self.xp = self._shared.bridge, self._shared.xp
+            self.idx = self._shared.idx("self_schema")   # descriptor idx_fn: member/attend/confid/author dev maps
+            self.snap = self._shared.snap                # the pool's settle-to-rest full-state snapshot
+        else:
+            self.bridge, self.xp, self.idx, self.snap = build_self_schema_bridge(
+                seed=self.seed, lesion_schema=False)
         # CALIBRATE the self/heard threshold from one volunteered (self) and one recalled (heard) read (the same
         # author read a production turn uses), midpoint between them. Deterministic per seed.
         self_rate = self._author_rate(authored=True, lesion=False)
@@ -124,10 +137,15 @@ class SelfSchemaAuthorshipOrgan:
         """The SPIKING author sub-block late-window firing RATE for a turn whose authorship context is `authored`
         (True = a volunteered proposition -> AUTHOR_PA drive; False = a recalled fact -> no drive). `lesion`
         severs the schema's access (`schema_access=False`) so the read collapses regardless of `authored`."""
-        r = _run_trial(self.bridge, self.xp, self.idx, self.snap,
-                       content_k=CONTENT_K, conf_current=CONF_PA,
-                       author_current=(AUTHOR_PA if authored else 0.0),
-                       schema_access=(not lesion))
+        # ONE-BRAIN MERGE: each read restores the pool's rest snapshot then ignites/holds on the SHARED bridge;
+        # the isolation restores every co-resident organ's slice at the end (only this organ's slice may evolve).
+        guard = (self._shared.read_isolation("self_schema")
+                 if self._shared is not None else contextlib.nullcontext())
+        with guard:
+            r = _run_trial(self.bridge, self.xp, self.idx, self.snap,
+                           content_k=CONTENT_K, conf_current=CONF_PA,
+                           author_current=(AUTHOR_PA if authored else 0.0),
+                           schema_access=(not lesion))
         return float(r["author"])
 
     def read_author(self, authored: bool, lesion: bool = False) -> dict:

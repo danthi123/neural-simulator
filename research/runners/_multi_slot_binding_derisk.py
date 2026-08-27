@@ -114,12 +114,22 @@ OUT = Path("research/findings/raw/_multi_slot_binding/multi_slot.json")
 # ====================================================================================================================
 class MultiSlotHold:
     def __init__(self, seed, R, n_slot, recur=25.0, load_steps=30, hold_steps=18, read_steps=18, clear_steps=200,
-                 input_gain=400.0, clear_gain=1500.0, nmda=True):
+                 input_gain=400.0, clear_gain=1500.0, nmda=True, shared=None):
         from sim.backend import to_host, from_host
         self._to_host, self._from_host = to_host, from_host
         self.R, self.n_slot = R, n_slot
         self.K = R * n_slot                                       # total attractor pools (R banks of n_slot)
-        self.sb = build_persistent_slot(seed, self.K, recur=recur, nmda=nmda)
+        # ONE-BRAIN MERGE (opt-in, byte-identical when shared is None): when a MergedPool is injected, the K slot
+        # pools + shared FS are this organ's region SLICE of the SHARED spiking bridge (already built + wired by the
+        # pool's per-region-seamed wiring inject) instead of its own bridge. The reads (write/hold/read) then run on
+        # the shared bridge's slice; a co-resident organ is protected by the pool's read_isolation. See
+        # research/runners/onebrain_merge_framework.py.
+        self._shared = shared
+        if shared is not None:
+            shared.ensure_built()
+            self.sb = shared.bridge
+        else:
+            self.sb = build_persistent_slot(seed, self.K, recur=recur, nmda=nmda)
         self.idx = _pool_idx(self.sb, self.K)                     # global pool index -> neuron indices
         self.fs_idx = np.asarray(list(self.sb.region_manager.indices("fs")), dtype=int)
         self.n = self.sb.core_config.num_neurons

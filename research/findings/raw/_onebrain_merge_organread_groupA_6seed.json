@@ -1,0 +1,323 @@
+{
+  "mode": "onebrain_merge_batched_verify",
+  "keys": [
+    "self_schema",
+    "d6_multiref_wm"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 114.77658462524414,
+          "param_het": true,
+          "het_loadbearing_delta": 90.0,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 104.88714599609375,
+          "param_het": true,
+          "het_loadbearing_delta": 78.64737319946289,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    },
+    {
+      "seed": 43,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 115.79492950439453,
+          "param_het": true,
+          "het_loadbearing_delta": 78.86883354187012,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 104.35176467895508,
+          "param_het": true,
+          "het_loadbearing_delta": 84.99765014648438,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    },
+    {
+      "seed": 44,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 114.115478515625,
+          "param_het": true,
+          "het_loadbearing_delta": 78.51387023925781,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 116.80409908294678,
+          "param_het": true,
+          "het_loadbearing_delta": 90.0,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    },
+    {
+      "seed": 100,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 125.72102737426758,
+          "param_het": true,
+          "het_loadbearing_delta": 78.84035301208496,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 115.43791961669922,
+          "param_het": true,
+          "het_loadbearing_delta": 86.81233310699463,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    },
+    {
+      "seed": 101,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 119.74065399169922,
+          "param_het": true,
+          "het_loadbearing_delta": 90.0,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 122.2689094543457,
+          "param_het": true,
+          "het_loadbearing_delta": 78.91311645507812,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    },
+    {
+      "seed": 102,
+      "n_all_neurons": 1314,
+      "organs": {
+        "self_schema": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 117.5619888305664,
+          "param_het": true,
+          "het_loadbearing_delta": 74.42665100097656,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        },
+        "d6_multiref_wm": {
+          "substrate_maxerr": 0.0,
+          "substrate_byte_identical": true,
+          "legacy_maxerr": 106.15998077392578,
+          "param_het": true,
+          "het_loadbearing_delta": 85.30350303649902,
+          "het_loadbearing_ok": true,
+          "read_checked": true,
+          "read_byte_identical": true,
+          "read_maxerr": 0.0,
+          "answer_checked": true,
+          "answer_same": true,
+          "read_worst_key": null,
+          "read_missing_keys": [],
+          "GO": true
+        }
+      },
+      "legacy_diverges": true
+    }
+  ],
+  "per_organ": {
+    "self_schema": {
+      "n_substrate_byte_identical": 6,
+      "n_go": 6,
+      "n_seeds": 6,
+      "n_legacy_diverges": 6,
+      "param_het": true,
+      "n_het_loadbearing": 6,
+      "read_checked": true,
+      "n_read_byte_identical": 6,
+      "verdict": "GO"
+    },
+    "d6_multiref_wm": {
+      "n_substrate_byte_identical": 6,
+      "n_go": 6,
+      "n_seeds": 6,
+      "n_legacy_diverges": 6,
+      "param_het": true,
+      "n_het_loadbearing": 6,
+      "read_checked": true,
+      "n_read_byte_identical": 6,
+      "verdict": "GO"
+    }
+  },
+  "n_legacy_diverges": 6,
+  "n_all_organ_legacy_diverges": 6,
+  "all_go": true,
+  "label": "one-brain merge batched migration byte-identity (2 Group-A organs, N-organ pool)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "every registered organ substrate-byte-identical merged-vs-coresident, every seed",
+      "ok": true,
+      "detail": "measured=12 expect=12",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy discriminator diverges (byte-identity NOT vacuous), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "param-het reconciliation is load-bearing for every param-het organ, every seed",
+      "ok": true,
+      "detail": "measured=12 expect=12",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every organ's per-seed GO gate holds, every seed",
+      "ok": true,
+      "detail": "measured=12 expect=12",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "cross-region interaction (the one-brain INTEGRATION goal)",
+      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION (DESIGN \u00a74)"
+    },
+    {
+      "process": "organ-read / answer equivalence (no shipped Group-A class takes shared= today)",
+      "why": "the substrate-init co-residence-invariance gate; organ-read needs shared= plumbing (next rung)"
+    }
+  ],
+  "chance": null
+}
