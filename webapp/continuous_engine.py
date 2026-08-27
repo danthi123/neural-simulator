@@ -121,6 +121,7 @@ def forget_session(cache_key) -> None:
     _LAST_SLEEP_KB.pop(cache_key, None)
     _IDEATE_TICK.pop(cache_key, None)
     _MULLED_TOPIC.pop(cache_key, None)
+    _SPIKING_IDEATE_STORE.pop(cache_key, None)
 
 
 # ── D5 LEARN-THROUGH-USE: consolidate a memory the brain USED, between turns ─────────────────────────────────────
@@ -925,12 +926,111 @@ def _ideation_blend_settle(seed: int, n_mem: int, iA: int, iB: int) -> dict | No
             "fixed_point": bool(fixed)}
 
 
+# ── SPIKING IDEATION: the PRODUCTION-SCALE on-substrate port of the numpy blend-settle above (board #104 rung 2,
+# 2026-08-27) ────────────────────────────────────────────────────────────────────────────────────────────────────
+# `_ideation_blend_settle` above is a DECLARED SCAFFOLD (its own docstring: "a fast standalone numpy attractor is
+# the de-risked stand-in for the on-substrate CA3 blend"). research/findings/2026-08-27-generative-attractor-
+# wander-onsubstrate-GO.md validated the REAL mechanism (the SAME two-compartment dendritic dAP bistable-latch
+# completion the D5/episodic production organ runs) at a reduced n_ca3=400 PRE-ASSIGNED-membership scale and named
+# two blockers to production: (i) the reduced scale, (ii) direct-index cues rather than BTSP-formed concept
+# assemblies. `research/runners/_generative_attractor_wander_onsubstrate_derisk.py`'s `--emergent` mode / `build_
+# production_store` + `blend_settle_production` close BOTH: n_ca3 lifts to whatever `emergent_assemblies` selects
+# (2000 at its default R1 config — the SAME DG-selected sparse-detonator membership `_episodic_dap_dialogue_memory.
+# EpisodicDapMemory`, the production D5 organ, actually stores concepts into), and the cue is driven from BTSP-
+# FORMED assemblies, not direct indices.
+#
+# WHAT THIS COUPLING DOES: when armed, the wander's two most curiosity-active concepts are BTSP-formed into a real
+# emergent CA3 store (built ONCE per session's self-init organ and CACHED — the build+BTSP-form pass is real
+# substrate time, ~seconds on cupy per the production organ's own docstring, so it must not re-run every ideation
+# tick — see `_spiking_ideate_store`), and the blended-cue read runs through the SAME dendritic dAP completion the
+# D5/episodic recall path uses, instead of a fresh standalone numpy Hopfield net unrelated to any real stored
+# engram.
+#
+# DECLARED SCOPE (honest, not glossed): the wander's own concept AGENTS (self_initiated_production_organ.py's
+# `SelfInitiationOrgan.agents`) are BTSP-formed into a DEDICATED store here — they are NOT (yet) unified with the
+# D5/episodic organ's own topic store (a real prerequisite the 2026-08-27 GO finding's Residual names, not
+# attempted here); this coupling gives the wander's OWN concepts a genuine spiking store via a PARALLEL formation
+# path, not a merge of the two stores.
+#
+# LOAD-BEARING (not merely observed): this coupling changes only the SETTLE mechanism the ideation record's
+# fields come from — the record flows through the IDENTICAL downstream gate (IDEATE_NOVELTY_MAX / IDEATE_BALANCE_
+# MIN / IDEATE_BLEND_MARGIN) and the IDENTICAL `recent_ideation()` / lead-sentence channel a real live turn already
+# reads from (webapp/server.py's `ideation_drives_lead`), so the property that a spiking-sourced idle idea changes
+# what the NEXT live turn's reply opens with is INHERITED unchanged from the already-wired numpy path, not new
+# server-side wiring.
+#
+# STRICTLY ADDITIVE + DEFAULT-OFF behind `BRAIN_CONTINUOUS_IDEATE_SPIKING` (independent of `BRAIN_CONTINUOUS_
+# IDEATE`, mirrors the `_wander_ior_enabled()` / `_affect_relax_drive_enabled()` per-coupling-flag convention for a
+# not-yet-owner-reviewed rung): unset/off -> `_ideation_wander` calls the numpy `_ideation_blend_settle` EXACTLY as
+# before this rung (byte-identical) — this whole block is never entered, no store is ever built, no `substrate` key
+# is ever added to an ideation record.
+_SPIKING_IDEATE_STORE: dict = {}   # cache_key -> {"agents": tuple, "store": <build_production_store(...) dict>} or
+                                   # {"agents": tuple, "failed": True} (cached so a truly-idle server does not retry
+                                   # a heavy build every ideation tick)
+
+
+def ideation_spiking_enabled() -> bool:
+    """#104 rung 2 (2026-08-27). `BRAIN_CONTINUOUS_IDEATE_SPIKING` truthy (1/true/on/yes) swaps the between-turn
+    IDEATION blend-settle from the numpy stand-in to the production-scale (n_ca3=2000, emergent DG-selected)
+    SPIKING mechanism (`_generative_attractor_wander_onsubstrate_derisk.build_production_store`/`blend_settle_
+    production`, the SAME dAP completion path the D5/episodic production organ runs). Default-OFF
+    (unset/0/anything falsy): `_ideation_wander` takes the numpy `_ideation_blend_settle` branch exactly as before
+    this rung — byte-identical."""
+    return os.environ.get("BRAIN_CONTINUOUS_IDEATE_SPIKING", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _spiking_ideate_store(cache_key, organ):
+    """Lazily build + cache the PER-SESSION production-scale spiking store for this organ's concept agents (built
+    ONCE, reused by every later ideation tick this session). Returns the store dict, or None if formation was not
+    genuine or the organ has <2 concepts (cached as a standing failure for this session's agent-set so a truly-idle
+    server does not retry a heavy build every tick). Only ever called while `ideation_spiking_enabled()` (the
+    caller gates it), so this function itself has no env check — mirrors `_pre_wander_ior`/`_apply_wander_mull`."""
+    agents = tuple(getattr(organ, "agents", None) or ())
+    cached = _SPIKING_IDEATE_STORE.get(cache_key)
+    if cached is not None and cached.get("agents") == agents:
+        return None if cached.get("failed") else cached.get("store")
+    if not agents or len(agents) < 2:
+        _SPIKING_IDEATE_STORE[cache_key] = {"agents": agents, "failed": True}
+        return None
+    try:
+        from research.runners._generative_attractor_wander_onsubstrate_derisk import build_production_store
+        store = build_production_store(getattr(organ, "seed", 42), len(agents))
+    except Exception:
+        _SPIKING_IDEATE_STORE[cache_key] = {"agents": agents, "failed": True}
+        return None
+    if not store.get("genuine_formation"):
+        _SPIKING_IDEATE_STORE[cache_key] = {"agents": agents, "failed": True}
+        return None
+    _SPIKING_IDEATE_STORE[cache_key] = {"agents": agents, "store": store, "failed": False}
+    return store
+
+
+def _ideation_blend_settle_spiking(cache_key, organ, iA: int, iB: int) -> dict | None:
+    """The SAME-SHAPED settle `_ideation_blend_settle` returns (novelty_max_overlap, blend_balance, blend_vs_other,
+    fixed_point), read through the production-scale on-substrate mechanism instead of the numpy stand-in. Returns
+    None on any failure (store build, formation, or read) — an honest 'no idea surfaced', never a crash (mirrors
+    `_ideation_blend_settle`'s own internal try/except)."""
+    try:
+        store = _spiking_ideate_store(cache_key, organ)
+        if store is None:
+            return None
+        from research.runners._generative_attractor_wander_onsubstrate_derisk import blend_settle_production
+        res = blend_settle_production(store, iA, iB)
+        if res is not None:
+            res["substrate"] = "spiking-onsubstrate"   # additive, observability-only (see the header note above)
+        return res
+    except Exception:
+        return None
+
+
 def _ideation_wander(cache_key, organ) -> dict | None:
     """OCCASIONAL between-turn IDEATION: drive a BLENDED cue of the TWO most curiosity-active basins into the
     attractor -> it settles into a NOVEL recombination that was never stored (the creativity/novelty rung). Returns
     a record TAGGED as a novel idea/association (never a recalled fact), or None if the two-source blend did NOT
     settle into a genuine novel balanced state (honest: no novel idea surfaced this tick). SELECTION of the two
-    source basins rides the organ's spiking curiosity gains; the novelty rides the attractor DYNAMICS."""
+    source basins rides the organ's spiking curiosity gains; the novelty rides the attractor DYNAMICS (numpy
+    stand-in, or — when `ideation_spiking_enabled()` — the production-scale on-substrate mechanism; see the
+    SPIKING IDEATION section above)."""
     agents = getattr(organ, "agents", None)
     if not agents or len(agents) < 2:
         return None
@@ -941,7 +1041,10 @@ def _ideation_wander(cache_key, organ) -> dict | None:
     else:
         order = list(range(n_mem))
     iA, iB = order[0], order[1]
-    res = _ideation_blend_settle(getattr(organ, "seed", 42), n_mem, iA, iB)
+    if ideation_spiking_enabled():
+        res = _ideation_blend_settle_spiking(cache_key, organ, iA, iB)
+    else:
+        res = _ideation_blend_settle(getattr(organ, "seed", 42), n_mem, iA, iB)
     if res is None:
         return None
     novel = bool(res["fixed_point"]
@@ -950,7 +1053,7 @@ def _ideation_wander(cache_key, organ) -> dict | None:
                  and (res["blend_balance"] - res["blend_vs_other"]) > IDEATE_BLEND_MARGIN)
     if not novel:
         return None
-    return {
+    out = {
         "kind": "novel-association",   # the HONESTY TAG — an IDEA, not a recalled fact
         "is_fact": False,
         "sources": [agents[iA], agents[iB]],
@@ -959,6 +1062,9 @@ def _ideation_wander(cache_key, organ) -> dict | None:
         "blend_vs_other": res["blend_vs_other"],
         "fixed_point": res["fixed_point"],
     }
+    if res.get("substrate"):   # additive: absent for the numpy path -> byte-identical record shape when off
+        out["substrate"] = res["substrate"]
+    return out
 
 
 def recent_ideation(cache_key) -> dict | None:
