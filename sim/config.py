@@ -605,6 +605,19 @@ class CoreSimConfig:
     # removes net drive (measured: firing fell 3.7x, decode halved, rsa fell out of its gate).
     # 0.0 => OFF => the (w_max - w) form is used unchanged => byte-identical.
     hebbian_oja: float = 0.0
+    # LANE B1-V1 (2026-08-26): BCM sliding metaplastic threshold (Bienenstock-Cooper-Munro 1982; Cooper-Intrator
+    # 2004). The rate-window rule above is POTENTIATION-ONLY above a FIXED coactivity threshold, so on ON/OFF-split
+    # full-field gratings ON and OFF potentiate to identical values and the signed RF cancels (the measured
+    # 2026-08-14 COMMON-MODE CONVERGENCE boundary). BCM adds the missing INPUT-SPECIFIC DEPRESSION via a PER-
+    # POSTSYNAPTIC-CELL sliding threshold theta_M = <y^2>: dw_ij = gain * x_j * y_i * (y_i - theta_M_i). y_i above
+    # theta_M => LTP, below => LTD, and theta_M ~ <y^2> grows superlinearly so runaway is self-limited. A cell that
+    # fires strongly for its preferred phase potentiates the co-active ON/OFF pixels there and DEPRESSES the pixels
+    # co-active at the anti-preferred (contrast-reversed) phase, so W_ON and W_OFF become spatially anti-correlated
+    # => a signed oriented RF. `hebbian_bcm` is the BCM GAIN (multiplies phi); 0.0 => OFF => the (w_max-w)/Oja form
+    # is used unchanged => byte-identical. Requires hebbian_rate_window=True (reuses cp_hebb_coactivity_trace as y).
+    hebbian_bcm: float = 0.0
+    hebbian_bcm_theta_alpha: float = 0.001   # EMA rate for the sliding threshold theta_M=<y^2> (slow vs the trace)
+    hebbian_bcm_pre_floor: float = 0.02      # presynaptic-activity floor: only x_j>floor synapses change (the x_j gate)
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while

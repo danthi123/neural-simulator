@@ -662,6 +662,7 @@ class SimulationBridge:
         self.cp_neuron_firing_thresholds = None
         self.cp_neuron_activity_ema = None
         self.cp_hebb_coactivity_trace = None       # per-neuron decaying firing trace for the RATE-WINDOW Hebbian (None unless cfg.hebbian_rate_window)
+        self.cp_bcm_theta = None                   # per-neuron BCM sliding metaplastic threshold theta_M=<y^2> (None unless cfg.hebbian_bcm>0)
         self.cp_reward_coactivity_trace = None     # per-neuron presynaptic trace for optional three-factor coactivity eligibility
         self.cp_inhibitory_stdp_trace = None       # per-neuron local spike trace for opt-in Vogels-style inhibitory STDP
         self.cp_dendritic_source_activity = None   # per-source firing EMA for the dendritic divisive gain (None unless enable_dendritic_divisive_gain)
@@ -9655,6 +9656,14 @@ class SimulationBridge:
                     _cd = cp.float32(getattr(cfg, "hebbian_coactivity_decay", 0.9))
                     self.cp_hebb_coactivity_trace = (self.cp_hebb_coactivity_trace * _cd
                                                      + (1.0 - _cd) * fired_this_step.astype(cp.float32))
+                    # BCM sliding metaplastic threshold theta_M = <y^2> (guarded; y = the coactivity trace).
+                    # Updated EVERY step alongside the trace so LTP/LTD balance tracks recent postsynaptic activity.
+                    if float(getattr(cfg, "hebbian_bcm", 0.0)) > 0.0:
+                        _y_bcm = self.cp_hebb_coactivity_trace
+                        if self.cp_bcm_theta is None or self.cp_bcm_theta.size != _y_bcm.size:
+                            self.cp_bcm_theta = cp.zeros_like(_y_bcm)
+                        _ba = cp.float32(getattr(cfg, "hebbian_bcm_theta_alpha", 0.001))
+                        self.cp_bcm_theta = (1.0 - _ba) * self.cp_bcm_theta + _ba * (_y_bcm * _y_bcm)
                 if _prev_any and _fired_any:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
                     base_weights_data_array = self.cp_connections.data
@@ -9666,9 +9675,35 @@ class SimulationBridge:
                         # RATE-WINDOW: potentiate by the co-activity-trace PRODUCT at the two endpoints, for synapses
                         # whose product exceeds the specificity threshold; graded delta ∝ coactivity × (max - w).
                         _tr = self.cp_hebb_coactivity_trace
-                        _coact = _tr[coo_matrix_heb.row] * _tr[coo_matrix_heb.col]
-                        active_synapse_indices_heb = cp.where(
-                            _coact > cp.float32(getattr(cfg, "hebbian_coactivity_thresh", 0.25)))[0]
+                        _bcm = float(getattr(cfg, "hebbian_bcm", 0.0))
+                        if _bcm > 0.0:
+                            # BCM sliding-threshold rule (Bienenstock-Cooper-Munro 1982; Cooper-Intrator 2004):
+                            # signed dw_ij = gain * x_j * y_i * (y_i - theta_M_i), theta_M the per-post sliding
+                            # threshold updated with the trace above. y_i>theta_M => LTP, y_i<theta_M => LTD, so a
+                            # co-active input at the cell's anti-preferred (contrast-reversed) phase is DEPRESSED
+                            # while the preferred-phase input is potentiated -> W_ON and W_OFF become spatially
+                            # anti-correlated (a signed opponent RF), the input-specific depression the potentiation-
+                            # only rule lacks (the 2026-08-14 COMMON-MODE CONVERGENCE boundary's named fix). Only
+                            # presynaptically-active synapses (x_j>floor) change (the x_j gate); the final [min,max]
+                            # clip rectifies the excitatory pathway. 0.0 => this branch OFF => byte-identical.
+                            _pre_tr_b = _tr[coo_matrix_heb.row]
+                            _bcm_sel = cp.where(
+                                _pre_tr_b > cp.float32(getattr(cfg, "hebbian_bcm_pre_floor", 0.02)))[0]
+                            if _bcm_sel.size > 0:
+                                _ya = _tr[coo_matrix_heb.col[_bcm_sel]]
+                                _pa = _pre_tr_b[_bcm_sel]
+                                _tha = self.cp_bcm_theta[coo_matrix_heb.col[_bcm_sel]]
+                                _dw_b = cp.float32(_bcm) * _pa * _ya * (_ya - _tha)
+                                if self.cp_plasticity_rate_gain is not None:
+                                    _dw_b = _dw_b * self.cp_plasticity_rate_gain[_bcm_sel]
+                                base_weights_data_array[_bcm_sel] += _dw_b
+                                num_potentiation_events = int(_bcm_sel.size)
+                            # BCM has applied its own signed update; make the potentiation-only body below inert.
+                            active_synapse_indices_heb = cp.empty(0, dtype=cp.int64)
+                        else:
+                            _coact = _tr[coo_matrix_heb.row] * _tr[coo_matrix_heb.col]
+                            active_synapse_indices_heb = cp.where(
+                                _coact > cp.float32(getattr(cfg, "hebbian_coactivity_thresh", 0.25)))[0]
                         if active_synapse_indices_heb.size > 0:
                             current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
                             # OJA (2026-07-31): swap the (w_max - w) soft bound for -a^2*w, which is what makes
