@@ -3025,6 +3025,14 @@ def _get_self_schema_organ():
 # ChatBrain cache; cleared on reset. See research/runners/d6_multiref_wm_production_organ.py. ────────────────────
 _SESSION_MULTIREF: dict = {}
 
+# ─── ACTIVITY-SILENT WORKING MEMORY (Gate-B, Mongillo 2008, 2026-08-26): a maintenance-mode swap on the anaphora
+# referent store — the discourse FOCUS is held in short-term synaptic FACILITATION (cp_stp_u) across an intervening
+# distractor turn, delay genuinely SILENT, and reactivated on the next temporal-recall query by a NONSPECIFIC ping.
+# PER-SESSION (the focus + which-referent-in-which-assembly is THIS conversation's; a process singleton would leak one
+# conversation's focus into another's recall), keyed identically to the ChatBrain cache; cleared on reset. DEFAULT-OFF
+# (BRAIN_SILENT_WM). See research/runners/activity_silent_wm_production_organ.py. ──────────────────────────────────────
+_SESSION_SILENT_WM: dict = {}
+
 # ─── DISCOURSE EVENT REGISTER (Gate-B, D3): the running "who-was-doing-it-BEFORE across a connective" turn STATE
 # (boundary_seen / heard_any), keyed identically to the ChatBrain cache. The spiking register OBJECT itself is built
 # once with the agent (attached as _event_register); only this small per-conversation fold state lives here so a
@@ -3264,6 +3272,19 @@ def _get_multiref_organ(cache_key):
         from research.runners.d6_multiref_wm_production_organ import MultiReferentWMOrgan
         org = MultiReferentWMOrgan(seed=42)
         _SESSION_MULTIREF[cache_key] = org
+    return org
+
+
+def _get_silent_wm_organ(cache_key):
+    """The PER-SESSION activity-silent-WM organ (Mongillo 2008). Holds this conversation's discourse FOCUS in short-term
+    facilitation across a distractor and reactivates it via a nonspecific ping. PER-SESSION (not a process singleton:
+    the organ's focus/binding is conversation-specific, and a shared instance would leak one conversation's focus into
+    another's recall — mirrors _SESSION_MULTIREF). Lazy: no bridge is built until a recall query actually fires."""
+    org = _SESSION_SILENT_WM.get(cache_key)
+    if org is None:
+        from research.runners.activity_silent_wm_production_organ import ActivitySilentWMOrgan
+        org = ActivitySilentWMOrgan(seed=42)
+        _SESSION_SILENT_WM[cache_key] = org
     return org
 
 
@@ -4008,6 +4029,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _SESSION_MOOD.pop(cache_key, None)  # clear the mood STATE (reset-between-topics)
         _SESSION_WORLDVIEW.pop(cache_key, None)  # clear the affective forward-model STATE (E2)
         _SESSION_MULTIREF.pop(cache_key, None)  # drop the multi-referent WM buffer (D6, per-session discourse state)
+        _SESSION_SILENT_WM.pop(cache_key, None)  # drop the activity-silent WM focus/binding (Mongillo, per-session)
         _SESSION_SELFINIT.pop(cache_key, None)  # drop the self-initiation organ (its own mouth + selection substrate)
         _SESSION_DISCOURSE.pop(cache_key, None)  # drop the running discourse event-pair turn state (D3)
         _SESSION_PMEM.pop(cache_key, None)  # drop the held prospective intention + its latch bridge (Gate-B pmem)
@@ -4802,6 +4824,47 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                     multiref_info = dict(jm, kind="maintain")
         except Exception as _d6e:                            # never crash a turn -> degrade to the normal answer
             multiref_info = {"on": True, "error": f"{type(_d6e).__name__}: {_d6e}"}
+
+    # ── BEGIN faculty:activity-silent-wm (Gate-B, Mongillo 2008, 2026-08-26) ── PARENT-MERGE MARKER ───────────────
+    # ACTIVITY-SILENT WORKING MEMORY as a maintenance-mode SWAP on the anaphora referent store. The live store holds the
+    # discourse focus in a PERSISTENT-ACTIVITY attractor (it must keep firing); this mode holds it in short-term
+    # synaptic FACILITATION (cp_stp_u) with the assembly SILENT across an intervening distractor turn, and reactivates
+    # it on the next temporal-recall query by a NONSPECIFIC ping (Mongillo/Barak/Tsodyks 2008). Reuse-by-import from
+    # research.runners.activity_silent_wm_production_organ (the 6/6-GO de-risk ActivitySilentWM; NO sim/ edit). Two
+    # paths: (a) READ-OUT — a DISJOINT temporal-recall query ("what did we start with / the original topic / go back to
+    # the beginning"; deliberately shares NO lexeme with the D6 hold-query, which runs first) reactivates the silently-
+    # held focus and short-circuits with an honest functional read-out; the read-out ABSTAINS ("I don't recall ...")
+    # rather than confabulate when the ping did not decisively reactivate (a no-confab gate). (b) MAINTAIN — every other
+    # turn is a pure WRITE-ONLY side effect: a turn naming a referent holds it silently as the focus; a turn with no new
+    # referent grows the silent delay (an intervening distractor). Neither MAINTAIN changes the reply. LESION
+    # (BRAIN_SILENT_WM_LESION=1): recall builds the buffer with tau_f~5 (facilitation lesion) -> the ping cannot recover
+    # the focus -> the read-out abstains (load-bearing: the correct anaphor vs abstain is caused by the SILENT hold, not
+    # the host parse). DEFAULT-OFF: `BRAIN_SILENT_WM` unset -> this block imports nothing + returns nothing -> the turn
+    # is BYTE-IDENTICAL to today (the parent flips default-on after the pool soak). Guarded so a wiring failure can never
+    # crash a turn (degrades to the normal path). See research/runners/_activity_silent_wm_production_soak.py (6/6 GO).
+    if os.environ.get("BRAIN_SILENT_WM", "0").strip().lower() in ("1", "true", "on", "yes"):
+        try:
+            import research.runners.activity_silent_wm_production_organ as _SW
+            sworg = _get_silent_wm_organ(cache_key)
+            swles = _SW.silent_wm_lesioned()
+            if _SW.is_silent_recall_query(msg):          # READ-OUT: disjoint temporal-recall -> ping the silent buffer
+                jq = sworg.judge(msg, lesion=swles)      # None if nothing held -> falls through (byte-identical)
+                if jq is not None and "readout" in jq:
+                    return JSONResponse({
+                        "answer": jq["readout"], "abstained": (jq.get("recovered") is None),
+                        "recalled_svo": None, "verified": bool(jq.get("recovered") is not None),
+                        "renderer": rname, "brain": req.brain, "source": source, "rich": False, "activity": None,
+                        "affect": affect_info, "silent_wm": dict(jq, kind="recall"), "inner_state_readout": True,
+                    })
+            else:                                        # MAINTAIN (write-only side effect; reply unchanged)
+                _sw_refs = _SW._extract_refs(msg)        # reuse the D6 host referent lexicon (declared residual)
+                if _sw_refs:
+                    sworg.write_referent(_sw_refs[0])    # hold the (first) named referent silently as the focus
+                else:
+                    sworg.note_distractor()              # no new referent -> the silent delay grows (a distractor turn)
+        except Exception:
+            pass  # never let the silent-WM coupling crash a turn -> fall through to the normal path
+    # ── END faculty:activity-silent-wm ──
 
     # ── DISCOURSE EVENT REGISTER (Gate-B, D3, 2026-08-13) — who-was-doing-it-BEFORE across a connective, on spikes ──
     # Holds the running (a_curr,p_curr | a_prev,p_prev) event PAIR on the co-resident four-FS-WTA spiking register
