@@ -45,6 +45,16 @@ model-tiering + engine-first are the levers Claude controls and should be applie
 1. **Engine?** Could the experiment engine do this for 0 tokens (sweep / multi-seed / scripted probe)? → route it there, don't spawn an agent.
 2. **Tier?** For each agent stage: is it mechanical (`haiku`), moderate (`sonnet`), or genuine Opus judgment? → set `model` explicitly to the cheapest that fits. An agent with NO model override is a red flag — you defaulted to Opus.
 3. **Main loop?** Am I about to reason at length for something an agent/engine should do? → delegate or shorten.
+4. **Research-first?** Is this a NEW DIRECTION or a WALL (a design pass, a first attempt at a capability, or
+   attacking a characterized limit)? → BEFORE dispatching, run `bash tools/before_you_build.sh "<capability>"`
+   yourself, READ the prior work it surfaces (especially any existing `status:GO` / scoping doc / research-gate),
+   and carry that prior work + an explicit "RAG the finding+kandel+paper corpora and read the surfaced sources"
+   mandate INTO the agent's prompt. The commit-time `deep_research_at_wall` gate only catches a missing source
+   check REACTIVELY — after the agent has burned the tokens re-deriving what the record already holds. The
+   `neural-simulator` skill carries the full deep-research discipline; this item is the dispatch-time trigger for
+   it. (Earned 2026-08-27, owner-flagged: an integration-phase DESIGN agent was dispatched without this;
+   `before_you_build` then surfaced a 2026-08-11 `status:GO` cross-region synaptic pathway the design would
+   otherwise have re-derived from scratch.)
 
 `tools/parallel_audit.py`'s 💸 COST-ROUTING block is the per-heartbeat reminder + the engine pointers; THIS skill is
 the decision procedure that turns "I know I should" into "which model / which lane, decided before I dispatch."

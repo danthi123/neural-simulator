@@ -103,7 +103,10 @@ def frame_supported(a, v, p):
 
 # The DEFAULT-ON escape gate for the mood-tone coupling (2026-08-27 fix). See the module docstring's "MOOD-TONE
 # COUPLING" section for the regression this closes.
-_MOUTH_MOOD_DEFAULT_ON = True
+_MOUTH_MOOD_DEFAULT_ON = False  # 2026-08-27: flipped OFF — the 6-seed onebrain-composer soak is NO-GO (the mood
+# colouring is INERT on the production OneBrainComposer mouth, surface_changed_off_on=False; it only manifests on
+# the lightweight rf composer the derisk used). Keep the code (opt-in via BRAIN_SPIKING_MOUTH_MOOD=1) until the
+# onebrain-composer version is validated; do NOT ship an un-soaked default-on production flag.
 
 
 def mouth_mood_enabled():
