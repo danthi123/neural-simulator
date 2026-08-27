@@ -1,0 +1,36 @@
+{
+ "run_id": "1787807456-1747890",
+ "runner": "research/runners/_knowledge_scale_100k_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_knowledge_scale_100k_production_verify.py",
+  "--seed",
+  "100",
+  "--n-oracle-agents",
+  "15",
+  "--n-scale-probes",
+  "50",
+  "--n-moat",
+  "20",
+  "--json",
+  "research/findings/raw/knowledge_100k_verify/ks_s100.json"
+ ],
+ "git_sha": "f6330d326",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T01:10:56",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2673.3,
+ "corpus_check_query": "mouth read-SNR ensemble dendritic readout",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/knowledge_100k_verify/ks_s100.json"
+}

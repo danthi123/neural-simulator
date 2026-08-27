@@ -1,0 +1,131 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "seed": 100,
+  "sparse_index_architecture_check": {
+    "RFPhasorComposer_accepts_enable_sparse_index": false,
+    "error_if_rejected": "RFPhasorComposer.__init__() got an unexpected keyword argument 'enable_sparse_index'",
+    "conclusion": "enable_sparse_index CANNOT reach the LTM shard composer (RFPhasorComposer has no such param) -- BRAIN_SPARSE_INDEX_RETRIEVAL is architecturally INERT on the tiered-LTM path"
+  },
+  "bundle_manifest": {
+    "n_shards": 395,
+    "seed": 42,
+    "D": 128,
+    "n_facts": 78857,
+    "vocab_size": 23914,
+    "composer_kwargs": {}
+  },
+  "ltm_load_s": 0.34,
+  "tiered_installed": true,
+  "ltm_class": "ShardedPhasorStore",
+  "ltm_shard_class": "RFPhasorComposer",
+  "ltm_total_facts": 78859,
+  "ltm_only_facts": 78857,
+  "oracle_build_s": 0.04,
+  "oracle_n_agents": 15,
+  "oracle_n_facts": 59,
+  "oracle_byte_identity": {
+    "checked": 118,
+    "n_mismatches": 0,
+    "mismatches": []
+  },
+  "oracle_check_s": 192.62,
+  "scale_battery_flag_unset": {
+    "recall_checked": 50,
+    "recall_ok": 50,
+    "recall_rate": 1.0,
+    "moat_checked": 20,
+    "moat_confab": 0,
+    "latency_ms_median": 845.97,
+    "latency_ms_p95": 1023.4,
+    "latency_ms_mean": 836.7,
+    "n_latency_samples": 70
+  },
+  "inertness_check": {
+    "flag_unset": {
+      "recall_checked": 20,
+      "recall_ok": 20,
+      "recall_rate": 1.0,
+      "moat_checked": 10,
+      "moat_confab": 0,
+      "latency_ms_median": 851.42,
+      "latency_ms_p95": 977.82,
+      "latency_ms_mean": 835.79,
+      "n_latency_samples": 30
+    },
+    "flag_set_1": {
+      "recall_checked": 20,
+      "recall_ok": 20,
+      "recall_rate": 1.0,
+      "moat_checked": 10,
+      "moat_confab": 0,
+      "latency_ms_median": 843.2,
+      "latency_ms_p95": 995.07,
+      "latency_ms_mean": 861.01,
+      "n_latency_samples": 30
+    },
+    "answers_identical": true
+  },
+  "bars": {
+    "recall_bar_pass": true,
+    "moat_bar_pass": true,
+    "latency_bar_pass": true
+  },
+  "label": "100k end-to-end knowledge-scale production verify (board #66/#150/#109)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "production load path installs a TieredFactStore over the real 100k bundle",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LTM-only total_facts == the real bundle's n_facts (excludes the buffer tier's own facts)",
+      "ok": true,
+      "detail": "measured=78857 expect=78857",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "RECALL parity: 0 mismatches vs the tractable flat oracle (held agent set)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "RECALL at full 100k scale (oracle-free, ground-truth dict) >= 0.99",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fe3213f3420>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT: 0 confabulations on unknown/cross cues",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "LATENCY: warm routed-recall median < 1000 ms",
+      "ok": true,
+      "detail": "154.03 vs floor 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BRAIN_SPARSE_INDEX_RETRIEVAL flag has NO effect on this path (architecturally inert, as predicted)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "elapsed_s": 387.9
+}
