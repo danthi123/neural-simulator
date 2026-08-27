@@ -1,0 +1,11 @@
+{
+  "run_id": "derived-oppoint-sweep-s42",
+  "runner": "research/runners/_gap5_ecker_replay_learn_through_use_derisk.py",
+  "argv": [
+    "DERIVED aggregate: extracted (b,tau,dw_fwd,dw_rev,band) from 8 seed-42 scratchpad runs of the runner at b in {120,350,500,700,1000,1400} x tau in {4,8,20}; see the finding op-point table"
+  ],
+  "git_sha": "7909070ca",
+  "git_dirty": true,
+  "source_kind": "derived-summary",
+  "note": "per-op-point runner outputs were transient (scratchpad); this banks the extracted directional-check table cited by the finding"
+}
