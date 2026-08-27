@@ -335,6 +335,65 @@ def develop(bridge, r0, n_retina, v0, n_v1, n_steps, drive_pA, present_steps, se
     return v1_spike_total / max(1, steps_done) / max(1, n_v1)
 
 
+def homeostatic_warmup(bridge, r0, n_retina, v0, n_v1, n_steps, drive_pA, present_steps, seed, xp):
+    """PRE-DEVELOPMENT homeostatic-scaling phase (2026-08-27; additive, opt-in via
+    `getattr(a, "warmup_steps", 0) > 0`; 0 = OFF = this function is never called = byte-identical).
+
+    THE MISSING COMPANION PROCESS (per the CLAUDE.md wall-reframe -- "what else does the real
+    system run alongside this that we replaced with a constant?"). The 2026-08-26 BCM lever
+    breaks the on-bridge ON/OFF common mode (osi_post_frac 0.173 mean, ~62x the potentiation-only
+    control) but is SEED-VARIABLE: 3/6 seeds clear the +0.15 margin (2 of them by ~0.32), the rest
+    stay near the control (~0.03) -- "the classic BCM/Hebbian INITIAL-CONDITION dependence"
+    (2026-08-26 finding). BCM's LTP/LTD split (y vs theta_M=<y^2>) only produces a genuine
+    stimulus-driven symmetry break when a cell's postsynaptic response starts in a workable
+    dynamic range around theta_M: a cell whose RANDOM initial weight norm happens to be too small
+    stays chronically below threshold (net LTD keeps shrinking it -- it never escapes the noise
+    floor); one whose norm is too large fires near saturation from the first presentation (net LTP
+    pins everything toward hebbian_max_weight -- the ORIGINAL potentiation-only common-mode
+    failure mode, recurring at the top of the range instead of being escaped). Both are accidents
+    of random initialization, not of the stimulus, and plausibly explain the observed bimodality.
+
+    Real cortical circuits do not hand experience-dependent (BCM-like) refinement an un-equalized
+    population: Turrigiano & Nelson 2004 (Nat Rev Neurosci 5:97) describe homeostatic scaling that
+    normalizes baseline excitability toward a common set-point ALONGSIDE Hebbian refinement -- the
+    companion process this runner previously replaced with a CONSTANT (random init straight into
+    oriented BCM, no equalization). This phase reuses the bridge's OWN Turrigiano multiplicative
+    synaptic-scaling mechanism (`cfg.enable_synaptic_scaling`; sim/bridge.py, already used
+    elsewhere in this file for the non-BCM arm) for `n_steps`, with Hebbian/BCM learning FROZEN so
+    no orientation-specific content can leak in early. Synaptic scaling multiplies ALL of a cell's
+    incoming weights by the SAME per-cell scalar (sim/bridge.py: `post_scales =
+    scale_factors[coo.col]`, applied uniformly across a postsynaptic neuron's own pre-synapses) --
+    it renormalizes overall GAIN toward the target firing rate; it cannot itself manufacture
+    orientation structure, because the RELATIVE pattern across a cell's own isotropic disc (and
+    hence any chance orientation/phase preference already latent in its random weights) is
+    invariant to a uniform per-cell rescale. This is a DIFFERENT axis from the 2026-08-06
+    source-monitor synaptic-scaling NO-GO (that mechanism ran scaling CONCURRENTLY with, and
+    targeting, the very synapses carrying the readout's between-pool contrast; here scaling runs
+    ONLY before BCM engages, on weights that carry no learned contrast yet, and only sets each
+    cell's overall gain -- the within-cell relative pattern BCM will read is untouched).
+
+    Plasticity flags are restored to their pre-call values afterward, so the main development
+    phase proceeds exactly as it did before this phase existed.
+    """
+    hebb_was = bridge.core_config.enable_hebbian_learning
+    scaling_was = bridge.core_config.enable_synaptic_scaling
+    bridge.core_config.enable_hebbian_learning = False   # no orientation-specific learning yet
+    bridge.core_config.enable_synaptic_scaling = True     # force the equalizing mechanism ON
+    rng = np.random.default_rng(seed * 101 + 29)          # distinct stream from develop()'s (3/7)
+    steps_done = 0
+    while steps_done < n_steps:
+        img = render_oriented_field(rng)   # content is irrelevant while Hebbian is frozen
+        _drive_image(bridge, r0, n_retina, img, drive_pA, xp)
+        for _ in range(present_steps):
+            bridge._run_one_simulation_step()
+            steps_done += 1
+            if steps_done >= n_steps:
+                break
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.core_config.enable_hebbian_learning = hebb_was
+    bridge.core_config.enable_synaptic_scaling = scaling_was
+
+
 # ============================================================================
 # 5. Read learned RFs -> OSI; encode test shapes by V1 FIRING -> RSA.
 # ============================================================================
@@ -473,9 +532,18 @@ def run_seed(seed, a):
         homeo_target=a.homeo_target, homeo_ema_alpha=a.homeo_ema_alpha, homeo_adapt_rate=a.homeo_adapt_rate,
         rule=a.rule)
 
-    # PRE-learning RFs (random init on isotropic support) = the no-learning control (a)
+    # PRE-learning RFs (random init on isotropic support) = the no-learning control (a). Measured
+    # BEFORE any warmup: warmup only rescales each cell's OVERALL gain (see homeostatic_warmup's
+    # docstring), so this control's meaning (no orientation-specific structure has been introduced)
+    # is unaffected either way, but reading it first keeps this control's semantics unchanged from
+    # every prior run of this file when warmup_steps=0.
     rf_pre = read_v1_rfs(bridge, r0, v0, n_retina, n_v1, n_orient, n_freq, n_pos, retina_size, radius)
     osi_pre_mean, osi_pre_frac = gabor_orientation_tuning(rf_pre)
+
+    # ---- OPTIONAL homeostatic warm-up (2026-08-27; opt-in, 0 = OFF = byte-identical) ----
+    warmup_steps = int(getattr(a, "warmup_steps", 0))
+    if warmup_steps > 0:
+        homeostatic_warmup(bridge, r0, n_retina, v0, n_v1, warmup_steps, a.drive_pA, a.present_steps, seed, xp)
 
     dev_ff = develop(bridge, r0, n_retina, v0, n_v1, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=False)
     _freeze(bridge)   # critical-period close: freeze all plasticity for read-out
@@ -492,6 +560,10 @@ def run_seed(seed, a):
         n_inh=a.n_inh, inh_exc_w=a.inh_exc_w, inh_inh_w=a.inh_inh_w, inh_density=a.inh_density,
         homeo_target=a.homeo_target, homeo_ema_alpha=a.homeo_ema_alpha, homeo_adapt_rate=a.homeo_adapt_rate,
         rule=a.rule)
+    # Matched treatment: the shuffle-control bridge gets the SAME warm-up (else warmup itself would
+    # be an unmatched confound between the learn and shuffle arms).
+    if warmup_steps > 0:
+        homeostatic_warmup(bridge_sh, r0s, n_ret_s, v0s, n_v1, warmup_steps, a.drive_pA, a.present_steps, seed, xp)
     dev_ff_shuf = develop(bridge_sh, r0s, n_ret_s, v0s, n_v1, a.dev_steps, a.drive_pA, a.present_steps, seed, xp, shuffle=True)
     _freeze(bridge_sh)
     rf_shuf = read_v1_rfs(bridge_sh, r0s, v0s, n_ret_s, n_v1, n_orient, n_freq, n_pos, retina_size, radius)
@@ -605,6 +677,7 @@ def run_seed(seed, a):
 
     return dict(
         seed=seed, backend=backend, n_v1=n_v1, elapsed_s=round(elapsed, 1),
+        warmup_steps=warmup_steps,
         dev_firing_fraction=round(dev_ff, 5),
         dev_firing_fraction_shuffle=round(dev_ff_shuf, 5),
         op_point_ok=bool(op_point_ok),
