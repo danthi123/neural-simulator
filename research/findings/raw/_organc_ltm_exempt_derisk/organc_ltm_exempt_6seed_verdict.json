@@ -1,0 +1,1135 @@
+{
+  "label": "organ-C LTM-exemption de-risk (BRAIN_GNW_ORGANB_LTM_EXEMPT, reused) -- 6-seed moat + commit + organ-C-exemption + buffer-untouched + 2-organ-bus-unaffected",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seed 42: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: 3-organ moat holds (unstored fact abstains flag on/off, primary_recall_miss)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: LTM fact chelsea_fc|country commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: LTM fact frank_lincoln_wright|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: LTM fact harold_clayton_lloyd|instance_of commits on 3-organ bus with flag ON (organ B AND organ C both exempted); still vetoes OFF (organ B withholds first)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: 3-organ buffer-taught recall identical flag on/off (organ C's own real-vocab/D4 read governs, untouched)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on frank_lincoln_wright|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: 2-organ bus (gnw_two_organ_bus.py, untouched by this arc) unaffected on harold_clayton_lloyd|instance_of",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "runner": "research/findings/raw/_organc_ltm_exempt_derisk/verify_derisk.py",
+  "byte_identical_off": {
+    "n_diffs": 0,
+    "artifact": "byte_identical_check_result.json (n_diffs: 0)"
+  },
+  "flag_reused": "BRAIN_GNW_ORGANB_LTM_EXEMPT (same flag governs organ B AND organ C on the 3-organ bus)",
+  "raw_report": {
+    "moat_held": true,
+    "commits_with_flag_on": true,
+    "organ_c_exemption_applied": true,
+    "byte_identical_off": true,
+    "buffer_untouched": true,
+    "two_organ_bus_unaffected": true,
+    "seeds": {
+      "42": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      },
+      "43": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      },
+      "44": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      },
+      "100": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      },
+      "101": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      },
+      "102": {
+        "probes": [
+          [
+            "chelsea_fc",
+            "country"
+          ],
+          [
+            "frank_lincoln_wright",
+            "instance_of"
+          ],
+          [
+            "harold_clayton_lloyd",
+            "instance_of"
+          ]
+        ],
+        "expected": {
+          "chelsea_fc|country": "united_kingom",
+          "frank_lincoln_wright|instance_of": "human_specie",
+          "harold_clayton_lloyd|instance_of": "human_specie"
+        },
+        "moat": {
+          "off_committed": null,
+          "off_abstain_reason": "primary_recall_miss",
+          "on_committed": null,
+          "on_abstain_reason": "primary_recall_miss",
+          "ok": true
+        },
+        "commit": {
+          "chelsea_fc|country": {
+            "expected_patient": "united_kingom",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "united_kingom",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "chelsea_fc",
+              "country",
+              "united_kingom"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "frank_lincoln_wright",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "expected_patient": "human_specie",
+            "off_committed": null,
+            "off_abstain_reason": "consensus_veto_organ_b_withheld",
+            "off_organ_b_confirmed": false,
+            "off_organ_c_votes": false,
+            "on_committed": "human_specie",
+            "on_abstain_reason": null,
+            "on_recall_source": "ltm",
+            "on_organb_ltm_exempt_applied": true,
+            "on_organ_b_confirmed": true,
+            "on_organ_c_votes": true,
+            "on_organ_c_ltm_exempt_applied": true,
+            "on_organ_c_real_vocab_known": null,
+            "off_organ_c_real_vocab_known": false,
+            "off_organ_c_unknown_tokens": [
+              "harold_clayton_lloyd",
+              "instance_of",
+              "human_specie"
+            ],
+            "off_organ_c_margin": 0.0,
+            "off_organ_c_threshold": 0.24861111111111112,
+            "ok": true
+          }
+        },
+        "buffer_untouched": {
+          "off_committed": null,
+          "on_committed": null,
+          "off_organ_c_votes": false,
+          "on_organ_c_votes": false,
+          "on_recall_source": "buffer",
+          "identical": true
+        },
+        "two_organ_bus": {
+          "chelsea_fc|country": {
+            "off_committed": null,
+            "on_committed": "united_kingom",
+            "ok": true
+          },
+          "frank_lincoln_wright|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          },
+          "harold_clayton_lloyd|instance_of": {
+            "off_committed": null,
+            "on_committed": "human_specie",
+            "ok": true
+          }
+        }
+      }
+    }
+  }
+}
