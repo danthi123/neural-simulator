@@ -1,0 +1,43 @@
+{
+ "run_id": "1787866347-3448416",
+ "runner": "research/runners/_gap5_ecker_replay_learn_through_use_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a047560cc69c61819/research/runners/_gap5_ecker_replay_learn_through_use_derisk.py",
+  "--gap-coding",
+  "--gi-base",
+  "4",
+  "--fb-gain",
+  "0",
+  "--fb-tau",
+  "4",
+  "--gi-cap",
+  "60",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/gap5_ecker_adex/gapcoding_mildtonic_learn_through_use_6seed.json"
+ ],
+ "git_sha": "4a27f1a5e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T17:32:27",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap5_ecker_adex/gapcoding_mildtonic_learn_through_use_6seed.json"
+}
