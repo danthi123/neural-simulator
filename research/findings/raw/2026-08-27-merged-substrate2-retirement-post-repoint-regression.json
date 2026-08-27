@@ -1,0 +1,483 @@
+{
+  "mode": "onebrain_merge2_retire_verify",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    },
+    "43": {
+      "seed": 43,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    },
+    "44": {
+      "seed": 44,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    },
+    "100": {
+      "seed": 100,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    },
+    "101": {
+      "seed": 101,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    },
+    "102": {
+      "seed": 102,
+      "bridge_hash_identical": true,
+      "n_shipped": 450,
+      "n_engine": 450,
+      "metacog_identical": true,
+      "metacog_max_delta": 0.0,
+      "metacog_worst_where": null,
+      "pragmatic_identical": true,
+      "pragmatic_max_delta": 0.0,
+      "pragmatic_worst_where": null,
+      "production_combo_go": true,
+      "solo_metacog_hash_identical": true,
+      "solo_metacog_read_identical": true,
+      "solo_metacog_max_delta": 0.0,
+      "solo_pragmatic_hash_identical": true,
+      "solo_pragmatic_read_identical": true,
+      "solo_pragmatic_max_delta": 0.0,
+      "solo_combos_go": true,
+      "all_go": true
+    }
+  },
+  "n_go": 6,
+  "n_seeds": 6,
+  "n_production_combo_go": 6,
+  "go": true,
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seed42 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed42 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed43 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed44 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed100 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed101 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 production bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 production n_shipped==n_engine",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 production metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 production pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 solo-metacog bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 solo-metacog judge() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 solo-pragmatic bridge_hash_identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed102 solo-pragmatic interpret() identical",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": []
+}

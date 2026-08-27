@@ -43,22 +43,28 @@ NO NEW `sim/` behavior — the three region-scoped flags already exist on `main`
 `per_region_parameter_heterogeneity`, `per_region_threshold_heterogeneity`, `per_region_wiring_seed`). Reuse-by-import:
 the region / pathway SPECS + the assembly-loop wiring are pulled from each de-risk builder; each production organ reads
 its own slice on the shared bridge. Process backend (cupy in production, numpy in tests).
+
+RETIRED-TO-A-SHIM (2026-08-27). `MergedSubstrate2.ensure_built()` no longer builds this bridge itself — it
+DELEGATES to `onebrain_merge_framework.merge_organs([METACOG, PRAGMATIC-or-subset], seed, wire=True)`, the same
+declarative engine every other registered organ (surprise/world-model + the 7 Group-A organs) builds through. The
+config/wiring rationale documented above is now encoded in `onebrain_merge_framework.py`'s `METACOG`/`PRAGMATIC`
+`OrganDescriptor`s (kept here as biology/architecture documentation, not as duplicated executable logic). This
+class's public surface (`.bridge`/`.cfg`/`.xp`/`.snap`/`.metacog_idx()`/`.pragmatic_item_dev()`/`.ensure_built()`,
+the `organs=` constructor for BOTH the 2-organ production combo and the 1-organ CORESIDENT-baseline combos its
+other callers use) is preserved UNCHANGED — verified byte-identical (whole-bridge SHA1 hash + the real
+`judge()`/`interpret()` production reads) against the pre-retirement bespoke build, 6/6 seeds, all three combos:
+`_onebrain_merge2_retire_verify.py`, `research/findings/2026-08-27-merged-substrate2-retirement-framework-backed.md`.
 """
 from __future__ import annotations
 
 import os
 
-import numpy as np
-
-# reuse-by-import: metacog geometry + wiring helper + the shared GNW snapshot/settle machinery.
+# reuse-by-import: metacog geometry (still needed by `_metacog_specs`/`metacog_idx`, both kept as the SINGLE
+# definition the framework's `_pool2_metacog_specs` reuses via a throwaway instance of this class).
 from research.runners._second_order_metacog_monitor_derisk import (
-    ASSEMBLY_SIZE, K_CLASSES, WORKSPACE_FS_N, META_SIZE,
-    WS_TO_FS_WEIGHT, FS_TO_WS_WEIGHT, WS_LOOP_GATE, DEFAULT_ATTRACTOR_WEIGHT, DEFAULT_NMDA_TAU,
+    ASSEMBLY_SIZE, K_CLASSES, WORKSPACE_FS_N, META_SIZE, WS_TO_FS_WEIGHT, FS_TO_WS_WEIGHT,
 )
-from research.runners._gnw_rung1_ignition_curve_derisk import (
-    _build_assembly_loop_population, _snapshot_state, SETTLE_STEPS,
-)
-# reuse-by-import: RSA geometry.
+# reuse-by-import: RSA geometry (still needed by `_pragmatic_specs`/`pragmatic_item_dev`).
 from research.runners._recursive_tom_rsa_derisk import (
     RSA_ITEM_SIZE, RSA_FS_N, RSA_EXC_FS_W, RSA_FS_EXC_W,
 )
@@ -89,9 +95,6 @@ def merge2_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
-# metacog uses its production build parameters (must match MetacogProductionOrgan.ensure_built:
-# build_metacog_bridge(confidence_read="balance") -> DEFAULT_ATTRACTOR_WEIGHT, DEFAULT_NMDA_TAU).
-_METACOG_ATTRACTOR_W = float(DEFAULT_ATTRACTOR_WEIGHT)
 _N_WS = ASSEMBLY_SIZE * K_CLASSES
 
 
@@ -112,6 +115,7 @@ class MergedSubstrate2:
         self.seed = int(seed)
         self.organs = tuple(organs)
         self.bridge = self.cfg = self.xp = self.snap = None
+        self._pool = None    # the underlying framework MergedPool, once built (ensure_built delegates to it)
         self._built = False
 
     def _metacog_specs(self):
@@ -145,118 +149,43 @@ class MergedSubstrate2:
         return regions, pathways
 
     def ensure_built(self):
+        """DELEGATES to `onebrain_merge_framework.merge_organs()` — the declarative engine's `METACOG`/`PRAGMATIC`
+        `OrganDescriptor`s encode exactly the geometry/config/wiring this method used to hand-build (reused
+        BY CALLING `self._metacog_specs`/`self._pragmatic_specs` below, so there remains exactly ONE definition
+        of the geometry). `wire=True` reproduces the ALWAYS-ON wiring inject (base pathways + metacog's dense
+        self-recurrent assembly loops, per-region-seamed) this class used to build directly. Verified
+        byte-identical to the pre-retirement bespoke build (this docstring's history, preserved in the module
+        docstring above) for every `organs=` combination this class's callers use — 6/6 seeds, whole-bridge SHA1
+        hash + the real `judge()`/`interpret()` production reads —
+        `_onebrain_merge2_retire_verify.py` / `2026-08-27-merged-substrate2-retirement-framework-backed.md`."""
         if self._built:
             return
-        from sim.bridge import SimulationBridge
-        from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
-        from sim.enums import NeuronModel
-        from sim.backend import get_backend
-        xp, _ = get_backend()
-
-        regions, pathways = [], []
+        from research.runners.onebrain_merge_framework import merge_organs, METACOG, PRAGMATIC
+        descs = []
         if "metacog" in self.organs:
-            r, p = self._metacog_specs()
-            regions += r
-            pathways += p
+            descs.append(METACOG)
         if "pragmatic" in self.organs:
-            r, p = self._pragmatic_specs()
-            regions += r
-            pathways += p
-
-        # ── THE MERGED (or single-organ baseline) CONFIG SUPERSET. Globals replicate build_metacog_bridge /
-        #    build_rsa_bridge where they matter; the additions are the THREE region-scoped merge seams + the region /
-        #    pathway UNION. enable_nmda is ON iff metacog is present (its workspace / meta_schema slices are NMDA;
-        #    build_metacog_bridge sets enable_nmda=True). Pragmatic's item / item_fs carry region enable_nmda=False, so
-        #    the per-neuron NMDA mask zeroes their NMDA current even under a global enable_nmda=True -> byte-identical
-        #    to build_rsa_bridge's enable_nmda=False. When only pragmatic is present, enable_nmda stays False. ──
-        has_metacog = "metacog" in self.organs
-        cfg = CoreSimConfig()
-        cfg.seed = int(self.seed)
-        cfg.heterogeneity_seed = int(self.seed)
-        cfg.ou_seed = int(self.seed)
-        cfg.per_region_parameter_heterogeneity = True    # merge seam #1 (Izhikevich param jitter, name-keyed)
-        cfg.per_region_threshold_heterogeneity = True    # merge seam #2 (firing thresholds, name-keyed)
-        cfg.per_region_wiring_seed = True                # merge seam #3 (sparse-pathway placement, order-invariant)
-        cfg.dt_ms = 1.0
-        cfg.num_traits = 1
-        cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
-        cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
-        cfg.connections_per_neuron = 0
-        cfg.enable_brain_region_framework = True
-        cfg.enable_nmda = bool(has_metacog)
-        cfg.nmda_ratio = 0.5
-        cfg.nmda_tau_decay = float(DEFAULT_NMDA_TAU)
-        cfg.nmda_recurrent_tau_decay_ms = float(DEFAULT_NMDA_TAU)
-        for f in ("enable_stdp", "enable_reward_modulation", "enable_hebbian_learning", "enable_homeostasis",
-                  "enable_short_term_plasticity", "enable_structural_plasticity", "enable_ou_process"):
-            setattr(cfg, f, False)
-        cfg.enable_parameter_heterogeneity = True         # both organs' graded rate codes REQUIRE it (seeded)
-        cfg.stdp_w_max = max(400.0, _METACOG_ATTRACTOR_W * 4.0)
-        cfg.hebbian_max_weight = max(400.0, _METACOG_ATTRACTOR_W * 4.0)
-        cfg.brain_regions = regions
-        cfg.region_pathways = pathways
-
-        bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                                  runtime_state=RuntimeState(), gpu_config=GPUConfig())
-        bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
-        bridge.runtime_state.actual_seed_used = self.seed
-        bridge._initialize_simulation_data(called_from_playback_init=False)
-
-        rm = bridge.region_manager
-        # ONE union: the framework wiring plan (both organs' declared pathways, sampled per-region-name-keyed via
-        # per_region_seed=True -> order-invariant) + metacog's dense self-recurrent assembly loops. inject ONCE.
-        union = dict(rm.build_wiring_plan(seed=int(self.seed), per_region_seed=True))
-        if has_metacog:
-            ws = np.asarray(rm.indices("workspace"), dtype=np.int64)
-            for k in range(K_CLASSES):
-                member = ws[k * ASSEMBLY_SIZE:(k + 1) * ASSEMBLY_SIZE]
-                union[f"loop_{k}"] = _build_assembly_loop_population(member, _METACOG_ATTRACTOR_W)
-        inh = []
-        for region in rm.regions():
-            inh.extend(rm.inhibitory_indices(region.name))
-        bridge.inject_explicit_wiring(union, output_inhibitory_indices=inh or None)
-        if has_metacog:
-            bridge.set_plasticity_gate(WS_LOOP_GATE, 0.0)   # freeze the assembly loop (balance mode installs no META_GATE)
-
-        # settle to a quiescent rest, snapshot ONCE (each organ's read restores this global snapshot -> read isolation).
-        bridge.cp_external_input_current[:] = 0.0
-        for _ in range(SETTLE_STEPS):
-            bridge._run_one_simulation_step()
-        bridge.cp_external_input_current[:] = 0.0
-        self.snap = _snapshot_state(bridge, xp)
-
-        self.bridge = bridge
-        self.cfg = cfg
-        self.xp = xp
+            descs.append(PRAGMATIC)
+        pool = merge_organs(descs, seed=self.seed, wire=True)
+        self._pool = pool
+        self.bridge = pool.bridge
+        self.cfg = pool.cfg
+        self.xp = pool.xp
+        self.snap = pool.snap
         self._built = True
 
-    # ── per-organ read contexts (the slice indices each organ's real read path consumes) ─────────────────────────
+    # ── per-organ read contexts (the slice indices each organ's real read path consumes) — dispatch to the
+    #    framework pool's own idx_fn (the SAME computation this class used to run inline; see
+    #    `onebrain_merge_framework._metacog_idx_fn`/`_pragmatic_idx_fn`), so there is exactly ONE definition. ──
     def metacog_idx(self):
         """The metacog organ's region->neuron-index map on the shared bridge, in `_run_trial`'s expected shape."""
         self.ensure_built()
-        rm = self.bridge.region_manager
-        xp = self.xp
-        ws = np.asarray(rm.indices("workspace"), dtype=np.int64)
-        fs = np.asarray(rm.indices("workspace_fs"), dtype=np.int64)
-        meta = np.asarray(rm.indices("meta_schema"), dtype=np.int64)
-        member_idx = {k: ws[k * ASSEMBLY_SIZE:(k + 1) * ASSEMBLY_SIZE] for k in range(K_CLASSES)}
-        meta_sub = META_SIZE // K_CLASSES
-        meta_member_idx = {k: meta[k * meta_sub:(k + 1) * meta_sub] for k in range(K_CLASSES)}
-        return {
-            "member_dev": {k: xp.asarray(v) for k, v in member_idx.items()},
-            "meta_dev": xp.asarray(meta),
-            "meta_member_dev": {k: xp.asarray(v) for k, v in meta_member_idx.items()},
-            "fs_dev": xp.asarray(fs),
-            "confidence_read": "balance",
-        }
+        return self._pool.metacog_idx()
 
     def pragmatic_item_dev(self):
         """The pragmatic (RSA) organ's 3 item-assembly index arrays on the shared bridge (`_rsa_recursion` shape)."""
         self.ensure_built()
-        rm = self.bridge.region_manager
-        xp = self.xp
-        base = np.asarray(rm.indices("item"), dtype=np.int64)
-        return {i: xp.asarray(base[i * RSA_ITEM_SIZE:(i + 1) * RSA_ITEM_SIZE]) for i in range(3)}
+        return self._pool.pragmatic_item_dev()
 
 
 # The process-shared pool #2 substrate (built once on first use; holds BOTH organs).
