@@ -1,0 +1,40 @@
+{
+ "run_id": "1787846960-3250914",
+ "runner": "research/runners/_ltm_exempt_broad_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a54954ad92285655e/research/runners/_ltm_exempt_broad_flip_soak.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-ltm-facts",
+  "15",
+  "--n-fake-probes",
+  "15",
+  "--n-buffer-facts",
+  "8",
+  "--json",
+  "research/findings/raw/_ltm_exempt_broad_flip_soak.json"
+ ],
+ "git_sha": "e1a9a6bcd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T12:09:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ltm_exempt_broad_flip_soak.json"
+}

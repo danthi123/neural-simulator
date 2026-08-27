@@ -1,0 +1,2546 @@
+{
+  "runner": "_ltm_exempt_broad_flip_soak",
+  "verdict": "GO",
+  "flip_go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "seed 42: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 42: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 43: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 44: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 100: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 101: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: MOAT holds on all 15 nonexistent probes (primary_recall_miss, both buses)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: all 15 genuine LTM facts commit flag-ON / veto flag-OFF, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed 102: all 8 buffer-taught facts byte-identical flag on/off, both buses",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "env-level '=0' escape: unset=default-ON, explicit '0'=OFF, explicit '1'=ON",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "n_seeds": 6,
+  "n_seed_go": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "escape_check": {
+    "unset_is_default_on": true,
+    "explicit_0_is_off": false,
+    "explicit_1_is_on": true,
+    "ok": true
+  },
+  "moat": {
+    "all_ok": true,
+    "n_probes_total": 90,
+    "n_probes_ok": 90
+  },
+  "commit": {
+    "all_ok": true,
+    "n_facts_total": 90,
+    "n_facts_ok": 90
+  },
+  "buffer": {
+    "all_ok": true,
+    "n_facts_total": 48,
+    "n_facts_ok": 48
+  },
+  "config": {
+    "n_ltm_facts": 15,
+    "n_fake_probes": 15,
+    "n_buffer_facts": 8,
+    "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k"
+  },
+  "flag": "BRAIN_GNW_ORGANB_LTM_EXEMPT (production DEFAULT-ON since 2026-08-27; governs organ B on the 2-organ bus AND organ C on the 3-organ bus via the SAME flag)",
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_42_0_262393639",
+            "action": "definitely_not_a_stored_relation_42_0_322505512",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_1_275330613",
+            "action": "definitely_not_a_stored_relation_42_1_330955619",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_2_440421400",
+            "action": "definitely_not_a_stored_relation_42_2_174526549",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_3_659557368",
+            "action": "definitely_not_a_stored_relation_42_3_859521957",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_4_984020354",
+            "action": "definitely_not_a_stored_relation_42_4_814359221",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_5_651676182",
+            "action": "definitely_not_a_stored_relation_42_5_495300282",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_6_156426254",
+            "action": "definitely_not_a_stored_relation_42_6_170947186",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_7_82016699",
+            "action": "definitely_not_a_stored_relation_42_7_783128741",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_8_987975742",
+            "action": "definitely_not_a_stored_relation_42_8_477034505",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_9_153284930",
+            "action": "definitely_not_a_stored_relation_42_9_61323910",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_10_778783279",
+            "action": "definitely_not_a_stored_relation_42_10_767247137",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_11_146617284",
+            "action": "definitely_not_a_stored_relation_42_11_771804540",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_12_944632820",
+            "action": "definitely_not_a_stored_relation_42_12_142882530",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_13_835064721",
+            "action": "definitely_not_a_stored_relation_42_13_918308533",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_42_14_999190735",
+            "action": "definitely_not_a_stored_relation_42_14_862194240",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "phyllis_virginia_daniels",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "the_tar_heel_state",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "princeton_u",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "audio_master_plus_series",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "celine_diomn",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "johnny_cash_lists",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "peter_the_disciple",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "david_banda",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "ol_blue_eyes",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "levar_burton",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "deva_music_director",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "adolph_zukor",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "u_s_of_a",
+            "action": "shares_border_with",
+            "expected": "canada_portal",
+            "two_organ_on": "canada_portal",
+            "two_organ_off": null,
+            "three_organ_on": "canada_portal",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "nadia_juliette_boulanger",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_42_0",
+            "action": "zzz_buf_action_42_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_1",
+            "action": "zzz_buf_action_42_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_2",
+            "action": "zzz_buf_action_42_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_3",
+            "action": "zzz_buf_action_42_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_4",
+            "action": "zzz_buf_action_42_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_5",
+            "action": "zzz_buf_action_42_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_6",
+            "action": "zzz_buf_action_42_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_42_7",
+            "action": "zzz_buf_action_42_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_43_0_64804726",
+            "action": "definitely_not_a_stored_relation_43_0_701287037",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_1_488565901",
+            "action": "definitely_not_a_stored_relation_43_1_770495944",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_2_737423898",
+            "action": "definitely_not_a_stored_relation_43_2_18117153",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_3_226645233",
+            "action": "definitely_not_a_stored_relation_43_3_739463614",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_4_648570567",
+            "action": "definitely_not_a_stored_relation_43_4_577541059",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_5_453744670",
+            "action": "definitely_not_a_stored_relation_43_5_939692019",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_6_452910675",
+            "action": "definitely_not_a_stored_relation_43_6_521214351",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_7_10709794",
+            "action": "definitely_not_a_stored_relation_43_7_322839853",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_8_212660658",
+            "action": "definitely_not_a_stored_relation_43_8_753565427",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_9_927721052",
+            "action": "definitely_not_a_stored_relation_43_9_743328790",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_10_908425319",
+            "action": "definitely_not_a_stored_relation_43_10_259406257",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_11_299980618",
+            "action": "definitely_not_a_stored_relation_43_11_967040480",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_12_971500000",
+            "action": "definitely_not_a_stored_relation_43_12_201894949",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_13_369279922",
+            "action": "definitely_not_a_stored_relation_43_13_846999959",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_43_14_232709403",
+            "action": "definitely_not_a_stored_relation_43_14_520044757",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "u_s_of_a",
+            "action": "shares_border_with",
+            "expected": "canada_portal",
+            "two_organ_on": "canada_portal",
+            "two_organ_off": null,
+            "three_organ_on": "canada_portal",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "prem_nazeer",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "paul_sawtelle",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "mack_sennett_production",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "alfred_newman_composer",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "ada_malik",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "fatty_arbuckle_scandal",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "wilhelm_fried",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "nothing_but_wind",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "nadia_juliette_boulanger",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "frank_lincoln_wright",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "guggenheim_grant",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "james_paul_mccartney",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "deva_music_director",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_43_0",
+            "action": "zzz_buf_action_43_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_1",
+            "action": "zzz_buf_action_43_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_2",
+            "action": "zzz_buf_action_43_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_3",
+            "action": "zzz_buf_action_43_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_4",
+            "action": "zzz_buf_action_43_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_5",
+            "action": "zzz_buf_action_43_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_6",
+            "action": "zzz_buf_action_43_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_43_7",
+            "action": "zzz_buf_action_43_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_44_0_411055372",
+            "action": "definitely_not_a_stored_relation_44_0_541610468",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_1_447961884",
+            "action": "definitely_not_a_stored_relation_44_1_722689592",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_2_35874835",
+            "action": "definitely_not_a_stored_relation_44_2_393117598",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_3_500968252",
+            "action": "definitely_not_a_stored_relation_44_3_535631874",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_4_742128748",
+            "action": "definitely_not_a_stored_relation_44_4_68123235",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_5_990935295",
+            "action": "definitely_not_a_stored_relation_44_5_549453938",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_6_923586357",
+            "action": "definitely_not_a_stored_relation_44_6_44904536",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_7_997165429",
+            "action": "definitely_not_a_stored_relation_44_7_22973028",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_8_609078212",
+            "action": "definitely_not_a_stored_relation_44_8_721455415",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_9_15388869",
+            "action": "definitely_not_a_stored_relation_44_9_926728858",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_10_447865128",
+            "action": "definitely_not_a_stored_relation_44_10_273655950",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_11_310047194",
+            "action": "definitely_not_a_stored_relation_44_11_173026074",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_12_221074848",
+            "action": "definitely_not_a_stored_relation_44_12_221940400",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_13_698138455",
+            "action": "definitely_not_a_stored_relation_44_13_550116152",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_44_14_259095761",
+            "action": "definitely_not_a_stored_relation_44_14_55361590",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "massachusetts_united_states",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "nadia_juliette_boulanger",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "wilhelm_fried",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "frank_lincoln_wright",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "prem_nazeer",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "guggenheim_grant",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "sports_player",
+            "action": "subclass_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "saint_andrew",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "u_s_of_a",
+            "action": "shares_border_with",
+            "expected": "canada_portal",
+            "two_organ_on": "canada_portal",
+            "two_organ_off": null,
+            "three_organ_on": "canada_portal",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "alfred_newman_composer",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "teapot_party",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "joe_yule_jr",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "arthur_stanley_jefferson",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "rembrandt_van_rhyn",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_44_0",
+            "action": "zzz_buf_action_44_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_1",
+            "action": "zzz_buf_action_44_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_2",
+            "action": "zzz_buf_action_44_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_3",
+            "action": "zzz_buf_action_44_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_4",
+            "action": "zzz_buf_action_44_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_5",
+            "action": "zzz_buf_action_44_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_6",
+            "action": "zzz_buf_action_44_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_44_7",
+            "action": "zzz_buf_action_44_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 100,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_100_0_426305987",
+            "action": "definitely_not_a_stored_relation_100_0_284593106",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_1_488418007",
+            "action": "definitely_not_a_stored_relation_100_1_492121039",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_2_167393615",
+            "action": "definitely_not_a_stored_relation_100_2_149940553",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_3_189761295",
+            "action": "definitely_not_a_stored_relation_100_3_717087032",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_4_307395120",
+            "action": "definitely_not_a_stored_relation_100_4_269915171",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_5_925096303",
+            "action": "definitely_not_a_stored_relation_100_5_148385559",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_6_596809370",
+            "action": "definitely_not_a_stored_relation_100_6_688050304",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_7_684515597",
+            "action": "definitely_not_a_stored_relation_100_7_245664128",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_8_404714407",
+            "action": "definitely_not_a_stored_relation_100_8_586093963",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_9_12590233",
+            "action": "definitely_not_a_stored_relation_100_9_612985508",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_10_973110688",
+            "action": "definitely_not_a_stored_relation_100_10_618464493",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_11_763007769",
+            "action": "definitely_not_a_stored_relation_100_11_392255698",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_12_578050663",
+            "action": "definitely_not_a_stored_relation_100_12_527573494",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_13_765223915",
+            "action": "definitely_not_a_stored_relation_100_13_707598551",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_100_14_706588761",
+            "action": "definitely_not_a_stored_relation_100_14_225822174",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "phyllis_virginia_daniels",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "basket_ball",
+            "action": "country_of_origin",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "sports_player",
+            "action": "subclass_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "religion_in_utah",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "human_specie",
+            "action": "subclass_of",
+            "expected": "personhood_theory",
+            "two_organ_on": "personhood_theory",
+            "two_organ_off": null,
+            "three_organ_on": "personhood_theory",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "nadia_juliette_boulanger",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "roger_corman",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "ol_blue_eyes",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "john_lenin",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "rahman_a_r",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "rembrandt_van_rhyn",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "audio_master_plus_series",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "james_j_brown",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "adolph_zukor",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_100_0",
+            "action": "zzz_buf_action_100_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_1",
+            "action": "zzz_buf_action_100_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_2",
+            "action": "zzz_buf_action_100_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_3",
+            "action": "zzz_buf_action_100_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_4",
+            "action": "zzz_buf_action_100_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_5",
+            "action": "zzz_buf_action_100_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_6",
+            "action": "zzz_buf_action_100_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_100_7",
+            "action": "zzz_buf_action_100_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 101,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_101_0_229560394",
+            "action": "definitely_not_a_stored_relation_101_0_873977687",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_1_539236472",
+            "action": "definitely_not_a_stored_relation_101_1_596020738",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_2_887063452",
+            "action": "definitely_not_a_stored_relation_101_2_530490859",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_3_407026485",
+            "action": "definitely_not_a_stored_relation_101_3_301552798",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_4_900565246",
+            "action": "definitely_not_a_stored_relation_101_4_291542447",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_5_747208890",
+            "action": "definitely_not_a_stored_relation_101_5_617914696",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_6_41046509",
+            "action": "definitely_not_a_stored_relation_101_6_795371045",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_7_749256404",
+            "action": "definitely_not_a_stored_relation_101_7_709619183",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_8_119041112",
+            "action": "definitely_not_a_stored_relation_101_8_275878979",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_9_639409688",
+            "action": "definitely_not_a_stored_relation_101_9_224546015",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_10_502558854",
+            "action": "definitely_not_a_stored_relation_101_10_908772779",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_11_780963597",
+            "action": "definitely_not_a_stored_relation_101_11_8598109",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_12_631917532",
+            "action": "definitely_not_a_stored_relation_101_12_597417661",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_13_244890351",
+            "action": "definitely_not_a_stored_relation_101_13_683747173",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_101_14_488519516",
+            "action": "definitely_not_a_stored_relation_101_14_678817392",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "saint_puhwegweg",
+            "action": "subclass_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "arthur_stanley_jefferson",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "jesse_lasky",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "u_s_of_a",
+            "action": "shares_border_with",
+            "expected": "canada_portal",
+            "two_organ_on": "canada_portal",
+            "two_organ_off": null,
+            "three_organ_on": "canada_portal",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "hal_wallis",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "the_tar_heel_state",
+            "action": "country",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "john_lenin",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "john_cale",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "mohanlal_viswanathan_nair",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "martin_george",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "canada_portal",
+            "action": "shares_border_with",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "h_d_carey",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "basket_ball",
+            "action": "country_of_origin",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "joseph_franz_haydn",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_101_0",
+            "action": "zzz_buf_action_101_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_1",
+            "action": "zzz_buf_action_101_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_2",
+            "action": "zzz_buf_action_101_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_3",
+            "action": "zzz_buf_action_101_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_4",
+            "action": "zzz_buf_action_101_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_5",
+            "action": "zzz_buf_action_101_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_6",
+            "action": "zzz_buf_action_101_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_101_7",
+            "action": "zzz_buf_action_101_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 102,
+      "seed_go": true,
+      "n_dropped_unresolvable_ltm_probes": 0,
+      "moat": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "definitely_not_a_stored_entity_102_0_15342195",
+            "action": "definitely_not_a_stored_relation_102_0_446786983",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_1_632527599",
+            "action": "definitely_not_a_stored_relation_102_1_56955710",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_2_835521373",
+            "action": "definitely_not_a_stored_relation_102_2_387615778",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_3_106547458",
+            "action": "definitely_not_a_stored_relation_102_3_953102214",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_4_915574082",
+            "action": "definitely_not_a_stored_relation_102_4_977527857",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_5_589007719",
+            "action": "definitely_not_a_stored_relation_102_5_742084860",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_6_837451579",
+            "action": "definitely_not_a_stored_relation_102_6_243789561",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_7_854095083",
+            "action": "definitely_not_a_stored_relation_102_7_991593837",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_8_73510678",
+            "action": "definitely_not_a_stored_relation_102_8_829391203",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_9_886162083",
+            "action": "definitely_not_a_stored_relation_102_9_242104244",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_10_329554319",
+            "action": "definitely_not_a_stored_relation_102_10_901369841",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_11_926557393",
+            "action": "definitely_not_a_stored_relation_102_11_985139835",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_12_298773660",
+            "action": "definitely_not_a_stored_relation_102_12_261262861",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_13_76966578",
+            "action": "definitely_not_a_stored_relation_102_13_932277226",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          },
+          {
+            "agent": "definitely_not_a_stored_entity_102_14_369276861",
+            "action": "definitely_not_a_stored_relation_102_14_69370646",
+            "two_organ_committed": null,
+            "two_organ_abstain": "primary_recall_miss",
+            "three_organ_committed": null,
+            "three_organ_abstain": "primary_recall_miss",
+            "ok": true
+          }
+        ]
+      },
+      "commit": {
+        "all_ok": true,
+        "n": 15,
+        "rows": [
+          {
+            "agent": "chelsea_fc",
+            "action": "country",
+            "expected": "united_kingom",
+            "two_organ_on": "united_kingom",
+            "two_organ_off": null,
+            "three_organ_on": "united_kingom",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "frank_lincoln_wright",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "apron_strings",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "joseph_franz_haydn",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "adolph_zukor",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "saint_andrew",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "canada_portal",
+            "action": "shares_border_with",
+            "expected": "u_s_of_a",
+            "two_organ_on": "u_s_of_a",
+            "two_organ_off": null,
+            "three_organ_on": "u_s_of_a",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "lady_agatha_mallowan",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "u_s_of_a",
+            "action": "shares_border_with",
+            "expected": "canada_portal",
+            "two_organ_on": "canada_portal",
+            "two_organ_off": null,
+            "three_organ_on": "canada_portal",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "saint_puhwegweg",
+            "action": "subclass_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "james_j_brown",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "hal_wallis",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "ol_blue_eyes",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "austin_cedric_gibbons",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          },
+          {
+            "agent": "hal_roach",
+            "action": "instance_of",
+            "expected": "human_specie",
+            "two_organ_on": "human_specie",
+            "two_organ_off": null,
+            "three_organ_on": "human_specie",
+            "three_organ_off": null,
+            "two_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "three_organ_off_abstain": "consensus_veto_organ_b_withheld",
+            "ok": true
+          }
+        ]
+      },
+      "buffer": {
+        "all_ok": true,
+        "n": 8,
+        "rows": [
+          {
+            "agent": "zzz_buf_agent_102_0",
+            "action": "zzz_buf_action_102_0",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_1",
+            "action": "zzz_buf_action_102_1",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_2",
+            "action": "zzz_buf_action_102_2",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_3",
+            "action": "zzz_buf_action_102_3",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_4",
+            "action": "zzz_buf_action_102_4",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_5",
+            "action": "zzz_buf_action_102_5",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_6",
+            "action": "zzz_buf_action_102_6",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          },
+          {
+            "agent": "zzz_buf_agent_102_7",
+            "action": "zzz_buf_action_102_7",
+            "two_organ_identical": true,
+            "three_organ_identical": true,
+            "ok": true
+          }
+        ]
+      }
+    }
+  ]
+}
