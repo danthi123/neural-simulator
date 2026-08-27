@@ -1,19 +1,28 @@
-"""BRAIN_OPEN_ENDED live-chat mode — the wiring of the two proven de-risks into `/api/brain-chat` (default-OFF).
+"""BRAIN_OPEN_ENDED live-chat mode — the wiring of three proven de-risks into `/api/brain-chat` (default-OFF).
 
-WHAT THIS IS. The owner reframed (2026-08-19): Qwen = a FORM scaffold; honesty = STATE-FIDELITY. Two de-risks made
-that concrete and both are GO on `main`:
+WHAT THIS IS. The owner reframed (2026-08-19): Qwen = a FORM scaffold; honesty = STATE-FIDELITY. Three de-risks made
+that concrete and all are GO on `main`:
   * `_open_ended_state_driven_generation_derisk.OpenEndedGenerator` — assemble the brain's STATE (retrieved
     KNOWLEDGE + affect/familiarity/curiosity/self) and let the off-bridge spiking Qwen write a FREE, first-person,
     multi-sentence reply (conversational, V1 GO), instead of the telegraphic per-SVO strict composer.
   * `_open_ended_verify_postfilter_derisk.post_filter` — the VERIFY moat MOVED from a pre-hoc SVO constraint to a
     POST-FILTER on the free reply: strip persona leaks; on a brain-UNKNOWN topic keep only the honest hedges (and
-    prepend an honest abstain if none remain); on a KNOWN topic drop sentences that contradict the retrieved facts.
-    This dropped fabrication on Qwen-known/brain-unknown topics 1.0 -> 0.0 while keeping known substance 1.0 (GO).
+    prepend an honest abstain if none remain); on a KNOWN topic drop sentences that its own `contradicts()` flags
+    (a declared STUB that always returns False — see the 2026-08-21 wiring commit's own named gap). This dropped
+    fabrication on Qwen-known/brain-unknown topics 1.0 -> 0.0 while keeping known substance 1.0 (GO).
+  * `_open_ended_known_supplement_filter_derisk.sentence_contradicts` — the named fix for that stub: a per-sentence
+    CONTRADICTION check (a stored relation — borders/continent/capital — asserted with a DIFFERENT object than the
+    store holds, plus any bare number/year never in the store). Validated GO on the saved known-topic replies
+    (catch_rate 1.0, 0 leaks, no reply emptied — research/findings/2026-08-21-contradiction-filter-catches-known-
+    topic-wrong-supplements-GO.md). `post_filter()` below layers this on top of the base post-filter's known-topic
+    path, closing the stub gap; the base post-filter's persona-strip + unknown-topic hedge/abstain logic is
+    untouched.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
 familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> `OpenEndedGenerator.
-generate` (FORM) -> `post_filter` (HONESTY) -> return the filtered reply.
+generate` (FORM) -> `post_filter` (HONESTY: base persona-strip/hedge/abstain + the known-topic contradiction filter)
+-> return the filtered reply.
 
 MEMORY / COST DISCIPLINE (the two hard lessons this session).
   (1) ONE Qwen. `OpenEndedGenerator.__init__` would load a SECOND Qwen-0.5B. Instead we REUSE the server's already
@@ -38,14 +47,49 @@ import os
 import re
 import threading
 
-# reuse-by-import: the two GO de-risk modules (on main). No local reimplementation of the mechanism.
+# reuse-by-import: the three GO de-risk modules (on main). No local reimplementation of the mechanism.
 from research.runners._open_ended_state_driven_generation_derisk import (
-    StateContext, build_prompt, OpenEndedGenerator, _valence_from_differential, n_sentences,
+    StateContext, build_prompt, OpenEndedGenerator, _valence_from_differential, n_sentences, _sentences, persona_leak,
 )
-from research.runners._open_ended_verify_postfilter_derisk import post_filter
+from research.runners._open_ended_verify_postfilter_derisk import post_filter as _base_post_filter
+from research.runners._open_ended_known_supplement_filter_derisk import (
+    sentence_contradicts as _known_supplement_contradicts,
+)
 
 # The self-model line the state carries (the de-risk's default; a held string, exactly as declared there).
 SELF_MODEL = "a spiking brain that learns from conversation"
+
+
+# ── HONESTY: the base VERIFY post-filter + the GO known-topic contradiction filter (2026-08-21) ──────────────────
+def _facts_as_relation_pairs(facts):
+    """Adapt the retrieval's (agent, action, patient) triples into the (relation, object) pairs
+    `sentence_contradicts` expects -- the SAME (action, patient) shape the de-risk's own ground-truth FACTS table
+    used (e.g. canada -> [("borders", "united states"), ("capital", "ottawa"), ...]). An interface adapter only;
+    the contradiction-detection LOGIC stays entirely inside the imported de-risk module."""
+    return [(str(v).lower(), str(p).lower()) for (_a, v, p) in facts]
+
+
+def post_filter(reply, topic, known, facts):
+    """The live post-filter: on a brain-UNKNOWN topic this IS `_base_post_filter` (persona-strip + the hedge/abstain
+    path), unchanged. On a KNOWN topic it swaps the base filter's own stub `contradicts()` (declared to always
+    return False) for the de-risked `sentence_contradicts` (2026-08-21, catch_rate 1.0 / 0 leaks / no reply emptied
+    on the saved known-topic replies), closing the named gap: a KNOWN-topic reply's wrong parametric supplements
+    (e.g. Canada "borders ... Mexico" when the store holds "united states") previously survived the stub unchanged.
+
+    Mirrors `_base_post_filter`'s OWN known-topic structure (persona-leak-strip the reply's sentences, then drop
+    the ones the contradiction check flags, then rejoin) rather than re-splitting `_base_post_filter`'s OUTPUT:
+    `_sentences()` splits on [.!?]+ and DROPS the delimiters, so a second split over the base filter's own
+    already-joined, punctuation-stripped text collapses back into ONE sentence and the per-sentence check goes
+    inert (caught by this wiring's own verify -- see research/runners/_open_ended_chat_known_supplement_wiring_
+    verify.py). Reuse-by-import only: `persona_leak` and `sentence_contradicts` are both imported verbatim from
+    their GO de-risk modules; nothing here reimplements persona-leak or contradiction DETECTION."""
+    if not known:
+        return _base_post_filter(reply, topic, known, facts)
+    pairs = _facts_as_relation_pairs(facts)
+    sents = [s for s in _sentences(reply) if not persona_leak(s)]
+    keep = [s for s in sents if not _known_supplement_contradicts(s, topic, pairs)]
+    return " ".join(keep).strip() or reply.strip()
+
 
 # ── env flag (default-OFF) ──────────────────────────────────────────────────────────────────────────────────────
 def open_ended_enabled() -> bool:

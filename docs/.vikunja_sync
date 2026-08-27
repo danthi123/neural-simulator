@@ -195,3 +195,22 @@ overwritten mid-session by a concurrent automated `git rebase origin/main` on th
 checkout, which silently discarded uncommitted working-tree edits more than once -- re-applied here;
 flagged in the session report as an operational hazard of doing doc-sync on the live primary checkout
 while autonomous work is in flight on the same repo.
+
+## 2026-08-27  known-supplement contradiction filter wired into open-ended chat (branch reconcile)
+Reconciled the board for landing the already-GO 2026-08-21 known-topic contradiction filter into
+`webapp/open_ended_chat.py`'s post-filter (branch research/wire-known-supplement-contradiction-filter,
+finding 2026-08-27-known-supplement-contradiction-filter-wired-into-open-ended-chat-postfilter-GO,
+BRAIN_OPEN_ENDED stays default-OFF). #112 ("Let the brain talk freely, staying honest") is the
+pre-existing task tracking this faculty -- its description was stale (still said "Next: wire it into
+the live chat", but the live-chat wiring landed 2026-08-21 and had no board task update at the time);
+updated to reflect the mode IS wired (opt-in, default-off) and that this landing closes the honesty gap
+that wiring's own commit named (10/10 wrong supplements now caught, unknown-topic moat unchanged,
+lesion-confirmed load-bearing). Left OPEN (not done) per the ladder rule -- the faculty is wired but not
+production-default; labeled `Live brain (chat)` (6) + `de-risked` (10), neither of which it carried
+before. Also retitled #177 (still read "has been designed, but not built yet" even though its own
+description already says "R1 (landed)... R2 (landed)...") to match its current description -- a title/
+description mismatch, not a status change; no other board edits made for the other 6 findings synced
+into the roadmap docs this cycle (onebrain-integration R1/R2, GNW 3-organ hollow-flip fix, flip-soak
+audit, organb-ltm-exempt, knowledge-in-live-chat-veto) -- #171/#177/#179/#142 already read current for
+those, checked but not re-touched; #173/#178 (V1 BCM VOID, mood-tone) likewise already current from the
+prior entry above.
