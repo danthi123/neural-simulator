@@ -48,6 +48,25 @@ LESION-LOAD-BEARING levers (the honest-negative deliverable):
     CONFIRM fires as high as CONTRADICT -> organ B can no longer corroborate a genuine match -> it withholds -> the
     coincidence collapses -> abstain. Proves the second vote is caused by organ B's learned SPIKING prediction.
 
+LTM-EXEMPTION lever, a DE-RISK, DEFAULT-OFF (2026-08-27, `BRAIN_GNW_ORGANB_LTM_EXEMPT`, closes the
+`2026-08-27-knowledge-in-live-chat-veto-...` diagnostic's Bug 2). Organ B's expectation registry `e_B` is built
+EXCLUSIVELY from `_chat_concepts(chat)` -> `chat.stored_facts` -> the small conversational-BUFFER tier (never the
+routed cortical LTM tier a `TieredFactStore` may hold) -- so `e_B.get((agent,action))` is structurally `None` for
+EVERY one of the LTM's facts, and `organ_b_confirms` WITHHOLDS whenever `exp is None`. That makes the DEFAULT-ON
+two-organ bus veto every single LTM-sourced recall, correct or not, regardless of the question's syntactic shape.
+This is a genuine architecture gap in organ B's registered domain, not a moat defect: organ A's forward recall
+(the moat's ONLY gate against a non-existent fact) is completely unaffected -- an unstored fact still returns
+`cand=None` and abstains BEFORE organ B is even consulted (see `two_organ_combine` below). The exemption only
+changes what organ B does for a recall that ALREADY succeeded: with the flag ON, a recall whose PROVENANCE is the
+STABLE LTM tier (`TieredFactStore.query_patient_source` reports `"ltm"`) makes organ B CORROBORATE instead of
+withhold -- stable, previously-consolidated cortical knowledge is not a "conversational surprise", so the
+surprise monitor has nothing to legitimately be surprised BY. A conversational-BUFFER recall (source `"buffer"`)
+is untouched: organ B still reads its own learned `e_B` expectation exactly as today, corroborate / withhold /
+`_ORGANB_LESION` all unchanged. DEFAULT OFF (unset/0/false/off/no): `two_organ_combine` calls
+`composer.query_patient(agent, action)` exactly as before (the ORIGINAL single call, no `query_patient_source`
+probe at all) -> byte-identical to today's production. Does NOT change whether the bus INSTALLS (still gated by
+`two_organ_enabled()` / `_organ_discriminates()`), only the combine-time organ-B vote for an LTM-sourced recall.
+
 REUSE-BY-IMPORT (NO `sim/` edit, NO re-derivation): the workspace build + ignition-read + the 2-organ coincidence
 hop + organ B (the expanded production surprise organ) + the calibrated subthreshold drive come straight from
 `research/runners/_gnw_two_distinct_organs_derisk.py` and its parents; this module adds only the production glue
@@ -89,6 +108,16 @@ def organb_lesion_on() -> bool:
     """`BRAIN_GNW_2ORGAN_ORGANB_LESION` truthy -> organ B's patient_expected->surprise prediction edges are zeroed
     (CONFIRM fires as high as CONTRADICT -> organ B withholds even on a match -> the coincidence collapses)."""
     return os.environ.get("BRAIN_GNW_2ORGAN_ORGANB_LESION", "").strip().lower() in ("1", "true", "on", "yes")
+
+
+def organb_ltm_exempt_enabled() -> bool:
+    """`BRAIN_GNW_ORGANB_LTM_EXEMPT` truthy -> a recall whose PROVENANCE is the STABLE cortical LTM tier (not the
+    small conversational buffer) makes organ B CORROBORATE instead of WITHHOLD (see the LTM-EXEMPTION section of
+    this module's docstring). DEFAULT OFF: unset/0/false/off/no == today's production behavior (organ B's
+    registry never sees the LTM tier -> withholds on EVERY LTM fact) -- byte-identical when off. Never touches a
+    conversational-buffer recall, and never overrides organ A's own moat (a non-existent fact still abstains
+    before organ B is consulted, flag on or off)."""
+    return os.environ.get("BRAIN_GNW_ORGANB_LTM_EXEMPT", "").strip().lower() in ("1", "true", "on", "yes")
 
 
 def _organ_backend_neutral_init_on() -> bool:
@@ -194,8 +223,30 @@ def _chat_concepts(chat):
     return agents_set, actions_set, all_concepts, e_b, stored_patients
 
 
+def _organ_a_recall(composer, agent: str, action: str, *, ltm_exempt: bool):
+    """Organ A's forward recall, with LTM-tier PROVENANCE when `ltm_exempt` requests it (needed by the LTM-
+    exemption lever to tell a stable long-term-memory recall apart from a conversational-buffer one — see
+    `organb_ltm_exempt_enabled`). Returns `(cand, source)`, `source` in `{"buffer", "ltm", None}`.
+
+    `ltm_exempt=False` -> exactly today's single `composer.query_patient(agent, action)` call, `source=None` —
+    BYTE-IDENTICAL to the pre-exemption code (no `query_patient_source` probe is even attempted). `ltm_exempt=True`
+    on a composer that is not tier-aware (no `query_patient_source`, e.g. the plain buffer-only composer) also
+    falls back to the same single call with `source=None` — the exemption can never apply there, matching the
+    bus's own discipline of never running a mechanism it cannot faithfully support."""
+    if ltm_exempt and hasattr(composer, "query_patient_source"):
+        try:
+            return composer.query_patient_source(agent, action)
+        except Exception:
+            return None, None
+    try:
+        return composer.query_patient(agent, action), None
+    except Exception:
+        return None, None
+
+
 def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
-                      ws_lesion: bool = False, organb_lesion: bool = False) -> dict:
+                      ws_lesion: bool = False, organb_lesion: bool = False,
+                      organb_ltm_exempt: bool = False) -> dict:
     """Route (agent, action) through the TWO-DISTINCT-ORGANS spiking coincidence and return the SUBSTRATE's committed
     decision. `committed` is the ignited patient (or None = abstain). NO host `if/else` selects it — organ A (FHRR
     recall) and organ B (the spiking surprise monitor's corroboration against its OWN expectation e_B) each write a
@@ -203,23 +254,29 @@ def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
 
     (agent A's forward `query_patient` read leaves the composer's `last_trace` = the forward-recall trace — the same
     trace the host `what_does` surfaces as "brain activity" — and organ B / the workspace use SEPARATE bridges, so the
-    surfaced activity stays byte-identical to the host forward read.)"""
+    surfaced activity stays byte-identical to the host forward read.)
+
+    `organb_ltm_exempt=True` (the `BRAIN_GNW_ORGANB_LTM_EXEMPT` de-risk lever, default off): when the recall's
+    PROVENANCE is the STABLE cortical LTM tier, organ B corroborates instead of withholding on its (structurally
+    always-None) LTM expectation — see the module docstring's LTM-EXEMPTION section. A conversational-buffer
+    recall is untouched either way; a non-existent fact still abstains at organ A, before organ B is consulted."""
     composer = getattr(getattr(chat, "inner", None), "composer", None)
     _a, _v, all_concepts, e_b, stored_patients = _chat_concepts(chat)
     info = {"organ_a_recall": None, "organ_b_confirmed": None, "organ_b_surprise_hz": None,
             "committed": None, "ignited": False, "n_ignited": 0,
             "ws_lesion": bool(ws_lesion), "organb_lesion": bool(organb_lesion),
+            "organb_ltm_exempt": bool(organb_ltm_exempt),
             "expected": e_b.get((agent, action))}
     if composer is None:
         info["abstain_reason"] = "no_composer"
         return info
 
-    # organ A — the FHRR recall (the primary organ; a miss abstains by the moat, exactly like the host).
-    try:
-        cand = composer.query_patient(agent, action)
-    except Exception:
-        cand = None
+    # organ A — the FHRR recall (the primary organ; a miss abstains by the moat, exactly like the host). With the
+    # LTM-exemption lever on, also learns WHICH tier answered (buffer vs LTM) so organ B can be exempted below —
+    # off (default), this is the identical single `query_patient` call, unaffected.
+    cand, recall_source = _organ_a_recall(composer, agent, action, ltm_exempt=bool(organb_ltm_exempt))
     info["organ_a_recall"] = cand
+    info["recall_source"] = recall_source
     if cand is None:
         info["abstain_reason"] = "primary_recall_miss"
         return info
@@ -227,10 +284,19 @@ def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
     # organ B — the spiking surprise monitor's corroboration of `cand` against its OWN expectation e_B[(agent,action)].
     organ = _get_organ(seed, stored_patients)
     exp = e_b.get((agent, action))
-    confirmed, hz = organ_b_confirms(organ, exp, cand, lesion=bool(organb_lesion))
+    ltm_exempt_applied = bool(organb_ltm_exempt and recall_source == "ltm")
+    if ltm_exempt_applied:
+        # LTM-EXEMPTION: e_B structurally never covers the LTM tier (exp is always None here) -> organ_b_confirms
+        # would unconditionally withhold. Stable, previously-consolidated knowledge is not a "conversational
+        # surprise" for the surprise monitor to be surprised BY, so corroborate instead. Organ B's own spiking
+        # read is never invoked for this recall (nothing in its registry to read against).
+        confirmed, hz = True, None
+    else:
+        confirmed, hz = organ_b_confirms(organ, exp, cand, lesion=bool(organb_lesion))
     info["organ_b_confirmed"] = bool(confirmed)
     info["organ_b_surprise_hz"] = (None if (hz is None or np.isnan(hz)) else float(hz))
     info["organ_b_threshold_hz"] = float(getattr(organ, "threshold", float("nan")))
+    info["organb_ltm_exempt_applied"] = ltm_exempt_applied
 
     # the shared GNW workspace: organ A drives slot(cand); organ B drives slot(cand) IFF it corroborated; a decoy
     # exercises WTA. Only a >=2-vote slot crosses the knee -> a genuine coincidence-ignition commit (or abstain).
@@ -250,7 +316,8 @@ def two_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
 
 
 def two_organ_gate_via(chat, question: str, *, seed: int = 42,
-                       ws_lesion: bool = False, organb_lesion: bool = False):
+                       ws_lesion: bool = False, organb_lesion: bool = False,
+                       organb_ltm_exempt: bool = False):
     """AUTHOR the gate combination with the TWO-DISTINCT-ORGANS spiking coincidence for the COVERED routable class,
     mirroring `gnw_bus_shadow.gate_via_bus`'s routing EXACTLY (so extraction + acquisition/open-ended/anaphora side
     effects run ONCE, unchanged) but swapping the covered-class combine from the composer-only N-organ bus to the
@@ -273,7 +340,8 @@ def two_organ_gate_via(chat, question: str, *, seed: int = 42,
         _, q, agent, action, anaphora_used = mode_tuple
         agents_set = getattr(chat, "agents_set", set()) or set()
         info = two_organ_combine(chat, agent, action, seed=seed,
-                                 ws_lesion=ws_lesion, organb_lesion=organb_lesion)
+                                 ws_lesion=ws_lesion, organb_lesion=organb_lesion,
+                                 organb_ltm_exempt=organb_ltm_exempt)
         committed = info.get("committed")
         if committed is not None:
             # preserve gate()'s ONLY covered-class side effect: a concrete patient that is itself an agent becomes the
@@ -352,7 +420,8 @@ def install_two_organ_gate(chat, *, seed: int = 42) -> bool:
             return orig_gate(question)
         try:
             svo, info = two_organ_gate_via(chat, question, seed=seed,
-                                           ws_lesion=ws_lesion_on(), organb_lesion=organb_lesion_on())
+                                           ws_lesion=ws_lesion_on(), organb_lesion=organb_lesion_on(),
+                                           organb_ltm_exempt=organb_ltm_exempt_enabled())
         except Exception as e:                                # never let the bus crash a turn -> original authors
             host_svo = orig_gate(question)
             chat._last_two_organ = {"routable": False, "reason": f"error:{type(e).__name__}: {e}",

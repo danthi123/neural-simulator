@@ -57,6 +57,15 @@ LESION-LOAD-BEARING (the honest-negative deliverable):
     recurrence zeroed -> even a full consensus cannot sustain -> abstain, while the forward-recall reflex survives)
     and `BRAIN_GNW_2ORGAN_ORGANB_LESION=1` (organ B withholds even on a match -> the consensus collapses).
 
+DE-RISK lever, DEFAULT-OFF, reused from `gnw_two_organ_bus.py` (2026-08-27, `BRAIN_GNW_ORGANB_LTM_EXEMPT`): organ
+B's expectation registry never covers the LTM tier (see that module's LTM-EXEMPTION docstring), so it withholds on
+EVERY LTM-sourced recall here too, exactly as in the 2-organ bus. With the flag ON, organ B corroborates instead
+of withholding for an LTM-sourced recall — organ C's OWN comprehension vote is UNCHANGED by this lever (it may
+still veto an LTM recall for its own reason: `_real_vocab_competence` reads `brain_vocab` from the SAME buffer-
+only `_chat_concepts`, so an LTM-only entity is "unknown" to organ C too, and the OOV fallback consults the
+comprehension organ's spiking margin, calibrated on the toy cue lexicon — a genuinely separate gap, not fixed
+here).
+
 REUSE-BY-IMPORT (NO `sim/` edit, NO re-derivation): the workspace build + ignition-read + organ B (the surprise organ)
 + the calibrated subthreshold drive come from `gnw_two_organ_bus` (which reuses the de-risk parents); the N-organ
 consensus hop is `_gnw_norgan_bus_derisk.norgan_hop` (which already supports 3 organs); organ C is the production
@@ -73,8 +82,8 @@ import numpy as np
 # reuse-by-import the DEFAULT-ON two-organ bus machinery (organ A read is inline; organ B + the shared warm workspace
 # bridge + concept extraction + the backend-discrimination gate all come from the 2-organ module) — NO sim/ edit.
 from webapp.gnw_two_organ_bus import (
-    _get_organ, _get_bridge, _chat_concepts, _organ_discriminates,
-    ws_lesion_on, organb_lesion_on,
+    _get_organ, _get_bridge, _chat_concepts, _organ_discriminates, _organ_a_recall,
+    ws_lesion_on, organb_lesion_on, organb_ltm_exempt_enabled,
 )
 # organ B's spiking corroboration read (cp_firing_states[surprise]) and the N-organ consensus hop + unanimity drive.
 from research.runners._gnw_two_distinct_organs_derisk import organ_b_confirms
@@ -175,13 +184,18 @@ def _comprehension_vote(agent: str, action: str, cand: str, brain_vocab, *, seed
 # ── one EVALUATE/COMMIT over the workspace: organ A + (confirmed) organ B + (comprehended) organ C ───────────────
 def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
                         ws_lesion: bool = False, organb_lesion: bool = False,
-                        organc_lesion: bool = False) -> dict:
+                        organc_lesion: bool = False, organb_ltm_exempt: bool = False) -> dict:
     """Route (agent, action) through the THREE-DISTINCT-ORGANS spiking consensus and return the SUBSTRATE's committed
     decision. `committed` is the ignited patient (or None = abstain). NO host `if/else` selects it — organ A (FHRR
     recall), organ B (the surprise monitor's corroboration), and organ C (the comprehension monitor's corroboration)
     each write a subthreshold `d_sub`; only their 3-way COINCIDENCE crosses the ignition knee. Read-only; never
     mutates the answer. (The forward `query_patient` leaves the composer's `last_trace` = the host forward-recall
-    trace; organ B / organ C / the workspace use SEPARATE bridges, so the surfaced 'brain activity' stays identical.)"""
+    trace; organ B / organ C / the workspace use SEPARATE bridges, so the surfaced 'brain activity' stays identical.)
+
+    `organb_ltm_exempt=True` (the `BRAIN_GNW_ORGANB_LTM_EXEMPT` de-risk lever, default off, defined in
+    `gnw_two_organ_bus.py`) reuses the SAME organ-B LTM-exemption applied there: a recall sourced from the stable
+    cortical LTM tier makes organ B corroborate instead of withhold (organ C's OWN comprehension vote is untouched
+    by this lever — see that module's LTM-EXEMPTION docstring for the mechanism)."""
     composer = getattr(getattr(chat, "inner", None), "composer", None)
     _a, _v, all_concepts, e_b, stored_patients = _chat_concepts(chat)
     brain_vocab = set(all_concepts)
@@ -189,17 +203,18 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
             "organ_c_votes": None, "committed": None, "ignited": False, "n_ignited": 0,
             "d_sub": _D_SUB_3, "n_organs": _N_ORGANS,
             "ws_lesion": bool(ws_lesion), "organb_lesion": bool(organb_lesion), "organc_lesion": bool(organc_lesion),
+            "organb_ltm_exempt": bool(organb_ltm_exempt),
             "expected": e_b.get((agent, action))}
     if composer is None:
         info["abstain_reason"] = "no_composer"
         return info
 
     # organ A — the FHRR recall (the primary organ; a miss abstains by the moat, exactly like the host / 2-organ bus).
-    try:
-        cand = composer.query_patient(agent, action)
-    except Exception:
-        cand = None
+    # With the LTM-exemption lever on, also learns WHICH tier answered (buffer vs LTM) so organ B can be exempted
+    # below — off (default), this is the identical single `query_patient` call, unaffected.
+    cand, recall_source = _organ_a_recall(composer, agent, action, ltm_exempt=bool(organb_ltm_exempt))
     info["organ_a_recall"] = cand
+    info["recall_source"] = recall_source
     if cand is None:
         info["abstain_reason"] = "primary_recall_miss"
         return info
@@ -207,10 +222,15 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
     # organ B — the spiking surprise monitor's corroboration of `cand` against its OWN expectation e_B[(agent,action)].
     organ = _get_organ(seed, stored_patients)
     exp = e_b.get((agent, action))
-    confirmed_b, hz = organ_b_confirms(organ, exp, cand, lesion=bool(organb_lesion))
+    ltm_exempt_applied = bool(organb_ltm_exempt and recall_source == "ltm")
+    if ltm_exempt_applied:
+        confirmed_b, hz = True, None            # LTM-EXEMPTION — see gnw_two_organ_bus.two_organ_combine
+    else:
+        confirmed_b, hz = organ_b_confirms(organ, exp, cand, lesion=bool(organb_lesion))
     info["organ_b_confirmed"] = bool(confirmed_b)
     info["organ_b_surprise_hz"] = (None if (hz is None or np.isnan(hz)) else float(hz))
     info["organ_b_threshold_hz"] = float(getattr(organ, "threshold", float("nan")))
+    info["organb_ltm_exempt_applied"] = ltm_exempt_applied
 
     # organ C — the spiking comprehension monitor's corroboration of the recalled proposition (agent, action, cand).
     c = _comprehension_vote(agent, action, cand, brain_vocab, seed=seed, lesion=bool(organc_lesion))
@@ -248,7 +268,7 @@ def three_organ_combine(chat, agent: str, action: str, *, seed: int = 42,
 
 def three_organ_gate_via(chat, question: str, *, seed: int = 42,
                          ws_lesion: bool = False, organb_lesion: bool = False,
-                         organc_lesion: bool = False):
+                         organc_lesion: bool = False, organb_ltm_exempt: bool = False):
     """AUTHOR the gate combination with the THREE-DISTINCT-ORGANS spiking consensus for the COVERED routable class,
     mirroring `gnw_two_organ_bus.two_organ_gate_via`'s routing EXACTLY (so extraction + acquisition/open-ended/anaphora
     side effects run ONCE, unchanged) but swapping the covered-class combine from the 2-organ coincidence to the
@@ -268,7 +288,8 @@ def three_organ_gate_via(chat, question: str, *, seed: int = 42,
         _, q, agent, action, anaphora_used = mode_tuple
         agents_set = getattr(chat, "agents_set", set()) or set()
         info = three_organ_combine(chat, agent, action, seed=seed, ws_lesion=ws_lesion,
-                                   organb_lesion=organb_lesion, organc_lesion=organc_lesion)
+                                   organb_lesion=organb_lesion, organc_lesion=organc_lesion,
+                                   organb_ltm_exempt=organb_ltm_exempt)
         committed = info.get("committed")
         if committed is not None:
             # preserve gate()'s ONLY covered-class side effect: a concrete patient that is itself an agent becomes the
@@ -341,7 +362,8 @@ def install_three_organ_gate(chat, *, seed: int = 42) -> bool:
         try:
             svo, info = three_organ_gate_via(chat, question, seed=seed,
                                              ws_lesion=ws_lesion_on(), organb_lesion=organb_lesion_on(),
-                                             organc_lesion=organc_lesion_on())
+                                             organc_lesion=organc_lesion_on(),
+                                             organb_ltm_exempt=organb_ltm_exempt_enabled())
         except Exception as e:                                # never let the bus crash a turn -> wrapped gate authors
             host_svo = orig_gate(question)
             chat._last_three_organ = {"routable": False, "reason": f"error:{type(e).__name__}: {e}",

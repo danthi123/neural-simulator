@@ -1,0 +1,176 @@
+{
+  "label": "BRAIN_GNW_ORGANB_LTM_EXEMPT byte-identical-when-off (flag=False vs pre-patch code at HEAD)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "two_organ_combine flag-off == pre-patch HEAD, probe chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two_organ_combine flag-off == pre-patch HEAD, probe definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "two_organ_combine flag-off == pre-patch HEAD, probe zzz_test_agent|zzz_test_action",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "three_organ_combine flag-off == pre-patch HEAD, probe chelsea_fc|country",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "three_organ_combine flag-off == pre-patch HEAD, probe definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "three_organ_combine flag-off == pre-patch HEAD, probe zzz_test_agent|zzz_test_action",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chat.gate() flag-off == pre-patch HEAD, q='what country is chelsea fc from'",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chat.gate() flag-off == pre-patch HEAD, q='what is chelsea fc'",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chat.gate() flag-off == pre-patch HEAD, q='who are you'",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "seed": 42,
+  "runner": "research/findings/raw/_organb_ltm_exempt_derisk/byte_identical_check.py",
+  "n_diffs": 0,
+  "raw": {
+    "two_organ_rows": [
+      {
+        "probe": "chelsea_fc|country",
+        "old_hash": "1e2a1914462b09ffc0131acb3e382b28c8802238b1edd7478fcdedff9305c9b7",
+        "new_hash": "1e2a1914462b09ffc0131acb3e382b28c8802238b1edd7478fcdedff9305c9b7",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null,
+        "new_only_keys": {
+          "organb_ltm_exempt": false,
+          "organb_ltm_exempt_applied": false,
+          "recall_source": null
+        }
+      },
+      {
+        "probe": "definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+        "old_hash": "8ceb7a34ce8b1e9e9a11ed416baf6cf12287c08f6e1c116bad6dfb05bfe404f5",
+        "new_hash": "8ceb7a34ce8b1e9e9a11ed416baf6cf12287c08f6e1c116bad6dfb05bfe404f5",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null,
+        "new_only_keys": {
+          "organb_ltm_exempt": false,
+          "recall_source": null
+        }
+      },
+      {
+        "probe": "zzz_test_agent|zzz_test_action",
+        "old_hash": "fb860fa734d8c3c6035a3d6170fae9201b1b7307e7fbf449b7c2fff3f0cff5e0",
+        "new_hash": "fb860fa734d8c3c6035a3d6170fae9201b1b7307e7fbf449b7c2fff3f0cff5e0",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null,
+        "new_only_keys": {
+          "organb_ltm_exempt": false,
+          "organb_ltm_exempt_applied": false,
+          "recall_source": null
+        }
+      }
+    ],
+    "three_organ_rows": [
+      {
+        "probe": "chelsea_fc|country",
+        "old_hash": "5392cf8ed0284f99587981d285e30c74201c99be14b3732e949084ca653c320a",
+        "new_hash": "5392cf8ed0284f99587981d285e30c74201c99be14b3732e949084ca653c320a",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null
+      },
+      {
+        "probe": "definitely_not_a_stored_entity_xyz|definitely_not_a_stored_relation_xyz",
+        "old_hash": "f0e4e7ba41a3106a9545ba4dea3e7dab7294b46802b6af146b9edbe736da2141",
+        "new_hash": "f0e4e7ba41a3106a9545ba4dea3e7dab7294b46802b6af146b9edbe736da2141",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null
+      },
+      {
+        "probe": "zzz_test_agent|zzz_test_action",
+        "old_hash": "d1357450d70dd515ba65c95651fef31e919451a6bc80b4cb08684bc539a4cda9",
+        "new_hash": "d1357450d70dd515ba65c95651fef31e919451a6bc80b4cb08684bc539a4cda9",
+        "match": true,
+        "old_committed": null,
+        "new_committed": null
+      }
+    ],
+    "gate_rows": [
+      {
+        "q": "what country is chelsea fc from",
+        "old": null,
+        "new": null,
+        "match": true
+      },
+      {
+        "q": "what is chelsea fc",
+        "old": null,
+        "new": null,
+        "match": true
+      },
+      {
+        "q": "who are you",
+        "old": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "new": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "match": true
+      }
+    ],
+    "n_diffs": 0,
+    "verdict": "GO"
+  }
+}
