@@ -55,8 +55,9 @@ already-VERIFIED set (or leaves it as generated) -- it never manufactures conten
 the direct answer (floor_sentences is always >= 1, so `facts[0]` -- the direct recall -- is never touched), and
 the honesty filter (`render_paragraph`'s per-sentence VERIFY / claim-level entailment) governs the kept
 elaboration exactly as it already does today; truncation only removes verified content, it never adds unverified
-content. Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`); OFF -> the whole block in webapp/server.py is skipped (no
-bump, no truncation, no `confidence_forthcoming` key) -> byte-identical to pre-wiring.
+content. DEFAULT-ON since 2026-08-27 (production-integration flip, board #94); `BRAIN_CONFIDENCE_FORTHCOMING=0`
+is the byte-identical escape -> the whole block in webapp/server.py is skipped (no bump, no truncation, no
+`confidence_forthcoming` key) -> byte-identical to pre-wiring.
 
 LESION (reuses the metacog organ's OWN load-bearing lesion, `BRAIN_METACOG_LESION=1`; no separate lesion flag):
 cutting the evidence differential collapses EVERY turn's margin to ~0 -> `confident` reads False unconditionally
@@ -79,9 +80,24 @@ EXTRA_ELABORATIONS = 1
 EXTRA_SENTENCES = 1
 
 
+# 2026-08-27 FLIPPED DEFAULT-ON (production-integration flip, board #94): the metacog confidence read now caps
+# forthcomingness on the DEFAULT `/api/brain-chat` turn (no opt-in needed). `BRAIN_CONFIDENCE_FORTHCOMING=0` is
+# the byte-identical escape to the pre-flip behavior (the row STAYS on_by_default:YES in
+# docs/PRODUCTION_INTEGRATION_LEDGER.yaml; flipping THIS constant back to False would turn the faculty OFF by
+# default). Mirrors the `_BG_SELECT_DEFAULT_ON` / `_bg_select_flag_on` convention in webapp/server.py.
+_CONFIDENCE_FORTHCOMING_DEFAULT_ON = True
+
+
 def confidence_forthcoming_enabled() -> bool:
-    """Default-OFF. `BRAIN_CONFIDENCE_FORTHCOMING` truthy (1/true/on/yes) enables the coupling."""
-    return os.environ.get("BRAIN_CONFIDENCE_FORTHCOMING", "0").strip().lower() in ("1", "true", "on", "yes")
+    """The master switch = the DEFAULT-ON anchor above combined with the env override. Enabled UNLESS
+    `BRAIN_CONFIDENCE_FORTHCOMING` is an explicit off (0/false/no/off/'') -- so an UNSET env now means ON, not
+    OFF (guards the `os.environ.pop()`-as-OFF staleness pattern: a caller that merely `.pop()`s the var to
+    'reset to default' now genuinely gets the shipped default, ON, not a stale OFF). `BRAIN_CONFIDENCE_
+    FORTHCOMING=1` (or true/on/yes) still forces it on explicitly if the anchor is ever flipped back to False."""
+    v = os.environ.get("BRAIN_CONFIDENCE_FORTHCOMING")
+    if _CONFIDENCE_FORTHCOMING_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def floor_override() -> Optional[tuple]:

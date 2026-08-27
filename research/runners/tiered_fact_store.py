@@ -129,6 +129,28 @@ class TieredFactStore:
         object.__setattr__(self, "buffer", buffer)
         object.__setattr__(self, "ltm", ltm)
 
+    def __setattr__(self, name, value):
+        """`buffer`/`ltm` are this wrapper's OWN state (set once above via `object.__setattr__`, never
+        reassigned elsewhere); every OTHER attribute write is INSTRUMENTATION meant for the underlying
+        composer that actually runs the query, per this class's own documented contract ("delegates every
+        other attribute ... to the buffer" -- see the module docstring). Without this override, Python's
+        default `object.__setattr__` would silently shadow the write as a NEW instance attribute on the
+        TieredFactStore WRAPPER itself (`__getattr__` is only consulted on a MISSING attribute, i.e. reads,
+        never on assignment) -- so a caller's `composer.trace = True` would never reach `self.buffer.trace`.
+
+        FOUND 2026-08-27 verifying board #94's confidence-forthcomingness production flip:
+        `webapp/server.py`'s per-turn activity-trace flip (`_composer.trace = True; _composer.last_trace =
+        None`, the B3 read the E1 metacog-monitor's `activity` depends on) has been a silent no-op on every
+        `tiny-demo +LTM` turn since the 2026-08-26 knowledge-core default-on flip
+        (`docs/PRODUCTION_INTEGRATION_LEDGER.yaml` `tiered-knowledge-ltm`) -- `self.buffer.trace` was never
+        actually set True, so `self.buffer.last_trace` was never recorded, so `activity`/`metacog.confident`
+        silently read None on the out-of-the-box production brain regardless of the turn's real confidence.
+        See `research/findings/2026-08-27-confidence-forthcomingness-production-default-*.md`."""
+        if name in ("buffer", "ltm"):
+            object.__setattr__(self, name, value)
+        else:
+            setattr(self.buffer, name, value)
+
     # -- WRITE: conversation-taught facts land in the recent working-set buffer -------------------------------
     def store(self, agent, action, patient, polarity=None):
         return self.buffer.store(agent, action, patient, polarity=polarity)

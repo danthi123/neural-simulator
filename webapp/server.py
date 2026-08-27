@@ -5418,8 +5418,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # `rich.answer()` returns below, and REUSED for the E1 hedge so the SAME spiking read drives both)
             # decides whether the reach's extra fact is KEPT (confident) or TRUNCATED back to the floor (not
             # confident / out of scope) -- NEVER overriding the floor downward, only ever granting ONE bonus
-            # fact on a HIGH read (the safe direction). Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`) -> this
-            # whole block is skipped -> byte-identical to pre-wiring. See webapp/confidence_forthcoming_chat.py.
+            # fact on a HIGH read (the safe direction). DEFAULT-ON since 2026-08-27 (board #94 production flip);
+            # `BRAIN_CONFIDENCE_FORTHCOMING=0` -> this whole block is skipped -> byte-identical to pre-wiring.
+            # See webapp/confidence_forthcoming_chat.py.
             _cf_on = False
             _cf_floor = None
             _cf_saved_plan = None
