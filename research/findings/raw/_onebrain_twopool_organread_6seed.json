@@ -1,0 +1,360 @@
+{
+  "mode": "onebrain_twopool_organread_verify",
+  "organs": [
+    "surprise",
+    "worldmodel",
+    "metacog",
+    "pragmatic"
+  ],
+  "n_seeds": 6,
+  "results": [
+    {
+      "seed": 42,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26321,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 124.60181999206543,
+        "worldmodel": 114.8308162689209,
+        "metacog": 119.54101943969727,
+        "pragmatic": 102.16528701782227
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26442,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 125.87012100219727,
+        "worldmodel": 108.49047088623047,
+        "metacog": 93.0639877319336,
+        "pragmatic": 121.50244522094727
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26448,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 105.13687896728516,
+        "worldmodel": 105.00969314575195,
+        "metacog": 89.5500602722168,
+        "pragmatic": 116.14951133728027
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26496,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 121.50090026855469,
+        "worldmodel": 107.99383926391602,
+        "metacog": 124.19272232055664,
+        "pragmatic": 109.13068008422852
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26293,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 106.43601036071777,
+        "worldmodel": 98.90032386779785,
+        "metacog": 95.37808990478516,
+        "pragmatic": 133.03093338012695
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "n_all_neurons": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": "threshold",
+          "missing_keys": [],
+          "byte_identical": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": "interpret[some].represented",
+          "missing_keys": [],
+          "byte_identical": true
+        }
+      },
+      "byte_ok": true,
+      "answers_same": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true
+      },
+      "answers_ok": true,
+      "gain0_structural_ok": true,
+      "gain0_n_frozen_edges": 26489,
+      "gain0_maxerr_after_full_lifecycle": 0.0,
+      "gain0_bit_frozen": true,
+      "legacy_discriminator": {
+        "surprise": 108.4581527709961,
+        "worldmodel": 105.00132369995117,
+        "metacog": 133.84177780151367,
+        "pragmatic": 126.0684700012207
+      },
+      "legacy_diverges": true,
+      "GO": true
+    }
+  ],
+  "n_go": 6,
+  "n_byte_ok": 6,
+  "n_answers_ok": 6,
+  "n_gain0_ok": 6,
+  "n_legacy_diverges": 6,
+  "verdict": "GO",
+  "label": "one-brain two-pool ORGAN-READ byte-identity (4 organs, merged vs two production pools)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all 4 organs' reads byte-identical vs the two pools, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chat-answers preserved for all 4 organs, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "gain-0 freeze holds pool-2 bit-frozen after the full lifecycle, every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy discriminator diverges (byte-identity not vacuous), every seed",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}
