@@ -34,6 +34,12 @@ from research.runners._spiking_expectation_rpe_derisk import (
 )
 from research.runners._affective_world_model_derisk import build_world_model_circuit
 from research.runners.onebrain_merge_production import _SURPRISE_KW, _WORLDMODEL_KW
+# reuse-by-import: pool #2's (metacog + pragmatic) geometry constants -- the SAME ones the shipped
+# `MergedSubstrate2` / `MetacogProductionOrgan` import, so a descriptor's config/wiring can never drift from them.
+from research.runners._second_order_metacog_monitor_derisk import (
+    ASSEMBLY_SIZE, K_CLASSES, META_SIZE, WS_LOOP_GATE, DEFAULT_ATTRACTOR_WEIGHT, DEFAULT_NMDA_TAU,
+)
+from research.runners._recursive_tom_rsa_derisk import RSA_ITEM_SIZE
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -341,6 +347,15 @@ class MergedPool:
     def surprise_idx_map(self):
         return self.idx("surprise")
 
+    # The shipped POOL-#2 organs call `shared.metacog_idx()` / `shared.pragmatic_item_dev()` (named methods,
+    # exactly like `surprise_idx_map` above) -- provide them by dispatch so `MetacogProductionOrgan` /
+    # `PragmaticProductionOrgan` run UNMODIFIED against this pool (2026-08-27 fold of pool #2 into the registry).
+    def metacog_idx(self):
+        return self.idx("metacog")
+
+    def pragmatic_item_dev(self):
+        return self.idx("pragmatic")
+
     def _keep_mask(self, active):
         if active not in self._keep_mask_cache:
             self.ensure_built()
@@ -625,6 +640,225 @@ WORLDMODEL = OrganDescriptor(
     idx_fn=lambda b: _name_idx(b, ("state", "pred_pos", "pred_neg", "obs_pos", "obs_neg",
                                    "surprise_pos", "surprise_neg")),
 )
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  POOL #2 — METACOG + PRAGMATIC (the 3rd/4th bespoke pool organ, folded 2026-08-27). Mirrors pool #1's fold:
+#  the bespoke `MergedSubstrate2` (`onebrain_merge_production2.py`) hand-builds ONE shared bridge for the E1
+#  metacognition balance-of-evidence monitor + the D-pragmatics scalar-implicature RSA organ, with THREE
+#  region-scoped seams ON (`per_region_parameter_heterogeneity`, `per_region_threshold_heterogeneity`,
+#  `per_region_wiring_seed`) and an ALWAYS-ON wiring inject (base pathways + metacog's dense self-recurrent
+#  assembly loops) + settle-to-rest snapshot. Both shipped production organs (`MetacogProductionOrgan`,
+#  `PragmaticProductionOrgan`) ALREADY take a `shared=` kwarg (unlike most Group-A organs, which needed one
+#  added) and call NAMED methods on it — `shared.metacog_idx()` / `shared.pragmatic_item_dev()` — so they run
+#  UNMODIFIED against this pool via the `MergedPool.metacog_idx`/`.pragmatic_item_dev` dispatch methods added
+#  above. `per_region_wiring_seed` is NOT set here: the framework's `wire=True` inject already rebuilds
+#  `cp_connections` from `build_wiring_plan(seed, per_region_seed=True)` (the SAME order-invariant mechanism),
+#  so the cfg flag would be redundant (clobbered by the wire=True rebuild) -- the exact reason no Group-A
+#  descriptor sets it either.
+#
+#  NAME COLLISION (honest, not a bug): metacog's "workspace"/"workspace_fs" region names COLLIDE with
+#  self_schema's (Group-A) -- the SAME collision the DESIGN doc names for affect vs metacog (seams key on
+#  region NAME; a rename would break byte-identity to the standalone organ). So metacog+pragmatic are
+#  registered but verified as THEIR OWN pair (`--keys metacog,pragmatic`), never in the GROUP_A/"all" batch --
+#  exactly how pool #1 (surprise/worldmodel) is already excluded from "all" for the same reason (surprise's
+#  "cue" collides with curiosity's).
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+def _pool2_metacog_specs():
+    """Region/pathway specs for the METACOG organ's pool-#2 slice -- reused BY CALLING the shipped
+    `MergedSubstrate2._metacog_specs` on a throwaway (never-built) instance, so there is exactly ONE
+    definition of the pool-#2 geometry (no copy to drift out of sync with the bespoke class)."""
+    from research.runners.onebrain_merge_production2 import MergedSubstrate2
+    r, p = MergedSubstrate2()._metacog_specs()
+    return list(r), list(p)
+
+
+def _pool2_pragmatic_specs():
+    """Region/pathway specs for the PRAGMATIC organ's pool-#2 slice -- reused BY CALLING the shipped
+    `MergedSubstrate2._pragmatic_specs` (see `_pool2_metacog_specs`)."""
+    from research.runners.onebrain_merge_production2 import MergedSubstrate2
+    r, p = MergedSubstrate2()._pragmatic_specs()
+    return list(r), list(p)
+
+
+def _spec_metacog(seed):
+    r, p = _pool2_metacog_specs()
+    return r, p, {}
+
+
+def _spec_pragmatic(seed):
+    r, p = _pool2_pragmatic_specs()
+    return r, p, {}
+
+
+# metacog wants NMDA ON (its workspace/meta_schema slices are NMDA-capable); pragmatic's regions carry
+# region-level enable_nmda=False (from `_pool2_pragmatic_specs`), so the per-neuron NMDA mask zeroes their
+# current even under this global True -- byte-identical to `build_rsa_bridge`'s enable_nmda=False. Mirrors
+# MergedSubstrate2.ensure_built's cfg block exactly (`has_metacog` -> True there is always True here because
+# metacog's config sets it True whenever metacog is IN the pool; when pragmatic is tested ALONE as the
+# coresident baseline, this key is simply absent from the union -> enable_nmda stays the CoreSimConfig default,
+# matching MergedSubstrate2(organs=("pragmatic",))'s has_metacog=False -> enable_nmda=False).
+# NOTE: `_NOISE_OFF` (the shared conductance/OU-noise-off dict every GROUP-A frozen organ unions) is defined
+# LATER in this file (Group-A organ-read plumbing) -- inline the same three keys here rather than forward-
+# referencing it, so this pool-#2 section can sit next to pool #1 (its natural place, both are the "4 pool
+# organs" the migration rung names) without reordering the whole file.
+_POOL2_METACOG_CONFIG = {
+    "enable_nmda": True, "nmda_ratio": 0.5,
+    "nmda_tau_decay": float(DEFAULT_NMDA_TAU), "nmda_recurrent_tau_decay_ms": float(DEFAULT_NMDA_TAU),
+    "enable_stdp": False, "enable_reward_modulation": False, "enable_hebbian_learning": False,
+    "enable_homeostasis": False, "enable_short_term_plasticity": False,
+    "enable_structural_plasticity": False, "enable_ou_process": False,
+    "enable_conductance_noise": False, "ou_std_current_pA": 0.0,
+    "enable_parameter_heterogeneity": True,      # BOTH pool-#2 organs' graded rate codes require it (global -- no
+                                                  # competing organ in this pool wants it off, so no per-region mask
+                                                  # reconciliation is needed; matches MergedSubstrate2 exactly).
+    # merge seam #1 (name-keyed Izhikevich param jitter) -- WITHOUT this, the engine pool's per-neuron het draw
+    # falls back to the LEGACY whole-pool position-dependent draw (co-residence-DEPENDENT), diverging from the
+    # shipped class's name-keyed region-scoped overwrite (caught by `--smoke2`: cp_izh_d_increment delta=111 on
+    # "workspace" before this line was added). NOT auto-set here (unlike Group-A's `param_het=True` masking
+    # path) because pool #2 sets it GLOBALLY, matching MergedSubstrate2 exactly (see the module comment above).
+    "per_region_parameter_heterogeneity": True,
+    "stdp_w_max": max(400.0, float(DEFAULT_ATTRACTOR_WEIGHT) * 4.0),
+    "hebbian_max_weight": max(400.0, float(DEFAULT_ATTRACTOR_WEIGHT) * 4.0),
+}
+_POOL2_PRAGMATIC_CONFIG = {
+    "enable_stdp": False, "enable_reward_modulation": False, "enable_hebbian_learning": False,
+    "enable_homeostasis": False, "enable_short_term_plasticity": False,
+    "enable_structural_plasticity": False, "enable_ou_process": False,
+    "enable_conductance_noise": False, "ou_std_current_pA": 0.0,
+    "enable_parameter_heterogeneity": True,      # identical value to metacog's -> no MergeConflict
+    "per_region_parameter_heterogeneity": True,  # identical value to metacog's -> no MergeConflict
+}
+
+
+def _metacog_wiring(bridge, rm):
+    """explicit_wiring_fn: metacog's K dense self-recurrent workspace assembly loops (the balance-of-evidence
+    attractor), reproduced from MergedSubstrate2.ensure_built's `union[f"loop_{k}"]` union exactly (SAME
+    `_build_assembly_loop_population` helper + SAME per-class member slice of the pool's "workspace" region).
+    The BASE pathways (workspace<->workspace_fs, item<->item_fs) come from the engine's own
+    `build_wiring_plan(seed, per_region_seed=True)` union (the wire=True inject already does this generically),
+    so only the loops -- metacog's OWN topographic addition -- belong here."""
+    from research.runners._gnw_rung1_ignition_curve_derisk import _build_assembly_loop_population
+    ws = np.asarray(rm.indices("workspace"), dtype=np.int64)
+    union = {}
+    for k in range(K_CLASSES):
+        member = ws[k * ASSEMBLY_SIZE:(k + 1) * ASSEMBLY_SIZE]
+        union[f"loop_{k}"] = _build_assembly_loop_population(member, float(DEFAULT_ATTRACTOR_WEIGHT))
+    return union
+
+
+def _metacog_post_inject(bridge):
+    bridge.set_plasticity_gate(WS_LOOP_GATE, 0.0)   # freeze the assembly loop (balance mode reads never learn)
+
+
+def _metacog_idx_fn(bridge):
+    """The metacog organ's dev-index map, in the SHAPE `MetacogProductionOrgan._margin`/`nmda_norm_margin`
+    consume (member_dev/meta_dev/meta_member_dev/fs_dev/confidence_read) -- computed identically to the shipped
+    `MergedSubstrate2.metacog_idx` off the pool's region slices."""
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    rm = bridge.region_manager
+    ws = np.asarray(rm.indices("workspace"), dtype=np.int64)
+    fs = np.asarray(rm.indices("workspace_fs"), dtype=np.int64)
+    meta = np.asarray(rm.indices("meta_schema"), dtype=np.int64)
+    member_idx = {k: ws[k * ASSEMBLY_SIZE:(k + 1) * ASSEMBLY_SIZE] for k in range(K_CLASSES)}
+    meta_sub = META_SIZE // K_CLASSES
+    meta_member_idx = {k: meta[k * meta_sub:(k + 1) * meta_sub] for k in range(K_CLASSES)}
+    return {
+        "member_dev": {k: xp.asarray(v) for k, v in member_idx.items()},
+        "meta_dev": xp.asarray(meta),
+        "meta_member_dev": {k: xp.asarray(v) for k, v in meta_member_idx.items()},
+        "fs_dev": xp.asarray(fs),
+        "confidence_read": "balance",
+    }
+
+
+def _pragmatic_idx_fn(bridge):
+    """The pragmatic (RSA) organ's 3 item-assembly index arrays, in the shape `_rsa_recursion` consumes --
+    computed identically to the shipped `MergedSubstrate2.pragmatic_item_dev`."""
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    rm = bridge.region_manager
+    base = np.asarray(rm.indices("item"), dtype=np.int64)
+    return {i: xp.asarray(base[i * RSA_ITEM_SIZE:(i + 1) * RSA_ITEM_SIZE]) for i in range(3)}
+
+
+def _metacog_organ(seed, shared):
+    from research.runners.metacog_production_organ import MetacogProductionOrgan
+    return MetacogProductionOrgan(seed=seed, shared=shared)
+
+
+def _pragmatic_organ(seed, shared):
+    from research.runners.pragmatic_production_organ import PragmaticProductionOrgan
+    return PragmaticProductionOrgan(seed=seed, shared=shared)
+
+
+_METACOG_READ_EVIDENCE = (0.1, 0.5, 0.9)
+
+
+def _metacog_reads(organ):
+    """The organ's REAL calibrated confidence-margin read battery (the production `judge()` path) at a spread
+    of evidence levels + the calibration numbers. Byte-identical merged-vs-coresident == the whole
+    calibrate+judge balance-of-evidence pipeline is co-residence-invariant."""
+    organ.ensure_built()
+    out = {"threshold": float(organ.threshold),
+           "calib.mean_hi": float(organ.calib["mean_hi"]), "calib.min_hi": float(organ.calib["min_hi"]),
+           "calib.mean_lo": float(organ.calib["mean_lo"]), "calib.max_lo": float(organ.calib["max_lo"])}
+    for i, e in enumerate(_METACOG_READ_EVIDENCE):
+        out[f"margin_{i}"] = float(organ.judge(e)["balance"])
+    return out
+
+
+def _metacog_answer(organ):
+    organ.ensure_built()
+    return tuple(bool(organ.judge(e)["confident"]) for e in _METACOG_READ_EVIDENCE)
+
+
+_PRAGMATIC_READ_UTTS = ("some", "all", "none")
+
+
+def _pragmatic_reads(organ):
+    """The organ's REAL graded RSA listener-belief read battery (the production `interpret()` path) over the
+    scalar-utterance family. Byte-identical merged-vs-coresident == the whole RSA-recursion read is
+    co-residence-invariant."""
+    organ.ensure_built()
+    out = {}
+    for u in _PRAGMATIC_READ_UTTS:
+        info = organ.interpret(u)
+        for i, s in enumerate(info["states"]):
+            out[f"{u}.belief_{s}"] = float(info["belief"][i])
+        out[f"{u}.margin"] = float(info["implicature_margin"])
+    return out
+
+
+def _pragmatic_answer(organ):
+    organ.ensure_built()
+    return tuple(organ.interpret(u)["enriched_interpretation"] for u in _PRAGMATIC_READ_UTTS)
+
+
+METACOG = OrganDescriptor(
+    key="metacog",
+    regions=("workspace", "workspace_fs", "meta_schema"),
+    spec_fn=_spec_metacog,
+    config=_POOL2_METACOG_CONFIG,
+    explicit_wiring_fn=_metacog_wiring, post_inject_fn=_metacog_post_inject,
+    idx_fn=_metacog_idx_fn,
+    organ_cls=_metacog_organ, read_fn=_metacog_reads, answer_fn=_metacog_answer,
+    supports_shared=True,
+    scaffold_residuals=("hand-declared dense self-recurrent assembly loops (explicit_wiring_fn, "
+                        "self-organize later, exactly like self_schema's)",),
+)
+
+PRAGMATIC = OrganDescriptor(
+    key="pragmatic",
+    regions=("item", "item_fs"),
+    spec_fn=_spec_pragmatic,
+    config=_POOL2_PRAGMATIC_CONFIG,
+    idx_fn=_pragmatic_idx_fn,
+    organ_cls=_pragmatic_organ, read_fn=_pragmatic_reads, answer_fn=_pragmatic_answer,
+    supports_shared=True,
+)
+
+POOL2_KEYS = ["metacog", "pragmatic"]
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  GROUP A — the declarative-NOW organs (DESIGN §5). Each is a registry ROW: a `spec_fn` that reuses the
@@ -1802,7 +2036,7 @@ GROUP_A_ORGANREAD_DEFERRED = {}
 
 GROUP_A_KEYS = [d.key for d in GROUP_A]
 
-REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL, *GROUP_A)}
+REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL, METACOG, PRAGMATIC, *GROUP_A)}
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -1850,27 +2084,165 @@ def _smoke(seed: int = 42) -> dict:
             "n_engine": n_pool, "n_shipped": n_ship, "organs": all_regions}
 
 
+def _smoke2(seed: int = 42) -> dict:
+    """Build the engine pool (metacog+pragmatic via the REGISTRY, wire=True -- pool #2's wiring inject is
+    ALWAYS-ON in the shipped class, unlike pool #1's post_build-only wiring) and the shipped `MergedSubstrate2`,
+    and compare (1) every per-neuron INIT array over both organs' regions AND (2) the REAL shipped production
+    organs' reads (`MetacogProductionOrgan.judge` / `PragmaticProductionOrgan.interpret`) run UNMODIFIED against
+    EACH pool. Byte-identity on both proves the declarative descriptor path reproduces the bespoke pool #2
+    exactly -- the round-trip `_smoke` proves for pool #1, extended here past init-only to the organs' actual
+    production read pipeline (the stronger bar; pool #2's organs already carry `shared=` in production)."""
+    from research.runners.onebrain_merge_production2 import MergedSubstrate2
+    from research.runners.metacog_production_organ import MetacogProductionOrgan
+    from research.runners.pragmatic_production_organ import PragmaticProductionOrgan
+
+    pool = merge_organs([METACOG, PRAGMATIC], seed=seed, wire=True)
+    shipped = MergedSubstrate2(seed=seed, organs=("metacog", "pragmatic"))
+    shipped.ensure_built()
+
+    all_regions = list(METACOG.regions) + list(PRAGMATIC.regions)
+    worst, worst_where = 0.0, None
+    for rname in all_regions:
+        ei = _region_slice(pool.bridge, rname)
+        si = _region_slice(shipped.bridge, rname)
+        if ei.size != si.size:
+            return {"seed": seed, "byte_identical": False, "all_go": False,
+                    "reason": f"{rname} size {ei.size}!={si.size}"}
+        for a in _INIT_ARRAYS:
+            ea = _host(getattr(pool.bridge, a, None)); sa = _host(getattr(shipped.bridge, a, None))
+            if ea is None or sa is None:
+                continue
+            d = float(np.max(np.abs(ea[ei].astype(np.float64) - sa[si].astype(np.float64)))) if ei.size else 0.0
+            if d > worst:
+                worst, worst_where = d, (rname, a)
+    n_pool = int(pool.bridge.cp_membrane_potential_v.shape[0])
+    n_ship = int(shipped.bridge.cp_membrane_potential_v.shape[0])
+    init_ok = bool(worst == 0.0 and n_pool == n_ship)
+
+    # ORGAN-READ round-trip: the real shipped production classes, run against EACH pool.
+    m_eng, m_ship = MetacogProductionOrgan(seed=seed, shared=pool), MetacogProductionOrgan(seed=seed, shared=shipped)
+    read_worst, read_worst_key = 0.0, None
+    for e in _METACOG_READ_EVIDENCE:
+        je, js = m_eng.judge(e), m_ship.judge(e)
+        d = abs(float(je["balance"]) - float(js["balance"]))
+        if d > read_worst:
+            read_worst, read_worst_key = d, f"metacog.judge({e}).balance"
+    d = abs(float(m_eng.threshold) - float(m_ship.threshold))
+    if d > read_worst:
+        read_worst, read_worst_key = d, "metacog.threshold"
+    metacog_answer_same = all(bool(m_eng.judge(e)["confident"]) == bool(m_ship.judge(e)["confident"])
+                              for e in _METACOG_READ_EVIDENCE)
+
+    p_eng = PragmaticProductionOrgan(seed=seed, shared=pool)
+    p_ship = PragmaticProductionOrgan(seed=seed, shared=shipped)
+    for u in _PRAGMATIC_READ_UTTS:
+        ie, is_ = p_eng.interpret(u), p_ship.interpret(u)
+        for i in range(len(ie["states"])):
+            d = abs(float(ie["belief"][i]) - float(is_["belief"][i]))
+            if d > read_worst:
+                read_worst, read_worst_key = d, f"pragmatic.interpret({u}).belief[{i}]"
+    pragmatic_answer_same = all(p_eng.interpret(u)["enriched_interpretation"] ==
+                                p_ship.interpret(u)["enriched_interpretation"] for u in _PRAGMATIC_READ_UTTS)
+
+    read_ok = bool(read_worst == 0.0 and metacog_answer_same and pragmatic_answer_same)
+    return {"seed": seed, "byte_identical": init_ok, "max_init_delta": worst, "worst_where": worst_where,
+            "n_engine": n_pool, "n_shipped": n_ship, "organs": all_regions,
+            "read_byte_identical": read_ok, "read_max_delta": read_worst, "read_worst_where": read_worst_key,
+            "metacog_answer_preserved": metacog_answer_same, "pragmatic_answer_preserved": pragmatic_answer_same,
+            "all_go": bool(init_ok and read_ok)}
+
+
+_DET_HASH_ARRAYS = ("cp_membrane_potential_v", "cp_neuron_firing_thresholds", "cp_izh_a", "cp_izh_b",
+                    "cp_izh_C", "cp_izh_d_increment")
+
+
+def _build_hash(pool) -> list:
+    """SHA1 of the per-neuron init arrays + the wired connection weights, in a stable order -- the
+    build-twice-at-one-seed determinism witness (`cfg.seed` reproducibility gotcha, CLAUDE.md)."""
+    import hashlib
+    b = pool.bridge
+    parts = [hashlib.sha1(np.ascontiguousarray(_host(getattr(b, a))).tobytes()).hexdigest()
+             for a in _DET_HASH_ARRAYS]
+    coo = b.cp_connections.tocoo()
+    parts.append(hashlib.sha1(np.ascontiguousarray(_host(coo.data)).tobytes()).hexdigest())
+    return parts
+
+
+def _determinism2(seed: int = 42) -> dict:
+    """Build the pool-#2 registry pool (metacog+pragmatic, wire=True) TWICE at ONE seed and hash its per-neuron
+    init arrays + wired connection weights -- identical hashes == `cfg.seed` genuinely controls this pool (the
+    2026-07-17 `actual_seed_used` gotcha this file's CLAUDE.md documents), not an artifact of import order."""
+    p1 = merge_organs([METACOG, PRAGMATIC], seed=seed, wire=True)
+    p2 = merge_organs([METACOG, PRAGMATIC], seed=seed, wire=True)
+    h1, h2 = _build_hash(p1), _build_hash(p2)
+    return {"seed": seed, "hash1": h1, "hash2": h2, "identical": bool(h1 == h2)}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--smoke", action="store_true", help="pool #1 (surprise+worldmodel) round-trip vs shipped")
+    ap.add_argument("--smoke2", action="store_true", help="pool #2 (metacog+pragmatic) round-trip vs shipped")
+    ap.add_argument("--determinism2", action="store_true",
+                    help="pool #2 build-twice-at-one-seed hash determinism")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--seeds", type=str, default=None, help="comma list; overrides --seed, loops + aggregates")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/_onebrain_merge_framework_smoke_s42.json")
     args = ap.parse_args()
-    if args.smoke:
-        r = _smoke(args.seed)
-        print("=== onebrain_merge_framework SMOKE (descriptor->engine round-trip vs shipped MergedSubstrate) ===")
-        print(f"  seed={r['seed']} engine_N={r.get('n_engine')} shipped_N={r.get('n_shipped')} "
-              f"max_init_delta={r.get('max_init_delta')} worst={r.get('worst_where')}")
-        print(f"  BYTE-IDENTICAL: {r['byte_identical']}  ->  {'PASS' if r['byte_identical'] else 'FAIL'}")
+    seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
+    if args.determinism2:
+        results = [_determinism2(s) for s in seeds]
+        print("=== onebrain_merge_framework DETERMINISM2 (pool #2 build-twice-at-one-seed hash) ===")
+        for r in results:
+            print(f"  seed={r['seed']} identical={r['identical']}")
+        n_go = sum(bool(r.get("identical")) for r in results)
+        print(f"  ALL-GO: {n_go}/{len(results)}")
+        payload = {"mode": "onebrain_merge_framework_determinism2", "seeds": seeds, "per_seed": results,
+                  "n_go": n_go, "n_seeds": len(results), "all_go": bool(n_go == len(results) and results)}
         if args.out:
             Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-            Path(args.out).write_text(json.dumps(r, indent=2))
+            Path(args.out).write_text(json.dumps(payload, indent=2))
+            print(f"  wrote {args.out}")
+    elif args.smoke2:
+        results = [_smoke2(s) for s in seeds]
+        print("=== onebrain_merge_framework SMOKE2 (pool #2 descriptor->engine round-trip vs shipped MergedSubstrate2) ===")
+        for r in results:
+            print(f"  seed={r['seed']} engine_N={r.get('n_engine')} shipped_N={r.get('n_shipped')} "
+                  f"init_delta={r.get('max_init_delta')} read_delta={r.get('read_max_delta')} "
+                  f"worst={r.get('worst_where') or r.get('read_worst_where')}  -> "
+                  f"{'PASS' if r.get('all_go') else 'FAIL'}")
+        n_go = sum(bool(r.get("all_go")) for r in results)
+        print(f"  ALL-GO: {n_go}/{len(results)}")
+        payload = {"mode": "onebrain_merge_framework_smoke2", "seeds": seeds, "per_seed": results,
+                  "n_go": n_go, "n_seeds": len(results), "all_go": bool(n_go == len(results) and results)}
+        if args.out:
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(payload, indent=2))
+            print(f"  wrote {args.out}")
+    elif args.smoke:
+        results = [_smoke(s) for s in seeds]
+        print("=== onebrain_merge_framework SMOKE (descriptor->engine round-trip vs shipped MergedSubstrate) ===")
+        for r in results:
+            print(f"  seed={r['seed']} engine_N={r.get('n_engine')} shipped_N={r.get('n_shipped')} "
+                  f"max_init_delta={r.get('max_init_delta')} worst={r.get('worst_where')}  -> "
+                  f"{'PASS' if r['byte_identical'] else 'FAIL'}")
+        n_go = sum(bool(r.get("byte_identical")) for r in results)
+        print(f"  ALL-GO: {n_go}/{len(results)}")
+        if len(seeds) == 1:
+            payload = results[0]
+        else:
+            payload = {"mode": "onebrain_merge_framework_smoke", "seeds": seeds, "per_seed": results,
+                      "n_go": n_go, "n_seeds": len(results), "all_go": bool(n_go == len(results) and results)}
+        if args.out:
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(payload, indent=2))
             print(f"  wrote {args.out}")
     else:
         print("registered organs:", list(REGISTRY))
         print("run the round-trip smoke with:  SIM_BACKEND=numpy python -m "
               "research.runners.onebrain_merge_framework --smoke")
+        print("run the pool-#2 round-trip smoke with:  SIM_BACKEND=numpy python -m "
+              "research.runners.onebrain_merge_framework --smoke2")
 
 
 if __name__ == "__main__":

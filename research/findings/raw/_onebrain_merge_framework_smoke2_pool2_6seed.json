@@ -1,0 +1,142 @@
+{
+  "mode": "onebrain_merge_framework_smoke2",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    },
+    {
+      "seed": 43,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    },
+    {
+      "seed": 44,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    },
+    {
+      "seed": 100,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    },
+    {
+      "seed": 101,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    },
+    {
+      "seed": 102,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 450,
+      "n_shipped": 450,
+      "organs": [
+        "workspace",
+        "workspace_fs",
+        "meta_schema",
+        "item",
+        "item_fs"
+      ],
+      "read_byte_identical": true,
+      "read_max_delta": 0.0,
+      "read_worst_where": null,
+      "metacog_answer_preserved": true,
+      "pragmatic_answer_preserved": true,
+      "all_go": true
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_go": true
+}

@@ -196,19 +196,16 @@ checkout, which silently discarded uncommitted working-tree edits more than once
 flagged in the session report as an operational hazard of doing doc-sync on the live primary checkout
 while autonomous work is in flight on the same repo.
 
-## 2026-08-27  organ-C mirror-image LTM exemption (closes #142 layer 2, both organs now de-risked)
+## 2026-08-27  onebrain-merge-framework pool-organ fold (rung #2: 4/4 pool organs registered+verified)
 
-Reconciled #142 ("the brain can't answer plain trivia questions in live chat even though its knowledge
-store can"): its description previously said layer 2 (the consensus organs vetoing every knowledge-base
-fact) was HALF fixed -- the surprise-check organ's exemption had landed (organ B, commit 9402f0ae), and
-the understanding-check organ's own identical blind spot (organ C, the three-organ consensus path) was
-"being given the same exemption right now." That work landed this cycle on branch
-research/organc-ltm-exempt-derisk (moat verified 6/6, byte-identical off, 0 diffs) -- description
-rewritten to say BOTH layers are now fully de-risked and share ONE switch, kept OPEN (not done: the
-production flip is still an owner-review call, per the ladder discipline -- de-risked is not the same
-as production-default), and labeled `de-risked`. Also reconciled this session's other six landed
-findings into ROADMAP.md (the one-brain merge's first learned cross-region edge R1+R2, the three-organ
-hollow-flip fix + 36-gate ledger audit, five stale flip-soak off-arms repaired, and a V1 self-org BCM
-warm-up 6-seed instrument-VOID) -- no other open board task needed reconciling for those (none had a
-matching open task; they are research/negative-result landings, done when the finding lands, no ladder
-label required).
+Reconciled the board for the fold-the-4-pool-organs rung: METACOG + PRAGMATIC newly registered as
+OrganDescriptors (reusing MergedSubstrate2's own spec builders) and verified 6/6 seeds, both internally
+(merged-vs-coresident, substrate-init + organ-read) and against the shipped MergedSubstrate2 (init arrays +
+real judge()/interpret() reads), plus build-twice determinism; surprise+worldmodel's pre-existing
+registration extended from a seed-42 smoke to 6/6. Did NOT mark #171 (the FULL 4-organ-on-ONE-bridge
+combined merge, a bigger/different claim tracked separately via the twopool branch) done -- this session's
+work registers the 4 organs as their EXISTING production pairs (2 pools), not combined onto one shared
+bridge. Created #179 (labels: Method & rigor, de-risked) capturing the actual landing + the honest remaining
+gap: MergedSubstrate2 (pool #2) is retirement-ready, MergedSubstrate (pool #1) is blocked by out-of-scope
+composer/parser production wiring. Branch research/onebrain-fold-pool-organs, pushed both remotes, not
+merged to main.
