@@ -1,0 +1,31 @@
+{
+ "run_id": "1787857866-3367911",
+ "runner": "research/runners/_generative_attractor_wander_onsubstrate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a625dd7a2622b7c59/research/runners/_generative_attractor_wander_onsubstrate_derisk.py",
+  "--seeds",
+  "100",
+  "101",
+  "102",
+  "--json",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a625dd7a2622b7c59/research/findings/raw/_generative_attractor_wander_onsubstrate/batch2.json"
+ ],
+ "git_sha": "68cddf50f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T15:11:06",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_generative_attractor_wander_onsubstrate/batch2.json"
+}
