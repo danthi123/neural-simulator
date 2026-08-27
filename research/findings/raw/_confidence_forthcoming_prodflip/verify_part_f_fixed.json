@@ -1,0 +1,28 @@
+{
+  "pass": true,
+  "unset_eq_on": true,
+  "unset_ne_off": true,
+  "n_unset": 2,
+  "n_on1": 2,
+  "n_off0": 3,
+  "cf_unset": {
+    "on": true,
+    "floor_sentences": 1,
+    "requested_sentences": 2,
+    "confident": true,
+    "granted": true,
+    "kept_sentences": 2,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+  },
+  "cf_on1": {
+    "on": true,
+    "floor_sentences": 1,
+    "requested_sentences": 2,
+    "confident": true,
+    "granted": true,
+    "kept_sentences": 2,
+    "elaborations_dropped": 0,
+    "reason": "high_confidence"
+  }
+}

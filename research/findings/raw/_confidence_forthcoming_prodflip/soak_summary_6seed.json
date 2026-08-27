@@ -1,0 +1,110 @@
+{
+  "probe": "confidence_forthcoming_flip_soak",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "organ_n_seed_ok": 6,
+  "organ_go": true,
+  "handler": {
+    "skipped": null,
+    "n_turns": 2,
+    "crashed": [],
+    "identical": true,
+    "off_had_no_cf_key": true,
+    "on_never_granted": true,
+    "moat_ok": true,
+    "no_regression": true,
+    "pairs_diff": {
+      "what does the brain use": {
+        "off": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here.",
+        "on": "the brain uses the spikes the brain stores the memory the brain learns the words \u2014 worth going further here."
+      },
+      "what does the dog chase": {
+        "off": "the dog chases the cat the cat eats the fish \u2014 worth going further here.",
+        "on": "the dog chases the cat the cat eats the fish \u2014 worth going further here."
+      }
+    }
+  },
+  "overall_go": true,
+  "elapsed_s": 479.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.08169699528341612,
+      "lo_balance": 0.02549446922325196,
+      "threshold": 0.057845546432234586,
+      "elapsed_s": 6.2
+    },
+    {
+      "seed": 43,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.08925780010539106,
+      "lo_balance": 0.026366639928309253,
+      "threshold": 0.06032454599202189,
+      "elapsed_s": 6.4
+    },
+    {
+      "seed": 44,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.10368413363503995,
+      "lo_balance": 0.03406855755986134,
+      "threshold": 0.06622809519551844,
+      "elapsed_s": 5.7
+    },
+    {
+      "seed": 100,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.10616208677841985,
+      "lo_balance": 0.030227095522203724,
+      "threshold": 0.0696692788645717,
+      "elapsed_s": 5.7
+    },
+    {
+      "seed": 101,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.083844254288932,
+      "lo_balance": 0.025254358090474445,
+      "threshold": 0.05757554098967549,
+      "elapsed_s": 5.6
+    },
+    {
+      "seed": 102,
+      "seed_ok": true,
+      "hi_confident": true,
+      "lo_confident": false,
+      "hi_lesioned_confident": false,
+      "lo_lesioned_confident": false,
+      "hi_balance": 0.08179212647391294,
+      "lo_balance": 0.023849266360195985,
+      "threshold": 0.056827632964582694,
+      "elapsed_s": 5.7
+    }
+  ]
+}

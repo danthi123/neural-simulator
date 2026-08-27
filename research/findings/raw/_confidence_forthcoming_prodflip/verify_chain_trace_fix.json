@@ -1,0 +1,93 @@
+{
+  "runner": "verify_chain_trace_fix (real /api/brain-chat, unpatched, unforced)",
+  "backend": "numpy",
+  "ts": "2026-08-27T19:33:19",
+  "what does the brain use": {
+    "answer": "the brain uses the spikes the brain stores the memory the brain learns the words",
+    "recalled_svo": [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    "n_sentences": 3,
+    "activity_is_none": false,
+    "mean_role_confidence": 1.0,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.08564659007052086,
+      "threshold": 0.057845546432234586,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07254469906489278,
+        "min_hi": 0.06324435069078038,
+        "mean_lo": 0.03623807287266029,
+        "max_lo": 0.05244674217368879,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 1.0
+    },
+    "confidence_forthcoming": {
+      "on": true,
+      "floor_sentences": 4,
+      "requested_sentences": 3,
+      "confident": true,
+      "granted": false,
+      "kept_sentences": 3,
+      "elaborations_dropped": 0,
+      "reason": "high_confidence"
+    },
+    "source": "tiny-demo +LTM"
+  },
+  "what does the dog chase": {
+    "answer": "the dog chases the cat the cat eats the fish",
+    "recalled_svo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "n_sentences": 2,
+    "activity_is_none": false,
+    "mean_role_confidence": 1.0,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.08564659007052086,
+      "threshold": 0.057845546432234586,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07254469906489278,
+        "min_hi": 0.06324435069078038,
+        "mean_lo": 0.03623807287266029,
+        "max_lo": 0.05244674217368879,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 1.0
+    },
+    "confidence_forthcoming": {
+      "on": true,
+      "floor_sentences": 4,
+      "requested_sentences": 2,
+      "confident": true,
+      "granted": false,
+      "kept_sentences": 2,
+      "elaborations_dropped": 0,
+      "reason": "high_confidence"
+    },
+    "source": "tiny-demo +LTM"
+  },
+  "chain_output_identical": true,
+  "mean_role_confidence_nonNone_both": true,
+  "confidence_genuinely_varies_real_traffic": false,
+  "confidence_forthcoming_key_present_real_traffic": true
+}

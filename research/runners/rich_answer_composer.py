@@ -229,12 +229,28 @@ class RichAnswerComposer:
         (the question's verb); subsequent hops reuse the SAME relation if it keeps matching (the validated
         query_chain semantics: patient->next agent). Returns the list of [a, v, p] hop-facts actually traversed
         (each one a STORED fact the moat confirmed); stops the moment a hop abstains. Error does NOT compound --
-        the composer re-cleans the intermediate each hop."""
+        the composer re-cleans the intermediate each hop.
+
+        TRACE PRESERVATION (2026-08-27, board #94 production-flip honesty fix). This method ALWAYS probes one
+        hop past the last successful match (exploring whether the chain continues) -- that is the whole point
+        of chaining -- but `OneBrainComposer.query_patient` resets `self.last_trace = None` UNCONDITIONALLY at
+        entry, so the inevitable dead-end probe clobbers the confidence trace the LAST successful hop left
+        behind, even though that hop's fact is exactly what gets returned/rendered. Track the trace off the
+        last hop that actually MATCHED (not the one that failed looking for MORE) and restore it before
+        returning, so a caller reading `self.composer.last_trace` afterward (the E1 hedge / board #94's
+        confidence-forthcoming cap) sees the confidence of what this chain actually SAID, not of the failed
+        exploratory probe beyond it. Purely a side-channel restore -- the returned `facts` list (what this
+        method actually decided) is completely unchanged by this; verified byte-identical
+        (research/findings/2026-08-27-confidence-forthcomingness-chain-trace-preservation-*.md)."""
         facts = []
         cur = start_agent
         action = seed_action
+        last_good_trace = None
         for _ in range(self.max_chain_hops):
             nxt = self.composer.query_patient(cur, action)   # the validated spiking hop (abstains -> None)
+            _t = getattr(self.composer, "last_trace", None)
+            if isinstance(_t, dict) and not _t.get("abstained", True):
+                last_good_trace = _t                          # this hop matched -- remember its trace
             if nxt is None:
                 # the same relation ran out; try the concept's OWN next fact (a different relation it has),
                 # so the chain can turn a corner (brain->spikes, then spikes->ARE->neurons under a new verb).
@@ -248,6 +264,8 @@ class RichAnswerComposer:
                 continue
             facts.append([cur, action, nxt])
             cur = nxt                                         # the patient becomes the next hop's agent
+        if last_good_trace is not None and hasattr(self.composer, "last_trace"):
+            self.composer.last_trace = last_good_trace         # restore -- undo the final dead-end probe's clobber
         return facts
 
     def _facts_for_concept(self, concept, exclude):
@@ -1018,6 +1036,8 @@ def run_neural_planner_derisk(seed, out_path, use_multiturn=True):
     # the intact neural follow-up brings up NEW grounded facts; the lesioned one cannot elaborate (the neural
     # selection drove the gather) -> strictly fewer sentences (ideally abstains / collapses to the chain only).
     lesion_collapses = intact["n_sentences"] >= 2 and lesioned["n_sentences"] < intact["n_sentences"]
+    from tools.lab import attributable_to
+    attributable_to("follow-up sentences: intact vs dlPFC-selection-lesioned", intact["n_sentences"], lesioned["n_sentences"])
 
     # ELABORATION-COMPONENT lesion (isolates the neural selection's contribution to a FRESH-QUESTION elaboration):
     # the per-turn elaboration in `gather` is driven by `_elaboration_facts` -> the neural ordering. Lesion the
@@ -1030,6 +1050,7 @@ def run_neural_planner_derisk(seed, out_path, use_multiturn=True):
     el_les._planner.ordered_associates = lambda topic, avoid=(): []     # dlPFC selection LESIONED
     g_les = el_les._elaboration_facts("memory", exclude=[])
     elaboration_lesion_collapses = len(g_intact) >= 1 and len(g_les) == 0
+    attributable_to("elaboration facts: intact vs dlPFC-selection-lesioned", len(g_intact), len(g_les))
 
     # (3) ON-TOPIC: every neural-selected elaboration fact stays within the topic's 2-hop graph neighbourhood.
     # Compare against a RANDOM-ordering baseline (shuffle the vocab instead of the latency rank) which, on this

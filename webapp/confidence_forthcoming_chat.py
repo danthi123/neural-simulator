@@ -55,8 +55,10 @@ already-VERIFIED set (or leaves it as generated) -- it never manufactures conten
 the direct answer (floor_sentences is always >= 1, so `facts[0]` -- the direct recall -- is never touched), and
 the honesty filter (`render_paragraph`'s per-sentence VERIFY / claim-level entailment) governs the kept
 elaboration exactly as it already does today; truncation only removes verified content, it never adds unverified
-content. Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`); OFF -> the whole block in webapp/server.py is skipped (no
-bump, no truncation, no `confidence_forthcoming` key) -> byte-identical to pre-wiring.
+content. Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`; a 2026-08-27 attempt to flip default-ON was reverted the
+SAME day once real-traffic verification found it hollow -- see the constant's own comment below); OFF -> the
+whole block in webapp/server.py is skipped (no bump, no truncation, no `confidence_forthcoming` key) ->
+byte-identical to pre-wiring.
 
 LESION (reuses the metacog organ's OWN load-bearing lesion, `BRAIN_METACOG_LESION=1`; no separate lesion flag):
 cutting the evidence differential collapses EVERY turn's margin to ~0 -> `confident` reads False unconditionally
@@ -79,9 +81,37 @@ EXTRA_ELABORATIONS = 1
 EXTRA_SENTENCES = 1
 
 
+# 2026-08-27: ATTEMPTED default-ON (production-integration flip, board #94), then HONESTLY REVERTED the SAME
+# day once real-traffic verification found it hollow -- see the module docstring's "PRODUCTION-FLIP ATTEMPT"
+# section and research/findings/2026-08-27-confidence-forthcomingness-chain-trace-fix-still-default-OFF-NOGO.md.
+# Two structural bugs found + FIXED en route (kept, independent of this flag's default): (1) TieredFactStore had
+# no __setattr__ (research/runners/tiered_fact_store.py), silently nulling `activity` on the +LTM production
+# default; (2) RichAnswerComposer._chain_facts's own "probe one hop past a match" pattern clobbered
+# OneBrainComposer.last_trace via its unconditional reset (research/runners/rich_answer_composer.py), so even
+# with fix (1) `mean_role_confidence` still read None on every real turn. BOTH are now fixed and verified
+# byte-identical to the pre-fix chain output. But measured directly against REAL (unpatched, unforced) traffic
+# on the shipped tiny-demo brain, `mean_role_confidence` reads a SATURATED 1.0 on every tested topic (both a
+# 3-fact and a 2-fact real question) -- the demo's clean, unambiguous SVO facts decode with maximal certainty,
+# ABOVE the metacog organ's calibrated HIGH band (`role_conf_hi=0.52`), so `evidence_from_role_conf` clips to
+# 1.0 and `confident` reads True unconditionally: no real LOW-confidence turn has been observed to compare
+# against, so the coupling's cap/grant behavior has never been exercised on genuine production content -- a
+# STILL-hollow flip by a different, more precisely characterized mechanism than before (calibration-band
+# saturation on this vocabulary, not a missing signal). `_CONFIDENCE_FORTHCOMING_DEFAULT_ON` therefore stays
+# False until a real LOW-confidence turn (a richer/more ambiguous vocabulary, or a recalibrated band) is
+# demonstrated. `BRAIN_CONFIDENCE_FORTHCOMING=1` remains the genuine, GO 6/6-verified opt-in (isolated + forced
+# evidence; see 2026-08-27-confidence-drives-forthcomingness-GO.md).
+_CONFIDENCE_FORTHCOMING_DEFAULT_ON = False
+
+
 def confidence_forthcoming_enabled() -> bool:
-    """Default-OFF. `BRAIN_CONFIDENCE_FORTHCOMING` truthy (1/true/on/yes) enables the coupling."""
-    return os.environ.get("BRAIN_CONFIDENCE_FORTHCOMING", "0").strip().lower() in ("1", "true", "on", "yes")
+    """Default-OFF (see the block above for why the 2026-08-27 default-ON attempt was reverted the same day).
+    `BRAIN_CONFIDENCE_FORTHCOMING` truthy (1/true/on/yes) enables the coupling. If `_CONFIDENCE_FORTHCOMING_
+    DEFAULT_ON` is ever flipped back to True (once a genuine real-traffic LOW-confidence turn is demonstrated),
+    this same function flips convention to the guarded-unset-means-ON reading, unchanged from that attempt."""
+    v = os.environ.get("BRAIN_CONFIDENCE_FORTHCOMING")
+    if _CONFIDENCE_FORTHCOMING_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def floor_override() -> Optional[tuple]:
