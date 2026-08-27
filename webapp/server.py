@@ -3117,11 +3117,12 @@ def _swap_drives_on() -> bool:
 # OR the #85 swap detector flagging a topic break) the held P1.2 coalition is driven into a divisively-normalized
 # distributed workspace and a conflict-triggered depression of the SHARED recurrence CLEARS it to n_ignited=0 BEFORE
 # the newcomer ignites -> a clean single-content workspace (no stale bleed). A CLEAN neural stop -> a short clearing
-# lead prepended OUTERMOST; no trigger / no clean clear -> NO lead. DEFAULT-OFF production-integration anchor: the
-# parent flips `_GNW_STOP_DEFAULT_ON`=True after the pool soak. LESION (`BRAIN_GNW_STOP_LESION=1`) zeroes the
+# lead prepended OUTERMOST; no trigger / no clean clear -> NO lead. LESION (`BRAIN_GNW_STOP_LESION=1`) zeroes the
 # shared-resource-depression term -> the workspace stays >=2 co-ignited -> the clearing lead VANISHES (load-bearing).
 # See webapp/gnw_global_stop.py.
-_GNW_STOP_DEFAULT_ON = False
+# 2026-08-26 FLIPPED DEFAULT-ON (wave 3 flip, 6/6 flip-soak GO): the clearing lead ships as the production default.
+# BRAIN_GNW_STOP=0 is the byte-identical escape to the pre-flip no-lead oracle.
+_GNW_STOP_DEFAULT_ON = True
 
 
 def _gnw_stop_flag_on() -> bool:
@@ -3230,6 +3231,42 @@ def _da_drives_on() -> bool:
     if _DA_DRIVES_DEFAULT_ON:
         return not _DAD.da_drives_off()
     return _DAD.da_drives_enabled()
+
+
+# ─── ACTIVITY-SILENT WORKING MEMORY (Gate-B, Mongillo 2008, 2026-08-26): the DEFAULT-ON master switch (the
+# production-integration anchor). `BRAIN_SILENT_WM=0` disables the maintenance-mode swap on the anaphora referent
+# store byte-identically (the row STAYS on_by_default:YES). Flipping this to False would turn the faculty OFF by
+# default. See research/runners/activity_silent_wm_production_organ.py. 2026-08-26 FLIPPED DEFAULT-ON (wave 3 flip,
+# 6/6 flip-soak GO): the silent-hold reactivation ships as the production default.
+_SILENT_WM_DEFAULT_ON = True
+
+
+def _silent_wm_flag_on() -> bool:
+    """The master switch = the DEFAULT-ON anchor combined with the env override. Enabled UNLESS `BRAIN_SILENT_WM`
+    is an explicit off (0/false/no/off/''). Kept as a lightweight env read so the disabled path does no silent-WM
+    work -> byte-identical to pre-wiring."""
+    v = os.environ.get("BRAIN_SILENT_WM")
+    if _SILENT_WM_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
+
+
+# ─── BG ACTION SELECTION (SPEAK vs STAY-SILENT, 2026-08-26): the DEFAULT-ON master switch (the production-
+# integration anchor). `BRAIN_BG_SELECT=0` disables the two-channel spiking basal-ganglia race byte-identically (the
+# row STAYS on_by_default:YES). Flipping this to False would turn the faculty OFF by default. See
+# research/runners/bg_action_selection_production_organ.py. 2026-08-26 FLIPPED DEFAULT-ON (wave 3 flip, 6/6
+# flip-soak GO): the BG SPEAK-vs-STAY-SILENT race ships as the production default.
+_BG_SELECT_DEFAULT_ON = True
+
+
+def _bg_select_flag_on() -> bool:
+    """The master switch = the DEFAULT-ON anchor combined with the env override. Enabled UNLESS `BRAIN_BG_SELECT`
+    is an explicit off (0/false/no/off/''). Kept as a lightweight env read so the disabled path does no BG-selector
+    work -> byte-identical to pre-wiring."""
+    v = os.environ.get("BRAIN_BG_SELECT")
+    if _BG_SELECT_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def _get_selfinit_organ(cache_key):
@@ -4330,16 +4367,16 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             pass  # never let the vision coupling crash a turn -> fall through to the normal path
     # ── END faculty:vision-identity ──
 
-    # ── BEGIN faculty:bg-action-selection — SPEAK-vs-STAY-SILENT via the two-channel spiking BG selector, default-OFF ──
+    # ── BEGIN faculty:bg-action-selection — SPEAK-vs-STAY-SILENT via the two-channel spiking BG selector ──────────
     # The production consumer for the Gate-A v2 vocal action-selection GO (research/findings/2026-08-03-neural-vocal-
     # selector-gateA-v2-4seed-GO.md). A discrete chat action decision — SPEAK this turn, or STAY-SILENT (hold) — is
     # routed through a genuine two-channel basal-ganglia RACE (channel 0 = SPEAK, channel 1 = STAY-SILENT) instead of a
     # host `if`. The composer's per-candidate salience biases each channel's striatal D1 pool; SHARED practice arousal
     # drives the proposal->D1 barrage that brings both to threshold; the FIRST channel to cross the GPi->thalamus
     # disinhibition commit burst IS the selected action (NOT a numpy argmax). Reuse-by-import (NO sim/ edit).
-    # Default-OFF: `BRAIN_BG_SELECT` unset -> the cheap env read below is the ONLY thing that runs -> the block imports
-    # nothing + returns nothing -> the turn is BYTE-IDENTICAL to today (the parent flips default-on after the pool
-    # soak). It is CONSULTED only on a content-empty turn (STAY-SILENT is a genuine contender there — a normal content
+    # 2026-08-26 FLIPPED DEFAULT-ON (wave 3 flip, `_BG_SELECT_DEFAULT_ON` above, 6/6 flip-soak GO): `BRAIN_BG_SELECT=0`
+    # is the byte-identical escape back to today's turn (the block then imports nothing + returns nothing). It is
+    # CONSULTED only on a content-empty turn (STAY-SILENT is a genuine contender there — a normal content
     # message always favors SPEAK, so the selector is not even called on it), and it SHORT-CIRCUITS with a HOLD line
     # ONLY when the BG race COMMITS to STAY-SILENT. A SPEAK commit / a non-commit / an ordinary content turn all return
     # None from decide_action() -> the turn FALLS THROUGH to the normal path -> byte-identical to flag-off.
@@ -4348,7 +4385,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # collapses the commit -> decide_action() returns None -> the hold VANISHES (byte-identical to flag-off), proving
     # the BG cascade — not a host max — chose. See research/runners/bg_action_selection_production_organ.py. Guarded so
     # a wiring failure can never crash a turn (degrades to the normal path).
-    if os.environ.get("BRAIN_BG_SELECT", "0").strip().lower() in ("1", "true", "on", "yes"):
+    if _bg_select_flag_on():
         try:
             import research.runners.bg_action_selection_production_organ as _BG
             _bg = _BG.decide_action(msg)   # None unless the BG race COMMITS to STAY-SILENT on a content-empty turn
@@ -4876,10 +4913,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     # referent grows the silent delay (an intervening distractor). Neither MAINTAIN changes the reply. LESION
     # (BRAIN_SILENT_WM_LESION=1): recall builds the buffer with tau_f~5 (facilitation lesion) -> the ping cannot recover
     # the focus -> the read-out abstains (load-bearing: the correct anaphor vs abstain is caused by the SILENT hold, not
-    # the host parse). DEFAULT-OFF: `BRAIN_SILENT_WM` unset -> this block imports nothing + returns nothing -> the turn
-    # is BYTE-IDENTICAL to today (the parent flips default-on after the pool soak). Guarded so a wiring failure can never
-    # crash a turn (degrades to the normal path). See research/runners/_activity_silent_wm_production_soak.py (6/6 GO).
-    if os.environ.get("BRAIN_SILENT_WM", "0").strip().lower() in ("1", "true", "on", "yes"):
+    # the host parse). 2026-08-26 FLIPPED DEFAULT-ON (wave 3 flip, `_SILENT_WM_DEFAULT_ON` above, 6/6 flip-soak GO):
+    # `BRAIN_SILENT_WM=0` is the byte-identical escape (the block then imports nothing + returns nothing). Guarded so a
+    # wiring failure can never crash a turn (degrades to the normal path). See
+    # research/runners/_activity_silent_wm_production_soak.py (6/6 GO).
+    if _silent_wm_flag_on():
         try:
             import research.runners.activity_silent_wm_production_organ as _SW
             sworg = _get_silent_wm_organ(cache_key)
@@ -5548,7 +5586,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["da_drives"] = da_drives_info
         if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
             resp["da_encoding"] = da_encoding_info
-        # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-OFF) ─────────────
+        # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ───────
         # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all): prepend the clearing lead
         # OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited -> a clean single-content
         # workspace, spoken first) + attach the additive `gnw_stop` trace. Runs AFTER the answer is composed so the
@@ -5802,7 +5840,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["da_drives"] = da_drives_info
     if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
         _resp["da_encoding"] = da_encoding_info
-    # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-OFF) ──────────
+    # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-ON 2026-08-26) ──
     # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, single-fact path): prepend the
     # clearing lead OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited) + attach the
     # additive `gnw_stop` trace. Runs AFTER the gate/render so the gnw-deliberation / #85-swap per-turn reads exist

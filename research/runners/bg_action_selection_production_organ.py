@@ -26,8 +26,8 @@ D1->GPi direct-path disinhibition, the GPe/STN indirect path, the GPi->thalamus 
 burst, the cross-channel commit inhibition — is neurons/synapses on a real `SimulationBridge` (NO numpy argmax
 anywhere). Which action wins is the substrate's race, not a host max.
 
-Flag: `BRAIN_BG_SELECT` (default OFF — the parent flips default-on after the pool soak passes). When OFF the production
-turn is BYTE-IDENTICAL to today (the wiring block reads the flag first and imports nothing). When ON, the selector is
+Flag: `BRAIN_BG_SELECT` (2026-08-26 FLIPPED DEFAULT-ON, wave 3, 6/6 flip-soak GO; `BRAIN_BG_SELECT=0` is the
+byte-identical escape to the pre-flip turn — the wiring block reads the flag first and imports nothing). When ON, the selector is
 CONSULTED only on a content-empty turn (STAY-SILENT is a genuine contender there); it SHORT-CIRCUITS the turn with a
 hold ONLY when the BG race COMMITS to STAY-SILENT. A SPEAK commit, a non-commit, or an ordinary content turn all fall
 through to the normal path.
@@ -95,11 +95,11 @@ _CONTENT_TOKEN_RE = re.compile(r"[A-Za-z0-9]{2,}")
 
 
 def bg_select_enabled() -> bool:
-    """Default-OFF. `BRAIN_BG_SELECT` in {1,true,yes,on} -> the SPEAK-vs-STAY-SILENT BG selector is live."""
+    """DEFAULT-ON (2026-08-26 flip, wave 3, 6/6 flip-soak GO). `BRAIN_BG_SELECT` unset -> the SPEAK-vs-STAY-SILENT
+    BG selector is live; an explicit off (0/false/no/off/'') -> byte-identical to pre-flip. Mirrors the server.py
+    `_BG_SELECT_DEFAULT_ON` anchor and its `_bg_select_flag_on()` reader."""
     v = os.environ.get("BRAIN_BG_SELECT")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+    return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
 
 
 def bg_select_lesion() -> str | None:

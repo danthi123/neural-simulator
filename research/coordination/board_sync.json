@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-08-27T01:01:07Z",
+ "updated_at": "2026-08-27T01:41:02Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -416,6 +416,78 @@
    "op": "label-task",
    "args": "task=161 label=3",
    "head": "3e1751451"
+  },
+  {
+   "at": "2026-08-27T01:40:22Z",
+   "op": "update-task",
+   "args": "task=155 done=true",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:23Z",
+   "op": "append-desc",
+   "args": "task=155",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:23Z",
+   "op": "label-task",
+   "args": "task=155 label=1",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:30Z",
+   "op": "create-task",
+   "args": "proj=2 title=Speak recalled facts through the brain's own spiking mouth by default",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:37Z",
+   "op": "update-task",
+   "args": "task=168 done=true",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:38Z",
+   "op": "label-task",
+   "args": "task=168 label=2",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:47Z",
+   "op": "create-task",
+   "args": "proj=2 title=Hold a discourse focus silently through synaptic facilitation, by default",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:52Z",
+   "op": "update-task",
+   "args": "task=169 done=true",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:53Z",
+   "op": "label-task",
+   "args": "task=169 label=3",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:40:59Z",
+   "op": "create-task",
+   "args": "proj=2 title=Let a real basal-ganglia race decide SPEAK vs STAY-SILENT, by default",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:41:02Z",
+   "op": "update-task",
+   "args": "task=170 done=true",
+   "head": "142b4d7f1"
+  },
+  {
+   "at": "2026-08-27T01:41:02Z",
+   "op": "label-task",
+   "args": "task=170 label=2",
+   "head": "142b4d7f1"
   }
  ]
 }

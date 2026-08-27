@@ -54,8 +54,8 @@ HONEST RESIDUALS (declared):
   * CO-RESIDENT: the buffer runs on ITS OWN `ActivitySilentWM` bridge alongside the recall composer (rides the
     one-brain merge), exactly as the affect/comprehension/D6 organs do.
 
-Additive, DEFAULT-OFF (`BRAIN_SILENT_WM` unset/0 -> the block imports nothing + returns nothing -> byte-identical; the
-parent flips default-on after the pool soak). Uses the process backend (cupy in production, numpy in tests) via
+Additive. 2026-08-26 FLIPPED DEFAULT-ON (wave 3, 6/6 flip-soak GO): `BRAIN_SILENT_WM=0` is the byte-identical escape
+(the block then imports nothing + returns nothing). Uses the process backend (cupy in production, numpy in tests) via
 reuse-by-import.
 """
 from __future__ import annotations
@@ -114,11 +114,11 @@ _SILENT_RECALL_RE = re.compile(
 
 
 def silent_wm_enabled() -> bool:
-    """DEFAULT-OFF. `BRAIN_SILENT_WM` in {1,true,yes,on} -> the organ runs; unset/0/false/no/off -> byte-identical."""
+    """DEFAULT-ON (2026-08-26 flip, wave 3, 6/6 flip-soak GO). `BRAIN_SILENT_WM` unset -> the organ runs; an
+    explicit off (0/false/no/off/'') -> byte-identical to pre-flip. Mirrors the server.py `_SILENT_WM_DEFAULT_ON`
+    anchor and its `_silent_wm_flag_on()` reader."""
     v = os.environ.get("BRAIN_SILENT_WM")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+    return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
 
 
 def silent_wm_lesioned() -> bool:
