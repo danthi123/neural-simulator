@@ -97,10 +97,22 @@ host/numpy.
 conversation is unchanged and is now the clear next target — open-ended prose still comes from the external Qwen
 language model, not the brain's own neurons. The wall is a signal-to-noise problem, not a lack of practice: the
 substrate's own moment-to-moment read of its firing is too noisy to teach a from-scratch spiking generator past
-roughly a third of target quality (board #80). The named next lever is a higher-signal read (pooling across more
-neurons, or reading dendrites — a wider time window was already tried and excluded). Secondary blockers: a
-sparse-index knowledge-scale speedup is built and de-risked but deliberately left off pending an owner review at
-scale, and most of the comprehension and routing glue between faculties is still host Python, not brain tissue.
+roughly a third of target quality (board #80). Secondary blockers: a sparse-index knowledge-scale speedup is
+built and de-risked but deliberately left off pending an owner review at scale, and most of the comprehension
+and routing glue between faculties is still host Python, not brain tissue.
+
+**2026-08-27 update on the mouth's read-SNR lever search.** "Pooling across more neurons" (an ensemble read over
+the existing word-pool) turned out to be inert by construction — the pool members are deterministic conductance
+replicas of one shared hidden drive, so summing them cancels exactly, zero averaging gain
+(`research/findings/2026-08-27-mouth-read-snr-ensemble-verdict-and-dendritic-lever.md`). A follow-up recurrent-
+inhibition decorrelation lever, proposed to fix the hidden population's noise directly, was cheaply diagnosed
+BEFORE being built and found moot: the hidden population's trial-to-trial noise already reads as statistically
+independent (rho ~0, at or below the ~0.03 reference point that count as "already decorrelated") at the mouth's
+real operating point, across three seeds and two drive regimes, so a decorrelation circuit has nothing to
+decorrelate (`research/findings/2026-08-27-mouth-readsnr-hid-decorrelation-PHASE0-NEG.md`). The live named next
+levers are therefore an apical/predictive-prior two-pathway read (in flight) and a rate/gain lever (more spikes
+per neuron per window) — reading dendrites in the two-compartment sense above, not more pooling or more
+decorrelation.
 
 ## ⭐ 2026-08-26 (perception) — the V1 oriented-receptive-field wall is broken on-bridge, partially; a fixed-inhibition lever is ruled out on a theorem
 
