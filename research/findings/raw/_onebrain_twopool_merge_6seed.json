@@ -1,0 +1,743 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 71.01548385620117,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 63.70343017578125,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 124.60181999206543,
+        "worldmodel": 114.8308162689209,
+        "metacog": 119.54101943969727,
+        "pragmatic": 102.16528701782227
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    "43": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 78.86883354187012,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 79.75345611572266,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 125.87012100219727,
+        "worldmodel": 108.49047088623047,
+        "metacog": 93.0639877319336,
+        "pragmatic": 121.50244522094727
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    "44": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 78.51387023925781,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 87.17578315734863,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 105.13687896728516,
+        "worldmodel": 105.00969314575195,
+        "metacog": 89.5500602722168,
+        "pragmatic": 116.14951133728027
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    "100": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 78.84035301208496,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 62.925907135009766,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 121.50090026855469,
+        "worldmodel": 107.99383926391602,
+        "metacog": 124.19272232055664,
+        "pragmatic": 109.13068008422852
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    "101": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 79.55544090270996,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 79.1900405883789,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 106.43601036071777,
+        "worldmodel": 98.90032386779785,
+        "metacog": 95.37808990478516,
+        "pragmatic": 133.03093338012695
+      },
+      "legacy_diverges": true,
+      "GO": true
+    },
+    "102": {
+      "n_total": 2034,
+      "one_pool": true,
+      "byte_identity": {
+        "surprise": {
+          "maxerr": 0.0,
+          "regions": {
+            "cue": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_expected": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "patient_asserted": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "worldmodel": {
+          "maxerr": 0.0,
+          "regions": {
+            "state": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "pred_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "obs_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_pos": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "surprise_neg": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "metacog": {
+          "maxerr": 0.0,
+          "regions": {
+            "workspace": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "workspace_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "meta_schema": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        },
+        "pragmatic": {
+          "maxerr": 0.0,
+          "regions": {
+            "item": {
+              "maxerr": 0.0,
+              "worst": null
+            },
+            "item_fs": {
+              "maxerr": 0.0,
+              "worst": null
+            }
+          }
+        }
+      },
+      "byte_ok": true,
+      "determinism_maxerr": 0.0,
+      "determinism_worst": null,
+      "det_ok": true,
+      "het_loadbearing": {
+        "surprise": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "worldmodel": {
+          "mask_effect_delta": 0.0,
+          "expected_het": false
+        },
+        "metacog": {
+          "mask_effect_delta": 78.31739807128906,
+          "expected_het": true
+        },
+        "pragmatic": {
+          "mask_effect_delta": 80.33631134033203,
+          "expected_het": true
+        }
+      },
+      "het_ok": true,
+      "legacy_discriminator": {
+        "surprise": 108.4581527709961,
+        "worldmodel": 105.00132369995117,
+        "metacog": 133.84177780151367,
+        "pragmatic": 126.0684700012207
+      },
+      "legacy_diverges": true,
+      "GO": true
+    }
+  },
+  "summary": {
+    "n_seeds": 6,
+    "n_go": 6,
+    "verdict": "GO"
+  }
+}

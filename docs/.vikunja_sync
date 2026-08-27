@@ -131,3 +131,13 @@ HONEST NOTE (this stamp): this landed from an ISOLATED wire-in worktree with NO 
 the live board was NOT reconciled here -- the parent orchestrator must reconcile the board at merge (mark
 the spiking-broca-mouth wire-in task done + add the default-ON flip next-rung). This entry stamps the
 marker to record the landing; it is NOT a claim that the board API was touched.
+
+## 2026-08-27  onebrain-twopool-merge (branch research/onebrain-twopool-merge)
+Board reconciled via tools/vikunja.sh (token present, API touched). Created task #171
+(one-brain merge: FULL organ-read byte-identity + answer-preservation on the 4-organ pool)
+capturing the follow-on rung of the substrate-merge GO. Finding
+2026-08-27-onebrain-twopool-merge-substrate-byte-identity-6seed-GO: production pool #1
+(surprise+world-model) + pool #2 (metacog+pragmatic) share ONE bridge byte-identically at
+substrate-init, 6/6 seeds; the per-region het MASK reconciles the param-het ON/OFF conflict
+the second-pool scoping named as the blocker. Substrate-init axis only (not organ-read /
+answer-preservation).

@@ -435,6 +435,17 @@ separate bridges. SCOPED at 2 of the 5 proven organs: metacog/pragmatic/affect n
 (parameter heterogeneity on; affect also noise on), which conflicts with this pair's — so they stay on their own bridges
 for now (a second shared pool for them is the named next step). Determinism 9/9, chat smoke unchanged.
 (`2026-08-13-onebrain-production-default-flip-SCOPED.md`)
+
+**2026-08-27 — the param-het conflict that kept the two pools apart is DISSOLVED (substrate axis, de-risk).** The
+"second shared pool" scoping said pool #2 (metacog/pragmatic, parameter-heterogeneity ON) could not join pool #1
+(surprise/world-model, het OFF) because het is a GLOBAL config. But het already supports a PER-REGION mask: global OFF
++ `BrainRegion.enable_heterogeneity=True` on the metacog/pragmatic regions ONLY lets a het-ON organ and a het-OFF
+organ share one bridge, each byte-identical to its standalone self. All FOUR core cortical organs (surprise +
+world-model + metacog + pragmatic) now build on ONE `SimulationBridge` (N=2034) with every organ's substrate INIT
+byte-identical merged-vs-co-resident, 6/6 seeds (det 6/6; the mask is load-bearing; a seams-off control diverges 89–
+134, so the compare is not vacuous). SUBSTRATE-INIT axis only — the organ-READ pipelines + answer-preservation vs the
+two current pools are the named follow-on (Vikunja #171; bigger build → pool/GPU), then the production flip to one
+pool. (`2026-08-27-onebrain-twopool-merge-substrate-byte-identity-6seed-GO.md`, NO `sim/` edit.)
 **The integration arc is the CURRENT FRONTIER** (wire more GO faculties in, dependency-ordered, gate on the chat).
 
 **⚖️ HONEST READING (2026-08-13 — square the celebratory batch log below with reality; the FORWARD plan is the refreshed
