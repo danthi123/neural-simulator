@@ -1,0 +1,29 @@
+{
+ "run_id": "1787832277-3117614",
+ "runner": "research/runners/_onebrain_integration_r1_wm_comprehension.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a32bc8a1b83a690e5/research/runners/_onebrain_integration_r1_wm_comprehension.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_integration_r1_wm_comprehension_6seed.json"
+ ],
+ "git_sha": "12722908a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T08:04:37",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_integration_r1_wm_comprehension_6seed.json"
+}
