@@ -1,0 +1,158 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 4,
+      "n_train_pos": 48,
+      "n_eval_pos": 32,
+      "n_sub_demo": 12,
+      "n_grad_steps": 12,
+      "n_grad_steps_shuffle": 4,
+      "substrate_reads": 22,
+      "main_substrate_reads": 12,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 1,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 7.521613,
+      "gain_substrate_vs_linear_corr": 0.8821,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 22,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 17.93,
+      "head_w_norm": 37.53,
+      "learn_secs": 7.4,
+      "shuffle_secs": 2.6,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.5598,
+        0.0
+      ],
+      "verify_first_argerr": [
+        1.0,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.1506,
+      "hostlinear_argmax_agree": 0.0625,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0173,
+        "lesion_err": 0.0173,
+        "shuffle_teach": 0.0005
+      },
+      "hostlinear_floor_recov": 0.0173,
+      "weight_cosine_to_head_diag": 0.042,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": -0.0065
+      },
+      "weight_cosine_floor": 0.0065,
+      "sub_learned": {
+        "argmax_agree": 0.25,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.5158,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.6667,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8659,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0002,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.5957,
+      "integrated_bar_0.85xcopied": 0.736,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": false,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "a45d2385f84619f0",
+        "thr_hash_2": "a45d2385f84619f0",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "go_count": 0,
+    "go_5of6": false,
+    "integrated_go_count": 0,
+    "parity_recovery_count": 0,
+    "anticheats_collapse_count": 0,
+    "forward_is_substrate_all": true,
+    "host_matmul_on_forward_max": 0,
+    "verify_first_all_ok": true,
+    "sub_learned_recov_mean": 0.5158,
+    "sub_copied_recov_mean": 0.8659,
+    "sub_shuffle_recov_mean": 0.0002,
+    "sub_recov_ratio_mean": 0.5957,
+    "sub_recov_ratio_min": 0.5957,
+    "hostlinear_recov_mean": 0.1506,
+    "hostlinear_floor_recov_max": 0.0173,
+    "weight_cosine_mean": 0.042,
+    "weight_cosine_floor_max": 0.0065
+  },
+  "seeds": [
+    42
+  ],
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "batched_substrate_graded_conductance_read",
+  "gain_per_seed": {
+    "42": 7.521613
+  },
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "a45d2385f84619f0",
+    "thr_hash_2": "a45d2385f84619f0",
+    "seeded": true
+  },
+  "backend": "numpy",
+  "elapsed_s": 127.2,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-a568a74259135c83f/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+    "--smoke",
+    "--seeds",
+    "42",
+    "--batch",
+    "4",
+    "--n-train-pos",
+    "48",
+    "--epochs",
+    "1",
+    "--sub-read-window",
+    "22",
+    "--read-window",
+    "35",
+    "--n-sub-demo",
+    "12",
+    "--n-eval-pos",
+    "32",
+    "--verify-steps",
+    "3",
+    "--n-sentences",
+    "3000",
+    "--json",
+    "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/off_after_smoke.json"
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 16,
+      "n_train_pos": 1200,
+      "n_eval_pos": 300,
+      "n_sub_demo": 80,
+      "n_grad_steps": 225,
+      "n_grad_steps_shuffle": 76,
+      "substrate_reads": 312,
+      "main_substrate_reads": 225,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 3,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 19.768716,
+      "gain_substrate_vs_linear_corr": 0.9384,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 120,
+      "sub_hid_pop": 4,
+      "sub_pop": 2,
+      "w_hat_norm": 40.0,
+      "head_w_norm": 37.53,
+      "learn_secs": 59.3,
+      "shuffle_secs": 20.2,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        9.4924,
+        9.4596
+      ],
+      "verify_first_argerr": [
+        1.0,
+        1.0
+      ],
+      "hostlinear_recov_argmax": 0.3993,
+      "hostlinear_argmax_agree": 0.2567,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0547,
+        "lesion_err": 0.0474,
+        "shuffle_teach": 0.0006
+      },
+      "hostlinear_floor_recov": 0.0547,
+      "weight_cosine_to_head_diag": 0.1257,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": 0.0015
+      },
+      "weight_cosine_floor": 0.0023,
+      "sub_learned": {
+        "argmax_agree": 0.325,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.4977,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.8,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9699,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0002,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.5131,
+      "integrated_bar_0.85xcopied": 0.8244,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "2660ec337cd3ab54",
+        "thr_hash_2": "2660ec337cd3ab54",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "go_count": 0,
+    "go_5of6": false,
+    "integrated_go_count": 0,
+    "parity_recovery_count": 0,
+    "anticheats_collapse_count": 1,
+    "forward_is_substrate_all": true,
+    "host_matmul_on_forward_max": 0,
+    "verify_first_all_ok": true,
+    "sub_learned_recov_mean": 0.4977,
+    "sub_copied_recov_mean": 0.9699,
+    "sub_shuffle_recov_mean": 0.0002,
+    "sub_recov_ratio_mean": 0.5131,
+    "sub_recov_ratio_min": 0.5131,
+    "hostlinear_recov_mean": 0.3993,
+    "hostlinear_floor_recov_max": 0.0547,
+    "weight_cosine_mean": 0.1257,
+    "weight_cosine_floor_max": 0.0023
+  },
+  "seeds": [
+    42
+  ],
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "batched_substrate_graded_conductance_read",
+  "gain_per_seed": {
+    "42": 19.768716
+  },
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "2660ec337cd3ab54",
+    "thr_hash_2": "2660ec337cd3ab54",
+    "seeded": true
+  },
+  "backend": "cupy",
+  "elapsed_s": 247.3,
+  "argv": [
+    "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py",
+    "--forward",
+    "substrate",
+    "--sub-pop",
+    "2",
+    "--seeds",
+    "42",
+    "--json",
+    "research/findings/raw/_wkv_mouth_readout_snr_ensemble/screen/sub_pop2_screen.json",
+    "--n-train-pos",
+    "1200",
+    "--n-eval-pos",
+    "300",
+    "--epochs",
+    "3",
+    "--batch",
+    "16",
+    "--n-sub-demo",
+    "80"
+  ]
+}
