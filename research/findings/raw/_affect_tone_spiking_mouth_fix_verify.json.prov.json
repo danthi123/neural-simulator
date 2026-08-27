@@ -1,0 +1,27 @@
+{
+ "run_id": "1787809187-1849416",
+ "runner": "research/runners/_affect_tone_spiking_mouth_fix_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a7ff324b947bdf81e/research/runners/_affect_tone_spiking_mouth_fix_verify.py",
+  "--out",
+  "research/findings/raw/_affect_tone_spiking_mouth_fix_verify.json"
+ ],
+ "git_sha": "f53600492",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T01:39:47",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_tone_spiking_mouth_fix_verify.json"
+}
