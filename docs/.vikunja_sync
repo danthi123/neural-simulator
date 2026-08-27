@@ -118,3 +118,10 @@ no framing-faculty regression. #141 CLOSED (production-default + confirmed live)
 the diagnostic): reasoning + recall over the brain's OWN 15k knowledge via NATURAL language (today the
 route reasons over just-taught facts + the possessive 2-hop shape; the 15k core still needs exact tokens,
 and compound/inverse/3+hop phrasings don't parse) -> new board task. Residuals tracked on #141's ref.
+
+## 2026-08-26  bg-action-selection production wire-in (branch worktree-wf_c9f85a9b-893-4)
+Wired the Gate-A v2 two-channel spiking BG selector into brain_chat as a SPEAK-vs-STAY-SILENT decision behind
+BRAIN_BG_SELECT (default OFF); 6-seed flip-soak PART A = GO (salience drives the winner + FLIP on every seed,
+both lesions floor 0.00), organ-level PART B deterministic. NOTE: this is a per-branch landing note — the FULL
+Vikunja board reconcile (mark shipped tasks done, add the flip-when-soaked next rung) is deferred to the parent
+harvest that merges this and the sibling faculty branches.

@@ -7,6 +7,17 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-26 (faculty wire-in) — the brain can now DECIDE whether to speak or stay silent through its basal ganglia (built, default-off, awaiting flip)
+
+A discrete conversational choice — SPEAK this turn, or STAY SILENT and hold — is now made by a real spiking
+basal-ganglia race (the Gate-A vocal selector) instead of a host `if`. Two competing striatal channels (SPEAK
+vs STAY-SILENT) are driven by how much the message gives the brain to say; the first to cross the commit
+threshold wins, and removing the shared arousal or the direct disinhibition path makes NOTHING commit — proving
+the brain chose, not a code shortcut. It is wired into the live chat behind `BRAIN_BG_SELECT`, DEFAULT-OFF and
+byte-identical when off; a 6-seed gate passes (the choice follows the salience and flips with it; both lesions
+floor). Not yet on by default — the parent flips it after the pool soak. Finding:
+`research/findings/2026-08-26-bg-action-selection-speak-vs-silent-production-wirein-GO.md`.
+
 ## ⭐⭐⭐ 2026-08-25 (evening) — the brain now REASONS to its own conclusion when you chat, on by default
 
 The biggest step toward the north-star landed. Until now, asking the brain something that needs two facts

@@ -1,0 +1,7 @@
+{
+  "check": "bg_action_selection organ-level PART B (deterministic; production decide_action)",
+  "organ_content_inert": true,
+  "organ_dots_intact": "STAY_SILENT",
+  "organ_dots_arousal_vanish": true,
+  "organ_dots_direct_vanish": true
+}
