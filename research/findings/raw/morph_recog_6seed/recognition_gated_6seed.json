@@ -1,0 +1,120 @@
+{
+ "probe": "productive_morphology_recognition_gated",
+ "config": {
+  "n_seeds": 6,
+  "base_seed": 42,
+  "n_lex": 2000,
+  "n_proc": 800,
+  "pattern_size": 90,
+  "cyc_rule": 40,
+  "cyc_irr": 48,
+  "inhib_strength": 6.0,
+  "inh_drive": 6.0,
+  "recog_threshold_mV": 8.0
+ },
+ "per_seed": [
+  {
+   "seed": 42,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 17.556190476190476,
+   "inh_fire_novel": 17.508333333333333,
+   "gate_selective": false,
+   "GO": false
+  },
+  {
+   "seed": 43,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 16.32857142857143,
+   "inh_fire_novel": 15.678333333333333,
+   "gate_selective": false,
+   "GO": false
+  },
+  {
+   "seed": 44,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 16.30952380952381,
+   "inh_fire_novel": 16.286666666666665,
+   "gate_selective": false,
+   "GO": false
+  },
+  {
+   "seed": 45,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 16.99238095238095,
+   "inh_fire_novel": 16.729999999999997,
+   "gate_selective": false,
+   "GO": false
+  },
+  {
+   "seed": 46,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 16.640952380952378,
+   "inh_fire_novel": 16.471666666666664,
+   "gate_selective": false,
+   "GO": false
+  },
+  {
+   "seed": 47,
+   "reg_acc": 0.875,
+   "irr_acc": 0.0,
+   "both_gates": false,
+   "overreg_rate_lesion": 1.0,
+   "permuted_binding_irr_acc": 0.0,
+   "inh_fire_irr": 16.955238095238094,
+   "inh_fire_novel": 16.93166666666667,
+   "gate_selective": false,
+   "GO": false
+  }
+ ],
+ "n_reg_ge_0.90": 0,
+ "n_irr_ge_0.85": 0,
+ "n_both_gates": 0,
+ "n_full_go": 0,
+ "seed_check": {
+  "same_seed_identical": true,
+  "cross_seed_differs": true,
+  "seeds_substrate": true,
+  "threshold_hash": "c39dce820cdf917935641de2829d3b62"
+ },
+ "GO": false,
+ "verdict": "NEGATIVE -- no op-point does BOTH (both 0/6; reg 0, irr 0) -- sweep --recog-threshold-mV / --inh-drive",
+ "mean_inh_fire_irr": 16.797142857142855,
+ "mean_inh_fire_novel": 16.60111111111111,
+ "verdict_status": "NO-GO",
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "substrate seeded by cfg.seed (anti-cheat 5)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "gate read-out is LIVE (interneuron fires >> silence, so gate_selective is a measured equality not a dead read-out)",
+   "ok": true,
+   "detail": "16.7971 vs floor 1",
+   "note": ""
+  }
+ ]
+}
