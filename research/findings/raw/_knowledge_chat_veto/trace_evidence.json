@@ -1,0 +1,103 @@
+{
+  "runner": "research/findings/raw/_knowledge_chat_veto/repro_veto.py",
+  "backend": "numpy",
+  "seed": 42,
+  "config": {
+    "SIM_BACKEND": "numpy",
+    "brain": "tiny-demo",
+    "composer_kind": "onebrain",
+    "ltm_bundle": "wikidata_core_15k"
+  },
+  "bug1_precheck": {
+    "direct_store_query": {
+      "call": "composer.query_patient('chelsea_fc','country')",
+      "result": "united_kingom"
+    },
+    "pre_fix_extract_route": {
+      "call": "chat._extract_route('what country is chelsea fc from')",
+      "result": [
+        "country",
+        "chelsea"
+      ]
+    },
+    "pre_fix_substrate_recall": {
+      "call": "chat._substrate_recall(...)",
+      "result": "__ABSTAIN__"
+    },
+    "pre_fix_gate": {
+      "call": "chat.gate(...)",
+      "result": null
+    }
+  },
+  "bug1_postfix": {
+    "gate_target": {
+      "call": "chat.gate('what country is chelsea fc from')",
+      "result": [
+        "chelsea_fc",
+        "country",
+        "united_kingom"
+      ]
+    },
+    "gate_target_qmark": {
+      "call": "chat.gate('what country is chelsea fc from?')",
+      "result": [
+        "chelsea_fc",
+        "country",
+        "united_kingom"
+      ]
+    },
+    "gate_bug2": {
+      "call": "chat.gate('what sport is chelsea fc in')",
+      "result": [
+        "chelsea_fc",
+        "sport",
+        "association_football_club"
+      ]
+    },
+    "no_regression_battery_n": 8,
+    "no_regression_failures": 0,
+    "lesion_flag_off_result": null,
+    "lesion_flag_reenabled_result": [
+      "chelsea_fc",
+      "country",
+      "united_kingom"
+    ],
+    "byte_identical_battery_n": 16,
+    "byte_identical_diffs": 0
+  },
+  "bug2_full_pipeline_trace": {
+    "wrapped_gate_result_postfix": null,
+    "last_two_organ": {
+      "organ_a_recall": "united_kingom",
+      "organ_b_confirmed": false,
+      "expected": null,
+      "committed": null,
+      "ignited": false,
+      "n_ignited": 0,
+      "abstain_reason": "consensus_veto_organ_b_withheld",
+      "authored_by": "two_organ_bus",
+      "agent": "chelsea_fc",
+      "action": "country",
+      "bus_svo": null
+    },
+    "last_gnw_delib": {
+      "acted": false,
+      "reason": "already_abstained"
+    },
+    "last_gnw_multistep": {
+      "acted": false,
+      "reason": "not_chase_form"
+    }
+  },
+  "bug3_organ_c_reverse_binding": {
+    "query_agent_call": "composer.query_agent('country', 'united_kingom')",
+    "query_agent_result": "man_city",
+    "expected_for_this_query": "chelsea_fc",
+    "note": "ShardedPhasorStore.query_agent documents first-hit-of-many-shards, not disambiguation"
+  },
+  "bug4_three_organ_never_installs": {
+    "server_py_outer_default": "1 (ON)",
+    "three_organ_enabled_inner_default": "'' (OFF)",
+    "install_three_organ_gate_returned": false
+  }
+}

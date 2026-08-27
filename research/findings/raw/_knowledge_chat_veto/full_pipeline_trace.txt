@@ -1,0 +1,20 @@
+[168.2s] built tiny-demo agent
+[168.3s] built ChatBrain
+[168.4s] installed the full GNW bus / deliberation / value-choice / multistep wrapper stack on chat.gate (mirrors the real /api/brain-chat handler)
+
+=== PRE-FIX (BRAIN_RELATION_FRONTED_QUESTIONS=0, the lesion == the exact pre-2026-08-27 behavior) through the FULL wrapped pipeline ===
+chat.gate('what country is chelsea fc from') [fully wrapped, pre-fix] = None
+  gnw_bus_shadow info: None
+
+=== POST-FIX (default/unset -> the route is ON) through the FULL wrapped pipeline ===
+chat.gate('what country is chelsea fc from') [fully wrapped, post-fix] = None
+  gnw_bus_shadow info: None
+
+=== AFFECT (mood) + SWAP-DRIVES (topic-tracking) observers, run exactly as server.py runs them ===
+  swap_drives_chat.observe_turn: lead=''
+chat.gate('what country is chelsea fc from') AFTER affect+swap observers ran = None  (same as post-fix above: True)
+
+=== CONCLUSION ===
+pre-fix (lesioned) fully-wrapped verdict:  None
+post-fix fully-wrapped verdict:             None
+authored_by (post-fix): None

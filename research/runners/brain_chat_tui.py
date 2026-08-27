@@ -132,6 +132,40 @@ def _knowledge_grounding_enabled() -> bool:
     return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
+# ============================================================================================================
+# RELATION-FRONTED QUESTIONS (Vikunja #142, 2026-08-27 -- knowledge-in-live-chat wrongful-veto fix). See
+# `ChatBrain._relation_fronted_route`'s docstring for the mechanism; summary: 'what country is chelsea fc
+# from?' fronts the RELATION noun ('country') before the copula, unlike the in-conversation teaching shape
+# 'what does <entity> <verb>?' the generic (agent,action)=(content[0],content[1]) positional parse in
+# `_extract_route` already handles -- so that generic parse mis-assigns the relation word to the AGENT slot
+# and the entity to the ACTION slot, producing a query the substrate correctly has no fact for (an honest
+# abstain on a fact the store genuinely holds -- see the 2026-08-27 finding for the traced repro). Default-ON
+# (production-wired, matching every other knowledge-grounding-arc flag); `BRAIN_RELATION_FRONTED_QUESTIONS` in
+# {0,false,no,off} is the LESION/escape (byte-identical to pre-fix: the route never matches, `_extract_route`
+# falls through to the unchanged generic parse for every question).
+# ============================================================================================================
+
+def _relation_fronted_enabled() -> bool:
+    """Default-ON (production-wired, not opt-in). `BRAIN_RELATION_FRONTED_QUESTIONS` in {0,false,no,off} is the
+    LESION/escape."""
+    v = os.environ.get("BRAIN_RELATION_FRONTED_QUESTIONS")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+# 'what <relation> is/are/was/were <entity> [trailing prep]?' -- the relation is required to be a SINGLE bare
+# word (the store's own relation names are single underscored tokens; a multi-word relation phrase is left to
+# the generic parse, out of scope here). Deliberately excludes 'does/do/did' (those already route correctly
+# through the existing 'what does <entity> <verb>?' shape) so this can never fire on an already-working question.
+_REL_FRONTED_RE = re.compile(
+    r"^what\s+(?P<relation>[a-z]+)\s+(?:is|are|was|were)\s+(?P<entity>.+?)\s*\??\s*$", re.IGNORECASE)
+
+# A trailing preposition left dangling by the copula shape ('... is chelsea fc FROM?', '... is the tower IN?')
+# is part of the English question frame, not the entity -- stripped before the entity is grounded/joined.
+_REL_FRONTED_TRAILING_PREPS = ("from", "in", "of", "at", "on", "for", "with", "to")
+
+
 def _alias_hop(composer, candidate: str):
     """ONE genuinely-spiking hop: does the brain's OWN store know `candidate` as an ALIAS of some canonical
     concept? Reuses the EXACT `query_patient` primitive `compositional_chain_route.py`'s reasoning hops already
@@ -790,6 +824,60 @@ class ChatBrain:
             return None                                       # degenerate/lesioned parse -> let the caller fall back
         return a, v
 
+    def _relation_fronted_route(self, question):
+        """A RELATION-FRONTED question -- 'what country is chelsea fc from?', 'what sport is chelsea fc in?' --
+        asks for ENTITY's RELATION value, but fronts the RELATION NOUN before the copula ('what <relation>
+        is/are/was/were <entity> [prep]?'). This is a DIFFERENT surface shape from the in-conversation teaching
+        pattern 'what does <entity> <verb>?' (the auxiliary 'does' immediately follows 'what', with no relation
+        noun in between) that `_extract_route`'s generic (agent, action) = (content[0], content[1]) positional
+        parse already handles correctly by ASSUMING SVO word order (entity first, relation/verb second).
+
+        Without this route, a relation-fronted question hits that same generic positional parse and gets its
+        roles SWAPPED: content[0] is the relation word, content[1] is (part of) the entity, so the parse
+        extracts (agent=relation, action=entity) instead of (agent=entity, action=relation). The substrate then
+        correctly has no fact under that backwards binding and honestly abstains -- reproducing Vikunja #142
+        exactly: 'what country is chelsea fc from?' -> the generic parse extracts (agent='country',
+        action='chelsea') -> `what_does('country', 'chelsea')` -> nothing stored -> 'I don't know about that.',
+        even though the shipped Wikidata core holds (chelsea_fc, country, united_kingom) and
+        `composer.query_patient('chelsea_fc', 'country')` answers it directly (see the 2026-08-27 finding's
+        traced repro, which confirms this is the exact stage that drops the answer -- not affect/topic-tracking/
+        the GNW consensus bus, which never see a routable (agent, action) pair to begin with here).
+
+        COMPREHENSION only (mirrors `_definitional_copula_route`): tries the entity phrase against the
+        knowledge-grounding alias hop (so a Wikidata alias surface form still resolves), falling back to the
+        naive underscore-joined phrase (which already matches this store's own canonical-token convention, e.g.
+        'chelsea fc' -> 'chelsea_fc', with zero alias facts required). Returns [agent, action] for the caller's
+        UNCHANGED `what_does()` recall + no-confab moat (an unknown entity or relation still honestly abstains
+        -- this can only ADD a resolution, never invent a fact), or None when the shape doesn't match / the
+        lesion flag is set (falls straight through to the untouched generic parse, byte-identical for every
+        other question)."""
+        if not _relation_fronted_enabled():
+            return None
+        m = _REL_FRONTED_RE.match(question.strip())
+        if not m:
+            return None
+        relation = m.group("relation").strip().lower()
+        entity = m.group("entity").strip().strip(".,!?").lower()
+        if not relation or not entity:
+            return None
+        for prep in _REL_FRONTED_TRAILING_PREPS:
+            suffix = " " + prep
+            if entity.endswith(suffix) and entity != prep:
+                entity = entity[: -len(suffix)].strip()
+                break
+        if not entity:
+            return None
+        if relation in self.router.self_aliases or entity in self.router.self_aliases:
+            return None                                       # self/identity turn -> the host router's job
+        entity_toks = entity.split()
+        entity_final = "_".join(entity_toks)                  # this store's own canonical-token convention
+        if _knowledge_grounding_enabled():
+            composer = getattr(self.inner, "composer", None)
+            grounded = _ground_content_words(composer, entity_toks, min_span=1)
+            if len(grounded) == 1:
+                entity_final = grounded[0]
+        return [entity_final, relation]
+
     def _definitional_copula_route(self, question):
         """A DEFINITIONAL copula question -- 'what is X?', "what's a X?", 'who is X?', 'define X' -- asks for X's
         CATEGORY. English lexicalizes that relation as the copula 'is', which the stopword strip removes as a
@@ -863,6 +951,17 @@ class ChatBrain:
             composer = getattr(self.inner, "composer", None)
             known = self.agents_set | self.actions_set | self.patients_set
             content = _ground_content_words(composer, content, known_words=known)
+        # RELATION-FRONTED question ('what country is chelsea fc from?', Vikunja #142) -> fires BEFORE the generic
+        # (agent, action) = (content[0], content[1]) positional parse below, which ASSUMES SVO word order (entity
+        # first, relation/verb second, as in the in-conversation teaching shape 'what does the wolf hunt?') and
+        # mis-assigns the RELATION noun to the agent slot when a Wikidata-style question instead fronts the
+        # relation before the copula (see `_relation_fronted_route`'s docstring for the traced mechanism). Runs on
+        # the RAW `question` (its own regex does its own tokenizing), independent of the `content` list above, so
+        # it cannot be perturbed by -- or perturb -- the generic parse. A non-match / disabled flag returns None
+        # -> falls straight through to the unchanged logic below, byte-identical for every other question.
+        _relf = self._relation_fronted_route(question)
+        if _relf is not None:
+            return _relf
         # DEFINITIONAL COPULA question ('what is X?') -> the instance-of relation 'isa'. Fires ONLY when the copula
         # strip left <=1 content word (i.e. the normal (agent, action) parse has NO verb to work with), so a question
         # that already carries two content words is untouched -> byte-identical for every previously-routable query.

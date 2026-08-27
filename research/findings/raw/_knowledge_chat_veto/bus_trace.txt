@@ -1,0 +1,13 @@
+[145.3s] built tiny-demo agent
+[145.3s] built ChatBrain
+
+=== ORGAN READS (organ A/B/C), exactly as webapp/gnw_bus_shadow._organ_reads computes them ===
+organ A: query_patient('chelsea_fc', 'country') = 'united_kingom'
+organ B (re-verify): 'united_kingom'
+organ C raw: query_agent('country', 'united_kingom') = 'man_city'
+organ C (reverse-binding verify): None
+
+=== bus_combine (the FULL ignition-bus consensus) ===
+len(all_concepts) [the bus's decoy pool, from chat.agents_set|actions_set|patients_set] = 12
+'chelsea_fc' in all_concepts: False   'country' in all_concepts: False   'united_kingom' in all_concepts: False
+bus_combine info = {'organ_reads': ['united_kingom', 'united_kingom', None], 'committed': None, 'ignited': False, 'n_ignited': 0, 'lesion': False, 'decoy': 'fish'}

@@ -1,0 +1,39 @@
+[181.9s] built tiny-demo agent
+[182.0s] attached LTM
+[182.0s] built ChatBrain
+
+=== THE BUG (Vikunja #142) ===
+[BUG1] 'what country is chelsea fc from' -> ['chelsea_fc', 'country', 'united_kingom']  ok=True
+[BUG1b] 'what country is chelsea fc from?' -> ['chelsea_fc', 'country', 'united_kingom']  ok=True
+[BUG2] 'what sport is chelsea fc in' -> ['chelsea_fc', 'sport', 'association_football_club']  ok=True
+
+=== NO-REGRESSION: pre-existing routes must be BYTE-IDENTICAL ===
+[REG-recall] 'what does the dog chase' -> ['dog', 'chase', 'cat']  ok=True
+[REG-recall2] 'what does the cat eat' -> ['cat', 'eat', 'fish']  ok=True
+[REG-abstain-unknown] 'what does the fish fly' -> None  ok=True
+[REG-copula] 'what is chelsea fc' -> None  ok=None
+[REG-self] 'what do you use' -> ['brain', 'use', 'spikes']  ok=True
+[REG-teach] 'the wolf hunts the deer' -> ['wolf', 'hunt', 'deer']  ok=True
+[REG-recall-taught] 'what does the wolf hunt' -> ['wolf', 'hunt', 'deer']  ok=True
+[REG-does-fronted-out-of-scope] 'what country does chelsea fc represent' -> None  ok=None
+
+=== LESION (BRAIN_RELATION_FRONTED_QUESTIONS=0) must revert to the pre-fix abstain ===
+[LESION] 'what country is chelsea fc from' -> None  ok=True
+[UN-LESIONED-AGAIN] 'what country is chelsea fc from' -> ['chelsea_fc', 'country', 'united_kingom']  ok=True
+
+=== SUMMARY ===
+  PASS  [BUG1] 'what country is chelsea fc from' -> ['chelsea_fc', 'country', 'united_kingom']
+  PASS  [BUG1b] 'what country is chelsea fc from?' -> ['chelsea_fc', 'country', 'united_kingom']
+  PASS  [BUG2] 'what sport is chelsea fc in' -> ['chelsea_fc', 'sport', 'association_football_club']
+  PASS  [REG-recall] 'what does the dog chase' -> ['dog', 'chase', 'cat']
+  PASS  [REG-recall2] 'what does the cat eat' -> ['cat', 'eat', 'fish']
+  PASS  [REG-abstain-unknown] 'what does the fish fly' -> None
+  PASS  [REG-copula] 'what is chelsea fc' -> None
+  PASS  [REG-self] 'what do you use' -> ['brain', 'use', 'spikes']
+  PASS  [REG-teach] 'the wolf hunts the deer' -> ['wolf', 'hunt', 'deer']
+  PASS  [REG-recall-taught] 'what does the wolf hunt' -> ['wolf', 'hunt', 'deer']
+  PASS  [REG-does-fronted-out-of-scope] 'what country does chelsea fc represent' -> None
+  PASS  [LESION] 'what country is chelsea fc from' -> None
+  PASS  [UN-LESIONED-AGAIN] 'what country is chelsea fc from' -> ['chelsea_fc', 'country', 'united_kingom']
+
+ALL PASS
