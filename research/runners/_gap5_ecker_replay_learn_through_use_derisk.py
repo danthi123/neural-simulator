@@ -215,8 +215,148 @@ def consolidate_by_btsp_replay(store, steps, seed, *, swr_period, cue_pa, cue_st
                 changed=bool(not np.array_equal(w0, w1)))
 
 
-def _consolidate(store, steps, seed, a, *, seed_on, cons_kw):
-    """Dispatch to the STDP (default, byte-identical) or BTSP-directional write per --write-rule."""
+# ----------------------------------------------------------------------------------------------------------------------
+# VOLLEY-OVERLAP metric (the residual blocker the [[2026-08-27-btsp-directional-write-...-PARTIAL]] op-point sweep
+# isolated): in a discrete forward replay event A->B->C, the leading assembly A keeps firing AFTER B ignites, so the
+# pre(A)-before-post(B) pairing is CONTAMINATED by A-fires-during-B (bidirectional coincidence) -> no coincidence-read
+# rule can be forward-selective. This measures it DIRECTLY: for each SWR event, for each consecutive assembly pair
+# (k, k+1) that BOTH activate, the temporal Jaccard overlap of their smoothed active windows
+# |active_k & active_{k+1}| / |active_k | active_{k+1}|. 0 = cleanly separated volleys (the delay's goal); ->1 = fully
+# overlapping. Mean over consecutive pairs over events. SAME smoother/thresholds as _score_periods (one instrument).
+# ----------------------------------------------------------------------------------------------------------------------
+def _volley_overlap(F, asm_local, env_seed_log, swr_period, *, W, active_frac, onset_frac):
+    T = F.shape[0]; n_mem = len(asm_local)
+    asizes = [max(1, len(a)) for a in asm_local]
+    n_periods = min(len(env_seed_log), T // swr_period)
+    ovs = []
+    for n in range(n_periods):
+        s0, s1 = n * swr_period, (n + 1) * swr_period
+        Fw = F[s0:s1]
+        act = {}
+        for kk, A in enumerate(asm_local):
+            a_t = _smooth_local(Fw[:, A].sum(1), W) / asizes[kk]
+            if a_t.size and float(a_t.max()) >= active_frac:
+                act[kk] = (a_t >= onset_frac)
+        for kk in range(n_mem - 1):
+            if kk in act and (kk + 1) in act:
+                inter = int(np.logical_and(act[kk], act[kk + 1]).sum())
+                union = int(np.logical_or(act[kk], act[kk + 1]).sum())
+                if union > 0:
+                    ovs.append(inter / union)
+    return float(np.mean(ovs)) if ovs else 0.0
+
+
+def _smooth_local(x, W):
+    if W <= 1:
+        return np.asarray(x, dtype=float)
+    k = np.ones(int(W), dtype=float) / float(W)
+    return np.convolve(np.asarray(x, dtype=float), k, mode="same")
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# CONSOLIDATE-BY-REPLAY, BTSP write + FORWARD-EDGE AXONAL CONDUCTION DELAY (2026-08-27). The residual blocker the
+# op-point sweep isolated is NOT the write rule -- it is VOLLEY OVERLAP: the leading assembly keeps firing after the
+# next ignites, so pre-and-post overlap and no coincidence-read write can be forward-selective. This adds a per-edge
+# CONDUCTION DELAY on the FORWARD recurrent edges only, so assembly A's forward drive reaches B `delay_steps` later ->
+# B ignites only AFTER A has self-terminated -> the volleys SEPARATE -> the pre(A)-before-post(B) coincidence is clean.
+#
+# The engine propagates every spike with a UNIFORM 1-step delay (g_e += (W.T @ prev_fired)*prop_strength; there is NO
+# per-synapse delay buffer -- max_synaptic_delay_ms is unused in this path). So the forward conduction delay is a
+# HOST-SIDE delay-line on the SAME g_e conductance channel (no sim/ edit): the forward edges are ZEROED in the
+# propagation matrix (so the matvec delivers only within+reverse drive), and their exact g_e increment
+# prop_strength * (W_fwd.T @ prev_fired) is buffered and re-added to cp_conductance_g_e `delay_steps` steps later --
+# a faithful axonal delay (same amplitude, same conductance, onset shifted). The plastic forward WEIGHTS live in a
+# decoupled host array w_bet (BTSP-updated + used for the delayed drive + measured); reverse weights stay in the matrix
+# (their standard 1-step delay is unchanged -- ONLY the forward axons are slowed). delay_steps=0 = path-active control
+# (forward re-added immediately == baseline forward timing) -> must reproduce the PARTIAL 0/6. Grounded: Izhikevich 2006
+# "Polychronization" (axonal conduction delays + STDP self-organize DIRECTIONAL/time-locked polychronous groups -- the
+# delay is what makes a coincidence-read rule direction-selective); Yu 2025 (axonal delays let SNNs exploit temporal
+# direction). seed_on=False = LESION-THE-REPLAY (no ignition -> no firing -> delay-line all-zero -> write is a null).
+# ----------------------------------------------------------------------------------------------------------------------
+def consolidate_by_btsp_replay_delayed(store, steps, seed, *, swr_period, cue_pa, cue_steps, cue_frac, dt, seed_on=True,
+                                       elig_tau_ms, plat_tau_ms, eta, w_min, w_max, delay_steps,
+                                       overlap_kw=None):
+    cp = store["cp"]; bridge = store["bridge"]; pc = store["pc"]; asm_local = store["asm_local"]; m = store["m_asm"]
+    asm_size = store["asm_size"]; n_pc = len(pc)
+    fwd_pos = store["fwd_pos"]; rev_pos = store["rev_pos"]; n_fwd = int(fwd_pos.size)
+    row, col = store["pre_post"]
+    bet_pos = np.concatenate([fwd_pos, rev_pos])
+    bet_pos_dev = cp.asarray(bet_pos.astype(np.int64))
+    fwd_pos_dev = cp.asarray(fwd_pos.astype(np.int64)); rev_pos_dev = cp.asarray(rev_pos.astype(np.int64))
+    row_bet = cp.asarray(row[bet_pos].astype(np.int64)); col_bet = cp.asarray(col[bet_pos].astype(np.int64))
+    row_fwd = cp.asarray(row[fwd_pos].astype(np.int64)); col_fwd = cp.asarray(col[fwd_pos].astype(np.int64))
+    prop = float(getattr(bridge.core_config, "propagation_strength", 0.05))
+    nN = int(bridge.cp_firing_states.size)
+
+    cell_rng = np.random.default_rng(int(seed) * 314159 + 17)
+    k_cells = max(1, int(round(float(cue_frac) * asm_size)))
+    cue_cells_dev = []
+    for a_loc in asm_local:
+        sub = np.sort(cell_rng.choice(a_loc, min(k_cells, len(a_loc)), replace=False))
+        cue_cells_dev.append(cp.asarray(pc[sub], dtype=cp.int64))
+    choice_rng = np.random.default_rng(int(seed) * 271828 + 23)
+
+    e_pre = cp.zeros(nN, dtype=cp.float32); p_post = cp.zeros(nN, dtype=cp.float32)
+    decay_e = cp.float32(np.exp(-dt / max(elig_tau_ms, 1e-9))); decay_p = cp.float32(np.exp(-dt / max(plat_tau_ms, 1e-9)))
+    eta_d = cp.float32(eta); wmin_d = cp.float32(w_min); wmax_d = cp.float32(w_max)
+
+    # DECOUPLE the plastic between-edge weights from the propagation matrix. w_bet[:n_fwd]=forward, [n_fwd:]=reverse.
+    w0 = np.asarray(to_host(bridge.cp_connections.data)).copy()          # BEFORE zeroing forward (encoded weights)
+    w_bet = bridge.cp_connections.data[bet_pos_dev].copy()               # canonical plastic weights (device)
+    bridge.cp_connections.data[fwd_pos_dev] = cp.float32(0.0)            # forward edges deliver drive ONLY via delay-line
+    D = int(max(0, delay_steps))
+    buf = cp.zeros((max(D, 1), nN), dtype=cp.float32) if D > 0 else None  # ring buffer of forward g_e increments
+    ptr = 0
+
+    F = np.zeros((steps, n_pc), dtype=bool); env_seed_log = []
+    bridge.core_config.enable_stdp = False
+    bridge.runtime_state.current_time_ms = 0.0
+    cur_k = None; n_env = 0
+    for t in range(steps):
+        bridge.cp_external_input_current[:] = 0.0
+        phase = t % swr_period
+        if phase == 0 and seed_on:
+            cur_k = int(choice_rng.integers(0, m)); env_seed_log.append(cur_k); n_env += 1
+        if seed_on and phase < cue_steps and cur_k is not None:
+            bridge.cp_external_input_current[cue_cells_dev[cur_k]] += float(cue_pa)
+        # forward g_e increment this step from the CURRENT firing (== what the matvec would add for forward edges).
+        prev_f = bridge.cp_prev_firing_states.astype(cp.float32)
+        fwd_g = cp.zeros(nN, dtype=cp.float32)
+        w_fwd_now = w_bet[:n_fwd]
+        cp.add.at(fwd_g, col_fwd, w_fwd_now * prev_f[row_fwd] * cp.float32(prop))
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_ms += float(dt)
+        # deliver the forward drive with the conduction delay (onto the SAME g_e channel the matvec feeds).
+        if D <= 0:
+            bridge.cp_conductance_g_e += fwd_g                          # control: immediate == baseline forward timing
+        else:
+            bridge.cp_conductance_g_e += buf[ptr]                        # arrival of the drive from D steps ago
+            buf[ptr] = fwd_g; ptr = (ptr + 1) % D
+        F[t] = np.asarray(to_host(bridge.cp_firing_states))[pc].astype(bool)
+        # BTSP write on the decoupled plastic weights; propagate reverse back into the matrix (forward stays 0).
+        fired = bridge.cp_firing_states.astype(cp.float32)
+        e_pre = cp.maximum(e_pre * decay_e, fired); p_post = cp.maximum(p_post * decay_p, fired)
+        w_bet = fused_btsp_update(w_bet, e_pre[row_bet], p_post[col_bet], eta_d, wmin_d, wmax_d)
+        bridge.cp_connections.data[rev_pos_dev] = w_bet[n_fwd:]
+    w1 = np.asarray(to_host(bridge.cp_connections.data)).copy()          # reverse updated, forward still 0 in matrix
+    w_bet_h = np.asarray(to_host(w_bet))
+    w1[fwd_pos] = w_bet_h[:n_fwd]; w1[rev_pos] = w_bet_h[n_fwd:]         # overlay true plastic weights
+    ov = None
+    if overlap_kw is not None and seed_on:
+        ov = _volley_overlap(F, asm_local, env_seed_log, swr_period, **overlap_kw)
+    return dict(n_env=n_env, w_after=w1.copy(),
+                dw_fwd=float((w1[fwd_pos] - w0[fwd_pos]).mean()), dw_rev=float((w1[rev_pos] - w0[rev_pos]).mean()),
+                dw_fwd_first_half=0.0, dw_fwd_second_half=0.0, volley_overlap=ov,
+                changed=bool(not np.array_equal(w0, w1)))
+
+
+def _consolidate(store, steps, seed, a, *, seed_on, cons_kw, overlap_kw=None):
+    """Dispatch to the STDP (default, byte-identical), BTSP-directional, or BTSP+conduction-delay write."""
+    if a.write_rule == "btsp" and a.fwd_delay_steps >= 0:
+        return consolidate_by_btsp_replay_delayed(store, steps, seed, seed_on=seed_on,
+                                                  elig_tau_ms=a.btsp_elig_tau, plat_tau_ms=a.btsp_plat_tau,
+                                                  eta=a.btsp_eta, w_min=0.0, w_max=a.btsp_w_max,
+                                                  delay_steps=a.fwd_delay_steps, overlap_kw=overlap_kw, **cons_kw)
     if a.write_rule == "btsp":
         return consolidate_by_btsp_replay(store, steps, seed, seed_on=seed_on,
                                           elig_tau_ms=a.btsp_elig_tau, plat_tau_ms=a.btsp_plat_tau,
@@ -277,14 +417,15 @@ def one_seed(seed, a):
           flush=True)
 
     # 3. CONSOLIDATE-BY-REPLAY (seeded): STDP on, forward-ordered replay deepens the band
+    overlap_kw = dict(W=a.window, active_frac=a.active_frac, onset_frac=a.onset_frac)
     st_c = build_store(seed, **bkw); _load_weights(st_c, w_learned)
-    cons = _consolidate(st_c, a.consol_steps, seed, a, seed_on=True, cons_kw=cons_kw)
+    cons = _consolidate(st_c, a.consol_steps, seed, a, seed_on=True, cons_kw=cons_kw, overlap_kw=overlap_kw)
     w_consol = cons["w_after"]
     out["consolidate"] = dict(n_env=cons["n_env"], dw_fwd=cons["dw_fwd"], dw_rev=cons["dw_rev"],
                               dw_fwd_first_half=cons["dw_fwd_first_half"], dw_fwd_second_half=cons["dw_fwd_second_half"],
-                              changed=cons["changed"])
+                              volley_overlap=cons.get("volley_overlap"), changed=cons["changed"])
     print(f"  [seed {seed}] CONSOLIDATE(seeded): n_env={cons['n_env']} dw_fwd={cons['dw_fwd']:.2f} "
-          f"dw_rev={cons['dw_rev']:.2f} (half1={cons['dw_fwd_first_half']:.2f} half2={cons['dw_fwd_second_half']:.2f}) "
+          f"dw_rev={cons['dw_rev']:.2f} volley_overlap={cons.get('volley_overlap')} "
           f"({time.time()-t0:.0f}s)", flush=True)
 
     # 4. READ AFTER (full + weak), frozen
@@ -365,6 +506,13 @@ def main():
                     "signal (the directionality knob: dw_rev/dw_fwd ~ exp(-lag/plat_tau) -> keep < the replay lag)")
     ap.add_argument("--btsp-eta", type=float, default=0.02, help="BTSP learning rate (folds the eligibility/plateau gain)")
     ap.add_argument("--btsp-w-max", type=float, default=900.0, help="BTSP saturation ceiling (w_max-w); match stdp_w_max")
+    # FORWARD-EDGE AXONAL CONDUCTION DELAY (2026-08-27): -1 = OFF (byte-identical; forward edges keep the standard
+    # 1-step delay). >=0 activates the host-side forward-only delay-line (requires --write-rule btsp): the forward
+    # recurrent drive reaches the next assembly `fwd_delay_steps` steps (*dt ms) later, so the leading assembly
+    # SELF-TERMINATES before the next ignites -> the volleys separate -> the coincidence-read write becomes forward-
+    # selective. 0 = path-active control (immediate re-add == baseline forward timing -> must reproduce the PARTIAL 0/6).
+    ap.add_argument("--fwd-delay-steps", type=int, default=-1, help="forward-edge conduction delay in sim steps "
+                    "(-1=OFF/byte-identical; 0=path-active control; k>0=k*dt ms axonal delay; needs --write-rule btsp)")
     # ENCODE (moderate: fewer laps than the band-GO's 30, so there is headroom to deepen by replay)
     ap.add_argument("--n-laps", type=int, default=14)
     ap.add_argument("--enc-step", type=int, default=80)
@@ -395,6 +543,7 @@ def main():
 
     _, backend = get_backend()
     _wr = (f"WRITE=btsp elig_tau={a.btsp_elig_tau} plat_tau={a.btsp_plat_tau} eta={a.btsp_eta} w_max={a.btsp_w_max}"
+           + (f" fwd_delay={a.fwd_delay_steps}steps({a.fwd_delay_steps*a.dt:.1f}ms)" if a.fwd_delay_steps >= 0 else "")
            if a.write_rule == "btsp" else "WRITE=stdp (ms-coincidence)")
     print(f"[ecker-ltu] Ecker AdEx CA3 replay-driven learn-through-use | {_wr} | n_mem={a.n_mem} asm={a.asm_size} "
           f"within={a.w_within} between_init={a.between_init} | encode {a.n_laps}laps | STDP a+={a.stdp_a_plus} "
@@ -425,6 +574,10 @@ def main():
         mweak_a = float(np.mean([p["reads"]["weak_after"]["forward"] for p in per]))
         mweak_ns = float(np.mean([p["no_seed"]["weak_forward"] for p in per]))
         mch = float(np.mean([p["reads"]["full_before"]["chance"] for p in per]))
+        _ovs = [p["consolidate"].get("volley_overlap") for p in per if p["consolidate"].get("volley_overlap") is not None]
+        mov = float(np.mean(_ovs)) if _ovs else None
+        _delay_note = (f" | forward conduction delay {a.fwd_delay_steps} steps ({a.fwd_delay_steps*a.dt:.1f}ms); "
+                       f"volley_overlap {mov:.3f}" if a.fwd_delay_steps >= 0 and mov is not None else "")
         if go:
             verdict = (f"ECKER-REPLAY-LEARN-THROUGH-USE GO {n_go}/{len(per)} -- OFFLINE discrete forward SWR replay on "
                        f"the Ecker AdEx CA3 store DURABLY DEEPENS the replayed sequence via the substrate's OWN STDP: "
@@ -433,14 +586,15 @@ def main():
                        f"forward {mweak_b:.3f}->{mweak_a:.3f} (full {mfull_b:.3f}->{mfull_a:.3f}, chance {mch:.3f}). "
                        f"LESION-THE-REPLAY (NO-SEED): dw_fwd {mdwns:.2f}~0, weak forward {mweak_ns:.3f} (no gain) -> the "
                        f"strengthening is CARRIED BY THE REPLAY. => the Ecker store UNBLOCKS replay-driven "
-                       f"learn-through-use the bistable co-firing store could not.")
+                       f"learn-through-use the bistable co-firing store could not.{_delay_note}")
         else:
             verdict = (f"ECKER-REPLAY-LEARN-THROUGH-USE NO-GO {n_go}/{len(per)} -- the store SEGMENTS (full-cue forward "
                        f"{mfull_b:.3f} vs chance {mch:.3f}) and replay drives DURABLE LESION-CONTROLLED plasticity "
                        f"(NO-SEED dw_fwd {mdwns:.2f}~0), but replay-driven STDP does NOT strengthen forward recall: it "
                        f"SYMMETRIZES the band (dw_fwd {mdwf:.1f} vs dw_rev {mdwr:.1f}; adj_fwd {maf_b:.1f}->{maf_a:.1f}); "
-                       f"weak forward {mweak_b:.3f}->{mweak_a:.3f} (noseed {mweak_ns:.3f}). 0/6 directional. Next "
-                       f"method: separated-volley conduction delay / inhibitory gap-coding / BTSP-eligibility write.")
+                       f"weak forward {mweak_b:.3f}->{mweak_a:.3f} (noseed {mweak_ns:.3f}). {n_go}/{len(per)} "
+                       f"directional. Next method: separated-volley conduction delay / inhibitory gap-coding / "
+                       f"BTSP-eligibility write.{_delay_note}")
         # Preconditions are INSTRUMENT-VALIDITY only (all must HOLD for the go/no-go to be meaningful); the
         # forward-consolidation CONCLUSION is carried by `go` (n_go >= bar), NOT registered as a precondition -- a
         # failed conclusion is a NO-GO, not an UNDEFINED.
@@ -463,7 +617,8 @@ def main():
                              band_adj_fwd_before=maf_b, band_adj_fwd_after=maf_a, band_adj_rev_after=mar_a,
                              full_forward_before=mfull_b, full_forward_after=mfull_a,
                              weak_forward_before=mweak_b, weak_forward_after=mweak_a, weak_forward_noseed=mweak_ns,
-                             chance=mch, preconditions=decided.get("preconditions", []), decided=decided)
+                             chance=mch, fwd_delay_steps=a.fwd_delay_steps, volley_overlap=mov,
+                             preconditions=decided.get("preconditions", []), decided=decided)
     else:
         go = False; n_go = 0
         verdict = f"ERROR -- {err}" if err else "NO RESULTS"
@@ -480,7 +635,7 @@ def main():
                            weak_cue_mult=a.weak_cue_mult, weak_cue_frac=a.weak_cue_frac, ou_sigma=a.ou_sigma,
                            rest_steps=a.rest_steps, consol_steps=a.consol_steps, dt=a.dt,
                            write_rule=a.write_rule, btsp_elig_tau=a.btsp_elig_tau, btsp_plat_tau=a.btsp_plat_tau,
-                           btsp_eta=a.btsp_eta, btsp_w_max=a.btsp_w_max),
+                           btsp_eta=a.btsp_eta, btsp_w_max=a.btsp_w_max, fwd_delay_steps=a.fwd_delay_steps),
                "elapsed_seconds": round(time.time() - t0, 1), "verdict": verdict, "per_seed": per, **summary_extra}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))

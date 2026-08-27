@@ -1,0 +1,1086 @@
+{
+  "probe": "gap5_ecker_replay_learn_through_use",
+  "mechanism": "Ecker-2022 AdEx CA3 discrete forward SWR replay -> directional replay-driven STDP consolidation (offline learn-through-use), lesion-the-replay controlled",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_mem": 6,
+  "asm_size": 80,
+  "write_rule": "btsp",
+  "cfg": {
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "n_laps": 14,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "swr_period": 650,
+    "cue_pa": 9000.0,
+    "cue_frac": 0.6,
+    "weak_cue_mult": 0.5,
+    "weak_cue_frac": 0.35,
+    "ou_sigma": 40.0,
+    "rest_steps": 9000,
+    "consol_steps": 6500,
+    "dt": 0.1,
+    "write_rule": "btsp",
+    "btsp_elig_tau": 80.0,
+    "btsp_plat_tau": 1.0,
+    "btsp_eta": 0.001,
+    "btsp_w_max": 900.0,
+    "fwd_delay_steps": 90
+  },
+  "elapsed_seconds": 131.1,
+  "verdict": "ECKER-REPLAY-LEARN-THROUGH-USE NO-GO 1/6 -- the store SEGMENTS (full-cue forward 1.000 vs chance 0.230) and replay drives DURABLE LESION-CONTROLLED plasticity (NO-SEED dw_fwd 0.00~0), but replay-driven STDP does NOT strengthen forward recall: it SYMMETRIZES the band (dw_fwd 203.6 vs dw_rev 170.9; adj_fwd 319.4->522.9); weak forward 1.000->0.807 (noseed 1.000). 1/6 directional. Next method: separated-volley conduction delay / inhibitory gap-coding / BTSP-eligibility write. | forward conduction delay 90 steps (9.0ms); volley_overlap 0.280",
+  "per_seed": [
+    {
+      "seed": 42,
+      "band_before": {
+        "adj_fwd": 319.35125732421875,
+        "adj_rev": 11.498048782348633,
+        "adj_within": 60.0,
+        "ratio": 27.774387060739787,
+        "fwd_max": 872.9390258789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 245.5580291748047,
+        "dw_rev": 219.4591064453125,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.29272659833748466,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 564.9093017578125,
+        "adj_rev": 230.95716857910156,
+        "adj_within": 60.0,
+        "ratio": 2.4459483342009114,
+        "fwd_max": 893.7723388671875
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 319.35125732421875,
+          "adj_rev": 11.498048782348633,
+          "adj_within": 60.0,
+          "ratio": 27.774387060739787,
+          "fwd_max": 872.9390258789062
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 3
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.1736111111111111,
+          "n_multi": 9,
+          "per_asm_active": [
+            3,
+            8,
+            8,
+            7,
+            9,
+            7
+          ],
+          "seed_first": 1.0,
+          "duty": 0.03922222222222222,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 319.35125732421875,
+            "adj_rev": 11.498048782348633,
+            "adj_within": 60.0,
+            "ratio": 27.774387060739787,
+            "fwd_max": 872.9390258789062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.014814814814814814,
+          "n_multi": 3,
+          "per_asm_active": [
+            3,
+            7,
+            4,
+            4,
+            5,
+            3
+          ],
+          "seed_first": 1.0,
+          "duty": 0.011222222222222222,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 319.35125732421875,
+            "adj_rev": 11.498048782348633,
+            "adj_within": 60.0,
+            "ratio": 27.774387060739787,
+            "fwd_max": 872.9390258789062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.18179012345679013,
+          "n_multi": 9,
+          "per_asm_active": [
+            3,
+            8,
+            8,
+            8,
+            8,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06711111111111111,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 564.9093017578125,
+            "adj_rev": 230.95716857910156,
+            "adj_within": 60.0,
+            "ratio": 2.4459483342009114,
+            "fwd_max": 893.7723388671875,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8333333333333334,
+          "reverse": 0.0,
+          "chance": 0.12662037037037036,
+          "n_multi": 6,
+          "per_asm_active": [
+            3,
+            8,
+            6,
+            4,
+            5,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.04377777777777778,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 564.9093017578125,
+            "adj_rev": 230.95716857910156,
+            "adj_within": 60.0,
+            "ratio": 2.4459483342009114,
+            "fwd_max": 893.7723388671875,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": true,
+        "robustness_gain": true,
+        "recall_change": true,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 245.558,
+        "dw_rev": 219.459,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "band_before": {
+        "adj_fwd": 320.0132141113281,
+        "adj_rev": 11.548107147216797,
+        "adj_within": 60.0,
+        "ratio": 27.71131320758955,
+        "fwd_max": 873.7046508789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 145.64154052734375,
+        "dw_rev": 114.00756072998047,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.3083242026206252,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 465.6547546386719,
+        "adj_rev": 125.55567169189453,
+        "adj_within": 60.0,
+        "ratio": 3.708751252443286,
+        "fwd_max": 888.1193237304688
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 320.0132141113281,
+          "adj_rev": 11.548107147216797,
+          "adj_within": 60.0,
+          "ratio": 27.71131320758955,
+          "fwd_max": 873.7046508789062
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 6
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.20300925925925925,
+          "n_multi": 6,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            6,
+            6,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.035777777777777776,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.0132141113281,
+            "adj_rev": 11.548107147216797,
+            "adj_within": 60.0,
+            "ratio": 27.71131320758955,
+            "fwd_max": 873.7046508789062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2518518518518518,
+          "n_multi": 6,
+          "per_asm_active": [
+            2,
+            4,
+            6,
+            6,
+            6,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.007333333333333333,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.0132141113281,
+            "adj_rev": 11.548107147216797,
+            "adj_within": 60.0,
+            "ratio": 27.71131320758955,
+            "fwd_max": 873.7046508789062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.17281746031746031,
+          "n_multi": 7,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            7,
+            6,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.05711111111111111,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 465.6547546386719,
+            "adj_rev": 125.55567169189453,
+            "adj_within": 60.0,
+            "ratio": 3.708751252443286,
+            "fwd_max": 888.1193237304688,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8,
+          "reverse": 0.0,
+          "chance": 0.08361111111111111,
+          "n_multi": 5,
+          "per_asm_active": [
+            2,
+            4,
+            5,
+            7,
+            4,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.025666666666666667,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 465.6547546386719,
+            "adj_rev": 125.55567169189453,
+            "adj_within": 60.0,
+            "ratio": 3.708751252443286,
+            "fwd_max": 888.1193237304688,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": false,
+        "robustness_gain": false,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 145.642,
+        "dw_rev": 114.008,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "band_before": {
+        "adj_fwd": 320.32623291015625,
+        "adj_rev": 11.51583194732666,
+        "adj_within": 60.0,
+        "ratio": 27.816160775472092,
+        "fwd_max": 876.070556640625,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 239.19464111328125,
+        "dw_rev": 205.0043182373047,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.36413863407431896,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 559.5208740234375,
+        "adj_rev": 216.5201416015625,
+        "adj_within": 60.0,
+        "ratio": 2.5841516169570053,
+        "fwd_max": 891.5625
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 320.32623291015625,
+          "adj_rev": 11.51583194732666,
+          "adj_within": 60.0,
+          "ratio": 27.816160775472092,
+          "fwd_max": 876.070556640625
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 4
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2557291666666667,
+          "n_multi": 8,
+          "per_asm_active": [
+            3,
+            3,
+            4,
+            8,
+            8,
+            9
+          ],
+          "seed_first": 1.0,
+          "duty": 0.04411111111111111,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.32623291015625,
+            "adj_rev": 11.51583194732666,
+            "adj_within": 60.0,
+            "ratio": 27.816160775472092,
+            "fwd_max": 876.070556640625,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.1673611111111111,
+          "n_multi": 4,
+          "per_asm_active": [
+            3,
+            2,
+            3,
+            7,
+            5,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.013222222222222222,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.32623291015625,
+            "adj_rev": 11.51583194732666,
+            "adj_within": 60.0,
+            "ratio": 27.816160775472092,
+            "fwd_max": 876.070556640625,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.17321428571428574,
+          "n_multi": 7,
+          "per_asm_active": [
+            3,
+            3,
+            4,
+            9,
+            7,
+            9
+          ],
+          "seed_first": 1.0,
+          "duty": 0.07244444444444445,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 559.5208740234375,
+            "adj_rev": 216.5201416015625,
+            "adj_within": 60.0,
+            "ratio": 2.5841516169570053,
+            "fwd_max": 891.5625,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.6,
+          "reverse": 0.0,
+          "chance": 0.058611111111111114,
+          "n_multi": 5,
+          "per_asm_active": [
+            3,
+            2,
+            5,
+            6,
+            4,
+            5
+          ],
+          "seed_first": 1.0,
+          "duty": 0.049555555555555554,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 559.5208740234375,
+            "adj_rev": 216.5201416015625,
+            "adj_within": 60.0,
+            "ratio": 2.5841516169570053,
+            "fwd_max": 891.5625,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": false,
+        "robustness_gain": true,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 239.195,
+        "dw_rev": 205.004,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "band_before": {
+        "adj_fwd": 314.6484069824219,
+        "adj_rev": 11.613385200500488,
+        "adj_within": 60.0,
+        "ratio": 27.093599458740233,
+        "fwd_max": 874.7079467773438,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 233.26736450195312,
+        "dw_rev": 219.99163818359375,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.24360571569071443,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 547.915771484375,
+        "adj_rev": 231.6050262451172,
+        "adj_within": 60.0,
+        "ratio": 2.3657335091877196,
+        "fwd_max": 893.2240600585938
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 314.6484069824219,
+          "adj_rev": 11.613385200500488,
+          "adj_within": 60.0,
+          "ratio": 27.093599458740233,
+          "fwd_max": 874.7079467773438
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 5
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.10625,
+          "n_multi": 8,
+          "per_asm_active": [
+            3,
+            6,
+            7,
+            8,
+            6,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.03266666666666666,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.6484069824219,
+            "adj_rev": 11.613385200500488,
+            "adj_within": 60.0,
+            "ratio": 27.093599458740233,
+            "fwd_max": 874.7079467773438,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.11861111111111111,
+          "n_multi": 5,
+          "per_asm_active": [
+            3,
+            6,
+            5,
+            6,
+            5,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.006222222222222222,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 314.6484069824219,
+            "adj_rev": 11.613385200500488,
+            "adj_within": 60.0,
+            "ratio": 27.093599458740233,
+            "fwd_max": 874.7079467773438,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.8181818181818182,
+          "reverse": 0.09090909090909091,
+          "chance": 0.25075757575757573,
+          "n_multi": 11,
+          "per_asm_active": [
+            3,
+            6,
+            9,
+            7,
+            6,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06977777777777777,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 547.915771484375,
+            "adj_rev": 231.6050262451172,
+            "adj_within": 60.0,
+            "ratio": 2.3657335091877196,
+            "fwd_max": 893.2240600585938,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.8571428571428571,
+          "reverse": 0.0,
+          "chance": 0.1630952380952381,
+          "n_multi": 7,
+          "per_asm_active": [
+            3,
+            6,
+            7,
+            7,
+            4,
+            3
+          ],
+          "seed_first": 1.0,
+          "duty": 0.035,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 547.915771484375,
+            "adj_rev": 231.6050262451172,
+            "adj_within": 60.0,
+            "ratio": 2.3657335091877196,
+            "fwd_max": 893.2240600585938,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": false,
+        "robustness_gain": true,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 233.267,
+        "dw_rev": 219.992,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "band_before": {
+        "adj_fwd": 321.66363525390625,
+        "adj_rev": 11.509712219238281,
+        "adj_within": 60.0,
+        "ratio": 27.94714838449663,
+        "fwd_max": 874.6446533203125,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 163.8805694580078,
+        "dw_rev": 117.09072875976562,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.18433909172001978,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 485.5442199707031,
+        "adj_rev": 128.60044860839844,
+        "adj_within": 60.0,
+        "ratio": 3.77560284761708,
+        "fwd_max": 891.2525024414062
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 321.66363525390625,
+          "adj_rev": 11.509712219238281,
+          "adj_within": 60.0,
+          "ratio": 27.94714838449663,
+          "fwd_max": 874.6446533203125
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 3
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.2625,
+          "n_multi": 8,
+          "per_asm_active": [
+            0,
+            3,
+            8,
+            5,
+            6,
+            9
+          ],
+          "seed_first": 1.0,
+          "duty": 0.03877777777777778,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 321.66363525390625,
+            "adj_rev": 11.509712219238281,
+            "adj_within": 60.0,
+            "ratio": 27.94714838449663,
+            "fwd_max": 874.6446533203125,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01944444444444444,
+          "n_multi": 3,
+          "per_asm_active": [
+            0,
+            3,
+            7,
+            3,
+            5,
+            6
+          ],
+          "seed_first": 1.0,
+          "duty": 0.010333333333333333,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 321.66363525390625,
+            "adj_rev": 11.509712219238281,
+            "adj_within": 60.0,
+            "ratio": 27.94714838449663,
+            "fwd_max": 874.6446533203125,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.23645833333333333,
+          "n_multi": 8,
+          "per_asm_active": [
+            0,
+            3,
+            8,
+            5,
+            7,
+            8
+          ],
+          "seed_first": 1.0,
+          "duty": 0.054,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 485.5442199707031,
+            "adj_rev": 128.60044860839844,
+            "adj_within": 60.0,
+            "ratio": 3.77560284761708,
+            "fwd_max": 891.2525024414062,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01944444444444444,
+          "n_multi": 3,
+          "per_asm_active": [
+            0,
+            3,
+            7,
+            3,
+            4,
+            5
+          ],
+          "seed_first": 1.0,
+          "duty": 0.03822222222222222,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 485.5442199707031,
+            "adj_rev": 128.60044860839844,
+            "adj_within": 60.0,
+            "ratio": 3.77560284761708,
+            "fwd_max": 891.2525024414062,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": true,
+        "robustness_gain": false,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 163.881,
+        "dw_rev": 117.091,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "band_before": {
+        "adj_fwd": 320.1249084472656,
+        "adj_rev": 11.497782707214355,
+        "adj_within": 60.0,
+        "ratio": 27.842316783948373,
+        "fwd_max": 873.2434692382812,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "n_env": 10,
+        "dw_fwd": 193.91322326660156,
+        "dw_rev": 149.94790649414062,
+        "dw_fwd_first_half": 0.0,
+        "dw_fwd_second_half": 0.0,
+        "volley_overlap": 0.28547852869097834,
+        "changed": true
+      },
+      "band_after": {
+        "adj_fwd": 514.0381469726562,
+        "adj_rev": 161.44569396972656,
+        "adj_within": 60.0,
+        "ratio": 3.1839693852042035,
+        "fwd_max": 890.5186767578125
+      },
+      "no_seed": {
+        "n_env": 0,
+        "dw_fwd": 0.0,
+        "dw_rev": 0.0,
+        "band_after": {
+          "adj_fwd": 320.1249084472656,
+          "adj_rev": 11.497782707214355,
+          "adj_within": 60.0,
+          "ratio": 27.842316783948373,
+          "fwd_max": 873.2434692382812
+        },
+        "weak_forward": 1.0,
+        "weak_multi": 3
+      },
+      "reads": {
+        "full_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.37621527777777775,
+          "n_multi": 8,
+          "per_asm_active": [
+            1,
+            4,
+            5,
+            8,
+            5,
+            5
+          ],
+          "seed_first": 1.0,
+          "duty": 0.04011111111111111,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.1249084472656,
+            "adj_rev": 11.497782707214355,
+            "adj_within": 60.0,
+            "ratio": 27.842316783948373,
+            "fwd_max": 873.2434692382812,
+            "fwd_min": 15.0
+          },
+          "tag": "full_before"
+        },
+        "weak_before": {
+          "forward": 1.0,
+          "reverse": 0.0,
+          "chance": 0.01712962962962963,
+          "n_multi": 3,
+          "per_asm_active": [
+            1,
+            4,
+            4,
+            7,
+            5,
+            4
+          ],
+          "seed_first": 1.0,
+          "duty": 0.009333333333333334,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 320.1249084472656,
+            "adj_rev": 11.497782707214355,
+            "adj_within": 60.0,
+            "ratio": 27.842316783948373,
+            "fwd_max": 873.2434692382812,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_before"
+        },
+        "full_after": {
+          "forward": 0.875,
+          "reverse": 0.125,
+          "chance": 0.23975694444444443,
+          "n_multi": 8,
+          "per_asm_active": [
+            1,
+            4,
+            5,
+            9,
+            7,
+            5
+          ],
+          "seed_first": 1.0,
+          "duty": 0.06077777777777778,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 514.0381469726562,
+            "adj_rev": 161.44569396972656,
+            "adj_within": 60.0,
+            "ratio": 3.1839693852042035,
+            "fwd_max": 890.5186767578125,
+            "fwd_min": 15.0
+          },
+          "tag": "full_after"
+        },
+        "weak_after": {
+          "forward": 0.75,
+          "reverse": 0.25,
+          "chance": 0.09409722222222222,
+          "n_multi": 4,
+          "per_asm_active": [
+            1,
+            4,
+            4,
+            8,
+            4,
+            3
+          ],
+          "seed_first": 1.0,
+          "duty": 0.041,
+          "frozen": true,
+          "band": {
+            "adj_fwd": 514.0381469726562,
+            "adj_rev": 161.44569396972656,
+            "adj_within": 60.0,
+            "ratio": 3.1839693852042035,
+            "fwd_max": 890.5186767578125,
+            "fwd_min": 15.0
+          },
+          "tag": "weak_after"
+        }
+      },
+      "checks": {
+        "replay_deepens": true,
+        "directional": true,
+        "recall_maintained": false,
+        "robustness_gain": true,
+        "recall_change": false,
+        "lesion_controlled": true,
+        "bounded": true,
+        "dw_fwd": 193.913,
+        "dw_rev": 149.948,
+        "dw_noseed": 0.0,
+        "seed_hash_ok": null
+      },
+      "seed_go": false
+    }
+  ],
+  "GO": false,
+  "n_go": 1,
+  "status": "NO-GO",
+  "dw_fwd": 203.57589467366537,
+  "dw_rev": 170.91687647501627,
+  "dw_fwd_noseed": 0.0,
+  "band_adj_fwd_before": 319.3546091715495,
+  "band_adj_fwd_after": 522.9305114746094,
+  "band_adj_rev_after": 182.44735844930014,
+  "full_forward_before": 1.0,
+  "full_forward_after": 0.9012445887445888,
+  "weak_forward_before": 1.0,
+  "weak_forward_after": 0.8067460317460317,
+  "weak_forward_noseed": 1.0,
+  "chance": 0.2295524691358025,
+  "fwd_delay_steps": 90,
+  "volley_overlap": 0.27976879518902353,
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "the store SEGMENTS: full-cue forward replay ignites above chance (a memory to consolidate exists)",
+      "ok": true,
+      "detail": "1 vs floor 0.229552",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "plasticity is LIVE during replay: seeded consolidation moved the forward band (|dw_fwd| > 0)",
+      "ok": true,
+      "detail": "measured=203.57589467366537 expect=<function main.<locals>.<lambda> at 0x7f093c3cbf60>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "LESION-THE-REPLAY ENGAGED: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER, so the NO-SEED arm is a true null and the negative is about the replay's DIRECTION, not a dead lever",
+      "ok": true,
+      "detail": "treatment=203.576 control=0 |sep|=203.576 > 0",
+      "note": ""
+    }
+  ],
+  "decided": {
+    "label": "Ecker AdEx CA3: does OFFLINE replay durably STRENGTHEN forward-ordered recall via replay-driven STDP (lesion-the-replay controlled)?",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "the store SEGMENTS: full-cue forward replay ignites above chance (a memory to consolidate exists)",
+        "ok": true,
+        "detail": "1 vs floor 0.229552",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "plasticity is LIVE during replay: seeded consolidation moved the forward band (|dw_fwd| > 0)",
+        "ok": true,
+        "detail": "measured=203.57589467366537 expect=<function main.<locals>.<lambda> at 0x7f093c3cbf60>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "LESION-THE-REPLAY ENGAGED: seeded forward-deepening vs NO-SEED forward-deepening -- must DIFFER, so the NO-SEED arm is a true null and the negative is about the replay's DIRECTION, not a dead lever",
+        "ok": true,
+        "detail": "treatment=203.576 control=0 |sep|=203.576 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "within-assembly recurrence + assembly identity (pre-formed cell groups; only the inter-assembly SEQUENCE band is plastic)",
+        "why": "scope: this tests replay-driven consolidation of the learned forward sequence, not assembly formation"
+      }
+    ],
+    "chance": 0.2295524691358025
+  }
+}
