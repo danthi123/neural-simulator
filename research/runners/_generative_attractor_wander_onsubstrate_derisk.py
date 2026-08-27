@@ -39,6 +39,24 @@ operating point for this exact BTSP-formation + dendritic-completion mechanism f
 runner's own reference scale). Everything downstream — BTSP one-shot formation, the dAP two-compartment plateau,
 the apical UP-state read, the lesion/no-encoding/permuted-cue teeth — is the PRODUCTION mechanism, unmodified.
 
+2026-08-27 PRODUCTION-SCALE PORT (board #104 rung 2, closes both blockers this finding's "Residual" named): `--emergent`
+threads `_gap5_emergent_end_to_end_episodic_loop_derisk.emergent_assemblies` (the IDENTICAL DG-selected sparse-detonator
+membership `_episodic_dap_dialogue_memory.EpisodicDapMemory` — the production D5/episodic organ — actually uses) through
+`assemblies_ext` into `_build_dap_readout`/`make_readout`/`form_btsp_multi`, exactly as that production organ composes
+them (n_ca3 lifts to whatever the emergent selection returns, i.e. 2000 at R1's default config; train_events defaults to
+40, the ALREADY-VALIDATED GO_DEFAULTS value for this SAME mechanism at this SAME scale, not re-derived). This closes
+BOTH declared blockers at once: (i) reduced n_ca3=400 -> production n_ca3=2000, (ii) PRE-ASSIGNED/direct-index cue
+membership -> the emergent, BTSP-formed membership the production organ actually stores concepts into. The `assemblies_
+ext` array is computed ONCE per seed and reused verbatim across every fresh per-condition bridge rebuild below (never
+re-called) — emergent membership is measured non-deterministic ACROSS separate builds (FMA/summation-order drift, see
+_episodic_dap_dialogue_memory.py's kthresh note), so re-deriving it per read would silently decouple the read from what
+was actually BTSP-formed; reusing one fixed array is the SAME discipline `EpisodicDapMemory.__init__`/`.store()` already
+use. `blend_cells_each` stays at the SAME calibrated absolute count (3) — the finding's own scale-invariance argument
+(driven by ABSOLUTE cued-neighbour count, not assembly size) is the reason this is a re-run, not a re-tune. `build_
+production_store`/`blend_settle_production` below factor the build+BTSP-form / blend-read steps out of `run_seed` into
+standalone reusable functions — the SAME code path `webapp/continuous_engine.py`'s live wiring calls, so there is
+exactly ONE implementation of the production-scale mechanism, not a duplicate for the offline verify vs. the live wire.
+
 METRICS (mirrors the numpy de-risk's definitions, mapped onto per-assembly-membership UP-fraction instead of
 binary-pattern overlap):
   novelty        = max_m UP-fraction(assembly m | blended cue)      -- low = not fully re-forming any ONE stored item
@@ -59,6 +77,10 @@ ANTI-CHEATS:
 
 Run:  SIM_BACKEND=numpy python -m research.runners._generative_attractor_wander_onsubstrate_derisk \
         --seeds 42 43 44 100 101 102 --json research/findings/raw/_generative_attractor_wander_onsubstrate/evidence.json
+Run (production scale, emergent DG-selected n_ca3=2000, GPU):
+      SIM_BACKEND=cupy python -m research.runners._generative_attractor_wander_onsubstrate_derisk --emergent \
+        --seeds 42 43 44 100 101 102 \
+        --json research/findings/raw/_generative_attractor_wander_onsubstrate/production_n_ca3_2000_6seed.json
 """
 from __future__ import annotations
 
@@ -148,9 +170,11 @@ def _cue_cells(assembly, seed, tag, cue_frac):
     return se[:n_cue]
 
 
-def _build_readout(seed, p, n_mem):
+def _build_readout(seed, p, n_mem, assemblies_ext=None):
     """The bare readout harness (bridge + R), NO formation -- cheap (~0.5s), used to get a FRESH transient-state
-    bridge for every read condition below."""
+    bridge for every read condition below. assemblies_ext (ADDITIVE, default None => byte-identical): a fixed list
+    of CA3 GLOBAL-index arrays (e.g. from `emergent_assemblies`) to use as membership INSTEAD of make_readout's
+    internal seed-deterministic random permutation -- forwarded verbatim to `make_readout`."""
     bridge = _build_dap_readout(
         seed, n_ca3=p["n_ca3"], ca3_density=p["ca3_density"], ca3_fb_inhib=p["ca3_fb_inhib"],
         k_thresh=p["kthresh"], plateau_strength=p["plateau_strength"], apical_R=p["apical_R"],
@@ -158,17 +182,38 @@ def _build_readout(seed, p, n_mem):
         apical_gc=p["apical_gc"], apical_gc_read=p["apical_gc_read"], coincidence=True)
     R = make_readout(bridge, seed, n_assembly=n_mem, assembly_frac=p["assembly_frac"], cue_frac=p["cue_frac"],
                      drive_pA=p["drive_pA"], warm_steps=p["warm_steps"], read_steps=p["read_steps"],
-                     silence_steps=p["silence_steps"])
+                     silence_steps=p["silence_steps"], assemblies_ext=assemblies_ext)
     return bridge, R
 
 
-def run_seed(seed, *, p=None, n_mem=3, verbose=True):
-    from sim.backend import get_backend, to_host
-    p = dict(P) if p is None else p
-    cp, _ = get_backend()
+def _build_and_form(seed, n_mem, p, *, emergent=False):
+    """ONE build + ONE BTSP formation pass (the expensive part) -> the formed + baseline weight arrays + the
+    assembly membership actually formed. Factored out of `run_seed` so BOTH the offline anti-cheat verify
+    (`run_seed`) and the live production store (`build_production_store`, reused by webapp/continuous_engine.py)
+    share exactly ONE build+BTSP-form code path -- no duplicate mechanism.
 
-    # ---- ONE build + ONE BTSP formation pass (the expensive part) -> save the formed + baseline weight arrays ----
-    bridge, R = _build_readout(seed, p, n_mem)
+    emergent=False (default, byte-identical to pre-2026-08-27): assemblies_ext stays None throughout -> every fresh
+    bridge rebuild below reproduces the SAME pre-assigned membership via make_readout's own seed-deterministic
+    internal permutation (the existing, already-6/6-GO invariant this instrument already relied on).
+    emergent=True: calls `emergent_assemblies` ONCE (membership is measured non-deterministic ACROSS separate
+    bridge builds -- FMA/summation-order drift, see _episodic_dap_dialogue_memory.py's kthresh note -- so it must
+    NOT be re-called per read), overrides p['n_ca3'] to the emergent selection's own CA3 range, and threads that
+    ONE fixed array through every downstream build via assemblies_ext -- identical to how the production
+    EpisodicDapMemory organ composes it."""
+    p = dict(p)
+    assemblies_ext = None
+    if emergent:
+        from research.runners._gap5_emergent_end_to_end_episodic_loop_derisk import emergent_assemblies
+        assemblies_ext, ca3_range = emergent_assemblies(seed, n_patterns=n_mem)
+        p["n_ca3"] = int(ca3_range[2])
+        if int(p.get("train_events", 0)) == int(P["train_events"]):
+            # the reduced-scale (72-cell pre-assigned) operating point bumped train_events 40->60 (see the P dict's
+            # comment); at the production emergent scale, reuse GO_DEFAULTS' train_events=40 -- the ALREADY-VALIDATED
+            # value _episodic_dap_dialogue_memory.py's own 6-seed GO uses for this SAME mechanism at this SAME scale
+            # -- rather than re-deriving. Only applied when the caller left train_events at its non-emergent default.
+            p["train_events"] = 40
+
+    bridge, R = _build_readout(seed, p, n_mem, assemblies_ext=assemblies_ext)
     assemblies = R.assemblies
     sizes = [int(len(a)) for a in assemblies]
     baseline_weights = R.C.data.copy()   # UNFORMED recurrent weights -- the anti-cheat (B) lesion target
@@ -179,12 +224,87 @@ def run_seed(seed, *, p=None, n_mem=3, verbose=True):
     diag = form_btsp_multi(seed, form_build_kwargs, R, btsp_w_max=p["wmax"], btsp_lr=p["btsp_lr"],
                            encode_drive=p["encode_drive"], encode_plateau_pA=p["encode_plateau_pA"],
                            train_events=p["train_events"], drive_steps=p["drive_steps"],
-                           reset_steps=p["reset_steps"], plateau=True)
+                           reset_steps=p["reset_steps"], plateau=True, assemblies_ext=assemblies_ext)
     w_within, cross_dw, nonmem_dw = diag["w_within"], diag["cross_dw"], diag["nonmem_dw"]
     genuine = bool(w_within > 20.0 and abs(cross_dw) < 0.05 * max(w_within, 1.0)
                    and abs(nonmem_dw) < 0.05 * max(w_within, 1.0))
     formed_weights = R.C.data.copy()
     del bridge, R   # the ONLY bridge that ever runs a drive/read is a FRESH one, per condition, below
+    return dict(p=p, assemblies_ext=assemblies_ext, assemblies=assemblies, sizes=sizes,
+               baseline_weights=baseline_weights, formed_weights=formed_weights,
+               diag=diag, genuine_formation=genuine)
+
+
+def build_production_store(seed, n_mem, *, p=None):
+    """PRODUCTION-SCALE store builder: emergent n_ca3=2000 DG-selected membership, BTSP-formed. Thin wrapper around
+    `_build_and_form(..., emergent=True)` returning exactly the fields `blend_settle_production` needs. This is the
+    ONE build+BTSP-form call `webapp/continuous_engine.py`'s live ideation wiring makes (once per session's concept
+    list, cached -- see that module's `_SPIKING_IDEATE_STORE`), and the same call `run_seed(emergent=True)` makes
+    for the offline 6-seed anti-cheat verify -- one mechanism, two callers."""
+    built = _build_and_form(seed, n_mem, dict(P) if p is None else p, emergent=True)
+    return dict(seed=int(seed), n_mem=int(n_mem), p=built["p"], assemblies_ext=built["assemblies_ext"],
+               assemblies=built["assemblies"], sizes=built["sizes"],
+               baseline_weights=built["baseline_weights"], formed_weights=built["formed_weights"],
+               diag=built["diag"], genuine_formation=built["genuine_formation"])
+
+
+def blend_settle_production(store, iA, iB, *, hold_steps=None):
+    """Read the blended-cue dAP completion for basins iA,iB of an already-formed `store` (from
+    `build_production_store`). Returns the SAME-SHAPED dict `_ideation_blend_settle` (webapp/continuous_engine.py's
+    numpy stand-in) returns (novelty_max_overlap, blend_balance, blend_vs_other, fixed_point) so either source can
+    feed the identical downstream ideation gate (IDEATE_NOVELTY_MAX etc.) unmodified. Returns None if the store's
+    formation was not genuine, or iA/iB are invalid -- an honest 'no idea surfaced' rather than a fake read.
+    FRESH bridge per read (the measured instrument-contamination fix this module's docstring documents)."""
+    from sim.backend import get_backend, to_host
+    p, n_mem = store["p"], store["n_mem"]
+    seed, assemblies_ext = store["seed"], store["assemblies_ext"]
+    if not store["genuine_formation"] or n_mem < 2 or not (0 <= iA < n_mem) or not (0 <= iB < n_mem) or iA == iB:
+        return None
+    cp, _ = get_backend()
+    hold = p["hold_steps"] if hold_steps is None else hold_steps
+
+    def _read_fresh(cue_ids, *, weights, hold=0):
+        b, r = _build_readout(seed, p, n_mem, assemblies_ext=assemblies_ext)
+        r.C.data[:] = weights
+        up_driven, up_release = _population_up(b, r, cue_ids, cp=cp, to_host=to_host, drive_pA=p["drive_pA"],
+                                               warm_steps=p["warm_steps"], read_steps=p["read_steps"],
+                                               up_thresh=p["up_thresh"], hold_steps=hold)
+        out = ([_frac(up_driven, r.assemblies[m]) for m in range(n_mem)],
+               [_frac(up_release, r.assemblies[m]) for m in range(n_mem)] if hold else None)
+        del b, r
+        return out
+
+    assemblies = store["assemblies"]
+    cueA = _cue_cells(assemblies[iA], seed, iA, p["cue_frac"])
+    cueB = _cue_cells(assemblies[iB], seed, iB, p["cue_frac"])
+    n_blend = max(1, int(p["blend_cells_each"]))
+    blend_cue = np.concatenate([cueA[:n_blend], cueB[:n_blend]])
+    ov_blend, ov_blend_release = _read_fresh(blend_cue, weights=store["formed_weights"], hold=hold)
+
+    novelty = max(ov_blend)
+    balance = min(ov_blend[iA], ov_blend[iB])
+    others_list = [ov_blend[m] for m in range(n_mem) if m not in (iA, iB)]
+    others = max(others_list) if others_list else 0.0
+    persist_gap = None
+    if ov_blend_release:
+        persist_gap = max(abs(ov_blend[iA] - ov_blend_release[iA]), abs(ov_blend[iB] - ov_blend_release[iB]))
+    fixed_point = bool(persist_gap is not None and persist_gap < 0.20)
+    return {"novelty_max_overlap": round(float(novelty), 3), "blend_balance": round(float(balance), 3),
+            "blend_vs_other": round(float(others), 3), "fixed_point": fixed_point,
+            "persistence_gap": round(float(persist_gap), 3) if persist_gap is not None else None}
+
+
+def run_seed(seed, *, p=None, n_mem=3, verbose=True, emergent=False):
+    from sim.backend import get_backend, to_host
+    p = dict(P) if p is None else p
+    cp, _ = get_backend()
+
+    # ---- ONE build + ONE BTSP formation pass (the expensive part) -> save the formed + baseline weight arrays ----
+    built = _build_and_form(seed, n_mem, p, emergent=emergent)
+    p = built["p"]; assemblies_ext = built["assemblies_ext"]; assemblies = built["assemblies"]
+    sizes = built["sizes"]; baseline_weights = built["baseline_weights"]; formed_weights = built["formed_weights"]
+    diag = built["diag"]; genuine = built["genuine_formation"]
+    w_within, cross_dw, nonmem_dw = diag["w_within"], diag["cross_dw"], diag["nonmem_dw"]
 
     # MEASURED CONTAMINATION (research/findings/raw/_generative_attractor_wander_onsubstrate/*): a second read on
     # an ALREADY-DRIVEN bridge collapses (e.g. a blend re-read fell from [1.0, 0.972, 0.0] to [0.056, 0.0, 0.0]) --
@@ -197,7 +317,7 @@ def run_seed(seed, *, p=None, n_mem=3, verbose=True):
     # positive-control single-cue completion too (STP dynamics are load-bearing for the plateau reaching
     # threshold), so isolation-by-fresh-bridge is the correct fix, not disabling the mechanism.
     def _read_fresh(cue_ids, *, weights, hold=0):
-        b, r = _build_readout(seed, p, n_mem)
+        b, r = _build_readout(seed, p, n_mem, assemblies_ext=assemblies_ext)
         r.C.data[:] = weights
         up_driven, up_release = _population_up(b, r, cue_ids, cp=cp, to_host=to_host, drive_pA=p["drive_pA"],
                                                warm_steps=p["warm_steps"], read_steps=p["read_steps"],
@@ -230,7 +350,7 @@ def run_seed(seed, *, p=None, n_mem=3, verbose=True):
 
     # ---- anti-cheat (C): NOISE cue -- same size, cells outside EVERY stored assembly's own membership + A/B's cue --
     excluded = all_members | set(int(x) for x in cueA) | set(int(x) for x in cueB)
-    _bx, _rx = _build_readout(seed, p, n_mem)   # deterministic given seed -- only its ca3_idx list is used
+    _bx, _rx = _build_readout(seed, p, n_mem, assemblies_ext=assemblies_ext)   # deterministic -- only ca3_idx used
     ca3_ids = list(_rx.ca3_idx)
     del _bx, _rx
     pool = np.asarray([g for g in ca3_ids if int(g) not in excluded], dtype=np.int64)
@@ -250,7 +370,8 @@ def run_seed(seed, *, p=None, n_mem=3, verbose=True):
     untrained_best = max(ov_untrained) if ov_untrained else 0.0
 
     row = dict(
-        seed=seed, assembly_sizes=sizes, w_within=round(w_within, 2), cross_dw=round(cross_dw, 4),
+        seed=seed, n_ca3=p["n_ca3"], emergent=bool(emergent), assembly_sizes=sizes,
+        w_within=round(w_within, 2), cross_dw=round(cross_dw, 4),
         nonmem_dw=round(nonmem_dw, 4), genuine_formation=genuine,
         novelty_max_overlap=round(novelty, 3), blend_balance_min=round(balance, 3),
         blend_overlap_others=round(others, 3), persistence_gap=round(persist_gap, 3),
@@ -275,21 +396,32 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
     ap.add_argument("--n-mem", type=int, default=3)
     ap.add_argument("--n-ca3", type=int, default=P["n_ca3"])
-    ap.add_argument("--train-events", type=int, default=P["train_events"])
+    ap.add_argument("--train-events", type=int, default=None,
+                    help="default: P['train_events'] (60) normally, or 40 (the production GO_DEFAULTS value) "
+                         "when --emergent is set -- see _build_and_form's comment.")
+    ap.add_argument("--emergent", action="store_true",
+                    help="PRODUCTION-SCALE membership: emergent DG-selected assemblies via "
+                         "_gap5_emergent_end_to_end_episodic_loop_derisk.emergent_assemblies (n_ca3 lifts to "
+                         "whatever that selection returns, i.e. 2000 at its default R1 config) instead of the "
+                         "reduced-scale PRE-ASSIGNED n_ca3=400 membership. --n-ca3 is ignored when set.")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
 
-    p = dict(P); p["n_ca3"] = a.n_ca3; p["train_events"] = a.train_events
+    p = dict(P); p["n_ca3"] = a.n_ca3
+    p["train_events"] = a.train_events if a.train_events is not None else P["train_events"]
     print(f"[GENERATIVE ATTRACTOR WANDER on-substrate de-risk, board #104] backend={os.environ.get('SIM_BACKEND')} "
-          f"n_ca3={p['n_ca3']} assembly_frac={p['assembly_frac']} kthresh={p['kthresh']} blend_cells_each="
+          f"emergent={a.emergent} n_ca3={'<emergent-selected>' if a.emergent else p['n_ca3']} "
+          f"assembly_frac={p['assembly_frac']} kthresh={p['kthresh']} blend_cells_each="
           f"{p['blend_cells_each']} | BLENDED cue ({p['blend_cells_each']} of stored-A's cue-eligible cells + "
           f"{p['blend_cells_each']} of stored-B's) into the SAME two-compartment dendritic dAP bistable-latch "
           f"completion the D5/episodic production organ uses -> is the settled UP-state population a NOVEL "
           f"recombination (not equal to any single stored assembly) while staying STABLE (persists past cue "
           f"release)?", flush=True)
     t0 = time.time()
-    rows = [run_seed(s, p=p, n_mem=a.n_mem) for s in a.seeds]
+    rows = [run_seed(s, p=p, n_mem=a.n_mem, emergent=a.emergent) for s in a.seeds]
     elapsed = time.time() - t0
+    if a.emergent and rows:
+        p = dict(p); p["n_ca3"] = rows[0].get("n_ca3", p["n_ca3"])   # the emergent-selected n_ca3, for the record
     if a.json and rows:
         os.makedirs(os.path.dirname(a.json), exist_ok=True)
         json.dump({"rows": rows, "params": p, "elapsed_seconds": elapsed}, open(a.json, "w"), indent=1)
