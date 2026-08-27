@@ -143,6 +143,27 @@ class TieredFactStore:
     def query_patient(self, agent, action, order_fn=None):
         return self._tiered("query_patient", (agent, action), {"order_fn": order_fn})
 
+    def query_patient_source(self, agent, action, order_fn=None):
+        """Like `query_patient`, but also reports WHICH tier answered: `"buffer"` (the small recent-conversation
+        working set) or `"ltm"` (the query fell through the buffer's abstain to the cortical long-term store), or
+        `(None, None)` when both tiers abstained. Read-only, zero side effects beyond the identical per-tier reads
+        `query_patient` already performs (same calls, same order) -- this does not change `query_patient`'s own
+        behavior or add any extra composer read.
+
+        WHY. Callers that need to tell a STABLE long-term-memory recall apart from a recent conversational one
+        (e.g. `webapp/gnw_two_organ_bus.py`'s organ-B LTM-exemption lever, `BRAIN_GNW_ORGANB_LTM_EXEMPT`) cannot
+        do so from `query_patient`'s return value alone -- the answer looks identical either way. This is the
+        single place that exposes tier provenance for such a caller, so the distinction is made ONCE, off the
+        store's own read path, not re-derived ad hoc at each call site."""
+        r = self.buffer.query_patient(agent, action, order_fn=order_fn)
+        if r is not None:
+            return r, "buffer"
+        if self.ltm is not None:
+            r2 = self.ltm.query_patient(agent, action, order_fn=order_fn)
+            if r2 is not None:
+                return r2, "ltm"
+        return None, None
+
     def query_agent(self, action, patient):
         return self._tiered("query_agent", (action, patient), {})
 
