@@ -1,0 +1,241 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "B": 8,
+      "n_train_pos": 160,
+      "n_eval_pos": 400,
+      "epochs": 8,
+      "sub_read_window": 64,
+      "n_probes": 24,
+      "global_gain": 10.51882,
+      "gain_substrate_vs_linear_corr": 0.9521,
+      "perword_frac_fallback": 0.0,
+      "wcos_host_proxy": 0.0828,
+      "wcos_substrate_lesion": 0.0779,
+      "wcos_substrate_calib": 0.0791,
+      "wcos_substrate_calib_shuffle": 0.0,
+      "wcos_calib_over_lesion": 1.015,
+      "hostlin_host_proxy": 0.4683,
+      "hostlin_substrate_lesion": 0.4276,
+      "hostlin_substrate_calib": 0.4295,
+      "host_matmul_on_forward_substrate": 0,
+      "host_matmul_on_forward_calib": 0,
+      "seed_trap": {
+        "thr_hash_1": "a45d2385f84619f0",
+        "thr_hash_2": "a45d2385f84619f0",
+        "seeded": true
+      },
+      "arms": {
+        "host_proxy": {
+          "arm": "host_proxy",
+          "final_wcos": 0.0828,
+          "final_hostlinear_recov": 0.4683,
+          "trajectory": [
+            {
+              "epoch": 1,
+              "hostlinear_recov": 0.3916,
+              "weight_cosine": 0.0763
+            },
+            {
+              "epoch": 2,
+              "hostlinear_recov": 0.4042,
+              "weight_cosine": 0.0813
+            },
+            {
+              "epoch": 3,
+              "hostlinear_recov": 0.4023,
+              "weight_cosine": 0.083
+            },
+            {
+              "epoch": 4,
+              "hostlinear_recov": 0.465,
+              "weight_cosine": 0.0828
+            },
+            {
+              "epoch": 5,
+              "hostlinear_recov": 0.4854,
+              "weight_cosine": 0.0828
+            },
+            {
+              "epoch": 6,
+              "hostlinear_recov": 0.4905,
+              "weight_cosine": 0.0828
+            },
+            {
+              "epoch": 7,
+              "hostlinear_recov": 0.4857,
+              "weight_cosine": 0.0828
+            },
+            {
+              "epoch": 8,
+              "hostlinear_recov": 0.4683,
+              "weight_cosine": 0.0828
+            }
+          ],
+          "host_matmul_on_forward": 160,
+          "n_substrate_reads": 0,
+          "w_norm": 19.01,
+          "secs": 0.5
+        },
+        "substrate": {
+          "arm": "substrate",
+          "final_wcos": 0.0779,
+          "final_hostlinear_recov": 0.4276,
+          "trajectory": [
+            {
+              "epoch": 1,
+              "hostlinear_recov": 0.3013,
+              "weight_cosine": 0.0715
+            },
+            {
+              "epoch": 2,
+              "hostlinear_recov": 0.3102,
+              "weight_cosine": 0.0751
+            },
+            {
+              "epoch": 3,
+              "hostlinear_recov": 0.3279,
+              "weight_cosine": 0.0772
+            },
+            {
+              "epoch": 4,
+              "hostlinear_recov": 0.3551,
+              "weight_cosine": 0.0777
+            },
+            {
+              "epoch": 5,
+              "hostlinear_recov": 0.4511,
+              "weight_cosine": 0.0774
+            },
+            {
+              "epoch": 6,
+              "hostlinear_recov": 0.4595,
+              "weight_cosine": 0.0776
+            },
+            {
+              "epoch": 7,
+              "hostlinear_recov": 0.4337,
+              "weight_cosine": 0.0778
+            },
+            {
+              "epoch": 8,
+              "hostlinear_recov": 0.4276,
+              "weight_cosine": 0.0779
+            }
+          ],
+          "host_matmul_on_forward": 0,
+          "n_substrate_reads": 160,
+          "w_norm": 19.89,
+          "secs": 242.8
+        },
+        "substrate_calib": {
+          "arm": "substrate_calib",
+          "final_wcos": 0.0791,
+          "final_hostlinear_recov": 0.4295,
+          "trajectory": [
+            {
+              "epoch": 1,
+              "hostlinear_recov": 0.3248,
+              "weight_cosine": 0.0714
+            },
+            {
+              "epoch": 2,
+              "hostlinear_recov": 0.3285,
+              "weight_cosine": 0.0747
+            },
+            {
+              "epoch": 3,
+              "hostlinear_recov": 0.3649,
+              "weight_cosine": 0.078
+            },
+            {
+              "epoch": 4,
+              "hostlinear_recov": 0.3997,
+              "weight_cosine": 0.0789
+            },
+            {
+              "epoch": 5,
+              "hostlinear_recov": 0.4138,
+              "weight_cosine": 0.0785
+            },
+            {
+              "epoch": 6,
+              "hostlinear_recov": 0.4217,
+              "weight_cosine": 0.079
+            },
+            {
+              "epoch": 7,
+              "hostlinear_recov": 0.4293,
+              "weight_cosine": 0.079
+            },
+            {
+              "epoch": 8,
+              "hostlinear_recov": 0.4295,
+              "weight_cosine": 0.0791
+            }
+          ],
+          "host_matmul_on_forward": 0,
+          "n_substrate_reads": 160,
+          "w_norm": 20.35,
+          "secs": 241.8
+        },
+        "substrate_calib_shuffle": {
+          "arm": "substrate_calib_shuffle",
+          "final_wcos": 0.0,
+          "final_hostlinear_recov": 0.0,
+          "trajectory": [],
+          "host_matmul_on_forward": 0,
+          "n_substrate_reads": 0,
+          "w_norm": 0.0,
+          "secs": 0.0,
+          "skipped": true
+        }
+      },
+      "forward_is_substrate": true,
+      "shuffle_collapses": true,
+      "go": false
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "go_count": 0,
+    "go_5of6": false,
+    "wcos_substrate_calib_mean": 0.0791,
+    "wcos_substrate_lesion_mean": 0.0779,
+    "wcos_host_proxy_mean": 0.0828,
+    "wcos_calib_shuffle_mean": 0.0,
+    "wcos_calib_over_lesion_mean": 1.015,
+    "hostlin_substrate_calib_mean": 0.4295,
+    "hostlin_substrate_lesion_mean": 0.4276,
+    "forward_is_substrate_all": true,
+    "shuffle_collapses_all": true
+  },
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "elapsed_s": 553.1,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_perword_calib_derisk.py",
+    "--seeds",
+    "42",
+    "--B",
+    "8",
+    "--n-train-pos",
+    "160",
+    "--n-eval-pos",
+    "400",
+    "--epochs",
+    "8",
+    "--sub-read-window",
+    "64",
+    "--n-probes",
+    "24",
+    "--skip-shuffle",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/calib_endpoint_s42.json"
+  ]
+}

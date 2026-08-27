@@ -1,0 +1,99 @@
+{
+  "seed": 42,
+  "V": 1000,
+  "D": 128,
+  "B": 8,
+  "n_train_pos": 40,
+  "n_eval_pos": 200,
+  "epochs": 1,
+  "lr": 0.5,
+  "weight_decay": 0.0008,
+  "w_target": 40.0,
+  "avg_k": 3,
+  "sub_read_window": 48,
+  "gain": 10.458195,
+  "gain_substrate_vs_linear_corr": 0.9436,
+  "per_read_cv": 0.0756,
+  "single_vs_6avg_corr": 0.9976,
+  "head_w_norm": 37.53,
+  "seed_trap": {
+    "thr_hash_1": "a45d2385f84619f0",
+    "thr_hash_2": "a45d2385f84619f0",
+    "seeded": true
+  },
+  "arms": {
+    "host_proxy": {
+      "arm": "host_proxy",
+      "final_wcos": 0.0417,
+      "final_hostlinear_recov": 0.2194,
+      "final_ce": 10.8484,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.2194,
+          "weight_cosine": 0.0417,
+          "held_ce": 10.8484
+        }
+      ],
+      "n_substrate_reads": 0,
+      "secs": 0.1,
+      "w_norm": 8.37
+    },
+    "substrate": {
+      "arm": "substrate",
+      "final_wcos": 0.0379,
+      "final_hostlinear_recov": 0.18,
+      "final_ce": 10.8875,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.18,
+          "weight_cosine": 0.0379,
+          "held_ce": 10.8875
+        }
+      ],
+      "n_substrate_reads": 5,
+      "secs": 6.9,
+      "w_norm": 8.44
+    },
+    "substrate_avgK": {
+      "arm": "substrate_avgK",
+      "final_wcos": 0.038,
+      "final_hostlinear_recov": 0.1821,
+      "final_ce": 10.9297,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.1821,
+          "weight_cosine": 0.038,
+          "held_ce": 10.9297
+        }
+      ],
+      "n_substrate_reads": 15,
+      "secs": 19.9,
+      "w_norm": 8.45
+    }
+  },
+  "backend": "numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_decoder_direction_diagnostic.py",
+    "--seed",
+    "42",
+    "--B",
+    "8",
+    "--n-train-pos",
+    "40",
+    "--n-eval-pos",
+    "200",
+    "--epochs",
+    "1",
+    "--sub-read-window",
+    "48",
+    "--avg-k",
+    "3",
+    "--arms",
+    "host_proxy,substrate,substrate_avgK",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/smoke_s42.json"
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "seed": 42,
+  "V": 1000,
+  "D": 128,
+  "B": 8,
+  "n_train_pos": 160,
+  "n_eval_pos": 400,
+  "epochs": 8,
+  "lr": 0.5,
+  "weight_decay": 0.0008,
+  "w_target": 40.0,
+  "avg_k": 3,
+  "sub_read_window": 64,
+  "gain": 10.51882,
+  "gain_substrate_vs_linear_corr": 0.9521,
+  "per_read_cv": 0.0799,
+  "single_vs_6avg_corr": 0.9979,
+  "head_w_norm": 37.53,
+  "seed_trap": {
+    "thr_hash_1": "a45d2385f84619f0",
+    "thr_hash_2": "a45d2385f84619f0",
+    "seeded": true
+  },
+  "arms": {
+    "host_proxy": {
+      "arm": "host_proxy",
+      "final_wcos": 0.0828,
+      "final_hostlinear_recov": 0.4683,
+      "final_ce": 9.3871,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.3916,
+          "weight_cosine": 0.0763,
+          "held_ce": 8.9595
+        },
+        {
+          "epoch": 2,
+          "hostlinear_recov": 0.4042,
+          "weight_cosine": 0.0813,
+          "held_ce": 9.6168
+        },
+        {
+          "epoch": 3,
+          "hostlinear_recov": 0.4023,
+          "weight_cosine": 0.083,
+          "held_ce": 11.2591
+        },
+        {
+          "epoch": 4,
+          "hostlinear_recov": 0.465,
+          "weight_cosine": 0.0828,
+          "held_ce": 10.0203
+        },
+        {
+          "epoch": 5,
+          "hostlinear_recov": 0.4854,
+          "weight_cosine": 0.0828,
+          "held_ce": 9.8822
+        },
+        {
+          "epoch": 6,
+          "hostlinear_recov": 0.4905,
+          "weight_cosine": 0.0828,
+          "held_ce": 9.6298
+        },
+        {
+          "epoch": 7,
+          "hostlinear_recov": 0.4857,
+          "weight_cosine": 0.0828,
+          "held_ce": 9.6631
+        },
+        {
+          "epoch": 8,
+          "hostlinear_recov": 0.4683,
+          "weight_cosine": 0.0828,
+          "held_ce": 9.3871
+        }
+      ],
+      "n_substrate_reads": 0,
+      "secs": 1.1,
+      "w_norm": 19.01
+    },
+    "substrate": {
+      "arm": "substrate",
+      "final_wcos": 0.0781,
+      "final_hostlinear_recov": 0.3616,
+      "final_ce": 10.2425,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.3269,
+          "weight_cosine": 0.0716,
+          "held_ce": 9.5445
+        },
+        {
+          "epoch": 2,
+          "hostlinear_recov": 0.3242,
+          "weight_cosine": 0.0758,
+          "held_ce": 10.3066
+        },
+        {
+          "epoch": 3,
+          "hostlinear_recov": 0.3213,
+          "weight_cosine": 0.0764,
+          "held_ce": 10.9945
+        },
+        {
+          "epoch": 4,
+          "hostlinear_recov": 0.3616,
+          "weight_cosine": 0.0771,
+          "held_ce": 9.9317
+        },
+        {
+          "epoch": 5,
+          "hostlinear_recov": 0.3348,
+          "weight_cosine": 0.0769,
+          "held_ce": 10.2889
+        },
+        {
+          "epoch": 6,
+          "hostlinear_recov": 0.3922,
+          "weight_cosine": 0.0783,
+          "held_ce": 10.0142
+        },
+        {
+          "epoch": 7,
+          "hostlinear_recov": 0.4039,
+          "weight_cosine": 0.0781,
+          "held_ce": 9.8147
+        },
+        {
+          "epoch": 8,
+          "hostlinear_recov": 0.3616,
+          "weight_cosine": 0.0781,
+          "held_ce": 10.2425
+        }
+      ],
+      "n_substrate_reads": 160,
+      "secs": 306.1,
+      "w_norm": 19.73
+    },
+    "substrate_avgK": {
+      "arm": "substrate_avgK",
+      "final_wcos": 0.0788,
+      "final_hostlinear_recov": 0.4072,
+      "final_ce": 9.2045,
+      "trajectory": [
+        {
+          "epoch": 1,
+          "hostlinear_recov": 0.2987,
+          "weight_cosine": 0.0716,
+          "held_ce": 9.3814
+        },
+        {
+          "epoch": 2,
+          "hostlinear_recov": 0.3408,
+          "weight_cosine": 0.076,
+          "held_ce": 10.4388
+        },
+        {
+          "epoch": 3,
+          "hostlinear_recov": 0.3446,
+          "weight_cosine": 0.0777,
+          "held_ce": 11.276
+        },
+        {
+          "epoch": 4,
+          "hostlinear_recov": 0.4287,
+          "weight_cosine": 0.0774,
+          "held_ce": 9.857
+        },
+        {
+          "epoch": 5,
+          "hostlinear_recov": 0.3622,
+          "weight_cosine": 0.0782,
+          "held_ce": 9.9771
+        },
+        {
+          "epoch": 6,
+          "hostlinear_recov": 0.4182,
+          "weight_cosine": 0.0789,
+          "held_ce": 9.4279
+        },
+        {
+          "epoch": 7,
+          "hostlinear_recov": 0.4212,
+          "weight_cosine": 0.0789,
+          "held_ce": 9.401
+        },
+        {
+          "epoch": 8,
+          "hostlinear_recov": 0.4072,
+          "weight_cosine": 0.0788,
+          "held_ce": 9.2045
+        }
+      ],
+      "n_substrate_reads": 480,
+      "secs": 774.2,
+      "w_norm": 19.44
+    }
+  },
+  "backend": "numpy",
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-aef31362ecac24696/research/runners/_wkv_mouth_readout_decoder_direction_diagnostic.py",
+    "--seed",
+    "42",
+    "--B",
+    "8",
+    "--n-train-pos",
+    "160",
+    "--n-eval-pos",
+    "400",
+    "--epochs",
+    "8",
+    "--sub-read-window",
+    "64",
+    "--avg-k",
+    "3",
+    "--arms",
+    "host_proxy,substrate,substrate_avgK",
+    "--json",
+    "research/findings/raw/_wkv_readout_decoder_direction/diag3arm_s42.json"
+  ]
+}
