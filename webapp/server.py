@@ -3103,6 +3103,30 @@ def _swap_drives_on() -> bool:
     return _SDC.swap_drives_enabled()
 
 
+# ─── GNW GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, 2026-08-26): the de-risk
+# `2026-08-18-gnw-distributed-overwrite-workspace-PARTIAL.md` global-stop capability (6/6 GO) made LOAD-BEARING on the
+# live turn. On a strong interrupt / hard topic-break (the gnw-deliberation acc_conflict_gate reporting n_ignited>=2,
+# OR the #85 swap detector flagging a topic break) the held P1.2 coalition is driven into a divisively-normalized
+# distributed workspace and a conflict-triggered depression of the SHARED recurrence CLEARS it to n_ignited=0 BEFORE
+# the newcomer ignites -> a clean single-content workspace (no stale bleed). A CLEAN neural stop -> a short clearing
+# lead prepended OUTERMOST; no trigger / no clean clear -> NO lead. DEFAULT-OFF production-integration anchor: the
+# parent flips `_GNW_STOP_DEFAULT_ON`=True after the pool soak. LESION (`BRAIN_GNW_STOP_LESION=1`) zeroes the
+# shared-resource-depression term -> the workspace stays >=2 co-ignited -> the clearing lead VANISHES (load-bearing).
+# See webapp/gnw_global_stop.py.
+_GNW_STOP_DEFAULT_ON = False
+
+
+def _gnw_stop_flag_on() -> bool:
+    """The master switch = the DEFAULT-OFF anchor combined with the env override. Enabled only on an explicit truthy
+    `BRAIN_GNW_STOP` (1/true/on/yes) UNLESS `_GNW_STOP_DEFAULT_ON` is flipped True (then enabled unless an explicit
+    off). Kept as a lightweight env read so the DISABLED default path imports nothing / does no stop work ->
+    byte-identical to pre-wiring."""
+    v = os.environ.get("BRAIN_GNW_STOP")
+    if _GNW_STOP_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
+
+
 # ─── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19): the #81 graded-affect ladder read made LOAD-BEARING on the
 # live turn — the brain's felt valence x arousal (read NEURALLY off the #81 interoceptive ladder) colors the AFFECTIVE
 # EXPRESSION the reply leads with (a graded warmth/curtness marker) + its forthcomingness. The production-integration
@@ -5401,6 +5425,27 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             resp["da_drives"] = da_drives_info
         if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
             resp["da_encoding"] = da_encoding_info
+        # >>> GNW GLOBAL-STOP BEGIN (rich path; additive, mergeable block — BRAIN_GNW_STOP, default-OFF) ─────────────
+        # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all): prepend the clearing lead
+        # OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited -> a clean single-content
+        # workspace, spoken first) + attach the additive `gnw_stop` trace. Runs AFTER the answer is composed so the
+        # gnw-deliberation / #85-swap per-turn reads exist (the interrupt trigger). Empty lead / no key when disabled,
+        # no interrupt, or no clean clear -> byte-identical. The content fields are unchanged (the stop frames the
+        # opening, never a fact); the lead VANISHES under the shared-resource-depression lesion (the load-bearing
+        # proof). Reuse-by-import (NO sim/ edit); the RNG is isolated. See webapp/gnw_global_stop.py.
+        if _gnw_stop_flag_on():
+            try:
+                from webapp import gnw_global_stop as _gnw_stop_mod
+                _gnw_stop_info = _gnw_stop_mod.observe_turn(chat, msg)
+            except Exception as _gse:   # never let the stop coupling crash a turn -> degrade to the un-led answer
+                _gnw_stop_info = {"on": True, "acted": False, "error": f"{type(_gse).__name__}: {_gse}", "lead": ""}
+            if _gnw_stop_info is not None:
+                _gnw_stop_lead = str(_gnw_stop_info.get("lead", "") or "")
+                if _gnw_stop_lead:
+                    resp["answer"] = _gnw_stop_lead + resp["answer"]
+                if _gnw_stop_info.get("acted"):
+                    resp["gnw_stop"] = _gnw_stop_info
+        # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────
         return _safe_json_response(resp, "rich")
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -5634,6 +5679,26 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _resp["da_drives"] = da_drives_info
     if da_encoding_info is not None:   # additive trace; absent when BRAIN_DA_ENCODING off -> byte-identical
         _resp["da_encoding"] = da_encoding_info
+    # >>> GNW GLOBAL-STOP BEGIN (single-fact path; additive, mergeable block — BRAIN_GNW_STOP, default-OFF) ──────────
+    # GLOBAL-WORKSPACE STOP DRIVES THE RESPONSE (distributed-overwrite clear-all, single-fact path): prepend the
+    # clearing lead OUTERMOST (the held coalition was cleared to n_ignited=0 before the newcomer ignited) + attach the
+    # additive `gnw_stop` trace. Runs AFTER the gate/render so the gnw-deliberation / #85-swap per-turn reads exist
+    # (the interrupt trigger). Empty lead / no key when disabled, no interrupt, or no clean clear -> byte-identical. The
+    # content fields are unchanged (the stop frames the opening, never a fact); the lead VANISHES under the
+    # shared-resource-depression lesion (the load-bearing proof). Reuse-by-import (NO sim/ edit). See gnw_global_stop.py.
+    if _gnw_stop_flag_on():
+        try:
+            from webapp import gnw_global_stop as _gnw_stop_mod
+            _gnw_stop_info = _gnw_stop_mod.observe_turn(chat, msg)
+        except Exception as _gse:   # never let the stop coupling crash a turn -> degrade to the un-led answer
+            _gnw_stop_info = {"on": True, "acted": False, "error": f"{type(_gse).__name__}: {_gse}", "lead": ""}
+        if _gnw_stop_info is not None:
+            _gnw_stop_lead = str(_gnw_stop_info.get("lead", "") or "")
+            if _gnw_stop_lead:
+                _resp["answer"] = _gnw_stop_lead + _resp["answer"]
+            if _gnw_stop_info.get("acted"):
+                _resp["gnw_stop"] = _gnw_stop_info
+    # <<< GNW GLOBAL-STOP END ──────────────────────────────────────────────────────────────────────────────────────
     return _safe_json_response(_resp, "single-fact")
 
 

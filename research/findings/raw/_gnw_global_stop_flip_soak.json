@@ -1,0 +1,263 @@
+{
+  "runner": "_gnw_global_stop_flip_soak",
+  "verdict": "GO",
+  "flip_go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "clean global stop on >=5/6 (co-ignited n>=2 -> n_ignited=0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LESION holds (depression term zeroed -> n_post>=2, stale persists) on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "clearing attributable to the shared-recurrence depression (>=0.8) on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "coupling: clearing lead present-on-stop AND vanish-on-lesion on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-trigger turn byte-identical (observe_turn -> None) on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism: build-twice identical stop n_post on all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "native_short_term_plasticity",
+      "why": "STD targets the workspace recurrence in-runner; native STP off"
+    }
+  ],
+  "undefined_reasons": [],
+  "n_seeds": 6,
+  "n_clean_stop": 6,
+  "n_seed_go": 6,
+  "min_clearing_attribution": 1.0,
+  "all_lesion_holds": true,
+  "all_coupling": true,
+  "all_clearing_attributed": true,
+  "all_no_trigger_byte_identical": true,
+  "all_determinism": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_go": true,
+      "clearing_attribution": 1.0,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 2,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 43,
+      "seed_go": true,
+      "clearing_attribution": 1.0,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 2,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 44,
+      "seed_go": true,
+      "clearing_attribution": 1.5,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 3,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 100,
+      "seed_go": true,
+      "clearing_attribution": 1.0,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 2,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 101,
+      "seed_go": true,
+      "clearing_attribution": 1.0,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 2,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 102,
+      "seed_go": true,
+      "clearing_attribution": 1.0,
+      "intact_stop": {
+        "n_pre": 2,
+        "n_post": 0,
+        "boost": 0.14166666666666666,
+        "cleared": true
+      },
+      "lesion_stop": {
+        "n_pre": 2,
+        "n_post": 2,
+        "boost": 0.0,
+        "cleared": false
+      },
+      "coupling": {
+        "lead_delib": "Setting the held thread aside \u2014 ",
+        "lead_swap": "Setting the held thread aside \u2014 ",
+        "lead_lesion": "",
+        "no_trigger_info": null
+      },
+      "gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    }
+  ],
+  "flag": "BRAIN_GNW_STOP (default-OFF; parent flips _GNW_STOP_DEFAULT_ON after this soak)",
+  "lesion_lever": "BRAIN_GNW_STOP_LESION (zeroes the shared-resource-depression boost gain)"
+}

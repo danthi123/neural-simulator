@@ -7,6 +7,19 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-26 — the brain can now CLEAR a held thought when you interrupt it (wired, OFF by default)
+
+A small but real piece of a mind landed as a reversible option. When you interrupt the brain mid-thought — a
+hard topic change, or a question it has two competing answers for — it can now genuinely CLEAR the thing it was
+holding before it turns to the new one, instead of letting the old thought bleed into its reply. Under the
+hood a shared "workspace" of neurons that were co-holding two contents is driven to silence together by
+draining the shared resource they all lean on (a distributed clear-all the earlier local mechanisms could not
+do), and only then does the newcomer light up cleanly. When it fires it opens the reply by saying it set the
+prior thread aside. It is wired into the live chat behind a switch that is OFF by default and proven harmless
+when off (byte-for-byte identical), and proven to be doing the work when on (disable the drain and the clear —
+and the acknowledgment — vanish). A 6-seed soak passed cleanly (6/6). The switch is flipped on only after the
+pooled no-regression soak. Not yet on by default.
+
 ## ⭐⭐⭐ 2026-08-25 (evening) — the brain now REASONS to its own conclusion when you chat, on by default
 
 The biggest step toward the north-star landed. Until now, asking the brain something that needs two facts

@@ -118,3 +118,5 @@ no framing-faculty regression. #141 CLOSED (production-default + confirmed live)
 the diagnostic): reasoning + recall over the brain's OWN 15k knowledge via NATURAL language (today the
 route reasons over just-taught facts + the possessive 2-hop shape; the 15k core still needs exact tokens,
 and compound/inverse/3+hop phrasings don't parse) -> new board task. Residuals tracked on #141's ref.
+
+2026-08-26 (gnw-global-stop wire-in): board reconciled for this landing. Created Neural-Simulator task #155 'Flip BRAIN_GNW_STOP default-ON after the pool soak' (p3) recording the GNW global-workspace STOP production wire-in — webapp/gnw_global_stop.py + guarded brain_chat blocks + ledger row gnw-global-stop, default-OFF (BRAIN_GNW_STOP), 6/6 flip-soak GO (clean-stop 6/6, lesion-holds 6/6, coupling 6/6, no-trigger byte-identical 6/6, determinism 6/6). NEXT-RUNG on the board: the parent runs the pool soak then flips _GNW_STOP_DEFAULT_ON=True. finding 2026-08-26-gnw-global-workspace-stop-production-wirein-GO.
