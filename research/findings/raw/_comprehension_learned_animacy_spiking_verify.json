@@ -1,0 +1,191 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "k_seed": 8,
+  "intact": [
+    {
+      "seed": 42,
+      "acc": 0.8636363636363636,
+      "ok": 38,
+      "wrong": 6,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 43,
+      "acc": 0.8181818181818182,
+      "ok": 36,
+      "wrong": 8,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 44,
+      "acc": 0.7954545454545454,
+      "ok": 35,
+      "wrong": 9,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 100,
+      "acc": 0.8636363636363636,
+      "ok": 38,
+      "wrong": 6,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 101,
+      "acc": 0.7045454545454546,
+      "ok": 31,
+      "wrong": 13,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 102,
+      "acc": 0.7727272727272727,
+      "ok": 34,
+      "wrong": 10,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    }
+  ],
+  "shuffled": [
+    {
+      "seed": 42,
+      "acc": 0.4772727272727273,
+      "ok": 21,
+      "wrong": 23,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 43,
+      "acc": 0.4772727272727273,
+      "ok": 21,
+      "wrong": 23,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 44,
+      "acc": 0.5,
+      "ok": 22,
+      "wrong": 22,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 100,
+      "acc": 0.5909090909090909,
+      "ok": 26,
+      "wrong": 18,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 101,
+      "acc": 0.4318181818181818,
+      "ok": 19,
+      "wrong": 25,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 102,
+      "acc": 0.5454545454545454,
+      "ok": 24,
+      "wrong": 20,
+      "abstain": 0,
+      "n_scored": 44,
+      "n_total": 44,
+      "abstain_rate": 0.0
+    }
+  ],
+  "mean_spiking_acc": 0.8030303030303031,
+  "mean_shuffled_acc": 0.5037878787878788,
+  "mean_abstain_rate": 0.0,
+  "go": true,
+  "status": "GO",
+  "lesion_check_pass": true,
+  "lesion_pre": [
+    "animate",
+    "animate",
+    "animate",
+    "inanimate",
+    "inanimate",
+    "inanimate"
+  ],
+  "lesion_post": [
+    "None",
+    "None",
+    "None",
+    "None",
+    "None",
+    "None"
+  ],
+  "coverage_pre_lesion": 1.0,
+  "coverage_post_lesion": 0.0,
+  "preconditions": [
+    {
+      "name": "spiking-acc>=0.75",
+      "ok": true,
+      "value": 0.8030303030303031
+    },
+    {
+      "name": "shuffled-graph-control<=0.60 (structure-destroyed collapses)",
+      "ok": true,
+      "value": 0.5037878787878788
+    },
+    {
+      "name": "spiking-acc-minus-shuffled>=0.15",
+      "ok": true,
+      "value": 0.2992424242424243
+    },
+    {
+      "name": "held-out abstain rate is low (moat not over-triggering on real words)",
+      "ok": true,
+      "value": 0.0
+    },
+    {
+      "name": "lesion collapses ALL held-out classification to abstain",
+      "ok": true,
+      "value": null
+    },
+    {
+      "name": "held-out coverage 100% attributable to the F_anim/F_inanim coupling (not the lesion itself an artifact of an already-abstaining arm)",
+      "ok": true,
+      "value": 1.0
+    }
+  ]
+}

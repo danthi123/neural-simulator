@@ -1,0 +1,106 @@
+{
+  "conditions": {
+    "flag_off": {
+      "competent": false,
+      "extract_transitive": [
+        "monkey",
+        "carry",
+        "cup"
+      ],
+      "judge": null
+    },
+    "flag_off_again": {
+      "competent": false,
+      "extract_transitive": [
+        "monkey",
+        "carry",
+        "cup"
+      ],
+      "judge": null
+    },
+    "flag_on": {
+      "competent": true,
+      "extract_transitive": [
+        "monkey",
+        "carry",
+        "cup"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.16666666666666666,
+          "mean_ill": 0.08958333333333332,
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.3375,
+        "on": true,
+        "svo": [
+          "monkey",
+          "carry",
+          "cup"
+        ],
+        "threshold": 0.24861111111111112
+      }
+    },
+    "flag_on_lesioned": {
+      "competent": false,
+      "extract_transitive": [
+        "monkey",
+        "carry",
+        "cup"
+      ],
+      "judge": null
+    }
+  },
+  "held_out_word": "monkey",
+  "lesioned_reverts_to_flag_off_exact_match": true,
+  "moat_check_oov": {
+    "classify_glorp": null,
+    "classify_wug": null,
+    "judge": {
+      "calib": {
+        "max_ill": 0.16666666666666666,
+        "mean_ill": 0.08958333333333332,
+        "mean_well": 0.3431712962962963,
+        "min_well": 0.33055555555555555,
+        "n_calib": 24,
+        "read_steps": 60
+      },
+      "comprehended": false,
+      "in_scope": true,
+      "lesioned": false,
+      "margin": 0.026388888888888892,
+      "on": true,
+      "svo": [
+        "wug",
+        "blickets",
+        "glorp"
+      ],
+      "threshold": 0.24861111111111112
+    },
+    "repair_target": {
+      "kind": "oov",
+      "lesioned": false,
+      "loadbearing": "host_lexical",
+      "on": true,
+      "oov_tokens": [
+        "wug",
+        "glorp",
+        "blickets"
+      ],
+      "role": null,
+      "svo": [
+        "wug",
+        "blickets",
+        "glorp"
+      ],
+      "word": null
+    }
+  },
+  "text": "the monkey carries the cup"
+}

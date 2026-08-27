@@ -7,6 +7,23 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-27 — the comprehension organs' toy vocabulary ceiling starts lifting: ANIMACY is now corpus-learned, spiking-realized, wired default-OFF
+
+Every comprehension organ (understanding-check, multi-referent memory, other-repair, and others) judged a
+sentence only if its nouns sat in a ~19-word hand-typed ANIMACY table; a real word off that list was silently
+skipped. A prior session proved (6 seeds) that a brain-like process — spreading a small set of known labels
+across which words tend to appear near which others in real children's-story text — can guess a NEW word's
+animacy correctly about 84% of the time, versus chance-level control. This session made that guess a genuine
+spiking computation (two small neuron pools race to fire; the one that wins names the category) reusing an
+already-proven circuit from an earlier faculty, and wired it into the understanding-check organ behind a new
+switch (`BRAIN_LEARNED_ANIMACY_CUE`, default OFF, so today's behavior is unchanged byte-for-byte until it is
+flipped). With the switch on, a held-out word the hand table never had ("monkey") is now judged correctly;
+turning off just the new circuit's connection (a lesion) makes that same word fall back to unrecognized,
+proving the new circuit — not something else — is doing the work. Genuinely unknown made-up words still say
+"I don't know that word" rather than guessing. The verb half of the same table (which verb expects an animate
+subject) is NOT yet converted — still hand-typed. Finding
+`2026-08-27-comprehension-cue-lexicon-spiking-realized-and-wired`.
+
 ## ⭐ 2026-08-26 — the brain now SPEAKS its recalled answers on its own neurons for simple sentences (wired, default-OFF)
 
 The "mouth" — the part that turns a recalled fact into a sentence — has been the biggest remaining scaffold: the

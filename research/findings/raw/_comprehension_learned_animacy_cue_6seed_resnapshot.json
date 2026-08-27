@@ -1,0 +1,77 @@
+{
+  "corpus": "data/corpus/tinystories.txt",
+  "tokens": 1570049,
+  "vocab": 1501,
+  "backend": "numpy",
+  "device": "cpu",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "learned": [
+    0.8636363636363636,
+    0.8181818181818182,
+    0.7954545454545454,
+    0.8636363636363636,
+    0.7045454545454546,
+    0.7727272727272727
+  ],
+  "shuffled": [
+    0.5909090909090909,
+    0.4772727272727273,
+    0.5,
+    0.5227272727272727,
+    0.5227272727272727,
+    0.38636363636363635
+  ],
+  "frequency": [
+    0.5681818181818182,
+    0.5681818181818182,
+    0.5227272727272727,
+    0.45454545454545453,
+    0.5,
+    0.5227272727272727
+  ],
+  "mean_learned": 0.8030303030303031,
+  "mean_shuffled": 0.49999999999999994,
+  "mean_frequency": 0.5227272727272728,
+  "go": true,
+  "preconditions": [
+    {
+      "name": "learned>=0.75",
+      "ok": true,
+      "value": 0.8030303030303031
+    },
+    {
+      "name": "shuffled-graph-control<=0.60 (structure-destroyed collapses)",
+      "ok": true,
+      "value": 0.49999999999999994
+    },
+    {
+      "name": "learned-minus-shuffled>=0.15",
+      "ok": true,
+      "value": 0.30303030303030315
+    },
+    {
+      "name": "frequency-only-control-at-chance",
+      "ok": true,
+      "value": 0.5227272727272728
+    },
+    {
+      "name": "held-out disjoint from seed (no label leakage)",
+      "ok": true
+    },
+    {
+      "name": "corpus structure not injected (real TinyStories text)",
+      "ok": true
+    }
+  ],
+  "n_seeds": 6,
+  "k_seed_per_class": 8,
+  "window": 4,
+  "top_v": 1500
+}

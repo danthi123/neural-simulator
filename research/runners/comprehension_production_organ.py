@@ -39,8 +39,12 @@ HONEST RESIDUALS (declared, ride existing burn-down items):
     recall composer, not merged onto the ONE recall bridge — rides on the one-brain merge (burn-down #1),
     exactly as the affect organ does.
   * VOCAB CEILING: the cue lexicon (ANIMACY / VERB_SELECTS) is the toy 2-noun transitive scope; out-of-table
-    real vocabulary is passed through (not judged). Calibrating on a graded/near-threshold battery + a learned
-    cue lexicon is the next rung (the de-risk's mapped residual).
+    real vocabulary is passed through (not judged). **PARTIALLY CLOSED (2026-08-27,
+    `BRAIN_LEARNED_ANIMACY_CUE`, default OFF)**: ANIMACY membership now extends to a corpus-LEARNED,
+    spiking-realized open-vocab cue (`_comprehension_learned_animacy_spiking.py`, 6-seed GO) via the single
+    `_animacy_of` choke point. VERB_SELECTS stays the hand-coded closed set (declared residual — no GO
+    artifact validates an open-vocab verb-selects cue); calibrating on a graded/near-threshold battery is
+    the next rung (the de-risk's mapped residual).
   * STRUCTURAL malformedness (no verb / wrong arity) is still a host arity/shape check, not the spiking read.
 
 Additive, default-ON, `BRAIN_COMPREHENSION_GATE=0` -> the byte-identical oracle (fully skipped). NO `sim/` edit;
@@ -55,7 +59,7 @@ import numpy as np
 
 from research.runners._spiking_comprehension_monitor_derisk import (
     _build_comp,
-    _evs_for,
+    cue_evidence,
     _agent_evidence_from_spikes,
     semantic_sel_margin,
     SEMANTIC_CUES,
@@ -70,6 +74,7 @@ from research.runners._phaseB_multicue_competition_spiking_derisk import (
     VERB_SELECTS,
     CUES,
 )
+from research.runners._comprehension_learned_animacy_spiking import get_lexicon as _get_learned_animacy_lexicon
 
 # Function words stripped to expose the transitive content (agent verb patient). Deliberately minimal so a
 # 3-content-token declarative assertion resolves while a WH-question (patient is the query) reduces to <3.
@@ -116,6 +121,70 @@ def comprehension_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def learned_animacy_cue_enabled() -> bool:
+    """`BRAIN_LEARNED_ANIMACY_CUE` in {1,true,yes,on} -> extend the ANIMACY membership scope beyond the
+    ~19-noun hand table to the corpus-LEARNED, spiking-realized open-vocab animacy cue (6-seed GO:
+    `research/findings/raw/_comprehension_learned_animacy_cue_6seed.json` -- learned=0.837,
+    shuffled-graph=0.504, frequency-only=0.511, gap=+0.333; spiking-realization verify:
+    `research/findings/raw/_comprehension_learned_animacy_spiking_verify.json`). Default OFF: unset behaves
+    byte-identically to the pre-existing hand-table-only scope."""
+    v = os.environ.get("BRAIN_LEARNED_ANIMACY_CUE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def learned_animacy_cue_lesioned() -> bool:
+    """`BRAIN_LEARNED_ANIMACY_LESION` in {1,true,yes,on} -> zero the F_anim/F_inanim coupling (see
+    `LearnedAnimacyLexicon.set_lesion`): every open-vocab `classify()` call abstains, so any word the hand
+    ANIMACY table does not cover reverts to OUT OF SCOPE -- byte-identical to the flag being off, for that
+    word (the load-bearing check: the diff this flag introduces must vanish under this lesion)."""
+    v = os.environ.get("BRAIN_LEARNED_ANIMACY_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _animacy_of(n: str):
+    """ANIMACY membership + category for noun `n`: "animate" / "inanimate" / None. The hand ANIMACY table is
+    the fast path (checked first, always -- byte-identical whether or not the flag below is set). When the
+    hand table misses AND `BRAIN_LEARNED_ANIMACY_CUE` is on, falls through to the corpus-learned,
+    spiking-realized open-vocab lexicon (`_comprehension_learned_animacy_spiking.LearnedAnimacyLexicon`).
+    This is the SINGLE choke point every `n in ANIMACY` membership test below was converted to call."""
+    cat = ANIMACY.get(n)
+    if cat is not None:
+        return cat
+    if not learned_animacy_cue_enabled():
+        return None
+    lex = _get_learned_animacy_lexicon()
+    lex.set_lesion(learned_animacy_cue_lesioned())
+    return lex.classify(n)
+
+
+def _evs_for_organ(n0: str, v: str, n1: str):
+    """Cue evidence for (n0, v, n1) -- the organ's own `_evs_for`, extended (flag ON) to feed the
+    corpus-learned animacy CATEGORY for a noun the hand ANIMACY table lacks into the ALREADY-VALIDATED
+    `SpikingRoleCompetition` (D4's AUC=1.000, lesion->0.500 circuit, left untouched). `cue_evidence`'s own
+    `permute_map` parameter (built for its permuted-cue anti-cheat) is reused, as designed, to remap such a
+    noun to a canonical proxy word of the SAME learned category ("dog" for animate, "ball" for inanimate) --
+    so the existing validated competition reads the correct signed animacy (and, transitively, verbfit) vote
+    for it, without touching `_phaseB_multicue_competition_spiking_derisk.py`. Byte-identical to
+    `_spiking_comprehension_monitor_derisk._evs_for` when the flag is off, or when both nouns are already
+    hand-table-covered (permute_map is then empty -> None, the same no-remap call `_evs_for` makes)."""
+    pm = {}
+    if learned_animacy_cue_enabled():
+        for n in (n0, n1):
+            if n in ANIMACY:
+                continue
+            cat = _animacy_of(n)
+            if cat is not None:
+                pm[n] = "dog" if cat == "animate" else "ball"
+    return [
+        cue_evidence(n0, 0, 2, v, sent_id=0, clean_cues=True, permute_map=(pm or None)),
+        cue_evidence(n1, 1, 2, v, sent_id=0, clean_cues=True, permute_map=(pm or None)),
+    ]
+
+
 def _lemma_verb(v: str) -> str:
     """Map an inflected surface verb to its base form ONLY when the base is a known selectional verb (so a
     real OOV verb stays OOV). 'eats'/'eating'/'chased'/'carries' -> 'eat'/'chase'/'carry'; unknown unchanged."""
@@ -137,10 +206,11 @@ def _lemma_verb(v: str) -> str:
 
 
 def _lemma_noun(n: str) -> str:
-    """Strip a plural 's' ONLY when the singular is a cue-covered noun (so a real OOV noun stays OOV)."""
-    if n in ANIMACY:
+    """Strip a plural 's' ONLY when the singular is a cue-covered noun (so a real OOV noun stays OOV).
+    "Cue-covered" is `_animacy_of` -- the hand ANIMACY table, extended (flag ON) to the learned lexicon."""
+    if _animacy_of(n) is not None:
         return n
-    if n.endswith("s") and n[:-1] in ANIMACY:
+    if n.endswith("s") and _animacy_of(n[:-1]) is not None:
         return n[:-1]
     return n
 
@@ -253,7 +323,7 @@ class ComprehensionProductionOrgan:
     def _read(self, comp, n0: str, v: str, n1: str) -> float:
         """Hard-reset `comp` to rest, then read the SEMANTIC sel-pool margin off cp_firing_states."""
         self._hard_reset(comp)
-        return float(semantic_sel_margin(comp, _evs_for(n0, v, n1), READ_STEPS))
+        return float(semantic_sel_margin(comp, _evs_for_organ(n0, v, n1), READ_STEPS))
 
     def _read_per_noun(self, comp, n0: str, v: str, n1: str):
         """(T1-6) Hard-reset `comp` to rest, then read the PER-NOUN agent-evidence (a0, a1) = (sel_agent -
@@ -262,7 +332,7 @@ class ComprehensionProductionOrgan:
         `< 0` = leans PATIENT. Their signs/magnitudes localise WHICH thematic role failed to resolve (the
         repair target). Under the learned-cue lesion both collapse to ~0 (no role activity)."""
         self._hard_reset(comp)
-        evs = _evs_for(n0, v, n1)
+        evs = _evs_for_organ(n0, v, n1)
         a0 = float(_agent_evidence_from_spikes(comp, evs[0], SEMANTIC_CUES, READ_STEPS))
         a1 = float(_agent_evidence_from_spikes(comp, evs[1], SEMANTIC_CUES, READ_STEPS))
         return a0, a1
@@ -282,12 +352,14 @@ class ComprehensionProductionOrgan:
         nouns unknown to both the cue lexicon and the brain), the genuine 'I heard only noise' case. A PARTIALLY
         recognized input (a covered noun with an unrecognized verb, or a real-but-untabled word the brain knows)
         is OUT of competence -> passed through unchanged (no unreliable read, no false abstain). This is the
-        declared vocab-ceiling residual: the monitor's competence is bounded by its cue lexicon."""
+        declared vocab-ceiling residual: the monitor's competence is bounded by its cue lexicon, extended
+        (flag ON) to the corpus-learned open-vocab animacy cue via `_animacy_of` -- VERB_SELECTS itself stays
+        the hand-coded closed set (no GO artifact validates an open-vocab verb-selects cue; declared residual)."""
         bv = brain_vocab or set()
-        fully_covered = (v in VERB_SELECTS) and (n0 in ANIMACY) and (n1 in ANIMACY)
+        fully_covered = (v in VERB_SELECTS) and (_animacy_of(n0) is not None) and (_animacy_of(n1) is not None)
 
         def oov(n):
-            return (n not in ANIMACY) and (n not in bv)
+            return (_animacy_of(n) is None) and (n not in bv)
         fully_oov = (v not in VERB_SELECTS) and oov(n0) and oov(n1)
         return fully_covered or fully_oov
 
@@ -336,7 +408,7 @@ class ComprehensionProductionOrgan:
 
         # ── OOV branch (host lexical): name the token(s) the brain does not know. ──
         bv = brain_vocab or set()
-        oov_tokens = [n for n in (n0, n1) if (n not in ANIMACY) and (n not in bv)]
+        oov_tokens = [n for n in (n0, n1) if (_animacy_of(n) is None) and (n not in bv)]
         if v not in VERB_SELECTS and v not in bv:
             oov_tokens.append(v)
         if oov_tokens:

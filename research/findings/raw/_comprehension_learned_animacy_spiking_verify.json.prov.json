@@ -1,0 +1,27 @@
+{
+ "run_id": "1787806455-1697101",
+ "runner": "research/runners/_comprehension_learned_animacy_spiking.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a43e362c475aabd50/research/runners/_comprehension_learned_animacy_spiking.py",
+  "--out",
+  "research/findings/raw/_comprehension_learned_animacy_spiking_verify.json"
+ ],
+ "git_sha": "fb725a180",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T00:54:15",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_comprehension_learned_animacy_spiking_verify.json"
+}
