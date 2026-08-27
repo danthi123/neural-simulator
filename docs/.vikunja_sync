@@ -131,3 +131,14 @@ HONEST NOTE (this stamp): this landed from an ISOLATED wire-in worktree with NO 
 the live board was NOT reconciled here -- the parent orchestrator must reconcile the board at merge (mark
 the spiking-broca-mouth wire-in task done + add the default-ON flip next-rung). This entry stamps the
 marker to record the landing; it is NOT a claim that the board API was touched.
+
+## 2026-08-27  doc-sync + board reconciliation (delegated sync cycle)
+Reconciled the 2026-08-25/26 finding backlog into INDEX.md, GAP_CLOSURE_MISSION.md CURRENT STATE, the
+MASTER-ROADMAP §2/§4/§7 faculty rows, and ROADMAP.md. Landed the previously-staged comprehension animacy-cue
+finding (merged branch research/comprehension-learned-animacy-cue, commit fb725a180, runner+artifact; finding
+doc copied to research/findings/). Board: created #172 (SC-orienting production wire-in, GO/de-risked),
+#173 (V1 BCM sliding-threshold, PARTIAL/de-risked), #174 (comprehension animacy-cue, GO/de-risked), each
+labeled `de-risked` (10); closed #151 (the 5-lane catalog-derisk parallel push) with each lane's final
+verdict (joint-attention GO -> #153, inductive-coverage PARTIAL, cls-consolidation GO -> #154, metacog
+spiking_acc NO-GO, E-morph NO-GO/REFUTED). All other 2026-08-26 wave-3 flip tasks (#153-#170, #133, #143)
+were already correctly reconciled on the board prior to this cycle -- verified, not re-touched.

@@ -87,6 +87,44 @@ learning rule, to try alongside the BCM rule — was queued to run concurrently;
 this writing. Both flags examined here stay off by default; this is research on the g11 perception path, separate
 from the live chat.
 
+## ⭐ 2026-08-26 — six more research de-risks land the same day (none flip a default; each is a proven building block)
+
+Alongside the ten-faculty flip and the V1 work above, a further batch of research landed the same day:
+
+- **The brain can now tell what someone else is looking at.** From a partner's gaze alone, a dedicated neural
+  population correctly picks out which of several objects the partner is attending to — an early building block
+  of understanding other minds. Proven, not yet wired in (there is no live visual input in chat yet). Finding
+  `2026-08-26-joint-attention-sts-tpj-other-attention-schema-spotlight-6seed-GO.md`.
+- **A reflexive "look toward it" reflex is now a reusable brain part.** The orienting reflex that already existed
+  inside the navigation experiments was packaged into a standalone piece any future body/eye can plug into, and
+  proven again end to end (a fake lesion that scrambles the wiring makes it orient the wrong way, as expected).
+  Still off by default pending the next batch decision. Finding
+  `2026-08-26-sc-orienting-production-wirein-GO.md`.
+- **The brain can learn to bind a feature to its slot from experience.** Asked "what filled role X", it recalls
+  the right answer only when asked about the right role — asking with the wrong role gets nothing, proving it
+  learned the actual binding rather than just noticing something was present. Still needs the harder
+  multiple-features-at-once version. Finding
+  `2026-08-26-gap2-spiking-deltarule-binder-GO-role-filler-recall-above-permuted-control-6seed.md`.
+- **A plain-English question can now reach the brain's 15,000-fact knowledge core.** Two small front-end gaps —
+  multi-word names never becoming one lookup token, and "what is X" not mapping to the core's own wording — are
+  fixed in code. Not yet switched on for everyday chat: the bigger vocabulary needed makes each lookup about five
+  times slower, and that trade-off is an open call, not a technical blocker. Finding
+  `2026-08-26-knowledge-grounding-natural-language.md`.
+- **Guessing whether an unfamiliar word names something alive is now learnable, not hand-listed.** Several
+  language-understanding checks privately relied on a hand-written 19-word list of "living things" — anything
+  else was simply out of scope. A word-association graph built from a real children's-story corpus now guesses
+  correctly for words it was never told about, well above a shuffled-graph or plain-frequency control. Proven,
+  not yet wired into those checks. Finding
+  `2026-08-26-comprehension-cue-lexicon-open-vocab-animacy-learnable-GO.md`.
+- **Two honest negatives, each with its next attempt already named.** A "how confident am I" read built entirely
+  from one neuron population's own incoming synapses came back short — building the extra population subtly
+  shifted the underlying task's difficulty for two of six test runs, not a flaw in the confidence read itself
+  (`2026-08-26-metacog-spiking-acc-6seed-NOGO.md`). A test of "combining several clues makes a conclusion more
+  confident" mostly held (6/6 on the main effect) but a small residual signal survived a control that should have
+  erased it completely, so it is banked as a partial, not a pass
+  (`2026-08-26-inductive-coverage-premise-diversity-6seed-PARTIAL.md`). Both name their next lever in the finding;
+  neither is a dead end.
+
 ## ⭐ 2026-08-26 — the brain now SPEAKS its recalled answers on its own neurons for simple sentences (wired, default-OFF)
 
 *(Update, same day, see the entry above: this flipped to default-ON in the wave-3 batch. Left here as history.)*
