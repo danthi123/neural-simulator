@@ -1,0 +1,20 @@
+{
+  "runner": "_scratch/swr_6seed_char.py",
+  "argv": [
+    "SIM_BACKEND=cupy",
+    "python",
+    "_scratch/swr_6seed_char.py"
+  ],
+  "git_sha": "de01e5dda2de1855fde7aa9e7e20d532d607f719",
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "note": "6-seed lean characterization; helpers imported from research.runners._gap5_swr_envelope_replay_derisk",
+  "ts": "2026-08-27T19:02:34Z"
+}

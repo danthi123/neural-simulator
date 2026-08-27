@@ -1,0 +1,247 @@
+{
+  "probe": "gap5_swr_envelope_replay",
+  "mechanism": "SWR-state E/I-transient envelope readout",
+  "seeds": [
+    42
+  ],
+  "n_ca3": 2000,
+  "n_mem": 3,
+  "rest_steps": 800,
+  "env_cfg": {
+    "swr_period": 250,
+    "env_dur": 120,
+    "env_exc_pa": 180.0,
+    "env_basket_drop": 400.0,
+    "env_basket_boost": 200.0,
+    "noise_rate": 0.01,
+    "noise_pa": 800.0,
+    "noise_dur": 5,
+    "self_regen_read": 0.0,
+    "recall_k_thresh": 40.0,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "sel_inhib_spare": 0.0,
+    "fwd_gain": 4.0,
+    "fwd_gain_scope": "adjacent",
+    "onset_cue_asm": "rand",
+    "onset_cue_pa": 600.0,
+    "onset_cue_dur": 10,
+    "onset_cue_frac": 0.5,
+    "fixed_seed_asm": null,
+    "env_exc_ramp": false,
+    "env_exc_ramp_floor": 0.5
+  },
+  "elapsed_seconds": 219.8,
+  "verdict": "SWR-ENVELOPE PARTIAL/NEGATIVE 0/1 -- forward_frac 0.000 vs reverse 0.000 vs chance 0.000; per_asm_active~[0.0, 0.0, 0.0] duty 0.000; NO-SWR 0.000 NO-NOISE 0.000 SHUFFLED 0.000 REVERSE-ASYM 0.000. Per THE LAW: the envelope depth x duration x noise-sigma is the TUNING band -- over-drive -> [3,3,3] co-fire, under-drive -> [0,0,0] no-ignition. Tune env_exc_pa / env_basket_drop / swr_period / env_dur / noise_pa / self_regen_read (and try --sel-inhib-spare 20 so the basket drop reaches members). A partial on the SWR-envelope rung is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode_decoupled": {
+        "w_within": 199.88336181640625,
+        "w_adj_fwd": 38.587371826171875,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.717474365234375,
+        "n_between_fwd": 8494,
+        "n_between_rev": 8547,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 0,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.0956925,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "weights_frozen": true,
+        "apical_rest_max": -80.45536041259766,
+        "apical_n_latched": 0,
+        "n_env": 4,
+        "basket_n": 500,
+        "amp": {
+          "fwd_gain": 4.0,
+          "scope": "adjacent",
+          "n_edges": 11352,
+          "base_mean": 21.65758514404297,
+          "peak_mean": 86.63034057617188,
+          "const_gain": null
+        },
+        "onset_cue": {
+          "asm": "rand",
+          "pa": 600.0,
+          "dur": 10,
+          "frac": 0.5,
+          "fixed": null
+        },
+        "seed_first_frac": 0.0,
+        "by_seedpos": {
+          "0": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          },
+          "1": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          },
+          "2": {
+            "multi": 0,
+            "fwd": 0,
+            "rev": 0
+          }
+        },
+        "n_seed_envs": 4
+      },
+      "no_swr": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "duty_cycle": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.07829875,
+        "weights_frozen": true
+      },
+      "no_noise": {
+        "n_multi": 2,
+        "forward_frac": 0.0,
+        "duty_cycle": 0.0425,
+        "per_asm_active": [
+          2,
+          2,
+          2
+        ],
+        "pop_rate": 0.030170000000000002,
+        "weights_frozen": true
+      },
+      "adapt_lesion": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "duty_cycle": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.085028125,
+        "weights_frozen": true
+      },
+      "permuted_assembly": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ]
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "w_within": 0.4976925551891327,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.00923625,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17041,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asym_lesion": {
+        "n_between_symmetrized": 17041,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "checks": {
+        "forward_ordered": false,
+        "ignites": false,
+        "discrete": true,
+        "no_swr_collapses": true,
+        "shuffled_collapses": true,
+        "reverse_lesion_collapses": true,
+        "permuted_chance": true,
+        "noise_acid": true,
+        "noencode_selective": true,
+        "noencode_ignite": [
+          0,
+          0,
+          0
+        ],
+        "adapt_lesion_cofire": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true
+      },
+      "seed_go": false
+    }
+  ],
+  "GO": false,
+  "n_go": 0,
+  "preconditions": [
+    {
+      "name": "store_built_forward_asymmetric",
+      "ok": true,
+      "detail": "within=199.9 adj_fwd=38.59 adj_rev=5.00 ratio=7.72x"
+    },
+    {
+      "name": "weights_frozen_all_arms",
+      "ok": true,
+      "detail": "cp_connections.data byte-identical across GO + all anti-cheat arms (fwd-gain transiently applied then restored)"
+    },
+    {
+      "name": "dendrite_reset_ok",
+      "ok": true,
+      "detail": "apical rest <= plateau_v_hold (no stale latch driving ignition)"
+    },
+    {
+      "name": "anticheats_executed",
+      "ok": true,
+      "detail": "NO-SWR, NO-NOISE, ADAPT-LESION, PERMUTED-ASSEMBLY, NO-ENCODE, SHUFFLED-STORE, REVERSE-ASYM-LESION all ran"
+    },
+    {
+      "name": "ignition_arm_ran",
+      "ok": true,
+      "detail": "GO arm delivered 4 SWR envelopes; per_asm_active read = [0, 0, 0]"
+    }
+  ],
+  "preconditions_all_ok": true
+}

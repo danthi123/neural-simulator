@@ -1,0 +1,43 @@
+{
+ "run_id": "1787857087-3360506",
+ "runner": "research/runners/_gap5_swr_envelope_replay_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a2ab4bc9cc39148c9/research/runners/_gap5_swr_envelope_replay_derisk.py",
+  "--seeds",
+  "42",
+  "--n-ca3",
+  "2000",
+  "--rest-steps",
+  "800",
+  "--self-regen-ignite",
+  "0.15",
+  "--fwd-gain",
+  "4.0",
+  "--onset-cue-asm",
+  "rand",
+  "--onset-cue-pa",
+  "600",
+  "--onset-cue-dur",
+  "10",
+  "--out",
+  "research/findings/raw/gap5_r4/swr_envelope_v2_seed42_designed.json"
+ ],
+ "git_sha": "de01e5dda",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T14:58:07",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap5_r4/swr_envelope_v2_seed42_designed.json"
+}
