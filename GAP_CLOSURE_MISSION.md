@@ -13,7 +13,28 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-26 LATE (READ FIRST; LATEST anchor — supersedes every header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (READ FIRST; LATEST anchor — supersedes every header below)
+
+**CURRENT ARC unchanged: the FLUENCY WALL (the mouth) is the frontier.** An overnight autonomous session (owner: work all night, high memory-aware parallelization, best judgment) advanced 4 frontiers. **Latest `main` = `1f092371f`.**
+
+**TONIGHT'S LANDINGS:**
+- **One-brain MERGE FRAMEWORK → MAIN (142ef37a0), owner-approved.** The bespoke per-organ merge is now a DECLARATIVE `OrganDescriptor` registry + `merge_organs()` engine + one batched verify (`onebrain_merge_framework.py` + `onebrain_merge_verify.py`). Group A: 7/13 organs migrated byte-identically 6/6 (causal_whatif, comprehension, self_schema, source_provenance, curiosity, prospective_memory, d6_multiref_wm); 6 deferred with named seams. THE REFRAME (owner-approved): byte-identity-in-isolation is the MIGRATION-SAFETY gate, NOT the one-brain GOAL (organs INTERACTING via cross-region synapses is the goal); hand-wired masks/freezes are scaffold to burn down to self-organized connectivity.
+- **Knowledge blocker #2 CLOSED → MAIN (b8f97aa2): NO-FLIP.** The 100k sharded path is ALREADY sublinear by shard-routing (verified 6-seed: oracle byte-identity 0-mismatch, 0-confab moat, recall 299/300); `BRAIN_SPARSE_INDEX_RETRIEVAL` (the DG flag) is redundant/inert on the tiered path (answers-identical 6/6) — flipping it is a hollow no-op. The #66 flip is RESOLVED (do not flip). Residuals: numpy-VSA-composer latency ~0.9s + reverse-lookup fan-out.
+- **V1 BCM hardening lever → MAIN (1f092371f)** + GPU eval queued: a pre-BCM homeostatic-scaling WARM-UP (equalizes each cell's operating point before oriented development — grounds the 3/6 seed-variance as BCM initial-condition dependence); pre-registered 6/6 gate; runs when the four-day GPU arc drains.
+- **On validated branches for a clean review-merge (task #82):** comprehension animacy cue spiking-realized+wired (b0e1fc1b0, GO, default-OFF); one-brain organ-read byte-identity (1bdb68b4, 6/6 GO); mood→tone regression FIX (515fdc651, GO — restores affect→tone on the spiking mouth, which a prior flip had silently neutralized; touches production server.py, soak memory-blocked). Doc backlog + 900-row INDEX reconciled → main.
+- **Mouth de-Qwen AUDIT done:** the bounded-SVO touchpoints already bypass Qwen (spiking-mouth-recall); read-SNR ensemble de-risk BUILT + staged (branch research/mouth-read-snr-ensemble-dendritic-derisk).
+
+**PRE-DECIDED NEXT ACTIONS (ordered):**
+1. HARVEST the in-flight: the framework ORGAN-READ byte-identity agent (running, extends substrate-init → organ-read for Group A); the V1 warmup GPU eval + the four-day arc verdicts (land in research/findings/raw/four_day/) when they complete.
+2. CONSOLIDATE the validated branches to main (task #82) — a doc-conflict-aware merge pass (ideally when memory is free; baloo indexer + stale swap made 2am risky). The mood→tone fix is highest-value (fixes a LIVE faculty neutralization) but needs its soak.
+3. THE MOUTH / read-SNR (#80, still the #1 frontier): run the staged ensemble/dendritic read-SNR de-risk; attack the noise so a learned spiking generator can replace Qwen.
+4. CONTINUE the one-brain framework migration: Group A organ-READ → fold the existing 4 pool organs (retire MergedSubstrate*) → Group B/C seams → integration cross-edges under a FUNCTIONAL gate → the production flip.
+
+**LAST DECISION: 2026-08-27 OVERNIGHT — framework+GroupA+V1-warmup on main; knowledge #2 CLOSED (no-flip); comprehension/one-brain-organ-read/mood-fix validated on branches; mouth read-SNR staged. Memory-conservative hold (swap-stressed). Latest `main` = `1f092371f`.**
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-26 LATE (history — superseded by the 2026-08-27 OVERNIGHT header above)
 
 **CURRENT ARC = FACULTY-INTEGRATION LARGELY DONE → the FLUENCY WALL is now the frontier.** This session drove 10 validated faculties to PRODUCTION-DEFAULT-ON and made them LIVE (the primary checkout was synced to `main`, owner-approved): affective empathy (W5 ToM), self-authorship honesty (DR-3), biased-competition attention, vision-identity readout, value-driven choice, sleep-replay consolidation (#64), spiking Broca mouth (bounded SVO), global-workspace STOP, activity-silent WM, BG action-selection. PI-ledger = 54 faculties / 26 default-on-spiking / scaffold_retired 0.
 The production brain now feels, remembers, hedges honestly, attends, chooses, deliberates, consolidates in sleep, and speaks BOUNDED sentences on its own neurons — but FLUENT OPEN-ENDED prose is STILL the external Qwen-0.5B mouth, and "most load-bearing cognition is still host/numpy" (the ledger's own note).
