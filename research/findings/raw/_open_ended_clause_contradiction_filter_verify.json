@@ -1,0 +1,351 @@
+{
+ "probe": "open_ended_clause_contradiction_filter_verify",
+ "backend": "numpy",
+ "source_replies": "research/findings/raw/_open_ended_verify_postfilter_derisk.json",
+ "off_path_import_gated": true,
+ "off_is_false": true,
+ "on_is_true": true,
+ "same_sentence_report": [
+  {
+   "topic": "canada",
+   "must_keep": "united states",
+   "must_strip": "mexico",
+   "source": "saved-reply(canada)",
+   "sentence": "Canada is bordered by the United States to the south and Mexico to the west",
+   "filtered": "Canada is bordered by the United States to the south",
+   "kept_correct": true,
+   "stripped_wrong": true,
+   "ok": true
+  },
+  {
+   "topic": "canada",
+   "must_keep": "ottawa",
+   "must_strip": "1867",
+   "source": "saved-reply(canada)",
+   "sentence": "The capital city of Canada is Ottawa, which was founded in 1867",
+   "filtered": "The capital city of Canada is Ottawa",
+   "kept_correct": true,
+   "stripped_wrong": true,
+   "ok": true
+  },
+  {
+   "topic": "france",
+   "must_keep": "paris",
+   "must_strip": "1523",
+   "source": "synthetic(france)",
+   "sentence": "France's capital is Paris, which was founded in the year 1523",
+   "filtered": "France's capital is Paris",
+   "kept_correct": true,
+   "stripped_wrong": true,
+   "ok": true
+  },
+  {
+   "topic": "morocco",
+   "must_keep": "spain",
+   "must_strip": "algeria",
+   "source": "synthetic(morocco)",
+   "sentence": "Morocco borders Spain to the north and Algeria to the east",
+   "filtered": "Morocco borders Spain to the north",
+   "kept_correct": true,
+   "stripped_wrong": true,
+   "ok": true
+  }
+ ],
+ "same_sentence_n_items": 4,
+ "same_sentence_n_kept_correct": 4,
+ "same_sentence_n_stripped_wrong": 4,
+ "same_sentence_all_ok": true,
+ "known_report": [
+  {
+   "topic": "canada",
+   "wired_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated: Canada is a vast country located in North America, bordered by the United States to the south The capital city of Canada is Ottawa",
+   "must_drop": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "caught": [
+    "1867",
+    "35 million",
+    "mexico"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "specificity_wired": 4
+  },
+  {
+   "topic": "france",
+   "wired_filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world",
+   "must_drop": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "caught": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "specificity_wired": 3
+  },
+  {
+   "topic": "morocco",
+   "wired_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "must_drop": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "caught": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "leaked": [],
+   "nonempty": true,
+   "specificity_wired": 4
+  }
+ ],
+ "wrong_supplements_total": 10,
+ "caught_wired": 10,
+ "leaked_wired": 0,
+ "catch_rate_wired": 1.0,
+ "all_known_replies_nonempty": true,
+ "canada_specificity_wired": 4,
+ "canada_specificity_improved_over_prior_wiring_verify": true,
+ "no_salvage_report": [
+  {
+   "topic": "france",
+   "source": "saved-reply(france)",
+   "sentence": "It's bordered by Italy to the west, Germany to the north, and Switzerland to the east",
+   "must_not_leak": [
+    "germany",
+    "italy",
+    "switzerland"
+   ],
+   "filtered": "I don't have a version of what I just said about france that I can actually stand behind.",
+   "leaked": [],
+   "used_honest_fallback": true,
+   "ok": true
+  },
+  {
+   "topic": "morocco",
+   "source": "saved-reply(morocco)",
+   "sentence": "Morocco has borders with several countries including Algeria, Tunisia, Libya, and Egypt",
+   "must_not_leak": [
+    "algeria",
+    "egypt",
+    "libya",
+    "tunisia"
+   ],
+   "filtered": "I don't have a version of what I just said about morocco that I can actually stand behind.",
+   "leaked": [],
+   "used_honest_fallback": true,
+   "ok": true
+  },
+  {
+   "topic": "canada",
+   "source": "saved-reply(canada)",
+   "sentence": "It has a population of around 35 million people, making it one of the largest countries in the world",
+   "must_not_leak": [
+    "35 million"
+   ],
+   "filtered": "I don't have a version of what I just said about canada that I can actually stand behind.",
+   "leaked": [],
+   "used_honest_fallback": true,
+   "ok": true
+  }
+ ],
+ "no_salvage_all_ok": true,
+ "no_salvage_leaked": 0,
+ "verdict": {
+  "label": "clause-granularity contradiction repair keeps correct + strips wrong in the SAME sentence, through webapp.open_ended_chat.post_filter, with no regression and no new leak",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(4) server.py's open_ended_chat import stays nested under the unchanged BRAIN_OPEN_ENDED guard",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(4) BRAIN_OPEN_ENDED unset/0 -> open_ended_enabled() is False",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(4) BRAIN_OPEN_ENDED=1 -> open_ended_enabled() is True",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(1) every same-sentence correct+wrong item keeps the correct detail AND strips the wrong one",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "(1) same-sentence correct-detail retention rate",
+    "ok": true,
+    "detail": "1 vs floor 0.99",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "(1) same-sentence wrong-detail strip rate",
+    "ok": true,
+    "detail": "1 vs floor 0.99",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "(2) NO-REGRESSION: known-topic wrong-supplement catch rate through the clause-aware post_filter",
+    "ok": true,
+    "detail": "1 vs floor 0.8",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(2) NO-REGRESSION: no wrong supplement leaks (still 0, same as the 2026-08-27 wiring verify)",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(2) every known-topic filtered reply stays non-empty (still conversational)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(2) canada's specificity improves over the prior wiring verify's disclosed 0 (the same-sentence residual that verify itself named)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(3) MOAT-SAFE: no-salvage sentences (every list item wrong / a bare unsupported number) still fully drop -- 0 leaks",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(3) MOAT-SAFE: zero total leaks across the no-salvage set",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [
+   {
+    "process": "a general (non-gazetteer) entity check / NLI-based clause extraction",
+    "why": "v1 (this file) makes exactly the TWO observed same-sentence residual shapes (appositive/relative-clause date, coordinated relation-object list) clause-safe via declared span-removal + a defense-in-depth re-check against sentence_contradicts; a bare unsupported claim with no relative-clause/list boundary (canada's '35 million' sentence) has no declared-safe repair and keeps falling back to whole-sentence removal, same as before this file existed -- the SAME general-entity-check/NLI next rung the 2026-08-21 and 2026-08-27 findings already name, now with a smaller residual left to close."
+   }
+  ],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(4) server.py's open_ended_chat import stays nested under the unchanged BRAIN_OPEN_ENDED guard",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(4) BRAIN_OPEN_ENDED unset/0 -> open_ended_enabled() is False",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(4) BRAIN_OPEN_ENDED=1 -> open_ended_enabled() is True",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(1) every same-sentence correct+wrong item keeps the correct detail AND strips the wrong one",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "(1) same-sentence correct-detail retention rate",
+   "ok": true,
+   "detail": "1 vs floor 0.99",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "(1) same-sentence wrong-detail strip rate",
+   "ok": true,
+   "detail": "1 vs floor 0.99",
+   "note": ""
+  },
+  {
+   "kind": "floor",
+   "name": "(2) NO-REGRESSION: known-topic wrong-supplement catch rate through the clause-aware post_filter",
+   "ok": true,
+   "detail": "1 vs floor 0.8",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(2) NO-REGRESSION: no wrong supplement leaks (still 0, same as the 2026-08-27 wiring verify)",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(2) every known-topic filtered reply stays non-empty (still conversational)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(2) canada's specificity improves over the prior wiring verify's disclosed 0 (the same-sentence residual that verify itself named)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(3) MOAT-SAFE: no-salvage sentences (every list item wrong / a bare unsupported number) still fully drop -- 0 leaks",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(3) MOAT-SAFE: zero total leaks across the no-salvage set",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  }
+ ],
+ "GO": true
+}

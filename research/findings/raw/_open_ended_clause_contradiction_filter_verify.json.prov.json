@@ -1,8 +1,8 @@
 {
- "run_id": "1787865584-3436645",
- "runner": "research/runners/_open_ended_chat_known_supplement_wiring_verify.py",
+ "run_id": "1787865572-3436546",
+ "runner": "research/runners/_open_ended_clause_contradiction_filter_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-ae6c1d76ac0964a7e/research/runners/_open_ended_chat_known_supplement_wiring_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ae6c1d76ac0964a7e/research/runners/_open_ended_clause_contradiction_filter_verify.py"
  ],
  "git_sha": "4a27f1a5e",
  "git_dirty": true,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T17:19:44",
+ "started": "2026-08-27T17:19:32",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -21,5 +21,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_open_ended_chat_known_supplement_wiring_verify.json"
+ "artifact": "research/findings/raw/_open_ended_clause_contradiction_filter_verify.json"
 }
