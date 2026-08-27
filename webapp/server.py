@@ -5399,13 +5399,53 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                 _saved_plan = (rich.max_sentences, rich.max_elaborations)
                 rich.max_sentences = int(affect_plan["max_sentences"])
                 rich.max_elaborations = int(affect_plan["max_elaborations"])
+            # ── CONFIDENCE CAPS FORTHCOMINGNESS (board #94, 2026-08-27) ──────────────────────────────────────
+            # Read the FLOOR the mood coupling (or the composer's own construction default) just decided, then
+            # request ONE extra "reach" fact from the composer. The confidence read (taken ONCE, right after
+            # `rich.answer()` returns below, and REUSED for the E1 hedge so the SAME spiking read drives both)
+            # decides whether the reach's extra fact is KEPT (confident) or TRUNCATED back to the floor (not
+            # confident / out of scope) -- NEVER overriding the floor downward, only ever granting ONE bonus
+            # fact on a HIGH read (the safe direction). Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`) -> this
+            # whole block is skipped -> byte-identical to pre-wiring. See webapp/confidence_forthcoming_chat.py.
+            _cf_on = False
+            _cf_floor = None
+            _cf_saved_plan = None
+            try:
+                from webapp import confidence_forthcoming_chat as _CF
+                _cf_on = _CF.confidence_forthcoming_enabled() and _metacog_on
+            except Exception:
+                _CF = None
+                _cf_on = False
+            if _cf_on:
+                _cf_floor = _CF.floor_override() or (rich.max_sentences, rich.max_elaborations)
+                _cf_saved_plan = (rich.max_sentences, rich.max_elaborations)
+                rich.max_sentences, rich.max_elaborations = _CF.reach_plan(*_cf_floor)
             try:
                 r = rich.answer(msg)
             finally:
+                if _cf_saved_plan is not None:
+                    rich.max_sentences, rich.max_elaborations = _cf_saved_plan
                 if _saved_plan is not None:
                     rich.max_sentences, rich.max_elaborations = _saved_plan
         except Exception as e:
             raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
+        # CONFIDENCE CAPS FORTHCOMINGNESS, continued: read the SAME post-answer activity trace + metacog
+        # confidence the E1 hedge below reads, ONCE (cached + reused at the hedge site so the organ's spiking
+        # margin read never runs twice in one turn), and apply the cap BEFORE `facts`/`resp` are built off `r`
+        # so every downstream field (recalled_svo, supporting_facts, n_sentences, the answer text) reflects the
+        # (possibly truncated) content consistently. Skips an abstain / hypothesis (nothing to cap) -> byte-
+        # identical there. Never crashes a turn -- degrades to the un-capped (reach-sized) answer on any error.
+        _cf_mc_prefix = ""
+        _cf_mc_info = None
+        _cf_trace = None
+        _cf_activity = None
+        if _cf_on and _cf_floor is not None and (not r.get("abstained")) and (not r.get("hypothesis")):
+            try:
+                _cf_activity = _read_activity()
+                _cf_mc_prefix, _cf_mc_info = _metacog_qualify(_cf_activity, False)
+                r, _cf_trace = _CF.apply_cap(rich, r, _cf_floor[0], (_cf_mc_info or {}).get("confident"))
+            except Exception as _cfe:  # never let the cap decision crash a turn -- degrade to the un-capped answer
+                _cf_trace = {"on": True, "error": f"{type(_cfe).__name__}: {_cfe}"}
         facts = [list(f) for f in r.get("facts", [])]
         # DERIVED (reasoning-frontier hardening, moat-hardening audit #4/#5): True when this turn's direct fact
         # was a COMPOSED multi-hop inference (compositional_chain_route), not a directly-recalled one.
@@ -5457,7 +5497,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "followup": bool(r.get("followup", False)),
             # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
             # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
-            "activity": _read_activity(),
+            # When the confidence-forthcoming cap ran (board #94) this is the CACHED pre-truncation activity read
+            # (the one the cap decision itself used), so the trace stays consistent with `resp["metacog"]` below
+            # even though a truncation's re-render may have since advanced the composer's own `last_trace`.
+            "activity": (_cf_activity if _cf_mc_info is not None else _read_activity()),
             # AFFECT (Gate-B): the live mood that colored this turn's forthcomingness + prose manner (debug trace;
             # the tone token lives here, never on the surface). null when affect is disabled (BRAIN_AFFECT=0).
             "affect": affect_info,
@@ -5515,9 +5558,19 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             # ── END faculty: DR-3 self-schema AUTHORSHIP ──
         # METACOG (Gate-B, E1): qualify a low-confidence RECALL answer with an honest functional hedge (skip an
         # abstain or a flagged guess — no recalled answer to qualify). Additive; null when disabled/out-of-scope.
-        _mc_prefix, resp["metacog"] = _metacog_qualify(resp.get("activity"), bool(r["abstained"]) or is_hyp)
+        # When the confidence-forthcoming cap (board #94) already ran the SAME read this turn, reuse it here
+        # instead of running the organ's spiking margin read a second time (the cap decision + the hedge are
+        # driven by ONE evidence read, not two).
+        if _cf_mc_info is not None:
+            _mc_prefix, resp["metacog"] = _cf_mc_prefix, _cf_mc_info
+        else:
+            _mc_prefix, resp["metacog"] = _metacog_qualify(resp.get("activity"), bool(r["abstained"]) or is_hyp)
         if _mc_prefix:
             resp["answer"] = _mc_prefix + resp["answer"]
+        # CONFIDENCE CAPS FORTHCOMINGNESS (board #94): attach the additive trace ONLY when the coupling actually
+        # ran this turn (on + in-scope) -> byte-identical (no key) when disabled or out of scope.
+        if _cf_trace is not None:
+            resp["confidence_forthcoming"] = _cf_trace
         # CURIOSITY (Gate-B, D3): on an ABSTAIN, APPEND an honest follow-up QUESTION when the spiking ASK pool
         # craves (crave, don't refuse). A hypothesis is a guess (not an abstain) -> out of scope. Additive; the
         # suffix is a QUESTION (moat-safe). null when disabled / not an abstain / not craving.

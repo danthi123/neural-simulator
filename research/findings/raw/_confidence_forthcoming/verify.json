@@ -1,0 +1,188 @@
+{
+  "runner": "verify_confidence_forthcoming (in-process /api/brain-chat)",
+  "backend": "numpy",
+  "ts": "2026-08-27T15:09:55",
+  "part_a": {
+    "pass": true,
+    "n_hi": 2,
+    "n_lo": 1,
+    "confident_hi": true,
+    "confident_lo": false,
+    "cf_hi": {
+      "on": true,
+      "floor_sentences": 1,
+      "requested_sentences": 2,
+      "confident": true,
+      "granted": true,
+      "kept_sentences": 2,
+      "elaborations_dropped": 0,
+      "reason": "high_confidence"
+    },
+    "cf_lo": {
+      "on": true,
+      "floor_sentences": 1,
+      "requested_sentences": 2,
+      "confident": false,
+      "granted": false,
+      "kept_sentences": 1,
+      "elaborations_dropped": 1,
+      "reason": "low_confidence_capped"
+    },
+    "answer_hi": "the brain uses the spikes the brain stores the memory",
+    "answer_lo": "My decision-margin reads this as low-confidence, so take it as uncertain: the dog chases the cat",
+    "recalled_hi": [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    "recalled_lo": [
+      "dog",
+      "chase",
+      "cat"
+    ],
+    "facts_hi": [
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ]
+    ],
+    "facts_lo": [
+      [
+        "dog",
+        "chase",
+        "cat"
+      ]
+    ]
+  },
+  "part_b": {
+    "pass": true,
+    "n_hi_lesioned": 1,
+    "n_lo_lesioned": 1,
+    "diff_collapsed": true,
+    "both_never_confident": true,
+    "confident_hi_lesioned": false,
+    "confident_lo_lesioned": false
+  },
+  "part_c": {
+    "pass": true,
+    "has_key": false,
+    "same_answer": true,
+    "same_n": true,
+    "off_answer_a": "the brain uses the spikes the brain stores the memory the brain learns the words",
+    "off_answer_b": "the brain uses the spikes the brain stores the memory the brain learns the words"
+  },
+  "part_d": {
+    "pass": true,
+    "verified": true,
+    "n_supporting_facts": 2,
+    "n_sentences": 2,
+    "supporting_facts": [
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "brain",
+        "store",
+        "memory"
+      ]
+    ]
+  },
+  "git_sha": "68cddf50f39d2b08de442b0d87992912d94395f2",
+  "verdict": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(A) HIGH confidence grants the bonus elaboration",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(A) LOW confidence withholds the bonus elaboration",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "(A) elaboration count high vs low",
+      "ok": true,
+      "detail": "treatment=2 control=1 |sep|=1 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(A) base fact identical regardless of confidence (high)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(A) base fact identical regardless of confidence (low)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) lesion collapses confident->False on the HIGH turn too",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "(B) elaboration count moves under the lesion (HIGH turn)",
+      "ok": true,
+      "detail": "before=2 after=1 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(B) lesioned high == lesioned low (difference gone)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C) no confidence_forthcoming key when the flag is off",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(C) two independent OFF runs produce the identical answer",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D) the bonus-granted reply is fully verified (moat holds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(D) supporting_facts count matches n_sentences (nothing unbacked)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "disabled_processes": []
+}
