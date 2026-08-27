@@ -47,8 +47,8 @@ met, the clearing lead VANISHES and the surface reverts to the byte-identical no
 surface change RIDES the SPIKING depression of the shared recurrence, not a host `if interrupt`: zero the depression
 term and the clearing acknowledgment disappears even though the world input (an interrupt) is unchanged.
 
-CONTRACT (additive, reversible, byte-identical-off; DEFAULT-OFF until the parent flips it after the pool soak).
-  * `stop_enabled()` (`BRAIN_GNW_STOP`, DEFAULT-OFF) gates the whole block. DISABLED -> the handler skips it: no
+CONTRACT (additive, reversible, byte-identical-off). 2026-08-26 FLIPPED DEFAULT-ON (wave 3, 6/6 flip-soak GO):
+  * `stop_enabled()` (`BRAIN_GNW_STOP`, DEFAULT-ON) gates the whole block. `BRAIN_GNW_STOP=0` disables it: no
     workspace is built, no read runs, no `gnw_stop` key is attached, and NO clearing lead is prepended -> the turn is
     BYTE-IDENTICAL to pre-wiring.
   * The stop workspace runs on its PRIVATE RNG timeline and the host process-global RNG (numpy + the sim backend) is
@@ -100,10 +100,12 @@ _LOCK = threading.Lock()
 
 
 def stop_enabled() -> bool:
-    """The master flag. `BRAIN_GNW_STOP` DEFAULT-OFF: only an explicit truthy (1/true/on/yes) enables the global-stop
-    consumer. Unset or 0/false/off/no -> the handler skips the block entirely (no build, no read, no key, no lead) ->
-    BYTE-IDENTICAL to pre-wiring. (The parent flips this default-ON after the pool soak.)"""
-    return os.environ.get("BRAIN_GNW_STOP", "0").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag. `BRAIN_GNW_STOP` DEFAULT-ON (2026-08-26 flip, wave 3, 6/6 flip-soak GO): unset -> the
+    global-stop consumer is enabled; an explicit off (0/false/off/no/'') -> the handler skips the block entirely
+    (no build, no read, no key, no lead) -> BYTE-IDENTICAL to pre-wiring. Mirrors the server.py
+    `_GNW_STOP_DEFAULT_ON` anchor and its `_gnw_stop_flag_on()` reader."""
+    v = os.environ.get("BRAIN_GNW_STOP")
+    return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
 
 
 def stop_lesion_on() -> bool:

@@ -9,11 +9,11 @@ ASSERTED RECALL / RICH answer surface (the `PLAIN_TRANSITIVE` frame "the <S> <V-
 authored by the off-bridge Qwen / template-stub. It BURNS DOWN the recall half of the mouth scaffold for the
 bounded transitive-SVO case; open prose the frames cannot cover keeps the Qwen fallback (owner-sanctioned).
 
-FLAG (additive, default OFF -> flag-OFF byte-identical; the parent flips it default-ON after the pool soak):
+FLAG (additive; 2026-08-26 FLIPPED DEFAULT-ON, wave 3, 6/6 flip-soak GO):
 
-    BRAIN_SPIKING_MOUTH_RECALL  -- unset / "0" => OFF (recall surface = the exact current Qwen/template path,
-                                   byte-identical); any other value => ON (bounded transitive-SVO recall frames
-                                   render on the spiking Broca, verify-gated). The pre-existing generate-channel
+    BRAIN_SPIKING_MOUTH_RECALL  -- unset => ON (bounded transitive-SVO recall frames render on the spiking Broca,
+                                   verify-gated); an explicit off (0/false/off/no/'') => OFF (recall surface = the
+                                   exact pre-flip Qwen/template path, byte-identical). The pre-existing generate-channel
                                    BRAIN_SPIKING_MOUTH (default ON) is UNTOUCHED.
 
     The master mouth kill-switch BRAIN_SPIKING_MOUTH=0 ALSO silences this recall surface (so the literal lesion
@@ -45,15 +45,24 @@ import os
 # but excluding up front avoids a wasted spiking emit + keeps the frame inventory honest.)
 _COPULA = frozenset({"is", "are", "was", "were", "be", "been", "being", "am", "'s", "s"})
 
+# The DEFAULT-ON master switch (the production-integration anchor; 2026-08-26 flip, wave 3, 6/6 flip-soak GO).
+# BRAIN_SPIKING_MOUTH_RECALL=0 disables the bounded transitive-SVO recall surface byte-identically (the row STAYS
+# on_by_default:YES). Flipping this to False would turn the faculty OFF by default.
+_RECALL_MOUTH_DEFAULT_ON = True
+
 
 def recall_mouth_enabled():
     """The escape hatch / flip gate. Returns True IFF the bounded transitive-SVO recall surface should render on
-    the spiking Broca. DEFAULT OFF (unset BRAIN_SPIKING_MOUTH_RECALL) so the wire-in is byte-identical until the
-    parent flips it. The master generate-channel kill-switch BRAIN_SPIKING_MOUTH=0 also forces this OFF (the
-    literal lesion oracle)."""
+    the spiking Broca. DEFAULT-ON (2026-08-26 flip, wave 3, 6/6 flip-soak GO): unset `BRAIN_SPIKING_MOUTH_RECALL`
+    -> ON; an explicit off (0/false/off/no/'') -> the recall surface stays on the current Qwen/template path,
+    byte-identical to pre-flip. The master generate-channel kill-switch BRAIN_SPIKING_MOUTH=0 also forces this OFF
+    (the literal lesion oracle)."""
     if os.environ.get("BRAIN_SPIKING_MOUTH", "1") == "0":
         return False                                              # master mouth kill also silences recall
-    return os.environ.get("BRAIN_SPIKING_MOUTH_RECALL", "0") != "0"
+    v = os.environ.get("BRAIN_SPIKING_MOUTH_RECALL")
+    if _RECALL_MOUTH_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
+    return v is not None and v.strip().lower() not in ("0", "false", "off", "no", "")
 
 
 def frame_supported(a, v, p):
