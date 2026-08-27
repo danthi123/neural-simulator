@@ -32,7 +32,9 @@ additive/DEFAULT-OFF/byte-identical-when-off (SHA256 + `tests/test_determinism.p
 MIGRATION-safety gate, not the INTEGRATION goal (cross-region synapses) — that remains the next rung. Findings:
 `2026-08-27-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow.md`, `2026-08-27-pmem-fp-accumulation-full7-GO.md`.
 
-**CURRENT ARC 2026-08-27 ~17:50 — Latest `main` = `6f6cb15b`.** The FLUENCY WALL (the mouth) remains the #1 frontier, but per the owner's "don't tunnel — work all the needed things concurrently" steer the session now advances FIVE dimensions in parallel: mouth-fluency · learn-through-use · introspection · continuous-life/aliveness · one-brain integration.
+**CURRENT ARC 2026-08-27 ~19:45 — Latest `main` = `34f282ed`.** ⭐ MILESTONE: the FIRST learned cross-region synapse is now WIRED INTO THE LIVE BRAIN (one-brain integration PART 1, `34f282ed`, `BRAIN_ONEBRAIN_XEDGE` default-OFF) — d6-WM→comprehension drives the real judge() lesion-attributably (~98.5%), byte-identical-off; HONEST CAVEAT it is SUB-DECISION (doesn't change wording yet). PART 2 (live-learning + cross the decision boundary) in flight per owner directive "frozen then immediately continue into live once validated".
+
+The session advances SIX dimensions in parallel: mouth-fluency · learn-through-use · introspection · continuous-life/aliveness · one-brain integration · open-ended-honesty. The FLUENCY WALL (the mouth) remains the #1 frontier; a possible SHARED spiking-population READ-FIDELITY wall may sit behind BOTH the mouth read-SNR AND learn-through-use (the mouth recodable GPU verdict is the first datapoint, ~1h out).
 
 **The mouth wall is now precisely characterized: NOT a noise/SNR problem but a STRUCTURE-SELECTIVE graded-conductance read collapse** — a structured target weight direction reads at corr ~0 vs the ideal linear map at EVERY magnitude (10-100%), while random directions of equal norm read at ~0.95; noise/magnitude/gain/temperature/confidence all ruled out (all NO-GO/NULL). The live lever is the OBJECTIVE (a dendritic Urbanczik-Senn teacher or an MSE/regression-margin readout), not denoising.
 
