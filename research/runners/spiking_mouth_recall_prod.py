@@ -103,10 +103,25 @@ def frame_supported(a, v, p):
 
 # The DEFAULT-ON escape gate for the mood-tone coupling (2026-08-27 fix). See the module docstring's "MOOD-TONE
 # COUPLING" section for the regression this closes.
-_MOUTH_MOOD_DEFAULT_ON = False  # 2026-08-27: flipped OFF — the 6-seed onebrain-composer soak is NO-GO (the mood
-# colouring is INERT on the production OneBrainComposer mouth, surface_changed_off_on=False; it only manifests on
-# the lightweight rf composer the derisk used). Keep the code (opt-in via BRAIN_SPIKING_MOUTH_MOOD=1) until the
-# onebrain-composer version is validated; do NOT ship an un-soaked default-on production flag.
+#
+# 2026-08-27 CORRECTION (same day, concurrent session): this was briefly flipped to False on the premise that the
+# 6-seed onebrain-composer soak (`_spiking_mouth_recall_soak.py`, the ~46-region/4180-neuron OneBrainComposer --
+# the ONLY soak in this repo that reports a `surface_changed_off_on` field) was NO-GO with the coloring "INERT on
+# the production OneBrainComposer mouth". Investigated before being believed (a NO-GO is the START of the
+# research here, not the end): the SAME NO-GO reproduces BYTE-FOR-BYTE on a clean PRE-MERGE `main` worktree
+# (69b65bd22, before either of this session's two branch merges existed) -- proof it cannot be an inertness
+# introduced by the mood-tone fix. Root cause is a STALE TEST INSTRUMENT, not a substrate finding:
+# `_spiking_mouth_recall_soak.py::_set_flag(False)` used `os.environ.pop(BRAIN_SPIKING_MOUTH_RECALL)` to mean OFF,
+# correct only while that flag defaulted OFF; the 2026-08-26 wave-3 flip made `_RECALL_MOUTH_DEFAULT_ON=True`
+# (this same file), so `unset` now reads ON -- the soak's "OFF" arm has been silently ON-vs-ON since that flip,
+# for ANY change measured through it, mood-tone included. Confirmed directly: `recall_mouth_enabled()` with the
+# var unset returns True; forcing it to an explicit "0" makes `on_surface != off_surface` again. Fixed in
+# `_spiking_mouth_recall_soak.py` (explicit "0" instead of pop) and re-run 6-seed: GO, 15/17 spiking-authored
+# facts per seed on every seed -- byte-identical to the artifact already banked on `main` from 2026-08-26 (before
+# the flip made the soak's OFF-arm stale), i.e. the corrected instrument reproduces exactly what was true before,
+# now genuinely re-verified against the merged HEAD. Full evidence + the FAILURE_LOG entry:
+# `research/findings/2026-08-27-affect-tone-spiking-mouth-flip-confirmed-GO-6seed.md`. Restored to True.
+_MOUTH_MOOD_DEFAULT_ON = True
 
 
 def mouth_mood_enabled():

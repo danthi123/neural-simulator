@@ -6,9 +6,11 @@ so it runs headless on the mini-PC pool.
 
 Per seed it proves the three properties a validated wire-in needs:
 
-  (1) FLAG-OFF BYTE-IDENTICAL. With BRAIN_SPIKING_MOUTH_RECALL unset (default OFF), every recall surface is EXACTLY
-      the current Qwen/template path -- for each stored transitive fact, chat.render(svo) with the flag OFF equals
-      the template-stub's own verified surface (the pre-wire behaviour), and NO spiking-form surface leaks.
+  (1) FLAG-OFF BYTE-IDENTICAL. With BRAIN_SPIKING_MOUTH_RECALL explicitly OFF (the flag defaulted OFF pre-2026-08-26;
+      the 2026-08-26 wave-3 flip made it default-ON, so this soak's "OFF" arm now sets `=0` explicitly rather than
+      relying on unset -- see `_set_flag`), every recall surface is EXACTLY the current Qwen/template path -- for
+      each stored transitive fact, chat.render(svo) with the flag OFF equals the template-stub's own verified
+      surface (the pre-wire behaviour), and NO spiking-form surface leaks.
 
   (2) LOAD-BEARING (the lesion oracle). With the flag ON, a bounded transitive-SVO recall is authored ON SPIKES:
         - flag lesion     : ON -> "the brain uses the spikes" (spiking form) vs OFF -> "The brain uses spikes."
@@ -54,10 +56,17 @@ _FLAG = "BRAIN_SPIKING_MOUTH_RECALL"
 
 
 def _set_flag(on):
+    # 2026-08-27 fix: this soak was written when BRAIN_SPIKING_MOUTH_RECALL defaulted OFF, so "unset" meant OFF.
+    # The 2026-08-26 wave-3 flip made it default-ON (_RECALL_MOUTH_DEFAULT_ON=True in spiking_mouth_recall_prod.py)
+    # WITHOUT updating this soak's own escape hatch -- `os.environ.pop` now leaves the flag at its (new) default
+    # of ON, so the "OFF" arm silently stopped being OFF: every flag-off/flag-on comparison this soak makes
+    # collapsed to ON-vs-ON (confirmed directly: recall_mouth_enabled() with the var unset now reads True, not
+    # False). Explicit "0" is required to actually force OFF post-flip; kept branch-explicit (not just "always
+    # write the string") so the intent stays legible at each call site.
     if on:
         os.environ[_FLAG] = "1"
     else:
-        os.environ.pop(_FLAG, None)          # unset => default OFF
+        os.environ[_FLAG] = "0"              # explicit OFF (the master BRAIN_SPIKING_MOUTH=0 kill also works)
 
 
 def _stub_surface(a, v, p):
@@ -188,7 +197,9 @@ def run_seed(seed):
     all_brain_sourced = all(t["brain_sourced"] for t in tr_on)
     no_regression = bool(content_equiv and surface_changed and moat_held and all_brain_sourced)
 
-    _set_flag(False)                                 # leave the process in the default (OFF) state
+    _set_flag(False)                                 # leave the process explicitly OFF (NOT the production
+                                                      # default, which is ON since the 2026-08-26 wave-3 flip --
+                                                      # just a clean, known state for the next seed's build)
 
     seed_go = bool(flag_off_byte_identical and load_bearing and no_regression)
     return {

@@ -1,8 +1,8 @@
 {
- "run_id": "1787792000-762512",
+ "run_id": "1787829596-2979644",
  "runner": "research/runners/_spiking_mouth_recall_soak.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_c9f85a9b-893-1/research/runners/_spiking_mouth_recall_soak.py",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/wt-main-fix/research/runners/_spiking_mouth_recall_soak.py",
   "--seeds",
   "42",
   "43",
@@ -13,7 +13,7 @@
   "--out",
   "research/findings/raw/_spiking_mouth_recall_soak.json"
  ],
- "git_sha": "3e1751451",
+ "git_sha": "12722908a",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -21,7 +21,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-26T20:53:20",
+ "started": "2026-08-27T07:19:56",
  "env": {
   "SIM_BACKEND": "numpy"
  },
