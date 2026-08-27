@@ -1,0 +1,133 @@
+{
+  "probe": "onebrain_xedge_production_frozen",
+  "seeds": [
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "results": [
+    {
+      "seed": 43,
+      "cross_weights": {
+        "w0->A": 0.05,
+        "w0->P": 0.05,
+        "w1->A": 13.2846,
+        "w1->P": 4.4794,
+        "w2->A": 4.0849,
+        "w2->P": 12.4066
+      },
+      "selftest": {
+        "role": {
+          "p_agent": "w1",
+          "p_patient": "w2",
+          "p_ctrl": "w0"
+        },
+        "intact": [
+          {
+            "item": "dog/chase/wolf",
+            "tag": "ambig_2animate",
+            "dNet": -0.0444444444444444,
+            "dMargin": 0.023611111111111138
+          },
+          {
+            "item": "rock/grab/book",
+            "tag": "ambig_2inanim",
+            "dNet": 0.004861111111111205,
+            "dMargin": 0.004861111111111094
+          },
+          {
+            "item": "fox/chase/fox",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": -0.033333333333333326
+          }
+        ],
+        "lesioned": [
+          {
+            "item": "dog/chase/wolf",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "rock/grab/book",
+            "tag": "ambig_2inanim",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "fox/chase/fox",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          }
+        ],
+        "max_abs_dNet_intact": 0.0444444444444444,
+        "max_abs_dNet_lesioned": 0.0,
+        "lesion_attributable": true
+      }
+    },
+    {
+      "seed": 44,
+      "cross_weights": {
+        "w0->A": 0.05,
+        "w0->P": 0.05,
+        "w1->A": 4.1966,
+        "w1->P": 12.8229,
+        "w2->A": 13.1506,
+        "w2->P": 4.5759
+      },
+      "selftest": {
+        "role": {
+          "p_agent": "w2",
+          "p_patient": "w1",
+          "p_ctrl": "w0"
+        },
+        "intact": [
+          {
+            "item": "fox/chase/bear",
+            "tag": "ambig_2animate",
+            "dNet": -0.011805555555555625,
+            "dMargin": -0.0020833333333333814
+          },
+          {
+            "item": "ball/grab/stick",
+            "tag": "ambig_2inanim",
+            "dNet": -0.02777777777777779,
+            "dMargin": -0.02777777777777779
+          },
+          {
+            "item": "fox/watch/bird",
+            "tag": "ambig_2animate",
+            "dNet": -0.04236111111111107,
+            "dMargin": -0.024305555555555552
+          }
+        ],
+        "lesioned": [
+          {
+            "item": "fox/chase/bear",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "ball/grab/stick",
+            "tag": "ambig_2inanim",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          },
+          {
+            "item": "fox/watch/bird",
+            "tag": "ambig_2animate",
+            "dNet": 0.0,
+            "dMargin": 0.0
+          }
+        ],
+        "max_abs_dNet_intact": 0.04236111111111107,
+        "max_abs_dNet_lesioned": 0.0,
+        "lesion_attributable": true
+      }
+    }
+  ],
+  "note": "frozen pre-grown d6-WM->comprehension cross-edge wired into the live pool; the DRIVE is lesion-attributable on the real production comprehension read (differential hold p_agent-pool vs p_patient-pool, exactly 0 lesioned). Semantic referent->pool binding is a declared residual (positional live focus)."
+}

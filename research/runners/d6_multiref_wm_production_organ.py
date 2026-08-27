@@ -213,6 +213,17 @@ class MultiReferentWMOrgan:
                 loc, amp = buf.read(r)
                 alive.append(float(amp))
                 recovered[r] = self._ref_of_slot.get(loc, None)
+        # ONE-BRAIN CROSS-EDGE (opt-in): publish the primary held referent's POSITIONAL candidate pool as the
+        # focus the comprehension read co-drives, so a held WM referent DRIVES the frozen d6->sel cross-edge in a
+        # live turn. Guarded by the xedge pool's OWN marker attr (`xedge_codrive_params`) -> byte-identical when
+        # shared is None or not an xedge pool. The register->candidate-pool map is POSITIONAL (declared residual:
+        # R3-v3's candidate topology is host-chosen, not a semantic role->pool binding; see onebrain_xedge_production).
+        if refs and getattr(self._shared, "xedge_codrive_params", None) is not None and not lesion:
+            try:
+                from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS
+                self._shared.xedge_focus = CAND_POOLS[0]
+            except Exception:
+                pass
         return {
             "n_referents": len(refs),
             "input_order": refs,

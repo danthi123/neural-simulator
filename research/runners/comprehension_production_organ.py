@@ -297,6 +297,38 @@ class ComprehensionProductionOrgan:
                 arr[:] = 0
         b.cp_external_input_current[:] = 0.0
 
+    def _xedge_codrive(self, comp):
+        """ONE-BRAIN CROSS-EDGE coupling (opt-in, byte-identical no-op when off). When a shared xedge pool has a
+        FOCUS d6 candidate pool set (`shared.xedge_focus`), establish that pool's self-sustaining slow-NMDA WM bump
+        on the shared bridge BEFORE the cue settle (R3-v3's amb_read protocol: drive LOAD_PA for LOAD_STEPS, then
+        HOLD), so the FROZEN w{k}->sel cross-edge transmits the held WM state INTO this comprehension read — the
+        `repair_target` net-lean (and the judge margin) then reflect it. The slow-NMDA bump self-sustains through
+        the subsequent `_noun_role_rates` soft resets + cue windows (exactly as amb_read's held read does). No-op
+        unless `self._shared` exposes a non-None `xedge_focus`: shared=None (standalone), or the flag off, or no
+        referent held, is byte-identical. Also a no-op on a bridge that lacks the focus region (the standalone D4
+        cue-lesion twin) — the try/except degrades cleanly."""
+        sh = self._shared
+        foc = getattr(sh, "xedge_focus", None) if sh is not None else None
+        if foc is None:
+            return
+        prm = getattr(sh, "xedge_codrive_params", None) or {}
+        load_pa = float(prm.get("load_pa", 400.0))
+        load_steps = int(prm.get("load_steps", 30))
+        hold_steps = int(prm.get("hold_steps", 6))
+        b, xp = comp.bridge, comp.xp
+        try:
+            idx = xp.asarray(np.asarray(b.region_manager.indices(foc), np.int64))
+        except Exception:
+            return
+        cur = xp.zeros(b.core_config.num_neurons, dtype=xp.float32)
+        cur[idx] = xp.float32(load_pa)
+        b.cp_external_input_current[:] = cur
+        for _ in range(load_steps):
+            b._run_one_simulation_step()
+        b.cp_external_input_current[:] = 0.0
+        for _ in range(hold_steps):
+            b._run_one_simulation_step()
+
     def ensure_built(self):
         if self._built:
             return
@@ -351,6 +383,7 @@ class ComprehensionProductionOrgan:
     def _read(self, comp, n0: str, v: str, n1: str) -> float:
         """Hard-reset `comp` to rest, then read the SEMANTIC sel-pool margin off cp_firing_states."""
         self._hard_reset(comp)
+        self._xedge_codrive(comp)                        # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
         return float(semantic_sel_margin(comp, _evs_for_organ(n0, v, n1), READ_STEPS))
 
     def _read_per_noun(self, comp, n0: str, v: str, n1: str):
@@ -360,6 +393,7 @@ class ComprehensionProductionOrgan:
         `< 0` = leans PATIENT. Their signs/magnitudes localise WHICH thematic role failed to resolve (the
         repair target). Under the learned-cue lesion both collapse to ~0 (no role activity)."""
         self._hard_reset(comp)
+        self._xedge_codrive(comp)                        # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
         evs = _evs_for_organ(n0, v, n1)
         a0 = float(_agent_evidence_from_spikes(comp, evs[0], SEMANTIC_CUES, READ_STEPS))
         a1 = float(_agent_evidence_from_spikes(comp, evs[1], SEMANTIC_CUES, READ_STEPS))
@@ -481,10 +515,23 @@ _ORGAN: ComprehensionProductionOrgan | None = None
 
 
 def get_organ(seed: int = 42) -> ComprehensionProductionOrgan:
-    """The process-shared comprehension organ (built once on first use)."""
+    """The process-shared comprehension organ (built once on first use). When the ONE-BRAIN CROSS-EDGE flag is ON
+    (`BRAIN_ONEBRAIN_XEDGE`) this returns the cross-edge-grown comprehension organ that co-inhabits the shared
+    [d6_multiref_wm + comprehension + da_credit] xedge pool (the frozen w{k}->sel cross-edge lets a HELD WM pool
+    drive its role competition); OFF (default) or on any build failure -> its own standalone bridge exactly as
+    before (byte-identical). Mirrors the metacog pool-#2 shared-attach template."""
     global _ORGAN
     if _ORGAN is None:
-        _ORGAN = ComprehensionProductionOrgan(seed=seed)
+        try:
+            from research.runners.onebrain_xedge_production import xedge_enabled, get_xedge_pool
+            if xedge_enabled():
+                xp = get_xedge_pool(seed)
+                if xp is not None and getattr(xp, "comp_organ", None) is not None:
+                    _ORGAN = xp.comp_organ
+        except Exception:
+            _ORGAN = None
+        if _ORGAN is None:
+            _ORGAN = ComprehensionProductionOrgan(seed=seed)
     return _ORGAN
 
 
