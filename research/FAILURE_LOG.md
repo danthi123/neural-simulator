@@ -11,6 +11,7 @@ system exists to remove. Every gate before this one was added because I happened
 
 | date | failure | gate |
 |---|---|---|
+| 2026-08-27 | `cfg.seed` is NOT portable ACROSS `SIM_BACKEND`: numpy (MT19937/PCG64) and cupy (cuRAND) give DIFFERENT heterogeneity/OU realizations at the IDENTICAL seed value (confirmed via `thr_hash` mismatch, all 6 of seeds 42/43/44/100/101/102) — a same-seed cross-backend comparison silently compares two DIFFERENT networks. Discovered because the 2026-08-27 mouth-readsnr structured-collapse (head_w corr~0.00) reproduces 6/6 on cupy but 0/6 on numpy at the SAME nominal seeds (corr~0.96, matching random) — the CPU-mandated re-run characterized a different realization, not the GPU wall | NOT-GATEABLE: expected behavior of two unrelated RNG algorithms sharing one seed value, not a bug to block on; the fix is DOCUMENTATION (a sibling note to the existing `cfg.seed` trap in CLAUDE.md/`docs/ENGINE_REFERENCE.md`: same-seed cross-backend runs are not the same experiment) so a future same-seed numpy-vs-cupy comparison isn't silently trusted |
 | 2026-07-31 | a queued job's command is invalid (flag does not exist) — 9 jobs dispatched, died on argparse | `pool_queue` argparse validation |
 | 2026-07-31 | a job dies mid-run and nothing notices — dispatcher logged launches, not exit status | dispatcher `job_status.log` + heartbeat |
 | 2026-07-31 | queue METADATA (`#checked:`) executed as part of the command, breaking a brace group | dispatcher strips at pop time |

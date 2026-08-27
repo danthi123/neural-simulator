@@ -220,3 +220,5 @@ full7 (not yet merged to main). Findings: 2026-08-27-dedup-synapse-masks-closes-
 2026-08-27-pmem-fp-accumulation-full7-GO.
 reconciled: 2026-08-27 board synced through the ~15:50 batch (learn-through-use Ecker NO-GO #107, mouth #94/#104, migration/integration). findings-through: ecker-adex-store-learn-through-use, mouth-readsnr-decoder-direction, confidence-drives-forthcomingness, generative-attractor-wander.
 reconciled: 2026-08-27 ~16:10 mouth magnitude-NULL + correction merged; learn-through-use Ecker NO-GO #107; BTSP directional-write dispatched.
+
+## 2026-08-27 ~18:15 reconcile — #104 (wander PARTIAL scaled+wired), #107 (Braun NO-GO -> graded-instrument in flight), #80 (mouth characterization backend-confound, eigen-alignment lever, GPU re-run staged). Findings: continuous-life wander PARTIAL, Braun gapcoding NO-GO, mouth structure-characterization backend-confound, dendritic screen soft-NO-GO, open-ended honesty same-sentence GO, mouth softmax NO-GO. Main 5fdc8e41 + the characterization merge.
