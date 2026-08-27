@@ -1,0 +1,25 @@
+[325.5s] built tiny-demo agent
+[325.6s] building pass-1 (flag ON / default) brain...
+[552.6s] pass 1 (flag default/ON) done
+[552.6s] building pass-2 (flag OFF / lesion) brain...
+[937.4s] pass 2 (flag OFF) done
+
+=== BYTE-IDENTICAL COMPARISON (flag default-ON vs BRAIN_RELATION_FRONTED_QUESTIONS=0) ===
+  SAME  'what does the dog chase': ON=['dog', 'chase', 'cat'] (sha=60f0c556121f)  OFF=['dog', 'chase', 'cat'] (sha=60f0c556121f)
+  SAME  'what does the cat eat': ON=['cat', 'eat', 'fish'] (sha=39501423612f)  OFF=['cat', 'eat', 'fish'] (sha=39501423612f)
+  SAME  'what does the fish fly': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'what do you use': ON=['brain', 'use', 'spikes'] (sha=6ff5d01a7957)  OFF=['brain', 'use', 'spikes'] (sha=6ff5d01a7957)
+  SAME  'what do you learn': ON=['brain', 'learn', 'words'] (sha=71000ad2dbde)  OFF=['brain', 'learn', 'words'] (sha=71000ad2dbde)
+  SAME  'who are you': ON=['brain', 'use', 'spikes'] (sha=6ff5d01a7957)  OFF=['brain', 'use', 'spikes'] (sha=6ff5d01a7957)
+  SAME  'what is chelsea fc': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'what is a dog': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'the wolf hunts the deer': ON=['wolf', 'hunt', 'deer'] (sha=b1289b46bf18)  OFF=['wolf', 'hunt', 'deer'] (sha=b1289b46bf18)
+  SAME  'what does the wolf hunt': ON=['wolf', 'hunt', 'deer'] (sha=b1289b46bf18)  OFF=['wolf', 'hunt', 'deer'] (sha=b1289b46bf18)
+  SAME  'what country does chelsea fc represent': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'tell me something about dog': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'guess': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'does the dog chase the cat': ON=['dog', 'chase', 'cat'] (sha=60f0c556121f)  OFF=['dog', 'chase', 'cat'] (sha=60f0c556121f)
+  SAME  'hello': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+  SAME  'what is the capital of france': ON=None (sha=74234e98afe7)  OFF=None (sha=74234e98afe7)
+
+BYTE-IDENTICAL: 0 diffs across 16 pre-existing questions
