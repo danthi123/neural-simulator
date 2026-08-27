@@ -550,6 +550,14 @@ class RichAnswerComposer:
             # no fluent renderer (raw mode / --no-renderer): the raw triple IS the verified content (it came
             # straight from the brain's store), so emit it as a plain sentence.
             return self.chat._raw(svo), True
+        # BRAIN-NATIVE SPIKING MOUTH (recall/rich surface): a bounded transitive-SVO sentence renders ON SPIKES
+        # (word order = the per-pool spiking-RATE ranking), verify-gated by the ChatBrain's own re-parse moat.
+        # Flag BRAIN_SPIKING_MOUTH_RECALL (default OFF) / open prose / a verify miss -> None -> falls straight
+        # through to the Qwen/template render below (BYTE-IDENTICAL). A returned spiking sentence carries EXACTLY
+        # this gathered SVO (verify passed), so it is within the gathered set and the multi-sentence moat holds.
+        spk = self.chat.spiking_recall_surface(a, v, p)
+        if spk is not None:
+            return spk, True
         surface, asserted = self.chat.renderer.render_svo(a, v, p)
         if self._verify_rendered(surface, asserted, svo, gated):
             return surface, True

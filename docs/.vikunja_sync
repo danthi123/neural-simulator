@@ -118,3 +118,16 @@ no framing-faculty regression. #141 CLOSED (production-default + confirmed live)
 the diagnostic): reasoning + recall over the brain's OWN 15k knowledge via NATURAL language (today the
 route reasons over just-taught facts + the possessive 2-hop shape; the 15k core still needs exact tokens,
 and compound/inverse/3+hop phrasings don't parse) -> new board task. Residuals tracked on #141's ref.
+
+## 2026-08-26  spiking Broca mouth extended to the RECALL/RICH surface (production wire-in, GO)
+The already-default-ON GENERATE-channel spiking Broca mouth was extended to the ASSERTED recall/rich
+answer surface for the bounded transitive-SVO frame inventory (organ spiking_mouth_recall_prod.py, NEW
+flag BRAIN_SPIKING_MOUTH_RECALL default OFF, wired into ChatBrain.render + RichAnswerComposer; NO sim/
+edit). 6-seed flip-soak GO: flag-OFF byte-identical, load-bearing (flag lesion reverts to Qwen/template +
+rate-read equal-drive lesion scrambles the ORDER with identical content -> the spiking read authored the
+order), no-regression (content-equivalence OFF==ON + moat abstains). Wired default-OFF; parent flips
+default-ON after the pool soak. Finding 2026-08-26-spiking-broca-mouth-recall-surface-production-wirein-GO.
+HONEST NOTE (this stamp): this landed from an ISOLATED wire-in worktree with NO Vikunja token present, so
+the live board was NOT reconciled here -- the parent orchestrator must reconcile the board at merge (mark
+the spiking-broca-mouth wire-in task done + add the default-ON flip next-rung). This entry stamps the
+marker to record the landing; it is NOT a claim that the board API was touched.
