@@ -1,0 +1,29 @@
+{
+ "run_id": "1787867725-3463920",
+ "runner": "research/runners/_wkv_mouth_readout_structure_characterization_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a32a4add10c0d7dd1/research/runners/_wkv_mouth_readout_structure_characterization_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--json",
+  "research/findings/raw/_wkv_structure_characterization/char_6seed.json"
+ ],
+ "git_sha": "fc5e9dcb9",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T17:55:25",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_structure_characterization/char_6seed.json"
+}
