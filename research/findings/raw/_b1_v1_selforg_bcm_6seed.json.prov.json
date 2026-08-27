@@ -1,0 +1,43 @@
+{
+ "run_id": "1787796882-1079472",
+ "runner": "research/runners/_b1_v1_selforg_bcm_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_341ab87d-04c-2/research/runners/_b1_v1_selforg_bcm_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "45",
+  "46",
+  "47",
+  "--dev-steps",
+  "40000",
+  "--bcm-gain",
+  "800",
+  "--bcm-pre-floor",
+  "0.002",
+  "--bcm-theta-alpha",
+  "0.001",
+  "--out",
+  "research/findings/raw/_b1_v1_selforg_bcm_6seed.json"
+ ],
+ "git_sha": "2e1745c0a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-26T22:14:42",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2299.2,
+ "corpus_check_query": "V1 oriented receptive fields do not emerge on-bridge: common-mode ON/OFF convergence, BCM sliding threshold",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_b1_v1_selforg_bcm_6seed.json"
+}

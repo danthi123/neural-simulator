@@ -220,6 +220,12 @@ def build_v1_bridge(seed, n_orient, n_freq, n_pos, retina_size, radius,
     # Miller-MacKay subtractive normalization (2026-07-31): env-exposed so the ON/OFF arms are one flag.
     cfg.hebbian_mean_subtract = float(os.environ.get("HEBB_MEAN_SUB", "0.0"))
     cfg.hebbian_oja = float(os.environ.get("HEBB_OJA", "0.0"))
+    # BCM sliding metaplastic threshold (2026-08-26): env-exposed exactly like MEAN_SUB/OJA so the BCM arm is one
+    # flag. HEBB_BCM > 0 => the signed BCM rule (LTP above theta_M=<y^2>, LTD below) replaces the potentiation-only
+    # branch -> input-specific depression -> ON/OFF opponency (the named fix for the 2026-08-14 common-mode wall).
+    cfg.hebbian_bcm = float(os.environ.get("HEBB_BCM", "0.0"))
+    cfg.hebbian_bcm_theta_alpha = float(os.environ.get("HEBB_BCM_THETA_ALPHA", "0.001"))
+    cfg.hebbian_bcm_pre_floor = float(os.environ.get("HEBB_BCM_PRE_FLOOR", "0.02"))
     cfg.hebbian_min_weight = 0.0
     cfg.enable_homeostasis = True           # threshold adaptation = the activity-normalizing competition term
     cfg.homeostasis_target_rate = homeo_target
