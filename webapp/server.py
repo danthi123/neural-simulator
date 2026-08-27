@@ -4096,6 +4096,19 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         _BRAIN_CHATS[cache_key] = chat
     source = getattr(chat, "_brain_chat_source", source)
 
+    # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +
+    # the entire faculty-DRIVE coupling sequence + the response assembly — now lives in `brain_reply`, so the
+    # standalone TUI (research/runners/brain_chat_tui) + the OpenAI shim run the IDENTICAL sequence, not just this
+    # handler. The handler above is now only request parsing + brain build/cache. See webapp/brain_reply.py.
+    return brain_reply(chat, req, source, cache_key)
+
+
+def brain_reply(chat, req, source, cache_key) -> JSONResponse:
+    """THE SHARED FULL-FACULTY TURN PIPELINE — the entire faculty-DRIVE coupling sequence run on an already-built
+    ChatBrain, returning the SAME JSONResponse the `/api/brain-chat` handler has always returned. Extracted
+    VERBATIM from the old inline `brain_chat` body (so the webapp path is byte-identical); the standalone TUI +
+    the OpenAI shim reach it through `webapp/brain_reply.py`, so a coupling added here reaches every surface at
+    once. Faculty couplings belong HERE, never inline in a request handler (the standing discipline)."""
     # GNW N-ORGAN IGNITION BUS — DEFAULT ORGAN-COMBINATION (T1-1 Phase-B FLIP -> SCAFFOLD-RETIREMENT, 2026-08-13):
     # `install_bus_gate` idempotently wraps `chat.gate` so the SUBSTRATE (consensus-ignition + WTA) AUTHORS the organ-
     # combination verdict — the ignited patient IS the answer, no ignition IS the abstain (the moat as a substrate
