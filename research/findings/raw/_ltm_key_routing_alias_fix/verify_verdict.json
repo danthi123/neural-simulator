@@ -1,0 +1,119 @@
+{
+  "runner": "research/findings/raw/_ltm_key_routing_alias_fix/build_verdict.py",
+  "mechanism": "sharded-ltm-key-routing-alias-fallback",
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "sim_backend": "numpy",
+  "label": "LTM key-routing alias fallback (_portal/_core residual)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "bare 'canada' retrieves canada_portal's member_of fact",
+      "ok": true,
+      "detail": "measured=united_nations expect=united_nations",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bare 'berlin' retrieves berlin_portal's country fact",
+      "ok": true,
+      "detail": "measured=federal_republic_of_germany expect=federal_republic_of_germany",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bare 'dorset' retrieves dorset_portal's country fact",
+      "ok": true,
+      "detail": "measured=united_kingom expect=united_kingom",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bare 'ska' retrieves ska_core's instance_of fact (_core suffix)",
+      "ok": true,
+      "detail": "measured=genre_of_music expect=genre_of_music",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "chelsea_fc|country unaffected (regression)",
+      "ok": true,
+      "detail": "measured=united_kingom expect=united_kingom",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "direct canada_portal|member_of unaffected (regression)",
+      "ok": true,
+      "detail": "measured=united_nations expect=united_nations",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "nonexistent entity still abstains",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "raw return value was None"
+    },
+    {
+      "kind": "require",
+      "name": "nonexistent relation on a real suffix-keyed entity still abstains",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "raw return value was None"
+    },
+    {
+      "kind": "require",
+      "name": "ambiguous strip ('foo_portal'+'foo_core' -> 'foo') left unresolved",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "ambiguous bare form abstains rather than guessing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "raw return value was None"
+    },
+    {
+      "kind": "require",
+      "name": "real entity 'bar' never shadowed by 'bar_portal' in the alias index",
+      "ok": true,
+      "detail": "measured=False expect=False",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "real entity 'bar' resolves to its OWN fact, not the shadowed one",
+      "ok": true,
+      "detail": "measured=z expect=z",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "full pipeline: 'what country is berlin in' commits",
+      "ok": true,
+      "detail": "measured=['berlin', 'country', 'federal_republic_of_germany'] expect=['berlin', 'country', 'federal_republic_of_germany']",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "full pipeline: chelsea_fc question unaffected (regression)",
+      "ok": true,
+      "detail": "measured=['chelsea_fc', 'country', 'united_kingom'] expect=['chelsea_fc', 'country', 'united_kingom']",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "full pipeline: nonexistent entity still abstains",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "raw return value was None"
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}

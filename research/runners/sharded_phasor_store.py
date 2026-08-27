@@ -51,6 +51,34 @@ def _stable_hash(s: str) -> int:
     return int.from_bytes(h, "big")
 
 
+# KEY-ROUTING RESIDUAL (2026-08-27, research/findings/2026-08-27-ltm-exempt-production-flip-...md's honest
+# residual): `_knowledge_core_curate.py`'s `pick_clean_alias` scores a MULTI-WORD, capitalized raw Wikidata alias
+# above a single-word canonical name (`+2` for 2-4 words, `+1.5` for a capital first letter). Wikidata's
+# crowd-sourced alias dump for several entities includes Wikipedia-namespace artifacts -- e.g. entity Q16
+# (Canada) lists the raw alias "Canada portal" (from the "Portal:Canada" Wikipedia page) alongside the bare
+# "Canada" -- and the 2-word capitalized "Canada portal" OUTSCORES the 1-word "Canada" under that rule, so it
+# gets picked as the canonical token and sanitized to "canada_portal". Confirmed directly against
+# `wikidata5m_entity.txt` (Q16's alias list contains both "Canada" and "Canada portal"). The shipped
+# `wikidata_core_15k` bundle has 11 entities keyed this way (10x "_portal", 1x "_core": ballet, berlin,
+# brandenburg, cambodia, canada, comic, dorset, lgbt, portugal, schleswig_holstein, ska) -- a user typing the
+# bare name gets an honest-but-WRONG abstain (the store holds the fact, keyed differently) rather than a
+# genuine "unknown" abstain. This is a curation-time picker bug; the deep fix is re-curating (rejecting a
+# Wikipedia-namespace-derived alias the same way `_CRUFT` already rejects "wikiproject"/"template"/etc, then
+# rebuilding the bundle -- ~13 CPU-min for 15k facts). The additive, retrieval-time mitigation below fixes the
+# SAME-SESSION user-facing symptom without a rebuild or any change to already-shipped keys.
+_KNOWN_KEY_SUFFIXES = ("_portal", "_core")
+
+
+def _strip_known_suffix(key):
+    """`'canada_portal' -> 'canada'`; `None` if `key` doesn't end in a known curation-artifact suffix."""
+    if not isinstance(key, str):
+        return None
+    for suf in _KNOWN_KEY_SUFFIXES:
+        if key.endswith(suf) and len(key) > len(suf):
+            return key[: -len(suf)]
+    return None
+
+
 class ShardedPhasorStore:
     """S independent RFPhasorComposer shards with agent-hash routing + a shared codebook.
 
@@ -63,6 +91,7 @@ class ShardedPhasorStore:
         self.seed = int(seed)
         self.D = int(D)
         self._composer_kwargs = dict(composer_kwargs)
+        self._alias_index = None   # lazy-built bare-surface-form -> stored-key map (see build_alias_index)
         # Build the shards. share_codebook: build the FULL {word:[D]} codebook ONCE (shard 0); the rest get a
         # 1-word vocab then GRAFT shard 0's codebook. Building all S shards with the full vocab FIRST allocated S
         # transient copies of a large codebook -> 500 shards x a 100k-word dict (~100 MB each) OOM-crashed a 46 GB
@@ -98,21 +127,84 @@ class ShardedPhasorStore:
     def shard_for(self, agent) -> RFPhasorComposer:
         return self.shards[self.route(agent)]
 
+    # --- key-routing alias fallback (additive; see the module-level comment above _KNOWN_KEY_SUFFIXES) -------
+    def build_alias_index(self, force=False):
+        """Lazily build (cache) a `bare_surface_form -> stored_key` map, e.g. `'canada' -> 'canada_portal'`, by
+        scanning every fact currently in the store for agent/patient values ending in a known curation-artifact
+        suffix. MOAT-SAFE by construction:
+          * a bare form is mapped ONLY when it is not ITSELF already a stored key (never shadows a real,
+            distinctly-keyed entity -- the direct lookup for a genuinely-existing bare-keyed entity always wins
+            because callers try the literal key FIRST and only consult this index on a miss);
+          * a bare form is mapped ONLY when the suffix-strip is UNAMBIGUOUS (exactly one distinct stored key
+            strips to it) -- an ambiguous bare form (two different suffixed entities colliding on the same bare
+            name) resolves to NOTHING rather than guessing, so this can never manufacture a wrong answer, only
+            recover a right one that was reachable under a different string.
+        A genuinely nonexistent entity's bare form is never a suffix-stripped form of anything stored, so it is
+        simply absent from this index -- the abstain path is untouched. Cached after the first call (the LTM is
+        a static bulk store, never runtime-grown -- see `save`/`load`'s own docstring); pass `force=True` to
+        rebuild after a write (bulk `.store()` calls between server restarts are not expected on the LTM tier)."""
+        if self._alias_index is not None and not force:
+            return self._alias_index
+        all_keys = set()
+        for sh in self.shards:
+            for fact, _handle in sh.kb:
+                for role in ("agent", "patient"):
+                    v = fact.get(role)
+                    if isinstance(v, str):
+                        all_keys.add(v)
+        candidates = {}   # bare -> set of stored keys that strip to it
+        for k in all_keys:
+            bare = _strip_known_suffix(k)
+            if bare:
+                candidates.setdefault(bare, set()).add(k)
+        index = {}
+        for bare, keys in candidates.items():
+            if bare in all_keys:
+                continue          # never shadow a real, distinctly-keyed entity
+            if len(keys) == 1:
+                index[bare] = next(iter(keys))
+            # len(keys) > 1: ambiguous -> deliberately left unresolved (moat safety over recall)
+        self._alias_index = index
+        return index
+
+    def _resolve_alias(self, key):
+        """`None` if `key` has no known-suffix alias in the store (the common case -- byte-identical no-op)."""
+        return self.build_alias_index().get(key)
+
     # --- write ---------------------------------------------------------------------------------------------
     def store(self, agent, action, patient, polarity=None):
         """Route by agent -> store in that one shard. A clause/attributed patient is passed through unchanged
         (RFPhasorComposer handles the fact-dict shape); routing only ever reads the top-level agent."""
         self.shard_for(agent).store(agent, action, patient, polarity=polarity)
+        self._alias_index = None   # a new fact may change the index; invalidate the cache (rebuilt lazily)
 
     # --- agent-cued reads (O(1) route + one-shard scan; answer-identical to the unsharded store) -----------
     def query_patient(self, agent, action, order_fn=None):
-        return self.shard_for(agent).query_patient(agent, action, order_fn=order_fn)
+        ans = self.shard_for(agent).query_patient(agent, action, order_fn=order_fn)
+        if ans is None:
+            alias = self._resolve_alias(agent)
+            if alias is not None:
+                ans = self.shard_for(alias).query_patient(alias, action, order_fn=order_fn)
+        return ans
 
     def ask_yes_no(self, agent, action, patient):
-        return self.shard_for(agent).ask_yes_no(agent, action, patient)
+        ans = self.shard_for(agent).ask_yes_no(agent, action, patient)
+        if ans == "unknown":
+            alias_a = self._resolve_alias(agent)
+            alias_p = self._resolve_alias(patient)
+            if alias_a is not None or alias_p is not None:
+                a2 = alias_a if alias_a is not None else agent
+                p2 = alias_p if alias_p is not None else patient
+                ans = self.shard_for(a2).ask_yes_no(a2, action, p2)
+        return ans
 
     def render_fact(self, agent, order_fn=None):
-        return self.shard_for(agent).render_fact(agent, order_fn=order_fn)
+        ans = self.shard_for(agent).render_fact(agent, order_fn=order_fn)
+        if ans is None:
+            alias = self._resolve_alias(agent)
+            if alias is not None:
+                ans = self.shard_for(alias).render_fact(alias, order_fn=order_fn)
+        return ans
 
     def query_chain(self, cue, actions):
         """Multi-hop: each hop pivots on the CURRENT concept as agent, so each hop routes to that concept's
@@ -166,6 +258,16 @@ class ShardedPhasorStore:
                 ans = sh.query_agent(action, patient)
                 if ans is not None:
                     return ans
+        # key-routing alias fallback: the cue patient may be a bare surface form of a suffix-keyed entity
+        # (e.g. 'canada' when the store holds 'canada_portal' as the patient) -- retry once with the resolved
+        # key, only ever reached after every shard has already genuinely missed on the literal cue.
+        alias_p = self._resolve_alias(patient)
+        if alias_p is not None:
+            for sh in self.shards:
+                if sh.kb:
+                    ans = sh.query_agent(action, alias_p)
+                    if ans is not None:
+                        return ans
         return None
 
     # --- introspection -------------------------------------------------------------------------------------
