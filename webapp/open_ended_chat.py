@@ -17,6 +17,13 @@ that concrete and all are GO on `main`:
     topic-wrong-supplements-GO.md). `post_filter()` below layers this on top of the base post-filter's known-topic
     path, closing the stub gap; the base post-filter's persona-strip + unknown-topic hedge/abstain logic is
     untouched.
+  * `_open_ended_clause_contradiction_filter_derisk.clause_filter_sentence` (2026-08-27, Vikunja #112) — the SAME-
+    SENTENCE residual the wiring above disclosed as "Honest scope": `sentence_contradicts` flags a whole sentence,
+    so when a CORRECT detail and a WRONG detail land in the SAME sentence ("bordered by the United States [correct]
+    ... and Mexico [wrong]"; "Ottawa [correct], which was founded in 1867 [wrong]"), the correct detail was dropped
+    with it. This drops only the store-WRONG clause/span, re-verifies against the UNCHANGED `sentence_contradicts`
+    before ever keeping edited text, and falls back to the prior whole-sentence drop whenever a repair can't be
+    verified clean — never less safe than before this file existed.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
@@ -52,8 +59,8 @@ from research.runners._open_ended_state_driven_generation_derisk import (
     StateContext, build_prompt, OpenEndedGenerator, _valence_from_differential, n_sentences, _sentences, persona_leak,
 )
 from research.runners._open_ended_verify_postfilter_derisk import post_filter as _base_post_filter
-from research.runners._open_ended_known_supplement_filter_derisk import (
-    sentence_contradicts as _known_supplement_contradicts,
+from research.runners._open_ended_clause_contradiction_filter_derisk import (
+    clause_filter_sentence as _clause_filter_sentence,
 )
 
 # The self-model line the state carries (the de-risk's default; a held string, exactly as declared there).
@@ -82,13 +89,36 @@ def post_filter(reply, topic, known, facts):
     already-joined, punctuation-stripped text collapses back into ONE sentence and the per-sentence check goes
     inert (caught by this wiring's own verify -- see research/runners/_open_ended_chat_known_supplement_wiring_
     verify.py). Reuse-by-import only: `persona_leak` and `sentence_contradicts` are both imported verbatim from
-    their GO de-risk modules; nothing here reimplements persona-leak or contradiction DETECTION."""
+    their GO de-risk modules; nothing here reimplements persona-leak or contradiction DETECTION.
+
+    Per sentence, `_clause_filter_sentence` (2026-08-27) decides what to KEEP: the sentence unchanged when nothing
+    contradicts; an EDITED sentence with only the store-wrong clause/span removed when a safe repair verifies clean
+    (the same-sentence correct+wrong residual); or None (the sentence is dropped whole) whenever no repair can be
+    verified clean -- the prior, still-correct behavior. `sentence_contradicts` itself is not reimplemented here or
+    in that helper; only the SPAN to drop is newly located.
+
+    A REAL, PRE-EXISTING gap this file's own MOAT-safety verify surfaced (2026-08-27): when EVERY sentence drops
+    (a reply with no salvageable clause at all -- e.g. a single wholly-fabricated sentence), the old
+    `" ".join(keep).strip() or reply.strip()` fell back to the RAW, UNFILTERED reply -- leaking exactly the
+    fabricated content the filter exists to catch. This was ALREADY true of both `_base_post_filter`'s own
+    known-topic branch and the pre-clause sentence-level filter this replaced (verified directly against both,
+    unchanged code, before this fix); it simply never fired on the 3 saved multi-sentence replies because some
+    sentence always survived. Fixed HERE (the only code path a live known-topic turn actually takes) by falling
+    back to `_empty_known_fallback(topic)` -- a fixed, non-fabricating honest string -- instead of the raw reply."""
     if not known:
         return _base_post_filter(reply, topic, known, facts)
     pairs = _facts_as_relation_pairs(facts)
     sents = [s for s in _sentences(reply) if not persona_leak(s)]
-    keep = [s for s in sents if not _known_supplement_contradicts(s, topic, pairs)]
-    return " ".join(keep).strip() or reply.strip()
+    keep = [k for s in sents for k in [_clause_filter_sentence(s, topic, pairs)] if k]
+    return " ".join(keep).strip() or _empty_known_fallback(topic)
+
+
+def _empty_known_fallback(topic: str) -> str:
+    """The KNOWN-topic honest fallback when every generated sentence turned out unverifiable: a FIXED,
+    non-fabricating string (never the raw Qwen reply, which is exactly the leak this closes) -- the same honest-
+    abstain category as `_base_post_filter`'s unknown-topic hedge-prepend, applied to "I generated something about
+    a topic I know, but none of it held up.\""""
+    return f"I don't have a version of what I just said about {topic} that I can actually stand behind."
 
 
 # ── env flag (default-OFF) ──────────────────────────────────────────────────────────────────────────────────────

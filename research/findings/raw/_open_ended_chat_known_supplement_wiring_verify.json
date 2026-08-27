@@ -8,7 +8,7 @@
  "known_report": [
   {
    "topic": "canada",
-   "wired_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape",
+   "wired_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated: Canada is a vast country located in North America, bordered by the United States to the south The capital city of Canada is Ottawa",
    "must_drop": [
     "1867",
     "35 million",
@@ -22,7 +22,7 @@
    "leaked": [],
    "nonempty": true,
    "n_sentences_wired": 1,
-   "specificity_wired": 0
+   "specificity_wired": 4
   },
   {
    "topic": "france",
@@ -44,7 +44,7 @@
   },
   {
    "topic": "morocco",
-   "wired_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "wired_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
    "must_drop": [
     "algeria",
     "egypt",
@@ -150,7 +150,7 @@
  "hard_byte_identical_to_base": true,
  "hard_fabrication_suppressed": true,
  "specificity_by_topic": {
-  "canada": 0,
+  "canada": 4,
   "france": 3,
   "morocco": 4
  },
@@ -213,7 +213,7 @@
     "kind": "require",
     "name": "(d) the lesioned (unwired) path leaks the wrong supplements the wired path catches",
     "ok": true,
-    "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7f54b28e91c0>",
+    "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7ff7dadd94e0>",
     "note": ""
    },
    {
@@ -297,7 +297,7 @@
    "kind": "require",
    "name": "(d) the lesioned (unwired) path leaks the wrong supplements the wired path catches",
    "ok": true,
-   "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7f54b28e91c0>",
+   "detail": "measured=10 expect=<function main.<locals>.<lambda> at 0x7ff7dadd94e0>",
    "note": ""
   },
   {
