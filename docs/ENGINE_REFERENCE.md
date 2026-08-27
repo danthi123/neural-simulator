@@ -91,6 +91,13 @@ SIM_BACKEND=numpy python -m research.runners.chat_repl --mode tier1 --seed 42
 # Force CuPy explicitly (or fail if unavailable)
 SIM_BACKEND=cupy python -m research.runners.chat_repl --mode tier1 --seed 42
 ```
+
+> ### ⛔ **THE CROSS-BACKEND SEED TRAP — `SIM_BACKEND=numpy` and `=cupy` at the SAME seed build DIFFERENT networks** (2026-08-27)
+>
+> `sim.backend.get_backend` aliases `cp` to real **cupy** under `SIM_BACKEND=cupy` and to plain **numpy** under `=numpy`. These are **different RNG algorithms** (numpy MT19937/PCG64 vs cupy cuRAND), so `seed 42` draws a **different** per-neuron threshold/weight population on each backend — the substrate is NOT byte-portable across backends (dtype is identical `float32`, so it is not a precision effect). Verified: the mouth read-SNR structure-selective wall (head_w read corr ~0.00) reproduces **6/6 on cupy** but **0/6 on numpy** (head_w reads ~0.96) — the numpy net simply doesn't have the wall.
+>
+> **The trap that bit us:** forcing `SIM_BACKEND=numpy` for HOST-RAM SAFETY (the 2026-08-26 OOM lesson) silently characterized a **different network** than the production cupy substrate — a memory-budgeted CPU run is NOT equivalent to the GPU run for anything that depends on the seeded substrate draw. ⇒ **When a result must match PRODUCTION (cupy), run it on cupy (small scale via `gpu_queue.sh` for RAM safety), do NOT substitute numpy; when you must use numpy for memory, treat its substrate as a different network and say so.** Sibling to the `cfg.seed` trap in CLAUDE.md. Finding: `2026-08-27-mouth-readsnr-structure-characterization-BACKEND-SEED-CONFOUND.md`.
+
 **Pattern for new code:** instead of `import cupy as cp`, use:
 
 ```python
