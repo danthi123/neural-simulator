@@ -1,8 +1,10 @@
 {
- "run_id": "1787871745-3505503",
- "runner": "research/runners/_open_ended_clause_contradiction_filter_verify.py",
+ "run_id": "1787871474-3502033",
+ "runner": "research/runners/_open_ended_gen_time_consensus_veto_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0a5c8650856e4008/research/runners/_open_ended_clause_contradiction_filter_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0a5c8650856e4008/research/runners/_open_ended_gen_time_consensus_veto_derisk.py",
+  "--out",
+  "research/findings/raw/_open_ended_gen_time_consensus_veto_derisk.json"
  ],
  "git_sha": "20b4b475c",
  "git_dirty": true,
@@ -12,7 +14,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T19:02:25",
+ "started": "2026-08-27T18:57:54",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -21,5 +23,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_open_ended_clause_contradiction_filter_verify.json"
+ "artifact": "research/findings/raw/_open_ended_gen_time_consensus_veto_derisk.json"
 }

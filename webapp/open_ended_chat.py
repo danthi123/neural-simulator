@@ -24,12 +24,26 @@ that concrete and all are GO on `main`:
     with it. This drops only the store-WRONG clause/span, re-verifies against the UNCHANGED `sentence_contradicts`
     before ever keeping edited text, and falls back to the prior whole-sentence drop whenever a repair can't be
     verified clean — never less safe than before this file existed.
+  * `_open_ended_gen_time_consensus_veto_derisk.generate_with_generation_time_veto` (2026-08-28, Vikunja #112
+    follow-on) — GENERATION-TIME honesty, additive + default-OFF (`BRAIN_OPEN_ENDED_GEN_TIME_HONESTY`, see
+    `gen_time_honesty_enabled` below). Everything above runs AFTER the whole reply is written (generate, THEN
+    strip). This mode steps the mouth ONE SENTENCE AT A TIME and checks each candidate against what the LIVE
+    LTM-exempt organ-B/C spiking CONSENSUS (`webapp.gnw_two_organ_bus`/`gnw_three_organ_bus`, the SAME
+    machinery that already authors the strict/rich recall path, production default-ON) actually COMMITS for
+    that (topic, relation) — a genuine neural verdict, not the static python `FACTS` table — BEFORE the
+    sentence is fixed into the context later sentences are generated from. An unsupported clause is
+    suppressed/repaired there, so it never shapes what the mouth says next. Requires a live, organ-wired `chat`
+    object (see `answer_turn`'s `chat=` parameter); with no `chat`, or the flag off, or an unknown topic, this
+    mode never activates and the one-shot path above runs unchanged. The string post-filter (`post_filter`,
+    everything above) still runs afterward on whatever this mode emits — a SAFETY NET, never bypassed.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
-familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> `OpenEndedGenerator.
-generate` (FORM) -> `post_filter` (HONESTY: base persona-strip/hedge/abstain + the known-topic contradiction filter)
--> return the filtered reply.
+familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> generate the reply
+(FORM: the one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` + a live `chat` + a
+known topic — the sentence-by-sentence generation-TIME consensus veto) -> `post_filter` (HONESTY safety net: base
+persona-strip/hedge/abstain + the known-topic contradiction filter, always applied either way) -> return the
+filtered reply.
 
 MEMORY / COST DISCIPLINE (the two hard lessons this session).
   (1) ONE Qwen. `OpenEndedGenerator.__init__` would load a SECOND Qwen-0.5B. Instead we REUSE the server's already
@@ -53,6 +67,7 @@ import json
 import os
 import re
 import threading
+import time
 
 # reuse-by-import: the three GO de-risk modules (on main). No local reimplementation of the mechanism.
 from research.runners._open_ended_state_driven_generation_derisk import (
@@ -121,11 +136,26 @@ def _empty_known_fallback(topic: str) -> str:
     return f"I don't have a version of what I just said about {topic} that I can actually stand behind."
 
 
-# ── env flag (default-OFF) ──────────────────────────────────────────────────────────────────────────────────────
+# ── env flags (default-OFF) ─────────────────────────────────────────────────────────────────────────────────────
 def open_ended_enabled() -> bool:
     """`BRAIN_OPEN_ENDED` truthy -> the open-ended state-driven + VERIFY-post-filter reply path. Default OFF (unset
     or 0/false/no/off) -> the block is skipped entirely and the existing strict/rich path runs byte-identically."""
     return os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def gen_time_honesty_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` truthy -> `answer_turn` routes a KNOWN-topic reply through the
+    sentence-by-sentence LTM-exempt organ-B/C spiking CONSENSUS VETO (generation-TIME honesty; see
+    `research.runners._open_ended_gen_time_consensus_veto_derisk.generate_with_generation_time_veto`) instead of
+    the one-shot `OpenEndedGenerator.generate` + string-only post-filter. Default OFF (unset/0/false/off/no):
+    `answer_turn` runs its EXISTING one-shot path, byte-identical, regardless of whether a `chat` is passed in --
+    this is a SECOND, independent gate on top of `BRAIN_OPEN_ENDED` (both must be truthy for anything to change).
+    Even with the flag ON, this mode activates ONLY when `answer_turn` receives a live, organ-wired `chat` AND
+    the topic is KNOWN (facts retrieved) -- an unknown topic's honest-abstain path is untouched either way, and
+    with no `chat` (e.g. a caller that never passes one) the one-shot path runs unchanged. The string post-filter
+    (`post_filter`) still runs afterward on whatever this mode emits, unconditionally -- a safety net, never
+    bypassed, so this flag can only ever ADD a generation-time suppression, never remove the existing one."""
+    return os.environ.get("BRAIN_OPEN_ENDED_GEN_TIME_HONESTY", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
@@ -241,12 +271,22 @@ def valence_from_affect(differential) -> float:
 # ── the turn ──────────────────────────────────────────────────────────────────────────────────────────────────
 def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 ltm_bundle: str | None, brain_bundle: str | None,
-                seed: int = 42, max_new_tokens: int = 110) -> dict:
-    """One open-ended turn: STATE + retrieved knowledge -> free Qwen reply (FORM) -> VERIFY post-filter (HONESTY).
+                seed: int = 42, max_new_tokens: int = 110, chat=None) -> dict:
+    """One open-ended turn: STATE + retrieved knowledge -> a free Qwen reply (FORM) -> VERIFY post-filter
+    (HONESTY safety net, always applied).
+
+    `chat` (default None): the LIVE, organ-wired production ChatBrain (already passed through
+    `install_two_organ_gate`/`install_three_organ_gate` by the server). Consulted ONLY when
+    `gen_time_honesty_enabled()` is truthy AND the topic is KNOWN — see that flag's docstring for the full gate.
+    In that case the reply is generated sentence-by-sentence through the LTM-exempt organ-B/C spiking CONSENSUS
+    VETO instead of one-shot (generation-TIME honesty); otherwise (flag off, `chat is None`, or an unknown topic)
+    the existing one-shot `OpenEndedGenerator.generate` path runs, byte-identical to before this parameter
+    existed. Either way, `post_filter` still runs afterward — the safety net is never skipped.
 
     Returns a dict with the final `answer` (the filtered reply) plus a trace (`raw`, `filtered`, `topic`, `known`,
-    `facts`, the assembled `state`, `gen_seconds`). `known` is True iff the store held facts about the topic — the
-    caller maps it to `abstained = not known` / `verified = known` (an unknown topic is an honest abstain)."""
+    `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`). `known` is True iff
+    the store held facts about the topic — the caller maps it to `abstained = not known` / `verified = known` (an
+    unknown topic is an honest abstain)."""
     by_agent = build_index(ltm_bundle, brain_bundle)
     topic = extract_topic(msg)
     facts = retrieve(by_agent, topic)
@@ -259,7 +299,26 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                          self_model=SELF_MODEL, affect_source="real-organ")
     system, user = build_prompt(state)
     gen = get_generator(warm_faculty)
-    raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
+
+    gen_time_used = False
+    gen_time_trace = None
+    if known and chat is not None and gen_time_honesty_enabled():
+        try:
+            from research.runners._open_ended_gen_time_consensus_veto_derisk import (
+                generate_with_generation_time_veto,
+            )
+            t0 = time.time()
+            raw, gen_time_trace, _consensus_info = generate_with_generation_time_veto(
+                gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens)
+            secs = round(time.time() - t0, 2)
+            gen_time_used = True
+        except Exception:
+            # never let a generation-time-honesty failure crash a turn -- degrade to the one-shot path (still
+            # honesty-safe: the SAME post_filter safety net runs on whatever this produces, unconditionally).
+            raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
+    else:
+        raw, secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
+
     filtered = post_filter(raw, topic, known, facts)
     return {
         "answer": filtered,
@@ -270,6 +329,8 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         "facts": [list(f) for f in facts],
         "n_sentences": n_sentences(filtered),
         "gen_seconds": secs,
+        "gen_time_honesty_used": gen_time_used,
+        "gen_time_trace": gen_time_trace,
         "state": {"valence": float(valence), "arousal": float(arousal), "familiarity": fam,
                   "novelty": novelty, "curiosity": curiosity},
     }

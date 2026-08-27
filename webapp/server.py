@@ -4521,6 +4521,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 msg, _warm_faculty, _oe_val, _oe_aro,
                 ltm_bundle=_resolve_ltm_bundle(),
                 brain_bundle=(os.environ.get("BRAIN_CHAT_BUNDLE", "").strip() or None),
+                # the live, organ-wired ChatBrain (install_two_organ_gate/install_three_organ_gate already ran on
+                # it above) -- consulted ONLY when BRAIN_OPEN_ENDED_GEN_TIME_HONESTY is ALSO truthy (a second,
+                # independent gate; see open_ended_chat.gen_time_honesty_enabled). Passing it has NO effect while
+                # that flag is off: answer_turn's one-shot path runs byte-identically, this kwarg unused.
+                chat=chat,
             )
         except HTTPException:
             raise

@@ -1,0 +1,863 @@
+{
+  "probe": "open_ended_gen_time_consensus_veto_derisk",
+  "backend": "numpy(chat)+cuda(qwen)",
+  "seed": 42,
+  "T": 16,
+  "max_new_tokens": 160,
+  "sentence_budget": 64,
+  "max_sentences": 6,
+  "bus": "three",
+  "rows": [
+    {
+      "topic": "canada",
+      "facts_injected": [
+        [
+          "canada",
+          "isa",
+          "country"
+        ],
+        [
+          "canada",
+          "capital",
+          "ottawa"
+        ],
+        [
+          "canada",
+          "continent",
+          "north america"
+        ],
+        [
+          "canada",
+          "borders",
+          "united states"
+        ]
+      ],
+      "must_drop": [
+        "1867",
+        "35 million",
+        "mexico"
+      ],
+      "raw_one_shot": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape. Here’s some knowledge I've accumulated:\n\nCanada is a vast country located in North America, bordered by the United States to the south and Mexico to the west. It has a population of around 35 million people, making it one of the largest countries in the world.\n\nThe capital city of Canada is Ottawa, which was founded in 1867. It serves as the federal capital and is home to the Parliament of Canada.\n\nCanada spans across three continents: North America, South America, and Asia. Its land area is approximately 9.2 million square kilometers.\n\nCanada borders the United States to the east, Mexico to the west, and the Caribbean Sea to the",
+      "wrong_in_raw_one_shot": [
+        "1867",
+        "35 million",
+        "mexico"
+      ],
+      "gen_time_veto_ON": {
+        "text": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape. It's a vast land stretching across North America, bordered by the United States to the west.",
+        "trace": [
+          {
+            "raw": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape.",
+            "kept": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "ottawa"
+              ],
+              [
+                "continent",
+                "north america"
+              ],
+              [
+                "borders",
+                "united states"
+              ]
+            ]
+          },
+          {
+            "raw": "It's a vast land stretching across North America, bordered by the United States to the west and Europe to the east.",
+            "kept": "It's a vast land stretching across North America, bordered by the United States to the west.",
+            "action": "repaired",
+            "consensus_facts": [
+              [
+                "capital",
+                "ottawa"
+              ],
+              [
+                "continent",
+                "north america"
+              ],
+              [
+                "borders",
+                "united states"
+              ]
+            ]
+          },
+          {
+            "raw": "The capital city of Ottawa is significant, serving as both the federal government's headquarters and the national seat of government.",
+            "kept": null,
+            "action": "dropped_stop",
+            "consensus_facts": [
+              [
+                "capital",
+                "ottawa"
+              ],
+              [
+                "continent",
+                "north america"
+              ],
+              [
+                "borders",
+                "united states"
+              ]
+            ]
+          }
+        ],
+        "chars": 218
+      },
+      "gen_time_veto_LESIONED": {
+        "text": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape. It's a vast land stretching across North America, bordered by the United States to the west and Europe to the east. The country has a rich cultural heritage, including its indigenous peoples and influences from European settlers.",
+        "trace": [
+          {
+            "raw": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape.",
+            "kept": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "It's a vast land stretching across North America, bordered by the United States to the west and Europe to the east.",
+            "kept": "It's a vast land stretching across North America, bordered by the United States to the west and Europe to the east.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "The country has a rich cultural heritage, including its indigenous peoples and influences from European settlers.",
+            "kept": "The country has a rich cultural heritage, including its indigenous peoples and influences from European settlers.",
+            "action": "kept",
+            "consensus_facts": []
+          }
+        ],
+        "chars": 355
+      },
+      "final_after_string_safety_net": {
+        "ON_then_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape It's a vast land stretching across North America, bordered by the United States to the west",
+        "LESIONED_then_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape It's a vast land stretching across North America, bordered by the United States to the west The country has a rich cultural heritage, including its indigenous peoples and influences from European settlers",
+        "wrong_present_ON": [],
+        "wrong_present_LESIONED": []
+      },
+      "consensus_info_ON": {
+        "capital": {
+          "organ_a_recall": "ottawa",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "ottawa",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "continent": {
+          "organ_a_recall": "north america",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "north america",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "borders": {
+          "organ_a_recall": "united states",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "united states",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        }
+      },
+      "live_mouth_output_diverged_on_vs_lesioned": true,
+      "safety_net_never_leaks_ON": true,
+      "safety_net_never_leaks_LESIONED": true
+    },
+    {
+      "topic": "france",
+      "facts_injected": [
+        [
+          "france",
+          "isa",
+          "country"
+        ],
+        [
+          "france",
+          "capital",
+          "paris"
+        ],
+        [
+          "france",
+          "continent",
+          "europe"
+        ],
+        [
+          "france",
+          "borders",
+          "spain"
+        ]
+      ],
+      "must_drop": [
+        "germany",
+        "italy",
+        "switzerland"
+      ],
+      "raw_one_shot": "As a language model, I don't have personal knowledge of France like humans do. However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea. It's bordered by Italy to the west, Germany to the north, and Switzerland to the east. The capital city is Paris, known for its rich history, art, and culture. France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world.",
+      "wrong_in_raw_one_shot": [
+        "germany",
+        "italy",
+        "switzerland"
+      ],
+      "gen_time_veto_ON": {
+        "text": "As a language model, I don't have personal knowledge of France like humans do. However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe. It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+        "trace": [
+          {
+            "raw": "As a language model, I don't have personal knowledge of France like humans do.",
+            "kept": "As a language model, I don't have personal knowledge of France like humans do.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "paris"
+              ],
+              [
+                "continent",
+                "europe"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          },
+          {
+            "raw": "However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe.",
+            "kept": "However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "paris"
+              ],
+              [
+                "continent",
+                "europe"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          },
+          {
+            "raw": "It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+            "kept": "It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "paris"
+              ],
+              [
+                "continent",
+                "europe"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          }
+        ],
+        "chars": 331
+      },
+      "gen_time_veto_LESIONED": {
+        "text": "As a language model, I don't have personal knowledge of France like humans do. However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe. It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+        "trace": [
+          {
+            "raw": "As a language model, I don't have personal knowledge of France like humans do.",
+            "kept": "As a language model, I don't have personal knowledge of France like humans do.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe.",
+            "kept": "However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+            "kept": "It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people.",
+            "action": "kept",
+            "consensus_facts": []
+          }
+        ],
+        "chars": 331
+      },
+      "final_after_string_safety_net": {
+        "ON_then_filtered": "As a language model, I don't have personal knowledge of France like humans do However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people",
+        "LESIONED_then_filtered": "As a language model, I don't have personal knowledge of France like humans do However, I can provide some general information about France based on my training data:\n\nFrance is a large European country located in western Europe It has a rich history, including ancient civilizations such as the Romans, Greeks, and French people",
+        "wrong_present_ON": [],
+        "wrong_present_LESIONED": []
+      },
+      "consensus_info_ON": {
+        "capital": {
+          "organ_a_recall": "paris",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "paris",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "continent": {
+          "organ_a_recall": "europe",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "europe",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "borders": {
+          "organ_a_recall": "spain",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "spain",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        }
+      },
+      "live_mouth_output_diverged_on_vs_lesioned": false,
+      "safety_net_never_leaks_ON": true,
+      "safety_net_never_leaks_LESIONED": true
+    },
+    {
+      "topic": "morocco",
+      "facts_injected": [
+        [
+          "morocco",
+          "isa",
+          "country"
+        ],
+        [
+          "morocco",
+          "capital",
+          "rabat"
+        ],
+        [
+          "morocco",
+          "continent",
+          "africa"
+        ],
+        [
+          "morocco",
+          "borders",
+          "spain"
+        ]
+      ],
+      "must_drop": [
+        "algeria",
+        "egypt",
+        "libya",
+        "tunisia"
+      ],
+      "raw_one_shot": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes. The country has a fascinating blend of Arab, Berber, and European influences, making it one of the most culturally diverse nations in Africa. \n\nMorocco's capital city, Rabat, is known for its stunning architecture, including the Alhambra palace and the Jardin du Luxembourg. The country also boasts some of the world's oldest mosques, dating back to the 8th century. \n\nIn terms of geography, Morocco is bordered by Algeria to the west, Tunisia to the south, Spain to the east, and Mauritania to the north. It is home to numerous national parks, such as the Sahara Desert National Park and the Atlas Mountains.\n\nMorocco's economy is heavily reliant on tourism",
+      "wrong_in_raw_one_shot": [
+        "algeria",
+        "tunisia"
+      ],
+      "gen_time_veto_ON": {
+        "text": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes. The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa. In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+        "trace": [
+          {
+            "raw": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes.",
+            "kept": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "rabat"
+              ],
+              [
+                "continent",
+                "africa"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          },
+          {
+            "raw": "The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa.",
+            "kept": "The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "rabat"
+              ],
+              [
+                "continent",
+                "africa"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          },
+          {
+            "raw": "In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+            "kept": "In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+            "action": "kept",
+            "consensus_facts": [
+              [
+                "capital",
+                "rabat"
+              ],
+              [
+                "continent",
+                "africa"
+              ],
+              [
+                "borders",
+                "spain"
+              ]
+            ]
+          }
+        ],
+        "chars": 375
+      },
+      "gen_time_veto_LESIONED": {
+        "text": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes. The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa. In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+        "trace": [
+          {
+            "raw": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes.",
+            "kept": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa.",
+            "kept": "The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa.",
+            "action": "kept",
+            "consensus_facts": []
+          },
+          {
+            "raw": "In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+            "kept": "In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power.",
+            "action": "kept",
+            "consensus_facts": []
+          }
+        ],
+        "chars": 375
+      },
+      "final_after_string_safety_net": {
+        "ON_then_filtered": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power",
+        "LESIONED_then_filtered": "As a Moroccan, I am familiar with Morocco's rich history, culture, and diverse landscapes The country has been inhabited for thousands of years, and its geography includes some of the most stunning natural wonders in Africa In terms of politics, Morocco is a democratic nation with a multi-party system, which means there are multiple political parties competing for power",
+        "wrong_present_ON": [],
+        "wrong_present_LESIONED": []
+      },
+      "consensus_info_ON": {
+        "capital": {
+          "organ_a_recall": "rabat",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "rabat",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "continent": {
+          "organ_a_recall": "africa",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "africa",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        },
+        "borders": {
+          "organ_a_recall": "spain",
+          "organ_b_confirmed": true,
+          "organ_b_surprise_hz": null,
+          "organ_c_votes": true,
+          "committed": "spain",
+          "ignited": true,
+          "n_ignited": 1,
+          "d_sub": 1000.0,
+          "n_organs": 3,
+          "ws_lesion": false,
+          "organb_lesion": false,
+          "organc_lesion": false,
+          "organb_ltm_exempt": true,
+          "expected": null,
+          "recall_source": "ltm",
+          "organ_b_threshold_hz": 1.3708043981481481,
+          "organb_ltm_exempt_applied": true,
+          "organ_c_competent": null,
+          "organ_c_margin": null,
+          "organ_c_threshold": null,
+          "organ_c_comprehended": true,
+          "organ_c_deferred": false,
+          "organ_c_lesioned": false,
+          "organ_c_real_vocab_known": null,
+          "organ_c_unknown_tokens": null,
+          "organ_c_ltm_exempt_applied": true,
+          "decoy": "fish",
+          "n_votes": 3
+        }
+      },
+      "live_mouth_output_diverged_on_vs_lesioned": false,
+      "safety_net_never_leaks_ON": true,
+      "safety_net_never_leaks_LESIONED": true
+    }
+  ],
+  "unit_rows": [
+    {
+      "topic": "canada",
+      "sentence": "Canada is bordered by the United States to the south and Mexico to the west.",
+      "must_keep": "united states",
+      "must_drop": "mexico",
+      "consensus_facts_ON": [
+        [
+          "capital",
+          "ottawa"
+        ],
+        [
+          "continent",
+          "north america"
+        ],
+        [
+          "borders",
+          "united states"
+        ]
+      ],
+      "consensus_facts_LESIONED": [],
+      "kept_ON": "Canada is bordered by the United States to the south.",
+      "kept_LESIONED": "Canada is bordered by the United States to the south and Mexico to the west.",
+      "ON_drops_wrong": true,
+      "ON_keeps_correct": true,
+      "LESIONED_keeps_wrong": true,
+      "consensus_committed_borders_ON": "united states"
+    },
+    {
+      "topic": "france",
+      "sentence": "France is bordered by Spain to the south and Italy to the east.",
+      "must_keep": "spain",
+      "must_drop": "italy",
+      "consensus_facts_ON": [
+        [
+          "capital",
+          "paris"
+        ],
+        [
+          "continent",
+          "europe"
+        ],
+        [
+          "borders",
+          "spain"
+        ]
+      ],
+      "consensus_facts_LESIONED": [],
+      "kept_ON": "France is bordered by Spain to the south.",
+      "kept_LESIONED": "France is bordered by Spain to the south and Italy to the east.",
+      "ON_drops_wrong": true,
+      "ON_keeps_correct": true,
+      "LESIONED_keeps_wrong": true,
+      "consensus_committed_borders_ON": "spain"
+    },
+    {
+      "topic": "morocco",
+      "sentence": "Morocco is bordered by Spain to the north and Algeria to the east.",
+      "must_keep": "spain",
+      "must_drop": "algeria",
+      "consensus_facts_ON": [
+        [
+          "capital",
+          "rabat"
+        ],
+        [
+          "continent",
+          "africa"
+        ],
+        [
+          "borders",
+          "spain"
+        ]
+      ],
+      "consensus_facts_LESIONED": [],
+      "kept_ON": "Morocco is bordered by Spain to the north.",
+      "kept_LESIONED": "Morocco is bordered by Spain to the north and Algeria to the east.",
+      "ON_drops_wrong": true,
+      "ON_keeps_correct": true,
+      "LESIONED_keeps_wrong": true,
+      "consensus_committed_borders_ON": "spain"
+    }
+  ],
+  "n_topics": 3,
+  "n_unit_drops_wrong": 3,
+  "n_unit_keeps_correct": 3,
+  "n_unit_lesioned_keeps_wrong": 3,
+  "n_unit": 3,
+  "n_safety_net_ok_ON": 3,
+  "n_safety_net_ok_LESIONED": 3,
+  "n_live_diverged": 1,
+  "verdict": {
+    "label": "generation-time LTM-exempt organ-B/C consensus veto suppresses a known-supplement clause AT generation (controlled unit battery, decisive) and vanishes when the coupling is lesioned; string safety net unaffected; live-mouth confirmation reported honestly (opportunistic)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "(PRIMARY, controlled) coupling ON: clause_filter_sentence drops the store-wrong border on the fixed adversarial sentence, every topic",
+        "ok": true,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(PRIMARY, controlled) coupling ON: the store-correct border is KEPT, every topic",
+        "ok": true,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(PRIMARY, controlled) coupling LESIONED: the store-wrong border REAPPEARS (kept unchanged), every topic",
+        "ok": true,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(no-regression) string safety net still catches everything on the LIVE end-to-end output, coupling ON",
+        "ok": true,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "(no-regression) string safety net still catches everything on the LIVE end-to-end output, coupling LESIONED (never less safe than before this file existed)",
+        "ok": true,
+        "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "a live-mouth vary/lesion demonstration on EVERY probed topic",
+        "why": "the sentence-by-sentence off-bridge Qwen decode is not byte-identical to one-shot generation (text-roundtrip retokenization -- an honest, disclosed property, not a bug in the consensus mechanism); this run the ON and LESIONED decodes actually diverged on 1/3 topics (the rest produced the SAME text either way -- nothing for the coupling to have a chance to suppress THIS run, UNDEFINED not a pass). The PRIMARY, decisive evidence is the controlled unit battery above, which is deterministic and topic-complete -- see individual rows for the per-topic live text."
+      }
+    ],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(PRIMARY, controlled) coupling ON: clause_filter_sentence drops the store-wrong border on the fixed adversarial sentence, every topic",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(PRIMARY, controlled) coupling ON: the store-correct border is KEPT, every topic",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(PRIMARY, controlled) coupling LESIONED: the store-wrong border REAPPEARS (kept unchanged), every topic",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(no-regression) string safety net still catches everything on the LIVE end-to-end output, coupling ON",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(no-regression) string safety net still catches everything on the LIVE end-to-end output, coupling LESIONED (never less safe than before this file existed)",
+      "ok": true,
+      "detail": "measured=3 expect=<function main.<locals>.<lambda> at 0x7ff48de2c040>",
+      "note": ""
+    }
+  ],
+  "GO": true
+}
