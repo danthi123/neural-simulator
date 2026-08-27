@@ -171,7 +171,11 @@ def main():
     ap.add_argument("--n-exemplars", type=int, default=4)
     ap.add_argument("--n-orient-dec", type=int, default=8)
     ap.add_argument("--n-orient-ex", type=int, default=8)
-    ap.add_argument("--out", type=str,
+    # `--json` is an alias for `--out` (2026-08-27): matches the convention ~200 other runners already use
+    # (`ap.add_argument("--json", "--out", dest="out", ...)`) so this runner is dispatchable by
+    # `tools/sweep_pool.sh`, which always appends `--json <path>` to the command it runs on the pool. Additive;
+    # `--out` alone still works exactly as before.
+    ap.add_argument("--json", "--out", dest="out", type=str,
                     default="research/findings/raw/_b1_v1_selforg_bcm_6seed.json")
     a = ap.parse_args()
 
