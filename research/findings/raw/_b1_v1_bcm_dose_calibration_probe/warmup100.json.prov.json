@@ -1,0 +1,8 @@
+{
+ "runner": "research/runners/_b1_v1_selforg_bcm_derisk.py",
+ "purpose": "same-session local dose-calibration probe (informal, single-seed, reduced-scale) for the 2026-08-27 BCM warm-up VOID finding",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "argv_summary": "--seeds 42 --n-orient 8 --n-freq 4 --n-pos 8 --dev-steps 4000 --bcm-gain 800 --bcm-pre-floor 0.002 --bcm-theta-alpha 0.001 --warmup-steps 100",
+ "artifact": "research/findings/raw/_b1_v1_bcm_dose_calibration_probe/warmup100.json"
+}

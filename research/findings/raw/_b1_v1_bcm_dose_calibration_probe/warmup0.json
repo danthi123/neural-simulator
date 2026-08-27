@@ -1,0 +1,137 @@
+{
+  "summary": {
+    "overall_verdict": "BOUNDARY",
+    "mechanism": "bcm-sliding-threshold",
+    "bcm": {
+      "gain": 800.0,
+      "theta_alpha": 0.001,
+      "pre_floor": 0.002
+    },
+    "warmup_steps": 0,
+    "seeds": [
+      42
+    ],
+    "per_seed_verdicts": [
+      "NEGATIVE"
+    ],
+    "op_point_ok": [
+      true
+    ],
+    "n_op_point_verified": 1,
+    "n_phase2_go_seeds": 0,
+    "n_margin_pass_seeds": 1,
+    "dev_firing_fraction": [
+      0.01894
+    ],
+    "dev_firing_fraction_mean": 0.01894,
+    "dev_active_band": [
+      0.005,
+      0.05
+    ],
+    "osi_pre_frac_mean": 0.0044,
+    "osi_post_frac_mean": 0.2827,
+    "osi_shuffle_frac_mean": 0.0073,
+    "osi_post_frac_per_seed": [
+      0.2827
+    ],
+    "osi_pre_frac_per_seed": [
+      0.0044
+    ],
+    "osi_shuffle_frac_per_seed": [
+      0.0073
+    ],
+    "osi_post_mean_mean": 0.3732,
+    "rsa_vs_host_mean": 0.8477,
+    "margin_mean": 0.2523,
+    "orient_decode_mean": 0.3438,
+    "host_decode_mean": 0.9844,
+    "v1_firing_rate_mean": 0.0045,
+    "weight_diagnosis": [
+      "COMMON-MODE CONVERGENCE \u2014 raw weights are healthy but ON and OFF cancel; adding weight mass cannot help, the common mode has to be removed"
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "n_v1": 2048,
+      "elapsed_s": 36.3,
+      "warmup_steps": 0,
+      "dev_firing_fraction": 0.01894,
+      "dev_firing_fraction_shuffle": 0.01783,
+      "op_point_ok": true,
+      "dev_active_band": [
+        0.005,
+        0.05
+      ],
+      "v1_firing_rate": 0.0045,
+      "saturation": {
+        "w_mean": 0.674802,
+        "w_absmax": 70.0,
+        "frac_rf_near_zero": 0.5584,
+        "frac_cells_all_zero": 0.0005
+      },
+      "raw_weights": {
+        "on_mean": 2.977972,
+        "off_mean": 2.987091,
+        "on_absmax": 70.0,
+        "off_absmax": 70.0,
+        "on_minus_off_mean": -0.009119,
+        "raw_mean_abs": 2.982532,
+        "l2_mean": 638.289062,
+        "l2_min": 213.383682,
+        "l2_max": 717.282837,
+        "l2_std": 112.517242,
+        "frac_cells_l2_near_zero": 0.0,
+        "frac_raw_near_zero": 0.9558
+      },
+      "plasticity": {
+        "total_plasticity_events": 386524097,
+        "v1_activity_ema_mean": 0.01619052,
+        "v1_activity_ema_max": 0.13969839,
+        "v1_activity_ema_min": 0.0,
+        "frac_v1_ema_zero": 0.0049
+      },
+      "weight_diagnosis": "COMMON-MODE CONVERGENCE \u2014 raw weights are healthy but ON and OFF cancel; adding weight mass cannot help, the common mode has to be removed",
+      "osi": {
+        "pre_random": {
+          "mean": 0.1716,
+          "frac_gt0_5": 0.0044
+        },
+        "post_learned": {
+          "mean": 0.3732,
+          "frac_gt0_5": 0.2827
+        },
+        "shuffle_ctrl": {
+          "mean": 0.1896,
+          "frac_gt0_5": 0.0073
+        }
+      },
+      "geometry": {
+        "host_reference": {
+          "margin": 0.7573,
+          "rsa_vs_pixels": 0.989,
+          "orient_decode": 0.9844
+        },
+        "v1_firing_post": {
+          "within": 0.2766,
+          "between": 0.0243,
+          "margin": 0.2523,
+          "rsa_vs_host": 0.8477,
+          "rsa_vs_pixels": 0.8545,
+          "orient_decode": 0.3438
+        }
+      },
+      "gates": {
+        "osi_self_gate": 0.5,
+        "osi_ctrl_ceiling": 0.0573,
+        "rsa_gate": 0.6,
+        "margin_gate": 0.15
+      },
+      "learned_oriented": false,
+      "lift_over_controls": true,
+      "geometry_ok": true,
+      "verdict": "NEGATIVE"
+    }
+  ]
+}
