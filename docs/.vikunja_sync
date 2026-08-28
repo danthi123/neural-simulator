@@ -245,3 +245,13 @@ BRAIN_OPEN_ENDED channel specifically) with two flagged open residuals (vocab sc
 recurrent-store training provenance). No sim/ edit, no production wiring built — scope-only, so no other
 task changed state. Did not touch #80/#182 (shared read-fidelity wall) — not open in the current board
 view, left as-is.
+
+## 2026-08-28 generative-wander queue-restage (isolated worktree agent-aaa6173234281a829)
+#104 (on-substrate CA3 generative-wander production port) appended-desc: the 2026-08-27-claimed staged 6-seed
+cupy production verify never actually ran (root-caused this session: the queue-add never persisted to the
+PRIMARY gpu.queue the shared dispatcher polls -- zero commits/log lines ever mention it). Reconfirmed no
+regression (byte-identical seed-42 reproduction + byte-identical-off/flag-on-routing via direct behavioral
+assertion), then correctly RE-STAGED the exact 6-seed --emergent verify against `main` directly (not a
+worktree), persistence confirmed (depth 15, dispatcher alive). Still PARTIAL -- no verdict, task stays open.
+No other task touched (no code changed, no other capability status changed). Finding:
+2026-08-28-generative-wander-production-verify-restaged-after-queue-loss.
