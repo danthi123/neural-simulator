@@ -1,0 +1,207 @@
+{
+ "probe": "open_ended_gen_time_skip_continue_wiring_verify",
+ "backend": "numpy(fake tokenizer/model, no GPU/Qwen/organs)",
+ "checks": {
+  "A_two_attempts_traced": true,
+  "A_s1_dropped_skip_not_stop": true,
+  "A_s2_kept_unchanged": true,
+  "A_final_text_is_s2_only": true,
+  "A_toronto_excluded": true,
+  "A_provinces_included": true,
+  "A_model_called_twice": true,
+  "B_one_attempt_traced": true,
+  "B_s1_dropped_stop": true,
+  "B_final_text_empty": true,
+  "B_model_called_once_only": true,
+  "C_lever_moved": true,
+  "C_diverge": true,
+  "C_skip_has_what_stop_lacks": true,
+  "D_text_matches_pre_existing_fn": true,
+  "D_trace_matches_pre_existing_fn": true,
+  "D_default_param_matches_explicit_false": true,
+  "E_lesioned_facts_skip_and_stop_identical": true,
+  "E_lesioned_toronto_survives_both": true,
+  "F_budget_exhaustion_no_crash": true,
+  "F_budget_exhaustion_bounded": true,
+  "G_flag_reader_default_false": true,
+  "G_flag_reader_true_on_1": true,
+  "G_flag_reader_true_on_word": true,
+  "G_flag_reader_false_on_0": true,
+  "H_known_true_all_turns": true,
+  "H_gen_time_used_all_turns": true,
+  "H_default_env_kwarg_false": true,
+  "H_flag_false_kwarg_false": true,
+  "H_flag_true_kwarg_true": true,
+  "H_default_matches_explicit_false": true
+ },
+ "text_skip_continue_ON": "It has ten provinces and three territories.",
+ "trace_skip_continue_ON": [
+  {
+   "raw": "The capital of Canada is Toronto.",
+   "kept": null,
+   "action": "dropped_skip",
+   "consensus_facts": [
+    [
+     "capital",
+     "ottawa"
+    ]
+   ],
+   "continuation": "token_id_skip"
+  },
+  {
+   "raw": "It has ten provinces and three territories.",
+   "kept": "It has ten provinces and three territories.",
+   "action": "kept",
+   "consensus_facts": [
+    [
+     "capital",
+     "ottawa"
+    ]
+   ],
+   "continuation": "token_id_skip"
+  }
+ ],
+ "text_skip_continue_LESIONED_ie_OFF": "",
+ "trace_skip_continue_LESIONED_ie_OFF": [
+  {
+   "raw": "The capital of Canada is Toronto.",
+   "kept": null,
+   "action": "dropped_stop",
+   "consensus_facts": [
+    [
+     "capital",
+     "ottawa"
+    ]
+   ],
+   "continuation": "token_id"
+  }
+ ],
+ "answer_default_env": "GEN-TIME: stub reply",
+ "answer_flag_false": "GEN-TIME: stub reply",
+ "answer_flag_true": "GEN-TIME: stub reply",
+ "verdict": {
+  "label": "SKIP-AND-CONTINUE (_generate_tokenid_continuation_skip / skip_continue= / BRAIN_HONESTY_SKIP_CONTINUE) is wired correctly against the REAL, unmodified clause_filter_sentence and generate_with_generation_time_veto dispatcher, and routes correctly from the env var through webapp.open_ended_chat.answer_turn -- fake tokenizer/model, no GPU, no Qwen, no organs",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(A) skip_continue=True + veto firing: the dropped sentence is skipped (not stopped) and the LATER, supported sentence is still reached and kept",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(B) skip_continue=False, same veto firing: generation stops at the drop, the later sentence is never reached (matches the pre-existing conservative-truncate contract)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(C) the load-bearing lever: skip_continue is the ONLY varying term and it MOVES the final text (vary -> differ; (B) is the lesion -> vanish half)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(D) flag OFF is byte-identical to the pre-existing untouched _generate_tokenid_continuation, AND to not passing skip_continue at all (proven by execution, not by comment)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(E) sanity: with nothing for the veto to suppress, skip_continue has zero effect either way",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(F) a token budget smaller than the full script truncates cleanly under skip_continue=True, never raises, never loops unboundedly",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(G) BRAIN_HONESTY_SKIP_CONTINUE flag reader: default False, truthy strings -> True, '0' -> False",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(H) answer_turn routes through the full stack (env var -> skip_continue_enabled() -> generate_with_generation_time_veto kwarg) without breaking the existing gen-time-honesty gate, and the env var lands as the EXACT skip_continue= kwarg the mechanism sees",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(A) skip_continue=True + veto firing: the dropped sentence is skipped (not stopped) and the LATER, supported sentence is still reached and kept",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(B) skip_continue=False, same veto firing: generation stops at the drop, the later sentence is never reached (matches the pre-existing conservative-truncate contract)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(C) the load-bearing lever: skip_continue is the ONLY varying term and it MOVES the final text (vary -> differ; (B) is the lesion -> vanish half)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(D) flag OFF is byte-identical to the pre-existing untouched _generate_tokenid_continuation, AND to not passing skip_continue at all (proven by execution, not by comment)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(E) sanity: with nothing for the veto to suppress, skip_continue has zero effect either way",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(F) a token budget smaller than the full script truncates cleanly under skip_continue=True, never raises, never loops unboundedly",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(G) BRAIN_HONESTY_SKIP_CONTINUE flag reader: default False, truthy strings -> True, '0' -> False",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(H) answer_turn routes through the full stack (env var -> skip_continue_enabled() -> generate_with_generation_time_veto kwarg) without breaking the existing gen-time-honesty gate, and the env var lands as the EXACT skip_continue= kwarg the mechanism sees",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true
+}

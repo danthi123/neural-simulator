@@ -1,5 +1,28 @@
 """GENERATION-TIME consensus-veto honesty for open-ended chat (Vikunja #112 follow-on, 2026-08-27/28/29).
 
+SKIP-AND-CONTINUE (2026-08-28, the NEXT rung BOTH the 2026-08-27 PARTIAL finding and the 2026-08-28 token-id-
+continuation finding named and did not attempt). Every continuation technique above (`"text"` and `"token_id"`)
+conservatively STOPS the whole reply the moment one sentence cannot be safely repaired -- the mouth reaches the
+residual content BEFORE a dropped sentence but never AFTER it, so honesty degrades into truncation rather than
+pruning. `_generate_tokenid_continuation_skip` (new) keeps the exact same per-sentence `clause_filter_sentence`
+contract (kept unchanged / repaired / dropped) but on a DROP does not `break`: it advances a SEPARATE raw
+generation-context stream (`context_ids`, the ids the mouth's own next `generate()` call continues from) past
+the dropped sentence's own generated tokens -- so the model's autoregressive state moves forward exactly as if
+it had said that sentence, without a repeat-forever risk under greedy decode -- while the FINAL, user-visible
+stream (`accepted_ids`) never receives the dropped span at all. A later, verifiable sentence in the SAME reply
+is therefore still reached and still individually vetoed, instead of the whole reply stopping at the first
+unverifiable point. Selected via `generate_with_generation_time_veto(..., continuation="token_id",
+skip_continue=True)`; `skip_continue=False` (the default, unchanged) reproduces the existing conservative-
+truncate `_generate_tokenid_continuation` path byte-for-byte -- this parameter can only ADD a behavior, never
+alter the pre-existing one. Wired into `webapp/open_ended_chat.py` behind a THIRD, independent, default-OFF
+flag (`BRAIN_HONESTY_SKIP_CONTINUE`, see `skip_continue_enabled()`) stacked on top of `BRAIN_OPEN_ENDED` +
+`BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` -- all three must be truthy for anything to change. NO `sim/` edit; no
+change to `clause_filter_sentence` / `sentence_contradicts` / `consensus_facts_for_topic` / the string safety
+net, which stays layered on top of whatever text this produces, unconditionally. `continuation="text"` has no
+skip-continue variant (v1 scope: the text path's every-step retokenization makes hiding a dropped span from the
+model's own future context substantially harder -- a bare string, not two separate id streams -- so this
+extension targets the token-id path only, as directed).
+
 TOKEN-ID CONTINUATION (2026-08-28, this file's own NEXT rung from the 2026-08-27-open-ended-generation-time-
 honesty-PARTIAL.md finding). The original v1 stepped the mouth sentence-by-sentence by DECODING the growing
 accepted text back to a string and RE-TOKENIZING `prompt_string + accepted_text_string` on every single step
@@ -359,25 +382,107 @@ def _generate_tokenid_continuation(gen: OpenEndedGenerator, topic: str, seed: in
     return accepted_text, trace
 
 
+# =====================================================================================================
+# (3b) SKIP-AND-CONTINUE (2026-08-28, this file's own NEXT rung -- see the module docstring). Same
+# clause_filter_sentence contract as `_generate_tokenid_continuation`; the ONLY difference is what happens on a
+# DROP: instead of `break` (truncate the whole reply there), the raw generation context is advanced past the
+# dropped span (so the mouth's own next `generate()` call continues forward, never stuck regenerating the same
+# dropped sentence) while the FINAL accepted stream never receives it -- honesty as a PRUNING filter, not a
+# truncating one.
+# =====================================================================================================
+def _generate_tokenid_continuation_skip(gen: OpenEndedGenerator, topic: str, seed: int, system: str, user: str,
+                                        facts, max_new_tokens: int, sentence_budget: int, max_sentences: int):
+    """Two token-id streams, both carried between sentence-generation steps:
+      `context_ids`  -- the RAW generation context (every sentence the mouth generated, kept OR dropped) --
+                        what the NEXT `generate()` call continues from, so the model's own autoregressive state
+                        always advances (a dropped sentence's tokens still move the model's context forward,
+                        exactly as if it had said them, just never surfaced to the caller).
+      `accepted_ids` -- the FINAL, user-visible stream -- receives a KEPT sentence's own generated ids
+                        (zero retokenization, same as `_generate_tokenid_continuation`) or a REPAIRED
+                        sentence's re-encoded span, but a DROPPED sentence is skipped entirely: `context_ids`
+                        moves past it, `accepted_ids` does not.
+    Every candidate -- kept, repaired, or dropped -- runs through the SAME, unmodified `clause_filter_sentence`
+    call as the non-skip path; nothing here alters what counts as a veto, only what happens next when one
+    fires. Bounded by `max_sentences` (total generation ATTEMPTS, kept+repaired+dropped combined -- the same
+    accounting `_generate_tokenid_continuation` uses) and `max_new_tokens`, so this can never loop unboundedly
+    even though a drop no longer stops the loop."""
+    torch = gen.fac._torch
+    msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    prompt = gen.fac.tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+    prompt_ids = gen.fac.tok(prompt, return_tensors="pt").to(gen.fac.device).input_ids
+    context_ids = torch.zeros((1, 0), dtype=prompt_ids.dtype, device=prompt_ids.device)
+    accepted_ids = torch.zeros((1, 0), dtype=prompt_ids.dtype, device=prompt_ids.device)
+    trace = []
+    tokens_used = 0
+    for _ in range(max_sentences):
+        remaining = max_new_tokens - tokens_used
+        if remaining <= 0:
+            break
+        budget = min(sentence_budget, remaining)
+        new_ids, eos = _continue_chunk_ids(gen, prompt_ids, context_ids, seed, budget)
+        tokens_used += budget
+        if new_ids.shape[1] == 0:
+            break
+        k, incomplete = _find_sentence_boundary_ids(gen.fac.tok, new_ids[0])
+        candidate_ids = new_ids[:, :k]
+        candidate = gen.fac.tok.decode(candidate_ids[0], skip_special_tokens=True).strip()
+        if not candidate:
+            break
+        repaired = clause_filter_sentence(candidate, topic, facts)
+        if repaired is None:
+            # SKIP-AND-CONTINUE: the raw context advances past this sentence's own generated tokens (so the
+            # mouth's next step moves forward, never re-generating the identical dropped sentence forever
+            # under greedy decode) but `accepted_ids` -- the FINAL text -- never receives it.
+            context_ids = torch.cat([context_ids, candidate_ids], dim=1)
+            trace.append({"raw": candidate, "kept": None, "action": "dropped_skip", "consensus_facts": facts,
+                          "continuation": "token_id_skip"})
+            if eos or incomplete:
+                break
+            continue                          # <-- the one-line difference from _generate_tokenid_continuation
+        action = "kept" if repaired.strip() == candidate.strip() else "repaired"
+        if action == "kept":
+            context_ids = torch.cat([context_ids, candidate_ids], dim=1)      # the model's OWN ids, unaltered
+            accepted_ids = torch.cat([accepted_ids, candidate_ids], dim=1)
+        else:
+            lead = " " if accepted_ids.numel() > 0 else ""
+            repair_ids = gen.fac.tok(lead + repaired, add_special_tokens=False,
+                                     return_tensors="pt").to(gen.fac.device).input_ids
+            context_ids = torch.cat([context_ids, repair_ids], dim=1)         # the ONLY re-encode: an edit
+            accepted_ids = torch.cat([accepted_ids, repair_ids], dim=1)
+        trace.append({"raw": candidate, "kept": repaired, "action": action, "consensus_facts": facts,
+                      "continuation": "token_id_skip"})
+        if eos or incomplete:
+            break
+    accepted_text = (gen.fac.tok.decode(accepted_ids[0], skip_special_tokens=True).strip()
+                     if accepted_ids.numel() else "")
+    return accepted_text, trace
+
+
 def generate_with_generation_time_veto(gen: OpenEndedGenerator, chat, topic: str, seed: int, system: str,
                                        user: str, *, max_new_tokens: int = 160, sentence_budget: int = 64,
                                        max_sentences: int = 6, lesion_coupling: bool = False, bus: str = "three",
-                                       continuation: str = "token_id"):
+                                       continuation: str = "token_id", skip_continue: bool = False):
     """Generate the reply ONE SENTENCE AT A TIME. Before each candidate sentence is fixed into the ACCEPTED
     context (what every later sentence is generated from), it is run through the imported `clause_filter_
-    sentence` against the LIVE, per-topic `consensus_facts_for_topic` verdict (not a static dict). A sentence
-    that cannot be safely repaired conservatively STOPS generation (v1 scope: truncate, never skip-and-continue
-    past an unverifiable point -- see the module docstring). `continuation` selects the stepping technique:
-    `"token_id"` (default, 2026-08-28) carries context as token ids (no retokenization on a kept sentence);
-    `"text"` reproduces the original 2026-08-27 decode-and-re-encode path verbatim, for A/B comparison. Returns
-    `(accepted_text, trace, consensus_info)`."""
+    sentence` against the LIVE, per-topic `consensus_facts_for_topic` verdict (not a static dict). `continuation`
+    selects the stepping technique: `"token_id"` (default, 2026-08-28) carries context as token ids (no
+    retokenization on a kept sentence); `"text"` reproduces the original 2026-08-27 decode-and-re-encode path
+    verbatim, for A/B comparison. `skip_continue` (default False, 2026-08-28 addition, `continuation="token_id"`
+    ONLY): False (unchanged) conservatively STOPS generation the moment a sentence cannot be safely repaired
+    (truncate, v1 scope); True DROPS that sentence and CONTINUES generating the next one instead (see
+    `_generate_tokenid_continuation_skip` / the module docstring) -- honesty as a pruning filter rather than a
+    truncating one. Returns `(accepted_text, trace, consensus_info)`."""
     facts, consensus_info = consensus_facts_for_topic(chat, topic, seed, lesion_coupling=lesion_coupling, bus=bus)
     if continuation == "text":
         accepted, trace = _generate_text_continuation(gen, topic, seed, system, user, facts, max_new_tokens,
                                                        sentence_budget, max_sentences)
     elif continuation == "token_id":
-        accepted, trace = _generate_tokenid_continuation(gen, topic, seed, system, user, facts, max_new_tokens,
-                                                          sentence_budget, max_sentences)
+        if skip_continue:
+            accepted, trace = _generate_tokenid_continuation_skip(gen, topic, seed, system, user, facts,
+                                                                   max_new_tokens, sentence_budget, max_sentences)
+        else:
+            accepted, trace = _generate_tokenid_continuation(gen, topic, seed, system, user, facts, max_new_tokens,
+                                                              sentence_budget, max_sentences)
     else:
         raise ValueError(f"unknown continuation technique: {continuation!r}")
     return accepted, trace, consensus_info

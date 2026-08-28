@@ -1,10 +1,10 @@
 {
- "run_id": "1787924256-3895322",
+ "run_id": "1787938447-4043610",
  "runner": "research/runners/_open_ended_gen_time_consensus_veto_wiring_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-aafef44fca8bc3d2c/research/runners/_open_ended_gen_time_consensus_veto_wiring_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3c9950b38a60c959/research/runners/_open_ended_gen_time_consensus_veto_wiring_verify.py"
  ],
- "git_sha": "5e802e254",
+ "git_sha": "7fd699a4d",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,14 +12,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-28T09:37:36",
+ "started": "2026-08-28T13:34:07",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": null,
- "corpus_check_query": null,
+ "corpus_check_age_s": 484.4,
+ "corpus_check_query": "skip-and-continue past a vetoed sentence in generation-time honesty",
+ "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_open_ended_gen_time_consensus_veto_wiring_verify.json"
 }
