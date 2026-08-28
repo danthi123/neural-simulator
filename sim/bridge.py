@@ -1006,6 +1006,23 @@ class SimulationBridge:
         self._cached_stp_per_type = None  # STP per-synapse params depend on connectivity
         self._cached_inhibitory_mask = None  # Inhibitory mask depends on traits
 
+    def mark_weights_edited(self):
+        """Public signal that self.cp_connections.data was edited IN PLACE out-of-band -- the object id AND nnz are
+        unchanged, only the weight VALUES changed. Invalidates every cache derived from the weight values so the next
+        step transmits the NEW weights:
+          - the megakernel-v2 transposed-CSR cache (`_ensure_step_v2_transpose`), keyed on (id(conn), nnz): an
+            in-place weight edit leaves that key unchanged, so WITHOUT this signal the read-only fused path keeps
+            transmitting the STALE pre-edit weights (measured: a per-step learned read-out's 2nd read transmits its
+            1st weight -- corr(read_B, host_A)=0.52 while corr(read_B, host_B)=-0.01; the mouth stale-COO bug,
+            2026-08-27);
+          - the COO cache (for any COO-consuming plasticity path).
+        Structural edits (synapse add/remove) already flow through `_invalidate_coo_cache` and change nnz (so the WT
+        key changes on its own); this is the WEIGHT-only counterpart a caller that rewrites weights between reads
+        (e.g. an eprop read-out's set_weights) MUST call. Byte-identical when weights did NOT actually change -- the
+        caches simply rebuild to identical data on the next step."""
+        self._step_v2_WT_key = None
+        self._invalidate_coo_cache()
+
     def _apply_branchless_stdp(self, coo_matrix_stdp, candidate_mask, cfg):
         """Branchless (compaction-free) STDP weight update (opt-in via cfg.enable_branchless_plasticity).
 
