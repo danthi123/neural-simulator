@@ -10,6 +10,9 @@ artifacts:
 runner: research/runners/_xedge_flip_production_verify.py
 ---
 
+> ⚠️ **CORRECTION 2026-08-28 (SUPERSEDED): this NO-GO was an INSTRUMENT ARTIFACT, not a hollow flip.** The verify ran on cupy, where the shared xedge pool BUILD CRASHED silently — `_snapshot_rest` stored the shared-path rest as HOST numpy, `_hard_reset` assigned it into DEVICE cupy arrays → `ValueError: non-scalar numpy.ndarray cannot be used for fill` at `comprehension_production_organ.py:419` — degrading every seed to STANDALONE organs (`pool.primed=false` in the artifact, never checked). So `n_visible_grown_focus=0` measured a CRASH, not hollowness.
+> The bug is INVISIBLE on numpy (both sides host), so the numpy-only disambiguation missed it — a cross-backend silent-failure. FIXED backend-correctly (`xp.asarray`, merged `a8c8a2d18`); cupy seed42 now: build SUCCESS, delta 0.0193 vs eps 0.0040, **resolved 144/144, role_differs=True**. A 6-seed cupy re-verify is bumped to the gpu.queue front → autonomous flip if non-hollow 6/6 GO. **The NO-GO verdict below is VOID.**
+
 # One-brain d6-WM→comprehension cross-edge — production-default flip is NO-GO (hollow on real traffic; edge is load-bearing only at the organ level)
 
 Artifact: `research/findings/raw/_xedge_flip_verify/flip_verify_cupy_6seed.json` (6 seeds 42/43/44/100/101/102, `SIM_BACKEND=cupy`, `b_edge=learn` = both flags on with the in-brain self-supervised edge at its converged weight, run through the REAL `webapp.server.brain_chat` handler on the production tiny-demo+LTM brain).
