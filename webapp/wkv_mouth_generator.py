@@ -271,8 +271,45 @@ def in_vocab_scope(text: str, seed: int = 42, min_frac: float = 0.6, min_hits: i
             and len(content_hits) >= min_content_hits)
 
 
+# ── decode-time repetition guard (the A/B GO's named next lever, per research/findings/2026-08-28-wkv-learned-
+# vs-native-head-AB-worth-keeping-opt-in.md SS5: "a repetition penalty / no-repeat n-gram constraint at
+# generation time (cheap, host-side, does not touch the learned weights)"). Two default-off knobs, applied to
+# the FULL-vocab logits `lg` -- NOT to `p` after the top-k cut -- so a banned/penalized token cannot re-enter
+# the top-`topk` candidate set the spiking reader samples over. Defaults (1.0, 0) are an EXACT no-op: this is
+# legitimately HOST territory (decode control, same category as the pre-existing `topk`/`gen_temp` knobs) --
+# the spiking population-coded WTA read (`reader.read(p)`) is never touched, so the brain-based read mechanism
+# stays exactly what it was; only WHICH candidates reach it changes.
+def _apply_repetition_controls(lg: np.ndarray, gen: list, repetition_penalty: float, no_repeat_ngram_size: int):
+    """Returns a (possibly new) logits array with decode-time repetition controls applied. Byte-identical
+    no-op (`lg` returned UNCHANGED, same object) when `repetition_penalty == 1.0` and
+    `no_repeat_ngram_size <= 0` -- the default-off path never allocates or mutates.
+
+    (a) `repetition_penalty` (CTRL-style, Keskar et al. 2019 / the HF `RepetitionPenaltyLogitsProcessor`
+        convention): for every token id already in `gen`, `lg[t] = lg[t]/rp if lg[t]>0 else lg[t]*rp` --
+        rp>1 SUPPRESSES re-selection of anything already generated, symmetric about the sign of the logit
+        so a penalty never flips a strongly-negative logit positive.
+    (b) `no_repeat_ngram_size=n>0` (Fan et al. 2018 / the HF `NoRepeatNGramLogitsProcessor` convention):
+        for the current (n-1)-token suffix of `gen`, hard-ban (`-1e30`) every token that would complete an
+        n-gram already seen earlier in `gen` -- an exact constraint, not a soft nudge."""
+    if repetition_penalty == 1.0 and no_repeat_ngram_size <= 0:
+        return lg
+    lg = lg.copy()
+    if repetition_penalty != 1.0:
+        for t in set(gen):
+            lg[t] = lg[t] / repetition_penalty if lg[t] > 0 else lg[t] * repetition_penalty
+    if no_repeat_ngram_size > 0:
+        n = no_repeat_ngram_size
+        prefix_len = n - 1
+        banned_prefix = tuple(gen[len(gen) - prefix_len:]) if prefix_len > 0 else ()
+        for i in range(len(gen) - n + 1):
+            if tuple(gen[i:i + prefix_len]) == banned_prefix:
+                lg[gen[i + prefix_len]] = -1e30
+    return lg
+
+
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
-def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float):
+def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float,
+              repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0):
     pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
     if not pid:
         pid = [0]
@@ -288,6 +325,7 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         if ro.unk_idx >= 0:
             lg = lg.copy()
             lg[ro.unk_idx] = -1e30
+        lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -305,19 +343,26 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
 
 
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
-             pop: int = 8, gen_temp: float = 0.8) -> tuple[str, float]:
+             pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
+             no_repeat_ngram_size: int = 0) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
     `research.runners._wkv_fewspike_read_derisk` module). Mirrors `OpenEndedGenerator.generate`'s `(text, seconds)`
     return shape so it drops into `webapp/open_ended_chat.py::answer_turn`'s generator slot unchanged. Runs on a
-    private RNG timeline (see `_RngIsolation`) -- never perturbs host process-global RNG state."""
+    private RNG timeline (see `_RngIsolation`) -- never perturbs host process-global RNG state.
+
+    `repetition_penalty` (default 1.0) and `no_repeat_ngram_size` (default 0) are DEFAULT-OFF decode-time
+    repetition guards -- see `_apply_repetition_controls` -- addressing the repetition/looping residual named
+    as the next lever by research/findings/2026-08-28-wkv-learned-vs-native-head-AB-worth-keeping-opt-in.md
+    SS5. Left at their defaults, `generate()` is byte-identical to before these kwargs existed."""
     t0 = time.time()
 
     def _run():
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
-        text, _self_nll = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp)
+        text, _self_nll = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
+                                     repetition_penalty, no_repeat_ngram_size)
         return text
 
     text = _RNG.run(seed, _run)
