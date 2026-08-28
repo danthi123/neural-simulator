@@ -1,0 +1,10 @@
+{
+ "runner": "research/runners/_b1_v1_selforg_bcm_derisk.py",
+ "purpose": "same-session dose-pilot (2026-08-27 follow-up to the warm-up VOID finding): fine-grained low-dose step-count sweep, isolate=False (the COMMITTED runner's own code path, unmodified, driven via research.runners._b1_v1_selforg_bcm_derisk.main() through sys.argv) -- single-seed, reduced-scale (n-orient 8 n-freq 4 n-pos 8, dev-steps 4000), rate=default 0.02",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "warmup_steps": 0,
+ "op_point_ok": true,
+ "dev_firing_fraction_mean": 0.01894,
+ "artifact": "research/findings/raw/_b1_v1_bcm_dose_pilot_2axis/sanity0.json"
+}

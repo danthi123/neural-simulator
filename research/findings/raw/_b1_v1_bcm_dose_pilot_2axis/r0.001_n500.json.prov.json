@@ -1,0 +1,11 @@
+{
+ "runner": "research/runners/_b1_v1_selforg_bcm_derisk.py",
+ "purpose": "same-session dose-pilot (2026-08-27): the OTHER dose axis (--syn-scaling-rate=0.001 instead of the default 0.02), isolate=False (committed runner's own code path, unmodified, driven via main() through sys.argv). Single-seed, reduced-scale.",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "warmup_steps": 500,
+ "op_point_ok": false,
+ "dev_firing_fraction_mean": 0.0,
+ "artifact": "research/findings/raw/_b1_v1_bcm_dose_pilot_2axis/r0.001_n500.json",
+ "syn_scaling_rate": 0.001
+}
