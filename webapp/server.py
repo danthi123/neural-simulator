@@ -5341,15 +5341,36 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _MC = None
         _metacog_on = False
 
+    # #184 (silent-regression guard, 2026-08-27): whether THIS turn's composer even SUPPORTS tracing at all
+    # (`hasattr(_composer, "last_trace")`, the same test the trace-flip block above already gated on). A composer
+    # that never traces (the rate composer / an external composer) legitimately has no confidence to read — no
+    # warning there. A trace-CAPABLE composer whose read still comes back empty on an ANSWERED turn is the
+    # plumbing-bug signature (exactly how `TieredFactStore.__setattr__` silently ate `last_trace` for a day: the
+    # answer was produced, tracing WAS supported, yet `activity` read None with nothing logged).
+    _composer_traces = _composer is not None and hasattr(_composer, "last_trace")
+
     def _metacog_qualify(activity, no_answer):
         """Read the spiking confidence of the answer just produced. Returns (hedge_prefix, metacog_info). Skips an
-        abstain / guess (no recalled answer to qualify) and any turn with no decoded-role confidence (out of scope)."""
+        abstain / guess (no recalled answer to qualify) and any turn with no decoded-role confidence (out of scope).
+
+        #184: when an ANSWER was given (no_answer=False) by a trace-CAPABLE composer, yet the confidence read
+        still comes back empty (activity is None, or has no role carries a confidence), that is NOT a legitimate
+        out-of-scope skip — it is an unexpected empty read, i.e. a plumbing regression silently disabling this
+        honesty hedge. Log a WARNING (never silent) so a future regression of this shape cannot hide again; the
+        turn still degrades gracefully to the un-hedged answer either way (never crashes/blocks a turn)."""
         if not _metacog_on or no_answer:
             return "", None
         try:
             mrc = _MC.mean_role_confidence(activity)
             ev = _MC.evidence_from_role_conf(mrc)
             if ev is None:
+                if _composer_traces:
+                    print(f"[webapp] METACOG WARNING (#184): an answer was produced by a trace-capable composer "
+                          f"but the confidence read came back empty this turn (activity_is_none="
+                          f"{activity is None}, roles={len((activity or {}).get('roles') or [])}) -- the honesty "
+                          f"hedge is silently disabled. This is the plumbing-bug signature (TieredFactStore.__"
+                          f"setattr__ ate last_trace for a day the same way); check the activity-trace plumbing.",
+                          flush=True)
                 return "", None
             j = _get_metacog_organ().judge(ev, lesion=_MC.metacog_lesioned())
             info = dict(j)

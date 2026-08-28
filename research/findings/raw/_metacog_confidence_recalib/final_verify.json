@@ -1,0 +1,142 @@
+{
+  "role_conf_lo": 0.3,
+  "role_conf_hi": 0.5,
+  "confident": {
+    "brain use": {
+      "answer": "spikes",
+      "expected": "spikes",
+      "mrc": 0.6080886903614127,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "brain learn": {
+      "answer": "words",
+      "expected": "words",
+      "mrc": 0.5151331018976317,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "brain store": {
+      "answer": "memory",
+      "expected": "memory",
+      "mrc": 0.6147780118094043,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "dog chase": {
+      "answer": "cat",
+      "expected": "cat",
+      "mrc": 0.5042344645465211,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "cat eat": {
+      "answer": "fish",
+      "expected": "fish",
+      "mrc": 0.5670046085591427,
+      "evidence": 1.0,
+      "confident": true
+    }
+  },
+  "uncertain": {
+    "sweep": [
+      {
+        "sigma": 0.3,
+        "answer": "spikes",
+        "mrc": 0.6029867296430174,
+        "evidence": 1.0,
+        "confident": true
+      },
+      {
+        "sigma": 0.5,
+        "answer": "spikes",
+        "mrc": 0.582758539634445,
+        "evidence": 1.0,
+        "confident": true
+      },
+      {
+        "sigma": 0.7,
+        "answer": "spikes",
+        "mrc": 0.42800184873591746,
+        "evidence": 0.6400092436795873,
+        "confident": true
+      },
+      {
+        "sigma": 0.9,
+        "answer": "spikes",
+        "mrc": 0.4083034115668863,
+        "evidence": 0.5415170578344316,
+        "confident": true
+      },
+      {
+        "sigma": 1.1,
+        "answer": "spikes",
+        "mrc": 0.30272039503629244,
+        "evidence": 0.013601975181462278,
+        "confident": false
+      },
+      {
+        "sigma": 1.3,
+        "answer": "spikes",
+        "mrc": 0.3724630517917257,
+        "evidence": 0.36231525895862843,
+        "confident": false
+      },
+      {
+        "sigma": 1.5,
+        "answer": "spikes",
+        "mrc": 0.2314110252233647,
+        "evidence": 0.0,
+        "confident": false
+      },
+      {
+        "sigma": 1.8,
+        "answer": "spikes",
+        "mrc": 0.22934071584359716,
+        "evidence": 0.0,
+        "confident": false
+      },
+      {
+        "sigma": 2.2,
+        "answer": "spikes",
+        "mrc": 0.37841012443695166,
+        "evidence": 0.39205062218475834,
+        "confident": false
+      },
+      {
+        "sigma": 2.6,
+        "answer": "spikes",
+        "mrc": 0.09024245745604907,
+        "evidence": 0.0,
+        "confident": false
+      }
+    ]
+  },
+  "lesioned": {
+    "confident_intact": {
+      "answer": "spikes",
+      "mrc": 0.6080886903614127,
+      "evidence": 1.0,
+      "confident": false
+    },
+    "uncertain_noised": {
+      "answer": "spikes",
+      "mrc": 0.16603233691133953,
+      "evidence": 0.0,
+      "confident": false
+    }
+  },
+  "184_contract": {
+    "activity_none": null,
+    "empty_roles": null,
+    "abstained": null
+  },
+  "verdict": {
+    "all_5_confident_no_hedge": true,
+    "any_uncertain_turn_hedges": true,
+    "heavy_noise_all_hedge": true,
+    "lesion_collapses_discrimination": true,
+    "DISCRIMINATES": true,
+    "no_answer_regression": true
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "runner": "measure_real_confident (real /api/brain-chat, unpatched)",
+  "backend": "numpy",
+  "ts": "2026-08-27T20:06:33",
+  "turns": {
+    "what does the brain use": {
+      "answer": "the brain uses the spikes the brain stores the memory the brain learns the words",
+      "n_sentences": 3,
+      "mean_role_confidence": 0.6080886903614127,
+      "margins_by_role": {
+        "agent": 0.6439579171032779,
+        "action": 0.6984371819603162,
+        "patient": 0.6449672046625632,
+        "attribute": 0.18202988821992272,
+        "polarity": 0.8710512598609838
+      },
+      "legacy_confidences_by_role": {
+        "agent": 1.0,
+        "action": 1.0,
+        "patient": 1.0,
+        "attribute": 1.0,
+        "polarity": 1.0
+      },
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.35,
+          "role_conf_hi": 0.52,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.6080886903614127
+      }
+    },
+    "what does the brain learn": {
+      "answer": "the brain learns the words the brain stores the memory the brain uses the spikes",
+      "n_sentences": 3,
+      "mean_role_confidence": 0.5151331018976317,
+      "margins_by_role": {
+        "agent": 0.5830204517488955,
+        "action": 0.6580165464795961,
+        "patient": 0.5986169435309614,
+        "attribute": 0.007234931500581408,
+        "polarity": 0.7287766362281244
+      },
+      "legacy_confidences_by_role": {
+        "agent": 1.0,
+        "action": 1.0,
+        "patient": 1.0,
+        "attribute": 1.0,
+        "polarity": 1.0
+      },
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 0.9713711876331277,
+        "balance": 0.08207596486733995,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.35,
+          "role_conf_hi": 0.52,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.5151331018976317
+      }
+    },
+    "what does the brain store": {
+      "answer": "the brain stores the memory the brain learns the words the brain uses the spikes",
+      "n_sentences": 3,
+      "mean_role_confidence": 0.6147780118094043,
+      "margins_by_role": {
+        "agent": 0.5737471642417078,
+        "action": 0.7236947515488305,
+        "patient": 0.5551326212623263,
+        "attribute": 0.22131552199415755,
+        "polarity": 0.9999999999999996
+      },
+      "legacy_confidences_by_role": {
+        "agent": 1.0,
+        "action": 1.0,
+        "patient": 1.0,
+        "attribute": 1.0,
+        "polarity": 1.0
+      },
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.35,
+          "role_conf_hi": 0.52,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.6147780118094043
+      }
+    },
+    "what does the dog chase": {
+      "answer": "the dog chases the cat the cat eats the fish",
+      "n_sentences": 2,
+      "mean_role_confidence": 0.5670046085591427,
+      "margins_by_role": {
+        "agent": 0.6033254334339793,
+        "action": 0.5985857722080797,
+        "patient": 0.6286733171898224,
+        "attribute": 0.004438519963832671,
+        "polarity": 0.9999999999999997
+      },
+      "legacy_confidences_by_role": {
+        "agent": 1.0,
+        "action": 1.0,
+        "patient": 1.0,
+        "attribute": 1.0,
+        "polarity": 1.0
+      },
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.35,
+          "role_conf_hi": 0.52,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.5670046085591427
+      }
+    },
+    "what does the cat eat": {
+      "answer": "the cat eats the fish the dog chases the cat",
+      "n_sentences": 2,
+      "mean_role_confidence": 0.5670046085591427,
+      "margins_by_role": {
+        "agent": 0.6033254334339793,
+        "action": 0.5985857722080797,
+        "patient": 0.6286733171898224,
+        "attribute": 0.004438519963832671,
+        "polarity": 0.9999999999999997
+      },
+      "legacy_confidences_by_role": {
+        "agent": 1.0,
+        "action": 1.0,
+        "patient": 1.0,
+        "attribute": 1.0,
+        "polarity": 1.0
+      },
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.35,
+          "role_conf_hi": 0.52,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.5670046085591427
+      }
+    }
+  },
+  "mrc_min": 0.5151331018976317,
+  "mrc_max": 0.6147780118094043,
+  "mrc_spread": 0.09964490991177255
+}

@@ -93,11 +93,29 @@ READ_JITTER_PA = 30.0    # per-rep Gaussian drive jitter (samples the local evid
 READ_SEED = 4242         # fixed so a given evidence -> a DETERMINISTIC confidence decision (reproducible per turn)
 
 # ── role-decode confidence -> evidence[0,1] normalization (STRETCH the observed recall band to the full range
-# so the balance margin separates). Measured on the tiny-demo recalls (2026-08-12): mean role-decode confidence
-# ran 0.400 ("dog chase cat", the lowest-confidence recall) .. 0.476 ("brain use spikes", the highest); these
-# bounds place 0.400 -> evidence ~0.29 (uncertain -> hedge) and 0.476 -> evidence ~0.74 (confident -> no hedge). ─
-ROLE_CONF_LO = 0.35      # a mean role-decode confidence at/below this -> evidence 0 (lowest confidence)
-ROLE_CONF_HI = 0.52      # a mean role-decode confidence at/above this -> evidence 1 (highest confidence)
+# so the balance margin separates). RECALIBRATED 2026-08-27 (issue #181): the OLD band (0.35/0.52) was tuned
+# against the self-ratio `confidence` field (`s[argmax]/max(s)`), which is 1.0 by construction on every
+# non-degenerate decode -- it never varied, so the band's exact placement never mattered and the hedge never
+# fired on real traffic (mean_role_confidence read 1.0 on every measured real turn, saturating above the OLD
+# HI). `mean_role_confidence` now reads the genuine winner-vs-runner-up `margin` (`OneBrainComposer._margin`,
+# the composer's own validated decisiveness signal -- see that method's docstring); this band is recalibrated
+# against THAT signal's real measured distribution, on the ACTUAL production composer instance
+# (`_build_tiny_demo`, the same builder `webapp/server.py` calls -- it enables `enable_attributed=True`, which
+# adds an always-near-zero-margin `attribute` role chip to every real trace, real production's `roles` set is
+# WIDER than a plain agent/action/patient/polarity composer) -- see `research/findings/raw/_metacog_confidence_recalib/`:
+#   CONFIDENT (THROUGH THE REAL `/api/brain-chat` handler, all 5 real tiny-demo facts, intact store): mrc
+#     0.504 .. 0.615 (`measure_real_confident.json`, `measure_real_build_noise_sweep.json`).
+#   GENUINELY-UNCERTAIN (the SAME real composer instance + query, `_noise`-perturbed synaptic store -- the
+#     identical legitimate synaptic-noise damage model 2026-06-18-emergent-graceful-degradation-derisk.md
+#     validated for this composer -- at noise levels that still return an answer, i.e. a genuine weak/ambiguous
+#     match, not an abstain): mrc ranges 0.149 (heavy noise) up through light-noise levels that correctly stay
+#     confident (0.60 at sigma=0.3, barely perturbed); the clearly-degraded region (sigma>=1.1) reads 0.149..0.36.
+# HI sits AT/BELOW the measured confident floor (0.504) so every real confident turn clips to evidence=1.0 (no
+# regression); LO sits below the clearly-degraded region so a genuinely weak/ambiguous read reaches the organ's
+# own low-evidence calibration zone (evidence<=~0.4) and hedges. A borderline (lightly-perturbed) read is
+# allowed to land in the middle and go either way -- an honest ambiguous case, not gamed to a side.
+ROLE_CONF_LO = 0.30      # a mean role-decode confidence at/below this -> evidence 0 (in the measured degraded region)
+ROLE_CONF_HI = 0.50      # a mean role-decode confidence at/above this -> evidence 1 (at the measured confident floor)
 
 NORM_EPS = 1e-9          # divisive-normalization stabilizer for the nmda_norm confidence read
 
@@ -199,15 +217,36 @@ def evidence_from_role_conf(mean_role_conf: float | None) -> float | None:
 
 
 def mean_role_confidence(activity: dict | None) -> float | None:
-    """Extract the mean role-decode confidence from the composer's per-turn activity trace (the brain's own
-    spiking parse certainty for the answer it is giving). None when no roles carry a confidence."""
+    """Extract the mean per-role DECODE-CONFIDENCE from the composer's per-turn activity trace (the brain's own
+    spiking parse certainty for the answer it is giving).
+
+    ROOT CAUSE (issue #181, 2026-08-27): this used to average each role chip's `confidence` field
+    (`one_brain_composer._winner`: `s[argmax(s)] / max(s)`) -- but `s[argmax(s)]` IS `max(s)` BY CONSTRUCTION, so
+    that field is 1.0 for every non-degenerate decode and 0.0 only when literally nothing scored above zero. It
+    can never discriminate a confident recall from a genuinely uncertain one (measured: mean_role_confidence read
+    1.0 on every real production turn, well above the metacog HIGH band, so the honesty hedge never fired).
+
+    FIX: prefer each role chip's `margin` field when present -- `OneBrainComposer._margin(scores)`, the SAME
+    normalized winner-vs-runner-up decisiveness read the composer's own `confidence_gate` familiarity gate uses
+    (`(peak-runner_up)/peak`; multi-seed validated in 2026-06-18-emergent-graceful-degradation-derisk: ~0 on a
+    noise-dominated/damaged read, ~0.5+ on an intact confident one). This is a genuine COMPETITION read: it is
+    LOW exactly when the decode was ambiguous (a close runner-up candidate), HIGH exactly when one candidate
+    dominates -- unlike the legacy `confidence` field, it actually varies with how uncertain the recall was.
+    Falls back to the legacy `confidence` field for any chip/composer that does not populate `margin` (a safe,
+    unchanged fallback -- e.g. `decoded_extra` host-composed chips, or a composer variant without the field).
+    None (no decoded roles / no parse) -> None (out of scope)."""
     if not activity:
         return None
     roles = activity.get("roles") or []
-    confs = [r.get("confidence") for r in roles if r.get("confidence") is not None]
-    if not confs:
+    vals = []
+    for r in roles:
+        m = r.get("margin")
+        v = m if m is not None else r.get("confidence")
+        if v is not None:
+            vals.append(float(v))
+    if not vals:
         return None
-    return float(np.mean([float(c) for c in confs]))
+    return float(np.mean(vals))
 
 
 class MetacogProductionOrgan:

@@ -1,0 +1,118 @@
+{
+  "runner": "verify_prod_discriminates",
+  "role_conf_lo": 0.4,
+  "role_conf_hi": 0.6,
+  "confident": {
+    "brain use": {
+      "answer": "spikes",
+      "mrc": 0.7146033908967853,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "brain learn": {
+      "answer": "words",
+      "mrc": 0.6421076444968944,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "brain store": {
+      "answer": "memory",
+      "mrc": 0.713143634263216,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "dog chase": {
+      "answer": "cat",
+      "mrc": 0.6159078117651036,
+      "evidence": 1.0,
+      "confident": true
+    },
+    "cat eat": {
+      "answer": "fish",
+      "mrc": 0.7076461307079702,
+      "evidence": 1.0,
+      "confident": true
+    }
+  },
+  "uncertain": {
+    "brain use sweep": [
+      {
+        "sigma": 0.7,
+        "answer": "spikes",
+        "mrc": 0.5169260251317093,
+        "evidence": 0.5846301256585463,
+        "confident": true
+      },
+      {
+        "sigma": 0.9,
+        "answer": "spikes",
+        "mrc": 0.5108218118789976,
+        "evidence": 0.5541090593949878,
+        "confident": true
+      },
+      {
+        "sigma": 1.1,
+        "answer": "spikes",
+        "mrc": 0.4787775784144895,
+        "evidence": 0.3938878920724474,
+        "confident": false
+      },
+      {
+        "sigma": 1.3,
+        "answer": "spikes",
+        "mrc": 0.17484512893716486,
+        "evidence": 0.0,
+        "confident": false
+      },
+      {
+        "sigma": 1.5,
+        "answer": "spikes",
+        "mrc": 0.466320999619683,
+        "evidence": 0.33160499809841487,
+        "confident": false
+      },
+      {
+        "sigma": 1.8,
+        "answer": "spikes",
+        "mrc": 0.3838769999158534,
+        "evidence": 0.0,
+        "confident": false
+      },
+      {
+        "sigma": 2.2,
+        "answer": "spikes",
+        "mrc": 0.17587957822757316,
+        "evidence": 0.0,
+        "confident": false
+      },
+      {
+        "sigma": 2.6,
+        "answer": "spikes",
+        "mrc": 0.23480222047421756,
+        "evidence": 0.0,
+        "confident": false
+      }
+    ],
+    "picked_sigma": 1.3
+  },
+  "lesioned": {
+    "confident_intact": {
+      "answer": "spikes",
+      "mrc": 0.7146033908967853,
+      "evidence": 1.0,
+      "confident": false
+    },
+    "uncertain_noised": {
+      "answer": "spikes",
+      "mrc": 0.456902526846357,
+      "evidence": 0.284512634231785,
+      "confident": false
+    }
+  },
+  "verdict": {
+    "all_5_confident_facts_no_hedge": true,
+    "any_uncertain_turn_hedges": true,
+    "lesion_removes_discrimination": false,
+    "DISCRIMINATES": true
+  }
+}

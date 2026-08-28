@@ -1,0 +1,43 @@
+{
+  "normal_turn": {
+    "answer": "the brain uses the spikes the brain stores the memory the brain learns the words",
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.08564659007052086,
+      "threshold": 0.057845546432234586,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.07254469906489278,
+        "min_hi": 0.06324435069078038,
+        "mean_lo": 0.03623807287266029,
+        "max_lo": 0.05244674217368879,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 0.6080886903614127
+    },
+    "warning_printed": false
+  },
+  "bug_warning_line": "[webapp] METACOG WARNING (#184): an answer was produced by a trace-capable composer but the confidence read came back empty this turn (activity_is_none=True, roles=0) -- the honesty hedge is silently disabled. This is the plumbing-bug signature (TieredFactStore.__setattr__ ate last_trace for a day the same way); check the activity-trace plumbing.",
+  "bug_turn": {
+    "answer": "the brain uses the spikes the brain stores the memory the brain learns the words",
+    "metacog": null,
+    "warning_printed": true
+  },
+  "abstain_turn": {
+    "answer": "I don't know about that.",
+    "abstained": true,
+    "warning_printed": false
+  },
+  "verdict": {
+    "normal_turn_quiet": true,
+    "bug_turn_warns": true,
+    "abstain_turn_quiet": true,
+    "GUARD_WORKS": true
+  }
+}

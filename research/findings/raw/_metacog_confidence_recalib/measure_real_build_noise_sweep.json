@@ -1,0 +1,139 @@
+{
+  "runner": "measure_real_build_noise_sweep",
+  "main_roles": [
+    "agent",
+    "action",
+    "patient",
+    "attribute"
+  ],
+  "bind_roles": [
+    "agent",
+    "action",
+    "patient",
+    "attribute",
+    "polarity"
+  ],
+  "confident": {
+    "brain use": {
+      "answer": "spikes",
+      "expected": "spikes",
+      "mrc": 0.6080886903614127,
+      "margins": {
+        "agent": 0.6439579171032779,
+        "action": 0.6984371819603162,
+        "patient": 0.6449672046625632,
+        "attribute": 0.18202988821992272,
+        "polarity": 0.8710512598609838
+      }
+    },
+    "brain learn": {
+      "answer": "words",
+      "expected": "words",
+      "mrc": 0.5151331018976317,
+      "margins": {
+        "agent": 0.5830204517488955,
+        "action": 0.6580165464795961,
+        "patient": 0.5986169435309614,
+        "attribute": 0.007234931500581408,
+        "polarity": 0.7287766362281244
+      }
+    },
+    "brain store": {
+      "answer": "memory",
+      "expected": "memory",
+      "mrc": 0.6147780118094043,
+      "margins": {
+        "agent": 0.5737471642417078,
+        "action": 0.7236947515488305,
+        "patient": 0.5551326212623263,
+        "attribute": 0.22131552199415755,
+        "polarity": 0.9999999999999996
+      }
+    },
+    "dog chase": {
+      "answer": "cat",
+      "expected": "cat",
+      "mrc": 0.5042344645465211,
+      "margins": {
+        "agent": 0.5625418005956131,
+        "action": 0.5166290093472239,
+        "patient": 0.38446043711757766,
+        "attribute": 0.0575410756721913,
+        "polarity": 0.9999999999999997
+      }
+    },
+    "cat eat": {
+      "answer": "fish",
+      "expected": "fish",
+      "mrc": 0.5670046085591427,
+      "margins": {
+        "agent": 0.6033254334339793,
+        "action": 0.5985857722080797,
+        "patient": 0.6286733171898224,
+        "attribute": 0.004438519963832671,
+        "polarity": 0.9999999999999997
+      }
+    }
+  },
+  "noise_sweep": [
+    {
+      "sigma": 0.3,
+      "answer": "spikes",
+      "mrc": 0.6025225930909247
+    },
+    {
+      "sigma": 0.5,
+      "answer": "spikes",
+      "mrc": 0.4994176003941598
+    },
+    {
+      "sigma": 0.7,
+      "answer": "spikes",
+      "mrc": 0.5176661600975985
+    },
+    {
+      "sigma": 0.9,
+      "answer": "spikes",
+      "mrc": 0.39477124077803605
+    },
+    {
+      "sigma": 1.1,
+      "answer": "spikes",
+      "mrc": 0.3102425837304295
+    },
+    {
+      "sigma": 1.3,
+      "answer": "spikes",
+      "mrc": 0.32544128460076305
+    },
+    {
+      "sigma": 1.5,
+      "answer": "spikes",
+      "mrc": 0.3560934527663352
+    },
+    {
+      "sigma": 1.8,
+      "answer": "spikes",
+      "mrc": 0.2991265033291507
+    },
+    {
+      "sigma": 2.2,
+      "answer": "spikes",
+      "mrc": 0.1494709201715551
+    },
+    {
+      "sigma": 2.6,
+      "answer": "spikes",
+      "mrc": 0.17202285847801213
+    },
+    {
+      "sigma": 3.0,
+      "answer": "spikes",
+      "mrc": 0.28275184313452395
+    }
+  ],
+  "confident_mrc_min": 0.5042344645465211,
+  "confident_mrc_max": 0.6147780118094043,
+  "uncertain_mrc_min_answered": 0.1494709201715551,
+  "uncertain_mrc_max_answered": 0.6025225930909247
+}
