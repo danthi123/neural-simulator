@@ -1,0 +1,30 @@
+{
+ "run_id": "1787874268-3528841",
+ "runner": "research/runners/_wkv_mouth_readout_structure_characterization_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_structure_characterization_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--json",
+  "research/findings/raw/_wkv_structure_characterization/char_cupy_6seed.json"
+ ],
+ "git_sha": "34f282edd",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T19:44:28",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 41995.9,
+ "corpus_check_query": "knowledge answer vetoed in live chat pipeline despite store answering directly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_structure_characterization/char_cupy_6seed.json"
+}
