@@ -1,0 +1,273 @@
+{
+ "probe": "wkv_mouth_open_ended_wiring_verify",
+ "backend": "numpy",
+ "off_content_diffs": [],
+ "off_byte_identical": true,
+ "off_generator_is_qwen": true,
+ "on_used_wkv": true,
+ "on_qwen_stub_fired": false,
+ "on_post_filter_ran": true,
+ "on_raw": "once upon a time there was a little boy named tim who had a dog named max was playing in the yard with his toy car and a red ball that he loved to play with his toys and listen to his mom and dad and they became good friends and played together every day",
+ "on_filtered": "I'm not sure about once upon a time there was a little boy named tim who had a dog \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+ "self_nll_wkv_continuation": 1.0245126395796884,
+ "chance_nll_uniform_over_V": 6.907755278982137,
+ "n_words_scored": 55,
+ "rng_untouched_across_wkv_call": true,
+ "host_rng_draws_on_read_path": 0,
+ "oov_falls_back_to_qwen": true,
+ "lesion_falls_back_to_qwen": true,
+ "lesion_attribution_fraction": 1.0,
+ "V": 1000,
+ "checkpoint_provenance_sanity": {
+  "vocab_size": 1000,
+  "first_40_words": [
+   "the",
+   "and",
+   "a",
+   "to",
+   "was",
+   "they",
+   "he",
+   "it",
+   "she",
+   "her",
+   "with",
+   "said",
+   "day",
+   "in",
+   "his",
+   "tim",
+   "you",
+   "big",
+   "but",
+   "one",
+   "not",
+   "had",
+   "endoftext",
+   "mom",
+   "happy",
+   "on",
+   "saw",
+   "i",
+   "play",
+   "very",
+   "lily",
+   "of",
+   "there",
+   "so",
+   "little",
+   "time",
+   "tom",
+   "named",
+   "for",
+   "that"
+  ],
+  "last_10_words": [
+   "hoped",
+   "messy",
+   "wheat",
+   "birthday",
+   "crayons",
+   "touched",
+   "penny",
+   "woman",
+   "mill",
+   "<unk>"
+  ],
+  "head_weight_shape": [
+   1000,
+   128
+  ],
+  "head_weight_mean": 0.0006189258081386413,
+  "head_weight_std": 0.10490542459911828,
+  "head_weight_min": -0.44470301270484924,
+  "head_weight_max": 0.5114541053771973,
+  "head_weight_has_nan": false,
+  "head_weight_all_zero": false,
+  "emb_weight_mean": 6.196099038201382e-05,
+  "emb_weight_std": 0.11677733060331175,
+  "emb_weight_has_nan": false,
+  "emb_weight_all_zero": false
+ },
+ "verdict": {
+  "label": "the from-scratch WKV mouth is correctly wired into webapp.open_ended_chat.answer_turn as a default-OFF, in-vocab-scoped alternate generator for BRAIN_OPEN_ENDED",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(a) flag-off content is identical to the pre-edit original (WKV module never touched)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": "diffs=[]"
+   },
+   {
+    "kind": "require",
+    "name": "(a) flag-off generator trace reads qwen/False",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(provenance sanity) checkpoint weights are non-degenerate (no NaN, not all-zero)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": "a random-init or corrupted placeholder would show NaN or all-zero rows"
+   },
+   {
+    "kind": "require",
+    "name": "(b) flag ON + in-vocab -> the WKV path actually ran (Qwen stub did NOT fire)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(b) Qwen stub never fired on the WKV path",
+    "ok": true,
+    "detail": "measured=False expect=False",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(b) post_filter still ran on the WKV output (honesty gate never bypassed)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "control",
+    "name": "(b) WKV continuation self-NLL vs chance (uniform over V=1000)",
+    "ok": true,
+    "detail": "treatment=5.88324 control=0 |sep|=5.88324 > 2",
+    "note": "self_nll=1.025 nats vs chance=6.908 nats (lower self_nll == more on-distribution / coherent)"
+   },
+   {
+    "kind": "require",
+    "name": "(d) host numpy RNG state is byte-identical across the WKV-path call",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(e) the wiring's own FewSpikeWordRead makes zero host categorical draws on the read path",
+    "ok": true,
+    "detail": "measured=0 expect=0",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) an out-of-vocab prompt (flag ON) falls back to Qwen, unchanged",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) a forced WKV-path exception falls back to Qwen without crashing the turn",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) the forced-exception lesion attributes 100% of the wkv_mouth_used drop (no other cause)",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f1b6739a520>",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(a) flag-off content is identical to the pre-edit original (WKV module never touched)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "diffs=[]"
+  },
+  {
+   "kind": "require",
+   "name": "(a) flag-off generator trace reads qwen/False",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(provenance sanity) checkpoint weights are non-degenerate (no NaN, not all-zero)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "a random-init or corrupted placeholder would show NaN or all-zero rows"
+  },
+  {
+   "kind": "require",
+   "name": "(b) flag ON + in-vocab -> the WKV path actually ran (Qwen stub did NOT fire)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(b) Qwen stub never fired on the WKV path",
+   "ok": true,
+   "detail": "measured=False expect=False",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(b) post_filter still ran on the WKV output (honesty gate never bypassed)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "(b) WKV continuation self-NLL vs chance (uniform over V=1000)",
+   "ok": true,
+   "detail": "treatment=5.88324 control=0 |sep|=5.88324 > 2",
+   "note": "self_nll=1.025 nats vs chance=6.908 nats (lower self_nll == more on-distribution / coherent)"
+  },
+  {
+   "kind": "require",
+   "name": "(d) host numpy RNG state is byte-identical across the WKV-path call",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(e) the wiring's own FewSpikeWordRead makes zero host categorical draws on the read path",
+   "ok": true,
+   "detail": "measured=0 expect=0",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) an out-of-vocab prompt (flag ON) falls back to Qwen, unchanged",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) a forced WKV-path exception falls back to Qwen without crashing the turn",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) the forced-exception lesion attributes 100% of the wkv_mouth_used drop (no other cause)",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f1b6739a520>",
+   "note": ""
+  }
+ ],
+ "GO": true
+}
