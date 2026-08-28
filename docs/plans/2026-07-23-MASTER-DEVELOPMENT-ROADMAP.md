@@ -1147,9 +1147,21 @@ engine) LANDED; D5 learn-through-use flip NO-GO; da-encoding flip gate UNDEFINED
   suppresses. Flip-verified GO through the real handler (default drives g_high 2.48 > g_low 1.0; lesion severs; `=0`
   byte-identical). Faculty now on_by_default:YES; see §7.
 - **knowledge-scale (#66) flip IN FLIGHT** (another agent): wire the sharded FHRR store into brain_chat recall + scale K.
+- **confidence-forthcomingness (board #94) RETESTED 2026-08-27, flip decision UNCHANGED (stays off), the residual is
+  now precisely re-characterized.** Issue #181 root-caused + fixed the metacog confidence read (a self-referential
+  ratio that always computed 1.0, re-keyed to the composer's own decisiveness margin, recalibrated bands) — that
+  CLOSES the reason board #94 was reverted earlier the same day (confidence never varied on real traffic). Retested
+  through the real handler: a confident recall reads 0.60809, a synaptic-noise-degraded read of the same fact reads
+  0.28363 (below the low band), the honesty hedge fires. The forthcomingness cap itself is proven sound + lesion-
+  attributable via the module's own floor-override test hook (3 sentences confident vs 2 unsure, collapsing to 2-vs-2
+  lesioned). But on the TRUE production floor, both arms keep an IDENTICAL 3 sentences — this demo brain's buffer-
+  tier-only elaboration content never exceeds the floor regardless of confidence, a DIFFERENT residual (content
+  volume) than the one #181 fixed (calibration). Stays default-OFF. See
+  `2026-08-27-confidence-forthcomingness-retest-PARTIAL.md`.
 NEXT: (1) D5 lever-2 (stable graded read + size floor) → re-soak → flip; (2) da-encoding homeostatic set-point →
 re-soak; (3) the enforcement engine's SUPPLY gap — author the prose backlog into runnable commands so the ratchet can
-dispatch; (4) gpu-queue singleton adoption.
+dispatch; (4) gpu-queue singleton adoption; (5) confidence-forthcomingness (#94) — reach elaboration past the buffer
+tier, or a richer default-floor vocabulary, before the next retest.
 
 **2026-08-20 (AUTONOMOUS) — GNW two-organ bus DEFAULT-ON in production (both backends); gap#5 SWR forward-replay wall CLOSED (Ecker AdEx CA3 6/6).**
 GNW: the genuinely-distinct second organ (the surprise monitor) is now a LOAD-BEARING coincidence vote on the live chat

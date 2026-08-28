@@ -1,0 +1,150 @@
+{
+  "runner": "verify_real_traffic_recalibrated (real /api/brain-chat, unpatched confidence, noise-degraded uncertainty)",
+  "backend": "numpy",
+  "ts": "2026-08-27T21:11:23",
+  "role_conf_lo": 0.3,
+  "role_conf_hi": 0.5,
+  "part1_3a_default_floor": {
+    "confident": {
+      "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+      "n_sentences": 3,
+      "mrc": 0.6080886903614127,
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.3,
+          "role_conf_hi": 0.5,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.6080886903614127
+      },
+      "cf": {
+        "on": true,
+        "floor_sentences": 4,
+        "requested_sentences": 3,
+        "confident": true,
+        "granted": false,
+        "kept_sentences": 3,
+        "elaborations_dropped": 0,
+        "reason": "high_confidence"
+      }
+    },
+    "uncertain": {
+      "sigma": 2.2,
+      "answer": "I don't know about that.",
+      "recalled_svo": null,
+      "n_sentences": 0,
+      "mrc": null,
+      "metacog": null,
+      "cf": null,
+      "same_fact_not_misrecall": false
+    },
+    "no_longer_saturated_at_1": true,
+    "mrc_below_lo_uncertain": false,
+    "confident_flipped_false": false,
+    "n_sentences_differ_on_default_floor": true
+  },
+  "part3b_floor_override": {
+    "floor": [
+      2,
+      1
+    ],
+    "confident": {
+      "n_sentences": 3,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": true,
+        "granted": true,
+        "kept_sentences": 3,
+        "elaborations_dropped": 0,
+        "reason": "high_confidence"
+      },
+      "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+      "supporting_facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "brain",
+          "learn",
+          "words"
+        ]
+      ],
+      "verified": true
+    },
+    "uncertain": {
+      "n_sentences": 0,
+      "cf": null,
+      "answer": "I don't know about that.",
+      "supporting_facts": [],
+      "verified": false
+    },
+    "n_sentences_differ_with_floor_override": true,
+    "granted_confident": true,
+    "granted_uncertain": false
+  },
+  "part4_lesion": {
+    "confident": {
+      "n_sentences": 2,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": false,
+        "granted": false,
+        "kept_sentences": 2,
+        "elaborations_dropped": 1,
+        "reason": "low_confidence_capped"
+      },
+      "metacog_confident": false
+    },
+    "uncertain": {
+      "n_sentences": 0,
+      "cf": null,
+      "metacog_confident": null
+    },
+    "difference_collapses": false
+  },
+  "part5_moat_safety": {
+    "default_floor_confident": true,
+    "default_floor_uncertain": false,
+    "3b_confident": true,
+    "3b_uncertain": false
+  },
+  "part5_moat_all_ok": false,
+  "part6_byte_identical_off": {
+    "no_cf_key": true,
+    "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+    "n_sentences": 3,
+    "matches_confident_control": true
+  },
+  "verdict": {
+    "confidence_saturation_fixed": true,
+    "noise_degrades_confidence_real_handler": false,
+    "cap_discriminates_at_default_floor": true,
+    "cap_discriminates_with_floor_override": true,
+    "lesion_collapses_the_difference": false,
+    "moat_safe": false,
+    "byte_identical_off": true
+  }
+}
