@@ -4915,6 +4915,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     # Additive + moat-safe: it only reads/reports ITS OWN buffer (no invented referent, no fact, no abstain flip).
     # Default-ON; `BRAIN_MULTIREF=0` -> fully skipped (byte-identical oracle).
     multiref_info = None
+    # `d6org` (THIS session's own per-cache_key MultiReferentWMOrgan) is hoisted to function scope so the
+    # COMPREHENSION block below can read `d6org.current_focus()` -- this session's OWN xedge focus, never another
+    # session's (2026-08-27 cross-session xedge_focus leak fix, research/FAILURE_LOG.md). None when multiref is
+    # disabled or the lookup failed -> the comprehension block treats that as "no focus held" (byte-identical).
+    d6org = None
     try:
         import research.runners.d6_multiref_wm_production_organ as _D6
         _multiref_on = _D6.multiref_enabled()
@@ -5148,7 +5153,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
     if _comp_on:
         try:
             corg = _get_comprehension_organ()
-            cj = corg.judge(msg, brain_vocab=_brain_vocab(chat), lesion=_CO.comprehension_lesioned())
+            # THIS session's OWN xedge focus (None if this session holds no referent, multiref is off, or xedge is
+            # off) -- resolved from `d6org` (hoisted above, THIS cache_key's own MultiReferentWMOrgan) and passed
+            # EXPLICITLY into every comprehension call below. 2026-08-27 cross-session leak fix: `corg` is a
+            # process-shared singleton serving every session, so it must never infer "what's held" from shared
+            # mutable pool state -- only from what THIS turn's own session organ reports.
+            _wm_focus = d6org.current_focus() if d6org is not None else None
+            cj = corg.judge(msg, brain_vocab=_brain_vocab(chat), lesion=_CO.comprehension_lesioned(),
+                            wm_focus=_wm_focus)
             if cj is not None:
                 comprehension_info = dict(cj)
                 a_c, v_c, p_c = cj["svo"]
@@ -5160,18 +5172,19 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     known = False
                 comprehension_info["known_binding"] = bool(known)
                 # ── ONE-BRAIN XEDGE PER-TURN LIVE PLASTICITY (PART 3, 2026-08-27) ───────────────────────────────
-                # LEARN THROUGH THE CONVERSATION: on a turn where a WM referent is HELD (the d6 multiref organ set
-                # pool.xedge_focus this turn) AND comprehension RESOLVED confidently, apply ONE in-brain
-                # self-supervised credited plasticity step to the d6-WM->comprehension cross-edge (three-factor,
-                # DA-coincidence-gated, bounded by stdp_w_max) -- the SAME atom PART 2 fires over a build curriculum,
-                # now fired ONCE per REAL chat turn so the edge GROWS from W0=0.05 through the conversation itself.
-                # The credit VALUE + teach DIRECTION are read off the brain's OWN confident spiking resolution (no
-                # host label). Behind BRAIN_ONEBRAIN_XEDGE + BRAIN_ONEBRAIN_XEDGE_LEARN (both default-OFF) ->
-                # byte-identical no-op when off / no referent held / content inconclusive. Never crashes a turn.
+                # LEARN THROUGH THE CONVERSATION: on a turn where THIS session's own WM referent is HELD (`_wm_focus`
+                # above, resolved from `d6org.current_focus()` -- never a shared-pool ambient global) AND
+                # comprehension RESOLVED confidently, apply ONE in-brain self-supervised credited plasticity step to
+                # the d6-WM->comprehension cross-edge (three-factor, DA-coincidence-gated, bounded by stdp_w_max) --
+                # the SAME atom PART 2 fires over a build curriculum, now fired ONCE per REAL chat turn so the edge
+                # GROWS from W0=0.05 through the conversation itself. The credit VALUE + teach DIRECTION are read
+                # off the brain's OWN confident spiking resolution (no host label). Behind BRAIN_ONEBRAIN_XEDGE +
+                # BRAIN_ONEBRAIN_XEDGE_LEARN (both default-OFF) -> byte-identical no-op when off / no referent held
+                # / content inconclusive. Never crashes a turn.
                 if cj["comprehended"] or known:
                     try:
                         from research.runners.onebrain_xedge_production import credit_live_turn_from_comprehension
-                        _xtrace = credit_live_turn_from_comprehension(corg, cj["svo"])
+                        _xtrace = credit_live_turn_from_comprehension(corg, cj["svo"], wm_focus=_wm_focus)
                         if _xtrace is not None:
                             comprehension_info["xedge_live_learn"] = _xtrace
                     except Exception as _xe:
@@ -5192,7 +5205,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                         if _RP.repair_enabled():
                             tgt = corg.repair_target(
                                 msg, brain_vocab=_brain_vocab(chat),
-                                lesion=_CO.comprehension_lesioned())
+                                lesion=_CO.comprehension_lesioned(), wm_focus=_wm_focus)
                             q = _RP.clarification_question(tgt) if tgt is not None else None
                             if q:
                                 answer = q

@@ -1,0 +1,71 @@
+{
+  "runner": "research/findings/raw/_onebrain_xedge_session_leak_verify/verify_session_leak_fixed.py",
+  "provenance": "manual ad-hoc verification script (not a research/runners/ module); run via SIM_BACKEND=numpy PYTHONPATH=. python <script>; full raw stdout in the sibling verify_session_leak_fixed_output.log",
+  "seed": 42,
+  "backend": "numpy",
+  "purpose": "post-fix verification of the cross-session xedge_focus leak closed by this session's code change (research/runners/comprehension_production_organ.py, research/runners/d6_multiref_wm_production_organ.py, research/runners/onebrain_xedge_production.py, webapp/server.py). Mirrors the ACTUAL new production calling convention: wm_focus is resolved from THIS session's own MultiReferentWMOrgan.current_focus() and passed explicitly into every comprehension_production_organ call, never read off the shared process pool's ambient xedge_focus attribute.",
+  "pool_role_assignment": {"p_agent": "w0", "p_patient": "w2", "p_ctrl": "w1"},
+  "build_mode": "PART 1 (frozen, host-schedule-trained edge; BRAIN_ONEBRAIN_XEDGE=1 only, no _LEARN) -- chosen because PART 2/3's default per-turn build leaves the cross-edge UNIFORM (all pools at W0=0.05, no offline credit applied) so wm_resolved_role's margin there is genuine near-zero substrate noise (observed ~0.0006 vs eps 0.004, correctly inconclusive), not a meaningful regression probe. PART 1 shares the EXACT SAME d6_multiref_wm_production_organ.py / comprehension_production_organ.py coupling code the leak was found in.",
+  "checks": {
+    "1_own_session_resolves": {
+      "description": "session A holds 2 referents via the real production call path (orgA.judge), then reads its OWN current_focus() and threads it explicitly into repair_target -- PART 1/2 load-bearing behaviour must be unchanged from before this fix.",
+      "session_A_current_focus": "w0",
+      "session_A_repair_target": {"role": "agent", "wm_resolved": true, "wm_margin": 0.013333333333333364, "content_role": "patient"},
+      "result": "PASS -- matches the pre-fix mechanism (a WM-held referent still flips the repair role via the cross-edge, lesion-attributable)"
+    },
+    "2_leak_closed": {
+      "description": "session C is a BRAND NEW MultiReferentWMOrgan sharing the SAME process pool, confirmed to have an EMPTY _slot_of_ref (never called .load()), built AFTER session A already held referents in the same process.",
+      "session_C_slot_of_ref_before_read": {},
+      "session_C_current_focus": null,
+      "session_C_repair_target": {"role": "patient", "wm_resolved_key_present": false},
+      "result": "PASS -- the leak is closed: session C reads NO xedge focus and no wm_resolved key, regardless of session A's earlier hold in the same process (pre-fix, session C read wm_resolved=true/role=agent here -- see the sibling summary.json)"
+    },
+    "3_teardown_clears": {
+      "description": "drop session A's organ (mirrors webapp/server.py's _SESSION_MULTIREF.pop(cache_key) on a conversation reset) and build a fresh organ for the same conceptual session, as a new turn after reset would.",
+      "post_teardown_current_focus": null,
+      "post_teardown_repair_target_wm_resolved_key_present": false,
+      "after_re_holding_current_focus": "w0",
+      "after_re_holding_repair_target": {"role": "agent", "wm_resolved": true, "wm_margin": 0.015555555555555581},
+      "result": "PASS -- teardown clears the session's own focus; re-holding re-establishes it"
+    },
+    "4_lesion_severs": {
+      "description": "zero the cross-edge weights in place (pool_holder.lesion_cross()) and re-measure session A's own held focus.",
+      "post_lesion_repair_target": {"role": "patient", "wm_resolved_key_present": false},
+      "result": "PASS -- the WM drive vanishes under lesion, exactly as PART 1's own _selftest_loadbearing established (lesion_attributable=True)"
+    },
+    "5_byte_identical_off": {
+      "description": "with BRAIN_ONEBRAIN_XEDGE=0, an omitted wm_focus kwarg (the legacy call style every pre-existing caller still uses) and an explicit wm_focus=None (what production now always passes when a session holds nothing) must resolve identically -- verified via direct equality of the resolved `foc` value (a hash/exact compare of the decision variable, not an inference from reading the code) and via absence of a wm_resolved key in both live repair_target reads. NOTE: exact NUMERIC equality of two separate repair_target calls on the SAME organ is NOT expected and NOT the claim -- a pre-existing, xedge-unrelated background-noise carryover (_hard_reset restores v/u but not any background noise generator) makes back-to-back reads on one organ non-bit-reproducible even before this fix; that is why 'byte-identical' here is scoped to the resolved wm_focus VALUE and the absence of xedge influence, not full numeric output equality.",
+      "resolved_foc_implicit_omitted": null,
+      "resolved_foc_explicit_none": null,
+      "implicit_wm_resolved_key_present": false,
+      "explicit_wm_resolved_key_present": false,
+      "result": "PASS"
+    }
+  },
+  "regression_selftests_seed42_post_refactor": {
+    "part1_frozen_loadbearing": {"cmd": "onebrain_xedge_production.py --seeds 42", "lesion_attributable": true, "max_abs_dNet_intact": 0.009, "max_abs_dNet_lesioned": 0.0, "note": "unchanged from the pre-existing 6-seed GO this session's refactor did not touch"},
+    "part2_live_learning": {"cmd": "onebrain_xedge_production.py --verify-live --seeds 42", "GO": true, "caveat_closed": true, "grew_both": true, "bounded_F3": true, "decision_flips_intact": "5/5", "decision_flips_lesioned": "0/5"},
+    "part3_per_turn": {"cmd": "onebrain_xedge_production.py --verify-per-turn --seeds 42", "GO": true, "grew_from_0.05_per_turn": true, "bounded_F3": true, "taught_role_signs_later_read": true, "decision_load_bearing": true, "lesion_no_accumulation": true}
+  },
+  "preconditions": [
+    {"kind": "reaches", "name": "own-session xedge focus still resolves the repair role (no regression)",
+     "ok": true, "note": "",
+     "detail": "session A's own current_focus()='w0' threaded explicitly into repair_target read role=agent, wm_resolved=true, wm_margin=0.013 (content_role=patient) -- matches the pre-fix PART 1/2 mechanism"},
+    {"kind": "control", "name": "a brand-new, empty-codebook session reads NO focus (the leak itself)",
+     "ok": true, "note": "the control this whole fix targets",
+     "detail": "session C's _slot_of_ref confirmed {} before the read; current_focus() is None; repair_target carries no wm_resolved key, even though session A held referents earlier in the SAME process (pre-fix this read wm_resolved=true/role=agent -- see the sibling summary.json)"},
+    {"kind": "reaches", "name": "session teardown clears the focus, re-holding re-establishes it",
+     "ok": true, "note": "",
+     "detail": "dropping session A's organ (mirrors _SESSION_MULTIREF.pop(cache_key)) and building a fresh one for the same slot reads current_focus()=None and no wm_resolved key; re-holding restores wm_resolved=true"},
+    {"kind": "control", "name": "cross-edge lesion still severs the own-session resolution",
+     "ok": true, "note": "",
+     "detail": "pool_holder.lesion_cross() reverted session A's own held-focus read to role=patient (== content_role) with no wm_resolved key, matching PART 1's own _selftest_loadbearing lesion_attributable=true"},
+    {"kind": "knob", "name": "flag-off path resolves wm_focus identically whether passed explicitly or omitted",
+     "ok": true, "note": "the precise byte-identical-off claim; NOT full output-hash equality (see the check's own note on background-noise carryover)",
+     "detail": "with BRAIN_ONEBRAIN_XEDGE=0, _resolve(_WM_FOCUS_UNSET, shared) == _resolve(None, shared) == None; both repair_target reads carry no wm_resolved key"},
+    {"kind": "reaches", "name": "PART 1/2/3 offline self-tests re-run GO/lesion-attributable at seed 42 post-refactor (no regression)",
+     "ok": true, "note": "single-seed sanity re-run of an ALREADY-established 6-seed GO mechanism, not a new generalisation claim (see seed-waiver in the finding)",
+     "detail": "PART1 lesion_attributable=true; PART2 --verify-live GO=true caveat_closed=true flips(5/5,0/5); PART3 --verify-per-turn GO=true taught_role_signs_later_read=true lesion_no_accumulation=true"}
+  ],
+  "verdict": "GO -- the cross-session xedge_focus leak is closed (session-scoped calling convention verified via the real production organs), session A's own PART 1/2 load-bearing behaviour is preserved, session teardown clears the focus, the cross-edge lesion still severs it, the flag-off path resolves identically whether wm_focus is passed explicitly or omitted, and PART 1/2/3's own offline self-tests re-run GO/lesion-attributable at seed 42 with no regression from the refactor."
+}
