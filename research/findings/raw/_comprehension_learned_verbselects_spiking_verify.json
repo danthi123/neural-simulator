@@ -1,0 +1,197 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "k_seed": 8,
+  "intact": [
+    {
+      "seed": 42,
+      "acc": 0.9285714285714286,
+      "ok": 26,
+      "wrong": 2,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 43,
+      "acc": 0.9285714285714286,
+      "ok": 26,
+      "wrong": 2,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 44,
+      "acc": 0.9642857142857143,
+      "ok": 27,
+      "wrong": 1,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 100,
+      "acc": 0.9285714285714286,
+      "ok": 26,
+      "wrong": 2,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 101,
+      "acc": 0.9642857142857143,
+      "ok": 27,
+      "wrong": 1,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 102,
+      "acc": 1.0,
+      "ok": 28,
+      "wrong": 0,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    }
+  ],
+  "shuffled": [
+    {
+      "seed": 42,
+      "acc": 0.6428571428571429,
+      "ok": 18,
+      "wrong": 10,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 43,
+      "acc": 0.4642857142857143,
+      "ok": 13,
+      "wrong": 15,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 44,
+      "acc": 0.6071428571428571,
+      "ok": 17,
+      "wrong": 11,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 100,
+      "acc": 0.6785714285714286,
+      "ok": 19,
+      "wrong": 9,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 101,
+      "acc": 0.5,
+      "ok": 14,
+      "wrong": 14,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    },
+    {
+      "seed": 102,
+      "acc": 0.4642857142857143,
+      "ok": 13,
+      "wrong": 15,
+      "abstain": 0,
+      "n_scored": 28,
+      "n_total": 28,
+      "abstain_rate": 0.0
+    }
+  ],
+  "mean_spiking_acc": 0.9523809523809524,
+  "mean_shuffled_acc": 0.5595238095238096,
+  "mean_abstain_rate": 0.0,
+  "numpy_label_prop_acc": 0.9523809523809524,
+  "go": true,
+  "status": "GO",
+  "lesion_check_pass": true,
+  "lesion_pre": [
+    "animate_patient",
+    "animate_patient",
+    "inanimate_patient",
+    "inanimate_patient",
+    "inanimate_patient",
+    "inanimate_patient"
+  ],
+  "lesion_post": [
+    "None",
+    "None",
+    "None",
+    "None",
+    "None",
+    "None"
+  ],
+  "coverage_pre_lesion": 1.0,
+  "coverage_post_lesion": 0.0,
+  "preconditions": [
+    {
+      "name": "spiking-acc>=0.75",
+      "ok": true,
+      "value": 0.9523809523809524
+    },
+    {
+      "name": "shuffled-graph-control<=0.60 (structure-destroyed collapses)",
+      "ok": true,
+      "value": 0.5595238095238096
+    },
+    {
+      "name": "spiking-acc-minus-shuffled>=0.15",
+      "ok": true,
+      "value": 0.3928571428571428
+    },
+    {
+      "name": "held-out abstain rate is low (moat not over-triggering on real verbs)",
+      "ok": true,
+      "value": 0.0
+    },
+    {
+      "name": "lesion collapses ALL held-out classification to abstain",
+      "ok": true,
+      "value": null
+    },
+    {
+      "name": "spiking read matches the numpy label-propagation read (no signal lost)",
+      "ok": true,
+      "value": 0.0
+    },
+    {
+      "name": "held-out coverage 100% attributable to the F_anim/F_inanim coupling (not the lesion itself an artifact of an already-abstaining arm)",
+      "ok": true,
+      "value": 1.0
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "corpus": "data/corpus/tinystories.txt",
+  "tokens": 1567756,
+  "vocab": 1508,
+  "backend": "numpy",
+  "device": "cpu",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "learned": [
+    0.9285714285714286,
+    0.9285714285714286,
+    0.9642857142857143,
+    0.9285714285714286,
+    0.9642857142857143,
+    1.0
+  ],
+  "shuffled": [
+    0.5,
+    0.5,
+    0.32142857142857145,
+    0.42857142857142855,
+    0.39285714285714285,
+    0.5357142857142857
+  ],
+  "frequency": [
+    0.35714285714285715,
+    0.25,
+    0.32142857142857145,
+    0.39285714285714285,
+    0.25,
+    0.32142857142857145
+  ],
+  "mean_learned": 0.9523809523809524,
+  "mean_shuffled": 0.4464285714285714,
+  "mean_frequency": 0.31547619047619047,
+  "go": true,
+  "preconditions": [
+    {
+      "name": "learned>=0.75",
+      "ok": true,
+      "value": 0.9523809523809524
+    },
+    {
+      "name": "shuffled-graph-control<=0.60 (structure-destroyed collapses)",
+      "ok": true,
+      "value": 0.4464285714285714
+    },
+    {
+      "name": "learned-minus-shuffled>=0.15",
+      "ok": true,
+      "value": 0.505952380952381
+    },
+    {
+      "name": "held-out disjoint from seed (no label leakage)",
+      "ok": true
+    },
+    {
+      "name": "held-out disjoint from the hand VERB_SELECTS table (no table-membership leakage -- genuine open-vocab, not interpolation)",
+      "ok": true,
+      "value": []
+    },
+    {
+      "name": "corpus structure not injected (real TinyStories text)",
+      "ok": true
+    }
+  ],
+  "informational_controls": [
+    {
+      "name": "frequency-only-control",
+      "value": 0.31547619047619047,
+      "at_chance (informational, not gated)": false
+    }
+  ],
+  "n_seeds": 6,
+  "k_seed_per_class": 8,
+  "window": 4,
+  "top_v": 1500,
+  "gt_animate_patient": [
+    "hug",
+    "kiss",
+    "help",
+    "feed",
+    "pet",
+    "scare",
+    "meet",
+    "thank",
+    "warn",
+    "comfort",
+    "teach",
+    "protect",
+    "save",
+    "forgive",
+    "trust",
+    "invite",
+    "visit",
+    "rescue",
+    "nurse",
+    "marry"
+  ],
+  "gt_inanimate_patient": [
+    "drink",
+    "open",
+    "close",
+    "break",
+    "build",
+    "buy",
+    "wear",
+    "read",
+    "write",
+    "paint",
+    "wash",
+    "clean",
+    "cook",
+    "bake",
+    "pour",
+    "drop",
+    "pick",
+    "plant",
+    "dig",
+    "fix",
+    "sell",
+    "wrap",
+    "cut",
+    "fly"
+  ],
+  "hand_verb_selects_table": [
+    "bite",
+    "carry",
+    "chase",
+    "eat",
+    "grab",
+    "kick",
+    "push",
+    "watch"
+  ],
+  "ablation_verb_seed_only": {
+    "mean_learned": 0.6904761904761906,
+    "mean_shuffled": 0.5059523809523809,
+    "note": "seed_nouns=False -- verb-verb propagation alone, no noun-animacy scaffold; reported for attribution honesty, NOT part of the go gate above"
+  }
+}
