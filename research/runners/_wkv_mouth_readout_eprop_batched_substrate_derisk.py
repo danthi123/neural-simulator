@@ -703,6 +703,23 @@ def run_seed(seed, ro, args):
     chance = 1.0 / ro.V
     ratio = round(sub_learned["recov_argmax"] / max(1e-9, sub_copied["recov_argmax"]), 4)
     integrated_bar = round(0.85 * sub_copied["recov_argmax"], 4)
+
+    # -- PERSIST W_hat (opt-in, --save-w-hat): the prior GO (2026-08-14) and this rung both trained W_hat
+    #    in-memory and wrote only summary metrics -- this is the fix named in the mouth-wiring finding's honest
+    #    residual #1 (`research/findings/2026-08-28-mouth-crutch-burndown-scope.md` / the wiring finding). Saves
+    #    the SAME [V,D] matrix `LearnedReadout.set_weights` Dale-splits, plus head_b/provenance, so a consumer
+    #    (e.g. `webapp/wkv_mouth_generator.py`) can drop it into `WKVReadout.head_w` (identical shape/basis: both
+    #    map the host feature h=r_h*(Wo_sp@state) -> V logits via `W @ h + head_b`). NOT gated on `go` -- a
+    #    sub-GO head is still useful for de-risking the load path; the consumer sees the recorded ratio/go.
+    save_path = getattr(args, "save_w_hat", None)
+    if save_path:
+        p = Path(save_path.format(seed=seed) if "{seed}" in save_path else save_path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        np.savez(p, W_hat=W_main.astype(np.float32), head_b=head_b.astype(np.float32),
+                 seed=seed, V=ro.V, D=ro.D, sub_recov_ratio=ratio,
+                 sub_learned_recov=sub_learned["recov_argmax"], sub_copied_recov=sub_copied["recov_argmax"],
+                 integrated_go=bool(ratio >= 0.85), source_runner="_wkv_mouth_readout_eprop_batched_substrate_derisk")
+        print(f"[save-w-hat seed {seed}] W_hat[{W_main.shape}] -> {p} (ratio={ratio})", flush=True)
     m = {
         "seed": seed, "V": ro.V, "D": ro.D, "chance_1_over_v": round(chance, 6),
         "B": args.batch, "n_train_pos": len(H), "n_eval_pos": len(He), "n_sub_demo": len(sub_tuples),
@@ -834,6 +851,10 @@ def main():
                          "(CONTROL: W@h+head_b at the SAME operating point/coverage, forward_is_substrate=False)")
     ap.add_argument("--eval-every-epochs", type=int, default=0,
                     help="if >0, record host-linear recovery every K epochs (cheap; plateau-vs-climbing convergence)")
+    ap.add_argument("--save-w-hat", type=str, default=None,
+                    help="if set, savez the learned W_hat[V,D] (+head_b/provenance) per seed to this path "
+                         "({seed} templated if present) -- the persistence step the mouth-wiring finding's "
+                         "residual #1 named as undone; opt-in, does not change any existing metric/behavior")
     ap.add_argument("--json", type=str, default="research/findings/raw/_wkv_readout_eprop_batched_substrate.json")
     args = ap.parse_args()
 

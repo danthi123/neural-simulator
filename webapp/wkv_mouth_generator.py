@@ -68,10 +68,31 @@ _CKPT_TEMPLATE = os.environ.get(
 )
 _WORD_RE = re.compile(r"[a-zA-Z']+")
 
+# ── opt-in e-prop LEARNED read-out head (honest residual #1, see the module docstring). Default OFF: the native
+# checkpoint head.weight is used, byte-identical to before this flag existed. `_wkv_mouth_readout_eprop_batched_
+# substrate_derisk.py --save-w-hat <path>` is the ONLY producer of this file's shape/basis; see `_apply_learned_
+# head` for the compatibility check performed before it is ever substituted in.
+_LEARNED_HEAD_ENV = "BRAIN_WKV_MOUTH_LEARNED_HEAD"
+_LEARNED_HEAD_PATH_TEMPLATE = os.environ.get(
+    "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH",
+    str(_REPO_ROOT / "research/findings/raw/_wkv_eprop_learned_head_seed{seed}.npz"),
+)
+
+
+def learned_head_enabled() -> bool:
+    return os.environ.get(_LEARNED_HEAD_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _learned_head_path(seed: int) -> str:
+    if "{seed}" in _LEARNED_HEAD_PATH_TEMPLATE:
+        return _LEARNED_HEAD_PATH_TEMPLATE.format(seed=seed)
+    return _LEARNED_HEAD_PATH_TEMPLATE
+
 
 # ── the checkpoint (pure np.load — no RNG effect, cached) ─────────────────────────────────────────────────────────
 _CKPT_LOCK = threading.Lock()
-_CKPT_CACHE: dict[int, tuple] = {}
+_CKPT_CACHE: dict[tuple, tuple] = {}
+_HEAD_INFO: dict[tuple, dict] = {}
 
 
 def _ckpt_path(seed: int) -> str:
@@ -83,20 +104,60 @@ def _ckpt_path(seed: int) -> str:
     return _CKPT_TEMPLATE
 
 
+def _apply_learned_head(ro, seed: int) -> dict:
+    """Opt-in (`learned_head_enabled()`): overrides `ro.head_w` IN PLACE with the e-prop LOCALLY-LEARNED read-out
+    matrix `W_hat[V,D]` persisted by `_wkv_mouth_readout_eprop_batched_substrate_derisk.py --save-w-hat` (or the
+    host-linear-forward `_wkv_mouth_readout_eprop_learn_derisk.py`, same [V,D] shape/basis if ever extended to
+    save). `head_b` (the base-rate prior) is left UNTOUCHED -- both eprop runners explicitly keep `head_b` COPIED,
+    only `W_hat` is locally-learned (see their docstrings). Fails SAFE: on a missing file or a shape mismatch, the
+    native checkpoint head is left in place and the reason is recorded (never raised) -- this opt-in path must
+    never be able to break the default-off caller. Returns a provenance dict (also cached in `_HEAD_INFO`)."""
+    info = {"enabled": True, "path": _learned_head_path(seed), "applied": False, "reason": None}
+    p = Path(info["path"])
+    if not p.exists():
+        info["reason"] = "file_missing"
+        return info
+    try:
+        d = np.load(p, allow_pickle=True)
+        W_hat = np.asarray(d["W_hat"], dtype=np.float64)
+    except Exception as exc:                                    # noqa: BLE001 — fail-safe by design, see docstring
+        info["reason"] = f"load_failed:{exc}"
+        return info
+    if W_hat.shape != ro.head_w.shape:
+        info["reason"] = f"shape_mismatch:{W_hat.shape}_vs_{ro.head_w.shape}"
+        return info
+    ro.head_w = W_hat                                            # the swap: identical [V,D] linear-map basis
+    info["applied"] = True
+    for k in ("sub_recov_ratio", "sub_learned_recov", "sub_copied_recov", "integrated_go"):
+        if k in d:
+            info[k] = d[k].item() if hasattr(d[k], "item") else d[k]
+    return info
+
+
 def _get_readout(seed: int):
-    hit = _CKPT_CACHE.get(seed)
+    learned = learned_head_enabled()
+    key = (seed, learned)
+    hit = _CKPT_CACHE.get(key)
     if hit is not None:
         return hit
     with _CKPT_LOCK:
-        hit = _CKPT_CACHE.get(seed)
+        hit = _CKPT_CACHE.get(key)
         if hit is not None:
             return hit
         ro = WKVReadout(_ckpt_path(seed))
+        if learned:
+            _HEAD_INFO[key] = _apply_learned_head(ro, seed)      # native head kept on any failure (fail-safe)
         vocab = set(w.lower() for w in ro.words)
         word_to_id = {w.lower(): i for i, w in enumerate(ro.words)}
         hit = (ro, vocab, word_to_id)
-        _CKPT_CACHE[seed] = hit
+        _CKPT_CACHE[key] = hit
         return hit
+
+
+def learned_head_status(seed: int = 42) -> dict | None:
+    """Diagnostic: provenance of the last `_get_readout(seed)` call's learned-head load attempt under the
+    CURRENT `learned_head_enabled()` state (None if that state was never off/on-attempted for this seed yet)."""
+    return _HEAD_INFO.get((seed, learned_head_enabled()))
 
 
 # ── RNG isolation (the #77 fix, replicated from affect_drives_chat.ObservedAffectLadder._isolated) ────────────────
