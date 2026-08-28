@@ -25,6 +25,8 @@ sources:
 implemented_by:
   - research/runners/_sparse_indexed_retrieval_derisk.py
   - research/runners/one_brain_composer.py
+  - research/runners/rf_phasor_composer.py
+  - research/runners/sharded_phasor_store.py
 findings:
   - research/findings/raw/four_day/_sparse_indexed_retrieval_6seed.json
 ---
@@ -60,6 +62,24 @@ out-of-store cue abstains under BOTH paths with **0 new confabulation** (the sha
 its peak score <= the full peak; if the full scan abstains, the shard abstains). Wired into the production
 `OneBrainComposer` as an additive default-off fast path (`enable_sparse_index` / env
 `BRAIN_SPARSE_INDEX_RETRIEVAL`).
+
+**2026-08-28 port to `RFPhasorComposer`/`ShardedPhasorStore` (board #66 knowledge-scale vocab-latency wall).** The
+2026-08-28 vocab-latency-wall finding showed the tiered LTM's shard composer (`RFPhasorComposer`, the engine
+behind `ShardedPhasorStore`) pays the SAME O(V) cleanup cost the DG index already fixes for `OneBrainComposer` --
+every routed shard shares ONE global codebook, so a query's cleanup step still scans the FULL vocabulary
+regardless of the shard's own ~200-fact size (1.37s@24k words -> 20.7s@347k -> 33.8s@581k). The identical
+mechanism (same `DGSparseIndex` class, reused by import, not reimplemented) was ported into `_cleanup`/
+`_cleanup_all` behind `enable_sparse_index` / env `BRAIN_SHARD_SPARSE_INDEX` (a DISTINCT env var from
+OneBrainComposer's, since the two composers' defaults are reviewed independently). One new consideration this
+port introduces: `ShardedPhasorStore(share_codebook=True)` already grafts ONE shared `{word: phases}` codebook
+across all S shards (avoiding an S-fold memory blow-up, `sharded_phasor_store.py`'s own documented rationale) --
+the DG index is grafted the SAME way (`_dg_index_source`), so the index is built ONCE for the whole store, not
+once per shard. Measured effect (real Wikidata bundle, 347,695-word vocab, paired same-session): correctness
+exact (parity + moat unchanged), peak RSS LOWER with the accelerator on, warm-query latency reduced ~25% (median
+33.21s -> 24.92s, excluding the one-time index-build query) -- a real but MODEST reduction, not a close to
+sub-second; the residual is plausibly frequent DG-shard escalation on real (non-synthetic) entity codes and/or
+session memory pressure, named as the next lever, not resolved. See
+`research/findings/2026-08-28-shard-composer-dg-sparse-index-port-modest-latency-reduction.md`.
 
 **Declared shortcut, and the named burn-down.** The in-shard matched-filter cleanup IS the composer's existing
 on-substrate op (the complex-synapse cleanup matvec + WTA select), just over fewer rows. The **DG sparse

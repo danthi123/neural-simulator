@@ -1,0 +1,97 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_500k_fast",
+  "seed": 42,
+  "n_facts": 748956,
+  "vocab_size": 347695,
+  "n_shards": 3745,
+  "ltm_load_s": 5.12,
+  "recall_ok": 5,
+  "recall_checked": 5,
+  "moat_confab": 0,
+  "recall_latency_median_s": 33.25,
+  "recall_latency_min_s": 33.15,
+  "recall_latency_max_s": 41.7,
+  "results": [
+    {
+      "kind": "recall",
+      "i": 0,
+      "cue": [
+        "excelsior_rotterdam",
+        "alias_of"
+      ],
+      "gt": "sbv_excelsior",
+      "live": "sbv_excelsior",
+      "ok": true,
+      "latency_s": 41.697
+    },
+    {
+      "kind": "recall",
+      "i": 1,
+      "cue": [
+        "gentlemen_prefer_blondes_1953_film",
+        "cast_member"
+      ],
+      "gt": "marcel_dalio",
+      "live": "marcel_dalio",
+      "ok": true,
+      "latency_s": 33.152
+    },
+    {
+      "kind": "recall",
+      "i": 2,
+      "cue": [
+        "volkingen",
+        "alias_of"
+      ],
+      "gt": "volklingen",
+      "live": "volklingen",
+      "ok": true,
+      "latency_s": 33.248
+    },
+    {
+      "kind": "recall",
+      "i": 3,
+      "cue": [
+        "aaron_allston",
+        "place_of_death"
+      ],
+      "gt": "springfield_mo",
+      "live": "springfield_mo",
+      "ok": true,
+      "latency_s": 33.17
+    },
+    {
+      "kind": "recall",
+      "i": 4,
+      "cue": [
+        "llucmajor_spain",
+        "shares_border_with"
+      ],
+      "gt": "palma_de_mallorca",
+      "live": "palma_de_mallorca",
+      "ok": true,
+      "latency_s": 36.589
+    },
+    {
+      "kind": "moat",
+      "cue": [
+        "zzz_unknown_entity_xq",
+        "alias_of"
+      ],
+      "live": null,
+      "confab": false,
+      "latency_s": 26.95
+    },
+    {
+      "kind": "yesno",
+      "cue": [
+        "excelsior_rotterdam",
+        "alias_of",
+        "sbv_excelsior"
+      ],
+      "answer": "yes",
+      "latency_s": 41.187
+    }
+  ],
+  "elapsed_s": 255.0
+}
