@@ -38,10 +38,10 @@ def main():
         ("flag_off_again", False, False),
     ):
         _clear_flags()
-        if cue_on:
-            os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1"
-        if lesion_on:
-            os.environ["BRAIN_LEARNED_VERB_SELECTS_LESION"] = "1"
+        # 2026-08-27 FLIPPED DEFAULT-ON: EXPLICIT "0"/"1" always -- unset now means ON post-flip, so a bare
+        # `_clear_flags()` no longer reproduces the "flag_off" condition this loop's label claims.
+        os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1" if cue_on else "0"
+        os.environ["BRAIN_LEARNED_VERB_SELECTS_LESION"] = "1" if lesion_on else "0"
         tr = CO.extract_transitive(text)
         rows[label] = {
             "extract_transitive": list(tr) if tr else None,

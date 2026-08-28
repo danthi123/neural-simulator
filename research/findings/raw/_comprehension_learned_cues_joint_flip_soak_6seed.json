@@ -1,0 +1,307 @@
+{
+  "GO": true,
+  "attribution": {
+    "animacy_cue_attributable_fraction": 1.0,
+    "animacy_cue_held_noun_rate_lesioned": 0.0,
+    "animacy_cue_held_noun_rate_live": 1.0,
+    "verb_selects_cue_attributable_fraction": 1.0,
+    "verb_selects_cue_held_verb_rate_lesioned": 0.0,
+    "verb_selects_cue_held_verb_rate_live": 1.0
+  },
+  "battery_labels": {
+    "hand_covered": [
+      "hand_chase",
+      "hand_eat",
+      "hand_push",
+      "hand_carry",
+      "hand_bite",
+      "hand_kick",
+      "hand_grab",
+      "hand_watch",
+      "hand_ambig_2anim",
+      "hand_ambig_2inan"
+    ],
+    "held_noun": [
+      "noun_anim_monkey",
+      "noun_anim_rabbit",
+      "noun_anim_kitten",
+      "noun_inanim_box",
+      "noun_inanim_table",
+      "noun_inanim_key"
+    ],
+    "held_verb": [
+      "verb_inanimpat_clean",
+      "verb_inanimpat_wash",
+      "verb_inanimpat_open",
+      "verb_animpat_help",
+      "verb_animpat_hug",
+      "verb_animpat_feed"
+    ],
+    "joint": [
+      "joint_monkey_clean_box",
+      "joint_rabbit_help_kitten"
+    ],
+    "moat": [
+      "moat_oov"
+    ]
+  },
+  "conditions": [
+    "C0_unset",
+    "C1_off",
+    "C2_animacy_only",
+    "C3_verb_only",
+    "C4_both",
+    "C5_lesion_animacy",
+    "C6_lesion_verb",
+    "C7_lesion_both"
+  ],
+  "disabled_processes": [],
+  "gates": {
+    "G1_byte_identical_off": {
+      "fail_count": 0,
+      "fails": [],
+      "pass": true
+    },
+    "G2_no_regression_hand_covered": {
+      "fail_count": 0,
+      "fails": [],
+      "pass": true
+    },
+    "G3_coverage_extends": {
+      "expected_flips": 72,
+      "flip_count": 72,
+      "pass": true,
+      "regression_count": 0,
+      "regressions": []
+    },
+    "G4_lesion_load_bearing": {
+      "fail_count": 0,
+      "fails": [],
+      "pass": true
+    },
+    "G5_joint_coverage": {
+      "detail": [
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 42
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 42
+        },
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 43
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 43
+        },
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 44
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 44
+        },
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 100
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 100
+        },
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 101
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 101
+        },
+        {
+          "item": "joint_monkey_clean_box",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "box",
+            "clean",
+            "monkey"
+          ],
+          "on_comprehended": true,
+          "on_oov_tokens": [],
+          "seed": 102
+        },
+        {
+          "item": "joint_rabbit_help_kitten",
+          "off_comprehended": false,
+          "off_oov_tokens": [
+            "help",
+            "kitten",
+            "rabbit"
+          ],
+          "on_comprehended": false,
+          "on_oov_tokens": [],
+          "seed": 102
+        }
+      ],
+      "fail_count": 0,
+      "fails": [],
+      "pass": true
+    },
+    "moat_holds": {
+      "fail_count": 0,
+      "fails": [],
+      "pass": true
+    }
+  },
+  "preconditions": [
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "G1 byte-identical-off (unset == explicit '0')",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "G2 no-regression on hand-covered (== the interaction check)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "G3 coverage extends monotonically (held-out competent() False->True, 0 regressions)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "G4 lesion load-bearing (per-cue + full revert)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "G5 joint coverage (doubly-held-out OOV-naming shrinks to empty)",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "measured=True expect=True",
+      "kind": "require",
+      "name": "moat holds in every one of the 8 conditions",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "kind": "control",
+      "name": "animacy lesion collapses held-noun coverage",
+      "note": "",
+      "ok": true
+    },
+    {
+      "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+      "kind": "control",
+      "name": "verb-selects lesion collapses held-verb coverage",
+      "note": "",
+      "ok": true
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "status": "GO",
+  "verdict": "GO"
+}

@@ -56,12 +56,33 @@ def test_learned_lexicon_lesion_collapses_to_abstain():
 
 
 def test_flag_off_byte_identical_to_pre_existing_scope():
+    # 2026-08-27 FLIPPED DEFAULT-ON (joint flip-soak GO): explicit "0" is now the byte-identical escape to the
+    # pre-flip hand-table-only scope -- `_clear_flags()` (unset) means ON post-flip; see
+    # `test_unset_now_defaults_to_on` below for the flip itself.
     _clear_flags()
-    organ = CO.get_organ(seed=42)
-    tr = CO.extract_transitive(TEXT)
-    assert tr == ("dog", HELD_OUT_VERB, "cup")
-    assert organ.competent(*tr) is False                     # unrecognized (hand table lacks 'clean') -> out of scope
-    assert organ.judge(TEXT) is None                          # byte-identical: unchanged turn
+    os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "0"
+    try:
+        organ = CO.get_organ(seed=42)
+        tr = CO.extract_transitive(TEXT)
+        assert tr == ("dog", HELD_OUT_VERB, "cup")
+        assert organ.competent(*tr) is False                 # unrecognized (hand table lacks 'clean') -> out of scope
+        assert organ.judge(TEXT) is None                      # byte-identical: unchanged turn
+    finally:
+        _clear_flags()
+
+
+def test_unset_now_defaults_to_on():
+    """Pins the 2026-08-27 default-flip itself: leaving `BRAIN_LEARNED_VERB_SELECTS` UNSET now behaves exactly
+    like an explicit "1" (mirrors the sibling animacy-cue test exactly)."""
+    _clear_flags()
+    try:
+        organ = CO.get_organ(seed=42)
+        tr = CO.extract_transitive(TEXT)
+        assert organ.competent(*tr) is True
+        j = organ.judge(TEXT)
+        assert j is not None and j["comprehended"] is True
+    finally:
+        _clear_flags()
 
 
 def test_flag_on_extends_coverage_load_bearing():
@@ -115,7 +136,10 @@ def test_flag_on_does_not_break_existing_inflected_hand_verbs():
     the learned lexicon (via `_verb_selects_of` on each candidate, in order) before it had exhausted the hand
     table. Fixed by trying every candidate against the hand table FIRST, in full, before ever falling back to
     the learned lexicon."""
+    # 2026-08-27 FLIPPED DEFAULT-ON: explicit "0" is the byte-identical escape to pre-flip OFF; unset now
+    # means ON post-flip (see test_unset_now_defaults_to_on).
     _clear_flags()
+    os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "0"
     try:
         assert CO._lemma_verb("pushed") == "push"
         assert CO._lemma_verb("bites") == "bite"
@@ -127,7 +151,7 @@ def test_flag_on_does_not_break_existing_inflected_hand_verbs():
         # every hand-table verb's -s/-ed/-ing inflection should be unaffected by the flag, both directions
         for base, inflected in (("chase", "chases"), ("eat", "eats"), ("carry", "carries"),
                                  ("grab", "grabs"), ("watch", "watches")):
-            os.environ.pop("BRAIN_LEARNED_VERB_SELECTS", None)
+            os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "0"
             off = CO._lemma_verb(inflected)
             os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1"
             on = CO._lemma_verb(inflected)

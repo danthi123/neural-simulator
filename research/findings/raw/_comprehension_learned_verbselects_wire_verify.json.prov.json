@@ -1,10 +1,10 @@
 {
- "run_id": "1787886213-3657576",
+ "run_id": "1787887071-3667956",
  "runner": "research/runners/_comprehension_learned_verbselects_wire_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-ac07447ca20ce59d0/research/runners/_comprehension_learned_verbselects_wire_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a01c3358168568fd7/research/runners/_comprehension_learned_verbselects_wire_verify.py"
  ],
- "git_sha": "79a419a84",
+ "git_sha": "45900044b",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T23:03:33",
+ "started": "2026-08-27T23:17:51",
  "env": {
   "SIM_BACKEND": "numpy"
  },

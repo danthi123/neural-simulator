@@ -138,17 +138,28 @@ def comprehension_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# 2026-08-27 FLIPPED DEFAULT-ON (joint flip-soak GO, research/findings/raw/_comprehension_learned_cues_joint_flip_soak_6seed.json,
+# seeds 42/43/44/100/101/102): byte-identical-off (unset==explicit-off) 6/6, ZERO hand-covered regression across
+# every animacy/verb/lesion combination (10 hand-covered items x 6 seeds x 7 non-baseline conditions), 72/72
+# held-out noun/verb coverage-extension flips (competent False->True) with zero regressions, per-cue lesion
+# load-bearing (lesioning ONLY this cue reverts ONLY the noun contribution), full-both-lesion exact revert,
+# and the doubly-held-out JOINT items' OOV-naming genuinely shrinks to empty. `BRAIN_LEARNED_ANIMACY_CUE=0` is
+# the byte-identical escape to the pre-flip hand-table-only scope.
+_LEARNED_ANIMACY_CUE_DEFAULT_ON = True
+
+
 def learned_animacy_cue_enabled() -> bool:
-    """`BRAIN_LEARNED_ANIMACY_CUE` in {1,true,yes,on} -> extend the ANIMACY membership scope beyond the
-    ~19-noun hand table to the corpus-LEARNED, spiking-realized open-vocab animacy cue (6-seed GO:
+    """`BRAIN_LEARNED_ANIMACY_CUE` -- extend the ANIMACY membership scope beyond the ~19-noun hand table to the
+    corpus-LEARNED, spiking-realized open-vocab animacy cue (6-seed GO:
     `research/findings/raw/_comprehension_learned_animacy_cue_6seed.json` -- learned=0.837,
     shuffled-graph=0.504, frequency-only=0.511, gap=+0.333; spiking-realization verify:
-    `research/findings/raw/_comprehension_learned_animacy_spiking_verify.json`). Default OFF: unset behaves
-    byte-identically to the pre-existing hand-table-only scope."""
+    `research/findings/raw/_comprehension_learned_animacy_spiking_verify.json`). DEFAULT-ON anchor
+    (`_LEARNED_ANIMACY_CUE_DEFAULT_ON`): enabled UNLESS `BRAIN_LEARNED_ANIMACY_CUE` is an explicit off
+    (0/false/no/off/""); `=0` reverts byte-identically to the pre-flip hand-table-only scope."""
     v = os.environ.get("BRAIN_LEARNED_ANIMACY_CUE")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+    if _LEARNED_ANIMACY_CUE_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
 def learned_animacy_cue_lesioned() -> bool:
@@ -162,18 +173,25 @@ def learned_animacy_cue_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# 2026-08-27 FLIPPED DEFAULT-ON (joint flip-soak GO, mirrors `_LEARNED_ANIMACY_CUE_DEFAULT_ON` exactly -- see
+# its comment for the soak evidence). `BRAIN_LEARNED_VERB_SELECTS=0` is the byte-identical escape to the
+# pre-flip hand-table-only scope.
+_LEARNED_VERB_SELECTS_DEFAULT_ON = True
+
+
 def learned_verb_selects_enabled() -> bool:
-    """`BRAIN_LEARNED_VERB_SELECTS` in {1,true,yes,on} -> extend the VERB_SELECTS patient-slot membership
-    scope beyond the hand-coded 8-verb table to the corpus-LEARNED, spiking-realized open-vocab
-    verb-selectional cue (6-seed GO: `research/findings/raw/_comprehension_learned_verbselects_cue_6seed.json`
-    -- learned=0.952, shuffled-graph=0.446, frequency-only=0.315, gap=+0.506; spiking-realization verify:
-    `research/findings/raw/_comprehension_learned_verbselects_spiking_verify.json`). Default OFF: unset
-    behaves byte-identically to the pre-existing hand-table-only scope. Mirrors
+    """`BRAIN_LEARNED_VERB_SELECTS` -- extend the VERB_SELECTS patient-slot membership scope beyond the
+    hand-coded 8-verb table to the corpus-LEARNED, spiking-realized open-vocab verb-selectional cue (6-seed
+    GO: `research/findings/raw/_comprehension_learned_verbselects_cue_6seed.json` -- learned=0.952,
+    shuffled-graph=0.446, frequency-only=0.315, gap=+0.506; spiking-realization verify:
+    `research/findings/raw/_comprehension_learned_verbselects_spiking_verify.json`). DEFAULT-ON anchor
+    (`_LEARNED_VERB_SELECTS_DEFAULT_ON`): enabled UNLESS `BRAIN_LEARNED_VERB_SELECTS` is an explicit off
+    (0/false/no/off/""); `=0` reverts byte-identically to the pre-flip hand-table-only scope. Mirrors
     `learned_animacy_cue_enabled` exactly."""
     v = os.environ.get("BRAIN_LEARNED_VERB_SELECTS")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+    if _LEARNED_VERB_SELECTS_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
 def learned_verb_selects_lesioned() -> bool:
