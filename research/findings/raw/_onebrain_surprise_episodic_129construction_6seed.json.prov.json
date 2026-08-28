@@ -1,0 +1,32 @@
+{
+ "run_id": "1787954404-177034",
+ "runner": "research/runners/_onebrain_surprise_episodic_129construction_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af5d60c3d7bce131b/research/runners/_onebrain_surprise_episodic_129construction_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--floor",
+  "0.0478",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af5d60c3d7bce131b/research/findings/raw/_onebrain_surprise_episodic_129construction_6seed.json"
+ ],
+ "git_sha": "2030b6272",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T18:00:04",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2780.4,
+ "corpus_check_query": "surprise->episodic cross-edge via the #129 separate-trace opponent-ratio construction",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_surprise_episodic_129construction_6seed.json"
+}
