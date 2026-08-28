@@ -311,3 +311,4 @@ no-regression test PASSED; one real-handler load-bearing on/lesion test started,
 session (named residual). Not default-on (owner-gated). No task newly closed or reopened (task #185 was
 already DONE for the framework itself); no ladder-label change. (Ref:
 2026-08-28-surprise-episodic-production-xedge-wireIn.md.)
+2026-08-28T19:48 dg-shard escalation NO-GO harvested+merged c6605861; #192 updated (99.5% escalation = noise mismatch, win is caching side-effect, next=decouple caching)
