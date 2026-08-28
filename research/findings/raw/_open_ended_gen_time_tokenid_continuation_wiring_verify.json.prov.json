@@ -1,8 +1,8 @@
 {
- "run_id": "1787924256-3895322",
- "runner": "research/runners/_open_ended_gen_time_consensus_veto_wiring_verify.py",
+ "run_id": "1787924798-3900322",
+ "runner": "research/runners/_open_ended_gen_time_tokenid_continuation_wiring_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-aafef44fca8bc3d2c/research/runners/_open_ended_gen_time_consensus_veto_wiring_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aafef44fca8bc3d2c/research/runners/_open_ended_gen_time_tokenid_continuation_wiring_verify.py"
  ],
  "git_sha": "5e802e254",
  "git_dirty": true,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-28T09:37:36",
+ "started": "2026-08-28T09:46:38",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -21,5 +21,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_open_ended_gen_time_consensus_veto_wiring_verify.json"
+ "artifact": "research/findings/raw/_open_ended_gen_time_tokenid_continuation_wiring_verify.json"
 }

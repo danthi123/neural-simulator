@@ -265,3 +265,15 @@ assertion), then correctly RE-STAGED the exact 6-seed --emergent verify against 
 worktree), persistence confirmed (depth 15, dispatcher alive). Still PARTIAL -- no verdict, task stays open.
 No other task touched (no code changed, no other capability status changed). Finding:
 2026-08-28-generative-wander-production-verify-restaged-after-queue-loss.
+## 2026-08-28 open-ended-gen-time-honesty-tokenid-continuation (isolated worktree agent-aafef44fca8bc3d2c)
+Updated #112 ("Let the brain talk freely (open-ended), staying honest") with the retokenization-limit fix:
+`_open_ended_gen_time_consensus_veto_derisk.py`'s mouth-stepping loop now carries the growing reply as
+token ids (a kept sentence continues from the model's own generated tokens, zero re-encode; only a
+repaired sentence re-encodes its own edited span) instead of decoding to a string and re-tokenizing the
+whole thing every step — the exact confound the 2026-08-27 PARTIAL finding named as its own NEXT rung.
+Proven via a new deterministic 20/20-check wiring-sanity battery (no live model needed); the existing
+flag-routing wiring verify (6/6) and the string-moat battery (10/10) both re-ran unaffected. The decisive
+live-mouth GPU multi-seed comparison (does the divergence rate actually rise over the 2026-08-27 baseline)
+is STAGED on `research/queue/gpu.queue`, not yet run — task #112 stays OPEN, no ladder-label change (still
+de-risked, still default-OFF `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY`). No other task's state changed. Finding:
+2026-08-28-open-ended-generation-time-honesty-token-id-continuation-removes-retokenization-confound-PARTIAL.

@@ -1,0 +1,197 @@
+{
+ "probe": "open_ended_gen_time_tokenid_continuation_wiring_verify",
+ "backend": "numpy(fake tokenizer/model, no GPU/Qwen/organs)",
+ "checks": {
+  "A_repair_matches_real_clause_filter": true,
+  "A_s1_mexico_dropped": true,
+  "A_s1_united_states_kept": true,
+  "A_s2_kept_unchanged": true,
+  "A_final_text_has_no_mexico": true,
+  "A_final_text_has_both_sentences": true,
+  "A_model_called_twice": true,
+  "B_repair_reencoded_different_length": true,
+  "B_repair_reencoded_shorter": true,
+  "C_kept_ids_match_model_vocab": true,
+  "C_kept_text_byte_identical_to_model_output": true,
+  "D_lesioned_s1_kept_not_repaired": true,
+  "D_lesioned_mexico_survives": true,
+  "D_lesioned_s2_kept": true,
+  "D_lesioned_final_text_matches_raw_s1_s2": true,
+  "E_lever_moved": true,
+  "E_on_vs_lesioned_diverge": true,
+  "E_on_drops_what_lesioned_keeps": true,
+  "F_eos_stopped_generation": true,
+  "G_budget_exhaustion_no_crash": true,
+  "G_budget_exhaustion_truncates": true
+ },
+ "text_ON": "Canada is bordered by the United States to the south. It has ten provinces and three territories.",
+ "trace_ON": [
+  {
+   "raw": "Canada is bordered by the United States to the south and Mexico to the west.",
+   "kept": "Canada is bordered by the United States to the south.",
+   "action": "repaired",
+   "consensus_facts": [
+    [
+     "borders",
+     "united states"
+    ]
+   ],
+   "continuation": "token_id"
+  },
+  {
+   "raw": "It has ten provinces and three territories.",
+   "kept": "It has ten provinces and three territories.",
+   "action": "kept",
+   "consensus_facts": [
+    [
+     "borders",
+     "united states"
+    ]
+   ],
+   "continuation": "token_id"
+  }
+ ],
+ "text_LESIONED": "Canada is bordered by the United States to the south and Mexico to the west. It has ten provinces and three territories.",
+ "trace_LESIONED": [
+  {
+   "raw": "Canada is bordered by the United States to the south and Mexico to the west.",
+   "kept": "Canada is bordered by the United States to the south and Mexico to the west.",
+   "action": "kept",
+   "consensus_facts": [],
+   "continuation": "token_id"
+  },
+  {
+   "raw": "It has ten provinces and three territories.",
+   "kept": "It has ten provinces and three territories.",
+   "action": "kept",
+   "consensus_facts": [],
+   "continuation": "token_id"
+  }
+ ],
+ "text_budget_exhausted": "Canada is bordered by the United States to the south",
+ "trace_budget_exhausted": [
+  {
+   "raw": "Canada is bordered by the United States to the south and Mexico",
+   "kept": "Canada is bordered by the United States to the south",
+   "action": "repaired",
+   "consensus_facts": [
+    [
+     "borders",
+     "united states"
+    ]
+   ],
+   "continuation": "token_id"
+  }
+ ],
+ "verdict": {
+  "label": "the 2026-08-28 token-id continuation orchestration (_generate_tokenid_continuation / _continue_chunk_ids / _find_sentence_boundary_ids) is wired correctly against the REAL, unmodified clause_filter_sentence, using a fake tokenizer/model (no GPU, no Qwen, no organs)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(A) repair matches the real clause_filter_sentence output exactly; kept sentence unchanged",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(B) a repaired sentence's context is a genuine re-encode (different length than the model's own unedited ids)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(C) a kept sentence's text is byte-identical to the model's own generated words (no edit occurred)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(D) LESIONED coupling: nothing suppressed, the wrong detail survives (matches run_controlled_unit_battery's LESIONED_keeps_wrong property)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(E) ON vs LESIONED diverge on the final text (the load-bearing lever, attributed via tools.lab.lever -- the ONLY varying term between the two arms is the coupling itself)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(F) eos / sentence-count stop correctly, no infinite loop",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(G) a token budget smaller than the full reply truncates cleanly, never raises",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(A) repair matches the real clause_filter_sentence output exactly; kept sentence unchanged",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(B) a repaired sentence's context is a genuine re-encode (different length than the model's own unedited ids)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(C) a kept sentence's text is byte-identical to the model's own generated words (no edit occurred)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(D) LESIONED coupling: nothing suppressed, the wrong detail survives (matches run_controlled_unit_battery's LESIONED_keeps_wrong property)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(E) ON vs LESIONED diverge on the final text (the load-bearing lever, attributed via tools.lab.lever -- the ONLY varying term between the two arms is the coupling itself)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(F) eos / sentence-count stop correctly, no infinite loop",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(G) a token budget smaller than the full reply truncates cleanly, never raises",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true
+}

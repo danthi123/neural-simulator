@@ -1,10 +1,10 @@
 {
- "run_id": "1787871745-3505503",
+ "run_id": "1787924259-3895387",
  "runner": "research/runners/_open_ended_clause_contradiction_filter_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a0a5c8650856e4008/research/runners/_open_ended_clause_contradiction_filter_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aafef44fca8bc3d2c/research/runners/_open_ended_clause_contradiction_filter_verify.py"
  ],
- "git_sha": "20b4b475c",
+ "git_sha": "5e802e254",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T19:02:25",
+ "started": "2026-08-28T09:37:39",
  "env": {
   "SIM_BACKEND": "numpy"
  },
