@@ -7,6 +7,28 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-28 (newest) — the read-fidelity crux's anti-cheat instrument is fixed, first-spike latency is a clean negative, and a dispersion read finds the strongest lead yet
+
+Follow-up to the surprise→episodic F2 crux (line below, and its own first non-rate read attempt): that attempt's
+verdict came back UNDEFINED because its shuffle-identity anti-cheat (scrambling which neurons count as
+"generated" vs "perceived" should destroy any real effect) only collapsed on 3 of 6 seeds — an instrument
+ambiguity, not a validated negative. Diagnosed directly against the captured spike data (not the earlier finding's
+own guess of too-few-spikes/censoring, which the raster rules out — every neuron fires): this circuit runs with
+no background noise of any kind, so repeatedly "re-probing" it after a reset gives the SAME deterministic answer
+every time except the very first probe — 8 supposedly-independent repeated reads were really only 1-2 distinct
+values, which starves the old statistics of real degrees of freedom and makes the anti-cheat's pass/fail close to
+a coin flip. Fixed by testing significance a different way — comparing the real generated/perceived grouping
+against many random re-groupings of the SAME captured spikes, rather than against noisy repeats — which now
+collapses the anti-cheat cleanly on all 6 seeds. With a trustworthy instrument, first-spike timing is a
+confident, clean negative (0/6, two seeds even significant in the wrong direction) — that specific read does not
+carry the crux's signal. A new read tried in the same pass — how IRREGULARLY each neuron fires (spike-timing
+variability, not just when it starts or how often) — also falls short of the 6-seed bar (1/6) but is the most
+promising signal found on this crux so far: every one of the 6 seeds points the same pre-registered direction,
+and 2 of 6 are individually significant. Named next: recalibrate the "must vanish under lesion" bar for this
+specific statistic (borrowed from an older, differently-scaled read) and/or feed the population estimate more
+genuinely distinct data (the repeat-read count that no longer helps significance may also be starving the point
+estimate itself). See `research/findings/2026-08-28-read-fidelity-latency-instrument-fixed-NOGO-dispersion-lead-NOGO.md`.
+
 ## 2026-08-28 (newest) — the e-prop-learned WKV-mouth head is confirmed swappable, and its save/load plumbing now exists
 
 Scoped follow-up to the 2026-08-28 WKV-mouth wiring: that rung named one residual left undone — the e-prop

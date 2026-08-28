@@ -15,6 +15,23 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (READ FIRST; LATEST anchor — supersedes every header below)
 
+**UPDATE — 2026-08-28: READ-FIDELITY crux — the shuffle-anti-cheat INSTRUMENT is fixed (3/6→6/6 collapse); latency
+is a clean 0/6 NO-GO, a new dispersion(ISI-CV) read is NO-GO at 6/6 (1/6 PASS) but shows the strongest lead yet
+(6/6 seeds same pre-registered sign, 2/6 individually significant).** Diagnosed why iteration 1's shuffle anti-cheat
+collapsed on only 3/6 (NOT the finding's own leading right-censoring hypothesis — REJECTED, 100% of neurons fire in
+the window): this pool family runs `enable_ou_process=False` + `enable_short_term_plasticity=False`, so the
+`N_READS=8` repeated `_hard_reset()`+drive protocol is fully DETERMINISTIC (read 0 differs from train()'s own
+history; reads 1-7 are bit-identical duplicates) — an across-read SEM over 1 outlier + 7 duplicates is not a valid
+significance test. Fixed by resampling over NEURON IDENTITY (a K_PERM=300 permutation test on the SAME captured
+raster, no new simulation) for both significance and the anti-cheat; collapses 6/6 now. With the clean instrument,
+first-spike latency is a confident 0/6 NO-GO (2/6 seeds even significant in the WRONG direction) — the METHOD is
+closed, not the read-fidelity capability. The new ISI-CV dispersion read (Softky-Koch 1993) is NO-GO at the
+required 6/6 bar but directionally consistent on EVERY seed — next lever: recalibrate `F2_LESION_RATIO=0.34`
+(borrowed from the rate arm) for a dispersion statistic, and/or raise the number of distinct raster draws feeding
+the point estimate (N_READS=8 reads are themselves mostly duplicated under this pool's determinism, per the
+diagnosis above — the mean estimate's own sample size, not just its significance test, may be under-powered).
+Finding: `2026-08-28-read-fidelity-latency-instrument-fixed-NOGO-dispersion-lead-NOGO.md`.
+
 **UPDATE — 2026-08-27, LATEST: the one-brain full-7 STRICT-simultaneous migration batch is CLOSED, 7/7 organs GO
 6/6 seeds.** Every prior reference below to "the full-7 strict batch" needing `deterministic_transpose_matvec`
 across all matvec paths, or "closes when nmda_slow lands," is SUPERSEDED — that characterization was refuted by
