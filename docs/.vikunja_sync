@@ -300,3 +300,14 @@ stability soak in flight" note now reads LANDED, citing
 2026-08-28-onebrain-xedge-long-conversation-soak-100turn-6seed-GO. No task newly closed (the soak is a
 safety extension of an already-landed flip, not a new capability rung); no ladder-label change.
 2026-08-28T18:50 sparse-index port harvested+merged d4a45c27; board #192 real-time-recall next-rung created (Memory,de-risked)
+
+## 2026-08-28  surprise->episodic production wire-in (branch research/onebrain-surprise-episodic-migration)
+Task #185 (declarative cross_edges) description APPENDED: the surprise->episodic edge named in its own
+"NEXT (cheap now)" line is now (a) confirmed already-declarative (no new layer needed, verified by reading
+the construction code + a bit-exact reproduction re-run) and (b) wired into the live chat brain as an
+additive default-OFF diagnostic (BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC), mirroring the R4 wire-in pattern.
+6/6 offline production self-test GO (lesion-attributable, n_hollow=0); one real-/api/brain-chat
+no-regression test PASSED; one real-handler load-bearing on/lesion test started, not completed this
+session (named residual). Not default-on (owner-gated). No task newly closed or reopened (task #185 was
+already DONE for the framework itself); no ladder-label change. (Ref:
+2026-08-28-surprise-episodic-production-xedge-wireIn.md.)

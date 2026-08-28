@@ -1,0 +1,517 @@
+{
+  "probe": "onebrain_xedge_surprise_episodic_production_frozen",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "n_go": 6,
+  "n_seeds": 6,
+  "n_hollow_total": 0,
+  "n_clears_registered_floor": 6,
+  "results": [
+    {
+      "seed": 42,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.015413626659159725,
+        "ratio_held": 0.18528995672853202,
+        "shift_toward_generated": 0.20070358338769173,
+        "cross_weights": {
+          "surprise->provgen": 0.0944,
+          "trained_block->provgen": 0.5823,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.194,
+          "trained_block->provperc": 1.7784,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1442
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.010620692894925034,
+        "ratio_held": -0.01460823366965955,
+        "shift_toward_generated": -0.003987540774734516,
+        "cross_weights": {
+          "surprise->provgen": 0.0944,
+          "trained_block->provgen": 0.5823,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.194,
+          "trained_block->provperc": 1.7784,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1442
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.01460823366965955,
+        "ratio_held": 0.001999112286192377,
+        "shift_toward_generated": 0.016607345955851928,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.010789328833012538,
+        "ratio_held": -0.012783120729868303,
+        "shift_toward_generated": -0.001993791896855765,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.9172543625004835,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.07344185689514127,
+        "ratio_held": 0.11252445472271813,
+        "shift_toward_generated": 0.1859663116178594,
+        "cross_weights": {
+          "surprise->provgen": 0.1275,
+          "trained_block->provgen": 0.9802,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1794,
+          "trained_block->provperc": 1.6033,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1535
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.06944441491582923,
+        "ratio_held": -0.07162534403691309,
+        "shift_toward_generated": -0.0021809291210838633,
+        "cross_weights": {
+          "surprise->provgen": 0.1275,
+          "trained_block->provgen": 0.9802,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1794,
+          "trained_block->provperc": 1.6033,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1535
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.07162534403691309,
+        "ratio_held": -0.05931034456580264,
+        "shift_toward_generated": 0.01231499947111045,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.06888965774860313,
+        "ratio_held": -0.06827408916184996,
+        "shift_toward_generated": 0.0006155685867531707,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.9337783313333845,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.052055435837565035,
+        "ratio_held": 0.07471264333465452,
+        "shift_toward_generated": 0.12676807917221955,
+        "cross_weights": {
+          "surprise->provgen": 0.134,
+          "trained_block->provgen": 1.0581,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1584,
+          "trained_block->provperc": 1.3509,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1462
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.05106148192078102,
+        "ratio_held": -0.049390330758872086,
+        "shift_toward_generated": 0.0016711511619089334,
+        "cross_weights": {
+          "surprise->provgen": 0.134,
+          "trained_block->provgen": 1.0581,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1584,
+          "trained_block->provperc": 1.3509,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1462
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.049709492262247704,
+        "ratio_held": -0.03683492480508628,
+        "shift_toward_generated": 0.012874567457161423,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.04887370126911144,
+        "ratio_held": -0.04893675523383921,
+        "shift_toward_generated": -6.30539647277703e-05,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.8984399894576709,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.04381807646316242,
+        "ratio_held": 0.15679837324634868,
+        "shift_toward_generated": 0.2006164497095111,
+        "cross_weights": {
+          "surprise->provgen": 0.1129,
+          "trained_block->provgen": 0.8047,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.2166,
+          "trained_block->provperc": 2.0498,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1648
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.03960231247789435,
+        "ratio_held": -0.04025093060928499,
+        "shift_toward_generated": -0.0006486181313906381,
+        "cross_weights": {
+          "surprise->provgen": 0.1129,
+          "trained_block->provgen": 0.8047,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.2166,
+          "trained_block->provperc": 2.0498,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1648
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.04306392340487798,
+        "ratio_held": -0.032717716983991764,
+        "shift_toward_generated": 0.010346206420886218,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.04176471819885208,
+        "ratio_held": -0.039764911095862464,
+        "shift_toward_generated": 0.001999807102989616,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.9484279258462238,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.006185845363773614,
+        "ratio_held": 0.15091678352195526,
+        "shift_toward_generated": 0.15710262888572887,
+        "cross_weights": {
+          "surprise->provgen": 0.1374,
+          "trained_block->provgen": 1.0992,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1819,
+          "trained_block->provperc": 1.6333,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1597
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.0006583235329941774,
+        "ratio_held": -0.0009907523894748392,
+        "shift_toward_generated": -0.00033242885648066185,
+        "cross_weights": {
+          "surprise->provgen": 0.1374,
+          "trained_block->provgen": 1.0992,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1819,
+          "trained_block->provperc": 1.6333,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1597
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.0008251917860731127,
+        "ratio_held": 0.005305039765283655,
+        "shift_toward_generated": 0.006130231551356767,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.0014808896552322348,
+        "ratio_held": -0.00048530294912492683,
+        "shift_toward_generated": 0.000995586706107308,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.9609794463985978,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "cross_weights": {
+        "surprise->provgen": 0.0,
+        "trained_block->provgen": 0.0,
+        "other_blocks->provgen": 0.0,
+        "pexp->provperc": 0.0,
+        "trained_block->provperc": 0.0,
+        "other_blocks->provperc": 0.0,
+        "both_edges": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.0322657061045374,
+        "ratio_held": 0.11615236755879665,
+        "shift_toward_generated": 0.14841807366333404,
+        "cross_weights": {
+          "surprise->provgen": 0.1467,
+          "trained_block->provgen": 1.2099,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1703,
+          "trained_block->provperc": 1.4932,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1585
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.028217821606817073,
+        "ratio_held": -0.02890417663749548,
+        "shift_toward_generated": -0.0006863550306784073,
+        "cross_weights": {
+          "surprise->provgen": 0.1467,
+          "trained_block->provgen": 1.2099,
+          "other_blocks->provgen": 0.05,
+          "pexp->provperc": 0.1703,
+          "trained_block->provperc": 1.4932,
+          "other_blocks->provperc": 0.05,
+          "both_edges": 0.1585
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "surprise_held": true,
+        "ratio_baseline": -0.027931001780812485,
+        "ratio_held": -0.014262571188660554,
+        "shift_toward_generated": 0.01366843059215193,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "surprise_held": false,
+        "ratio_baseline": -0.02823796715281339,
+        "ratio_held": -0.027764664675375625,
+        "shift_toward_generated": 0.00047330247743776477,
+        "cross_weights": {
+          "surprise->provgen": 0.0,
+          "trained_block->provgen": 0.0,
+          "other_blocks->provgen": 0.0,
+          "pexp->provperc": 0.0,
+          "trained_block->provperc": 0.0,
+          "other_blocks->provperc": 0.0,
+          "both_edges": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 0.9079058887183992,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "f2_intact_floor_129": 0.0478,
+      "clears_registered_floor": true,
+      "n_hollow": 0,
+      "GO": true
+    }
+  ],
+  "note": "frozen pre-grown board-#129 (TWO cross-edge, divisive-ratio) surprise->source_provenance construction wired into the live pool; the DRIVE is lesion-attributable through crossedge_provenance_shift_129 (the function the live surprise (D2) block would call): holding the LIVE D2 surprise verdict shifts the construction's fixed ambiguous item's divisive-ratio provenance margin toward GENERATED, within the construction's own noise floor of 0 shift when surprise_held=False (no signal, no bias), and the shift collapses under BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION=1 (BOTH cross-edges zeroed together, the SAME joint lesion the 6-seed GO's own F2 gate used) on every seed (GO). HONEST RESIDUAL (carried from the construction's own finding, \u00a75): an individual-edge lesion found the NEW confirm-side edge does almost all the causal work, not the original surprise-side edge \u2014 this wire-in exercises the ALREADY-VALIDATED JOINT mechanism only, not a resolution of that open circuit-level question."
+}

@@ -1572,6 +1572,121 @@ def test_brain_chat_xedge_selfschema_declarative_flag_alone_is_byte_identical(cl
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# board #129 surprise->episodic/source_provenance LEARNED CROSS-EDGES production wire-in
+# (mirrors the R4/PART-1 pattern; BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC, default-OFF)
+# ─────────────────────────────────────────────────────────────────────────
+
+def test_brain_chat_xedge_surprise_episodic_no_regression_on_ordinary_recall_turn(client, monkeypatch):
+    """The board-#129 diagnostic lives strictly inside the D2 surprise block (only entered when the turn's own
+    `surprise_info` carries a `surprised` key) — an ORDINARY recall turn that never asserts a contradicting fact
+    must be BYTE-IDENTICAL (whole-response structural equality, docs/TERMS.md's bar: asserted in the data) whether
+    the flag is off or on. A REAL end-to-end HTTP round trip (the fast, already-proven recall path)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    def _ask(sess, flag_on):
+        monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC", raising=False)
+        if flag_on:
+            monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC", "1")
+        res = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+        assert res.status_code == 200, res.text
+        d = res.json()
+        client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+        return d
+
+    d_off = _ask("pytest-xedge-se-noreg-off", False)
+    d_on = _ask("pytest-xedge-se-noreg-on", True)
+    assert d_off == d_on
+    assert "source_provenance_crossedge" not in (d_off.get("surprise") or {})
+
+
+def test_brain_chat_xedge_surprise_episodic_default_off_is_byte_identical(client, monkeypatch):
+    """board #129 wire-in, OFF: `BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC` unset -> even on a GENUINE surprising
+    turn (asserting a patient that contradicts tiny-demo's stored 'dog chase cat'), the response carries NO
+    `source_provenance_crossedge` key under `surprise` -- the guard `if xedge_surprise_episodic_enabled():` is
+    never entered, and the existing D2 surprise notice/reconsolidation behavior is completely untouched."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC", raising=False)
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-xedge-se-off"
+    # "dog chase mouse" -- a bare 3-content-token assertion (extract_assertion strips determiners/function
+    # words), same verb form ("chase") tiny-demo's own stored fact uses ("dog chase cat") -- p_stored="cat" !=
+    # p_asserted="mouse" -> a genuine D2 contradiction, the SAME mechanism the surprise notice already fires on.
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "dog chase mouse"})
+    assert res.status_code == 200, res.text
+    data = res.json()
+    surp = data.get("surprise") or {}
+    assert surp.get("surprised") is True, f"expected a genuine D2 contradiction to fire, got: {surp}"
+    assert "source_provenance_crossedge" not in surp
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_xedge_surprise_episodic_on_reads_live_crossedge_and_lesion_collapses(client, monkeypatch):
+    """board #129 wire-in, ON: the diagnostic field is attached, driven by the turn's OWN live D2 surprise verdict
+    (`surprise_held == surprise.surprised`), and reads a nonzero shift toward GENERATED on the construction's
+    validated ambiguous-item instrument -- the SAME `crossedge_provenance_shift_129` function the 6-seed
+    organ-level GO (`research/findings/raw/_onebrain_xedge_surprise_episodic_production_frozen_6seed.json`)
+    already cleared, now exercised through the REAL /api/brain-chat handler.
+    `BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION=1` collapses the shift toward zero -- the load-bearing check
+    through the real handler."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC", "1")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_surprise_episodic_production as _xsep
+    _xsep._POOL = None   # force a fresh (un-lesioned) pool regardless of prior test order
+
+    sess = "pytest-xedge-se-on"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "dog chase mouse"})
+    assert res.status_code == 200, res.text
+    data = res.json()
+    surp = data.get("surprise") or {}
+    assert surp.get("surprised") is True, f"expected a genuine D2 contradiction to fire, got: {surp}"
+    xe = surp.get("source_provenance_crossedge")
+    assert xe is not None and xe.get("on") is True and "error" not in xe
+    assert xe["surprise_held"] == bool(surp.get("surprised"))
+    shift_intact = xe["shift_toward_generated"]
+    assert shift_intact > 0.01   # matches the 6-seed organ-level GO's range (0.126-0.201)
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+    _xsep._POOL = None
+
+    # ── LESION, through the SAME real handler ──
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION", "1")
+    sess2 = "pytest-xedge-se-on-lesion"
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess2, "brain": "tiny-demo", "renderer": "stub", "message": "dog chase mouse"})
+    assert res2.status_code == 200, res2.text
+    data2 = res2.json()
+    xe2 = (data2.get("surprise") or {}).get("source_provenance_crossedge")
+    assert xe2 is not None and xe2.get("on") is True and "error" not in xe2
+    shift_lesioned = xe2["shift_toward_generated"]
+    assert abs(shift_lesioned) < 0.34 * abs(shift_intact)   # the construction's own noise-floor ratio
+
+    client.post("/api/brain-chat/reset", json={"session": sess2, "brain": "tiny-demo", "renderer": "stub"})
+    _xsep._POOL = None
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
 # ─────────────────────────────────────────────────────────────────────────
 
