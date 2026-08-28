@@ -1,0 +1,1 @@
+3841073	cd /home/dant123/Projects/sim-worktrees/four-day-queue && SIM_BACKEND=cupy /home/dant123/Projects/sim/.venv/bin/python -u -m research.runners._longitudinal_develop_loop_gpu --n-days 60 --seed 2852 --out research/findings/raw/four_day/longi_nd60_s2852.json
