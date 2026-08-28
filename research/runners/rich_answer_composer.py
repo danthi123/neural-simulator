@@ -59,6 +59,27 @@ _FOLLOWUP_PHRASES = ("tell me more", "go on", "say more", "what else", "anything
                      "why", "how so", "keep going")
 
 
+def _elaborate_from_ltm_enabled():
+    """ADDITIVE, DEFAULT-OFF, owner-gated (`BRAIN_ELABORATE_FROM_LTM_SHARD`). When truthy, the composer's
+    ELABORATION (and the chain corner-turn -- both flow through `_facts_about`/`_facts_mentioning`) may ALSO draw
+    grounded candidate facts from the ROUTED cortical LTM shard behind a `TieredFactStore`, not just the
+    conversational BUFFER tier. WHY (two convergent blockers this unblocks):
+      * KNOWLEDGE-IN-CHAT (owner priority #66): the elaboration read ONLY the buffer, so an answer whose concept
+        lives in long-term memory (the routed `ShardedPhasorStore`) got a bare direct fact + same-relation chain
+        hops and NO breadth -- the brain could not elaborate from its full routed knowledge about that concept.
+      * CONFIDENCE->FORTHCOMINGNESS (board #94): the reach-cap in `webapp/confidence_forthcoming_chat.py` asks the
+        composer for FLOOR+1 facts then truncates the extra on a LOW-confidence read. On the true production floor
+        (`NEUTRAL_SENTENCES=4`) the buffer-only elaboration structurally cannot exceed 4, so the reach never
+        produces an extra fact and a confident vs an uncertain turn keep identical sentences (the "hollow flip"
+        the owner's rule prohibits). Reading the concept's routed LTM facts gives the reach content to trim.
+    OFF (default) -> every LTM draw is a guarded no-op -> BYTE-IDENTICAL to the buffer-only path. The no-confab
+    MOAT is preserved by construction: an LTM candidate is drawn straight from the shard's `kb` (a fact the brain
+    genuinely HOLDS), and the per-sentence VERIFY in `render_paragraph` still gates every rendered sentence; an
+    unknown concept has no direct fact (the gate abstains before elaboration ever runs) and no LTM facts either."""
+    v = os.environ.get("BRAIN_ELABORATE_FROM_LTM_SHARD")
+    return bool(v) and v.strip().lower() in ("1", "true", "on", "yes")
+
+
 def _is_followup(question):
     """True when the utterance is a bare 'tell me more' / 'why?' style follow-up (no new content) -- so the
     composer ELABORATES on the held topic rather than re-gating a fresh question."""
@@ -192,16 +213,84 @@ class RichAnswerComposer:
         return [(f.get("agent"), f.get("action"), f.get("patient")) for f, _ in self.composer.kb
                 if all(isinstance(f.get(r), str) for r in ("agent", "action", "patient"))]
 
+    def _ltm_store(self):
+        """The ROUTED cortical LTM shard behind the live composer (a `ShardedPhasorStore` held on a
+        `TieredFactStore.ltm`), or None. Non-None ONLY when the `BRAIN_ELABORATE_FROM_LTM_SHARD` flag is ON *and*
+        the composer actually has an LTM tier. A plain buffer composer (RFPhasorComposer / OneBrainComposer) has
+        no `ltm` attribute and no `__getattr__`, so `getattr(..., "ltm", None)` is None there; a `TieredFactStore`
+        holds `ltm` as a real instance attribute (set via `object.__setattr__`, never delegated). Byte-identical
+        (returns None) whenever the flag is off, so every LTM-draw helper below is a guarded no-op by default."""
+        if not _elaborate_from_ltm_enabled():
+            return None
+        return getattr(self.composer, "ltm", None)
+
+    def _ltm_facts_about(self, concept):
+        """(LTM tier) Facts in the routed cortical LTM shard whose AGENT is `concept` -- the concept's own
+        self-statements in long-term memory. Retrieved via the SAME agent-hash routing + unambiguous surface-form
+        ALIAS fallback the store's own reads use (route `concept` to its ONE shard and scan that shard's `kb`; on
+        an empty shard, retry once under the store's `_resolve_alias` -- exactly `ShardedPhasorStore.query_patient`'s
+        own fallback). O(1) route + O(K/S) one-shard scan, so it scales to LLM-scale knowledge. Returns [] when the
+        flag is off, there is no LTM tier, or the concept is genuinely absent (the moat -- an unknown concept has no
+        facts here). Every returned [a, v, p] is a str-role fact the brain HOLDS in the LTM (drawn straight from
+        the shard's kb), so it is brain-sourced by construction; the per-sentence VERIFY still gates each rendered
+        sentence. NOTE (honest scope): this draws the AGENT-role facts (the routed, cheap path). Facts mentioning
+        `concept` only as a PATIENT live in other shards (the store's reverse-lookup case) and would need a
+        cross-shard fan-out; that breadth is deliberately deferred to keep the draw routed + sub-second at scale."""
+        ltm = self._ltm_store()
+        if ltm is None or not isinstance(concept, str):
+            return []
+
+        def _scan(shard, key):
+            return [[f.get("agent"), f.get("action"), f.get("patient")]
+                    for f, _h in getattr(shard, "kb", [])
+                    if f.get("agent") == key
+                    and all(isinstance(f.get(r), str) for r in ("agent", "action", "patient"))]
+
+        try:
+            out = _scan(ltm.shard_for(concept), concept)
+            if not out and hasattr(ltm, "_resolve_alias"):
+                alias = ltm._resolve_alias(concept)
+                if alias is not None:
+                    out = _scan(ltm.shard_for(alias), alias)
+            return out
+        except Exception:
+            return []
+
+    def _with_ltm(self, buf, concept):
+        """Append the concept's routed LTM facts (agent-role) to a buffer-tier fact list `buf`, de-duplicated,
+        with the BUFFER facts kept FIRST as an unchanged prefix (so any existing head selection is byte-preserved
+        and the LTM only ever EXTENDS the tail). A guarded no-op when the flag is off / no LTM / concept absent
+        (`_ltm_facts_about` -> []), so the caller returns `buf` unchanged -- byte-identical to the pre-LTM path."""
+        ltm = self._ltm_facts_about(concept)
+        if not ltm:
+            return buf
+        seen = {tuple(f) for f in buf}
+        out = list(buf)
+        for f in ltm:
+            key = tuple(f)
+            if key not in seen:
+                seen.add(key)
+                out.append(list(f))
+        return out
+
     def _facts_about(self, concept):
         """Stored facts whose AGENT is `concept` -- the concept's own self-statements (what the brain can say
-        ABOUT it). Used to expand a chain step / an elaboration associate into a grounded sentence."""
-        return [[a, v, p] for (a, v, p) in self._stored_facts() if a == concept]
+        ABOUT it). Used to expand a chain step / an elaboration associate into a grounded sentence.
+
+        Buffer tier first (unchanged); when the `BRAIN_ELABORATE_FROM_LTM_SHARD` flag is ON, the concept's routed
+        LTM facts are APPENDED (additive -- see `_with_ltm` / `_elaborate_from_ltm_enabled`)."""
+        buf = [[a, v, p] for (a, v, p) in self._stored_facts() if a == concept]
+        return self._with_ltm(buf, concept)
 
     def _facts_mentioning(self, concept):
         """Stored facts that mention `concept` in ANY role (agent OR patient) -- the content most directly ABOUT
         the topic, including the facts pointing INTO a hub concept ('weights hold memory', 'facts build memory'
-        when the topic is 'memory'). The richest, most naturally on-topic elaboration source for a hub."""
-        return [[a, v, p] for (a, v, p) in self._stored_facts() if concept in (a, p)]
+        when the topic is 'memory'). The richest, most naturally on-topic elaboration source for a hub.
+
+        Buffer tier first (unchanged, any-role); when the LTM flag is ON, the concept's routed LTM AGENT-role facts
+        are APPENDED (additive). The LTM patient-role mentions are deferred (see `_ltm_facts_about`'s note)."""
+        buf = [[a, v, p] for (a, v, p) in self._stored_facts() if concept in (a, p)]
+        return self._with_ltm(buf, concept)
 
     def _direct_fact(self, question):
         """(a) The DIRECT recall: the question's matched stored fact, GATED + VERIFIED by the brain (the moat
@@ -291,6 +380,21 @@ class RichAnswerComposer:
                     out.append(list(f))
                     excluded.add(tuple(f))
                     break                         # one grounded sentence per neural-selected concept
+        # LTM ENRICHMENT (additive, `BRAIN_ELABORATE_FROM_LTM_SHARD`): the neural planner selects concepts from the
+        # BUFFER's association graph (`ordered_associates` returns [] for a topic not in it), so an answer whose
+        # topic lives ONLY in the routed LTM shard yields no neural associates and, before this, no elaboration at
+        # all. When the flag is ON, fill any remaining budget from the TOPIC's own routed LTM facts (legitimate
+        # host KB access -- the topic is already chosen; `_facts_for_concept` -> `_facts_mentioning` carries the LTM
+        # draw). OFF -> `_ltm_store()` is None and this whole block is skipped -> byte-identical to the pre-LTM path
+        # (the host `_elaboration_facts` needs no analogue: its source-1 `_facts_mentioning(topic)` already carries
+        # the LTM draw).
+        if len(out) < self.max_elaborations and self._ltm_store() is not None:
+            for f in self._facts_for_concept(topic, exclude=list(excluded)):
+                if len(out) >= self.max_elaborations:
+                    break
+                if tuple(f) not in excluded:
+                    out.append(list(f))
+                    excluded.add(tuple(f))
         return out[: self.max_elaborations]
 
     def _elaboration_facts(self, topic, exclude):
