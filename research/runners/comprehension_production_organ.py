@@ -254,6 +254,13 @@ class ComprehensionProductionOrgan:
         self.lean_margin = None  # (T1-6) net-lean confidence for naming the over-subscribed role
         self.calib = None
         self._rest = {}          # comp-bridge id -> (rest_v, rest_u) resting snapshot for a hard per-turn reset
+        # ONE-BRAIN XEDGE — the WM-resolved-role decision (closes the sub-decision caveat): on a content-inconclusive
+        # transitive with a WM referent held, the balanced (content-cancelled) read is SIGNED by the cross-edge, so
+        # the held referent's LEARNED role becomes the role tiebreaker. `_wm_baseline` is the no-WM balanced margin
+        # (cross-edge-independent, computed lazily once); `_wm_resolve_eps` is the min |margin - baseline| that counts
+        # as a resolution (so lesioned/no-signal stays inconclusive).
+        self._wm_baseline = None
+        self._wm_resolve_eps = 0.005
 
     def _guard(self):
         """The pool's read_isolation on the SHARED path (restores every co-resident organ's slice at the end so
@@ -328,6 +335,33 @@ class ComprehensionProductionOrgan:
         b.cp_external_input_current[:] = 0.0
         for _ in range(hold_steps):
             b._run_one_simulation_step()
+
+    def _wm_resolved_role(self, comp):
+        """ONE-BRAIN XEDGE (closes the sub-decision caveat). On a content-inconclusive transitive with a WM referent
+        held, RESOLVE the role from R3-v3's VALIDATED balanced `amb_read` (the F2 instrument the pool binds as
+        `shared.xedge_amb_read`): drive BOTH animacy cue directions equally (CONTENT cancels to ~0), hold the focus
+        WM pool, read the signed `sel_agent - sel_patient` margin -- the SIGN is the held referent's LEARNED role.
+        role = sign(wm_margin - baseline), where baseline holds a NON-candidate control pool (no grown edge). Returns
+        (role, wm_margin), or (None, wm_margin) when |delta| < eps (a lesioned / no-signal read stays inconclusive ->
+        no false resolution). Byte-identical no-op (None, None) when shared=None / xedge off / no referent held. Uses
+        the proven pool read rather than a reimplementation (a hand-rolled balanced read was NOT actually balanced)."""
+        sh = self._shared
+        amb = getattr(sh, "xedge_amb_read", None) if sh is not None else None
+        foc = getattr(sh, "xedge_focus", None) if sh is not None else None
+        if amb is None or foc is None:
+            return None, None
+        cues = getattr(sh, "xedge_balanced_cues", None)
+        base_pool = getattr(sh, "xedge_base_pool", None)
+        if cues is None or base_pool is None:
+            return None, None
+        if self._wm_baseline is None:                    # control-hold balanced margin (no grown edge), computed once
+            self._wm_baseline = float(amb(base_pool, cues)["margin"])
+            self._wm_resolve_eps = max(0.004, 3.0 * abs(self._wm_baseline))
+        wm_m = float(amb(foc, cues)["margin"])
+        delta = wm_m - float(self._wm_baseline)
+        if abs(delta) < self._wm_resolve_eps:
+            return None, wm_m
+        return ("agent" if delta > 0 else "patient"), wm_m
 
     def ensure_built(self):
         if self._built:
@@ -499,15 +533,25 @@ class ComprehensionProductionOrgan:
             # no role activity at all (the D4 lesion collapses both a_i to ~0) -> nothing to target.
             base.update(kind="none", role=None, word=None)
             return None
+        # CONTENT-based role (the pre-xedge behaviour, exact when no WM is held): the net_lean sign names the
+        # over-subscribed role; within the lean margin it is a generic role-swap ("either").
         if net_lean < -self.lean_margin:
-            # both nouns over-claim PATIENT -> the AGENT slot is the unresolved one.
-            base.update(kind="role", role="agent", word=None)
+            content_role = "agent"                        # both nouns over-claim PATIENT -> AGENT slot unresolved
         elif net_lean > self.lean_margin:
-            # both nouns over-claim AGENT -> the PATIENT slot is the unresolved one.
-            base.update(kind="role", role="patient", word=None)
+            content_role = "patient"                      # both nouns over-claim AGENT -> PATIENT slot unresolved
         else:
-            # roles are active but the direction is not confidently one-sided -> a generic role-swap target.
-            base.update(kind="role", role="either", word=None)
+            content_role = "either"                       # not confidently one-sided -> generic role-swap
+        base.update(kind="role", role=content_role, word=None)
+        # ONE-BRAIN XEDGE (closes the sub-decision caveat): this transitive's CONTENT did not resolve which referent
+        # plays which role (that is why repair runs). If a WM referent is held, the cross-edge RESOLVES the held
+        # referent's role via the balanced (content-cancelled) read -- the discourse-held referent is the tiebreaker
+        # the content lacked -- and that becomes the repair role. LOAD-BEARING on the OUTPUT: varying the held
+        # referent flips role agent<->patient (-> the clarification wording differs); lesioning the cross-edge
+        # collapses the balanced margin to baseline (below eps) -> the content role stands. Byte-identical (content
+        # role only) when shared=None / xedge off / no referent held / the WM signal is below eps.
+        wm_role, wm_m = (self._wm_resolved_role(comp) if not lesion else (None, None))
+        if wm_role is not None:
+            base.update(role=wm_role, wm_resolved=True, wm_margin=float(wm_m), content_role=content_role)
         return base
 
 

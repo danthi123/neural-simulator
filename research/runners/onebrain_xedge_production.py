@@ -74,6 +74,54 @@ def xedge_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+def xedge_learn_enabled() -> bool:
+    """`BRAIN_ONEBRAIN_XEDGE_LEARN` in {1,true,yes,on} -> PART 2 LIVE-LEARNING: the cross-edge starts near-zero
+    (W0=0.05) and GROWS from an IN-BRAIN, self-supervised credit signal (comprehension's OWN confident sel
+    resolution drives teach_*, three-factor DA-gated, bounded by stdp_w_max) over a multi-turn sequence -- NOT a
+    frozen pre-grown host-schedule weight. Default OFF (unset) -> the PART-1 FROZEN host-schedule edge. Only takes
+    effect when `BRAIN_ONEBRAIN_XEDGE` is also on."""
+    v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_LEARN")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def grow_live_selfsupervised(p, n_turns: int = 80, conf: float = 0.02):
+    """PART 2 LIVE-LEARNING. Grow the cross-edge from W0=0.05 via an IN-BRAIN, SELF-SUPERVISED credit signal: no
+    host ground-truth label anywhere. Per turn: hold a WM candidate pool, present a role-resolving discourse
+    (agent- or patient-leaning content), READ the brain's OWN sel resolution (`amb_read` margin), and IFF the
+    comprehension is CONFIDENT (|margin| > `conf`) drive teach_{the-role-the-brain-resolved} -- the DA-coincidence
+    machinery then grows w{held}->sel_{resolved}. Interleaves agent-discourse-while-holding-p_agent and
+    patient-discourse-while-holding-p_patient so BOTH role edges learn from use. Freezes the candidate gate at the
+    end (no further growth in production reads). Returns the weight trajectory. `p` is an R3Pool (gate open, edge
+    at 0.05). Credit VALUE = comprehension's own spiking verdict; the WM->role association is the LEARNED content."""
+    from research.runners._onebrain_integration_r2_threefactor_selforganized import CUE_PA, GATE, _role_assignment
+    pa, pp, pc = _role_assignment(p.seed)
+    ix = p.ix
+    AG_KEYS = [("cue_animacy_pos", CUE_PA), ("cue_verbfit_pos", CUE_PA)]           # amb_read: string keys
+    PA_KEYS = [("cue_animacy_neg", CUE_PA), ("cue_verbfit_neg", CUE_PA)]
+    AG_IX = [(ix["cue_animacy_pos"], CUE_PA), (ix["cue_verbfit_pos"], CUE_PA)]     # _episode: index arrays
+    PA_IX = [(ix["cue_animacy_neg"], CUE_PA), (ix["cue_verbfit_neg"], CUE_PA)]
+    traj = [dict(turn=0, **p.cross_weights())]
+    n_credited = 0
+    for t in range(n_turns):
+        # alternate the discourse: even turns = agent-content while holding p_agent; odd = patient while holding p_patient
+        if t % 2 == 0:
+            hold, cue_keys, cue_ix = pa, AG_KEYS, AG_IX
+        else:
+            hold, cue_keys, cue_ix = pp, PA_KEYS, PA_IX
+        margin = float(p.amb_read(hold, cue_keys, band=True)["margin"])            # the brain's OWN resolution
+        if abs(margin) > conf:                                                     # confident comprehension = credit
+            teach = "teach_agent" if margin > 0 else "teach_patient"
+            p._episode(hold, cue_ix, credited=True, teach_pool=teach)              # self-supervised credited episode
+            n_credited += 1
+        if (t + 1) % 20 == 0 or t == n_turns - 1:
+            traj.append(dict(turn=t + 1, **p.cross_weights()))
+    p.b.set_plasticity_gate(GATE, 0.0)                                             # freeze after live learning
+    traj[-1]["n_credited"] = n_credited
+    return traj
+
+
 # ── Co-drive params the comprehension read reads OFF the shared pool (no import from the organ into the R2/R3
 #    runner). LOAD_PA/LOAD_STEPS/HOLD are R2's own WM-hold protocol (the same amb_read uses). ──
 _CODRIVE_PARAMS = {"load_pa": 400.0, "load_steps": 30, "hold_steps": 6}
@@ -99,6 +147,7 @@ class XedgeProductionPool:
         self.role = None            # {"p_agent","p_patient","p_ctrl"} candidate-pool assignment for this seed
         self.grow_traj = None
         self.cross_weights = None
+        self.learned = False        # True when the edge was GROWN LIVE (self-supervised, PART 2) vs frozen host-grown
 
     def ensure_built(self):
         if self._built:
@@ -116,14 +165,26 @@ class XedgeProductionPool:
 
     def _build(self):
         # Import lazily (the R3-v3 runner sets DA_SENSITIVITY=10000 on import + os.environ.setdefault SIM_BACKEND;
-        # by first-use the webapp has already fixed the backend, so setdefault is a no-op).
+        # by first-use the webapp has already fixed the backend, so setdefault is a no-op). Importing it also
+        # calibrates the DA gain the LIVE-LEARNING path below relies on (it uses the base R3Pool).
         from research.runners._onebrain_integration_r3v3_functional_drive import R3v3Pool
         from research.runners._onebrain_integration_r2_threefactor_selforganized import _role_assignment
 
-        p = R3v3Pool(self.seed, mode="intact")
-        self.grow_traj = p.train()                 # grows the cross-edge; freezes the candidate gate on return
+        if xedge_learn_enabled():
+            # PART 2 LIVE-LEARNING: start the edge at W0=0.05 (R3Pool, gate OPEN) and GROW it from the in-brain
+            # self-supervised credit signal over a multi-turn sequence, then freeze. Emergent, not pre-grown.
+            from research.runners._onebrain_integration_r3_spiking_dopamine_credit import R3Pool
+            p = R3Pool(self.seed, mode="intact")
+            self.grow_traj = grow_live_selfsupervised(p)
+            self.learned = True
+        else:
+            # PART 1 FROZEN: grow via R3-v3's host-schedule credit-gated training, freeze on return.
+            p = R3v3Pool(self.seed, mode="intact")
+            self.grow_traj = p.train()             # grows the cross-edge; freezes the candidate gate on return
+            self.learned = False
         p_agent, p_patient, p_ctrl = _role_assignment(self.seed)
         self.role = {"p_agent": p_agent, "p_patient": p_patient, "p_ctrl": p_ctrl}
+        self._r3pool = p            # keep the R3(v3)Pool: its VALIDATED amb_read is the WM-resolved role read
         self.pool = p.pool
         self.bridge = p.b
         self.comp_organ = p.comp_organ
@@ -135,6 +196,14 @@ class XedgeProductionPool:
         # comprehension co-drive + the d6 focus-set find them without importing this module.
         self.pool.xedge_focus = None
         self.pool.xedge_codrive_params = dict(_CODRIVE_PARAMS)
+        # WM-RESOLVED-ROLE read (closes the sub-decision caveat): bind R3-v3's VALIDATED balanced `amb_read` (the F2
+        # instrument) + the balanced (content-cancelled) cue spec + the control-hold pool. The comprehension organ
+        # calls these off `self._shared` to resolve an ambiguous role from the held WM referent -- reusing the proven
+        # read rather than reimplementing it (a hand-rolled balanced read was NOT actually balanced).
+        from research.runners._onebrain_integration_r2_threefactor_selforganized import AMBIG_PA, BASE_POOL
+        self.pool.xedge_amb_read = p.amb_read
+        self.pool.xedge_balanced_cues = [("cue_animacy_pos", AMBIG_PA), ("cue_animacy_neg", AMBIG_PA)]
+        self.pool.xedge_base_pool = BASE_POOL
         # optional lesion control (env) — zero the cross-edge weights in place.
         if xedge_lesioned():
             self.lesion_cross()
@@ -255,21 +324,109 @@ def _selftest_loadbearing(pool, seed):
             "lesion_attributable": bool(max_les < 1e-9 and max_intact > 1e-3)}
 
 
+def _selftest_livelearn(pool, seed):
+    """PART 2 end-to-end: the LIVE-LEARNED edge (grown from in-brain self-supervised credit) (1) grew from W0=0.05,
+    selectively, bounded by stdp_w_max (F3); (2) CLOSES the caveat -- the real production `repair_target` role
+    DECISION flips with the held WM referent (p_agent vs p_patient candidate pool) and reverts under cross-edge
+    lesion. Returns the growth + decision-flip measurements."""
+    import numpy as np
+    from sim.backend import to_host
+    from research.runners._onebrain_integration_r2_threefactor_selforganized import HMAX
+    from research.runners._spiking_comprehension_monitor_derisk import build_battery
+
+    pa, pp = pool.role["p_agent"], pool.role["p_patient"]
+    w = pool.cross_weights
+    w0 = pool.grow_traj[0]
+    grew_agent = w[f"{pa}->A"] > 0.5 and w0[f"{pa}->A"] <= 0.06
+    grew_patient = w[f"{pp}->P"] > 0.5 and w0[f"{pp}->P"] <= 0.06
+    bounded = all(v <= HMAX + 1e-6 for v in w.values())
+
+    corg = pool.comp_organ
+    corg.ensure_built()
+    sh = pool.pool
+    ambig = [it for it in build_battery(seed, n_per_cond=3) if it[0] == 0 and "ambig" in it[1]][:5]
+
+    def roles():
+        rows = []
+        for (lab, tag, n0, v, n1) in ambig:
+            sh.xedge_focus = pa
+            ra = corg.repair_target(f"{n0} {v} {n1}")
+            sh.xedge_focus = pp
+            rp = corg.repair_target(f"{n0} {v} {n1}")
+            ra_r = ra and ra.get("role"); rp_r = rp and rp.get("role")
+            rows.append({"item": f"{n0}/{v}/{n1}", "tag": tag, "role_p_agent": ra_r, "role_p_patient": rp_r,
+                         "flip": bool(ra_r != rp_r and ra_r in ("agent", "patient") and rp_r in ("agent", "patient"))})
+        return rows
+
+    intact = roles()
+    b = pool.bridge
+    data = np.asarray(to_host(b.cp_connections.data)).copy()
+    for k in pool.masks:
+        data[pool.masks[k]] = 0.0
+    b.cp_connections.data = pool.pool.xp.asarray(data, dtype=b.cp_connections.data.dtype)
+    lesioned = roles()
+
+    flips_i = sum(r["flip"] for r in intact)
+    flips_l = sum(r["flip"] for r in lesioned)
+    return {"role": pool.role, "learned": pool.learned, "grow_traj": pool.grow_traj,
+            "final_weights": w, "grew_both": bool(grew_agent and grew_patient), "bounded_F3": bool(bounded),
+            "intact_roles": intact, "lesioned_roles": lesioned,
+            "decision_flips_intact": flips_i, "decision_flips_lesioned": flips_l,
+            "caveat_closed": bool(flips_i > 0 and flips_l == 0),
+            "GO": bool(grew_agent and grew_patient and bounded and flips_i > 0 and flips_l == 0)}
+
+
 def main():
     import argparse
     import json
     from pathlib import Path
     ap = argparse.ArgumentParser()
-    ap.add_argument("--grow", action="store_true", help="build+grow the pool and self-verify load-bearing")
+    ap.add_argument("--grow", action="store_true", help="build+grow the FROZEN pool and self-verify load-bearing")
+    ap.add_argument("--verify-live", action="store_true",
+                    help="PART 2: build the LIVE-LEARNED pool (edge grows from in-brain credit) + verify caveat close")
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     os.environ["BRAIN_ONEBRAIN_XEDGE"] = "1"
-
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+
+    global _POOL
+    if args.verify_live:
+        os.environ["BRAIN_ONEBRAIN_XEDGE_LEARN"] = "1"
+        results = []
+        for s in seeds:
+            _POOL = None
+            from research.runners import comprehension_production_organ as _CO
+            _CO._ORGAN = None
+            pool = get_xedge_pool(s)
+            assert pool is not None and pool.ok, "live-learn pool failed to build"
+            sv = _selftest_livelearn(pool, s)
+            traj = [{k: round(v, 3) if isinstance(v, float) else v for k, v in d.items()} for d in sv["grow_traj"]]
+            print(f"[seed {s}] learned={sv['learned']} role={sv['role']} grew_both={sv['grew_both']} "
+                  f"bounded_F3={sv['bounded_F3']} flips(intact={sv['decision_flips_intact']}/5 "
+                  f"lesioned={sv['decision_flips_lesioned']}/5) caveat_closed={sv['caveat_closed']} GO={sv['GO']}",
+                  flush=True)
+            print(f"    grow: {traj}")
+            for r in sv["intact_roles"]:
+                print(f"    intact  {r['tag']:14s} {r['item']:18s} p_agent->{r['role_p_agent']} "
+                      f"p_patient->{r['role_p_patient']} {'FLIP' if r['flip'] else ''}")
+            results.append({"seed": s, "selftest": sv})
+        payload = {"probe": "onebrain_xedge_production_live_learning", "seeds": seeds,
+                   "backend": os.environ.get("SIM_BACKEND", "numpy"), "results": results,
+                   "n_go": sum(r["selftest"]["GO"] for r in results),
+                   "note": ("PART 2: the cross-edge GROWS from W0=0.05 via an IN-BRAIN self-supervised credit signal "
+                            "(comprehension's own confident sel resolution drives teach_*, three-factor DA-gated, "
+                            "bounded by stdp_w_max) -- NOT a frozen pre-grown weight -- and CLOSES the sub-decision "
+                            "caveat: the real production repair role DECISION flips with the held WM referent, "
+                            "lesion-attributable. Semantic referent->pool binding stays a declared residual.")}
+        if args.out:
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(payload, indent=2, default=str))
+            print(f"wrote {args.out}", flush=True)
+        return 0
+
     results = []
     for s in seeds:
-        global _POOL
         _POOL = None
         pool = get_xedge_pool(s)
         assert pool is not None and pool.ok, "xedge pool failed to build"
