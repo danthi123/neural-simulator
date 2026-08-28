@@ -50,12 +50,34 @@ def test_learned_lexicon_lesion_collapses_to_abstain():
 
 
 def test_flag_off_byte_identical_to_pre_existing_scope():
+    # 2026-08-27 FLIPPED DEFAULT-ON (joint flip-soak GO): explicit "0" is now the byte-identical escape to the
+    # pre-flip hand-table-only scope -- `_clear_flags()` (unset) means ON post-flip; see
+    # `test_unset_now_defaults_to_on` below for the flip itself.
     _clear_flags()
-    organ = CO.get_organ(seed=42)
-    tr = CO.extract_transitive(TEXT)
-    assert tr == (HELD_OUT_ANIMATE, "carry", "cup")
-    assert organ.competent(*tr) is False                    # unrecognized (hand table lacks 'monkey') -> out of scope
-    assert organ.judge(TEXT) is None                         # byte-identical: unchanged turn
+    os.environ["BRAIN_LEARNED_ANIMACY_CUE"] = "0"
+    try:
+        organ = CO.get_organ(seed=42)
+        tr = CO.extract_transitive(TEXT)
+        assert tr == (HELD_OUT_ANIMATE, "carry", "cup")
+        assert organ.competent(*tr) is False                # unrecognized (hand table lacks 'monkey') -> out of scope
+        assert organ.judge(TEXT) is None                     # byte-identical: unchanged turn
+    finally:
+        _clear_flags()
+
+
+def test_unset_now_defaults_to_on():
+    """Pins the 2026-08-27 default-flip itself: leaving `BRAIN_LEARNED_ANIMACY_CUE` UNSET now behaves exactly
+    like an explicit "1" (the joint flip-soak's own G1 byte-identical-off check verified unset=="0" was true
+    of the PRE-flip code; this is the post-flip mirror: unset=="1")."""
+    _clear_flags()
+    try:
+        organ = CO.get_organ(seed=42)
+        tr = CO.extract_transitive(TEXT)
+        assert organ.competent(*tr) is True
+        j = organ.judge(TEXT)
+        assert j is not None and j["comprehended"] is True
+    finally:
+        _clear_flags()
 
 
 def test_flag_on_extends_coverage_load_bearing():

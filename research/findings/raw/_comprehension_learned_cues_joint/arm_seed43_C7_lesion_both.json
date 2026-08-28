@@ -1,0 +1,777 @@
+{
+  "battery": {
+    "hand_ambig_2anim": {
+      "competent": true,
+      "extract_transitive": [
+        "wolf",
+        "watch",
+        "owl"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.07708333333333334,
+        "on": true,
+        "svo": [
+          "wolf",
+          "watch",
+          "owl"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.016666666666666666,
+        "a1": 0.09930555555555555,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.11597222222222221,
+        "on": true,
+        "pair_max": 0.09930555555555555,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "wolf",
+          "watch",
+          "owl"
+        ],
+        "word": null
+      },
+      "text": "the wolf watch the owl"
+    },
+    "hand_ambig_2inan": {
+      "competent": true,
+      "extract_transitive": [
+        "book",
+        "carry",
+        "cup"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.15694444444444444,
+        "on": true,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": -0.20555555555555555,
+        "a1": -0.3333333333333333,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": -0.5388888888888889,
+        "on": true,
+        "pair_max": 0.3333333333333333,
+        "role": "agent",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "word": null
+      },
+      "text": "the book carry the cup"
+    },
+    "hand_bite": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "bite",
+        "bone"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.29305555555555557,
+        "on": true,
+        "svo": [
+          "dog",
+          "bite",
+          "bone"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.14722222222222223,
+        "a1": -0.14722222222222223,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.0,
+        "on": true,
+        "pair_max": 0.14722222222222223,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "bite",
+          "bone"
+        ],
+        "word": null
+      },
+      "text": "the dog bite the bone"
+    },
+    "hand_carry": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "carry",
+        "book"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.29166666666666663,
+        "on": true,
+        "svo": [
+          "dog",
+          "carry",
+          "book"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.1375,
+        "a1": -0.1375,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.0,
+        "on": true,
+        "pair_max": 0.1375,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "carry",
+          "book"
+        ],
+        "word": null
+      },
+      "text": "the dog carry the book"
+    },
+    "hand_chase": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.06388888888888888,
+        "on": true,
+        "svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.015277777777777777,
+        "a1": 0.07013888888888889,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.08541666666666667,
+        "on": true,
+        "pair_max": 0.07013888888888889,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        "word": null
+      },
+      "text": "the dog chase the cat"
+    },
+    "hand_eat": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "eat",
+        "apple"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.3305555555555556,
+        "on": true,
+        "svo": [
+          "dog",
+          "eat",
+          "apple"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.13194444444444445,
+        "a1": -0.14861111111111108,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": -0.016666666666666635,
+        "on": true,
+        "pair_max": 0.14861111111111108,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "eat",
+          "apple"
+        ],
+        "word": null
+      },
+      "text": "the dog eat the apple"
+    },
+    "hand_grab": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "grab",
+        "stick"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.2923611111111111,
+        "on": true,
+        "svo": [
+          "dog",
+          "grab",
+          "stick"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.15416666666666667,
+        "a1": -0.14722222222222223,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.0069444444444444475,
+        "on": true,
+        "pair_max": 0.15416666666666667,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "grab",
+          "stick"
+        ],
+        "word": null
+      },
+      "text": "the dog grab the stick"
+    },
+    "hand_kick": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "kick",
+        "ball"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.29027777777777775,
+        "on": true,
+        "svo": [
+          "dog",
+          "kick",
+          "ball"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.15138888888888888,
+        "a1": -0.14375,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.0076388888888888895,
+        "on": true,
+        "pair_max": 0.15138888888888888,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "kick",
+          "ball"
+        ],
+        "word": null
+      },
+      "text": "the dog kick the ball"
+    },
+    "hand_push": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "push",
+        "rock"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": true,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.28055555555555556,
+        "on": true,
+        "svo": [
+          "dog",
+          "push",
+          "rock"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.14027777777777778,
+        "a1": -0.13333333333333336,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.00694444444444442,
+        "on": true,
+        "pair_max": 0.14027777777777778,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "push",
+          "rock"
+        ],
+        "word": null
+      },
+      "text": "the dog push the rock"
+    },
+    "hand_watch": {
+      "competent": true,
+      "extract_transitive": [
+        "dog",
+        "watch",
+        "bird"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.15555555555555556,
+        "on": true,
+        "svo": [
+          "dog",
+          "watch",
+          "bird"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "a0": 0.017361111111111112,
+        "a1": 0.09444444444444444,
+        "kind": "role",
+        "lean_margin": 0.18194444444444444,
+        "lesioned": false,
+        "loadbearing": "spiking_role_evidence",
+        "net_lean": 0.11180555555555555,
+        "on": true,
+        "pair_max": 0.09444444444444444,
+        "role": "either",
+        "role_floor": 0.03638888888888889,
+        "svo": [
+          "dog",
+          "watch",
+          "bird"
+        ],
+        "word": null
+      },
+      "text": "the dog watch the bird"
+    },
+    "joint_monkey_clean_box": {
+      "competent": true,
+      "extract_transitive": [
+        "monkey",
+        "clean",
+        "box"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.018750000000000003,
+        "on": true,
+        "svo": [
+          "monkey",
+          "clean",
+          "box"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "kind": "oov",
+        "lesioned": false,
+        "loadbearing": "host_lexical",
+        "on": true,
+        "oov_tokens": [
+          "monkey",
+          "box",
+          "clean"
+        ],
+        "role": null,
+        "svo": [
+          "monkey",
+          "clean",
+          "box"
+        ],
+        "word": null
+      },
+      "text": "the monkey clean the box"
+    },
+    "joint_rabbit_help_kitten": {
+      "competent": true,
+      "extract_transitive": [
+        "rabbit",
+        "help",
+        "kitten"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.0,
+        "on": true,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "kind": "oov",
+        "lesioned": false,
+        "loadbearing": "host_lexical",
+        "on": true,
+        "oov_tokens": [
+          "rabbit",
+          "kitten",
+          "help"
+        ],
+        "role": null,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "word": null
+      },
+      "text": "the rabbit help the kitten"
+    },
+    "moat_oov": {
+      "competent": true,
+      "extract_transitive": [
+        "wug",
+        "blickets",
+        "glorp"
+      ],
+      "judge": {
+        "calib": {
+          "max_ill": 0.17569444444444443,
+          "mean_ill": 0.09575617283950616,
+          "mean_well": 0.3332175925925926,
+          "min_well": 0.3284722222222222,
+          "n_calib": 24,
+          "read_steps": 60
+        },
+        "comprehended": false,
+        "in_scope": true,
+        "lesioned": false,
+        "margin": 0.0,
+        "on": true,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "threshold": 0.2520833333333333
+      },
+      "repair_target": {
+        "kind": "oov",
+        "lesioned": false,
+        "loadbearing": "host_lexical",
+        "on": true,
+        "oov_tokens": [
+          "wug",
+          "glorp",
+          "blickets"
+        ],
+        "role": null,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "word": null
+      },
+      "text": "the wug blickets the glorp"
+    },
+    "noun_anim_kitten": {
+      "competent": false,
+      "extract_transitive": [
+        "kitten",
+        "eat",
+        "apple"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the kitten eat the apple"
+    },
+    "noun_anim_monkey": {
+      "competent": false,
+      "extract_transitive": [
+        "monkey",
+        "eat",
+        "apple"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the monkey eat the apple"
+    },
+    "noun_anim_rabbit": {
+      "competent": false,
+      "extract_transitive": [
+        "rabbit",
+        "eat",
+        "apple"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the rabbit eat the apple"
+    },
+    "noun_inanim_box": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "eat",
+        "box"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog eat the box"
+    },
+    "noun_inanim_key": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "eat",
+        "key"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog eat the key"
+    },
+    "noun_inanim_table": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "eat",
+        "table"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog eat the table"
+    },
+    "verb_animpat_feed": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "feed",
+        "cat"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog feed the cat"
+    },
+    "verb_animpat_help": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "help",
+        "cat"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog help the cat"
+    },
+    "verb_animpat_hug": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "hug",
+        "cat"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog hug the cat"
+    },
+    "verb_inanimpat_clean": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "clean",
+        "cup"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog clean the cup"
+    },
+    "verb_inanimpat_open": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "open",
+        "cup"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog open the cup"
+    },
+    "verb_inanimpat_wash": {
+      "competent": false,
+      "extract_transitive": [
+        "dog",
+        "wash",
+        "cup"
+      ],
+      "judge": null,
+      "repair_target": null,
+      "text": "the dog wash the cup"
+    }
+  },
+  "flags": {
+    "animacy": "on",
+    "lesion_animacy": "on",
+    "lesion_verb": "on",
+    "verb": "on"
+  },
+  "seed": 43
+}

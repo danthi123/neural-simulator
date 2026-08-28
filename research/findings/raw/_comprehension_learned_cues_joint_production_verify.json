@@ -1,0 +1,986 @@
+{
+  "faculty": "joint flip-soak \u2014 BRAIN_LEARNED_ANIMACY_CUE + BRAIN_LEARNED_VERB_SELECTS through /api/brain-chat",
+  "backend": "numpy",
+  "composer": "rf",
+  "checks": {
+    "hand_covered_byte_identical": true,
+    "joint_off_oov_named": true,
+    "joint_on_abstained_with_repair": true,
+    "held_out_clear_off_out_of_scope": true,
+    "held_out_clear_on_comprehended": true,
+    "moat_unaffected_by_flags": true,
+    "lesion_both_reverts_joint_to_flagoff": true
+  },
+  "ALL_OK": true,
+  "examples": {
+    "hand_covered_off": {
+      "answer": "I caught the verb 'carry' with the book and the cup, but my role-binding didn't resolve the AGENT \u2014 which of them is doing the 'carry', the book or the cup?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "margin": 0.14166666666666666,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "a0": -0.2076388888888889,
+        "a1": -0.3333333333333333,
+        "pair_max": 0.3333333333333333,
+        "net_lean": -0.5409722222222222,
+        "role_floor": 0.037708333333333344,
+        "lean_margin": 0.1885416666666667,
+        "loadbearing": "spiking_role_evidence",
+        "kind": "role",
+        "role": "agent",
+        "word": null,
+        "repaired": true
+      }
+    },
+    "hand_covered_on": {
+      "answer": "I caught the verb 'carry' with the book and the cup, but my role-binding didn't resolve the AGENT \u2014 which of them is doing the 'carry', the book or the cup?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "margin": 0.14027777777777775,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "book",
+          "carry",
+          "cup"
+        ],
+        "a0": -0.20555555555555555,
+        "a1": -0.3333333333333333,
+        "pair_max": 0.3333333333333333,
+        "net_lean": -0.5388888888888889,
+        "role_floor": 0.037708333333333344,
+        "lean_margin": 0.1885416666666667,
+        "loadbearing": "spiking_role_evidence",
+        "kind": "role",
+        "role": "agent",
+        "word": null,
+        "repaired": true
+      }
+    },
+    "joint_off": {
+      "answer": "I followed the shape of that, but I don't know the words 'rabbit' or 'kitten' yet \u2014 what do they refer to?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0005555555555555556,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.16440749999999998,
+        "appraisal_arousal": 0.26668125,
+        "appraisal_hits": [
+          "help",
+          "kitten"
+        ],
+        "pos_rate": 0.0005555555555555556,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "margin": 0.004861111111111108,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "kind": "oov",
+        "oov_tokens": [
+          "rabbit",
+          "kitten",
+          "help"
+        ],
+        "role": null,
+        "word": null,
+        "loadbearing": "host_lexical",
+        "repaired": true
+      }
+    },
+    "joint_on": {
+      "answer": "I caught the verb 'help' with the rabbit and the kitten, but my role-binding didn't resolve who does what \u2014 is the rabbit doing the 'help' to the kitten, or the other way round?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0002777777777777778,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.16440749999999998,
+        "appraisal_arousal": 0.26668125,
+        "appraisal_hits": [
+          "help",
+          "kitten"
+        ],
+        "pos_rate": 0.0002777777777777778,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "margin": 0.08611111111111111,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "a0": 0.014583333333333334,
+        "a1": 0.07013888888888889,
+        "pair_max": 0.07013888888888889,
+        "net_lean": 0.08472222222222223,
+        "role_floor": 0.037708333333333344,
+        "lean_margin": 0.1885416666666667,
+        "loadbearing": "spiking_role_evidence",
+        "kind": "role",
+        "role": "either",
+        "word": null,
+        "repaired": true
+      }
+    },
+    "joint_lesioned": {
+      "answer": "I followed the shape of that, but I don't know the words 'rabbit' or 'kitten' yet \u2014 what do they refer to?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0002777777777777778,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.16440749999999998,
+        "appraisal_arousal": 0.26668125,
+        "appraisal_hits": [
+          "help",
+          "kitten"
+        ],
+        "pos_rate": 0.0002777777777777778,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "margin": 0.0,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "rabbit",
+          "help",
+          "kitten"
+        ],
+        "kind": "oov",
+        "oov_tokens": [
+          "rabbit",
+          "kitten",
+          "help"
+        ],
+        "role": null,
+        "word": null,
+        "loadbearing": "host_lexical",
+        "repaired": true
+      }
+    },
+    "held_clear_off": {
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: the monkey eats the apple the dog chases the cat the cat eats the fish \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": [
+        "monkey",
+        "eat",
+        "apple"
+      ],
+      "derived": false,
+      "derived_from": null,
+      "verified": true,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": true,
+      "n_sentences": 3,
+      "supporting_facts": [
+        [
+          "monkey",
+          "eat",
+          "apple"
+        ],
+        [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        [
+          "cat",
+          "eat",
+          "fish"
+        ]
+      ],
+      "followup": false,
+      "activity": {
+        "roles": [
+          {
+            "word": "monkey",
+            "confidence": 0.44937197343047247,
+            "winner_score_raw": 0.44937197343047247,
+            "runner_word": "dog",
+            "runner_confidence": 0.1033821785454613,
+            "runner_score_raw": 0.1033821785454613,
+            "margin": 0.34598979488501114,
+            "conflict": 0.18703102995946633,
+            "role": "agent",
+            "cue": true,
+            "asserted": "monkey"
+          },
+          {
+            "word": "eat",
+            "confidence": 0.5287427554767944,
+            "winner_score_raw": 0.5287427554767944,
+            "runner_word": "worm",
+            "runner_confidence": 0.10618983221748038,
+            "runner_score_raw": 0.10618983221748038,
+            "margin": 0.42255292325931404,
+            "conflict": 0.16724583697279974,
+            "role": "action",
+            "cue": true,
+            "asserted": "eat"
+          },
+          {
+            "word": "apple",
+            "confidence": 0.49680520823198326,
+            "winner_score_raw": 0.49680520823198326,
+            "runner_word": "use",
+            "runner_confidence": 0.11507426409437965,
+            "runner_score_raw": 0.11507426409437965,
+            "margin": 0.3817309441376036,
+            "conflict": 0.1880668809966789,
+            "role": "patient",
+            "cue": false
+          }
+        ],
+        "matched_fact_index": 5,
+        "n_facts_scanned": 6,
+        "abstained": false,
+        "rf": {
+          "n_readout_neurons": null,
+          "frac_fired": null,
+          "mean_magnitude": null
+        },
+        "composer": "rf",
+        "source_fact": {
+          "agent": "monkey",
+          "action": "eat",
+          "patient": "apple",
+          "polarity": "AFFIRM"
+        }
+      },
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": null,
+      "surprise": null,
+      "worldmodel": null,
+      "multiref": null,
+      "noncontradiction": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "monkey",
+          "eats",
+          "apple"
+        ],
+        "recall_action": "eats",
+        "asserted_polarity": "AFFIRM",
+        "recalled_yn": "unknown",
+        "stored_polarity": null,
+        "reject": false
+      },
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 0.4171227704698813,
+        "balance": 0.05069026269714647,
+        "threshold": 0.057845546432234586,
+        "confident": false,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.3,
+          "role_conf_hi": 0.5,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.38342455409397624
+      },
+      "curiosity": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.0,
+        "ema_arousal": 0.0,
+        "body_h": 0.5,
+        "body_a": 0.0,
+        "mood": -0.003375000000000003,
+        "felt_arousal": 0.0,
+        "level": 0,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "neutral_hold",
+        "seed": 42,
+        "vplus_rate": 0.03679166666666667,
+        "vminus_rate": 0.04016666666666667
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 42,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.75,
+        "ema_engagement": 0.44999999999999996,
+        "afferent_pA": 629.9999999999999,
+        "da_level": 0.7155259371121526,
+        "snc_firing": 0.11083333333333327,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 42,
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 1.4310518742243052,
+        "da_level": 0.7155259371121526,
+        "lesioned": false
+      }
+    },
+    "held_clear_on": {
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: the monkey eats the apple the dog chases the cat the cat eats the fish \u2014 worth going further here.",
+      "abstained": false,
+      "recalled_svo": [
+        "monkey",
+        "eat",
+        "apple"
+      ],
+      "derived": false,
+      "derived_from": null,
+      "verified": true,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": true,
+      "n_sentences": 3,
+      "supporting_facts": [
+        [
+          "monkey",
+          "eat",
+          "apple"
+        ],
+        [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        [
+          "cat",
+          "eat",
+          "fish"
+        ]
+      ],
+      "followup": false,
+      "activity": {
+        "roles": [
+          {
+            "word": "monkey",
+            "confidence": 0.44937197343047247,
+            "winner_score_raw": 0.44937197343047247,
+            "runner_word": "dog",
+            "runner_confidence": 0.1033821785454613,
+            "runner_score_raw": 0.1033821785454613,
+            "margin": 0.34598979488501114,
+            "conflict": 0.18703102995946633,
+            "role": "agent",
+            "cue": true,
+            "asserted": "monkey"
+          },
+          {
+            "word": "eat",
+            "confidence": 0.5287427554767944,
+            "winner_score_raw": 0.5287427554767944,
+            "runner_word": "worm",
+            "runner_confidence": 0.10618983221748038,
+            "runner_score_raw": 0.10618983221748038,
+            "margin": 0.42255292325931404,
+            "conflict": 0.16724583697279974,
+            "role": "action",
+            "cue": true,
+            "asserted": "eat"
+          },
+          {
+            "word": "apple",
+            "confidence": 0.49680520823198326,
+            "winner_score_raw": 0.49680520823198326,
+            "runner_word": "use",
+            "runner_confidence": 0.11507426409437965,
+            "runner_score_raw": 0.11507426409437965,
+            "margin": 0.3817309441376036,
+            "conflict": 0.1880668809966789,
+            "role": "patient",
+            "cue": false
+          }
+        ],
+        "matched_fact_index": 5,
+        "n_facts_scanned": 6,
+        "abstained": false,
+        "rf": {
+          "n_readout_neurons": null,
+          "frac_fired": null,
+          "mean_magnitude": null
+        },
+        "composer": "rf",
+        "source_fact": {
+          "agent": "monkey",
+          "action": "eat",
+          "patient": "apple",
+          "polarity": "AFFIRM"
+        }
+      },
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "monkey",
+          "eat",
+          "apple"
+        ],
+        "margin": 0.34652777777777777,
+        "threshold": 0.24861111111111112,
+        "comprehended": true,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false
+      },
+      "surprise": null,
+      "worldmodel": null,
+      "multiref": null,
+      "noncontradiction": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "monkey",
+          "eats",
+          "apple"
+        ],
+        "recall_action": "eats",
+        "asserted_polarity": "AFFIRM",
+        "recalled_yn": "unknown",
+        "stored_polarity": null,
+        "reject": false
+      },
+      "reconsolidation": null,
+      "pragmatic": null,
+      "episodic": null,
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 0.4171227704698813,
+        "balance": 0.05069026269714647,
+        "threshold": 0.057845546432234586,
+        "confident": false,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.3,
+          "role_conf_hi": 0.5,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.38342455409397624
+      },
+      "curiosity": null,
+      "affect_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "ema_valence": 0.0,
+        "ema_arousal": 0.0,
+        "body_h": 0.5,
+        "body_a": 0.0,
+        "mood": -0.003375000000000003,
+        "felt_arousal": 0.0,
+        "level": 0,
+        "high_arousal": false,
+        "lead": "",
+        "reason": "neutral_hold",
+        "seed": 42,
+        "vplus_rate": 0.03679166666666667,
+        "vminus_rate": 0.04016666666666667
+      },
+      "swap_drives": {
+        "acted": false,
+        "turn": 1,
+        "topic": null,
+        "swapped": false,
+        "held_topic_before": null,
+        "held_topic": null,
+        "evicted_topic": null,
+        "reason": "no_topic_hold",
+        "seed": 42,
+        "lesioned": false,
+        "on": true,
+        "lead": "",
+        "new_topic": null,
+        "reason_lead": "no_topic_hold"
+      },
+      "da_drives": {
+        "acted": true,
+        "turn": 1,
+        "lesioned": false,
+        "turn_engagement": 0.75,
+        "ema_engagement": 0.44999999999999996,
+        "afferent_pA": 629.9999999999999,
+        "da_level": 0.7155259371121526,
+        "snc_firing": 0.11083333333333327,
+        "mode": "focus",
+        "lead": " \u2014 worth going further here.",
+        "reason": "engaged",
+        "seed": 42,
+        "on": true
+      },
+      "da_encoding": {
+        "on": true,
+        "g": 1.4310518742243052,
+        "da_level": 0.7155259371121526,
+        "lesioned": false
+      }
+    },
+    "moat_off": {
+      "answer": "I followed the shape of that, but I don't know the words 'wug' or 'glorp' yet \u2014 what do they refer to?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "margin": 0.0,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "kind": "oov",
+        "oov_tokens": [
+          "wug",
+          "glorp",
+          "blickets"
+        ],
+        "role": null,
+        "word": null,
+        "loadbearing": "host_lexical",
+        "repaired": true
+      }
+    },
+    "moat_on": {
+      "answer": "I followed the shape of that, but I don't know the words 'wug' or 'glorp' yet \u2014 what do they refer to?",
+      "abstained": true,
+      "recalled_svo": null,
+      "verified": false,
+      "renderer": "template-stub (GPU-free)",
+      "brain": "tiny-demo",
+      "source": "tiny-demo +LTM",
+      "rich": false,
+      "activity": null,
+      "affect": {
+        "on": true,
+        "lesioned": false,
+        "composer": "onebrain",
+        "differential": 0.0,
+        "valence_sign": "0",
+        "tone_level": 0,
+        "tone_token": "",
+        "forthcomingness": {
+          "max_sentences": 4,
+          "max_elaborations": 2
+        },
+        "manner_template": "",
+        "appraisal_valence": 0.0,
+        "appraisal_arousal": 0.0,
+        "appraisal_hits": [],
+        "pos_rate": 0.0,
+        "neg_rate": 0.0
+      },
+      "comprehension": {
+        "on": true,
+        "lesioned": false,
+        "in_scope": true,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "margin": 0.02986111111111111,
+        "threshold": 0.24861111111111112,
+        "comprehended": false,
+        "calib": {
+          "mean_well": 0.3431712962962963,
+          "min_well": 0.33055555555555555,
+          "mean_ill": 0.08958333333333332,
+          "max_ill": 0.16666666666666666,
+          "read_steps": 60,
+          "n_calib": 24
+        },
+        "known_binding": false,
+        "abstained": true
+      },
+      "not_understood": true,
+      "pragmatic": null,
+      "repair": {
+        "on": true,
+        "lesioned": false,
+        "svo": [
+          "wug",
+          "blickets",
+          "glorp"
+        ],
+        "kind": "oov",
+        "oov_tokens": [
+          "wug",
+          "glorp",
+          "blickets"
+        ],
+        "role": null,
+        "word": null,
+        "loadbearing": "host_lexical",
+        "repaired": true
+      }
+    }
+  }
+}

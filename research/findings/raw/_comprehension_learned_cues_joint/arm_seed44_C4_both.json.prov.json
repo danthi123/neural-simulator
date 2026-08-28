@@ -1,0 +1,38 @@
+{
+ "run_id": "1787889809-3695511",
+ "runner": "research/runners/_comprehension_learned_cues_joint_arm.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a01c3358168568fd7/research/runners/_comprehension_learned_cues_joint_arm.py",
+  "--seed",
+  "44",
+  "--animacy",
+  "on",
+  "--verb",
+  "on",
+  "--lesion-animacy",
+  "off",
+  "--lesion-verb",
+  "off",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a01c3358168568fd7/research/findings/raw/_comprehension_learned_cues_joint/arm_seed44_C4_both.json"
+ ],
+ "git_sha": "45900044b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T00:03:29",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1787889695-3693360"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_comprehension_learned_cues_joint/arm_seed44_C4_both.json"
+}
