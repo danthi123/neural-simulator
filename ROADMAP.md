@@ -7,6 +7,19 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-28 (newest) — the e-prop-learned WKV-mouth head is confirmed swappable, and its save/load plumbing now exists
+
+Scoped follow-up to the 2026-08-28 WKV-mouth wiring: that rung named one residual left undone — the e-prop
+LOCALLY-LEARNED read-out head (`W_hat`, already GO'd at 6-seed, recovering `0.87` of the copied head's substrate
+fidelity) was never persisted to disk, so the wired mouth reads the checkpoint's own copied head instead. This
+pass confirms `W_hat` is architecturally IDENTICAL to that copied head (same `[V,D]` linear map over the same
+feature basis — a literal drop-in, not a different object needing translation), adds `--save-w-hat` persistence
+to the eprop runner, and adds an opt-in, default-OFF, fail-safe load path in the WKV mouth generator (loads the
+learned head if present and shape-matched; falls back cleanly to the native head otherwise). De-risked at a tiny
+single-seed CPU smoke scale (flag-off byte-identical, flag-on loads+generates, both failure modes fail safe); the
+real 6-seed head still needs the full GPU run to actually persist it at production quality — named as the next
+step, not done here. See `research/findings/2026-08-28-persist-eprop-head-scope.md`.
+
 ## 2026-08-27 (newest) — knowledge answers live by default; the mouth wall is precisely located; the "learn from experience" wall moves one layer deeper; and literature search at a wall is now machine-enforced
 
 Since the 7-region merge check passed, a broad concurrent push (owner steer: work all the needed dimensions at once, toward an LLM-like *experience* that is biology-based, learns/grows, and is introspective — not a Q&A machine):
