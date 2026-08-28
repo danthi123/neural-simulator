@@ -1,7 +1,7 @@
 {
  "schema": "board-sync-v1",
  "_doc": "Audit trail of board mutations written by tools/vikunja.sh. gates/board_sync_on_status_change.py requires this file to GROW in the same commit that changes docs/PRODUCTION_INTEGRATION_LEDGER.yaml (a faculty-status change must sync the board). Seeded 2026-08-21.",
- "updated_at": "2026-08-28T01:40:09Z",
+ "updated_at": "2026-08-28T02:59:45Z",
  "entries": [
   {
    "at": "2026-08-22T02:19:31Z",
@@ -626,6 +626,24 @@
    "op": "append-desc",
    "args": "task=94",
    "head": "da84fde7c"
+  },
+  {
+   "at": "2026-08-28T02:59:36Z",
+   "op": "set-desc",
+   "args": "task=175",
+   "head": "e17d177aa"
+  },
+  {
+   "at": "2026-08-28T02:59:42Z",
+   "op": "create-task",
+   "args": "proj=2 title=Test turning on both the alive-word guesser and the verb-preference guesser together, then make them the default",
+   "head": "e17d177aa"
+  },
+  {
+   "at": "2026-08-28T02:59:45Z",
+   "op": "label-task",
+   "args": "task=190 label=2",
+   "head": "e17d177aa"
   }
  ]
 }

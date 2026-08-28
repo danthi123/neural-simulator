@@ -86,7 +86,7 @@
     },
     "comprehensible": {
       "in": "the wolf bites the apple",
-      "answer": "The wolf biteses apple.",
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: the wolf bites the apple \u2014 worth going further here.",
       "repair": null
     },
     "lesion": {
