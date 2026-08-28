@@ -1,5 +1,5 @@
 {
-  "probe": "onebrain_xedge_selfschema_production_frozen",
+  "probe": "onebrain_xedge_selfschema_production_declarative",
   "seeds": [
     42,
     43,
@@ -8,6 +8,7 @@
     101,
     102
   ],
+  "declarative": true,
   "backend": "numpy",
   "n_go": 6,
   "n_seeds": 6,

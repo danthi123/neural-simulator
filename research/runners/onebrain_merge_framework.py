@@ -107,6 +107,20 @@ class CrossEdge:
     freeze_rest: bool = True                   # apply_cross_edge_freeze()'s whitelist inversion: gain0-freeze
                                                #   every OTHER edge in the pool, keep only THIS edge's gate plastic
                                                #   (the R1 3-line pattern, generalized to N declared edges)
+    source_idx_fn: Callable = None             # OPTIONAL (bridge) -> ndarray of absolute neuron indices, used
+                                               #   INSTEAD of `rm.indices(source_region)` when given. Closes a
+                                               #   genuine gap found migrating R4 (self_schema author -> source_
+                                               #   provenance, 2026-08-28): R1/R3-v3/the surprise->episodic edge all
+                                               #   wire whole REGISTERED regions ("w0", "surprise", ...), but R4's
+                                               #   source endpoint ("author") is a SUB-SLICE of the single
+                                               #   "self_schema" region (self_schema_production_organ's own
+                                               #   attend/confid/author offset split, `_self_schema_member_attend`)
+                                               #   -- `region_manager.indices("author")` raises KeyError, there is
+                                               #   no such top-level region. `source_region` stays a required
+                                               #   documentation string either way (still labels the edge); when
+                                               #   `source_idx_fn` is None (every pre-existing CrossEdge), behavior
+                                               #   is UNCHANGED (`_cross_edge_dense` falls back to the name lookup).
+    target_idx_fn: Callable = None             # OPTIONAL, same as `source_idx_fn` for the TARGET endpoint.
 
     @property
     def gate_name(self) -> str:
@@ -119,10 +133,17 @@ def _cross_edge_dense(bridge, ce: "CrossEdge") -> dict:
     the pool's OWN region indices (`region_manager.indices(name)`) so a cross-edge descriptor needs no bespoke
     callable, only a region-name pair. Byte-identical in shape/dtype/order to R1's `_dense` (same
     `np.repeat(pre, post.size)` / `np.tile(post, pre.size)` construction), so a declared edge reproduces the
-    bespoke wiring exactly, not merely approximately."""
+    bespoke wiring exactly, not merely approximately.
+
+    `source_idx_fn`/`target_idx_fn` (2026-08-28, the R4 migration): when a `CrossEdge` supplies one, it resolves
+    that endpoint's absolute neuron indices directly instead of `region_manager.indices(name)` — needed for an
+    endpoint that is a SUB-SLICE of a registered region (R4's `author`, a slice of the single `self_schema`
+    region), not itself a top-level region name. None (every pre-existing CrossEdge) -> unchanged name lookup."""
     rm = bridge.region_manager
-    pre = np.asarray(rm.indices(ce.source_region), dtype=np.int64)
-    post = np.asarray(rm.indices(ce.target_region), dtype=np.int64)
+    pre = (np.asarray(ce.source_idx_fn(bridge), dtype=np.int64) if ce.source_idx_fn is not None
+          else np.asarray(rm.indices(ce.source_region), dtype=np.int64))
+    post = (np.asarray(ce.target_idx_fn(bridge), dtype=np.int64) if ce.target_idx_fn is not None
+           else np.asarray(rm.indices(ce.target_region), dtype=np.int64))
     P = np.repeat(pre, post.size)
     Q = np.tile(post, pre.size)
     out = {"pre_indices": P, "post_indices": Q,

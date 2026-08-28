@@ -98,6 +98,32 @@ def xedge_selfschema_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# PRODUCTION DEFAULT — OFF (2026-08-28, the declarative-framework migration). `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_
+# DECLARATIVE` selects WHICH construction path builds the pool this module wires into the live chat handler:
+# unset/off (default) -> the ORIGINAL bespoke `R4Pool` (hand-typed `_dense(...)` union + 3-line whitelist freeze,
+# unchanged since PART-1/`d84775aa8`); on -> `DeclarativeR4Pool` (`_onebrain_declarative_crossedge_r4_repro.py`),
+# the SAME edge expressed as ONE `CrossEdge` row on `merge_organs(..., cross_edges=[...])`, proven BIT-IDENTICAL
+# to the bespoke construction on 6/6 seeds (grown-weight max|delta|=0.0, F2 lesion-attributable fraction matching
+# to full float precision on every seed -- see the repro's own 6-seed artifact). This flag changes ONLY the
+# INTERNAL pool-construction code path; `crossedge_provenance_shift` (the function `webapp/server.py`'s is_hyp
+# block calls) and every other module-level surface are UNCHANGED, so a turn's `resp["authorship"][
+# "source_provenance_crossedge"]` output is byte-identical whichever arm built the pool. Default OFF -> the
+# module's behavior (and every existing test against it) is UNCHANGED (the exact bespoke code path PART-1 shipped
+# runs unconditionally when this flag is unset), so this migration carries zero risk to what is already wired.
+_XEDGE_SS_DECLARATIVE_DEFAULT_ON = False
+
+
+def xedge_selfschema_declarative_enabled() -> bool:
+    """`BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_DECLARATIVE` in {1,true,yes,on} -> build the R4 pool via the declarative
+    `CrossEdge`/`merge_organs(cross_edges=...)` framework (`DeclarativeR4Pool`) instead of the original bespoke
+    `R4Pool`. Only takes effect when `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA` is also on (this flag alone builds nothing).
+    Default per `_XEDGE_SS_DECLARATIVE_DEFAULT_ON` (OFF) -> the original bespoke path, unchanged."""
+    v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_DECLARATIVE")
+    if v is None:
+        return _XEDGE_SS_DECLARATIVE_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 class XedgeSelfschemaProductionPool:
     """Process-shared holder of the [self_schema + source_provenance] `MergedPool` with the FROZEN pre-grown R4
     `author -> prov_generated` cross-edge. Exposes `.pool` (the framework MergedPool), `.ss_organ` (R4's OWN
@@ -136,11 +162,21 @@ class XedgeSelfschemaProductionPool:
 
     def _build(self):
         # Import lazily (this pins SIM_BACKEND=numpy via os.environ.setdefault at module scope; a no-op once the
-        # webapp has already fixed the backend). R4Pool.__init__ builds the merged pool, injects the near-zero
-        # cross-edge as the SOLE plastic synapse (R1's whitelist inversion), runs both organs' own build-time
-        # steps, and constructs the fixed dual-context-encoded ambiguous content pattern — all REUSED BY IMPORT.
+        # webapp has already fixed the backend). The pool class REUSED BY IMPORT builds the merged pool, injects
+        # the near-zero cross-edge as the SOLE plastic synapse, runs both organs' own build-time steps, and
+        # constructs the fixed dual-context-encoded ambiguous content pattern — either the ORIGINAL bespoke
+        # `R4Pool` (hand-typed `_dense(...)` union + 3-line whitelist freeze) or, behind `BRAIN_ONEBRAIN_XEDGE_
+        # SELFSCHEMA_DECLARATIVE`, `DeclarativeR4Pool` (the SAME edge as ONE `CrossEdge` row on `merge_organs(...,
+        # cross_edges=[...])`, proven bit-identical to R4Pool on 6/6 seeds). Both classes expose the IDENTICAL
+        # surface (`.train`, `.b`, `.pool`, `.ix`, `.masks`, `.ss_organ`, `.sp_organ`, `.cross_weights()`,
+        # `.amb_read`) since `DeclarativeR4Pool` subclasses `R4Pool` and only overrides `__init__`.
         from research.runners._onebrain_integration_r4_selfschema_provenance import R4Pool, GATE
-        r4 = R4Pool(self.seed)
+        if xedge_selfschema_declarative_enabled():
+            from research.runners._onebrain_declarative_crossedge_r4_repro import DeclarativeR4Pool
+            pool_cls = DeclarativeR4Pool
+        else:
+            pool_cls = R4Pool
+        r4 = pool_cls(self.seed)
         self.grow_traj = r4.train()             # GROWS the cross-edge by the substrate's own Hebbian rule (0.05 -> ~3)
         # FREEZE for production: r4.train() already leaves enable_hebbian_learning=False (the global per-step
         # gate every subsequent read is subject to); ALSO re-assert the gate's own rate_gain at 0, for defensive
@@ -231,14 +267,20 @@ def crossedge_provenance_shift(pool: "XedgeSelfschemaProductionPool", hold_autho
 #  Offline grow + record + self-verify entrypoint (0 Claude tokens; CPU numpy). Mirrors PART-1's
 #  `_selftest_loadbearing` + CLI shape exactly.
 # ─────────────────────────────────────────────────────────────────────────────────────────────
-def _selftest_loadbearing(seed):
+def _selftest_loadbearing(seed, declarative=False):
     """Exercise the REAL production function `crossedge_provenance_shift` (not a bespoke probe) at seed `seed`,
     INTACT vs cross-edge-LESIONED: the shift must be nonzero (author_held=True) intact and collapse toward zero
     lesioned -> lesion-attributable authorship->provenance drive through the live production read. Also checks
-    author_held=False reports exactly 0.0 shift on BOTH arms (the honest no-signal-no-bias control)."""
+    author_held=False reports exactly 0.0 shift on BOTH arms (the honest no-signal-no-bias control).
+    `declarative=True` sets `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_DECLARATIVE=1` first, so this SAME production
+    call sequence exercises `DeclarativeR4Pool` instead of the bespoke `R4Pool` (2026-08-28 migration)."""
     from tools.lab import attributable_to
     os.environ["BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA"] = "1"
     os.environ.pop("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION", None)
+    if declarative:
+        os.environ["BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_DECLARATIVE"] = "1"
+    else:
+        os.environ.pop("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_DECLARATIVE", None)
     global _POOL
     _POOL = None
     pool = get_xedge_selfschema_pool(seed)
@@ -298,12 +340,15 @@ def main():
     ap.add_argument("--grow", action="store_true", help="build+grow the FROZEN pool and self-verify load-bearing")
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--declarative", action="store_true",
+                    help="exercise the DeclarativeR4Pool construction path (BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_"
+                         "DECLARATIVE=1) instead of the bespoke R4Pool default")
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
 
     results = []
     for s in seeds:
-        sv = _selftest_loadbearing(s)
+        sv = _selftest_loadbearing(s, declarative=args.declarative)
         print(f"[seed {s}] {'GO' if sv['GO'] else 'no'} | cross_weight={sv['cross_weight']} | "
               f"held=T intact shift={sv['held_true_intact']['shift_toward_generated']:+.4f} "
               f"lesion shift={sv['held_true_lesion']['shift_toward_generated']:+.4f} "
@@ -316,7 +361,9 @@ def main():
 
     n_go = sum(r["GO"] for r in results)
     n_clears_floor = sum(r["clears_r4_registered_floor"] for r in results)
-    payload = {"probe": "onebrain_xedge_selfschema_production_frozen", "seeds": seeds,
+    probe_name = ("onebrain_xedge_selfschema_production_declarative" if args.declarative
+                 else "onebrain_xedge_selfschema_production_frozen")
+    payload = {"probe": probe_name, "seeds": seeds, "declarative": bool(args.declarative),
                "backend": os.environ.get("SIM_BACKEND", "numpy"),
                "n_go": n_go, "n_seeds": len(results), "n_clears_r4_registered_floor": n_clears_floor,
                "results": results,

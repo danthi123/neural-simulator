@@ -1,11 +1,11 @@
 {
- "run_id": "1787814419-2145404",
+ "run_id": "1787943533-4138392",
  "runner": "research/runners/onebrain_merge_framework.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3705112d0350492e/research/runners/onebrain_merge_framework.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af1d9bf1fcf216855/research/runners/onebrain_merge_framework.py",
   "--smoke"
  ],
- "git_sha": "1dfbe798a",
+ "git_sha": "e3db5d2e9",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -13,7 +13,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T03:06:59",
+ "started": "2026-08-28T14:58:53",
  "env": {
   "SIM_BACKEND": "numpy"
  },
