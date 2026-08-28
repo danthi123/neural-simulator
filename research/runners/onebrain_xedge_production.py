@@ -173,6 +173,17 @@ def grow_live_selfsupervised(p, n_turns: int = 80, conf: float = 0.02):
 #    runner). LOAD_PA/LOAD_STEPS/HOLD are R2's own WM-hold protocol (the same amb_read uses). ──
 _CODRIVE_PARAMS = {"load_pa": 400.0, "load_steps": 30, "hold_steps": 6}
 
+# 2026-08-27 CROSS-SESSION xedge_focus LEAK FIX (research/FAILURE_LOG.md). `credit_live_turn`/
+# `credit_live_turn_from_comprehension` used to read `self.pool.xedge_focus`, a single mutable attribute on the
+# ONE process-shared MergedPool -- written by whichever session's d6 organ last held >=2 referents, read (and
+# credited against!) by EVERY session's live-plasticity hook thereafter. `focus`/`wm_focus` below are now EXPLICIT
+# per-call arguments: the caller (webapp/server.py) resolves the value from the REQUESTING session's own
+# `MultiReferentWMOrgan.current_focus()` and passes it down. `_FOCUS_UNSET` keeps the OLD ambient-pool-attribute
+# read as a fallback ONLY for callers that omit the kwarg (the offline self-tests below), so their byte-identical
+# behaviour is untouched; production now always passes an explicit value (even None), so it never consults the
+# ambient global.
+_FOCUS_UNSET = object()
+
 
 class XedgeProductionPool:
     """Process-shared holder of the [d6_multiref_wm + comprehension + da_credit] `MergedPool` with the FROZEN
@@ -254,8 +265,13 @@ class XedgeProductionPool:
         self.cross_weights = p.cross_weights()
         # publish the coupling handles ONTO the MergedPool (the object the organs hold as `shared=`), so the
         # comprehension co-drive + the d6 focus-set find them without importing this module.
+        # `xedge_focus` (LEGACY, self-tests only, 2026-08-27): production no longer reads or writes this attribute
+        # -- every real session's focus lives on ITS OWN `MultiReferentWMOrgan._own_focus` and is threaded
+        # explicitly through `wm_focus`/`focus` kwargs (see `_FOCUS_UNSET` above). Kept here ONLY so the offline
+        # `_selftest_livelearn`/`_selftest_perturn` below (which manipulate it directly, single-session, sequential,
+        # never exercising cross-session isolation) keep running byte-identical to before this fix.
         self.pool.xedge_focus = None
-        self.pool.xedge_codrive_params = dict(_CODRIVE_PARAMS)
+        self.pool.xedge_codrive_params = dict(_CODRIVE_PARAMS)   # NOT session state -- a constant marker/config dict
         # WM-RESOLVED-ROLE read (closes the sub-decision caveat): bind R3-v3's VALIDATED balanced `amb_read` (the F2
         # instrument) + the balanced (content-cancelled) cue spec + the control-hold pool. The comprehension organ
         # calls these off `self._shared` to resolve an ambiguous role from the held WM referent -- reusing the proven
@@ -280,6 +296,9 @@ class XedgeProductionPool:
         b.cp_connections.data = self.pool.xp.asarray(data, dtype=b.cp_connections.data.dtype)
 
     # ── the coupling focus (which held d6 candidate pool the comprehension read co-drives) ──
+    # LEGACY (self-tests only, 2026-08-27): production never calls these -- a real session's focus lives on its
+    # own `MultiReferentWMOrgan` and is passed explicitly per call (see `_FOCUS_UNSET` above). `clear_focus` had
+    # ZERO live callers even before this fix (the finding's own observation) -- kept for the offline self-tests.
     def set_focus(self, region_name):
         if self.pool is not None:
             self.pool.xedge_focus = region_name
@@ -298,20 +317,25 @@ class XedgeProductionPool:
         return CAND_POOLS[min(int(register_index), len(CAND_POOLS) - 1)]
 
     # ── PART 3 PER-TURN LIVE PLASTICITY: grow the cross-edge ONE credited step per real chat turn ──
-    def credit_live_turn(self, content_direction: str, conf: float = 0.02, lesion_plasticity: bool = False):
+    def credit_live_turn(self, content_direction: str, conf: float = 0.02, lesion_plasticity: bool = False,
+                         focus=_FOCUS_UNSET):
         """Apply ONE in-brain self-supervised credited plasticity step to the cross-edge from the HELD focus pool
-        (`self.pool.xedge_focus`), during a LIVE chat turn -- the SAME `_credit_turn_step` PART 2 fires over a
-        build curriculum, now fired ONCE per turn. The gate is OPENED for exactly this one credited step then
-        RE-FROZEN (every production READ is a frozen forward pass). `content_direction` in {"agent","patient"} is
-        the turn's discourse content (host/teacher scaffold, declared residual #1 -- WHICH discourse); the credit
-        VALUE + the teach DIRECTION are read off the brain's OWN confident `amb_read` (|margin|>conf), so NO host
-        label writes the weight. Bounded by stdp_w_max (F3, the R3Pool gate). `lesion_plasticity=True` runs the
-        SAME credit path but LEAVES THE GATE FROZEN (the load-bearing lesion: the credited episode drives, yet no
-        weight can accumulate). No-op (byte-identical, returns None) unless `live_per_turn` is active, a focus is
-        held, and the content resolves. Appends the new weights to `grow_traj` and returns a small trace dict."""
+        (`focus`, the CALLING session's own xedge focus -- resolved by the caller from ITS OWN d6 organ; see
+        `credit_live_turn_from_comprehension` / `_FOCUS_UNSET`), during a LIVE chat turn -- the SAME
+        `_credit_turn_step` PART 2 fires over a build curriculum, now fired ONCE per turn. The gate is OPENED for
+        exactly this one credited step then RE-FROZEN (every production READ is a frozen forward pass).
+        `content_direction` in {"agent","patient"} is the turn's discourse content (host/teacher scaffold, declared
+        residual #1 -- WHICH discourse); the credit VALUE + the teach DIRECTION are read off the brain's OWN
+        confident `amb_read` (|margin|>conf), so NO host label writes the weight. Bounded by stdp_w_max (F3, the
+        R3Pool gate). `lesion_plasticity=True` runs the SAME credit path but LEAVES THE GATE FROZEN (the
+        load-bearing lesion: the credited episode drives, yet no weight can accumulate). No-op (byte-identical,
+        returns None) unless `live_per_turn` is active, a focus is held, and the content resolves. Appends the new
+        weights to `grow_traj` and returns a small trace dict."""
         if not self.ok or not self.live_per_turn:
             return None
-        foc = getattr(self.pool, "xedge_focus", None)
+        foc = focus
+        if foc is _FOCUS_UNSET:    # legacy fallback (offline self-tests only, via set_focus/set on self.pool)
+            foc = getattr(self.pool, "xedge_focus", None)
         if foc is None or content_direction not in ("agent", "patient"):
             return None
         p = self._r3pool
@@ -337,9 +361,11 @@ class XedgeProductionPool:
                 "n_live_credited": self.n_live_credited}
 
 
-def credit_live_turn_from_comprehension(comp_organ, svo, conf: float = 0.02):
+def credit_live_turn_from_comprehension(comp_organ, svo, conf: float = 0.02, wm_focus=_FOCUS_UNSET):
     """LIVE reply-path hook (PART 3). Called from `webapp.server.brain_reply` on a real chat turn where a WM
-    referent is HELD (the d6 multiref organ set `pool.xedge_focus` this turn) AND comprehension resolved (a
+    referent is HELD BY THIS SESSION (`wm_focus`, resolved by the caller from the REQUESTING session's own d6
+    organ via `MultiReferentWMOrgan.current_focus()` -- never read off the shared process pool's ambient global;
+    see `_FOCUS_UNSET` and the 2026-08-27 cross-session xedge_focus leak fix) AND comprehension resolved (a
     competent transitive). Derives the held referent's DISCOURSE role IN-BRAIN -- the sign of the first noun's
     per-noun agent-evidence a0 off `cp_firing_states` (positional focus = the primary held referent ~ n0,
     declared residual) -- and applies ONE credited plasticity step via `pool.credit_live_turn`. No-op
@@ -351,18 +377,21 @@ def credit_live_turn_from_comprehension(comp_organ, svo, conf: float = 0.02):
         pool = get_xedge_pool()
         if pool is None or not getattr(pool, "live_per_turn", False):
             return None
-        if getattr(pool.pool, "xedge_focus", None) is None:
+        foc = wm_focus
+        if foc is _FOCUS_UNSET:    # legacy fallback (offline self-tests only)
+            foc = getattr(pool.pool, "xedge_focus", None)
+        if foc is None:
             return None
         n0, v, n1 = svo
         comp_organ.ensure_built()
         # in-brain content read of the held (first) referent: a0 = sel_agent-sel_patient evidence for n0.
         with comp_organ._guard():
-            a0, a1 = comp_organ._read_per_noun(comp_organ.comp, n0, v, n1)
+            a0, a1 = comp_organ._read_per_noun(comp_organ.comp, n0, v, n1, wm_focus=foc)
         floor = float(getattr(comp_organ, "role_floor", 0.0) or 0.0)
         if abs(a0) <= floor:
             return None                                  # content did not commit a role -> no self-supervised credit
         direction = "agent" if a0 > 0 else "patient"
-        trace = pool.credit_live_turn(direction, conf=conf)
+        trace = pool.credit_live_turn(direction, conf=conf, focus=foc)
         if trace is not None:
             trace["a0"] = float(a0)
             trace["a1"] = float(a1)

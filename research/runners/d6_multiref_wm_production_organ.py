@@ -153,6 +153,12 @@ class MultiReferentWMOrgan:
         self._slot_of_ref: dict[str, int] = {}   # referent string -> local slot
         self._codes = None
         self._next_code = 0
+        # ONE-BRAIN CROSS-EDGE focus (2026-08-27 cross-session leak fix, research/FAILURE_LOG.md): THIS session's
+        # own xedge focus, stored on THIS ORGAN INSTANCE only -- never written onto the shared process-global pool.
+        # Each session owns exactly one persistent MultiReferentWMOrgan (webapp/server.py's `_SESSION_MULTIREF`, one
+        # per cache_key), so an instance attribute is already correctly session-scoped for free, and is derived
+        # ONLY from referents THIS organ has itself loaded (see `load()` / `current_focus()`).
+        self._own_focus = None
 
     def ensure_built(self):
         if self._built:
@@ -213,15 +219,22 @@ class MultiReferentWMOrgan:
                 loc, amp = buf.read(r)
                 alive.append(float(amp))
                 recovered[r] = self._ref_of_slot.get(loc, None)
-        # ONE-BRAIN CROSS-EDGE (opt-in): publish the primary held referent's POSITIONAL candidate pool as the
-        # focus the comprehension read co-drives, so a held WM referent DRIVES the frozen d6->sel cross-edge in a
-        # live turn. Guarded by the xedge pool's OWN marker attr (`xedge_codrive_params`) -> byte-identical when
-        # shared is None or not an xedge pool. The register->candidate-pool map is POSITIONAL (declared residual:
-        # R3-v3's candidate topology is host-chosen, not a semantic role->pool binding; see onebrain_xedge_production).
+        # ONE-BRAIN CROSS-EDGE (opt-in): record the primary held referent's POSITIONAL candidate pool as THIS
+        # session's own focus (`self._own_focus`), which the caller (webapp/server.py) later reads via
+        # `current_focus()` and passes EXPLICITLY into the comprehension organ's `wm_focus` argument -- so a held
+        # WM referent drives the frozen d6->sel cross-edge for the SESSION THAT ACTUALLY HELD IT, and no other.
+        # 2026-08-27: this used to write `self._shared.xedge_focus` (a process-global attribute on the ONE shared
+        # pool), which every OTHER session's comprehension read consulted too -> a cross-session focus leak
+        # (research/FAILURE_LOG.md). Storing it on `self` instead makes leakage structurally impossible: a fresh
+        # organ with an empty `_slot_of_ref` never runs this branch, so `current_focus()` stays None regardless of
+        # what any other session's organ ever did. Guarded by the xedge pool's OWN marker attr
+        # (`xedge_codrive_params`) -> `_own_focus` stays None (byte-identical) when shared is None or not an xedge
+        # pool. The register->candidate-pool map is POSITIONAL (declared residual: R3-v3's candidate topology is
+        # host-chosen, not a semantic role->pool binding; see onebrain_xedge_production).
         if refs and getattr(self._shared, "xedge_codrive_params", None) is not None and not lesion:
             try:
                 from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS
-                self._shared.xedge_focus = CAND_POOLS[0]
+                self._own_focus = CAND_POOLS[0]
             except Exception:
                 pass
         return {
@@ -262,6 +275,19 @@ class MultiReferentWMOrgan:
         if query:
             out["readout"] = hold_readout([res["recovered"].get(r) for r in range(res["n_referents"])])
         return out
+
+    def current_focus(self):
+        """THIS session's own ONE-BRAIN XEDGE focus (the positional candidate pool ITS OWN held referents set),
+        or None if this session holds nothing. Derived ONLY from `self._own_focus` (set by `load()`, never by
+        another organ instance) -- a brand-new organ with an empty `_slot_of_ref` always returns None here,
+        regardless of what any other session's organ has ever held. The caller (webapp/server.py) passes this
+        explicitly into the comprehension organ's `wm_focus` argument every turn (2026-08-27 leak fix)."""
+        return self._own_focus
+
+    def clear_focus(self):
+        """Explicitly forget this session's held xedge focus (turn-start / session-teardown hygiene). Only ever
+        touches THIS organ instance's own state -- never the shared process pool, never another session."""
+        self._own_focus = None
 
 
 _ORGAN: MultiReferentWMOrgan | None = None

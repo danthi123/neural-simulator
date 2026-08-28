@@ -104,6 +104,18 @@ READ_STEPS = 60
 #     clarification (honest: the substrate cannot confidently say which role is over-subscribed).
 ROLE_FLOOR_FRAC = 0.2
 
+# 2026-08-27 CROSS-SESSION xedge_focus LEAK FIX (research/FAILURE_LOG.md): the ONE-BRAIN XEDGE co-drive used to be
+# read off `self._shared.xedge_focus`, a single mutable attribute on the ONE process-shared MergedPool -- written
+# by WHICHEVER session's d6 organ last held >=2 referents, read by EVERY session's comprehension call thereafter
+# (a cross-session WM-focus latch). `wm_focus` below is now an EXPLICIT per-call argument: the caller (webapp/
+# server.py) resolves it from the REQUESTING session's own d6 organ (`MultiReferentWMOrgan.current_focus()`, which
+# now stores this session's focus on the ORGAN INSTANCE, never on the shared pool) and passes it down. The
+# `_WM_FOCUS_UNSET` sentinel keeps the OLD ambient-global read as a fallback ONLY for callers that do not pass the
+# kwarg (the offline self-tests below and `research/findings/raw/_onebrain_xedge_session_leak_verify/`), so their
+# byte-identical behaviour is untouched; production now always passes an explicit value (even None), so it never
+# consults the ambient global.
+_WM_FOCUS_UNSET = object()
+
 
 def comprehension_enabled() -> bool:
     """Default-ON. `BRAIN_COMPREHENSION_GATE` in {0,false,no,off} -> the byte-identical oracle (fully disabled)."""
@@ -304,18 +316,21 @@ class ComprehensionProductionOrgan:
                 arr[:] = 0
         b.cp_external_input_current[:] = 0.0
 
-    def _xedge_codrive(self, comp):
-        """ONE-BRAIN CROSS-EDGE coupling (opt-in, byte-identical no-op when off). When a shared xedge pool has a
-        FOCUS d6 candidate pool set (`shared.xedge_focus`), establish that pool's self-sustaining slow-NMDA WM bump
-        on the shared bridge BEFORE the cue settle (R3-v3's amb_read protocol: drive LOAD_PA for LOAD_STEPS, then
-        HOLD), so the FROZEN w{k}->sel cross-edge transmits the held WM state INTO this comprehension read — the
-        `repair_target` net-lean (and the judge margin) then reflect it. The slow-NMDA bump self-sustains through
-        the subsequent `_noun_role_rates` soft resets + cue windows (exactly as amb_read's held read does). No-op
-        unless `self._shared` exposes a non-None `xedge_focus`: shared=None (standalone), or the flag off, or no
-        referent held, is byte-identical. Also a no-op on a bridge that lacks the focus region (the standalone D4
-        cue-lesion twin) — the try/except degrades cleanly."""
+    def _xedge_codrive(self, comp, wm_focus=_WM_FOCUS_UNSET):
+        """ONE-BRAIN CROSS-EDGE coupling (opt-in, byte-identical no-op when off). When the CALLER's OWN session
+        has a FOCUS d6 candidate pool held (`wm_focus`, resolved by the caller from ITS OWN `MultiReferentWMOrgan`
+        — never read off the shared pool's ambient global; see `_WM_FOCUS_UNSET` above), establish that pool's
+        self-sustaining slow-NMDA WM bump on the shared bridge BEFORE the cue settle (R3-v3's amb_read protocol:
+        drive LOAD_PA for LOAD_STEPS, then HOLD), so the FROZEN w{k}->sel cross-edge transmits the held WM state
+        INTO this comprehension read — the `repair_target` net-lean (and the judge margin) then reflect it. The
+        slow-NMDA bump self-sustains through the subsequent `_noun_role_rates` soft resets + cue windows (exactly
+        as amb_read's held read does). No-op when `wm_focus` is None (this session holds nothing): shared=None
+        (standalone), the flag off, or no referent held, is byte-identical. Also a no-op on a bridge that lacks the
+        focus region (the standalone D4 cue-lesion twin) — the try/except degrades cleanly."""
         sh = self._shared
-        foc = getattr(sh, "xedge_focus", None) if sh is not None else None
+        foc = wm_focus
+        if foc is _WM_FOCUS_UNSET:      # legacy fallback (self-tests only) -- production always passes explicitly
+            foc = getattr(sh, "xedge_focus", None) if sh is not None else None
         if foc is None:
             return
         prm = getattr(sh, "xedge_codrive_params", None) or {}
@@ -336,18 +351,23 @@ class ComprehensionProductionOrgan:
         for _ in range(hold_steps):
             b._run_one_simulation_step()
 
-    def _wm_resolved_role(self, comp):
+    def _wm_resolved_role(self, comp, wm_focus=_WM_FOCUS_UNSET):
         """ONE-BRAIN XEDGE (closes the sub-decision caveat). On a content-inconclusive transitive with a WM referent
-        held, RESOLVE the role from R3-v3's VALIDATED balanced `amb_read` (the F2 instrument the pool binds as
-        `shared.xedge_amb_read`): drive BOTH animacy cue directions equally (CONTENT cancels to ~0), hold the focus
-        WM pool, read the signed `sel_agent - sel_patient` margin -- the SIGN is the held referent's LEARNED role.
-        role = sign(wm_margin - baseline), where baseline holds a NON-candidate control pool (no grown edge). Returns
-        (role, wm_margin), or (None, wm_margin) when |delta| < eps (a lesioned / no-signal read stays inconclusive ->
-        no false resolution). Byte-identical no-op (None, None) when shared=None / xedge off / no referent held. Uses
-        the proven pool read rather than a reimplementation (a hand-rolled balanced read was NOT actually balanced)."""
+        held BY THE CALLING SESSION (`wm_focus`, resolved by the caller from its OWN `MultiReferentWMOrgan` --
+        NEVER the shared pool's ambient global; see `_WM_FOCUS_UNSET` above), RESOLVE the role from R3-v3's
+        VALIDATED balanced `amb_read` (the F2 instrument the pool binds as `shared.xedge_amb_read`): drive BOTH
+        animacy cue directions equally (CONTENT cancels to ~0), hold the focus WM pool, read the signed
+        `sel_agent - sel_patient` margin -- the SIGN is the held referent's LEARNED role. role = sign(wm_margin -
+        baseline), where baseline holds a NON-candidate control pool (no grown edge). Returns (role, wm_margin), or
+        (None, wm_margin) when |delta| < eps (a lesioned / no-signal read stays inconclusive -> no false
+        resolution). Byte-identical no-op (None, None) when shared=None / xedge off / no referent held (this
+        session's own `wm_focus` is None). Uses the proven pool read rather than a reimplementation (a hand-rolled
+        balanced read was NOT actually balanced)."""
         sh = self._shared
         amb = getattr(sh, "xedge_amb_read", None) if sh is not None else None
-        foc = getattr(sh, "xedge_focus", None) if sh is not None else None
+        foc = wm_focus
+        if foc is _WM_FOCUS_UNSET:      # legacy fallback (self-tests only) -- production always passes explicitly
+            foc = getattr(sh, "xedge_focus", None) if sh is not None else None
         if amb is None or foc is None:
             return None, None
         cues = getattr(sh, "xedge_balanced_cues", None)
@@ -414,37 +434,42 @@ class ComprehensionProductionOrgan:
             self._snapshot_rest(self.comp_lesion)
         return self.comp_lesion
 
-    def _read(self, comp, n0: str, v: str, n1: str) -> float:
-        """Hard-reset `comp` to rest, then read the SEMANTIC sel-pool margin off cp_firing_states."""
+    def _read(self, comp, n0: str, v: str, n1: str, wm_focus=_WM_FOCUS_UNSET) -> float:
+        """Hard-reset `comp` to rest, then read the SEMANTIC sel-pool margin off cp_firing_states. `wm_focus` is the
+        CALLING session's own xedge focus (or None); see `_xedge_codrive`."""
         self._hard_reset(comp)
-        self._xedge_codrive(comp)                        # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
+        self._xedge_codrive(comp, wm_focus=wm_focus)      # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
         return float(semantic_sel_margin(comp, _evs_for_organ(n0, v, n1), READ_STEPS))
 
-    def _read_per_noun(self, comp, n0: str, v: str, n1: str):
+    def _read_per_noun(self, comp, n0: str, v: str, n1: str, wm_focus=_WM_FOCUS_UNSET):
         """(T1-6) Hard-reset `comp` to rest, then read the PER-NOUN agent-evidence (a0, a1) = (sel_agent -
         sel_patient) firing for each noun off cp_firing_states, driven by the SEMANTIC (content) cues only —
         the SAME spiking reads whose |a0 - a1| is the D4 comprehension margin. `a_i > 0` = noun i leans AGENT,
         `< 0` = leans PATIENT. Their signs/magnitudes localise WHICH thematic role failed to resolve (the
-        repair target). Under the learned-cue lesion both collapse to ~0 (no role activity)."""
+        repair target). Under the learned-cue lesion both collapse to ~0 (no role activity). `wm_focus` is the
+        CALLING session's own xedge focus (or None); see `_xedge_codrive`."""
         self._hard_reset(comp)
-        self._xedge_codrive(comp)                        # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
+        self._xedge_codrive(comp, wm_focus=wm_focus)      # ONE-BRAIN XEDGE (opt-in): co-drive the held WM pool
         evs = _evs_for_organ(n0, v, n1)
         a0 = float(_agent_evidence_from_spikes(comp, evs[0], SEMANTIC_CUES, READ_STEPS))
         a1 = float(_agent_evidence_from_spikes(comp, evs[1], SEMANTIC_CUES, READ_STEPS))
         return a0, a1
 
-    def read_margin(self, n0: str, v: str, n1: str, lesion: bool = False) -> float:
+    def read_margin(self, n0: str, v: str, n1: str, lesion: bool = False, wm_focus=_WM_FOCUS_UNSET) -> float:
         """The SPIKING comprehension margin for a transitive (n0, v, n1): |agentEv_0 - agentEv_1| from the
         SEMANTIC sel pools, read off cp_firing_states. Hard-resets the comp bridge first (history-independent).
-        `lesion` uses the zeroed-cue competition (-> ~chance)."""
+        `lesion` uses the zeroed-cue competition (-> ~chance). `wm_focus` is the CALLING session's own xedge focus
+        (None if this session holds nothing / xedge off) -- resolved by the CALLER (never read off a shared
+        process-global; closes the 2026-08-27 cross-session xedge_focus leak). Omitting it falls back to the legacy
+        ambient-global read for the offline self-tests only (see `_WM_FOCUS_UNSET`)."""
         self.ensure_built()
         comp = self._lesion_comp() if lesion else self.comp
         # SHARED path (intact read): guard the sel-WTA settle so the co-resident slices are restored afterwards.
         # The lesion twin is its OWN bridge (built standalone), so it needs no pool guard.
         if lesion:
-            return self._read(comp, n0, v, n1)
+            return self._read(comp, n0, v, n1, wm_focus=wm_focus)
         with self._guard():
-            return self._read(comp, n0, v, n1)
+            return self._read(comp, n0, v, n1, wm_focus=wm_focus)
 
     def competent(self, n0: str, v: str, n1: str, brain_vocab=None) -> bool:
         """Is the monitor COMPETENT to judge this transitive? It reads a RELIABLE signal only when the cues are
@@ -464,10 +489,11 @@ class ComprehensionProductionOrgan:
         fully_oov = (v not in VERB_SELECTS) and oov(n0) and oov(n1)
         return fully_covered or fully_oov
 
-    def judge(self, text: str, brain_vocab=None, lesion: bool = False) -> dict | None:
+    def judge(self, text: str, brain_vocab=None, lesion: bool = False, wm_focus=_WM_FOCUS_UNSET) -> dict | None:
         """Read the comprehension of `text`. Returns None when the input is OUT OF SCOPE (not a competent 3-token
         transitive) -> the caller leaves the turn byte-identical. Otherwise a dict with the spiking margin, the
-        threshold, and `comprehended` (margin >= threshold)."""
+        threshold, and `comprehended` (margin >= threshold). `wm_focus` is the CALLING session's own xedge focus
+        (see `read_margin`)."""
         tr = extract_transitive(text)
         if tr is None:
             return None
@@ -475,7 +501,7 @@ class ComprehensionProductionOrgan:
         if not self.competent(n0, v, n1, brain_vocab=brain_vocab):
             return None                                # out of the monitor's cue-lexicon competence -> unchanged
         self.ensure_built()
-        margin = self.read_margin(n0, v, n1, lesion=lesion)
+        margin = self.read_margin(n0, v, n1, lesion=lesion, wm_focus=wm_focus)
         comprehended = bool(margin >= self.threshold)
         return {
             "on": True, "lesioned": bool(lesion), "in_scope": True,
@@ -483,10 +509,13 @@ class ComprehensionProductionOrgan:
             "comprehended": comprehended, "calib": self.calib,
         }
 
-    def repair_target(self, text: str, brain_vocab=None, lesion: bool = False) -> dict | None:
+    def repair_target(self, text: str, brain_vocab=None, lesion: bool = False, wm_focus=_WM_FOCUS_UNSET) -> dict | None:
         """(OTHER-REPAIR, T1-6) Given the SAME in-scope transitive the D4 gate abstained on, localise WHICH
         element the substrate could not resolve, so the turn can ask a TARGETED clarification instead of a bare
-        abstain. Returns None when nothing can be targeted (-> the caller keeps the bare abstain). Two branches:
+        abstain. Returns None when nothing can be targeted (-> the caller keeps the bare abstain). `wm_focus` is
+        the CALLING session's own xedge focus (None if this session holds no referent / xedge off) -- resolved by
+        the CALLER from ITS OWN `MultiReferentWMOrgan`, never read off the shared process pool's ambient global
+        (closes the 2026-08-27 cross-session xedge_focus leak; see `_WM_FOCUS_UNSET`). Two branches:
 
           * OOV (host-lexical scaffold, NOT load-bearing on the spiking read — a declared residual, exactly like
             curiosity's host topic extractor): when a content token is genuinely out of the brain's vocabulary,
@@ -520,10 +549,10 @@ class ComprehensionProductionOrgan:
         # ── ROLE branch (spiking, load-bearing): the roles are covered but did not separate. ──
         comp = self._lesion_comp() if lesion else self.comp
         if lesion:
-            a0, a1 = self._read_per_noun(comp, n0, v, n1)
+            a0, a1 = self._read_per_noun(comp, n0, v, n1, wm_focus=wm_focus)
         else:
             with self._guard():                          # SHARED path: restore co-resident slices after the read
-                a0, a1 = self._read_per_noun(comp, n0, v, n1)
+                a0, a1 = self._read_per_noun(comp, n0, v, n1, wm_focus=wm_focus)
         pair_max = max(abs(a0), abs(a1))
         net_lean = a0 + a1
         base.update(a0=float(a0), a1=float(a1), pair_max=float(pair_max), net_lean=float(net_lean),
@@ -549,7 +578,7 @@ class ComprehensionProductionOrgan:
         # referent flips role agent<->patient (-> the clarification wording differs); lesioning the cross-edge
         # collapses the balanced margin to baseline (below eps) -> the content role stands. Byte-identical (content
         # role only) when shared=None / xedge off / no referent held / the WM signal is below eps.
-        wm_role, wm_m = (self._wm_resolved_role(comp) if not lesion else (None, None))
+        wm_role, wm_m = (self._wm_resolved_role(comp, wm_focus=wm_focus) if not lesion else (None, None))
         if wm_role is not None:
             base.update(role=wm_role, wm_resolved=True, wm_margin=float(wm_m), content_role=content_role)
         return base
