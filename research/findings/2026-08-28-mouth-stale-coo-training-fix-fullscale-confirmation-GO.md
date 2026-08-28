@@ -10,6 +10,8 @@ artifacts:
 runner: research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py
 ---
 
+> ⚠️ **TERMINOLOGY CORRECTION (2026-08-28, from [`2026-08-28-mouth-crutch-burndown-scope`](2026-08-28-mouth-crutch-burndown-scope.md)):** the "copied head" here is the **WKV/SSM home-grown spiking cortex's OWN target head** (bridges/wkv_ckpt, V=1000, D=128) — it is **NOT literal Qwen2.5 weights**, and the WKV mouth is a separate from-scratch cortex **not yet wired into `webapp/server.py`** (live renderers = raw/qwen/stub). So this result is a step toward a **brain-native generator**, NOT literally "replacing Qwen" — read "Qwen-replacement" below as "the from-scratch WKV mouth that will REDUCE Qwen's role once wired". The concrete wire-in target is the `BRAIN_OPEN_ENDED` channel (the one fully-Qwen touchpoint, default-OFF).
+
 # Mouth stale-cache training fix — FULL-SCALE B=48 6-seed magnitude confirmation: the learned readout recovers most of the copied head (from the pre-fix wall)
 
 Artifact: `research/findings/raw/_mouth_stale_coo_training_fix/eprop_STALEFIX_6seed_frommain.json` (6 seeds 42/43/44/100/101/102, `SIM_BACKEND=cupy`, B=48, epochs 10, n-sentences 40000 — the production-scale config, run from `main` with the fix).
@@ -31,7 +33,7 @@ Six-seed means from the artifact `research/findings/raw/_mouth_stale_coo_trainin
 
 ## What this settles
 
-The stale-cache training fix is confirmed at PRODUCTION scale: the learned spiking read-out head, trained by the local three-factor rule against a now-FAITHFUL forward, recovers most of the copied Qwen-derived head (`sub_recov_ratio_mean = 0.8686`) — from a wall that stood for weeks. The mechanism + magnitude are strong and anti-cheat-clean; the learned readout is now a **viable Qwen-replacement candidate** and the mouth crutch-burndown (train the learned readout into the actual word-generation, measure Qwen-reduction) is UNLOCKED.
+The stale-cache training fix is confirmed at PRODUCTION scale: the learned spiking read-out head, trained by the local three-factor rule against a now-FAITHFUL forward, recovers most of the copied head — the WKV cortex's OWN target head, NOT literal Qwen (see the correction banner above) — (`sub_recov_ratio_mean = 0.8686`), from a wall that stood for weeks. The mechanism + magnitude are strong and anti-cheat-clean; the learned readout is now a **viable brain-native readout for the from-scratch WKV mouth** and the mouth crutch-burndown (wire the WKV mouth into the `BRAIN_OPEN_ENDED` channel to REDUCE Qwen's role) is UNLOCKED.
 
 ## Residual (marginal, not a wall — NO-DEFER next lever)
 
