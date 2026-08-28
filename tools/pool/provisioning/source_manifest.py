@@ -134,11 +134,22 @@ def verify_manifest(
         raise SourceManifestError("source manifest file digest does not match")
     expected = parse_manifest(payload)
     actual = enumerate_source_files(root_path)
-    if set(expected) != set(actual):
-        missing = sorted(set(expected) - set(actual))[:5]
-        extra = sorted(set(actual) - set(expected))[:5]
+    # The provision syncs a SUBSET of top-level source roots (sim, research/{runners,specs,fixtures,findings},
+    # experiment, tools, tests, docs, + a few root files). A live pool node also accretes UNMANAGED top-level
+    # entries: its own virtualenvs (.venv-rag/.venv-pool), simulation_profiles/, config/, old result dirs, etc.
+    # Those are harmless — runners only import the synced source, so an unmanaged accretion cannot execute — and
+    # MUST NOT fail the guard (else a working node can never be re-provisioned). Scope the "widened" (extra) check
+    # to the MANAGED roots the manifest actually covers: an extra file INSIDE a synced source dir is a real
+    # injection risk and still fails; an extra entry in an unmanaged top-level dir is a benign accretion, ignored.
+    # The missing-file check and the per-file digest (tamper) check below are UNCHANGED — full strength.
+    managed_roots = {PurePosixPath(p).parts[0] for p in expected if PurePosixPath(p).parts}
+    missing = set(expected) - set(actual)
+    extra = {a for a in (set(actual) - set(expected))
+             if PurePosixPath(a).parts and PurePosixPath(a).parts[0] in managed_roots}
+    if missing or extra:
         raise SourceManifestError(
-            f"source file set differs from manifest; missing={missing}, extra={extra}"
+            "source file set differs from manifest; "
+            f"missing={sorted(missing)[:5]}, extra={sorted(extra)[:5]}"
         )
     for relative, expected_digest in expected.items():
         if _sha256(actual[relative]) != expected_digest:
