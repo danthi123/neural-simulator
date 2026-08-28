@@ -1,0 +1,145 @@
+{
+  "seed": 42,
+  "backend": "numpy",
+  "config": "B_on_learn (converged, per_turn=False)",
+  "i_loaded_cross_weights": {
+    "w0->A": 16.7788,
+    "w0->P": 4.3919,
+    "w1->A": 0.05,
+    "w1->P": 0.05,
+    "w2->A": 5.676,
+    "w2->P": 16.7183
+  },
+  "i_verdict": "CONVERGED (grown)",
+  "ii_content_only_no_focus": {
+    "tag": "ii_content_only_no_focus",
+    "wm_focus": null,
+    "role": "patient",
+    "content_role": null,
+    "net_lean": 0.3888888888888889,
+    "a0": 0.12152777777777779,
+    "a1": 0.2673611111111111,
+    "wm_resolved": null,
+    "wm_margin": null,
+    "raw": {
+      "on": true,
+      "lesioned": false,
+      "svo": [
+        "wolf",
+        "watch",
+        "owl"
+      ],
+      "a0": 0.12152777777777779,
+      "a1": 0.2673611111111111,
+      "pair_max": 0.2673611111111111,
+      "net_lean": 0.3888888888888889,
+      "role_floor": 0.06333333333333334,
+      "lean_margin": 0.31666666666666665,
+      "loadbearing": "spiking_role_evidence",
+      "kind": "role",
+      "role": "patient",
+      "word": null
+    }
+  },
+  "ii_held_edge_intact": {
+    "tag": "ii_held_edge_intact",
+    "wm_focus": "w0",
+    "role": "agent",
+    "content_role": "patient",
+    "net_lean": 0.5229166666666667,
+    "a0": 0.20972222222222223,
+    "a1": 0.31319444444444444,
+    "wm_resolved": true,
+    "wm_margin": 0.020000000000000018,
+    "raw": {
+      "on": true,
+      "lesioned": false,
+      "svo": [
+        "wolf",
+        "watch",
+        "owl"
+      ],
+      "a0": 0.20972222222222223,
+      "a1": 0.31319444444444444,
+      "pair_max": 0.31319444444444444,
+      "net_lean": 0.5229166666666667,
+      "role_floor": 0.06333333333333334,
+      "lean_margin": 0.31666666666666665,
+      "loadbearing": "spiking_role_evidence",
+      "kind": "role",
+      "role": "agent",
+      "word": null,
+      "wm_resolved": true,
+      "wm_margin": 0.020000000000000018,
+      "content_role": "patient"
+    }
+  },
+  "ii_held_edge_lesioned": {
+    "tag": "ii_held_edge_lesioned",
+    "wm_focus": "w0",
+    "role": "patient",
+    "content_role": null,
+    "net_lean": 0.5256944444444445,
+    "a0": 0.21666666666666667,
+    "a1": 0.3090277777777778,
+    "wm_resolved": null,
+    "wm_margin": null,
+    "raw": {
+      "on": true,
+      "lesioned": false,
+      "svo": [
+        "wolf",
+        "watch",
+        "owl"
+      ],
+      "a0": 0.21666666666666667,
+      "a1": 0.3090277777777778,
+      "pair_max": 0.3090277777777778,
+      "net_lean": 0.5256944444444445,
+      "role_floor": 0.06333333333333334,
+      "lean_margin": 0.31666666666666665,
+      "loadbearing": "spiking_role_evidence",
+      "kind": "role",
+      "role": "patient",
+      "word": null
+    }
+  },
+  "ii_edge_shifts_organ_read": true,
+  "ii_lesion_reverts_organ_read": true,
+  "iii_reprimed_cross_weights": {
+    "w0->A": 16.7788,
+    "w0->P": 4.3919,
+    "w1->A": 0.05,
+    "w1->P": 0.05,
+    "w2->A": 5.676,
+    "w2->P": 16.7183
+  },
+  "iii_novisi": {
+    "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?",
+    "abstained": true,
+    "comprehended": false,
+    "repair_role": "patient",
+    "repair_content_role": null,
+    "repair_net_lean": 0.49375,
+    "repair_wm_resolved": null,
+    "repair_wm_margin": null,
+    "repaired": true,
+    "multiref_n": null
+  },
+  "iii_held": {
+    "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the AGENT \u2014 which of them is doing the 'watch', the wolf or the owl?",
+    "abstained": true,
+    "comprehended": false,
+    "repair_role": "agent",
+    "repair_content_role": "patient",
+    "repair_net_lean": 0.55,
+    "repair_wm_resolved": true,
+    "repair_wm_margin": 0.020000000000000018,
+    "repaired": true,
+    "multiref_n": null
+  },
+  "iii_resolved_wm_focus_in_handler": "w0",
+  "iii_role_differs": true,
+  "iii_answer_differs": true,
+  "verdict": "NEITHER (visible through the handler in this diagnostic run -- re-check the flip-verify harness)"
+}
