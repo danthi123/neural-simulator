@@ -1,0 +1,30 @@
+{
+ "run_id": "1787930820-3698090",
+ "runner": "research/runners/_read_fidelity_decoder_separability_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_read_fidelity_decoder_separability_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_read_fidelity_decoder_separability_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "5216f0dbf8470a20e58ce7b9afb560ae48d6995001dc6024deef32a5286379e7",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T11:27:00",
+ "env": {
+  "POOL_CHECKED_REASON": "new",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_read_fidelity_decoder_separability_6seed.json"
+}

@@ -277,3 +277,11 @@ live-mouth GPU multi-seed comparison (does the divergence rate actually rise ove
 is STAGED on `research/queue/gpu.queue`, not yet run — task #112 stays OPEN, no ladder-label change (still
 de-risked, still default-OFF `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY`). No other task's state changed. Finding:
 2026-08-28-open-ended-generation-time-honesty-token-id-continuation-removes-retokenization-confound-PARTIAL.
+
+2026-08-28 ~11:50 · big autonomous session reconcile · landings this session:
+- MOUTH crutch-burndown: learned-vs-native head A/B GO (coherent brain-native voice); looping DECODE-SUPPRESSIBLE (fix wired opt-in); better-head persist 6/6 GO (ratio 0.9273, per-seed heads saved).
+- ONE-BRAIN xedge flip: the "hollow" NO-GO was a cupy BUILD CRASH (fixed a8c8a2d18); re-verify still NO-GO but now a precise POSITIONAL-BINDING residual (2/4 grown-focus visible) — next lever indirection (Kriete2013), agent af541ce0 in flight -> autonomous flip if 6/6 GO. Stays default-OFF.
+- KNOWLEDGE/INTROSPECTION: LTM-shard elaboration MERGED (BRAIN_ELABORATE_FROM_LTM_SHARD default-OFF) — unblocks #94 (confidence->forthcomingness hollow-flip) + deepens knowledge-in-chat #66; cupy verify queued.
+- READ-FIDELITY crux SETTLED as a READ problem: decoder separates 6/6 shuffle-clean (rate/latency/dispersion all miss it) -> a read-fidelity limit, not wiring; next = a population-vector/template spiking read.
+- AFFECT #86: expression-marker now brain-native spiking WTA (de-risked GO, default-OFF).
+- INFRA: the mini-PC pool (36 cores) UNBLOCKED (manifest guard scoped + safe reconcile); RAG #83 resolved. No production-default flips (all owner-gated); no board task newly DONE (de-risks stay open under de-risked label until wired-default-on).

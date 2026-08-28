@@ -1,0 +1,1201 @@
+{
+  "probe": "read_fidelity_decoder_separability_derisk",
+  "verdict": "SIGNAL-FOUND (read-fidelity limit) -- reads are inadequate, keep searching read primitives. Richest available per-neuron readout (10-bin spike-count profile, subsumes rate/latency/dispersion) fed to a LINEAR (logistic regression) and a NONLINEAR (shallow MLP) decoder, cross-validated (K_FOLDS=5 x R_REPEATS=5 repeats), on the SAME trained cross-edge and SAME captured rasters iteration 1/2 used (no retraining confound). 2 weight-conditions (intact/lesion) x 2 feature variants (raw_held/delta_held_base) x 2 decoders = 8 combos/seed. Anti-cheat: K_SHUF=20-draw neuron-identity permutation null, shuffle collapses on 48/48 combo-seed pairs. 6/6 seeds have >=1 separable combo; 0/6 seeds are at chance on EVERY combo. ",
+  "GO_signal_found": true,
+  "ALL_CHANCE_wiring_problem": false,
+  "n_seeds": 6,
+  "n_seeds_any_separable": 6,
+  "n_seeds_all_chance": 0,
+  "n_seeds_shuffle_ok_on_every_combo": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "shuffle_anticheat_collapses_on_every_combo",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f72bcb72980>",
+      "note": "the neuron-identity permutation null must individually clear Z_FLOOR on <= 0.15 of its own draws, on EVERY combo, before any real-vs-null comparison here can be trusted -- same instrument-validity bar as iteration 2"
+    },
+    {
+      "kind": "require",
+      "name": "null_pipeline_centers_near_chance",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f72bcb72980>",
+      "note": "the shuffled-label null's own mean accuracy must sit near 0.5 -- a biased null (e.g. CV leakage) would inflate BOTH real and null accuracy together and hide a real signal behind an equally-inflated floor"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f72bcb72980>",
+      "note": "the reused cross-edge trained normally (sanity on the shared substrate)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f72bcb72980>",
+      "note": "the per-seed block pair must actually vary (inherited from the parent runner)"
+    }
+  ],
+  "seed_trap_build_twice": {
+    "identical": true,
+    "n_neurons": 1408,
+    "hash_build1": "df4c33e6261f5d4a",
+    "hash_build2": "df4c33e6261f5d4a"
+  },
+  "config": {
+    "n_bins": 10,
+    "z_floor": 2.0,
+    "shuf_collapse_max_rate": 0.15,
+    "k_folds": 5,
+    "r_repeats": 5,
+    "k_shuf": 20,
+    "mlp_hidden": 8,
+    "l2_reg": 0.01,
+    "adam_lr": 0.05,
+    "logreg_epochs": 250,
+    "mlp_epochs": 250,
+    "weight_conds": [
+      "intact",
+      "lesion"
+    ],
+    "feat_kinds": [
+      "raw_held",
+      "delta_held_base"
+    ],
+    "decoders": [
+      "linear",
+      "mlp"
+    ],
+    "recall_steps": 100,
+    "n_reads": 8,
+    "pre_steps": 60,
+    "episode_drive_pa": 2500.0,
+    "f2_lesion_ratio": 0.34,
+    "cross_edge_hebbian_lr": 0.15,
+    "n_episodes": 150,
+    "hebbian_max_weight": 20.0,
+    "cue_pa": 2000.0,
+    "ctx_drive_pa": 2500.0,
+    "rng_formula": "seed*15485863+271, +combo_index*104651 per combo (this module's own distinct offset family; does not collide with _assign_blocks(*104729+17), _shuffle_mask(*65599+41), iteration-2's permutation rng(*7919+101), or _make_ambiguous_pattern(*997+3))"
+  },
+  "mechanism": "Reuses ReadFidelityPool (build/train/lesion + the raster-capturing `_drive2`) VERBATIM from the committed iteration-1 file, and `_capture_reads` (N_READS (base,held) raster-pair capture) VERBATIM from the committed iteration-2 file. Adds ONLY: a per-neuron 10-bin spike-count feature (richer than any prior scalar read), two hand-rolled decoders (L2 logistic regression; a shallow 1-hidden-layer MLP, both Adam-optimized, numpy only -- no sklearn/torch available in this environment), stratified k-fold cross-validation with train-fold-only standardization (no leakage), and a neuron-identity permutation-null anti-cheat in the same statistical shape as iteration 2's own fix (K_SHUF draws, z-score vs the null, a shuffle-collapse fraction bar).",
+  "biology": "Population/pattern DECODING as an analysis method (not a claimed biological readout mechanism): Averbeck, Latham & Pouget 2006 (Nat Rev Neurosci 7:358-366, 'Neural correlations, population coding and computation') and Quiroga & Panzeri 2009 (Nat Rev Neurosci 10:173-185, 'Extracting information from neuronal populations: information theory and decoding approaches') establish that a population code's information content is a property of the FULL joint response, not any single summary statistic -- a linear or nonlinear decoder trained on the full per-neuron response can detect separations that a reduction to one scalar (rate, latency, or dispersion) provably cannot. This run is that check applied directly: if even a flexible decoder on the richest available per-neuron readout cannot beat a label-shuffled null, the absence is in the SUBSTRATE's population response, not in any one read primitive's sensitivity.",
+  "scaffold_residuals": [
+    "N_BINS=10 binning of RECALL_STEPS is a host-chosen resolution, not a computed feature -- a coarser or finer binning could in principle shift a borderline combo's z-score",
+    "the decoders (L2 logistic regression; an 8-unit-hidden MLP) are two points in a much larger decoder-family space; a genuine absence-of-signal verdict from THESE two is evidence, not proof, that NO decoder could ever separate the pools",
+    "K_FOLDS=5/R_REPEATS/K_SHUF are host-chosen statistical-power/tolerance knobs (same class as iteration 2's K_PERM/SHUF_COLLAPSE_MAX_RATE), not computed features",
+    "N_READS=8 reads averaged into ONE per-neuron feature vector per condition (denoising only, per this pool family's deterministic dynamics -- see module docstring); the genuine per-seed sample count is n_union=64 neurons, not 64*8",
+    "same host-curated training schedule / topology as the parent crossedge runner (declared there, unchanged)"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 97.7,
+      "cue_concept": 1,
+      "assert_concept": 5,
+      "final_weight_trained_block": 3.9776554107666016,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.403125,
+          "real_acc_std": 0.06191128986299672,
+          "real_acc_all": [
+            0.34375,
+            0.359375,
+            0.421875,
+            0.390625,
+            0.5
+          ],
+          "null_acc_mean": 0.53671875,
+          "null_acc_std": 0.09487740423241763,
+          "z": -1.4080670848955816,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.45625,
+          "real_acc_std": 0.030055287596361478,
+          "real_acc_all": [
+            0.4375,
+            0.421875,
+            0.46875,
+            0.5,
+            0.453125
+          ],
+          "null_acc_mean": 0.48359375,
+          "null_acc_std": 0.060933282580104296,
+          "z": -0.44874900616183405,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.73125,
+          "real_acc_std": 0.06191128986299671,
+          "real_acc_all": [
+            0.75,
+            0.625,
+            0.78125,
+            0.734375,
+            0.765625
+          ],
+          "null_acc_mean": 0.5015625,
+          "null_acc_std": 0.07185354370816413,
+          "z": 3.1966064322851544,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.871875,
+          "real_acc_std": 0.03730417620722914,
+          "real_acc_all": [
+            0.90625,
+            0.859375,
+            0.8125,
+            0.890625,
+            0.890625
+          ],
+          "null_acc_mean": 0.5,
+          "null_acc_std": 0.09933992677987828,
+          "z": 3.7434595741550796,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.478125,
+          "real_acc_std": 0.035971451353816686,
+          "real_acc_all": [
+            0.453125,
+            0.53125,
+            0.4375,
+            0.484375,
+            0.484375
+          ],
+          "null_acc_mean": 0.4984375,
+          "null_acc_std": 0.0967050716775387,
+          "z": -0.21004586054939928,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.528125,
+          "real_acc_std": 0.03387419279481063,
+          "real_acc_all": [
+            0.484375,
+            0.53125,
+            0.578125,
+            0.53125,
+            0.515625
+          ],
+          "null_acc_mean": 0.52265625,
+          "null_acc_std": 0.08535237404392575,
+          "z": 0.06407261732620903,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.625,
+          "real_acc_std": 0.029231698334171417,
+          "real_acc_all": [
+            0.59375,
+            0.59375,
+            0.640625,
+            0.65625,
+            0.640625
+          ],
+          "null_acc_mean": 0.4921875,
+          "null_acc_std": 0.059444211738490786,
+          "z": 2.2342377182874213,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.665625,
+          "real_acc_std": 0.05014627042462879,
+          "real_acc_all": [
+            0.671875,
+            0.71875,
+            0.640625,
+            0.703125,
+            0.59375
+          ],
+          "null_acc_mean": 0.4828125,
+          "null_acc_std": 0.08204006061707068,
+          "z": 2.22833209318669,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.03671875000000002,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.4594594594594594,
+        "mlp": 0.5546218487394957
+      }
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 98.7,
+      "cue_concept": 6,
+      "assert_concept": 7,
+      "final_weight_trained_block": 6.112188816070557,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.565625,
+          "real_acc_std": 0.04044430970482746,
+          "real_acc_all": [
+            0.515625,
+            0.625,
+            0.578125,
+            0.5625,
+            0.546875
+          ],
+          "null_acc_mean": 0.5109375,
+          "null_acc_std": 0.09098160329516014,
+          "z": 0.6010830543685215,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.58125,
+          "real_acc_std": 0.03730417620722914,
+          "real_acc_all": [
+            0.609375,
+            0.625,
+            0.53125,
+            0.5625,
+            0.578125
+          ],
+          "null_acc_mean": 0.53359375,
+          "null_acc_std": 0.07792325926115758,
+          "z": 0.6115792698080237,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.790625,
+          "real_acc_std": 0.03045873232752801,
+          "real_acc_all": [
+            0.75,
+            0.8125,
+            0.8125,
+            0.765625,
+            0.8125
+          ],
+          "null_acc_mean": 0.47578125,
+          "null_acc_std": 0.07910162595432803,
+          "z": 3.980243720676306,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.76875,
+          "real_acc_std": 0.06091746465505602,
+          "real_acc_all": [
+            0.765625,
+            0.8125,
+            0.828125,
+            0.671875,
+            0.765625
+          ],
+          "null_acc_mean": 0.5,
+          "null_acc_std": 0.06290984045692526,
+          "z": 4.271986672482738,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.684375,
+          "real_acc_std": 0.0447431908227386,
+          "real_acc_all": [
+            0.734375,
+            0.65625,
+            0.6875,
+            0.71875,
+            0.625
+          ],
+          "null_acc_mean": 0.51015625,
+          "null_acc_std": 0.08303254033771465,
+          "z": 2.0981984808775884,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.671875,
+          "real_acc_std": 0.036643873123620545,
+          "real_acc_all": [
+            0.65625,
+            0.734375,
+            0.671875,
+            0.65625,
+            0.640625
+          ],
+          "null_acc_mean": 0.4875,
+          "null_acc_std": 0.09928817375381833,
+          "z": 1.8569683883717267,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.65,
+          "real_acc_std": 0.05908647000371574,
+          "real_acc_all": [
+            0.703125,
+            0.5625,
+            0.65625,
+            0.625,
+            0.703125
+          ],
+          "null_acc_mean": 0.5359375,
+          "null_acc_std": 0.07605818734260043,
+          "z": 1.499674183480222,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.725,
+          "real_acc_std": 0.023696485762661094,
+          "real_acc_all": [
+            0.71875,
+            0.734375,
+            0.75,
+            0.734375,
+            0.6875
+          ],
+          "null_acc_mean": 0.50546875,
+          "null_acc_std": 0.07385971850807518,
+          "z": 2.972273039139708,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.035937499999999956,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.48387096774193544,
+        "mlp": 0.16279069767441884
+      }
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 98.2,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.177545547485352,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.715625,
+          "real_acc_std": 0.04474319082273861,
+          "real_acc_all": [
+            0.65625,
+            0.765625,
+            0.6875,
+            0.71875,
+            0.75
+          ],
+          "null_acc_mean": 0.51953125,
+          "null_acc_std": 0.06489549892904746,
+          "z": 3.0216849124528062,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.7625,
+          "real_acc_std": 0.020372507516258277,
+          "real_acc_all": [
+            0.78125,
+            0.75,
+            0.78125,
+            0.765625,
+            0.734375
+          ],
+          "null_acc_mean": 0.5234375,
+          "null_acc_std": 0.07213910288098739,
+          "z": 3.3139100772350476,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 1.0,
+          "real_acc_std": 0.0,
+          "real_acc_all": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "null_acc_mean": 0.51640625,
+          "null_acc_std": 0.06501419221327553,
+          "z": 7.438279759188531,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 1.0,
+          "real_acc_std": 0.0,
+          "real_acc_all": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "null_acc_mean": 0.49921875,
+          "null_acc_std": 0.08290864577598583,
+          "z": 6.040157155058119,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.790625,
+          "real_acc_std": 0.02614562582918986,
+          "real_acc_all": [
+            0.8125,
+            0.75,
+            0.796875,
+            0.8125,
+            0.78125
+          ],
+          "null_acc_mean": 0.51015625,
+          "null_acc_std": 0.11098150535674851,
+          "z": 2.5271665679649695,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.78125,
+          "real_acc_std": 0.015625,
+          "real_acc_all": [
+            0.78125,
+            0.796875,
+            0.796875,
+            0.765625,
+            0.765625
+          ],
+          "null_acc_mean": 0.525,
+          "null_acc_std": 0.07941371310389263,
+          "z": 3.2267726817503433,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.678125,
+          "real_acc_std": 0.03240068961457457,
+          "real_acc_all": [
+            0.640625,
+            0.65625,
+            0.671875,
+            0.703125,
+            0.71875
+          ],
+          "null_acc_mean": 0.48828125,
+          "null_acc_std": 0.06288430368280348,
+          "z": 3.01893698239224,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.66875,
+          "real_acc_std": 0.02567449488305466,
+          "real_acc_all": [
+            0.703125,
+            0.640625,
+            0.65625,
+            0.6875,
+            0.65625
+          ],
+          "null_acc_mean": 0.5046875,
+          "null_acc_std": 0.11188382058729729,
+          "z": 1.466364833975171,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.025000000000000022,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.64375,
+        "mlp": 0.6625000000000001
+      }
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 97.8,
+      "cue_concept": 3,
+      "assert_concept": 0,
+      "final_weight_trained_block": 5.6903815269470215,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.58125,
+          "real_acc_std": 0.033874192794810624,
+          "real_acc_all": [
+            0.546875,
+            0.625,
+            0.59375,
+            0.546875,
+            0.59375
+          ],
+          "null_acc_mean": 0.5234375,
+          "null_acc_std": 0.063215477108479,
+          "z": 0.9145307865159772,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.615625,
+          "real_acc_std": 0.052524175981161283,
+          "real_acc_all": [
+            0.640625,
+            0.609375,
+            0.59375,
+            0.546875,
+            0.6875
+          ],
+          "null_acc_mean": 0.48125,
+          "null_acc_std": 0.07321758084460891,
+          "z": 1.8352832536926702,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.603125,
+          "real_acc_std": 0.035971451353816686,
+          "real_acc_all": [
+            0.59375,
+            0.609375,
+            0.546875,
+            0.640625,
+            0.625
+          ],
+          "null_acc_mean": 0.51015625,
+          "null_acc_std": 0.07659270349464381,
+          "z": 1.2138068739994459,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.634375,
+          "real_acc_std": 0.03921843874378479,
+          "real_acc_all": [
+            0.578125,
+            0.625,
+            0.671875,
+            0.625,
+            0.671875
+          ],
+          "null_acc_mean": 0.50546875,
+          "null_acc_std": 0.06974367867742945,
+          "z": 1.8482857865327489,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.675,
+          "real_acc_std": 0.01711632992203644,
+          "real_acc_all": [
+            0.671875,
+            0.671875,
+            0.65625,
+            0.671875,
+            0.703125
+          ],
+          "null_acc_mean": 0.49375,
+          "null_acc_std": 0.0697667047530931,
+          "z": 2.597944114480544,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.715625,
+          "real_acc_std": 0.05783361101038046,
+          "real_acc_all": [
+            0.671875,
+            0.75,
+            0.796875,
+            0.65625,
+            0.703125
+          ],
+          "null_acc_mean": 0.50234375,
+          "null_acc_std": 0.06004106153894753,
+          "z": 3.552256481368977,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.571875,
+          "real_acc_std": 0.03045873232752801,
+          "real_acc_all": [
+            0.609375,
+            0.59375,
+            0.5625,
+            0.5625,
+            0.53125
+          ],
+          "null_acc_mean": 0.4640625,
+          "null_acc_std": 0.060003597753976824,
+          "z": 1.7967672612240089,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.5625,
+          "real_acc_std": 0.05298695299316616,
+          "real_acc_all": [
+            0.640625,
+            0.5,
+            0.5625,
+            0.53125,
+            0.578125
+          ],
+          "null_acc_mean": 0.49453125,
+          "null_acc_std": 0.06806533329852629,
+          "z": 0.9985810207069337,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.03593750000000001,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.303030303030303,
+        "mlp": 0.5348837209302326
+      }
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 97.1,
+      "cue_concept": 4,
+      "assert_concept": 0,
+      "final_weight_trained_block": 6.75588846206665,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.55,
+          "real_acc_std": 0.05568290525376707,
+          "real_acc_all": [
+            0.578125,
+            0.5625,
+            0.453125,
+            0.59375,
+            0.5625
+          ],
+          "null_acc_mean": 0.5046875,
+          "null_acc_std": 0.07382926716952751,
+          "z": 0.6137471186860499,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.584375,
+          "real_acc_std": 0.03423265984407288,
+          "real_acc_all": [
+            0.5625,
+            0.5625,
+            0.5625,
+            0.640625,
+            0.59375
+          ],
+          "null_acc_mean": 0.54140625,
+          "null_acc_std": 0.07659270349464381,
+          "z": 0.5610031770585672,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.84375,
+          "real_acc_std": 0.019136638615493577,
+          "real_acc_all": [
+            0.859375,
+            0.84375,
+            0.859375,
+            0.84375,
+            0.8125
+          ],
+          "null_acc_mean": 0.50703125,
+          "null_acc_std": 0.06560443756803667,
+          "z": 5.1325605779456245,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.834375,
+          "real_acc_std": 0.013975424859373685,
+          "real_acc_all": [
+            0.84375,
+            0.84375,
+            0.8125,
+            0.84375,
+            0.828125
+          ],
+          "null_acc_mean": 0.5109375,
+          "null_acc_std": 0.0684089928010392,
+          "z": 4.7279968138207495,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.559375,
+          "real_acc_std": 0.05344572305152209,
+          "real_acc_all": [
+            0.578125,
+            0.5625,
+            0.578125,
+            0.46875,
+            0.609375
+          ],
+          "null_acc_mean": 0.49140625,
+          "null_acc_std": 0.09298965239370793,
+          "z": 0.730928100604439,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.60625,
+          "real_acc_std": 0.030055287596361478,
+          "real_acc_all": [
+            0.609375,
+            0.59375,
+            0.59375,
+            0.578125,
+            0.65625
+          ],
+          "null_acc_mean": 0.49765625,
+          "null_acc_std": 0.08666705874046773,
+          "z": 1.2529991392138233,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.5375,
+          "real_acc_std": 0.04501518840902479,
+          "real_acc_all": [
+            0.484375,
+            0.5,
+            0.5625,
+            0.59375,
+            0.546875
+          ],
+          "null_acc_mean": 0.4953125,
+          "null_acc_std": 0.07135106520984076,
+          "z": 0.5912665757116332,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.534375,
+          "real_acc_std": 0.04044430970482745,
+          "real_acc_all": [
+            0.484375,
+            0.578125,
+            0.5625,
+            0.5,
+            0.546875
+          ],
+          "null_acc_mean": 0.50546875,
+          "null_acc_std": 0.07775818491145278,
+          "z": 0.37174543146701594,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.04140624999999998,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.890909090909091,
+        "mlp": 0.8971962616822429
+      }
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 97.9,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.735973358154297,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.553125,
+          "real_acc_std": 0.03423265984407288,
+          "real_acc_all": [
+            0.546875,
+            0.546875,
+            0.515625,
+            0.609375,
+            0.546875
+          ],
+          "null_acc_mean": 0.50859375,
+          "null_acc_std": 0.05494535076531667,
+          "z": 0.8104643865174782,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.575,
+          "real_acc_std": 0.07686483672655527,
+          "real_acc_all": [
+            0.578125,
+            0.515625,
+            0.671875,
+            0.484375,
+            0.625
+          ],
+          "null_acc_mean": 0.4984375,
+          "null_acc_std": 0.08720285542011255,
+          "z": 0.8779815710293992,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "intact__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.7875,
+          "real_acc_std": 0.03045873232752801,
+          "real_acc_all": [
+            0.8125,
+            0.765625,
+            0.828125,
+            0.765625,
+            0.765625
+          ],
+          "null_acc_mean": 0.49765625,
+          "null_acc_std": 0.07368554135605038,
+          "z": 3.933522705621008,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "intact__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.8625,
+          "real_acc_std": 0.048663785944991995,
+          "real_acc_all": [
+            0.8125,
+            0.890625,
+            0.921875,
+            0.875,
+            0.8125
+          ],
+          "null_acc_mean": 0.52265625,
+          "null_acc_std": 0.08023066945204735,
+          "z": 4.235833407860562,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true,
+          "separable": true
+        },
+        "lesion__raw_held__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.6125,
+          "real_acc_std": 0.030055287596361474,
+          "real_acc_all": [
+            0.578125,
+            0.625,
+            0.65625,
+            0.609375,
+            0.59375
+          ],
+          "null_acc_mean": 0.51171875,
+          "null_acc_std": 0.08894989418760903,
+          "z": 1.1330114658420714,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__raw_held__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.59375,
+          "real_acc_std": 0.048159484398195125,
+          "real_acc_all": [
+            0.515625,
+            0.578125,
+            0.625,
+            0.625,
+            0.625
+          ],
+          "null_acc_mean": 0.4828125,
+          "null_acc_std": 0.09630562729500394,
+          "z": 1.151931648398651,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__linear": {
+          "decoder": "linear",
+          "real_acc_mean": 0.628125,
+          "real_acc_std": 0.033874192794810624,
+          "real_acc_all": [
+            0.609375,
+            0.671875,
+            0.65625,
+            0.609375,
+            0.59375
+          ],
+          "null_acc_mean": 0.49609375,
+          "null_acc_std": 0.1008642495331303,
+          "z": 1.3089994781216558,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true,
+          "separable": false
+        },
+        "lesion__delta_held_base__mlp": {
+          "decoder": "mlp",
+          "real_acc_mean": 0.625,
+          "real_acc_std": 0.015625,
+          "real_acc_all": [
+            0.640625,
+            0.609375,
+            0.640625,
+            0.625,
+            0.609375
+          ],
+          "null_acc_mean": 0.52578125,
+          "null_acc_std": 0.08003825026157312,
+          "z": 1.2396416672746229,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true,
+          "separable": false
+        }
+      },
+      "any_combo_separable": true,
+      "all_combos_at_chance": false,
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "max_null_deviation_from_chance": 0.025781249999999978,
+      "attributable_to_crossedge_delta_held_base": {
+        "linear": 0.5543478260869563,
+        "mlp": 0.6551724137931035
+      }
+    }
+  ]
+}
