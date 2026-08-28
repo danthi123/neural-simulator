@@ -1327,6 +1327,155 @@ def test_brain_chat_source_provenance_lesion_collapses_through_the_real_handler(
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# R4 self_schema -> source_provenance LEARNED CROSS-EDGE production wire-in
+# (mirrors the PART-1 d6-WM->comprehension frozen cross-edge; BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA, default-OFF)
+# ─────────────────────────────────────────────────────────────────────────
+
+def _fake_hypothesis_answer(svo=("dog", "eat", "bone"), text="Maybe dog eat bone -- that's a guess."):
+    """A stand-in for RichAnswerComposer.answer() that returns a well-formed HYPOTHESIS turn dict (the shape
+    `webapp.server.brain_chat`'s `is_hyp` block consumes), so a test can drive the REAL, unmodified is_hyp
+    handler code (self_schema authorship + this wire-in's R4 diagnostic) WITHOUT paying for the genuine
+    generative-replay pipeline: a real open-ended hypothesis turn builds a vocab-scale (~46K-neuron) spiking
+    sampler substrate on first use — multiple minutes on CPU, and out of scope for a wire-in that only touches
+    code strictly DOWNSTREAM of `rich.answer()`'s return value."""
+    def _answer(self, msg):
+        return {
+            "abstained": False, "hypothesis": True, "hypothesis_svo": list(svo),
+            "fluent_hypothesis": False, "answer": text, "facts": [], "derived": False,
+            "n_sentences": 1, "followup": False,
+        }
+    return _answer
+
+
+def _warm_rich_composer(client, sess):
+    """Send one ORDINARY (fast) recall turn to build + cache the REAL RichAnswerComposer for `sess` (the same
+    proven-fast prompt `test_brain_chat_tiny_demo_answers_and_abstains` uses), then return it from
+    `webapp.server._BRAIN_RICH` so a test can monkeypatch ONLY its `.answer()`."""
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res.status_code == 200, res.text
+    import webapp.server as _srv
+    cache_key = (sess, "tiny-demo", "stub")
+    rich = _srv._BRAIN_RICH.get(cache_key)
+    assert rich is not None, "rich composer was not cached by the warm-up turn"
+    return rich
+
+
+def test_brain_chat_xedge_selfschema_default_off_is_byte_identical(client, monkeypatch):
+    """R4 wire-in, OFF: `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA` unset -> a hypothesis turn's response carries NO
+    `source_provenance_crossedge` key (the guard `if xedge_selfschema_enabled():` is never entered) — the
+    existing self_schema authorship marker behavior is completely untouched. Drives the REAL /api/brain-chat
+    is_hyp handler code via a monkeypatched RichAnswerComposer.answer (see _warm_rich_composer)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA", raising=False)
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-xedge-ss-off"
+    rich = _warm_rich_composer(client, sess)
+    monkeypatch.setattr(type(rich), "answer", _fake_hypothesis_answer(), raising=True)
+
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res.status_code == 200, res.text
+    data = res.json()
+    assert data.get("hypothesis") is True
+    auth = data.get("authorship") or {}
+    assert "source_provenance_crossedge" not in auth
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_xedge_selfschema_on_reads_live_crossedge_and_lesion_collapses(client, monkeypatch):
+    """R4 wire-in, ON: the diagnostic field is attached, driven by the turn's OWN live authorship verdict
+    (`author_held == authorship.is_self`), and reads a nonzero shift toward GENERATED on R4's validated
+    ambiguous-item instrument — the SAME `crossedge_provenance_shift` function the 6-seed organ-level GO
+    (`research/findings/raw/_onebrain_xedge_selfschema_production_frozen_6seed.json`) already cleared, now
+    exercised through the REAL /api/brain-chat handler. `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION=1` collapses the
+    shift toward zero — the load-bearing check through the real handler."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA", "1")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_selfschema_production as _xsp
+    _xsp._POOL = None   # force a fresh (un-lesioned) pool regardless of prior test order
+
+    sess = "pytest-xedge-ss-on"
+    rich = _warm_rich_composer(client, sess)
+    monkeypatch.setattr(type(rich), "answer", _fake_hypothesis_answer(), raising=True)
+
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res.status_code == 200, res.text
+    data = res.json()
+    auth = data.get("authorship") or {}
+    xe = auth.get("source_provenance_crossedge")
+    assert xe is not None and xe.get("on") is True and "error" not in xe
+    assert xe["author_held"] == bool(auth.get("is_self"))
+    assert auth.get("is_self") is True     # an is_hyp turn is always presented as authored=True
+    shift_intact = xe["shift_toward_generated"]
+    assert shift_intact > 0.003            # matches the 6-seed organ-level GO's range (0.0097-0.0130 @ seed 42)
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+    _xsp._POOL = None
+
+    # ── LESION, through the SAME real handler ──
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION", "1")
+    sess2 = "pytest-xedge-ss-on-lesion"
+    rich2 = _warm_rich_composer(client, sess2)
+    monkeypatch.setattr(type(rich2), "answer", _fake_hypothesis_answer(), raising=True)
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess2, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res2.status_code == 200, res2.text
+    data2 = res2.json()
+    xe2 = (data2.get("authorship") or {}).get("source_provenance_crossedge")
+    assert xe2 is not None and xe2.get("on") is True and "error" not in xe2
+    shift_lesioned = xe2["shift_toward_generated"]
+    assert abs(shift_lesioned) < 0.34 * abs(shift_intact)   # the R4 6-seed GO's own noise-floor ratio
+
+    client.post("/api/brain-chat/reset", json={"session": sess2, "brain": "tiny-demo", "renderer": "stub"})
+    _xsp._POOL = None
+
+
+def test_brain_chat_xedge_selfschema_no_regression_on_ordinary_recall_turn(client, monkeypatch):
+    """The R4 diagnostic lives strictly inside the is_hyp branch — an ORDINARY (non-hypothesis) recall turn must
+    be BYTE-IDENTICAL (whole-response structural equality, docs/TERMS.md's bar: asserted in the data) whether
+    the flag is off or on. A REAL end-to-end HTTP round trip (no monkeypatch needed — this is the fast,
+    already-proven recall path)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    def _ask(sess, flag_on):
+        monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA", raising=False)
+        if flag_on:
+            monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA", "1")
+        res = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+        assert res.status_code == 200, res.text
+        d = res.json()
+        client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+        return d
+
+    d_off = _ask("pytest-xedge-ss-noreg-off", False)
+    d_on = _ask("pytest-xedge-ss-noreg-on", True)
+    assert d_off == d_on
+    assert "source_provenance_crossedge" not in (d_off.get("authorship") or {})
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
 # ─────────────────────────────────────────────────────────────────────────
 
