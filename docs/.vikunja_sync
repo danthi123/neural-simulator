@@ -256,3 +256,12 @@ view, left as-is.
 - xedge one-brain flip: the 2026-08-28 NO-GO was CORRECTED — it was a cupy build crash (comprehension_production_organ
   _snapshot_rest host->device), fixed a8c8a2d18; 6-seed cupy re-verify bumped to gpu.queue front -> autonomous flip
   if 6/6 GO. Left #108's one-brain thread as-is pending the re-verify verdict (did not mark anything done there).
+## 2026-08-28 generative-wander queue-restage (isolated worktree agent-aaa6173234281a829)
+#104 (on-substrate CA3 generative-wander production port) appended-desc: the 2026-08-27-claimed staged 6-seed
+cupy production verify never actually ran (root-caused this session: the queue-add never persisted to the
+PRIMARY gpu.queue the shared dispatcher polls -- zero commits/log lines ever mention it). Reconfirmed no
+regression (byte-identical seed-42 reproduction + byte-identical-off/flag-on-routing via direct behavioral
+assertion), then correctly RE-STAGED the exact 6-seed --emergent verify against `main` directly (not a
+worktree), persistence confirmed (depth 15, dispatcher alive). Still PARTIAL -- no verdict, task stays open.
+No other task touched (no code changed, no other capability status changed). Finding:
+2026-08-28-generative-wander-production-verify-restaged-after-queue-loss.
