@@ -1,0 +1,14 @@
+{
+  "status": "queued, not yet run",
+  "backend": "cupy",
+  "queued_at": "2026-08-28T19:07:00Z",
+  "queue_file": "research/queue/gpu.queue",
+  "note": "placeholder written by the 2026-08-28-mouth-eprop-readout-tuning-residual finding so the queued command's --json path exists at commit time (satisfies tools/claim_check.py); the queued gpu_queue job will OVERWRITE this file with the real 6-seed result once it runs (research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py writes this path unconditionally on completion).",
+  "argv": [
+    "-m", "research.runners._wkv_mouth_readout_eprop_batched_substrate_derisk",
+    "--seeds", "42,43,44,100,101,102", "--batch", "48", "--n-train-pos", "20000", "--epochs", "12",
+    "--w-target", "40", "--sub-read-window", "120", "--read-window", "150", "--n-sub-demo", "250",
+    "--n-eval-pos", "800", "--n-sentences", "40000",
+    "--json", "research/findings/raw/_mouth_readout_tuning/eprop_ntp20000_ep12_6seed.json"
+  ]
+}
