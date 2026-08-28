@@ -1,0 +1,974 @@
+{
+  "probe": "onebrain_xedge_production_default_flip_real_handler",
+  "backend": "cupy",
+  "brain": "tiny-demo",
+  "renderer": "stub",
+  "smoke": false,
+  "b_edge": "learn",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "shipped_seed": 42,
+  "flip_target": "BRAIN_ONEBRAIN_XEDGE + BRAIN_ONEBRAIN_XEDGE_LEARN default ON; =0 escape hatch preserved",
+  "worker_problems": [],
+  "aggregate": {
+    "arm_A_byte_identical_off": {
+      "pass": true,
+      "n_match": 4,
+      "n_total": 4,
+      "diffs": []
+    },
+    "arm_B_visible_on_real_traffic": {
+      "pass": false,
+      "b_edge": "learn",
+      "shipped_seed42_visible": false,
+      "n_visible_grown_focus": 0,
+      "n_correctly_inert_ctrl_focus": 2,
+      "n_hollow": 0,
+      "n_flips_surviving_lesion": 0,
+      "flip_fraction_attributable_to_crossedge": null,
+      "all_seeds_lesion_revert": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "w0_role": "agent",
+          "grown_focus": true,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": false,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": false
+        },
+        {
+          "seed": 43,
+          "w0_role": "ctrl",
+          "grown_focus": false,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": true,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": true
+        },
+        {
+          "seed": 44,
+          "w0_role": "ctrl",
+          "grown_focus": false,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": true,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": true
+        },
+        {
+          "seed": 100,
+          "w0_role": "agent",
+          "grown_focus": true,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": false,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": false
+        },
+        {
+          "seed": 101,
+          "w0_role": "patient",
+          "grown_focus": true,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": false,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": false
+        },
+        {
+          "seed": 102,
+          "w0_role": "patient",
+          "grown_focus": true,
+          "wm_resolved": false,
+          "answer_differs": false,
+          "role_off_content": true,
+          "visible": false,
+          "hollow": false,
+          "correctly_inert": false,
+          "lesion_reverts": true,
+          "held_role": "either",
+          "content_role": null,
+          "held_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "novisi_answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "wm_margin": null,
+          "seed_ok": false
+        }
+      ],
+      "note": "through the real handler the WM focus is the positional CAND_POOLS[0]=w0; visibility requires w0 to be a grown role for that seed (declared positional-binding residual). n_hollow==0 is the anti-hollow bar; the shipped brain is seed 42 (w0=agent -> visible)."
+    },
+    "arm_C_no_regression": {
+      "pass": false,
+      "moat_well_held_ok": true,
+      "learn_wiring_live": false,
+      "diffs": []
+    },
+    "FLIP_VERIFY_GO": false
+  },
+  "per_worker": {
+    "A_baseline_s42": {
+      "config": "A_baseline",
+      "seed": 42,
+      "env": {},
+      "per_turn": true,
+      "pool": {
+        "primed": false
+      },
+      "well": {
+        "the wolf bites the apple": {
+          "answer": "the wolf bites the apple \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": true,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        },
+        "the dog chases the cat": {
+          "answer": "the dog chases the cat \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": false,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": 2,
+          "xedge_live_learn": null
+        }
+      },
+      "question": {
+        "answer": "Hm \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+        "abstained": true,
+        "comprehended": null,
+        "repair_role": null,
+        "repair_kind": null,
+        "content_role": null,
+        "wm_resolved": null,
+        "wm_margin": null,
+        "repaired": null,
+        "not_understood": false,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "amb_novisi": {
+        "the wolf watches the owl": {
+          "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "abstained": true,
+          "comprehended": false,
+          "repair_role": "either",
+          "repair_kind": "role",
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": true,
+          "not_understood": true,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        }
+      }
+    },
+    "A_off_s42": {
+      "config": "A_off",
+      "seed": 42,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "0"
+      },
+      "per_turn": true,
+      "pool": {
+        "primed": false
+      },
+      "well": {
+        "the wolf bites the apple": {
+          "answer": "the wolf bites the apple \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": true,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        },
+        "the dog chases the cat": {
+          "answer": "the dog chases the cat \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": false,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": 2,
+          "xedge_live_learn": null
+        }
+      },
+      "question": {
+        "answer": "Hm \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+        "abstained": true,
+        "comprehended": null,
+        "repair_role": null,
+        "repair_kind": null,
+        "content_role": null,
+        "wm_resolved": null,
+        "wm_margin": null,
+        "repaired": null,
+        "not_understood": false,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "amb_novisi": {
+        "the wolf watches the owl": {
+          "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "abstained": true,
+          "comprehended": false,
+          "repair_role": "either",
+          "repair_kind": "role",
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": true,
+          "not_understood": true,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        }
+      }
+    },
+    "C_on_shipped_s42": {
+      "config": "C_on_shipped",
+      "seed": 42,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": true,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "well": {
+        "the wolf bites the apple": {
+          "answer": "the wolf bites the apple \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": true,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        },
+        "the dog chases the cat": {
+          "answer": "the dog chases the cat \u2014 worth going further here.",
+          "abstained": false,
+          "comprehended": false,
+          "repair_role": null,
+          "repair_kind": null,
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": null,
+          "not_understood": false,
+          "multiref_n": 2,
+          "xedge_live_learn": null
+        }
+      },
+      "question": {
+        "answer": "Hm \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+        "abstained": true,
+        "comprehended": null,
+        "repair_role": null,
+        "repair_kind": null,
+        "content_role": null,
+        "wm_resolved": null,
+        "wm_margin": null,
+        "repaired": null,
+        "not_understood": false,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "amb_novisi": {
+        "the wolf watches the owl": {
+          "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+          "abstained": true,
+          "comprehended": false,
+          "repair_role": "either",
+          "repair_kind": "role",
+          "content_role": null,
+          "wm_resolved": null,
+          "wm_margin": null,
+          "repaired": true,
+          "not_understood": true,
+          "multiref_n": null,
+          "xedge_live_learn": null
+        }
+      },
+      "moat_well_held": {
+        "answer": "The wolf bites apple. \u2014 worth going further here.",
+        "abstained": false,
+        "comprehended": true,
+        "repair_role": null,
+        "repair_kind": null,
+        "content_role": null,
+        "wm_resolved": null,
+        "wm_margin": null,
+        "repaired": null,
+        "not_understood": false,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "learn_traj": [
+        {
+          "turn": 0,
+          "xedge_live_learn": null
+        },
+        {
+          "turn": 1,
+          "xedge_live_learn": null
+        },
+        {
+          "turn": 2,
+          "xedge_live_learn": null
+        },
+        {
+          "turn": 3,
+          "xedge_live_learn": null
+        }
+      ],
+      "pool_after_learn": null
+    },
+    "B_on_learn_s42": {
+      "config": "B_on_learn",
+      "seed": 42,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s42": {
+      "config": "B_lesion_learn",
+      "seed": 42,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_on_learn_s43": {
+      "config": "B_on_learn",
+      "seed": 43,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s43": {
+      "config": "B_lesion_learn",
+      "seed": 43,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_on_learn_s44": {
+      "config": "B_on_learn",
+      "seed": 44,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s44": {
+      "config": "B_lesion_learn",
+      "seed": 44,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_on_learn_s100": {
+      "config": "B_on_learn",
+      "seed": 100,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s100": {
+      "config": "B_lesion_learn",
+      "seed": 100,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_on_learn_s101": {
+      "config": "B_on_learn",
+      "seed": 101,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s101": {
+      "config": "B_lesion_learn",
+      "seed": 101,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_on_learn_s102": {
+      "config": "B_on_learn",
+      "seed": 102,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    },
+    "B_lesion_learn_s102": {
+      "config": "B_lesion_learn",
+      "seed": 102,
+      "env": {
+        "BRAIN_ONEBRAIN_XEDGE": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LEARN": "1",
+        "BRAIN_ONEBRAIN_XEDGE_LESION": "1"
+      },
+      "per_turn": false,
+      "pool": {
+        "primed": false,
+        "reason": "pool build failed / disabled"
+      },
+      "visibility": {
+        "the wolf watches the owl": {
+          "novisi": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "held": {
+            "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+            "abstained": true,
+            "comprehended": false,
+            "repair_role": "either",
+            "repair_kind": "role",
+            "content_role": null,
+            "wm_resolved": null,
+            "wm_margin": null,
+            "repaired": true,
+            "not_understood": true,
+            "multiref_n": null,
+            "xedge_live_learn": null
+          },
+          "answer_differs": false,
+          "role_differs": false
+        }
+      }
+    }
+  }
+}
