@@ -161,6 +161,19 @@ levers are therefore an apical/predictive-prior two-pathway read (in flight) and
 per neuron per window) — reading dendrites in the two-compartment sense above, not more pooling or more
 decorrelation.
 
+**2026-08-27 — the mouth "structure-selective substrate read wall" is VOID (a measurement artifact), read is
+faithful.** The `structure-characterization-cupy-SUBSTRATE-WALL` verdict (structured head_w reads corr ~0, only
+random reads) was a STALE-WEIGHTS bug in the measurement harness: `BatchedSubstrateReadout` reuses ONE built
+bridge across many `set_weights()` calls, but synaptic transmission reads `sim/bridge.py::_get_cached_coo()`, a
+cached COO matrix invalidated only on a STRUCTURAL change, never on a weight edit — so every read after the first
+transmits the FIRST-loaded weight. Measuring a random probe first and head_w later manufactured the "collapse".
+On a FRESH build per weight the structured head_w decodes as well as random, 6/6 seeds
+(`research/findings/2026-08-27-decorrelation-read-shared-fidelity-wall-PARTIAL.md`). The prior wall finding is
+retracted (PARTIAL). This ALSO refutes the "one shared read-fidelity wall behind mouth + learn-through-use"
+thesis: the LTU read builds fresh per read (no such bug), and a decorrelation read is a 6/6 NO-GO there. Open
+next mechanism: the eprop mouth TRAINING loop reuses one build across per-step `set_weights` too, so the same
+stale COO likely starves training's read — a strong candidate for the |W|->cap runaway.
+
 ## ⭐ 2026-08-26 (perception) — the V1 oriented-receptive-field wall is broken on-bridge, partially; a fixed-inhibition lever is ruled out on a theorem
 
 Separately from the chat-faculty batch above, and landing slightly later the same evening, a three-lever push

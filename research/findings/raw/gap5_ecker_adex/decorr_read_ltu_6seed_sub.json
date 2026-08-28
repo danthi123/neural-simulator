@@ -1,0 +1,491 @@
+{
+  "probe": "gap5_decorrelation_read_ltu",
+  "decorr_mode": "sub",
+  "decorr_lambda": 1.0,
+  "byte_identical_off": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "cfg": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "decorr_lambda": 1.0,
+    "decorr_mode": "sub",
+    "decorr_sigma": 0.05,
+    "decorr_lambda_scan": "",
+    "skip_byte_check": false,
+    "n_mem": 6,
+    "asm_size": 80,
+    "within_density": 0.5,
+    "rest_steps": 9000,
+    "consol_steps": 6500,
+    "dt": 0.1,
+    "w_within": 60.0,
+    "between_init": 15.0,
+    "b_override": 120.0,
+    "stdp_w_max": 900.0,
+    "stdp_a_plus": 0.05,
+    "stdp_a_minus": 0.06,
+    "stdp_tau": 20.0,
+    "btsp_elig_tau": 80.0,
+    "btsp_plat_tau": 1.0,
+    "btsp_eta": 0.001,
+    "btsp_w_max": 900.0,
+    "fwd_delay_steps": 90,
+    "n_laps": 14,
+    "enc_step": 80,
+    "enc_dwell": 40,
+    "enc_gap": 600,
+    "enc_cue_pa": 9000.0,
+    "enc_cue_frac": 0.6,
+    "swr_period": 650,
+    "cue_pa": 9000.0,
+    "cue_steps": 40,
+    "cue_frac": 0.6,
+    "weak_cue_mult": 0.5,
+    "weak_cue_frac": 0.35,
+    "ou_sigma": 40.0,
+    "window": 30,
+    "active_frac": 0.1,
+    "onset_frac": 0.06,
+    "dw_min": 5.0,
+    "headroom_max": 0.9,
+    "depth_gain_min": 0.05,
+    "tau_gain_min": 0.05,
+    "noseed_max_frac": 0.2,
+    "out": "research/findings/raw/gap5_ecker_adex/decorr_read_ltu_6seed_sub.json"
+  },
+  "verdict": "DECORRELATION-READ-LTU NO-GO 0/6 (mode=sub lam=1.0) -- weak-cue depth_frac 0.571->0.497 (noseed 0.571), byte-identical-off=True.",
+  "GO": false,
+  "decided": {
+    "label": "Does a cross-assembly common-mode DECORRELATION read lift the weak-cue recall floor?",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "byte-identical at lambda=0 (the read change is additive)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "the write is DIRECTIONAL (dw_fwd > dw_rev + dw_min) on >= bar seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fbf9118e3e0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "weak-cue depth_frac BEFORE has headroom (not at ceiling) on >= bar seeds",
+        "ok": true,
+        "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fbf9118e3e0>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "seeded vs NO-SEED weak depth (lesion-the-replay) -- must DIFFER",
+        "ok": true,
+        "detail": "treatment=0.497009 control=0.57094 |sep|=0.0739316 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte-identical at lambda=0 (the read change is additive)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the write is DIRECTIONAL (dw_fwd > dw_rev + dw_min) on >= bar seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fbf9118e3e0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "weak-cue depth_frac BEFORE has headroom (not at ceiling) on >= bar seeds",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fbf9118e3e0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "seeded vs NO-SEED weak depth (lesion-the-replay) -- must DIFFER",
+      "ok": true,
+      "detail": "treatment=0.497009 control=0.57094 |sep|=0.0739316 > 0",
+      "note": ""
+    }
+  ],
+  "scan": null,
+  "per_seed": [
+    {
+      "seed": 42,
+      "band_before": {
+        "adj_fwd": 319.35125732421875,
+        "adj_rev": 11.498048782348633,
+        "adj_within": 60.0,
+        "ratio": 27.774387060739787,
+        "fwd_max": 872.9390258789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 245.5580291748047,
+        "dw_rev": 219.4591064453125
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 1.0,
+          "depth_frac": 0.4423076923076923,
+          "depth_mean": 2.0,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "depth_frac": 0.4782051282051283,
+          "depth_mean": 2.1538461538461537,
+          "tau": 1.0,
+          "n_multi": 5,
+          "n_tau_events": 5,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 1.0,
+          "depth_frac": 0.4423076923076923,
+          "depth_mean": 2.0,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.4423,
+        "weak_depth_after": 0.4782,
+        "weak_depth_noseed": 0.4423,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 1.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "band_before": {
+        "adj_fwd": 320.0132141113281,
+        "adj_rev": 11.548107147216797,
+        "adj_within": 60.0,
+        "ratio": 27.71131320758955,
+        "fwd_max": 873.7046508789062,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 145.64154052734375,
+        "dw_rev": 114.00756072998047
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 1.0,
+          "depth_frac": 0.6307692307692307,
+          "depth_mean": 2.1538461538461537,
+          "tau": 1.0,
+          "n_multi": 4,
+          "n_tau_events": 4,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 0.8,
+          "depth_frac": 0.5256410256410257,
+          "depth_mean": 1.9230769230769231,
+          "tau": 0.7333333333333334,
+          "n_multi": 5,
+          "n_tau_events": 5,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 1.0,
+          "depth_frac": 0.6307692307692307,
+          "depth_mean": 2.1538461538461537,
+          "tau": 1.0,
+          "n_multi": 4,
+          "n_tau_events": 4,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.6308,
+        "weak_depth_after": 0.5256,
+        "weak_depth_noseed": 0.6308,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.7333
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "band_before": {
+        "adj_fwd": 320.32623291015625,
+        "adj_rev": 11.51583194732666,
+        "adj_within": 60.0,
+        "ratio": 27.816160775472092,
+        "fwd_max": 876.070556640625,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 239.19464111328125,
+        "dw_rev": 205.0043182373047
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 0.75,
+          "depth_frac": 0.6217948717948717,
+          "depth_mean": 1.6923076923076923,
+          "tau": 1.0,
+          "n_multi": 4,
+          "n_tau_events": 4,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "depth_frac": 0.532051282051282,
+          "depth_mean": 1.7692307692307692,
+          "tau": 1.0,
+          "n_multi": 5,
+          "n_tau_events": 5,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 0.75,
+          "depth_frac": 0.6217948717948717,
+          "depth_mean": 1.6923076923076923,
+          "tau": 1.0,
+          "n_multi": 4,
+          "n_tau_events": 4,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.6218,
+        "weak_depth_after": 0.5321,
+        "weak_depth_noseed": 0.6218,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 1.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "band_before": {
+        "adj_fwd": 314.6484069824219,
+        "adj_rev": 11.613385200500488,
+        "adj_within": 60.0,
+        "ratio": 27.093599458740233,
+        "fwd_max": 874.7079467773438,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 233.26736450195312,
+        "dw_rev": 219.99163818359375
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 1.0,
+          "depth_frac": 0.5628205128205128,
+          "depth_mean": 2.230769230769231,
+          "tau": 1.0,
+          "n_multi": 5,
+          "n_tau_events": 5,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "depth_frac": 0.4628205128205129,
+          "depth_mean": 2.230769230769231,
+          "tau": 1.0,
+          "n_multi": 6,
+          "n_tau_events": 6,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 1.0,
+          "depth_frac": 0.5628205128205128,
+          "depth_mean": 2.230769230769231,
+          "tau": 1.0,
+          "n_multi": 5,
+          "n_tau_events": 5,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.5628,
+        "weak_depth_after": 0.4628,
+        "weak_depth_noseed": 0.5628,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 1.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "band_before": {
+        "adj_fwd": 321.66363525390625,
+        "adj_rev": 11.509712219238281,
+        "adj_within": 60.0,
+        "ratio": 27.94714838449663,
+        "fwd_max": 874.6446533203125,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 163.8805694580078,
+        "dw_rev": 117.09072875976562
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 1.0,
+          "depth_frac": 0.6307692307692307,
+          "depth_mean": 1.8461538461538463,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 1.0,
+          "depth_frac": 0.5153846153846154,
+          "depth_mean": 1.6923076923076923,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 1.0,
+          "depth_frac": 0.6307692307692307,
+          "depth_mean": 1.8461538461538463,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.6308,
+        "weak_depth_after": 0.5154,
+        "weak_depth_noseed": 0.6308,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 1.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "band_before": {
+        "adj_fwd": 320.1249084472656,
+        "adj_rev": 11.497782707214355,
+        "adj_within": 60.0,
+        "ratio": 27.842316783948373,
+        "fwd_max": 873.2434692382812,
+        "fwd_min": 15.0
+      },
+      "consolidate": {
+        "dw_fwd": 193.91322326660156,
+        "dw_rev": 149.94790649414062
+      },
+      "reads": {
+        "weak_before": {
+          "forward": 1.0,
+          "depth_frac": 0.5371794871794872,
+          "depth_mean": 1.9230769230769231,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_before"
+        },
+        "weak_after": {
+          "forward": 0.75,
+          "depth_frac": 0.46794871794871795,
+          "depth_mean": 1.6923076923076923,
+          "tau": 0.5,
+          "n_multi": 4,
+          "n_tau_events": 4,
+          "tag": "weak_after"
+        },
+        "weak_noseed": {
+          "forward": 1.0,
+          "depth_frac": 0.5371794871794872,
+          "depth_mean": 1.9230769230769231,
+          "tau": 1.0,
+          "n_multi": 3,
+          "n_tau_events": 3,
+          "tag": "weak_noseed"
+        }
+      },
+      "checks": {
+        "directional": true,
+        "headroom": true,
+        "depth_gain": false,
+        "tau_gain": false,
+        "recall_gain": false,
+        "lesion_ok": true,
+        "weak_depth_before": 0.5372,
+        "weak_depth_after": 0.4679,
+        "weak_depth_noseed": 0.5372,
+        "weak_tau_before": 1.0,
+        "weak_tau_after": 0.5
+      },
+      "seed_go": false
+    }
+  ],
+  "elapsed_seconds": 105.7
+}

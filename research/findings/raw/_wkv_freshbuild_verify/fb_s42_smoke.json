@@ -1,0 +1,58 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "batch": 8,
+      "sub_read_window": 64,
+      "target_norm_T": 37.533,
+      "seeded": true,
+      "artifact": {
+        "rand_1st": 0.9557,
+        "headw_2nd": 0.0091,
+        "rand_3rd": -0.008
+      },
+      "truth": {
+        "random_a": 0.9557,
+        "random_b": 0.9544,
+        "random_c": 0.955,
+        "headw": 0.9541,
+        "sparse_structured": 0.9479,
+        "eigen_top_structured": 0.9685
+      },
+      "struct_min_freshbuild": 0.9479,
+      "rand_mean_freshbuild": 0.955,
+      "seed_truth_ok": true,
+      "seed_artifact_reproduced": true
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "bar": 1,
+    "n_seeds_structured_faithful_freshbuild": 1,
+    "n_seeds_artifact_reproduced": 1,
+    "headw_freshbuild_corr_mean": 0.9541,
+    "sparse_freshbuild_corr_mean": 0.9479,
+    "eigen_top_freshbuild_corr_mean": 0.9685,
+    "random_freshbuild_corr_mean": 0.955,
+    "headw_stale_2nd_corr_mean": 0.0091,
+    "rand_1st_corr_mean": 0.9557,
+    "verdict": "ARTIFACT-CONFIRMED-READ-FAITHFUL"
+  },
+  "seeds": [
+    42
+  ],
+  "struct_ok_threshold": 0.5,
+  "wall_ceiling": 0.15,
+  "root_cause": "BatchedSubstrateReadout reuses one built bridge across set_weights; transmission reads sim/bridge.py::_get_cached_coo() which is invalidated only on structural (not weight) change -> every read after the first transmits the FIRST-loaded weight matrix. Fresh build per probe = COO cache built from the loaded weights = faithful read.",
+  "backend": "cupy",
+  "elapsed_s": 139.0,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-a9ad8618e3f5657b0/research/runners/_wkv_mouth_read_freshbuild_structure_verify_derisk.py",
+    "--seeds",
+    "42",
+    "--json",
+    "research/findings/raw/_wkv_freshbuild_verify/fb_s42_smoke.json"
+  ]
+}
