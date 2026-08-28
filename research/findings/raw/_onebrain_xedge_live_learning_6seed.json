@@ -1,0 +1,898 @@
+{
+  "probe": "onebrain_xedge_production_live_learning",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "results": [
+    {
+      "seed": 42,
+      "selftest": {
+        "role": {
+          "p_agent": "w0",
+          "p_patient": "w2",
+          "p_ctrl": "w1"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 16.7788,
+            "w0->P": 1.4418,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 3.0976,
+            "w2->P": 16.7186
+          },
+          {
+            "turn": 40,
+            "w0->A": 16.7788,
+            "w0->P": 3.0022,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 5.0207,
+            "w2->P": 16.7183
+          },
+          {
+            "turn": 60,
+            "w0->A": 16.7788,
+            "w0->P": 3.9568,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 5.5417,
+            "w2->P": 16.7183
+          },
+          {
+            "turn": 80,
+            "w0->A": 16.7788,
+            "w0->P": 4.3919,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 5.676,
+            "w2->P": 16.7183,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 16.7788,
+          "w0->P": 4.3919,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 5.676,
+          "w2->P": 16.7183
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "bird/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "ball/kick/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "leaf/carry/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "bird/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "ball/kick/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "leaf/carry/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "owl/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 43,
+      "selftest": {
+        "role": {
+          "p_agent": "w1",
+          "p_patient": "w2",
+          "p_ctrl": "w0"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 16.6433,
+            "w1->P": 1.4746,
+            "w2->A": 1.9018,
+            "w2->P": 16.7728
+          },
+          {
+            "turn": 40,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 16.6433,
+            "w1->P": 3.284,
+            "w2->A": 4.4174,
+            "w2->P": 16.7696
+          },
+          {
+            "turn": 60,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 16.6433,
+            "w1->P": 4.2331,
+            "w2->A": 5.7344,
+            "w2->P": 16.7696
+          },
+          {
+            "turn": 80,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 16.6433,
+            "w1->P": 4.6483,
+            "w2->A": 6.034,
+            "w2->P": 16.7696,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 16.6433,
+          "w1->P": 4.6483,
+          "w2->A": 6.034,
+          "w2->P": 16.7696
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "dog/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "rock/grab/book",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "fox/chase/fox",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "bone/carry/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "fox/chase/frog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "dog/chase/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "rock/grab/book",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "fox/chase/fox",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "bone/carry/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "fox/chase/frog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 44,
+      "selftest": {
+        "role": {
+          "p_agent": "w2",
+          "p_patient": "w1",
+          "p_ctrl": "w0"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 1.9853,
+            "w1->P": 16.6615,
+            "w2->A": 16.8462,
+            "w2->P": 2.4216
+          },
+          {
+            "turn": 40,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 4.6761,
+            "w1->P": 16.6616,
+            "w2->A": 16.8461,
+            "w2->P": 5.067
+          },
+          {
+            "turn": 60,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 5.6162,
+            "w1->P": 16.6616,
+            "w2->A": 16.8461,
+            "w2->P": 5.7171
+          },
+          {
+            "turn": 80,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 5.8384,
+            "w1->P": 16.6616,
+            "w2->A": 16.8461,
+            "w2->P": 5.8558,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 5.8384,
+          "w1->P": 16.6616,
+          "w2->A": 16.8461,
+          "w2->P": 5.8558
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "fox/chase/bear",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "ball/grab/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "fox/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "bone/bite/book",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "frog/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "fox/chase/bear",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "ball/grab/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "fox/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "bone/bite/book",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "frog/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 100,
+      "selftest": {
+        "role": {
+          "p_agent": "w0",
+          "p_patient": "w1",
+          "p_ctrl": "w2"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 16.7243,
+            "w0->P": 2.1262,
+            "w1->A": 2.9429,
+            "w1->P": 16.6465,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 40,
+            "w0->A": 16.7243,
+            "w0->P": 4.7062,
+            "w1->A": 5.125,
+            "w1->P": 16.6465,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 60,
+            "w0->A": 16.7243,
+            "w0->P": 5.5725,
+            "w1->A": 5.8234,
+            "w1->P": 16.6465,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 80,
+            "w0->A": 16.7243,
+            "w0->P": 5.8333,
+            "w1->A": 6.0427,
+            "w1->P": 16.6491,
+            "w2->A": 0.05,
+            "w2->P": 0.05,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 16.7243,
+          "w0->P": 5.8333,
+          "w1->A": 6.0427,
+          "w1->P": 16.6491,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "wolf/chase/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "book/eat/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "frog/watch/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "bone/push/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "wolf/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "wolf/chase/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "book/eat/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "frog/watch/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "bone/push/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "wolf/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 101,
+      "selftest": {
+        "role": {
+          "p_agent": "w2",
+          "p_patient": "w0",
+          "p_ctrl": "w1"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 2.2099,
+            "w0->P": 16.798,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.5532,
+            "w2->P": 1.3625
+          },
+          {
+            "turn": 40,
+            "w0->A": 4.931,
+            "w0->P": 16.798,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.5512,
+            "w2->P": 2.5577
+          },
+          {
+            "turn": 60,
+            "w0->A": 5.6768,
+            "w0->P": 16.798,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.5512,
+            "w2->P": 3.7469
+          },
+          {
+            "turn": 80,
+            "w0->A": 5.9063,
+            "w0->P": 16.798,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.5512,
+            "w2->P": 4.3898,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 5.9063,
+          "w0->P": 16.798,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 16.5512,
+          "w2->P": 4.3898
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "fox/watch/cat",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "book/bite/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "fox/watch/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "bone/push/leaf",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "dog/watch/owl",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "fox/watch/cat",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "book/bite/stick",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "fox/watch/dog",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "bone/push/leaf",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "dog/watch/owl",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 102,
+      "selftest": {
+        "role": {
+          "p_agent": "w2",
+          "p_patient": "w0",
+          "p_ctrl": "w1"
+        },
+        "learned": true,
+        "grow_traj": [
+          {
+            "turn": 0,
+            "w0->A": 0.05,
+            "w0->P": 0.05,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 0.05,
+            "w2->P": 0.05
+          },
+          {
+            "turn": 20,
+            "w0->A": 1.592,
+            "w0->P": 16.8266,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.7065,
+            "w2->P": 2.2691
+          },
+          {
+            "turn": 40,
+            "w0->A": 3.1224,
+            "w0->P": 16.8266,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.7068,
+            "w2->P": 4.8497
+          },
+          {
+            "turn": 60,
+            "w0->A": 4.0236,
+            "w0->P": 16.8266,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.7068,
+            "w2->P": 5.6344
+          },
+          {
+            "turn": 80,
+            "w0->A": 4.5139,
+            "w0->P": 16.8266,
+            "w1->A": 0.05,
+            "w1->P": 0.05,
+            "w2->A": 16.7068,
+            "w2->P": 5.8898,
+            "n_credited": 80
+          }
+        ],
+        "final_weights": {
+          "w0->A": 4.5139,
+          "w0->P": 16.8266,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 16.7068,
+          "w2->P": 5.8898
+        },
+        "grew_both": true,
+        "bounded_F3": true,
+        "intact_roles": [
+          {
+            "item": "wolf/watch/cat",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "rock/push/ball",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "wolf/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "ball/push/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          },
+          {
+            "item": "wolf/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "agent",
+            "role_p_patient": "patient",
+            "flip": true
+          }
+        ],
+        "lesioned_roles": [
+          {
+            "item": "wolf/watch/cat",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "rock/push/ball",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "wolf/watch/wolf",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          },
+          {
+            "item": "ball/push/apple",
+            "tag": "ambig_2inanim",
+            "role_p_agent": "agent",
+            "role_p_patient": "agent",
+            "flip": false
+          },
+          {
+            "item": "wolf/watch/bird",
+            "tag": "ambig_2animate",
+            "role_p_agent": "patient",
+            "role_p_patient": "patient",
+            "flip": false
+          }
+        ],
+        "decision_flips_intact": 5,
+        "decision_flips_lesioned": 0,
+        "caveat_closed": true,
+        "GO": true
+      }
+    }
+  ],
+  "n_go": 6,
+  "note": "PART 2: the cross-edge GROWS from W0=0.05 via an IN-BRAIN self-supervised credit signal (comprehension's own confident sel resolution drives teach_*, three-factor DA-gated, bounded by stdp_w_max) -- NOT a frozen pre-grown weight -- and CLOSES the sub-decision caveat: the real production repair role DECISION flips with the held WM referent, lesion-attributable. Semantic referent->pool binding stays a declared residual."
+}
