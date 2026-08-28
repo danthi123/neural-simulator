@@ -1,0 +1,63 @@
+{
+  "config": "B_on_learn",
+  "seed": 102,
+  "env": {
+    "BRAIN_ONEBRAIN_XEDGE": "1",
+    "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+  },
+  "per_turn": false,
+  "pool": {
+    "primed": true,
+    "seed": 102,
+    "role": {
+      "p_agent": "w2",
+      "p_patient": "w0",
+      "p_ctrl": "w1"
+    },
+    "cross_weights": {
+      "w0->A": 4.5059,
+      "w0->P": 16.8272,
+      "w1->A": 0.05,
+      "w1->P": 0.05,
+      "w2->A": 16.6268,
+      "w2->P": 5.8965
+    },
+    "learned": true,
+    "live_per_turn": false,
+    "lesioned": false
+  },
+  "visibility": {
+    "the wolf watches the owl": {
+      "novisi": {
+        "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?",
+        "abstained": true,
+        "comprehended": false,
+        "repair_role": "patient",
+        "repair_kind": "role",
+        "content_role": null,
+        "wm_resolved": null,
+        "wm_margin": null,
+        "repaired": true,
+        "not_understood": true,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "held": {
+        "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?",
+        "abstained": true,
+        "comprehended": false,
+        "repair_role": "patient",
+        "repair_kind": "role",
+        "content_role": "patient",
+        "wm_resolved": true,
+        "wm_margin": -0.015555555555555581,
+        "repaired": true,
+        "not_understood": true,
+        "multiref_n": null,
+        "xedge_live_learn": null
+      },
+      "answer_differs": false,
+      "role_differs": false
+    }
+  }
+}

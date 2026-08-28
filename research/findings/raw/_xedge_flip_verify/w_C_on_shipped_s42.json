@@ -1,0 +1,288 @@
+{
+  "config": "C_on_shipped",
+  "seed": 42,
+  "env": {
+    "BRAIN_ONEBRAIN_XEDGE": "1",
+    "BRAIN_ONEBRAIN_XEDGE_LEARN": "1"
+  },
+  "per_turn": true,
+  "pool": {
+    "primed": true,
+    "seed": 42,
+    "role": {
+      "p_agent": "w0",
+      "p_patient": "w2",
+      "p_ctrl": "w1"
+    },
+    "cross_weights": {
+      "w0->A": 0.05,
+      "w0->P": 0.05,
+      "w1->A": 0.05,
+      "w1->P": 0.05,
+      "w2->A": 0.05,
+      "w2->P": 0.05
+    },
+    "learned": true,
+    "live_per_turn": true,
+    "lesioned": false
+  },
+  "well": {
+    "the wolf bites the apple": {
+      "answer": "the wolf bites the apple \u2014 worth going further here.",
+      "abstained": false,
+      "comprehended": true,
+      "repair_role": null,
+      "repair_kind": null,
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": null,
+      "not_understood": false,
+      "multiref_n": null,
+      "xedge_live_learn": null
+    },
+    "the dog chases the cat": {
+      "answer": "the dog chases the cat \u2014 worth going further here.",
+      "abstained": false,
+      "comprehended": false,
+      "repair_role": null,
+      "repair_kind": null,
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": null,
+      "not_understood": false,
+      "multiref_n": 2,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.32222222222222224,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 0.05,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 0.6929,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 1,
+        "a0": 0.21666666666666667,
+        "a1": 0.31319444444444444,
+        "role_floor": 0.06333333333333334
+      }
+    }
+  },
+  "question": {
+    "answer": "Hm \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+    "abstained": true,
+    "comprehended": null,
+    "repair_role": null,
+    "repair_kind": null,
+    "content_role": null,
+    "wm_resolved": null,
+    "wm_margin": null,
+    "repaired": null,
+    "not_understood": false,
+    "multiref_n": null,
+    "xedge_live_learn": null
+  },
+  "amb_novisi": {
+    "the wolf watches the owl": {
+      "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve the PATIENT \u2014 which of them is the 'watch' done to, the wolf or the owl?",
+      "abstained": true,
+      "comprehended": false,
+      "repair_role": "patient",
+      "repair_kind": "role",
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": true,
+      "not_understood": true,
+      "multiref_n": null,
+      "xedge_live_learn": null
+    }
+  },
+  "moat_well_held": {
+    "answer": "The wolf bites apple. \u2014 worth going further here.",
+    "abstained": false,
+    "comprehended": true,
+    "repair_role": null,
+    "repair_kind": null,
+    "content_role": null,
+    "wm_resolved": null,
+    "wm_margin": null,
+    "repaired": null,
+    "not_understood": false,
+    "multiref_n": null,
+    "xedge_live_learn": {
+      "credited": true,
+      "teach": "teach_agent",
+      "margin": 0.3162037037037037,
+      "focus": "w0",
+      "content_direction": "agent",
+      "w_before": {
+        "w0->A": 1.5395,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 0.05,
+        "w2->A": 0.05,
+        "w2->P": 0.05
+      },
+      "w_after": {
+        "w0->A": 2.4325,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 0.05,
+        "w2->A": 0.05,
+        "w2->P": 0.05
+      },
+      "n_live_credited": 3,
+      "a0": 0.26666666666666666,
+      "a1": -0.1423611111111111,
+      "role_floor": 0.06333333333333334
+    }
+  },
+  "learn_traj": [
+    {
+      "turn": 0,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.3173148148148148,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 3.2821,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 4.1403,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 5,
+        "a0": 0.2701388888888889,
+        "a1": -0.10694444444444443,
+        "role_floor": 0.06333333333333334
+      }
+    },
+    {
+      "turn": 1,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.3130555555555556,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 4.938,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 5.6795,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 7,
+        "a0": 0.26805555555555555,
+        "a1": -0.1284722222222222,
+        "role_floor": 0.06333333333333334
+      }
+    },
+    {
+      "turn": 2,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.3211111111111111,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 6.3689,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 7.0119,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 9,
+        "a0": 0.26805555555555555,
+        "a1": -0.13333333333333333,
+        "role_floor": 0.06333333333333334
+      }
+    },
+    {
+      "turn": 3,
+      "xedge_live_learn": {
+        "credited": true,
+        "teach": "teach_agent",
+        "margin": 0.32222222222222224,
+        "focus": "w0",
+        "content_direction": "agent",
+        "w_before": {
+          "w0->A": 7.6098,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "w_after": {
+          "w0->A": 8.165,
+          "w0->P": 0.05,
+          "w1->A": 0.05,
+          "w1->P": 0.05,
+          "w2->A": 0.05,
+          "w2->P": 0.05
+        },
+        "n_live_credited": 11,
+        "a0": 0.2701388888888889,
+        "a1": -0.1048611111111111,
+        "role_floor": 0.06333333333333334
+      }
+    }
+  ],
+  "pool_after_learn": {
+    "cross_weights": {
+      "w0->A": 8.165,
+      "w0->P": 0.05,
+      "w1->A": 0.05,
+      "w1->P": 0.05,
+      "w2->A": 0.05,
+      "w2->P": 0.05
+    },
+    "n_live_credited": 11
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "config": "A_off",
+  "seed": 42,
+  "env": {
+    "BRAIN_ONEBRAIN_XEDGE": "0"
+  },
+  "per_turn": true,
+  "pool": {
+    "primed": false
+  },
+  "well": {
+    "the wolf bites the apple": {
+      "answer": "the wolf bites the apple \u2014 worth going further here.",
+      "abstained": false,
+      "comprehended": true,
+      "repair_role": null,
+      "repair_kind": null,
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": null,
+      "not_understood": false,
+      "multiref_n": null,
+      "xedge_live_learn": null
+    },
+    "the dog chases the cat": {
+      "answer": "the dog chases the cat \u2014 worth going further here.",
+      "abstained": false,
+      "comprehended": false,
+      "repair_role": null,
+      "repair_kind": null,
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": null,
+      "not_understood": false,
+      "multiref_n": 2,
+      "xedge_live_learn": null
+    }
+  },
+  "question": {
+    "answer": "Hm \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+    "abstained": true,
+    "comprehended": null,
+    "repair_role": null,
+    "repair_kind": null,
+    "content_role": null,
+    "wm_resolved": null,
+    "wm_margin": null,
+    "repaired": null,
+    "not_understood": false,
+    "multiref_n": null,
+    "xedge_live_learn": null
+  },
+  "amb_novisi": {
+    "the wolf watches the owl": {
+      "answer": "I caught the verb 'watch' with the wolf and the owl, but my role-binding didn't resolve who does what \u2014 is the wolf doing the 'watch' to the owl, or the other way round?",
+      "abstained": true,
+      "comprehended": false,
+      "repair_role": "either",
+      "repair_kind": "role",
+      "content_role": null,
+      "wm_resolved": null,
+      "wm_margin": null,
+      "repaired": true,
+      "not_understood": true,
+      "multiref_n": null,
+      "xedge_live_learn": null
+    }
+  }
+}

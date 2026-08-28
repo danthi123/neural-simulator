@@ -1,0 +1,31 @@
+{
+ "run_id": "1787884438-3636613",
+ "runner": "research/runners/lm_train_run.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/lm_train_run.py",
+  "start",
+  "--root",
+  "bridges/lmtrain/run3",
+  "--compile",
+  "1",
+  "--compile-mode",
+  "max-autotune"
+ ],
+ "git_sha": "119ac7bb7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T22:33:58",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 51983.4,
+ "corpus_check_query": "knowledge answer vetoed in live chat pipeline despite store answering directly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_xedge_flip_verify/SMOKE_numpy_on.log"
+}

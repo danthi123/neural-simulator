@@ -1,0 +1,33 @@
+{
+ "run_id": "1787924871-3901481",
+ "runner": "research/runners/_xedge_flip_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_xedge_flip_production_verify.py",
+  "--worker",
+  "A_baseline",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/_xedge_flip_verify/w_A_baseline_s42.json"
+ ],
+ "git_sha": "c1405a836",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T09:47:51",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "SIM_RUN_ID": "1787924870-3901440"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5722.7,
+ "corpus_check_query": "persist the eprop-learned WKV mouth readout head for the crutch-burndown A/B",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_xedge_flip_verify/w_A_baseline_s42.json"
+}
