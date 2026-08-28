@@ -11,6 +11,9 @@ artifacts:
 runner: research/runners/_read_fidelity_nonrate_latency_dispersion_derisk.py
 ---
 
+> ⚠️ **CORRECTED-ON-DETAIL + SUPERSEDED by [`2026-08-28-read-fidelity-latency-instrument-fixed-NOGO-dispersion-lead-NOGO`](2026-08-28-read-fidelity-latency-instrument-fixed-NOGO-dispersion-lead-NOGO.md)** (the agent's authoritative version). Two corrections: (a) the 3/6 anti-cheat was NOT right-censoring (my initial guess) but read-DETERMINISM — this pool runs OU + short-term-plasticity OFF, so `N_READS=8` were only ~2 distinct states (reads 1-7 bit-identical); fixed with a permutation test over neuron identity. (b) latency is a CLEAN 0/6 NO-GO (2 seeds significant in the WRONG direction) and DISPERSION is the promising lead — directionally consistent on all 6 seeds (not the flat 1/6 my headline implied). My substantive verdict (no non-rate read clears the 6/6 bar) + the decoder-separability repoint STAND.
+
+
 # Read-fidelity crux: instrument FIXED (shuffle 6/6), but no non-rate read (latency, dispersion) beats rate — repoint to "is there a signal at all?"
 
 Artifact: `research/findings/raw/_read_fidelity_nonrate_latency_dispersion_derisk_6seed.json` (numpy/CPU, 6 seeds; latency + ISI-CV + Fano reads vs mean-rate on the surprise->`source_provenance` F2 crux, all from the SAME trained cross-edge + SAME raster — no retraining confound).

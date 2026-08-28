@@ -1,6 +1,6 @@
 {
   "probe": "read_fidelity_nonrate_latency_dispersion_derisk",
-  "verdict": "LATENCY(instrument-fixed)=UNDEFINED -- shuffle anti-cheat collapses 6/6 (was 3/6 under the iteration-1 across-read-SEM instrument); latency PASS 0/6 (permutation z>=Z_FLOOR=2.0 AND lesion-attributable). DISPERSION(ISI-CV)=NO-GO -- shuffle anti-cheat collapses 6/6, defined on 6/6 seeds, PASS 1/6. RATE (unchanged, reproduce-the-known-crux sanity, NOT the arm under repair) PASS 0/6. Same trained cross-edge, same lesion event, same simulated trajectory feeds all three reads (no retraining-noise confound). Root cause of iteration 1's 3/6 anti-cheat ambiguity: this pool family runs with enable_ou_process=False AND enable_short_term_plasticity=False (fully deterministic given a fixed reset+drive), so the old across-READ SEM was computed over quasi-duplicated (non-independent) samples -- fixed here by resampling over NEURON IDENTITY (a permutation test) instead of read repetition. LATENCY UNDEFINED, NOT a validated verdict either way: 1 precondition(s) unmet -- unmet: latency_clears_floor_and_lesion_attributable (measured=0 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>).",
+  "verdict": "LATENCY(instrument-fixed)=NO-GO -- shuffle anti-cheat collapses 6/6 (was 3/6 under the iteration-1 across-read-SEM instrument); latency PASS 0/6 (permutation z>=Z_FLOOR=2.0 AND lesion-attributable). DISPERSION(ISI-CV)=NO-GO -- shuffle anti-cheat collapses 6/6, defined on 6/6 seeds, PASS 1/6. RATE (unchanged, reproduce-the-known-crux sanity, NOT the arm under repair) PASS 0/6. Same trained cross-edge, same lesion event, same simulated trajectory feeds all three reads (no retraining-noise confound). Root cause of iteration 1's 3/6 anti-cheat ambiguity: this pool family runs with enable_ou_process=False AND enable_short_term_plasticity=False (fully deterministic given a fixed reset+drive), so the old across-READ SEM was computed over quasi-duplicated (non-independent) samples -- fixed here by resampling over NEURON IDENTITY (a permutation test) instead of read repetition.",
   "GO_latency": false,
   "GO_dispersion": false,
   "n_seeds": 6,
@@ -25,28 +25,21 @@
       "kind": "require",
       "name": "latency_shuffle_instrument_fixed",
       "ok": true,
-      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb6ecf725c0>",
       "note": "STEP 1 precondition: the permutation-based anti-cheat must collapse (frac_null_clears_floor <= 0.15) on every seed before the latency verdict can be trusted either way"
-    },
-    {
-      "kind": "require",
-      "name": "latency_clears_floor_and_lesion_attributable",
-      "ok": false,
-      "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
-      "note": "the latency margin's permutation z must clear Z_FLOOR AND vanish under lesion, on every seed, for a latency GO"
     },
     {
       "kind": "require",
       "name": "emergence_grew_from_near_zero",
       "ok": true,
-      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb6ecf725c0>",
       "note": "the reused cross-edge trained normally (sanity on the shared substrate)"
     },
     {
       "kind": "require",
       "name": "anti_cheat_random_assignment",
       "ok": true,
-      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb6ecf725c0>",
       "note": "the per-seed block pair must actually vary (inherited from the parent runner)"
     }
   ],
@@ -79,7 +72,7 @@
   "runs": [
     {
       "seed": 42,
-      "elapsed_s": 70.9,
+      "elapsed_s": 72.0,
       "cue_concept": 1,
       "assert_concept": 5,
       "final_weight_trained_block": 3.9776554107666016,
@@ -147,7 +140,7 @@
     },
     {
       "seed": 43,
-      "elapsed_s": 73.1,
+      "elapsed_s": 71.4,
       "cue_concept": 6,
       "assert_concept": 7,
       "final_weight_trained_block": 6.112188816070557,
@@ -215,7 +208,7 @@
     },
     {
       "seed": 44,
-      "elapsed_s": 71.2,
+      "elapsed_s": 72.1,
       "cue_concept": 0,
       "assert_concept": 4,
       "final_weight_trained_block": 7.177545547485352,
@@ -283,7 +276,7 @@
     },
     {
       "seed": 100,
-      "elapsed_s": 71.3,
+      "elapsed_s": 76.1,
       "cue_concept": 3,
       "assert_concept": 0,
       "final_weight_trained_block": 5.6903815269470215,
@@ -351,7 +344,7 @@
     },
     {
       "seed": 101,
-      "elapsed_s": 71.2,
+      "elapsed_s": 76.2,
       "cue_concept": 4,
       "assert_concept": 0,
       "final_weight_trained_block": 6.75588846206665,
@@ -419,7 +412,7 @@
     },
     {
       "seed": 102,
-      "elapsed_s": 70.5,
+      "elapsed_s": 78.6,
       "cue_concept": 0,
       "assert_concept": 4,
       "final_weight_trained_block": 7.735973358154297,

@@ -1,5 +1,5 @@
 {
- "run_id": "1787928308-3932185",
+ "run_id": "1787928944-3940619",
  "runner": "research/runners/_read_fidelity_nonrate_latency_dispersion_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/agent-a2f8bafadf20bcc2c/research/runners/_read_fidelity_nonrate_latency_dispersion_derisk.py",
@@ -16,7 +16,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-28T10:45:08",
+ "started": "2026-08-28T10:55:44",
  "env": {
   "SIM_BACKEND": "numpy"
  },
