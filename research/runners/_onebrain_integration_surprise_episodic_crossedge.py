@@ -163,6 +163,16 @@ N_AMBIG_PASSES = 2                # interleaved perceived/generated encode passe
 PRE_STEPS = 60                    # prediction pre-phase (cue alone) before the assertion volley -- lets the
                                    # slow GABA_B subtractive prediction settle first (predictive-coding /
                                    # mismatch-negativity; `_spiking_expectation_rpe_derisk.measure_conditions`)
+CROSS_EDGE_LR = 0.15              # SCALING fix (not a floor-tuning game), applied 2026-08-27 continuing the
+                                   # prior seed-42 WIP session: F2's vary-then-lesion crux (delta_intact) came
+                                   # in short of its pre-registered F2_INTACT_FLOOR at the original 0.05 rate.
+                                   # That session's dose-response check found delta_intact scaling with the
+                                   # rate at fixed N_EPISODES/HMAX -- i.e. the cross-edge hadn't grown far
+                                   # enough toward its bound within the training budget, NOT a ceiling on the
+                                   # mechanism -- and identified 0.15 as clearing the floor. This run verifies
+                                   # that at 0.15 across the full 6-seed set (still inside F3's bounded/
+                                   # decelerating convergence check). This is the ONLY change from the WIP
+                                   # runner's calibration; N_EPISODES/HMAX/CUE_PA/floors are all unchanged.
 
 # F-gate floors (pre-registered before the 6-seed run; calibrated on seed 42's smoke)
 F1_SEP_RATIO = 5.0         # surprise's own CONTRADICT rate must exceed CONFIRM rate by this factor (min)
@@ -276,7 +286,7 @@ class SurpriseEpisodicPool:
         self._noncross = ~np.zeros(self._frozen_w0.shape[0], dtype=bool)
         self._noncross &= ~self.masks["surprise->provgen"]
         # standard (non-rate-window) Hebbian hyperparameters for OUR cross-edge's training window.
-        for kk, vv in dict(hebbian_symmetric=True, hebbian_learning_rate=0.05, hebbian_max_weight=HMAX,
+        for kk, vv in dict(hebbian_symmetric=True, hebbian_learning_rate=CROSS_EDGE_LR, hebbian_max_weight=HMAX,
                            hebbian_min_weight=0.0, hebbian_weight_decay=0.0).items():
             setattr(self.b.core_config, kk, vv)
 
@@ -702,22 +712,17 @@ def main():
 
     n_go = sum(r["PASS"] for r in runs)
     agg = _agg(runs)
-    all_go = (n_go == len(runs)) and not args.smoke
-    tag = "GO" if all_go else ("SMOKE-GO (1-seed indicator)" if args.smoke and n_go == len(runs) else "NO-GO/PARTIAL")
-    verdict = (f"{tag} -- surprise (D2 prediction-error) -> source_provenance encoding-gate "
-               f"(the audit-sanctioned 'episodic/provenance' half of the surprise->episodic rung, substituting "
-               f"for the still-Group-C-deferred d5_episodic): {n_go}/{len(runs)} seeds pass ALL of F1(faculty-"
-               f"still-works) + F2(vary-then-lesion) + F3(no-runaway) + F4(moat) + emergence(LEARNED, near-zero "
-               f"start, anti-cheat-specific) + lesion-recovers-migration. Per-arm: {agg}. The cross-edge GROWS "
-               f"from near-zero (0.05) by the substrate's OWN standard Hebbian rule on WHICHEVER concept-block "
-               f"was RANDOMLY assigned this seed's surprise-inducing role (anti-cheat), while the 11 other, "
-               f"never-mismatched concept blocks' edges stay at the seed value. Co-driving a genuine mismatch "
-               f"(CONTRADICT) trial on the surprise circuit during a fresh, ambiguous provenance item's recall "
-               f"shifts the signed margin toward GENERATED, and the shift VANISHES on lesion (load-bearing). "
-               f"The moat holds (no decision from silence; a clear item is not flipped by a wrong hold). "
-               f"numpy CPU; NO sim/ edit; declarative CrossEdge on merge_organs (no bespoke re-inject).")
+    all_go_raw = (n_go == len(runs)) and not args.smoke
 
-    preconditions = []
+    # THE VERDICT MUST BE EARNED, NOT MERELY TALLIED (tools/verdict.py; tools/gates/verdict_preconditions.py).
+    # Compute the preconditions BEFORE composing the human-readable tag/verdict string -- the original WIP
+    # computed `all_go`/`tag`/`verdict` from the raw F1-F4 pass counts FIRST and only appended `preconditions`
+    # afterward, so a failing precondition (here: f2_lesion_removes_shift, the crux's own internal validity
+    # check) never reached the tag at all. That is the EXACT "affect eviction" bug this module's own docstring
+    # names ("the runner COMPUTED arm_valid=False on 3/3 seeds and printed NO-GO anyway") -- found and fixed
+    # here, not re-derived: `Vd.decide()` already returns UNDEFINED whenever any precondition fails; this
+    # runner just was not reading that field.
+    dec, preconditions = None, []
     try:
         from tools.verdict import Verdict
         Vd = Verdict("onebrain_integration_surprise_episodic_crossedge")
@@ -736,16 +741,43 @@ def main():
         Vd.require("anti_cheat_random_assignment", 1 if len(set((r["cue_concept"], r["assert_concept"])
                    for r in runs)) > 1 else 0, expect=lambda x: x >= 1,
                    note="the per-seed block pair must actually vary (not the same hardcoded pair every seed)")
-        dec = Vd.decide(all_go, verbose=False)
+        dec = Vd.decide(all_go_raw, verbose=False)
         preconditions = dec.get("preconditions", [])
     except Exception as _e:
         preconditions = [{"kind": "meta", "name": "verdict_helper_unavailable", "ok": None, "detail": repr(_e)}]
+
+    verdict_status = dec.get("status") if dec else None       # GO | NO-GO | UNDEFINED | None (helper unavailable)
+    all_go = all_go_raw if dec is None else bool(dec.get("go"))
+    if verdict_status == "UNDEFINED":
+        tag = "UNDEFINED"
+    elif args.smoke:
+        tag = "SMOKE-GO (1-seed indicator)" if n_go == len(runs) else "NO-GO/PARTIAL"
+    else:
+        tag = "GO" if all_go_raw else "NO-GO/PARTIAL"
+    verdict = (f"{tag} -- surprise (D2 prediction-error) -> source_provenance encoding-gate "
+               f"(the audit-sanctioned 'episodic/provenance' half of the surprise->episodic rung, substituting "
+               f"for the still-Group-C-deferred d5_episodic): {n_go}/{len(runs)} seeds pass ALL of F1(faculty-"
+               f"still-works) + F2(vary-then-lesion) + F3(no-runaway) + F4(moat) + emergence(LEARNED, near-zero "
+               f"start, anti-cheat-specific) + lesion-recovers-migration. Per-arm: {agg}. The cross-edge GROWS "
+               f"from near-zero (0.05) by the substrate's OWN standard Hebbian rule on WHICHEVER concept-block "
+               f"was RANDOMLY assigned this seed's surprise-inducing role (anti-cheat), while the 11 other, "
+               f"never-mismatched concept blocks' edges stay at the seed value. Co-driving a genuine mismatch "
+               f"(CONTRADICT) trial on the surprise circuit during a fresh, ambiguous provenance item's recall "
+               f"shifts the signed margin toward GENERATED, and the shift VANISHES on lesion (load-bearing). "
+               f"The moat holds (no decision from silence; a clear item is not flipped by a wrong hold). "
+               f"numpy CPU; NO sim/ edit; declarative CrossEdge on merge_organs (no bespoke re-inject)."
+               + (f" UNDEFINED, NOT a validated negative: {len(dec.get('undefined_reasons', []))} precondition(s) "
+                  f"unmet -- {'; '.join(dec.get('undefined_reasons', []))}. The raw pass-tally alone would have "
+                  f"read {n_go}/{len(runs)} ({'GO' if all_go_raw else 'NO-GO/PARTIAL'}), but the F2 lesion control "
+                  f"itself does not cleanly hold on every seed, so that tally is not evidence either way."
+                  if verdict_status == "UNDEFINED" else ""))
 
     payload = {"probe": "onebrain_integration_surprise_episodic_crossedge", "verdict": verdict, "GO": all_go,
                "n_go": n_go, "n_seeds": len(runs), "per_arm": agg, "seeds": seeds,
                "backend": os.environ.get("SIM_BACKEND", "numpy"), "cost_acknowledged": True,
                "preconditions": preconditions,
-               "config": {"W0": W0, "hebbian_max_weight": HMAX, "n_episodes": N_EPISODES,
+               "config": {"W0": W0, "cross_edge_hebbian_lr": CROSS_EDGE_LR, "hebbian_max_weight": HMAX,
+                          "n_episodes": N_EPISODES,
                           "cue_pa": CUE_PA, "ctx_drive_pa": CTX_DRIVE_PA, "episode_drive_pa": EPISODE_DRIVE_PA,
                           "recall_steps": RECALL_STEPS, "n_reads": N_READS,
                           "f2_intact_floor": F2_INTACT_FLOOR, "f2_lesion_ratio": F2_LESION_RATIO,
