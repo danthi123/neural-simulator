@@ -1,0 +1,97 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "seed": 42,
+  "n_facts": 78857,
+  "vocab_size": 23914,
+  "n_shards": 395,
+  "ltm_load_s": 0.72,
+  "recall_ok": 5,
+  "recall_checked": 5,
+  "moat_confab": 0,
+  "recall_latency_median_s": 1.37,
+  "recall_latency_min_s": 1.36,
+  "recall_latency_max_s": 1.5,
+  "results": [
+    {
+      "kind": "recall",
+      "i": 0,
+      "cue": [
+        "rhaetic_railway",
+        "country"
+      ],
+      "gt": "conf_d_ration_suisse",
+      "live": "conf_d_ration_suisse",
+      "ok": true,
+      "latency_s": 1.5
+    },
+    {
+      "kind": "recall",
+      "i": 1,
+      "cue": [
+        "jerome_s_de_viris_illustribus",
+        "language_of_work_or_name"
+      ],
+      "gt": "latin_language",
+      "live": "latin_language",
+      "ok": true,
+      "latency_s": 1.366
+    },
+    {
+      "kind": "recall",
+      "i": 2,
+      "cue": [
+        "camp_denidoo",
+        "member_of"
+      ],
+      "gt": "sparc_open",
+      "live": "sparc_open",
+      "ok": true,
+      "latency_s": 1.477
+    },
+    {
+      "kind": "recall",
+      "i": 3,
+      "cue": [
+        "yuvan_shankar_raja_discography",
+        "place_of_birth"
+      ],
+      "gt": "chennai_schools",
+      "live": "chennai_schools",
+      "ok": true,
+      "latency_s": 1.368
+    },
+    {
+      "kind": "recall",
+      "i": 4,
+      "cue": [
+        "arnsberg_germany",
+        "instance_of"
+      ],
+      "gt": "municipalities_in_germany",
+      "live": "municipalities_in_germany",
+      "ok": true,
+      "latency_s": 1.362
+    },
+    {
+      "kind": "moat",
+      "cue": [
+        "zzz_unknown_entity_xq",
+        "country"
+      ],
+      "live": null,
+      "confab": false,
+      "latency_s": 1.146
+    },
+    {
+      "kind": "yesno",
+      "cue": [
+        "rhaetic_railway",
+        "country",
+        "conf_d_ration_suisse"
+      ],
+      "answer": "yes",
+      "latency_s": 1.354
+    }
+  ],
+  "elapsed_s": 12.3
+}

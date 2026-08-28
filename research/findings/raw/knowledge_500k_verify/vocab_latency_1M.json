@@ -1,0 +1,73 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_1M_fast",
+  "seed": 42,
+  "n_facts": 1383561,
+  "vocab_size": 581065,
+  "n_shards": 6918,
+  "ltm_load_s": 8.13,
+  "recall_ok": 3,
+  "recall_checked": 3,
+  "moat_confab": 0,
+  "recall_latency_median_s": 33.82,
+  "recall_latency_min_s": 31.89,
+  "recall_latency_max_s": 41.91,
+  "results": [
+    {
+      "kind": "recall",
+      "i": 0,
+      "cue": [
+        "cancer_net_skate_america",
+        "subclass_of"
+      ],
+      "gt": "figure_skating_competition",
+      "live": "figure_skating_competition",
+      "ok": true,
+      "latency_s": 41.905
+    },
+    {
+      "kind": "recall",
+      "i": 1,
+      "cue": [
+        "xaverov_horn_po_ernice",
+        "alias_of"
+      ],
+      "gt": "sc_xaverov_horn_po_ernice",
+      "live": "sc_xaverov_horn_po_ernice",
+      "ok": true,
+      "latency_s": 33.823
+    },
+    {
+      "kind": "recall",
+      "i": 2,
+      "cue": [
+        "pamela_lyndon_goff_travers",
+        "alias_of"
+      ],
+      "gt": "pamela_l_travers",
+      "live": "pamela_l_travers",
+      "ok": true,
+      "latency_s": 31.887
+    },
+    {
+      "kind": "moat",
+      "cue": [
+        "zzz_unknown_entity_xq",
+        "subclass_of"
+      ],
+      "live": null,
+      "confab": false,
+      "latency_s": 36.884
+    },
+    {
+      "kind": "yesno",
+      "cue": [
+        "cancer_net_skate_america",
+        "subclass_of",
+        "figure_skating_competition"
+      ],
+      "answer": "yes",
+      "latency_s": 50.58
+    }
+  ],
+  "elapsed_s": 207.3
+}

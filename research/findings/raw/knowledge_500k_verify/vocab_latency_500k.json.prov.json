@@ -1,0 +1,34 @@
+{
+ "run_id": "1787952402-113270",
+ "runner": "research/runners/_knowledge_scale_vocab_latency_probe.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adbf7d12f7c5e24de/research/runners/_knowledge_scale_vocab_latency_probe.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_500k_fast",
+  "--n-probes",
+  "5",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/knowledge_500k_verify/vocab_latency_500k.json"
+ ],
+ "git_sha": "2030b6272",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T17:26:42",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1824.3,
+ "corpus_check_query": "bulk-load a large real KB into the sharded fact-store and verify chat-over-it at scale",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/knowledge_500k_verify/vocab_latency_500k.json"
+}
