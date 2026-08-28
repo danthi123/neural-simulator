@@ -1,0 +1,37 @@
+{
+ "run_id": "1787880188-3592137",
+ "runner": "research/runners/_gap5_decorrelation_read_ltu_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9ad8618e3f5657b0/research/runners/_gap5_decorrelation_read_ltu_derisk.py",
+  "--seeds",
+  "42",
+  "101",
+  "--decorr-lambda",
+  "1.0",
+  "--decorr-mode",
+  "div",
+  "--decorr-sigma",
+  "0.05",
+  "--skip-byte-check",
+  "--out",
+  "research/findings/raw/gap5_ecker_adex/decorr_read_ltu_div.json"
+ ],
+ "git_sha": "6341fc79a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T21:23:08",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/gap5_ecker_adex/decorr_read_ltu_div.json"
+}

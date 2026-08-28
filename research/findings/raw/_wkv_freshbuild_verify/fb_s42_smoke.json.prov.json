@@ -1,0 +1,29 @@
+{
+ "run_id": "1787877691-3568670",
+ "runner": "research/runners/_wkv_mouth_read_freshbuild_structure_verify_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9ad8618e3f5657b0/research/runners/_wkv_mouth_read_freshbuild_structure_verify_derisk.py",
+  "--seeds",
+  "42",
+  "--json",
+  "research/findings/raw/_wkv_freshbuild_verify/fb_s42_smoke.json"
+ ],
+ "git_sha": "6341fc79a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T20:41:31",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_freshbuild_verify/fb_s42_smoke.json"
+}
