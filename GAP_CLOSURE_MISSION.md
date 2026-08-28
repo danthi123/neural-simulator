@@ -5840,3 +5840,6 @@ caught this one move earlier).**
 
 **⇒ The next session's FIRST action is reading, not building** — the five plans, then the Kandel section. The
 research gate has already been run and is recorded here so it is not re-run or skipped.
+
+- ✅ UPDATE 17:40 (`f65ed645`): (i) CONFIDENCE #94 COMPLETE (`b98c95df`) — read discriminates, saturation blocker refuted, flip-viable on rich content. (ii) KNOWLEDGE-SCALE #66 bulk-KB landed (`f65ed645`): 748,956-fact bundle (9.5x), recall+moat PERFECT at 17x scale, DATA not the limit (wikidata5m full dump on disk, millions available) — but a VOCAB-driven LATENCY wall (1.4s@24k words→34s@581k) because RFPhasorComposer lacks OneBrainComposer's DG sparse-index. NO-DEFER: sparse-index PORT dispatched (agent `ab4c20b0`, hard-capped) to close it → unblocks real-time LLM-scale knowledge-in-chat AND (rich content) the confidence flip.
+  Bundles live at sim-data/knowledge_bundles/ (outside repo). (iii) STILL RUNNING: `af5d60c3` surprise→episodic one-brain rung; readout fair-test GPU verdict (~2h, near done) + honesty live-mouth GPU verdict (queued). Owner: no-defer both lanes; bundle default = technical merit (my call once latency fixed).
