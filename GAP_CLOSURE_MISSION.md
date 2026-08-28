@@ -32,7 +32,9 @@ additive/DEFAULT-OFF/byte-identical-when-off (SHA256 + `tests/test_determinism.p
 MIGRATION-safety gate, not the INTEGRATION goal (cross-region synapses) — that remains the next rung. Findings:
 `2026-08-27-dedup-synapse-masks-closes-onebrain-full7-d6-nmda-slow.md`, `2026-08-27-pmem-fp-accumulation-full7-GO.md`.
 
-**CURRENT ARC 2026-08-27 ~19:45 — Latest `main` = `34f282ed`.** ⭐ MILESTONE: the FIRST learned cross-region synapse is now WIRED INTO THE LIVE BRAIN (one-brain integration PART 1, `34f282ed`, `BRAIN_ONEBRAIN_XEDGE` default-OFF) — d6-WM→comprehension drives the real judge() lesion-attributably (~98.5%), byte-identical-off; HONEST CAVEAT it is SUB-DECISION (doesn't change wording yet). PART 2 (live-learning + cross the decision boundary) in flight per owner directive "frozen then immediately continue into live once validated".
+**CURRENT ARC 2026-08-27 ~20:35 — Latest `main` = `dc9d5288`.** ⭐⭐⭐ MILESTONE (one-brain emergent goal REACHED): a learned cross-region synapse in the LIVE brain now GROWS from the substrate's OWN activity AND CHANGES CONVERSATION. One-brain PART 2 (`dc9d5288`, `BRAIN_ONEBRAIN_XEDGE`+`_LEARN` default-OFF, 6-seed GO): d6-WM→comprehension grows W0 0.05→~16.7 credited by comprehension's own confident spiking resolution (in-brain self-supervised, no host label), and FLIPS the repair role agent↔patient on 5/5 ambiguous items/seed (the clarification wording changes), lesion-attributable, bounded, byte-identical-off. Organs LEARN to drive each other in the live brain.
+
+NO-DEFER next rung in flight: per-turn plasticity in brain_reply (learn DURING real chat). ⛔ OWNER RULE (20:15): NO PAUSING/DEFERRING — at every wall dispatch the next mechanism concurrently, never pause a lane.
 
 The session advances SIX dimensions in parallel: mouth-fluency · learn-through-use · introspection · continuous-life/aliveness · one-brain integration · open-ended-honesty. The FLUENCY WALL (the mouth) remains the #1 frontier; a possible SHARED spiking-population READ-FIDELITY wall may sit behind BOTH the mouth read-SNR AND learn-through-use (the mouth recodable GPU verdict is the first datapoint, ~1h out).
 
