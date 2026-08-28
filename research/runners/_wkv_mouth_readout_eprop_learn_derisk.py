@@ -342,6 +342,9 @@ def run_seed(seed, ro, args, proj_kw):
           before=hl_frozen["recov_argmax"], after=hostlin["recov_argmax"], required=False)
     lever(f"eprop_wcos_learned_vs_shuffleteach_seed{seed}",
           before=wcos_shuffle, after=wcos_main, required=False)
+    # -- PERSIST W_hat (opt-in, --save-w-hat): thread the learned weights through the returned dict for optional saving
+    m["_W_hat"] = W_main
+    m["_head_b"] = ro.head_b
     return m
 
 
@@ -386,6 +389,10 @@ def main():
     ap.add_argument("--n-bias", type=int, default=16)
     ap.add_argument("--bias-drive-pA", type=float, default=160.0)
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--save-w-hat", type=str, default=None,
+                    help="if set, savez the learned W_hat[V,D] (+head_b/provenance) per seed to this path "
+                         "({seed} templated if present) -- the persistence step for the learned readout head; "
+                         "opt-in, does not change any existing metric/behavior")
     ap.add_argument("--json", type=str, default="research/findings/raw/_wkv_readout_eprop_learn.json")
     args = ap.parse_args()
 
@@ -417,6 +424,22 @@ def main():
             seed_hash_check = {"seed": seed, "thr_hash_1": h1, "thr_hash_2": h2, "seeded": bool(h1 == h2)}
             print(f"[seed-trap] thr hash {h1} == {h2} -> {'SEEDED' if h1 == h2 else 'NOT SEEDED'}", flush=True)
         m = run_seed(seed, ro, args, proj_kw)
+        # -- PERSIST W_hat (opt-in, --save-w-hat): save the learned readout head per seed
+        save_path = getattr(args, "save_w_hat", None)
+        if save_path:
+            W_hat = m.pop("_W_hat")
+            head_b = m.pop("_head_b")
+            p = Path(save_path.format(seed=seed) if "{seed}" in save_path else save_path)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            ratio = m["sub_recov_ratio_learned_over_copied"]
+            np.savez(p, W_hat=W_hat.astype(np.float32), head_b=head_b.astype(np.float32),
+                     seed=seed, V=ro.V, D=ro.D, sub_recov_ratio=ratio,
+                     sub_learned_recov=m["sub_learned"]["recov_argmax"], sub_copied_recov=m["sub_copied"]["recov_argmax"],
+                     integrated_go=bool(ratio >= 0.85), source_runner="_wkv_mouth_readout_eprop_learn_derisk")
+            print(f"[save-w-hat seed {seed}] W_hat[{W_hat.shape}] -> {p} (ratio={ratio})", flush=True)
+        else:
+            m.pop("_W_hat", None)
+            m.pop("_head_b", None)
         m["seed_hash_check"] = seed_hash_check
         results.append(m)
         sl = m["sub_learned"]; sc = m["sub_copied"]; hlac = m["hostlinear_anticheat_recov"]; wac = m["weight_cosine_anticheat"]
