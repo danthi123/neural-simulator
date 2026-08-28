@@ -1,0 +1,25 @@
+{
+ "run_id": "1787875592-3543127",
+ "runner": "research/findings/raw/_metacog_confidence_recalib/measure_real_confident.py",
+ "argv": [
+  "research/findings/raw/_metacog_confidence_recalib/measure_real_confident.py"
+ ],
+ "git_sha": "ae80ac7d0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T20:06:32",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_metacog_confidence_recalib/verify_prod_discriminates.py"
+}

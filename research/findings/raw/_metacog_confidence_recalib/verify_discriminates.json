@@ -1,0 +1,185 @@
+{
+  "runner": "verify_discriminates (direct real-function chain, not the HTTP handler)",
+  "backend": "numpy",
+  "ts": "2026-08-27T20:11:21",
+  "confident": {
+    "answer": "north",
+    "mean_role_confidence": 0.7492583143324381,
+    "evidence": 1.0,
+    "margins_by_role": {
+      "agent": 0.8243365579939905,
+      "action": 0.6560321732870685,
+      "patient": 0.6734650661486523,
+      "polarity": 0.8431994599000411
+    },
+    "confident": true,
+    "judge": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 1.0,
+      "balance": 0.09948140892129004,
+      "threshold": 0.061886460328606036,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.08338421519381395,
+        "min_hi": 0.06791818701044258,
+        "mean_lo": 0.04024896748934768,
+        "max_lo": 0.05585473364676948,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      }
+    }
+  },
+  "noise_sweep": [
+    {
+      "sigma": 0.3,
+      "answer": "north",
+      "mean_role_confidence": 0.7191817831554632
+    },
+    {
+      "sigma": 0.5,
+      "answer": "north",
+      "mean_role_confidence": 0.6994547888740631
+    },
+    {
+      "sigma": 0.7,
+      "answer": "north",
+      "mean_role_confidence": 0.655931040599439
+    },
+    {
+      "sigma": 0.9,
+      "answer": "north",
+      "mean_role_confidence": 0.47470597205178755
+    },
+    {
+      "sigma": 1.1,
+      "answer": "north",
+      "mean_role_confidence": 0.47104642896436355
+    },
+    {
+      "sigma": 1.3,
+      "answer": "north",
+      "mean_role_confidence": 0.4677553885727894
+    },
+    {
+      "sigma": 1.5,
+      "answer": "north",
+      "mean_role_confidence": 0.3987522097477735
+    },
+    {
+      "sigma": 1.8,
+      "answer": "north",
+      "mean_role_confidence": 0.363077359097714
+    },
+    {
+      "sigma": 2.2,
+      "answer": "north",
+      "mean_role_confidence": 0.49090027246667534
+    }
+  ],
+  "picked_uncertain_sigma": 1.8,
+  "uncertain": {
+    "answer": "north",
+    "mean_role_confidence": 0.4537761648506967,
+    "evidence": 0.6104480285335101,
+    "margins_by_role": {
+      "agent": 0.4529011520495064,
+      "action": 0.5277374970145021,
+      "patient": 0.07054659403033953,
+      "polarity": 0.7639194163084388
+    },
+    "confident": true,
+    "judge": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 0.6104480285335101,
+      "balance": 0.06968309612558368,
+      "threshold": 0.061886460328606036,
+      "confident": true,
+      "calib": {
+        "mean_hi": 0.08338421519381395,
+        "min_hi": 0.06791818701044258,
+        "mean_lo": 0.04024896748934768,
+        "max_lo": 0.05585473364676948,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      }
+    }
+  },
+  "confident_lesioned": {
+    "answer": "north",
+    "mean_role_confidence": 0.7492583143324381,
+    "evidence": 1.0,
+    "margins_by_role": {
+      "agent": 0.8243365579939905,
+      "action": 0.6560321732870685,
+      "patient": 0.6734650661486523,
+      "polarity": 0.8431994599000411
+    },
+    "confident": false,
+    "judge": {
+      "on": true,
+      "lesioned": true,
+      "evidence": 1.0,
+      "balance": 0.0028956722864838507,
+      "threshold": 0.061886460328606036,
+      "confident": false,
+      "calib": {
+        "mean_hi": 0.08338421519381395,
+        "min_hi": 0.06791818701044258,
+        "mean_lo": 0.04024896748934768,
+        "max_lo": 0.05585473364676948,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      }
+    }
+  },
+  "uncertain_lesioned": {
+    "answer": "north",
+    "mean_role_confidence": 0.5351005304148739,
+    "evidence": 1.0,
+    "margins_by_role": {
+      "agent": 0.5300448364716942,
+      "action": 0.03584143492785801,
+      "patient": 0.7148353027657603,
+      "polarity": 0.8596805474941835
+    },
+    "confident": false,
+    "judge": {
+      "on": true,
+      "lesioned": true,
+      "evidence": 1.0,
+      "balance": 0.0028956722864838507,
+      "threshold": 0.061886460328606036,
+      "confident": false,
+      "calib": {
+        "mean_hi": 0.08338421519381395,
+        "min_hi": 0.06791818701044258,
+        "mean_lo": 0.04024896748934768,
+        "max_lo": 0.05585473364676948,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.35,
+        "role_conf_hi": 0.52,
+        "confidence_read": "nmda_norm"
+      }
+    }
+  },
+  "verdict": {
+    "mrc_confident": 0.7492583143324381,
+    "mrc_uncertain": 0.4537761648506967,
+    "discriminates_numerically": true,
+    "hedge_absent_on_confident": true,
+    "hedge_present_on_uncertain": false,
+    "lesion_removes_discrimination": false
+  }
+}

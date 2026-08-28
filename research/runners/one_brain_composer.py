@@ -1234,10 +1234,17 @@ class OneBrainComposer:
         return out
 
     def _block_role_scores(self, block_idx):
-        """Read block_idx once + return {role: (decoded_word, confidence)} for the main roles (+polarity), where
-        confidence = the role's top matched-filter membrane score normalized into [0,1] by its row peak. Read-only
-        (mirrors `_read_block`'s per-block matched-filter, but ALSO returns the winner's normalized score). Trace-only
-        -- never on the answer path."""
+        """Read block_idx once + return {role: (decoded_word, confidence, margin)} for the main roles (+polarity).
+        `confidence` = the role's top matched-filter membrane score normalized into [0,1] by its row peak (kept for
+        backward compat: this is `s[argmax]/max(s)`, i.e. ALWAYS 1.0 at a non-degenerate decode by construction --
+        it can never discriminate a clean recall from a genuinely ambiguous one, issue #181's root cause).
+        `margin` = `self._margin(scores)`, the SAME normalized-decisiveness read the `confidence_gate` familiarity
+        gate already uses ((peak-runner_up)/peak, 2026-06-18-emergent-graceful-degradation-derisk, multi-seed
+        validated: ~0 on a noise-dominated/damaged read, ~0.5+ on an intact confident one, g=0.15 the validated
+        clean/noise separator) -- reused here (2026-08-27, issue #181) rather than a new formula, so the metacog
+        honesty hedge reads the SAME already-tested decisiveness signal the composer's own moat uses, not a
+        fresh untested one. Read-only (mirrors `_read_block`'s per-block matched-filter, but ALSO returns the
+        winner's normalized score + margin). Trace-only -- never on the answer path."""
         comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
         self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
@@ -1265,13 +1272,17 @@ class OneBrainComposer:
         def _winner(scores, vocab):
             s = np.maximum(np.asarray(scores, dtype=float), 0.0)
             if s.size == 0:
-                return (None, None)
-            j = int(np.argmax(s)); peak = float(s.max())
+                return (None, None, None)
+            j = int(np.argmax(s)); peak = float(s[j])
+            # legacy `confidence`: s[j]/peak is IDENTICALLY 1.0 at j=argmax(s) by construction (peak==s[j]) --
+            # kept byte-identical as the backward-compat field (see the docstring); it is NOT used for the metacog
+            # discrimination anymore (issue #181).
             conf = float(np.clip(s[j] / peak, 0.0, 1.0)) if peak > 0.0 else 0.0
+            margin = self._margin(s)   # the composer's own validated decisiveness read (peak-runner_up)/peak
             w = vocab[j]
             if isinstance(w, str) and w.startswith("__free"):    # a reserved (unrecruited) slot -> not a real decode
-                return (None, conf)
-            return (w, conf)
+                return (None, conf, margin)
+            return (w, conf, margin)
         out = {}
         for ri, role in enumerate(self.main_roles):
             out[role] = _winner(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], self.words)
@@ -1292,15 +1303,20 @@ class OneBrainComposer:
         block_scores = self._block_role_scores(idx) if idx is not None else {}
         cue_set = set(cue_roles)
         for role, asserted in cue_roles.items():
-            word, conf = block_scores.get(role, (asserted, None))
-            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": True, "asserted": asserted})
+            word, conf, margin = block_scores.get(role, (asserted, None, None))
+            roles_out.append({"role": role, "word": word, "confidence": conf, "margin": margin,
+                              "cue": True, "asserted": asserted})
         # answer/decoded roles = the non-cue main roles (+ polarity) of the selected block + any explicit extras
-        for role, (word, conf) in block_scores.items():
+        for role, (word, conf, margin) in block_scores.items():
             if role in cue_set:
                 continue
-            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
-        for role, (word, conf) in (decoded_extra or {}).items():
-            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
+            roles_out.append({"role": role, "word": word, "confidence": conf, "margin": margin, "cue": False})
+        for role, extra in (decoded_extra or {}).items():
+            # decoded_extra chips (e.g. a recursively-rendered clause patient) are host-composed, not a genuine
+            # winner/runner-up VSA read -- no margin to report (2-tuple (word, conf) callers stay valid).
+            word, conf = extra[0], extra[1]
+            margin = extra[2] if len(extra) > 2 else None
+            roles_out.append({"role": role, "word": word, "confidence": conf, "margin": margin, "cue": False})
         self.last_trace = {
             "roles": roles_out,
             "matched_fact_index": (int(idx) if idx is not None else None),
