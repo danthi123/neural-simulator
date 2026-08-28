@@ -1,0 +1,30 @@
+{
+ "run_id": "1787925144-3906680",
+ "runner": "research/runners/_read_fidelity_nonrate_latency_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_read_fidelity_nonrate_latency_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_read_fidelity_nonrate_latency_derisk_6seed.json"
+ ],
+ "git_sha": "51c07260a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T09:52:24",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6099.5,
+ "corpus_check_query": "persist the eprop-learned WKV mouth readout head for the crutch-burndown A/B",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_read_fidelity_nonrate_latency_derisk_6seed.json"
+}
