@@ -1,0 +1,640 @@
+{
+  "probe": "onebrain_surprise_episodic_129construction",
+  "verdict": "GO -- #129's TWO-cross-edge/opponent-ratio construction applied to surprise->source_provenance: 6/6 seeds pass ALL of F1+F2(ratio, both-edge lesion)+F3+F4+emergence+lesion-recovers-migration. Per-arm: {'F1.PASS': '6/6', 'F2.PASS': '6/6', 'F3.PASS': '6/6', 'F4.PASS': '6/6', 'emergence.PASS': '6/6', 'lesion_recovers_migration.PASS': '6/6'}. ",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "per_arm": {
+    "F1.PASS": "6/6",
+    "F2.PASS": "6/6",
+    "F3.PASS": "6/6",
+    "F4.PASS": "6/6",
+    "emergence.PASS": "6/6",
+    "lesion_recovers_migration.PASS": "6/6"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "f2_lesion_removes_shift",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f6699b56840>",
+      "note": "the F2 ratio-shift must VANISH under lesion of BOTH edges, or it is a confound (the crux control -- this is the EXACT precondition that failed 5/6 on the raw-margin, single-edge construction)"
+    },
+    {
+      "kind": "require",
+      "name": "migration_byte_identity",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f6699b56840>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f6699b56840>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat_no_winner_from_silence",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f6699b56840>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f6699b56840>",
+      "note": ""
+    }
+  ],
+  "calibration": null,
+  "config": {
+    "W0": 0.05,
+    "cross_edge_hebbian_lr": 0.15,
+    "hebbian_max_weight": 2.5,
+    "n_episodes_per_edge": 60,
+    "dn_sigma": 0.05,
+    "f2_intact_floor_ratio": 0.0478,
+    "f2_lesion_ratio": 0.34
+  },
+  "mechanism": "TWO declarative CrossEdge rows on the SAME merged [surprise, source_provenance] pool: (1) surprise->prov_generated (unchanged, CONTRADICT-trained, the edge that already passes F1/F3/F4/emergence/migration 6/6); (2) NEW patient_expected->prov_perceived (CONFIRM-trained, the direct structural mirror). Read as the #129 divisively-normalized opponent ratio d=(r_gen-r_perc)/(r_gen+r_perc); F2 lesions BOTH edges together.",
+  "honest_architecture_note": "patient_expected (edge 2's presynaptic pool) does NOT cleanly discriminate CONFIRM from CONTRADICT the way #129's ctx_perceived/ctx_generated lines do -- it fires whenever cue is driven, in BOTH conditions, unlike #129's cleanly mutually-exclusive context lines. This is a genuine, declared architecture mismatch with #129's construction, not a hidden one; the numeric result below is the honest empirical answer to whether it matters.",
+  "runs": [
+    {
+      "seed": 42,
+      "PASS": true,
+      "elapsed_s": 89.5,
+      "cue_concept": 1,
+      "assert_concept": 5,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 0.5823219418525696,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 1.7783974409103394,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 0.5823219418525696,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 1.7783974409103394,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.7463976876412893,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 1,
+        "assert_concept": 5,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.9357479265684131,
+        "ratio_base_intact": -0.011120906098400432,
+        "ratio_held_intact": 0.18528995672853202,
+        "ratio_base_lesion": -0.010620692894925034,
+        "ratio_held_lesion": 0.001999112286192377,
+        "margin_base_intact": -0.002617187499999998,
+        "margin_held_intact": 0.0409375,
+        "delta_intact": 0.19641086282693246,
+        "delta_lesion": 0.01261980518111741,
+        "rates_base_intact": {
+          "prov_generated": 0.09140625000000001,
+          "prov_perceived": 0.0940234375,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.09140625000000001,
+          "prov_perceived": 0.0940234375,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 0.5823219418525696,
+        "grown_perc": 1.7783974409103394,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.5058823497670127,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.5058823497670127,
+        "clear_wrong_hold": -0.39647576813056734,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 43,
+      "PASS": true,
+      "elapsed_s": 87.7,
+      "cue_concept": 6,
+      "assert_concept": 7,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 0.9801852107048035,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 1.6033133268356323,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 0.9801852107048035,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 1.6033133268356323,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.716621247157526,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 6,
+        "assert_concept": 7,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.9446659165498147,
+        "ratio_base_intact": -0.07082764019512514,
+        "ratio_held_intact": 0.112315726752478,
+        "ratio_base_lesion": -0.06944441491582923,
+        "ratio_held_lesion": -0.05931034456580264,
+        "margin_base_intact": -0.016054687499999998,
+        "margin_held_intact": 0.0234765625,
+        "delta_intact": 0.18314336694760314,
+        "delta_lesion": 0.010134070350026586,
+        "rates_base_intact": {
+          "prov_generated": 0.08031250000000001,
+          "prov_perceived": 0.0963671875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.08031250000000001,
+          "prov_perceived": 0.0963671875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 0.9801852107048035,
+        "grown_perc": 1.6033133268356323,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.584269659420107,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.584269659420107,
+        "clear_wrong_hold": -0.4979423835526428,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 44,
+      "PASS": true,
+      "elapsed_s": 87.9,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 1.0580580234527588,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 1.3509197235107422,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 1.0580580234527588,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 1.3509197235107422,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6721311416644271,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 0,
+        "assert_concept": 4,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.8867708261564435,
+        "ratio_base_intact": -0.05054468811031534,
+        "ratio_held_intact": 0.0750992306146496,
+        "ratio_base_lesion": -0.05106148192078102,
+        "ratio_held_lesion": -0.03683492480508628,
+        "margin_base_intact": -0.011679687499999996,
+        "margin_held_intact": 0.016328125,
+        "delta_intact": 0.12564391872496494,
+        "delta_lesion": 0.01422655711569474,
+        "rates_base_intact": {
+          "prov_generated": 0.0846875,
+          "prov_perceived": 0.0963671875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.0846875,
+          "prov_perceived": 0.0963671875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 1.0580580234527588,
+        "grown_perc": 1.3509197235107422,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.5340909058539944,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.5340909058539944,
+        "clear_wrong_hold": -0.4088050287040334,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 100,
+      "PASS": true,
+      "elapsed_s": 87.1,
+      "cue_concept": 3,
+      "assert_concept": 0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 0.8046936988830566,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 2.0497732162475586,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 0.8046936988830566,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 2.0497732162475586,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6415584362260078,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 3,
+        "assert_concept": 0,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.9653375502411462,
+        "ratio_base_intact": -0.04181988777670684,
+        "ratio_held_intact": 0.15679837324634868,
+        "ratio_base_lesion": -0.03960231247789435,
+        "ratio_held_lesion": -0.032717716983991764,
+        "margin_base_intact": -0.010078125,
+        "margin_held_intact": 0.03515625,
+        "delta_intact": 0.19861826102305552,
+        "delta_lesion": 0.006884595493902586,
+        "rates_base_intact": {
+          "prov_generated": 0.09046875,
+          "prov_perceived": 0.100546875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.09046875,
+          "prov_perceived": 0.100546875,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 0.8046936988830566,
+        "grown_perc": 2.0497732162475586,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.5069930041566825,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.5069930041566825,
+        "clear_wrong_hold": -0.3306772887287504,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 101,
+      "PASS": true,
+      "elapsed_s": 88.0,
+      "cue_concept": 4,
+      "assert_concept": 0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 1.0992310047149658,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 1.6332842111587524,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 1.0992310047149658,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 1.6332842111587524,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.613231547169616,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 4,
+        "assert_concept": 0,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.9613724119481001,
+        "ratio_base_intact": -0.0034641550514150246,
+        "ratio_held_intact": 0.15091678352195526,
+        "ratio_base_lesion": -0.0006583235329941774,
+        "ratio_held_lesion": 0.005305039765283655,
+        "margin_base_intact": -0.0008203124999999929,
+        "margin_held_intact": 0.033437499999999995,
+        "delta_intact": 0.1543809385733703,
+        "delta_lesion": 0.005963363298277832,
+        "rates_base_intact": {
+          "prov_generated": 0.09300781250000001,
+          "prov_perceived": 0.09382812500000001,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.09300781250000001,
+          "prov_perceived": 0.09382812500000001,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 1.0992310047149658,
+        "grown_perc": 1.6332842111587524,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.5619389554789862,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.5619389554789862,
+        "clear_wrong_hold": -0.48927874938461585,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 102,
+      "PASS": true,
+      "elapsed_s": 97.8,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w_gen": 0.05000000819563866,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 0.05000000819563866,
+            "w_perc_o": 0.05000000819563866
+          },
+          {
+            "ep": 120,
+            "w_gen": 1.2098541259765625,
+            "w_gen_o": 0.05000000819563866,
+            "w_perc": 1.493228793144226,
+            "w_perc_o": 0.05000000819563866
+          }
+        ],
+        "final_weight_gen_trained": 1.2098541259765625,
+        "final_weight_gen_other": 0.05000000819563866,
+        "final_weight_perc_trained": 1.493228793144226,
+        "final_weight_perc_other": 0.05000000819563866,
+        "grew_from_near_zero": true,
+        "other_blocks_stayed_near_seed": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6136363591735537,
+        "battery_ok": true,
+        "surprise_confirm_rate": 0.0,
+        "surprise_contradict_rate": 0.003333333333333333,
+        "surprise_sep_ratio": 3333.3333333333335,
+        "discrimination_ok": true,
+        "cue_concept": 0,
+        "assert_concept": 4,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 0.9037849481812507,
+        "ratio_base_intact": -0.02888991173494124,
+        "ratio_held_intact": 0.11615236755879665,
+        "ratio_base_lesion": -0.028217821606817073,
+        "ratio_held_lesion": -0.014262571188660554,
+        "margin_base_intact": -0.006953124999999999,
+        "margin_held_intact": 0.026601562500000002,
+        "delta_intact": 0.1450422792937379,
+        "delta_lesion": 0.013955250418156519,
+        "rates_base_intact": {
+          "prov_generated": 0.0918359375,
+          "prov_perceived": 0.0987890625,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "floor_used": 0.0478,
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.0918359375,
+          "prov_perceived": 0.0987890625,
+          "surprise": 0.0,
+          "patient_expected": 0.0
+        },
+        "in_band": true,
+        "grown_gen": 1.2098541259765625,
+        "grown_perc": 1.493228793144226,
+        "bounded_by_hmax": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_ratio": 0.0,
+        "decision_scale": 0.5304659467786899,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.5304659467786899,
+        "clear_wrong_hold": -0.448140897389333,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "PASS": true
+      }
+    }
+  ]
+}
