@@ -299,3 +299,4 @@ Task #177 (merged-regions-learn-to-influence-each-other) description UPDATED: th
 stability soak in flight" note now reads LANDED, citing
 2026-08-28-onebrain-xedge-long-conversation-soak-100turn-6seed-GO. No task newly closed (the soak is a
 safety extension of an already-landed flip, not a new capability rung); no ladder-label change.
+2026-08-28T18:50 sparse-index port harvested+merged d4a45c27; board #192 real-time-recall next-rung created (Memory,de-risked)

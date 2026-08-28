@@ -206,9 +206,13 @@ host/numpy.
 conversation is unchanged and is now the clear next target — open-ended prose still comes from the external Qwen
 language model, not the brain's own neurons. The wall is a signal-to-noise problem, not a lack of practice: the
 substrate's own moment-to-moment read of its firing is too noisy to teach a from-scratch spiking generator past
-roughly a third of target quality (board #80). Secondary blockers: a sparse-index knowledge-scale speedup is
-built and de-risked but deliberately left off pending an owner review at scale, and most of the comprehension
-and routing glue between faculties is still host Python, not brain tissue.
+roughly a third of target quality (board #80). Secondary blockers: the knowledge store now scales to millions of
+facts with perfect recall, and the dentate-gyrus sparse-index accelerator has now been extended to the
+large-vocabulary shard composer too — but that only trims query latency by about 25% (≈25s at a 347,000-word
+vocabulary), so real-time chat over a full knowledge base is still the open item (next levers: cut how often a
+shard lookup falls back to the full scan on real entity codes, or save the built index alongside the knowledge
+bundle so it isn't rebuilt each launch); and most of the comprehension and routing glue between faculties is
+still host Python, not brain tissue.
 
 **2026-08-27 update on the mouth's read-SNR lever search.** "Pooling across more neurons" (an ensemble read over
 the existing word-pool) turned out to be inert by construction — the pool members are deterministic conductance
