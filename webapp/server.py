@@ -5323,6 +5323,41 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                             reconsolidation_info = {"on": True, "error": f"{type(_rce).__name__}: {_rce}"}
         except Exception as _se:  # never let the surprise read crash a turn — degrade to the un-noticed answer
             surprise_info = {"on": True, "error": f"{type(_se).__name__}: {_se}"}
+    # ── BEGIN faculty: board #129 surprise->episodic/source_provenance LEARNED CROSS-EDGES — additive,
+    #    DEFAULT-OFF (BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC). Mirrors the PART-1 d6-WM->comprehension frozen
+    #    cross-edge wire-in (research/runners/onebrain_xedge_production.py) and the R4 self_schema->source_
+    #    provenance wire-in (research/runners/onebrain_xedge_selfschema_production.py) on board #129's TWO-cross-
+    #    edge / divisive-ratio construction (2026-08-28-surprise-episodic-129construction-6seed-GO.md): the D2
+    #    expectation-violation circuit's CONTRADICT drive is a LEARNED Hebbian cross-synapse pair onto source_
+    #    provenance's perceived/generated pools, grown once on a SHARED merge pool, then frozen (no weight moves
+    #    during any live turn). THIS turn's OWN live D2 surprise verdict (`surprise_info["surprised"]`, computed
+    #    above) drives whether the cross-edges' presynaptic CONTRADICT drive is held during a co-temporal read of
+    #    the construction's own validated ambiguous-item provenance instrument (`amb_read_ratio`, reused verbatim
+    #    — not reimplemented). Attaches an ADDITIVE diagnostic field ONLY
+    #    (`resp["surprise"]["source_provenance_crossedge"]`); NEVER touches `resp["answer"]` or any existing
+    #    `surprise` field, and runs on an INDEPENDENT SurpriseEpisodic129Pool instance — ZERO risk to the
+    #    already-default-ON D2 surprise notice/reconsolidation pipeline above. LOAD-BEARING: the shift toward
+    #    GENERATED vanishes under BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION=1 (BOTH cross-edges zeroed
+    #    together — the SAME joint lesion the 6-seed GO's own F2 gate used). DEFAULT-OFF:
+    #    BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC unset -> no extra key, byte-identical. Guarded so it never
+    #    crashes a turn. HONEST RESIDUAL (carried from the construction's own finding, §5, not re-litigated
+    #    here): a single-edge lesion check found the confirm-side edge (not the surprise-side edge) does almost
+    #    all the causal work — this wire-in exercises the already-validated JOINT (both-edges) mechanism, which
+    #    is what BRAIN_ONEBRAIN_XEDGE_SURPRISE_EPISODIC_LESION lesions. See research/runners/
+    #    onebrain_xedge_surprise_episodic_production.py.
+    if surprise_info is not None and "surprised" in surprise_info:
+        try:
+            from research.runners.onebrain_xedge_surprise_episodic_production import (
+                xedge_surprise_episodic_enabled, get_xedge_surprise_episodic_pool, crossedge_provenance_shift_129)
+            if xedge_surprise_episodic_enabled():
+                _xse_pool = get_xedge_surprise_episodic_pool(42)
+                _xse_held = bool(surprise_info.get("surprised", False))
+                _xse_read = crossedge_provenance_shift_129(_xse_pool, _xse_held)
+                if _xse_read is not None:
+                    surprise_info["source_provenance_crossedge"] = _xse_read
+        except Exception as _xsee:   # never let the diagnostic read crash a turn
+            surprise_info["source_provenance_crossedge"] = {"on": True, "error": f"{type(_xsee).__name__}: {_xsee}"}
+    # ── END faculty: board #129 surprise->episodic/source_provenance LEARNED CROSS-EDGES ──
 
     # ── NON-CONTRADICTION ASSERTION-GATE (Gate-B, B3, 2026-08-12) ────────────────────────────────────────────
     # When the user ASSERTS a transitive fact whose POLARITY contradicts the brain's stored polarity for the EXACT

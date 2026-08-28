@@ -1,0 +1,31 @@
+{
+ "run_id": "1787957847-262097",
+ "runner": "research/runners/onebrain_xedge_surprise_episodic_production.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a983d753b7dca481e/research/runners/onebrain_xedge_surprise_episodic_production.py",
+  "--grow",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_xedge_surprise_episodic_production_frozen_6seed.json"
+ ],
+ "git_sha": "e27baf930",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T18:57:27",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 673.1,
+ "corpus_check_query": "migrate surprise->episodic 129-construction edge through the declarative CrossEdge framework, production wire-in",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_xedge_surprise_episodic_production_frozen_6seed.json"
+}
