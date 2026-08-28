@@ -1,0 +1,105 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "feature": "host",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 11183,
+      "n_eval_pos": 400,
+      "n_sub_demo": 120,
+      "lr": 0.5,
+      "epochs": 20,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 18.86,
+      "head_w_norm": 37.53,
+      "hostlinear_recov_argmax": 0.9061,
+      "hostlinear_argmax_agree": 0.7275,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0478,
+        "lesion_err": 0.04,
+        "shuffle_teach": 0.0019
+      },
+      "hostlinear_floor_recov": 0.0478,
+      "weight_cosine_to_head_diag": 0.4229,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": 0.0103
+      },
+      "weight_cosine_floor": 0.0103,
+      "sub_learned": {
+        "argmax_agree": 0.675,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8357
+      },
+      "sub_copied": {
+        "argmax_agree": 0.825,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9665
+      },
+      "sub_recov_ratio_learned_over_copied": 0.8647,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 20.5,
+      "demo_secs": 28.5,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "feature": "host",
+    "n_seeds": 1,
+    "go_count": 1,
+    "go_5of6": false,
+    "rule_recovery_go_count": 1,
+    "integrated_go_count": 1,
+    "anticheats_collapse_count": 1,
+    "hostlinear_recov_mean": 0.9061,
+    "hostlinear_recov_min": 0.9061,
+    "hostlinear_agree_mean": 0.7275,
+    "hostlinear_floor_recov_max": 0.0478,
+    "weight_cosine_to_head_diag_mean": 0.4229,
+    "weight_cosine_to_head_diag_min": 0.4229,
+    "weight_cosine_floor_max": 0.0103,
+    "sub_learned_recov_mean": 0.8357,
+    "sub_copied_recov_mean": 0.9665,
+    "sub_recov_ratio_mean": 0.8647,
+    "sub_recov_ratio_min": 0.8647
+  },
+  "seeds": [
+    42
+  ],
+  "feature": "host",
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "ddf5661b1c4d2e73",
+    "thr_hash_2": "ddf5661b1c4d2e73",
+    "seeded": true
+  },
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "host_linear_proxy_for_substrate_read",
+  "backend": "cupy",
+  "elapsed_s": 76.4,
+  "argv": [
+    "/home/dant123/Projects/sim/.claude/worktrees/agent-af5586a8cc352aeeb/research/runners/_wkv_mouth_readout_eprop_learn_derisk.py",
+    "--smoke",
+    "--seeds",
+    "42",
+    "--feature",
+    "host"
+  ]
+}

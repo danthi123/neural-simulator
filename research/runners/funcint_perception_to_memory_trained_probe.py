@@ -358,6 +358,10 @@ def _run_lesion(seed: int):
     idx = handles["route_syn_idx"]
     n_lesioned = int(idx.size)
     bridge.cp_connections.data[idx] = xp.asarray(0.0, dtype=bridge.cp_connections.data.dtype)
+    # `encode_percept_engram` above already stepped this (read-only-eligible) bridge, warming the megakernel-v2
+    # transposed-weight cache from the PRE-lesion route -- without this call the fused read-only step keeps
+    # transmitting the intact route (2026-08-27 stale-weight-cache bug class; empirically confirmed on this bridge).
+    bridge.mark_weights_edited()
 
     n_lo = int(handles["lang_out_indices"].size)
     out = {}

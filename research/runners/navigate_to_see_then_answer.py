@@ -614,11 +614,19 @@ def _clear_all_tags(bridge):
 
 def _lesion_route(bridge, handles):
     """Cut the trained route: zero every `cortex_it -> language_output` route synapse's weight in place. The
-    plasticity-gate index map points at exactly those synapses (route-specific lesion; no other pathway touched)."""
+    plasticity-gate index map points at exactly those synapses (route-specific lesion; no other pathway touched).
+
+    `bridge` reaches this call ALREADY read-only-eligible (post-training: hebbian/stdp/reward/homeostasis/stp/
+    structural/nmda all off) and ALREADY stepped once (`run_episode` above), so `_step_megakernel_can_dispatch()`
+    is True and the megakernel-v2 transposed-weight cache is WARM from the pre-lesion route. Without
+    `mark_weights_edited()` the fused read-only step keeps transmitting the pre-lesion (intact) route on every
+    subsequent step -- the lesion never reaches the substrate's forward dynamics (2026-08-27 stale-weight-cache
+    bug class; empirically confirmed on this exact bridge: cached vs freshly-rebuilt WT sums differ post-lesion)."""
     xp, _ = get_backend()
     idx = handles["route_syn_idx"]
     n_lesioned = int(idx.size)
     bridge.cp_connections.data[idx] = xp.asarray(0.0, dtype=bridge.cp_connections.data.dtype)
+    bridge.mark_weights_edited()
     return n_lesioned
 
 

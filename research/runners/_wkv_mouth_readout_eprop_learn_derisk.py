@@ -101,7 +101,17 @@ class LearnedReadout(ComposedEndToEndRead):
 
     def set_weights(self, W_hat):
         """Dale-split W_hat[V,D] -> Wp/Wn word-pool synapses and scatter into the fixed CSR (no re-wire). head_b
-        (the bias pop) is untouched. Reads self.hid_dim/syn_scale/ratio/P — the layout _wire() installs."""
+        (the bias pop) is untouched. Reads self.hid_dim/syn_scale/ratio/P — the layout _wire() installs.
+
+        `_eval_substrate` calls this repeatedly (once per weight-set being compared: learned W_main, then the
+        copied head) on the SAME bridge, stepping it (`margin_from_h` -> `_graded_margin` -> `_run_one_simulation_
+        step`) between calls. This bridge's config is the same fully-read-only regime as the fixed mouth eprop
+        bug (`_build_bridge` forces stdp/hebbian/stp/structural/homeostasis/reward-mod/nmda all False), so
+        `_step_megakernel_can_dispatch()` is True and the megakernel-v2 transposed-weight cache goes stale on
+        every `set_weights` after the first UNLESS invalidated -- worse here because `.data` is REASSIGNED (a new
+        array), not mutated in place, so even the id-based cache key comparison alone would not save it. Without
+        `mark_weights_edited()` the second `_eval_substrate` call (the copied-head comparison arm) would read
+        through the FIRST call's (learned W_main) weights (2026-08-27 stale-weight-cache bug class)."""
         xp, _ = get_backend()
         Wfull = np.concatenate([W_hat, -W_hat], axis=1)
         Wp = np.maximum(Wfull, 0.0); Wn = np.maximum(-Wfull, 0.0)
@@ -110,6 +120,7 @@ class LearnedReadout(ComposedEndToEndRead):
         self._data_host[self._pos_slot] = wp
         self._data_host[self._neg_slot] = wn
         self._b.cp_connections.data = xp.asarray(self._data_host)
+        self._b.mark_weights_edited()
         self.head_w = np.asarray(W_hat, dtype=np.float64); self.Wp = Wp; self.Wn = Wn
 
     def feature_signed(self, ap, an, tid):

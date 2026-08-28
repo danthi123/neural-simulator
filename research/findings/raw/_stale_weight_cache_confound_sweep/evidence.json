@@ -1,0 +1,59 @@
+{
+  "run_id": 1787885833,
+  "purpose": "stale-weight-cache-confound-sweep evidence (2026-08-27)",
+  "navigate_to_see_then_answer": {
+    "runner": "research/runners/navigate_to_see_then_answer.py::_lesion_route",
+    "can_dispatch_megakernel_v2_before_lesion": true,
+    "is_gpu_backend": true,
+    "n_lesioned_synapses": 42025,
+    "wt_cache_key_cleared_by_fix": true,
+    "wt_data_sum_pre_lesion_cached": 478196.4391254671,
+    "wt_data_sum_post_fix_rebuild": 458284.0455698818,
+    "wt_data_sum_independent_fresh_ground_truth": 458284.0455698818,
+    "fix_matches_ground_truth": true,
+    "verdict": "VICTIM (confirmed) -> FIXED (mark_weights_edited() added; verified matches independent fresh rebuild)"
+  },
+  "funcint_perception_to_memory_trained_probe": {
+    "runner": "research/runners/funcint_perception_to_memory_trained_probe.py::_run_lesion",
+    "can_dispatch_megakernel_v2_before_lesion": true,
+    "post_fix_lesion_recall_n_correct_of_4": 0,
+    "expected_post_lesion_n_correct": 0,
+    "verdict": "VICTIM (confirmed empirically: cached vs fresh WT sums differed post-lesion pre-fix) -> FIXED (mark_weights_edited() added; post-fix recall correctly collapses to 0/4)"
+  },
+  "funcint_perception_to_memory_probe": {
+    "runner": "research/runners/funcint_perception_to_memory_probe.py::_run_lesion",
+    "post_fix_lesion_recall_n_correct_of_4": 0,
+    "expected_post_lesion_n_correct": 0,
+    "verdict": "VICTIM (confirmed empirically: same mechanism) -> FIXED (mark_weights_edited() added; post-fix recall correctly collapses to 0/4)"
+  },
+  "wkv_mouth_readout_eprop_learn": {
+    "runner": "research/runners/_wkv_mouth_readout_eprop_learn_derisk.py::LearnedReadout.set_weights (called twice by _eval_substrate: once for the LEARNED W_main, once for the COPIED head hw, on the SAME bridge, with substrate stepping via margin_from_h/_graded_margin between calls)",
+    "smoke_cmd": "python -m research.runners._wkv_mouth_readout_eprop_learn_derisk --smoke --seeds 42 --feature host",
+    "AB_only_the_fix_toggles": {
+      "fix_OFF_no_mark_weights_edited_reproduces_pre_fix_code": {
+        "sub_learned_recov_mean": 0.8357,
+        "sub_copied_recov_mean": 0.8293,
+        "sub_recov_ratio_mean": 1.0077,
+        "note": "sub_copied_recov reads through the STALE (still-learned-W_main) megakernel-v2 WT cache, not the true copied-head weights"
+      },
+      "fix_ON_current_code": {
+        "sub_learned_recov_mean": 0.8357,
+        "sub_copied_recov_mean": 0.9665,
+        "sub_recov_ratio_mean": 0.8647,
+        "note": "sub_copied_recov now reads the TRUE copied-head weights (WT cache invalidated + rebuilt between the two set_weights calls)"
+      },
+      "delta_sub_copied_recov_mean": 0.1372,
+      "delta_sub_recov_ratio_mean": -0.143
+    },
+    "banked_finding": "research/findings/2026-08-14-fluid-mouth-readout-eprop-learned-GO.md (dated AFTER the 2026-07-23 enable_step_megakernel_v2 default-on flip -- NOT protected by the pre-flip exemption that applies to navigate_to_see_then_answer.py / the funcint probes)",
+    "banked_6seed_raw": "research/findings/raw/_wkv_readout_eprop_learn_substrate_6seed.json",
+    "banked_6seed_summary_feature_substrate": {
+      "sub_learned_recov_mean": 0.886,
+      "sub_copied_recov_mean": 0.8844,
+      "sub_recov_ratio_mean": 1.0018,
+      "sub_recov_ratio_min": 0.9992
+    },
+    "banked_number_matches_the_BUGGY_pattern": "banked sub_recov_ratio_mean=1.0018 (~1.0, copied~=learned) matches this sweep's fix-OFF reproduction (1.0077), NOT the fix-ON corrected pattern (0.8647, copied clearly > learned) -- strong evidence the banked 6-seed run was measured through the stale WT cache.",
+    "verdict": "VICTIM (confirmed + quantified) -> FIXED (mark_weights_edited() added to set_weights()). On this sweep's single-seed post-fix smoke, the corrected ratio (0.8647) is close to the GO bar (>=0.85) with much less margin than the banked 1.0018 suggested. The banked 6-seed GO finding needs RE-RUNNING under the fix to get the true ratio -- REPORTED for controller review, not silently amended or re-verdicted here."
+  }
+}
