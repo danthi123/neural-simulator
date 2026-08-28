@@ -35,6 +35,18 @@ Later same day: `2026-08-27-generative-wander-production-scale-PARTIAL` (the wan
 
 Still later same day: `2026-08-27-reverse-edge-heterosynaptic-depression-learn-through-use-NOGO` (the named depression arm lands, eliminates the reverse-edge deepening on 6/6 seeds and flips the mean weak-cue recall change from a decrease to an increase, but only 2/6 seeds individually clear the GO bar; dose scans past full reverse-elimination don't move the non-gaining seeds — next = the read-side noise floor / forward-band absolute magnitude, not more reverse suppression).
 
+**A verify-then-flip audit of 3 default-off faculties landed ZERO flips, and found a real bug along the way.**
+The one-brain cross-edge (`BRAIN_ONEBRAIN_XEDGE`/`_LEARN`, the "faculties driving faculties by learning" result
+mentioned above) was re-checked through the REAL production organs rather than its own self-test, and this
+surfaced a genuine cross-session leak: a held discourse referent from one conversation silently colors every
+OTHER unrelated conversation's ambiguous-clarification wording, because the coupling's WM-focus signal is a
+process-global attribute that is written but never cleared. The mechanism itself (learning + lesion-attributable
+role drive) still checks out — only the session-isolation property fails, undetected by the earlier 6-seed
+self-test. Left default-OFF; logged; a follow-up fix task is queued. The wander's production-scale flip
+(above) and two ledger candidates (`source-provenance-honesty`, `confidence-forthcomingness`) also stayed OFF,
+each for its own already-declared reason (staged verify not landed / matches an explicitly excluded category).
+Finding: `2026-08-27-production-default-flips-session-verification-no-flips-landed`.
+
 ## 2026-08-27 (latest) — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
 
 A follow-up to the "reads back cleanly" check above closed its last honest gap. That earlier check proved each
