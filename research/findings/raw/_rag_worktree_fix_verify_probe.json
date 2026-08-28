@@ -1,0 +1,10 @@
+{
+  "purpose": "trivial probe commit to verify the RAG post-commit hook fires from a linked git worktree (Vikunja board #83)",
+  "worktree": "/home/dant123/Projects/sim/.claude/worktrees/agent-af65eb590585626d4",
+  "created_by": "verify step for merge(rag): land research/rag-worktree-fix",
+  "note": "safe to delete; carries no research finding; not a scientific run",
+  "runner": "manual-verification-probe",
+  "backend": "none",
+  "seed": 0,
+  "execution": "not_executed"
+}
