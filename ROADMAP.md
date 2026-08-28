@@ -7,6 +7,18 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-28 (later, newest) — ⭐ the one-brain milestone LANDED, validated safe over long chats; the mouth "wall" was a measurement confound
+
+Four things landed this afternoon.
+
+(1) ⭐⭐ THE FIRST LEARNED FACULTY-TO-FACULTY CONNECTION IS NOW ON BY DEFAULT. The connection from working-memory to language-understanding (which earlier person a pronoun refers to → how the sentence is understood) is now live by default in the chat, and it GROWS a little every turn from the brain's own success signal — the brain learns through the conversation itself. It passed the full 6-seed production check (visible on real traffic, nothing hollow, no regression, exactly reversible with an off-switch). This is the first genuine piece of "one brain" wired on by default.
+
+(2) IT IS SAFE OVER A LONG CONVERSATION. A 100-turn, 6-seed stability soak confirmed the always-on learning stays bounded (never runs away), never degrades comprehension, still works at turn 100, and a lesson taught early survives 70 turns of unrelated chatter without being forgotten. So the default-on flip holds — it strengthens, not weakens, over a long talk.
+
+(3) MIGRATING MORE FACULTIES IS NOW CHEAP. The framework for declaring a new brain-region-to-region connection was already built and proven (it reproduces the first connection bit-for-bit), so adding the next one is a short, uniform step rather than a bespoke project.
+
+(4) THE MOUTH "WALL" WAS PARTLY A MEASUREMENT BUG, NOT A REAL LIMIT. The earlier verdict that "the brain's own read of its firing is too noisy to teach a good from-scratch voice" was measured on runs that had the stale-cache training bug (the substrate was frozen after one training step). With that fixed, the from-scratch voice's learned read already recovers ~0.87 of target, and the fair "more training data" test — never actually run before the fix — is now first in the GPU queue. So the brain-native mouth is closer than we thought; the gap to open-ended fluency is breadth (vocabulary/domain scale), not a fundamental read wall. Knowledge-aware elaboration also passed its full-hardware check, unblocking richer, confidence-tuned answers.
+
 ## 2026-08-28 (newest) — a working brain-native voice, the one-brain flip fix, knowledge-aware elaboration, and a well-mapped read wall
 
 Six things landed this session.

@@ -291,3 +291,11 @@ de-risked, still default-OFF `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY`). No other task
 - LTM-shard elaboration cupy 6-seed GO (finding 2026-08-28-ltm-shard-elaboration-cupy...) — unblocks confidence->forthcomingness #94 re-test (elaboration now reaches past the buffer tier) + deepens knowledge-in-chat #66.
 - read-fidelity arc (rate/latency/dispersion/decoder/popvec/opponent) characterized; the perceived-vs-generated FACULTY is already GO 6/6 via #129 (separate-trace + opponent-ratio wiring).
 - honesty skip-and-continue built+merged (default-OFF, 28/28 wiring GO); gen-time honesty confirmed already-merged.
+## 2026-08-28  xedge-long-conversation-soak (research/xedge-long-conversation-soak)
+Reconciled after landing the 100-turn/6-seed xedge production-flip safety soak (GO 6/6 — bounded,
+no comprehension degradation, sustained load-bearing at turn 60 + final, zero weight drift under a
+teach-then-distract interference probe; NOT a revert signal for the fe1911f2 default-ON flip).
+Task #177 (merged-regions-learn-to-influence-each-other) description UPDATED: the "long-conversation
+stability soak in flight" note now reads LANDED, citing
+2026-08-28-onebrain-xedge-long-conversation-soak-100turn-6seed-GO. No task newly closed (the soak is a
+safety extension of an already-landed flip, not a new capability rung); no ladder-label change.
