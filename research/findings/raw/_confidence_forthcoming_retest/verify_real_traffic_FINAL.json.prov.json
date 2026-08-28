@@ -1,0 +1,25 @@
+{
+ "run_id": "1787880715-3597590",
+ "runner": "research/findings/raw/_confidence_forthcoming_retest/verify_real_traffic_recalibrated_part3.py",
+ "argv": [
+  "research/findings/raw/_confidence_forthcoming_retest/verify_real_traffic_recalibrated_part3.py"
+ ],
+ "git_sha": "da84fde7c",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T21:31:55",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_confidence_forthcoming_retest/verify_real_traffic_FINAL.json"
+}

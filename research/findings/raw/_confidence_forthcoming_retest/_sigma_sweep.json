@@ -1,0 +1,45 @@
+[
+  {
+    "sigma": 1.8,
+    "abstained": true,
+    "answer": "I don't know about that.",
+    "recalled_svo": null,
+    "mrc": null,
+    "same_fact": false,
+    "metacog": null,
+    "below_lo": false
+  },
+  {
+    "sigma": 1.3,
+    "abstained": false,
+    "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: The brain uses spikes. The brain stores memory. The brain learns words.",
+    "recalled_svo": [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    "mrc": 0.2836275958792158,
+    "same_fact": true,
+    "metacog": {
+      "on": true,
+      "lesioned": false,
+      "evidence": 0.0,
+      "balance": 0.01807477725971096,
+      "threshold": 0.057845546432234586,
+      "confident": false,
+      "calib": {
+        "mean_hi": 0.07254469906489278,
+        "min_hi": 0.06324435069078038,
+        "mean_lo": 0.03623807287266029,
+        "max_lo": 0.05244674217368879,
+        "clean_gap": true,
+        "read_reps": 8,
+        "role_conf_lo": 0.3,
+        "role_conf_hi": 0.5,
+        "confidence_read": "nmda_norm"
+      },
+      "mean_role_conf": 0.2836275958792158
+    },
+    "below_lo": true
+  }
+]

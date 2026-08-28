@@ -1,0 +1,216 @@
+{
+  "runner": "verify_real_traffic_FINAL (part1 confident-side + part3 recalibrated-seed uncertain-side [default-floor, floor-override] + part2 lesion-uncertain, merged; through the real /api/brain-chat handler)",
+  "backend": "numpy",
+  "ts": "2026-08-27T21:34:49",
+  "role_conf_lo": 0.3,
+  "role_conf_hi": 0.5,
+  "sigma_uncertain": 1.3,
+  "seed_uncertain": 9013,
+  "sigma_seed_note": "synaptic noise is stochastic per-seed: sigma=2.2 (matching the raw-composer recalib sweep) abstained outright through the FULL rich+VERIFY pipeline; at sigma=1.3, seeds 4001/4002 ALSO abstained (part2) while seed=9013 (found by _sigma_sweep.py) answers cleanly (same fact, mrc=0.284<LO=0.30) -- seed=9013 reused for every uncertain condition below for a clean apples-to-apples comparison.",
+  "part1_3a_default_floor": {
+    "confident": {
+      "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+      "n_sentences": 3,
+      "mrc": 0.6080886903614127,
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 1.0,
+        "balance": 0.08564659007052086,
+        "threshold": 0.057845546432234586,
+        "confident": true,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.3,
+          "role_conf_hi": 0.5,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.6080886903614127
+      },
+      "cf": {
+        "on": true,
+        "floor_sentences": 4,
+        "requested_sentences": 3,
+        "confident": true,
+        "granted": false,
+        "kept_sentences": 3,
+        "elaborations_dropped": 0,
+        "reason": "high_confidence"
+      }
+    },
+    "uncertain": {
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: The brain uses spikes. The brain stores memory. The brain learns words.",
+      "recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "n_sentences": 3,
+      "mrc": 0.2836275958792158,
+      "metacog": {
+        "on": true,
+        "lesioned": false,
+        "evidence": 0.0,
+        "balance": 0.01807477725971096,
+        "threshold": 0.057845546432234586,
+        "confident": false,
+        "calib": {
+          "mean_hi": 0.07254469906489278,
+          "min_hi": 0.06324435069078038,
+          "mean_lo": 0.03623807287266029,
+          "max_lo": 0.05244674217368879,
+          "clean_gap": true,
+          "read_reps": 8,
+          "role_conf_lo": 0.3,
+          "role_conf_hi": 0.5,
+          "confidence_read": "nmda_norm"
+        },
+        "mean_role_conf": 0.2836275958792158
+      },
+      "cf": {
+        "on": true,
+        "floor_sentences": 4,
+        "requested_sentences": 3,
+        "confident": false,
+        "granted": false,
+        "kept_sentences": 3,
+        "elaborations_dropped": 0,
+        "reason": "nothing_to_cap"
+      },
+      "abstained": false,
+      "same_fact_not_misrecall": true
+    },
+    "no_longer_saturated_at_1": true,
+    "mrc_below_lo_uncertain": true,
+    "confident_flipped_false": true,
+    "n_sentences_differ_on_default_floor": false
+  },
+  "part3b_floor_override": {
+    "floor": [
+      2,
+      1
+    ],
+    "confident": {
+      "n_sentences": 3,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": true,
+        "granted": true,
+        "kept_sentences": 3,
+        "elaborations_dropped": 0,
+        "reason": "high_confidence"
+      },
+      "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+      "supporting_facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "brain",
+          "learn",
+          "words"
+        ]
+      ],
+      "verified": true
+    },
+    "uncertain": {
+      "n_sentences": 2,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": false,
+        "granted": false,
+        "kept_sentences": 2,
+        "elaborations_dropped": 1,
+        "reason": "low_confidence_capped"
+      },
+      "answer": "My decision-margin reads this as low-confidence, so take it as uncertain: The brain uses spikes. The brain stores memory.",
+      "supporting_facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "brain",
+          "store",
+          "memory"
+        ]
+      ],
+      "verified": true,
+      "abstained": false
+    },
+    "n_sentences_differ_with_floor_override": true,
+    "granted_confident": true,
+    "granted_uncertain": false
+  },
+  "part4_lesion": {
+    "confident": {
+      "n_sentences": 2,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": false,
+        "granted": false,
+        "kept_sentences": 2,
+        "elaborations_dropped": 1,
+        "reason": "low_confidence_capped"
+      },
+      "metacog_confident": false
+    },
+    "uncertain": {
+      "n_sentences": 2,
+      "cf": {
+        "on": true,
+        "floor_sentences": 2,
+        "requested_sentences": 3,
+        "confident": false,
+        "granted": false,
+        "kept_sentences": 2,
+        "elaborations_dropped": 1,
+        "reason": "low_confidence_capped"
+      },
+      "metacog_confident": false,
+      "abstained": false
+    },
+    "difference_collapses": true
+  },
+  "part6_byte_identical_off": {
+    "no_cf_key": true,
+    "answer": "The brain uses spikes. The brain stores memory. The brain learns words.",
+    "n_sentences": 3,
+    "matches_confident_control": true
+  },
+  "part5_moat_safety": {
+    "default_floor_confident": true,
+    "default_floor_uncertain": true,
+    "3b_confident": true,
+    "3b_uncertain": true
+  },
+  "part5_moat_all_ok": true,
+  "verdict": {
+    "confidence_saturation_fixed": true,
+    "noise_degrades_confidence_real_handler": true,
+    "cap_discriminates_at_default_floor": false,
+    "cap_discriminates_with_floor_override": true,
+    "lesion_collapses_the_difference": true,
+    "moat_safe": true,
+    "byte_identical_off": true
+  }
+}
