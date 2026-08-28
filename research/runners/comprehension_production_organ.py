@@ -482,6 +482,7 @@ class ComprehensionProductionOrgan:
         balanced read was NOT actually balanced)."""
         sh = self._shared
         amb = getattr(sh, "xedge_amb_read", None) if sh is not None else None
+        explicit = (wm_focus is not _WM_FOCUS_UNSET)   # production/real-handler ALWAYS threads wm_focus explicitly
         foc = wm_focus
         if foc is _WM_FOCUS_UNSET:      # legacy fallback (self-tests only) -- production always passes explicitly
             foc = getattr(sh, "xedge_focus", None) if sh is not None else None
@@ -494,11 +495,61 @@ class ComprehensionProductionOrgan:
         if self._wm_baseline is None:                    # control-hold balanced margin (no grown edge), computed once
             self._wm_baseline = float(amb(base_pool, cues)["margin"])
             self._wm_resolve_eps = max(0.004, 3.0 * abs(self._wm_baseline))
+        # ONE-BRAIN XEDGE POSITION-INVARIANT INDIRECTION (real-handler path): the live handler's WM focus is ALWAYS
+        # the positional CAND_POOLS[0], whose grown role is SEED-ARBITRARY, so a fixed-slot read of that one pool is
+        # visible only when that position happens to hold a grown AGENT role (the 2/4-seed positional-binding
+        # residual). When the caller threads `wm_focus` EXPLICITLY (production always does; the offline self-tests use
+        # the legacy ambient fallback, which deliberately hand-sets p_agent vs p_patient to test per-referent
+        # variation), resolve the role via `_wm_resolved_role_indirect` -- a substrate read over the candidate
+        # role-population that is INVARIANT to which position (w0/w1/w2) grew the role (Kriete 2013). The legacy
+        # per-pool read below is UNCHANGED for the self-tests (hold(p_agent)->agent vs hold(p_patient)->patient
+        # variation preserved).
+        if explicit:
+            return self._wm_resolved_role_indirect(amb, cues, foc)
         wm_m = float(amb(foc, cues)["margin"])
         delta = wm_m - float(self._wm_baseline)
         if abs(delta) < self._wm_resolve_eps:
             return None, wm_m
         return ("agent" if delta > 0 else "patient"), wm_m
+
+    def _wm_resolved_role_indirect(self, amb, cues, foc):
+        """ONE-BRAIN XEDGE POSITION-INVARIANT VARIABLE BINDING (Kriete, Noelle, Cohen & O'Reilly 2013, PNAS;
+        PMID 24062434 -- a role-filler binding gated through a PFC/basal-ganglia INDIRECTION pointer rather than
+        tied to a fixed slot/position). Closes the positional-binding residual (`2026-08-28-onebrain-xedge-reverify-
+        after-crashfix-still-NOGO-positional-binding`): through the real `/api/brain-chat` handler the WM focus is
+        ALWAYS the positional `CAND_POOLS[0]` (the semantic referent->pool binding is a DECLARED residual), and its
+        grown role is seed-arbitrary -- so a fixed-slot read of that one pool is visible only for the ~2/4 seeds
+        where the position happens to carry a grown AGENT role.
+
+        The indirection READS THE SUBSTRATE'S OWN ROLE-POPULATION -- probe each candidate pool's balanced
+        (content-cancelled) `amb_read` margin (the SAME F2 instrument the pool binds; only the READ is made
+        position-invariant -- the edge weights are the learned ones) -- and:
+          (a) if the positionally-held referent `foc` does NOT itself carry a grown role
+              (|margin(foc) - baseline| < eps -> an ungrown distractor/control pool is held), there is no
+              role-bound held referent to disambiguate with -> inconclusive (the content role stands; a held-but-
+              ungrown referent stays CORRECTLY inert, unchanged from before);
+          (b) otherwise bind the held (topical / discourse-given) referent to the AGENT slot POSITION-INVARIANTLY
+              -- route the drive to whichever candidate pool the substrate shows drives `sel_agent` most
+              (argmax(margin - baseline)), regardless of which position (w0/w1/w2) grew it. The
+              topic/given-referent-as-subject/agent linguistic universal, realised as a Kriete indirection pointer:
+              the held filler is gated into the agent role, so a seed whose grown AGENT role sits at w1/w2 (not w0)
+              still shows the visible clarification-wording change.
+        Under the cross-edge LESION every candidate margin collapses to baseline -> branch (a) fires -> reverts to
+        the content role (lesion-attributable). Returns (role, wm_margin) or (None, wm_margin)."""
+        from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS
+        base = float(self._wm_baseline)
+        eps = float(self._wm_resolve_eps)
+        probes = {p: float(amb(p, cues)["margin"]) for p in CAND_POOLS}
+        if foc not in probes:                            # a non-candidate focus (defensive) -> probe it too
+            probes[foc] = float(amb(foc, cues)["margin"])
+        # (a) the positionally-held referent must itself carry a grown role, else nothing is bound -> inert.
+        if abs(probes[foc] - base) < eps:
+            return None, probes[foc]
+        # (b) topical-as-agent: the AGENT-driving candidate pool WHEREVER it sits (position-invariant substrate read).
+        agent_pool = max(CAND_POOLS, key=lambda p: probes[p] - base)
+        if (probes[agent_pool] - base) > eps:
+            return "agent", probes[agent_pool]
+        return None, probes[foc]
 
     def ensure_built(self):
         if self._built:
