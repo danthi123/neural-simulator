@@ -55,6 +55,18 @@ model-tiering + engine-first are the levers Claude controls and should be applie
    it. (Earned 2026-08-27, owner-flagged: an integration-phase DESIGN agent was dispatched without this;
    `before_you_build` then surfaced a 2026-08-11 `status:GO` cross-region synaptic pathway the design would
    otherwise have re-derived from scratch.)
+5. **Verification: controller-harvests, not agent-waits?** Will this agent need a smoke / sweep / 6-seed / live-handler
+   verify? Then do NOT spec it to "run the verification, THEN commit" — that pattern STRANDS (recurred ~7× through
+   2026-08-28 despite explicit anti-strand prose in the prompt: the agent backgrounds the run + STOPS with an empty
+   *"I'll wait for the verification to complete"*, having committed nothing, forcing a SendMessage round-trip to
+   resume it). Two reliable shapes only: (a) the agent BUILDS + RETURNS the exact command(s) and the CONTROLLER runs
+   them + banks; or (b) the agent runs ONLY bounded-INLINE smokes (hard time cap, drop to a smaller cell if over,
+   commit the PARTIAL) and treats any deferral as a failed run. NEVER let an agent's deliverable depend on a
+   backgrounded run it then waits on. The `neural-simulator` skill carries the full "controller runs every smoke"
+   rule + the RECOVERY RECIPE (a stranded agent's work is NOT lost — harvest its `.claude/worktrees/agent-<id>/`,
+   do NOT re-launch); this item is the dispatch-time trigger for it. (Earned/re-earned 2026-08-28: the rule was
+   already fully written in `neural-simulator` yet the lapse recurred all session — because the DISPATCH-TIME
+   checklist, the thing actually run before spawning, did not carry it.)
 
 `tools/parallel_audit.py`'s 💸 COST-ROUTING block is the per-heartbeat reminder + the engine pointers; THIS skill is
 the decision procedure that turns "I know I should" into "which model / which lane, decided before I dispatch."
