@@ -1,0 +1,30 @@
+{
+ "run_id": "1787938140-4041247",
+ "runner": "research/runners/_read_fidelity_opponent_pushpull_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a69a72e95b17da849/research/runners/_read_fidelity_opponent_pushpull_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_read_fidelity_opponent_pushpull_derisk_6seed.json"
+ ],
+ "git_sha": "7fd699a4d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T13:29:00",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 913.8,
+ "corpus_check_query": "opponent push-pull spiking read for read-fidelity F2 crux",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_read_fidelity_opponent_pushpull_derisk_6seed.json"
+}
