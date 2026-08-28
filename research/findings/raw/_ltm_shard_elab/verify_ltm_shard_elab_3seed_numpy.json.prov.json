@@ -1,0 +1,31 @@
+{
+ "run_id": "1787928361-3932730",
+ "runner": "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab.py",
+ "argv": [
+  "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--out",
+  "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab_3seed_numpy.json"
+ ],
+ "git_sha": "f10edd601",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T10:46:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_ltm_shard_elab/verify_ltm_shard_elab_3seed_numpy.json"
+}
