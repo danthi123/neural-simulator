@@ -230,3 +230,18 @@ reconciled: 2026-08-27 ~16:10 mouth magnitude-NULL + correction merged; learn-th
 ## 2026-08-27 ~21:15 reconcile — #177 (one-brain PART 2+3: emergent cross-edge grows from own activity + per-turn during real chat, changes conversation), #185 (declarative cross_edges DONE), #181/#184 (honesty-hedge + guard DONE), #183 (V1-BCM NO-GO DONE), #182 (shared read-wall p4), #94 (unblocked, re-test in flight), #80 (mouth SUBSTRATE-WALL), + 3 host-biologization arcs tracked. Merges: PART2 dc9d5288, mouth-wall 6341fc79, confidence da84fde7, V1-BCM 029a7b6b, declarative a7728ffc, PART3 pending.
 
 ## 2026-08-27 ~22:55 reconcile — #175 (VERB_SELECTS cue WIRED behind BRAIN_LEARNED_VERB_SELECTS, default-OFF, mirrors #174's ANIMACY wire-in exactly; byte-identical-off, load-bearing-on, lesion-reverts, moat-safe, 8/8+8/8+7/7+5/5 no-regression), #190 (new next-rung: joint animacy+verb-selects flip-soak toward default-ON). Finding: 2026-08-27-comprehension-verb-selects-wired-GO.md, branch research/verb-selects-wire-in (not yet merged to main; controller merges).
+
+## 2026-08-28 mouth-crutch-burndown-scope (isolated worktree agent-a38ae3e9d6947cc62)
+Updated #37 ("Teach the brain to speak through its own neurons, not a borrowed model", due 2026-08-28,
+description was stale since 2026-08-17/27) with the current state: the stale-cache training-fix fullscale
+confirmation (sub_recov_ratio_mean 0.8686, decisive unlock from the ~0.34-0.37 pre-fix plateau) and this
+session's scoping finding (2026-08-28-mouth-crutch-burndown-scope.md, branch
+research/mouth-crutch-burndown-scope, not yet merged to main) — which verified the board's existing
+"mouth de-Qwen audit done" claim, mapped Qwen's two remaining live production touchpoints (recall-surface
+irregular/open-prose fallback; the still-off BRAIN_OPEN_ENDED free-generation channel), corrected a
+terminology drift (the 0.87 readout lives on a separate, not-yet-wired WKV/SSM home-grown cortex, not
+literally Qwen2.5's own weights), and named the concrete next rung (wire that WKV mouth into the
+BRAIN_OPEN_ENDED channel specifically) with two flagged open residuals (vocab scope; unverified
+recurrent-store training provenance). No sim/ edit, no production wiring built — scope-only, so no other
+task changed state. Did not touch #80/#182 (shared read-fidelity wall) — not open in the current board
+view, left as-is.

@@ -1,0 +1,331 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "read_window": 20,
+      "pop": 1,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 12.26,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.51,
+      "top5_hit": 0.83,
+      "nll_fewspike": 2.4396,
+      "mass_fewspike": 0.2247,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.0195,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.0348,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.8815,
+      "generation": {},
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "read_window": 20,
+      "pop": 8,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 101.92,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.77,
+      "top5_hit": 0.88,
+      "nll_fewspike": 1.6938,
+      "mass_fewspike": 0.3216,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.0194,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.0366,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.2617,
+      "generation": {},
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "read_window": 20,
+      "pop": 16,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 206.28,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.88,
+      "top5_hit": 0.97,
+      "nll_fewspike": 1.2891,
+      "mass_fewspike": 0.3604,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.0245,
+      "argmax_agree_scramble": 0.04,
+      "mass_equal_drive": 0.0142,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.4139,
+      "generation": {},
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": false,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "read_window": 40,
+      "pop": 1,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 45.88,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.35,
+      "top5_hit": 0.62,
+      "nll_fewspike": 3.2918,
+      "mass_fewspike": 0.1829,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.0117,
+      "argmax_agree_scramble": 0.02,
+      "mass_equal_drive": 0.0571,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 0.7175,
+      "generation": {
+        "once upon a time": {
+          "fewspike_text": "once upon a time in a garden together every looking picture some new and more fun and they played together and shared him with the toys to their friends again and they had a big car in the park with mia's doll and a",
+          "fewspike_self_nll": 3.184,
+          "hostsample_text": "once upon a time there was a kind king named tim saw a big red and shiny key with toys that it was filled with colorful joy and hands and sometimes the flowers are broken but they have a lot of ice and fun",
+          "hostsample_self_nll": 2.278
+        },
+        "the little girl": {
+          "fewspike_text": "the little girl became best friends and played together again soon and tom had an important lesson day and they were both best friends who had a different diamond to play with the ball and it rolled out near a big swing and",
+          "fewspike_self_nll": 2.498,
+          "hostsample_text": "the little girl was so happy and thanked her for her mom for her for a while lucy came to the park with her mom and dad on the park every day they found a big red ball in the truck was a",
+          "hostsample_self_nll": 1.316
+        },
+        "tom and his dog": {
+          "fewspike_text": "tom and his dog spot was happy to be warm with the other friends and they both laughed like to dance in the icy snow down and the tree at the end mia found so something excited like it and then her tooth started",
+          "fewspike_self_nll": 3.388,
+          "hostsample_text": "tom and his dog were friends and they played together all day long and had a great day at the park with her mom and dad if they could go back to their friends and play with the magical dog and the little dog",
+          "hostsample_self_nll": 1.47
+        }
+      },
+      "go": false,
+      "checks": {
+        "read_fidelity_ge_0.90": false,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "read_window": 40,
+      "pop": 8,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 368.68,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.9,
+      "top5_hit": 0.96,
+      "nll_fewspike": 1.4466,
+      "mass_fewspike": 0.3547,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.023,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.0347,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.3915,
+      "generation": {
+        "once upon a time": {
+          "fewspike_text": "once upon a time there was a little boy named tim saw a big red ball that he loved to play with his toys and his friends were very happy and they both laughed and played together every day and had lots of fun",
+          "fewspike_self_nll": 0.819,
+          "hostsample_text": "once upon a time there was a kind king named tim saw a big red and shiny key with toys that it was filled with colorful joy and hands and sometimes the flowers are broken but they have a lot of ice and fun",
+          "hostsample_self_nll": 2.278
+        },
+        "the little girl": {
+          "fewspike_text": "the little girl was very sad and cried for sara liked to play with her toys and books in her room and his mom were very surprised but happy to have a new friend to play with the ball because it couldn't but",
+          "fewspike_self_nll": 1.784,
+          "hostsample_text": "the little girl was so happy and thanked her for her mom for her for a while lucy came to the park with her mom and dad on the park every day they found a big red ball in the truck was a",
+          "hostsample_self_nll": 1.316
+        },
+        "tom and his dog": {
+          "fewspike_text": "tom and his dog were very surprised but happy where they could be friends again and again soon again soon the next day the bird came to the farm some were not safe and they both started to cry and cry and cry again",
+          "fewspike_self_nll": 1.423,
+          "hostsample_text": "tom and his dog were friends and they played together all day long and had a great day at the park with her mom and dad if they could go back to their friends and play with the magical dog and the little dog",
+          "hostsample_self_nll": 1.47
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    },
+    {
+      "seed": 42,
+      "read_window": 40,
+      "pop": 16,
+      "topk": 64,
+      "n_positions": 100,
+      "silent_frac": 0.0,
+      "mean_spikes_per_read": 749.09,
+      "topk_coverage": 0.929,
+      "argmax_agree": 0.95,
+      "top5_hit": 1.0,
+      "nll_fewspike": 1.193,
+      "mass_fewspike": 0.3721,
+      "mass_hostsample_ceiling": 0.2549,
+      "mass_argmax_ceiling": 0.3743,
+      "mass_scramble": 0.022,
+      "argmax_agree_scramble": 0.03,
+      "mass_equal_drive": 0.011,
+      "chance_1_over_k": 0.0156,
+      "noise_ablation_deterministic": true,
+      "host_rng_draws_on_read_path": 0,
+      "read_fidelity_vs_sampler": 1.4598,
+      "generation": {
+        "once upon a time": {
+          "fewspike_text": "once upon a time there was a little girl named lucy was very sad but she was very sad and did not want to fight with the bird but it was too fast and he could not fly high but he could not find",
+          "fewspike_self_nll": 1.038,
+          "hostsample_text": "once upon a time there was a kind king named tim saw a big red and shiny key with toys that it was filled with colorful joy and hands and sometimes the flowers are broken but they have a lot of ice and fun",
+          "hostsample_self_nll": 2.278
+        },
+        "the little girl": {
+          "fewspike_text": "the little girl was very sad and cried for her mom to stop the right but they saw the big tree with the ball and it was a very special surprise for her mom and dad for the party tim saw the big",
+          "fewspike_self_nll": 1.547,
+          "hostsample_text": "the little girl was so happy and thanked her for her mom for her for a while lucy came to the park with her mom and dad on the park every day they found a big red ball in the truck was a",
+          "hostsample_self_nll": 1.316
+        },
+        "tom and his dog": {
+          "fewspike_text": "tom and his dog were happy to help him feel better and happy again and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day and had",
+          "fewspike_self_nll": 0.911,
+          "hostsample_text": "tom and his dog were friends and they played together all day long and had a great day at the park with her mom and dad if they could go back to their friends and play with the magical dog and the little dog",
+          "hostsample_self_nll": 1.47
+        }
+      },
+      "go": true,
+      "checks": {
+        "read_fidelity_ge_0.90": true,
+        "argmax_agree_gt_2x_chance": true,
+        "scramble_collapses": true,
+        "equal_drive_below_fewspike": true,
+        "provenance_no_host_draw": true,
+        "noise_ablation_deterministic": true,
+        "not_silent": true
+      }
+    }
+  ],
+  "summary": {
+    "rw20_P1": {
+      "n_seeds": 1,
+      "go_count": 0,
+      "read_fidelity_mean": 0.8815,
+      "read_fidelity_min": 0.8815,
+      "argmax_agree_mean": 0.51,
+      "mean_spikes_per_read": 12.26
+    },
+    "rw20_P8": {
+      "n_seeds": 1,
+      "go_count": 1,
+      "read_fidelity_mean": 1.2617,
+      "read_fidelity_min": 1.2617,
+      "argmax_agree_mean": 0.77,
+      "mean_spikes_per_read": 101.92
+    },
+    "rw20_P16": {
+      "n_seeds": 1,
+      "go_count": 0,
+      "read_fidelity_mean": 1.4139,
+      "read_fidelity_min": 1.4139,
+      "argmax_agree_mean": 0.88,
+      "mean_spikes_per_read": 206.28
+    },
+    "rw40_P1": {
+      "n_seeds": 1,
+      "go_count": 0,
+      "read_fidelity_mean": 0.7175,
+      "read_fidelity_min": 0.7175,
+      "argmax_agree_mean": 0.35,
+      "mean_spikes_per_read": 45.88
+    },
+    "rw40_P8": {
+      "n_seeds": 1,
+      "go_count": 1,
+      "read_fidelity_mean": 1.3915,
+      "read_fidelity_min": 1.3915,
+      "argmax_agree_mean": 0.9,
+      "mean_spikes_per_read": 368.68
+    },
+    "rw40_P16": {
+      "n_seeds": 1,
+      "go_count": 1,
+      "read_fidelity_mean": 1.4598,
+      "read_fidelity_min": 1.4598,
+      "argmax_agree_mean": 0.95,
+      "mean_spikes_per_read": 749.09
+    }
+  },
+  "seeds": [
+    42
+  ],
+  "read_windows": [
+    20,
+    40
+  ],
+  "pops": [
+    1,
+    8,
+    16
+  ],
+  "topk": 64,
+  "sample_temp": 0.8,
+  "elapsed_s": 2.9,
+  "backend": "numpy"
+}
