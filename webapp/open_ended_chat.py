@@ -36,14 +36,28 @@ that concrete and all are GO on `main`:
     object (see `answer_turn`'s `chat=` parameter); with no `chat`, or the flag off, or an unknown topic, this
     mode never activates and the one-shot path above runs unchanged. The string post-filter (`post_filter`,
     everything above) still runs afterward on whatever this mode emits — a SAFETY NET, never bypassed.
+  * `webapp.wkv_mouth_generator` (2026-08-28, `BRAIN_OPEN_ENDED_WKV_MOUTH`, default-OFF, see
+    `wkv_mouth_enabled` below) — a genuine CRUTCH-BURNDOWN lever, not a fourth honesty layer: swaps the FORM
+    generator itself, for IN-VOCAB prompts only, from the literal Qwen2.5-0.5B model to a from-scratch,
+    home-grown WKV/SSM spiking cortex (`bridges/wkv_ckpt`, V=1000, D=128, trained on TinyStories,
+    architecturally unrelated to Qwen) reading its own next-word decision via a GENUINE few-spike Izhikevich
+    soft-WTA population read (`research.runners._wkv_fewspike_read_derisk`, GO-verified), not a host argmax.
+    `webapp.wkv_mouth_generator.in_vocab_scope(msg)` gates it: an out-of-vocab prompt (this checkpoint's
+    vocabulary is V=1000 TinyStories-domain words, not general-purpose) is NEVER forced through it — `answer_turn`
+    falls straight back to the existing Qwen path, unchanged. Every response field downstream (topic/known/facts/
+    post_filter) is identical either way; only WHICH generator wrote `raw` differs. See that module's own
+    docstring for the two honest residuals this rung does NOT resolve (the specific e-prop-learned read-out head
+    was never persisted to disk, so this uses the checkpoint's own native head; the checkpoint's recurrent-store
+    training method — local rule vs host-BPTT — is unverified).
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
 familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> generate the reply
-(FORM: the one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` + a live `chat` + a
-known topic — the sentence-by-sentence generation-TIME consensus veto) -> `post_filter` (HONESTY safety net: base
-persona-strip/hedge/abstain + the known-topic contradiction filter, always applied either way) -> return the
-filtered reply.
+(FORM: `BRAIN_OPEN_ENDED_WKV_MOUTH` + an in-vocab prompt -> the WKV mouth's few-spike spiking decode; else the
+one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` + a live `chat` + a known topic —
+the sentence-by-sentence generation-TIME consensus veto) -> `post_filter` (HONESTY safety net: base persona-strip/
+hedge/abstain + the known-topic contradiction filter, always applied either way, REGARDLESS of which generator
+wrote the reply) -> return the filtered reply.
 
 MEMORY / COST DISCIPLINE (the two hard lessons this session).
   (1) ONE Qwen. `OpenEndedGenerator.__init__` would load a SECOND Qwen-0.5B. Instead we REUSE the server's already
@@ -141,6 +155,17 @@ def open_ended_enabled() -> bool:
     """`BRAIN_OPEN_ENDED` truthy -> the open-ended state-driven + VERIFY-post-filter reply path. Default OFF (unset
     or 0/false/no/off) -> the block is skipped entirely and the existing strict/rich path runs byte-identically."""
     return os.environ.get("BRAIN_OPEN_ENDED", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def wkv_mouth_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_WKV_MOUTH` truthy -> `answer_turn` tries the from-scratch WKV mouth (genuine few-spike
+    spiking-WTA decode, `webapp.wkv_mouth_generator`) FIRST, for IN-VOCAB prompts only, before falling back to the
+    existing Qwen path. Default OFF (unset/0/false/off/no): the flag read is the ONLY thing that runs — no import,
+    no vocab check, no generation-path change — so `answer_turn` is BYTE-IDENTICAL to its pre-existing behavior.
+    This is a SECOND, independent gate on top of `BRAIN_OPEN_ENDED` (both must be truthy, and the topic must be
+    in-scope, for anything to change); an out-of-vocab prompt or an exception from the WKV path always falls back
+    to Qwen, never crashes the turn."""
+    return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def gen_time_honesty_enabled() -> bool:
@@ -272,21 +297,26 @@ def valence_from_affect(differential) -> float:
 def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 ltm_bundle: str | None, brain_bundle: str | None,
                 seed: int = 42, max_new_tokens: int = 110, chat=None) -> dict:
-    """One open-ended turn: STATE + retrieved knowledge -> a free Qwen reply (FORM) -> VERIFY post-filter
-    (HONESTY safety net, always applied).
+    """One open-ended turn: STATE + retrieved knowledge -> a free reply (FORM) -> VERIFY post-filter (HONESTY
+    safety net, always applied). The FORM generator is Qwen (`SpikingQwenFaculty`) UNLESS
+    `wkv_mouth_enabled()` is truthy AND `msg` is in-vocab for the from-scratch WKV mouth's V=1000 checkpoint (see
+    `webapp.wkv_mouth_generator`) — in which case that genuinely different, non-Qwen spiking cortex writes `raw`
+    instead, via a real few-spike Izhikevich soft-WTA decode. Off, or out-of-vocab, or on any WKV-path exception:
+    the Qwen path runs exactly as before this parameter existed.
 
     `chat` (default None): the LIVE, organ-wired production ChatBrain (already passed through
-    `install_two_organ_gate`/`install_three_organ_gate` by the server). Consulted ONLY when
-    `gen_time_honesty_enabled()` is truthy AND the topic is KNOWN — see that flag's docstring for the full gate.
-    In that case the reply is generated sentence-by-sentence through the LTM-exempt organ-B/C spiking CONSENSUS
-    VETO instead of one-shot (generation-TIME honesty); otherwise (flag off, `chat is None`, or an unknown topic)
-    the existing one-shot `OpenEndedGenerator.generate` path runs, byte-identical to before this parameter
-    existed. Either way, `post_filter` still runs afterward — the safety net is never skipped.
+    `install_two_organ_gate`/`install_three_organ_gate` by the server). Consulted ONLY when the WKV mouth was NOT
+    used AND `gen_time_honesty_enabled()` is truthy AND the topic is KNOWN — see that flag's docstring for the
+    full gate. In that case the reply is generated sentence-by-sentence through the LTM-exempt organ-B/C spiking
+    CONSENSUS VETO instead of one-shot (generation-TIME honesty); otherwise (WKV used, flag off, `chat is None`,
+    or an unknown topic) the existing one-shot `OpenEndedGenerator.generate` path runs, byte-identical to before
+    this parameter existed. Either way, `post_filter` still runs afterward — the safety net is never skipped,
+    regardless of which generator wrote `raw`.
 
     Returns a dict with the final `answer` (the filtered reply) plus a trace (`raw`, `filtered`, `topic`, `known`,
-    `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`). `known` is True iff
-    the store held facts about the topic — the caller maps it to `abstained = not known` / `verified = known` (an
-    unknown topic is an honest abstain)."""
+    `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`, `generator` —
+    `"wkv_mouth"` or `"qwen"` — and `wkv_mouth_used`). `known` is True iff the store held facts about the topic —
+    the caller maps it to `abstained = not known` / `verified = known` (an unknown topic is an honest abstain)."""
     by_agent = build_index(ltm_bundle, brain_bundle)
     topic = extract_topic(msg)
     facts = retrieve(by_agent, topic)
@@ -300,9 +330,29 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
     system, user = build_prompt(state)
     gen = get_generator(warm_faculty)
 
+    # ── WKV MOUTH (crutch-burndown, default-OFF) ──────────────────────────────────────────────────────────────
+    # `BRAIN_OPEN_ENDED_WKV_MOUTH` truthy AND the prompt is IN-VOCAB for the checkpoint's V=1000 TinyStories
+    # vocabulary -> generate via the from-scratch WKV spiking mouth instead of Qwen. Flag off: `wkv_mouth_enabled()`
+    # short-circuits before any import -> byte-identical to the pre-existing path below. Flag on + out-of-vocab, or
+    # any exception from the WKV path: falls straight through to the existing Qwen path, unchanged -- this branch
+    # can only ADD a generator choice, never remove or alter the fallback.
+    wkv_used = False
+    generator_name = "qwen"
+    if wkv_mouth_enabled():
+        try:
+            from webapp import wkv_mouth_generator as _WKV
+            if _WKV.in_vocab_scope(msg, seed=seed):
+                raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens)
+                wkv_used = True
+                generator_name = "wkv_mouth"
+        except Exception:
+            wkv_used = False               # never let a WKV failure crash the turn -- degrade to the Qwen path
+
     gen_time_used = False
     gen_time_trace = None
-    if known and chat is not None and gen_time_honesty_enabled():
+    if wkv_used:
+        pass                                # raw/secs already set by the WKV mouth above
+    elif known and chat is not None and gen_time_honesty_enabled():
         try:
             from research.runners._open_ended_gen_time_consensus_veto_derisk import (
                 generate_with_generation_time_veto,
@@ -331,6 +381,8 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         "gen_seconds": secs,
         "gen_time_honesty_used": gen_time_used,
         "gen_time_trace": gen_time_trace,
+        "generator": generator_name,
+        "wkv_mouth_used": wkv_used,
         "state": {"valence": float(valence), "arousal": float(arousal), "familiarity": fam,
                   "novelty": novelty, "curiosity": curiosity},
     }
