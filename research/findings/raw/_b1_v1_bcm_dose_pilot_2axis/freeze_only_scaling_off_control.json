@@ -1,0 +1,15 @@
+{
+  "provenance_exempt": "hand-authored same-session ad-hoc diagnostic script (2026-08-27), not driven through research.runners._b1_v1_selforg_bcm_derisk.main() -- calls build_v1_bridge/develop directly to run the SAME pre-development protocol as homeostatic_warmup() (oriented-grating drive, Hebbian/BCM frozen) but with enable_synaptic_scaling left OFF (never forced on), isolating whether freezing Hebbian ALONE (independent of the scaling flag) is what destabilizes the operating point. Method note lives in research/findings/2026-08-27-b1-v1-selforg-bcm-warmup-dose-pilot-NOGO.md.",
+  "purpose": "decisive ablation: same pre-dev freeze protocol as homeostatic_warmup(), synaptic scaling explicitly OFF throughout, threshold-homeostasis left at its always-on default (build_v1_bridge line 230). Single-seed (42), reduced-scale (n-orient 8 n-freq 4 n-pos 8, dev-steps 4000), bcm-gain 800 bcm-pre-floor 0.002 bcm-theta-alpha 0.001 -- identical BCM/architecture config to the rest of this dose-pilot batch.",
+  "sim_backend": "numpy",
+  "seed": 42,
+  "dev_active_band": [0.005, 0.05],
+  "results_by_freeze_only_steps": [
+    {"freeze_steps": 1,    "dev_firing_fraction": 0.01894, "op_point_ok": true},
+    {"freeze_steps": 10,   "dev_firing_fraction": 0.01846, "op_point_ok": true},
+    {"freeze_steps": 100,  "dev_firing_fraction": 0.01281, "op_point_ok": true},
+    {"freeze_steps": 500,  "dev_firing_fraction": 0.01262, "op_point_ok": true},
+    {"freeze_steps": 4000, "dev_firing_fraction": 0.01284, "op_point_ok": true}
+  ],
+  "interpretation": "Freezing Hebbian/BCM for a pre-development phase (even for as long as the FULL 4000-step dev-steps budget) under threshold-homeostasis alone is STABLE across every tested duration -- dev_firing_fraction stays in [0.0126, 0.0189], inside the active-sparse band the whole time. This isolates the forced-on enable_synaptic_scaling flag (not the freeze, not the duration) as the necessary trigger for the collapse seen in nf_iso_false_*.json / r*.json in this same directory."
+}

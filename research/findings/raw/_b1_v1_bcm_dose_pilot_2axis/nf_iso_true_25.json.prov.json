@@ -1,0 +1,10 @@
+{
+ "runner": "research/runners/_b1_v1_selforg_bcm_derisk.py",
+ "purpose": "same-session dose-pilot ablation (2026-08-27): tests whether isolating the concurrent threshold-adaptation homeostasis (cfg.enable_homeostasis forced OFF for the warm-up duration ONLY, via an external monkeypatch of homeostatic_warmup -- no repo file modified) rescues the operating point, leaving only the forced-on Turrigiano synaptic scaling active during warm-up. Single-seed, reduced-scale, rate=default 0.02",
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "warmup_steps": 25,
+ "op_point_ok": false,
+ "dev_firing_fraction_mean": 0.00045,
+ "artifact": "research/findings/raw/_b1_v1_bcm_dose_pilot_2axis/nf_iso_true_25.json"
+}

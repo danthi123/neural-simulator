@@ -121,12 +121,22 @@ as before.
 
 ## Next action
 
-Screen a **lower** warm-up dose that keeps `dev_firing_fraction_mean` clearly inside the active-sparse band
+**Follow-up (2026-08-27, done):** `research/findings/2026-08-27-b1-v1-selforg-bcm-warmup-dose-pilot-NOGO.md`
+ran the "screen a lower dose" next action stated below — the mini-PC pool dose-screen this section originally
+pointed to never materialized, so the follow-up ran a direct single-seed two-axis pilot instead (warm-up
+duration 1-4000 steps AND scaling-rate down to the `syn_scaling_rate` recorded in
+`research/findings/raw/_b1_v1_bcm_dose_pilot_2axis/r0.0002_n500.json.prov.json`) and found **no dose on either
+axis** leaves V1 in the active-sparse band; a freeze-only/scaling-off
+control isolates the forced-on Turrigiano synaptic-scaling flag itself (not the dose) as the cause. NO-GO on the
+warm-up lever as implemented; see that finding for the full two-axis evidence and the mechanistic ablation. This
+section's original text is kept for the record below.
+
+~~Screen a **lower** warm-up dose that keeps `dev_firing_fraction_mean` clearly inside the active-sparse band
 (`[0.005, 0.05]`) before re-running the 6-seed hardening eval. A CPU/numpy dose-screen (reduced scale, 3
 seeds x a fine-grained low-dose grid) has been staged on the mini-PC pool this session — see the companion
 session's pool dispatch (`research/findings/raw/_b1_v1_bcm_dose_screen/`, once results land) — to locate the
 largest warm-up dose that still leaves a valid pre-BCM operating point, before spending GPU time on a second
-6-seed run at a calibrated dose.
+6-seed run at a calibrated dose.~~
 
 ## Non-claims
 
