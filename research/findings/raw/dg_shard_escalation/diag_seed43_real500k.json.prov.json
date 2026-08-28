@@ -1,0 +1,39 @@
+{
+ "run_id": "1787959475-318133",
+ "runner": "research/runners/_dg_shard_escalation_diagnostic.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_dg_shard_escalation_diagnostic.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_500k_fast",
+  "--seed",
+  "43",
+  "--n-store",
+  "300",
+  "--n-query",
+  "3000",
+  "--n-parity",
+  "500",
+  "--skip-synthetic",
+  "--json",
+  "research/findings/raw/dg_shard_escalation/diag_seed43_real500k.json"
+ ],
+ "git_sha": "40c4b3ec1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T19:24:35",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1895.1,
+ "corpus_check_query": "sparse-index shard escalation real entity codes latency",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/dg_shard_escalation/diag_seed43_real500k.json"
+}

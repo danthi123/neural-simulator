@@ -1,0 +1,43 @@
+{
+ "run_id": "1787959122-314040",
+ "runner": "research/runners/_dg_shard_escalation_diagnostic.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_dg_shard_escalation_diagnostic.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_500k_fast",
+  "--seed",
+  "42",
+  "--n-store",
+  "300",
+  "--n-query",
+  "3000",
+  "--n-parity",
+  "500",
+  "--skip-synthetic",
+  "--lever",
+  "more_probes",
+  "--floor-sweep",
+  "0.30,0.35,0.40,0.45,0.50",
+  "--json",
+  "research/findings/raw/dg_shard_escalation/lever_more_probes_G32_seed42_real500k.json"
+ ],
+ "git_sha": "76a64f4da",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T19:18:42",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1515.7,
+ "corpus_check_query": "sparse-index shard escalation real entity codes latency",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/dg_shard_escalation/lever_more_probes_G32_seed42_real500k.json"
+}

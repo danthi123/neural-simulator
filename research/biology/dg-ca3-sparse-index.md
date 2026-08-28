@@ -29,6 +29,7 @@ implemented_by:
   - research/runners/sharded_phasor_store.py
 findings:
   - research/findings/raw/four_day/_sparse_indexed_retrieval_6seed.json
+  - research/findings/raw/dg_shard_escalation/diag_seed42_real500k.json
 ---
 
 # DG sparse pattern separation routes a cue to a small CA3 ensemble; retrieval is O(shard), not O(V)
@@ -80,6 +81,23 @@ exact (parity + moat unchanged), peak RSS LOWER with the accelerator on, warm-qu
 sub-second; the residual is plausibly frequent DG-shard escalation on real (non-synthetic) entity codes and/or
 session memory pressure, named as the next lever, not resolved. See
 `research/findings/2026-08-28-shard-composer-dg-sparse-index-port-modest-latency-reduction.md`.
+
+**2026-08-28 escalation-rate measurement + two REFUTED levers (board #66/#192).** The residual above was
+measured directly: `research/runners/_dg_shard_escalation_diagnostic.py` calibrates the REAL RF-resonate
+recovery noise through the production `store()`/`_unbind_phases()` path (not assumed) and instruments
+`_dg_shard_select` on the real bundle. Result (6-seed, real `wikidata_500k_fast`): **99.50% escalation**, and
+the root cause is a NOISE-CALIBRATION mismatch, NOT real-vs-synthetic code geometry -- a matched-scale synthetic
+sweep escalates at an almost identical 99.4%, refuting that hypothesis directly. The de-risk above validated GO
+at `sigma=0.30` rad; production's real recovery noise measures **sigma=1.27 rad (~4.1x larger)**, at which the
+true stored code is a member of its own DG-routed shard only 1.7% of queries (a genuine MISROUTE, not an
+under-confident match). Two levers were tested and REFUTED: lowering `conf_floor` (crashes parity to 1.4%-39%
+at any floor that meaningfully cuts escalation) and doubling the multi-probe group count `G` (true-in-shard
+hit rate rises only 1.1%->3.4%; closing the gap would need G in the thousands, already hitting the ~4GB RSS
+budget at a mere 2x). No code shipped; the already-merged accelerator's correctness is unaffected (parity 1.0
+whenever it does decide). Named next levers: decouple codebook caching from the DG index (plausibly explains
+the port's own ~25% win independent of shard routing); decouple the granule width `m` from `V^(1/g)`-driven
+occupancy; raise D toward the de-risk's own validated D=256 operating point (production runs D=128). See
+`research/findings/2026-08-28-dg-shard-escalation-root-cause-noise-calibration-mismatch-two-levers-refuted.md`.
 
 **Declared shortcut, and the named burn-down.** The in-shard matched-filter cleanup IS the composer's existing
 on-substrate op (the complex-synapse cleanup matvec + WTA select), just over fewer rows. The **DG sparse
