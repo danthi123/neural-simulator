@@ -268,19 +268,40 @@ def _evs_for_organ(n0: str, v: str, n1: str):
 def _lemma_verb(v: str) -> str:
     """Map an inflected surface verb to its base form ONLY when the base is a known selectional verb (so a
     real OOV verb stays OOV). 'eats'/'eating'/'chased'/'carries' -> 'eat'/'chase'/'carry'; unknown unchanged.
-    "Known selectional verb" is `_verb_selects_of` -- the hand VERB_SELECTS table, extended (flag ON) to the
-    learned lexicon."""
+
+    THE HAND TABLE IS TRIED EXHAUSTIVELY (raw form + every suffix-stripped candidate) BEFORE the learned
+    lexicon is ever consulted (verify-go, 2026-08-27): the learned lexicon's vocabulary is corpus-wide, not
+    verb-specific, so an EXISTING hand-covered verb's inflected surface form can itself be a real corpus word
+    with its own (unrelated) learned score -- e.g. flag ON, "pushed" was resolving via the learned lexicon's
+    read of the literal token "pushed" before the correct hand-table base "push" was ever tried (returned
+    unlemmatized); "bites" resolved to the learned lexicon's "bit" before reaching the correct hand-table
+    "bite" (candidate order tries "bit" first). Both are EXISTING hand-covered verbs -- this changed their
+    lemma (and thus `judge()`/`competent()`'s downstream cue read) purely because the flag was on, which
+    breaks the byte-identical-except-genuinely-new-words guarantee. Fix: run the FULL candidate list against
+    the hand table ONLY first; the learned-lexicon fallback (on the same candidate order) runs ONLY if no
+    hand-table candidate matched at all, so it can never preempt a correct hand-table lemma."""
+    def _cands():
+        out = []
+        if v.endswith("ies"):
+            out.append(v[:-3] + "y")                  # carries -> carry
+        for suf in ("ing", "es", "ed", "s"):
+            if v.endswith(suf):
+                base = v[: len(v) - len(suf)]
+                out += [base, base + "e"]
+                if len(base) >= 2 and base[-1] == base[-2]:
+                    out.append(base[:-1])              # grabbing -> grab (undouble)
+        return out
+
+    if v in VERB_SELECTS:
+        return v
+    cands = _cands()
+    for cand in cands:
+        if cand in VERB_SELECTS:
+            return cand
+    # No hand-table candidate matched anywhere -- now it is safe to consult the learned lexicon (flag ON
+    # only; `_verb_selects_of` is a no-op fast-path-only lookup when the flag is off).
     if _verb_selects_of(v) is not None:
         return v
-    cands = []
-    if v.endswith("ies"):
-        cands.append(v[:-3] + "y")                    # carries -> carry
-    for suf in ("ing", "es", "ed", "s"):
-        if v.endswith(suf):
-            base = v[: len(v) - len(suf)]
-            cands += [base, base + "e"]
-            if len(base) >= 2 and base[-1] == base[-2]:
-                cands.append(base[:-1])               # grabbing -> grab (undouble)
     for cand in cands:
         if _verb_selects_of(cand) is not None:
             return cand

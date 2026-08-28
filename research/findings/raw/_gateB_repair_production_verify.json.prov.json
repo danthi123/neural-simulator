@@ -1,5 +1,5 @@
 {
- "run_id": "1787885222-3644430",
+ "run_id": "1787885894-3652579",
  "runner": "research/runners/_gateB_repair_production_verify.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/agent-ac07447ca20ce59d0/research/runners/_gateB_repair_production_verify.py"
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-27T22:47:02",
+ "started": "2026-08-27T22:58:14",
  "env": {
   "SIM_BACKEND": "numpy"
  },

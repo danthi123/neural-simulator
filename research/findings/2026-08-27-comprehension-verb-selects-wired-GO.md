@@ -7,8 +7,9 @@ mechanism: comprehension-verb-selects-cue-lexicon
 
 # Comprehension cue-lexicon wire-in — the corpus-learned VERB_SELECTS patient-slot cue is wired behind a default-OFF flag, EXACTLY mirroring the already-wired ANIMACY cue
 
-**2026-08-27.** Closes the residual both sibling findings named: the ANIMACY half of the comprehension
-organs' shared "VOCAB CEILING" scaffold was wired 2026-08-27
+**2026-08-27. Verdict: WIRED-GO (a real bug was found by adversarial verification and fixed before this
+landed — see the dedicated section below).** Closes the residual both sibling findings named: the ANIMACY
+half of the comprehension organs' shared "VOCAB CEILING" scaffold was wired 2026-08-27
 (`research/findings/2026-08-27-comprehension-cue-lexicon-spiking-realized-and-wired.md`, `BRAIN_LEARNED_ANIMACY_CUE`,
 default OFF); the VERB_SELECTS half was de-risked the same day
 (`research/findings/2026-08-27-comprehension-verb-selects-corpus-learned-GO.md`, 6-seed GO numpy + spiking) but
@@ -81,6 +82,54 @@ introducing a new asymmetry; only the inanimate-patient class (proxy `"eat"`) co
 discriminating verbfit vote, exactly as it already does for the hand-covered `eat`/`push`/`carry`/`bite`/
 `kick`/`grab`.
 
+## A real regression was caught by verify-go, and fixed before this GO — not glossed over
+
+Adversarial skeptics (`verify-go`) dispatched against the first draft of this wiring found a genuine bug in
+`_lemma_verb`, distinct from anything the animacy cue's own wiring exhibits: with `BRAIN_LEARNED_VERB_SELECTS`
+ON, an **existing hand-covered verb's inflected surface form** could resolve through the learned lexicon
+before the correct hand-table base was ever tried — because the learned lexicon's vocabulary is corpus-wide
+(any frequent content word), not verb-specific, so an inflected token like `"pushed"` or `"bites"` can itself
+be a real corpus word with its own (unrelated) learned score. The first-draft `_lemma_verb` checked
+`_verb_selects_of` (hand table THEN learned lexicon) on the raw form, then on each suffix-stripped candidate
+IN ORDER, returning on the first hit — so a learned-lexicon hit on an early candidate could pre-empt the
+correct hand-table candidate later in the list.
+
+**Measured, not hypothesized:** flag ON, pre-fix, 3 of the 8 hand-table verbs' common inflections
+mis-lemmatized: `"pushed"` → `"pushed"` (unlemmatized; should be `"push"`), `"bites"` → `"bit"` (should be
+`"bite"`), `"kicked"` → `"kicked"` (unlemmatized; should be `"kick"`). This is a real regression on the
+wired-ON path — it does not affect the default-OFF production floor (`_verb_selects_of` is a hand-table-only
+fast path when the flag is off, so `_lemma_verb`'s behavior for these verbs was untouched with the flag
+unset), but it would have surfaced the moment `BRAIN_LEARNED_VERB_SELECTS` was ever flipped on, silently
+changing the comprehension read for EXISTING, already-covered sentences — exactly the kind of default-flip
+land-mine this repo's discipline exists to catch before it ships.
+
+**Fix:** `_lemma_verb` now tries the RAW form and every suffix-stripped candidate against the hand table
+**only** first (`cand in VERB_SELECTS`, no learned-lexicon consultation in this pass); the learned-lexicon
+fallback (the same candidate order, via `_verb_selects_of`) runs **only if no hand-table candidate matched at
+all**, so it can never pre-empt a correct hand-table lemma. Re-verified after the fix:
+
+* **Systematic 24-form sweep** (all 8 hand verbs × 3 inflections each: `-s`/`-ing`/`-ed`): `_lemma_verb`
+  matches `off == on == <correct base>` for **24/24 forms** post-fix. Pre-fix, an independent adversarial
+  skeptic (dispatched separately, before this fix landed) found **12/24 forms mis-lemmatized**, and — more
+  seriously — **3/24 (`chased`, `watched`, `watching`) resolved to a genuinely DIFFERENT selectional class**
+  than the hand table's true class (the learned lexicon is a binary animate/inanimate-patient classifier with
+  no way to represent `chase`/`watch`'s symmetric "patient=animate" class, so a stray learned-lexicon hit on
+  a candidate like `"chase"` itself, if it had scored, could have silently swapped the verb's selectional
+  category) — a materially different single-process margin was measured on `"the wolf watched the owl"`
+  pre-fix (0.0493 flag-off vs 0.1396 flag-on, ~3x). Both failure modes are now closed.
+* Fresh-process, single-call A/B (the rigorous byte-identical methodology, not a same-process sequential-call
+  comparison — same-process repeated `judge()` calls on one organ exhibit this project's own documented
+  chaotic inter-turn spiking jitter regardless of the flag, which is NOT this bug and was checked separately
+  by calling `judge()` four times with the flag OFF and unchanged, confirming the jitter is orthogonal) on
+  `"the fox pushes the rock"`, `"the wolf bites the apple"`, `"the cat kicked the ball"`: **zero-line diff**,
+  flag OFF vs flag ON, each a fresh process with exactly one `judge()` call.
+* A new CI regression guard, `test_flag_on_does_not_break_existing_inflected_hand_verbs`
+  (`tests/test_comprehension_learned_verbselects_cue.py`), pins all of the above; the full 9-test file and
+  every other suite listed below were re-run post-fix and still pass.
+
+The rest of this finding's verification (byte-identical-off, load-bearing-on, lesion-reverts, moat) was
+re-run against the FIXED code, not the pre-fix draft — every number below reflects the fixed state.
+
 ## New flags (mirror `BRAIN_LEARNED_ANIMACY_CUE` / `BRAIN_LEARNED_ANIMACY_LESION` exactly)
 
 * `BRAIN_LEARNED_VERB_SELECTS` (default OFF): extends VERB_SELECTS competence to the learned open-vocab cue.
@@ -152,14 +201,22 @@ no current drives either F_anim/F_inanim pool and they tie at exactly 0). `judge
 * `tests/test_comprehension_learned_animacy_cue.py` (the sibling cue's own CI guard): 8/8 still pass —
   unaffected by this change.
 * `tests/test_comprehension_learned_verbselects_cue.py` (new CI guard, mirrors the animacy test file
-  structure exactly): 8/8 pass (held-out coverage, off-graph abstain, lesion collapse, flag-off byte-identity,
-  flag-on load-bearing, lesion-reverts, moat).
+  structure exactly, PLUS the regression guard below): 9/9 pass (held-out coverage, off-graph abstain, lesion
+  collapse, flag-off byte-identity, flag-on load-bearing, lesion-reverts, moat, inflected-hand-verb
+  regression guard).
 * `tests/test_gap3_spiking_feature_compat.py` (the F_anim/F_inanim mechanism both cues reuse): 7/7 pass.
 * `tests/test_multireferent_biased_competition.py`: 5/5 pass.
 * `tests/test_all_capabilities_on.py`: unaffected (16 pre-existing GPU-only skips under the numpy backend,
   unrelated to this change — confirmed via `-rs`: "the attributed / frame / neural-render bridges are
   GPU-validated Hebbian parsers").
 * `.venv/bin/python tools/check_docs.py`: W1=0, W2=0, both document-structure rules pass.
+
+### 5. Regression guard (the lemma-order bug, see above) — the systematic 24-form sweep
+
+`tests/test_comprehension_learned_verbselects_cue.py::test_flag_on_does_not_break_existing_inflected_hand_verbs`
+pins the 3 originally-caught cases (`pushed`/`bites`/`kicked`) plus a 5-verb sample of the wider sweep. The
+full 24-form matrix (all 8 hand verbs × `-s`/`-ing`/`-ed`) was independently re-verified by hand at the
+terminal post-fix: **24/24 lemmatize identically flag-off vs flag-on**, matching each verb's correct base.
 
 ## Status against the load-bearing terms (`docs/TERMS.md`)
 

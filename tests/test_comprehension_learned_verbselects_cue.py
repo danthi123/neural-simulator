@@ -10,7 +10,11 @@ Pins: (1) the flag defaults OFF and is byte-identical to the pre-existing hand-t
 held-out verb the hand VERB_SELECTS table lacks becomes COMPETENT + judged only when the flag is ON; (3)
 lesioning the F_anim/F_inanim coupling (`BRAIN_LEARNED_VERB_SELECTS_LESION=1`) reverts that verb to
 byte-identical flag-OFF behaviour; (4) the moat holds — a genuinely off-graph (never-seen) verb still
-abstains, flag on or off. CPU/numpy.
+abstains, flag on or off; (5) a REGRESSION GUARD (verify-go, 2026-08-27): with the flag ON, an EXISTING
+hand-covered verb's INFLECTED surface form must still lemmatize to its correct hand-table base, never to a
+learned-lexicon read of the inflected form itself (caught: "pushed" resolved to itself unlemmatized, "bites"
+resolved to "bit", "kicked" resolved to itself -- all because the learned lexicon's corpus-wide vocabulary
+covers those surface tokens too, and was consulted before the hand table was tried exhaustively). CPU/numpy.
 """
 import os
 
@@ -98,5 +102,35 @@ def test_moat_genuinely_oov_still_abstains_flag_on():
         rt = organ.repair_target(text)
         assert rt["kind"] == "oov"
         assert set(rt["oov_tokens"]) >= {"wug", "blickets", "glorp"}
+    finally:
+        _clear_flags()
+
+
+def test_flag_on_does_not_break_existing_inflected_hand_verbs():
+    """REGRESSION GUARD (verify-go, 2026-08-27): with the flag ON, an inflected surface form of an EXISTING
+    hand-table verb must lemmatize to the SAME correct base it does with the flag off -- never to the
+    learned lexicon's own (unrelated) read of the raw inflected token. Caught: "pushed"->"pushed" (should be
+    "push"), "bites"->"bit" (should be "bite"), "kicked"->"kicked" (should be "kick") -- all three surface
+    forms happen to be real corpus words with their own learned scores, and the pre-fix `_lemma_verb` tried
+    the learned lexicon (via `_verb_selects_of` on each candidate, in order) before it had exhausted the hand
+    table. Fixed by trying every candidate against the hand table FIRST, in full, before ever falling back to
+    the learned lexicon."""
+    _clear_flags()
+    try:
+        assert CO._lemma_verb("pushed") == "push"
+        assert CO._lemma_verb("bites") == "bite"
+        assert CO._lemma_verb("kicked") == "kick"
+        os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1"
+        assert CO._lemma_verb("pushed") == "push"
+        assert CO._lemma_verb("bites") == "bite"
+        assert CO._lemma_verb("kicked") == "kick"
+        # every hand-table verb's -s/-ed/-ing inflection should be unaffected by the flag, both directions
+        for base, inflected in (("chase", "chases"), ("eat", "eats"), ("carry", "carries"),
+                                 ("grab", "grabs"), ("watch", "watches")):
+            os.environ.pop("BRAIN_LEARNED_VERB_SELECTS", None)
+            off = CO._lemma_verb(inflected)
+            os.environ["BRAIN_LEARNED_VERB_SELECTS"] = "1"
+            on = CO._lemma_verb(inflected)
+            assert off == on == base, (base, inflected, off, on)
     finally:
         _clear_flags()
