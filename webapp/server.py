@@ -5640,6 +5640,35 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             except Exception as _sse:   # never let the authorship read crash a turn — degrade to the un-marked guess
                 resp["authorship"] = {"on": True, "error": f"{type(_sse).__name__}: {_sse}"}
             # ── END faculty: DR-3 self-schema AUTHORSHIP ──
+            # ── BEGIN faculty: R4 self_schema->source_provenance LEARNED CROSS-EDGE — additive, DEFAULT-OFF
+            #    (BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA). Mirrors the PART-1 d6-WM->comprehension frozen cross-edge wire-in
+            #    (research/runners/onebrain_xedge_production.py, 2026-08-27-onebrain-xedge-production-frozen-GO.md)
+            #    on the R4 pairing (2026-08-27-onebrain-integration-selfschema-provenance-learned-crossedge-GO.md):
+            #    self_schema's authorship axis ('did I author this thought') is a LEARNED Hebbian cross-synapse onto
+            #    source_provenance's 'reads as internally-generated' pool, grown once (0.05 -> ~3) on a SHARED merge
+            #    pool, then frozen (no weight moves during any live turn). This turn's OWN live authorship verdict
+            #    (`_ss_read`/`resp["authorship"]`'s `is_self`, computed above) drives whether the cross-edge's
+            #    presynaptic `author` pool is held during a co-temporal read of R4's own validated ambiguous-item
+            #    provenance instrument (`amb_read`, reused verbatim — not reimplemented). Attaches an ADDITIVE
+            #    diagnostic field ONLY (`resp["authorship"]["source_provenance_crossedge"]`); NEVER touches
+            #    `resp["answer"]` or any existing `authorship` field, and runs on an INDEPENDENT R4Pool instance —
+            #    ZERO risk to the already-default-ON self_schema authorship marker above. LOAD-BEARING: the shift
+            #    toward GENERATED vanishes under BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION=1 (the cross-edge zeroed).
+            #    DEFAULT-OFF: BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA unset -> no extra key, byte-identical. Guarded so it
+            #    never crashes a turn. See research/runners/onebrain_xedge_selfschema_production.py.
+            try:
+                from research.runners.onebrain_xedge_selfschema_production import (
+                    xedge_selfschema_enabled, get_xedge_selfschema_pool, crossedge_provenance_shift)
+                if xedge_selfschema_enabled():
+                    _xsp_pool = get_xedge_selfschema_pool(42)
+                    _xsp_is_self = bool((resp.get("authorship") or {}).get("is_self", False))
+                    _xsp_read = crossedge_provenance_shift(_xsp_pool, _xsp_is_self)
+                    if _xsp_read is not None:
+                        resp.setdefault("authorship", {})["source_provenance_crossedge"] = _xsp_read
+            except Exception as _xspe:   # never let the diagnostic read crash a turn
+                resp.setdefault("authorship", {})["source_provenance_crossedge"] = {
+                    "on": True, "error": f"{type(_xspe).__name__}: {_xspe}"}
+            # ── END faculty: R4 self_schema->source_provenance LEARNED CROSS-EDGE ──
         # METACOG (Gate-B, E1): qualify a low-confidence RECALL answer with an honest functional hedge (skip an
         # abstain or a flagged guess — no recalled answer to qualify). Additive; null when disabled/out-of-scope.
         # When the confidence-forthcoming cap (board #94) already ran the SAME read this turn, reuse it here
