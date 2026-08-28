@@ -1,0 +1,73 @@
+{
+  "probe": "xedge_position_invariant_indirection_numpy_wiring_smoke",
+  "backend": "numpy",
+  "b_edge": "learn (converged, per_turn=False)",
+  "amb_item": "the wolf watches the owl",
+  "seeds": [
+    42,
+    43,
+    101,
+    102
+  ],
+  "n_hollow": 0,
+  "n_seed_ok": "4/4",
+  "note": "organ-level real-handler probe (explicit wm_focus='w0'=CAND_POOLS[0]): the Kriete-2013 position-invariant indirection routes the held referent to the grown AGENT pool wherever it sits, so seed 101/102 (w0=p_patient, was HOLLOW: resolved patient==content) now resolve agent (visible), seed 42/100 (w0=p_agent) stay visible, seed 43/44 (w0=p_ctrl) stay correctly inert; all lesion-revert. numpy WIRING smoke only -- the DECISIVE 6-seed verdict is the staged cupy run.",
+  "per_seed": {
+    "42": {
+      "w0_role": "agent",
+      "grown": true,
+      "novisi_role": "patient",
+      "held_role": "agent",
+      "held_wm_resolved": true,
+      "lesion_role": "patient",
+      "lesion_wm_resolved": null,
+      "visible": true,
+      "hollow": false,
+      "inert": false,
+      "reverts": true,
+      "seed_ok": true
+    },
+    "43": {
+      "w0_role": "ctrl",
+      "grown": false,
+      "novisi_role": "patient",
+      "held_role": "patient",
+      "held_wm_resolved": null,
+      "lesion_role": "patient",
+      "lesion_wm_resolved": null,
+      "visible": false,
+      "hollow": false,
+      "inert": true,
+      "reverts": true,
+      "seed_ok": true
+    },
+    "101": {
+      "w0_role": "patient",
+      "grown": true,
+      "novisi_role": "patient",
+      "held_role": "agent",
+      "held_wm_resolved": true,
+      "lesion_role": "patient",
+      "lesion_wm_resolved": null,
+      "visible": true,
+      "hollow": false,
+      "inert": false,
+      "reverts": true,
+      "seed_ok": true
+    },
+    "102": {
+      "w0_role": "patient",
+      "grown": true,
+      "novisi_role": "patient",
+      "held_role": "agent",
+      "held_wm_resolved": true,
+      "lesion_role": "patient",
+      "lesion_wm_resolved": null,
+      "visible": true,
+      "hollow": false,
+      "inert": false,
+      "reverts": true,
+      "seed_ok": true
+    }
+  }
+}
