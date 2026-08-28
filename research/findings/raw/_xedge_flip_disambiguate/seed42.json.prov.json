@@ -1,0 +1,27 @@
+{
+ "run_id": "1787901587-3769414",
+ "runner": "research/runners/_xedge_flip_disambiguate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aa7b6dfad861e4271/research/runners/_xedge_flip_disambiguate.py",
+  "--out",
+  "research/findings/raw/_xedge_flip_disambiguate/seed42.json"
+ ],
+ "git_sha": "1f5753b0e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T03:19:47",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_xedge_flip_disambiguate/seed42.json"
+}
