@@ -1,0 +1,31 @@
+{
+ "run_id": "1787917643-3836131",
+ "runner": "research/runners/lm_train_run.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/lm_train_run.py",
+  "start",
+  "--root",
+  "bridges/lmtrain/run3",
+  "--compile",
+  "1",
+  "--compile-mode",
+  "max-autotune"
+ ],
+ "git_sha": "283abf4ab",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T07:47:23",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 85187.4,
+ "corpus_check_query": "knowledge answer vetoed in live chat pipeline despite store answering directly",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz"
+}
