@@ -55,6 +55,7 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from tools.verdict import Verdict  # noqa: E402
+from tools.lab import attributable_to  # noqa: E402
 
 OUT = _REPO / "research" / "findings" / "raw" / "_wkv_mouth_open_ended_wiring_verify.json"
 
@@ -179,6 +180,14 @@ def main():
     _WKV.generate = _orig_generate
     lesion_falls_back = (r_lesion.get("generator") == "qwen" and r_lesion.get("wkv_mouth_used") is False
                          and r_lesion.get("raw") == "STUB QWEN OUTPUT the boy played with his ball")
+    # ATTRIBUTION (not just measuring both arms): the SAME in-vocab prompt, same seed, same flags -- the ONLY
+    # thing that differs between r_on (intact) and r_lesion (WKV generator forced to raise) is the lesion itself.
+    # wkv_mouth_used is a clean 1/0 indicator; attributable_to must read 100% -- if it read less, something OTHER
+    # than the forced exception would also be suppressing the WKV path, which would undercut claim (c).
+    wkv_used_intact = 1.0 if used_wkv else 0.0
+    wkv_used_lesioned = 1.0 if r_lesion.get("wkv_mouth_used") else 0.0
+    lesion_attribution = attributable_to("forced WKV-generator exception -> wkv_mouth_used",
+                                         treatment_value=wkv_used_intact, control_value=wkv_used_lesioned)
 
     art = {
         "probe": "wkv_mouth_open_ended_wiring_verify", "backend": "numpy",
@@ -190,6 +199,7 @@ def main():
         "n_words_scored": len(words), "rng_untouched_across_wkv_call": rng_untouched,
         "host_rng_draws_on_read_path": host_rng_draws_on_read_path,
         "oov_falls_back_to_qwen": oov_falls_back, "lesion_falls_back_to_qwen": lesion_falls_back,
+        "lesion_attribution_fraction": lesion_attribution,
         "V": int(ro.V), "checkpoint_provenance_sanity": checkpoint_provenance,
     }
 
@@ -216,12 +226,15 @@ def main():
     v.require("(c) an out-of-vocab prompt (flag ON) falls back to Qwen, unchanged", oov_falls_back, expect=True)
     v.require("(c) a forced WKV-path exception falls back to Qwen without crashing the turn",
               lesion_falls_back, expect=True)
+    v.require("(c) the forced-exception lesion attributes 100% of the wkv_mouth_used drop (no other cause)",
+              lesion_attribution, expect=lambda x: x is not None and abs(x - 1.0) < 1e-9)
 
     ckpt_clean = (not checkpoint_provenance["head_weight_has_nan"] and not checkpoint_provenance["head_weight_all_zero"]
                  and not checkpoint_provenance["emb_weight_has_nan"] and not checkpoint_provenance["emb_weight_all_zero"])
     go = (off_byte_identical and off_generator_is_qwen and used_wkv and not qwen_stub_fired_on_wkv_path
          and post_filter_ran and rng_untouched and host_rng_draws_on_read_path == 0
          and oov_falls_back and lesion_falls_back and ckpt_clean
+         and (lesion_attribution is not None and abs(lesion_attribution - 1.0) < 1e-9)
          and (self_nll is not None and (chance_nll - self_nll) > 2.0))
     decided = v.decide(go=go)
     art["verdict"] = decided
@@ -233,7 +246,8 @@ def main():
         "off_byte_identical", "off_generator_is_qwen", "on_used_wkv", "on_qwen_stub_fired",
         "on_post_filter_ran", "self_nll_wkv_continuation", "chance_nll_uniform_over_V",
         "rng_untouched_across_wkv_call", "host_rng_draws_on_read_path",
-        "oov_falls_back_to_qwen", "lesion_falls_back_to_qwen", "checkpoint_provenance_sanity", "GO")}, indent=1))
+        "oov_falls_back_to_qwen", "lesion_falls_back_to_qwen", "lesion_attribution_fraction",
+        "checkpoint_provenance_sanity", "GO")}, indent=1))
     print(f"wrote {OUT} -> {decided['status']}")
     return decided["status"]
 

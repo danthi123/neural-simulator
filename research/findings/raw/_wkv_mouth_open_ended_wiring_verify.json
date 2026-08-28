@@ -16,6 +16,7 @@
  "host_rng_draws_on_read_path": 0,
  "oov_falls_back_to_qwen": true,
  "lesion_falls_back_to_qwen": true,
+ "lesion_attribution_fraction": 1.0,
  "V": 1000,
  "checkpoint_provenance_sanity": {
   "vocab_size": 1000,
@@ -170,6 +171,13 @@
     "ok": true,
     "detail": "measured=True expect=True",
     "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) the forced-exception lesion attributes 100% of the wkv_mouth_used drop (no other cause)",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f1b6739a520>",
+    "note": ""
    }
   ],
   "disabled_processes": [],
@@ -251,6 +259,13 @@
    "name": "(c) a forced WKV-path exception falls back to Qwen without crashing the turn",
    "ok": true,
    "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) the forced-exception lesion attributes 100% of the wkv_mouth_used drop (no other cause)",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f1b6739a520>",
    "note": ""
   }
  ],
