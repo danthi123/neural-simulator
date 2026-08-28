@@ -1,0 +1,58 @@
+{
+  "runner": "research/findings/raw/_onebrain_xedge_session_leak_verify/verify_session_leak.py",
+  "provenance": "manual ad-hoc verification script (not a research/runners/ module); run via SIM_BACKEND=numpy python <script>; full raw stdout in the sibling verify_session_leak_output.log",
+  "seed": 42,
+  "backend": "numpy",
+  "purpose": "verify candidate-1 (BRAIN_ONEBRAIN_XEDGE + BRAIN_ONEBRAIN_XEDGE_LEARN, PART 2 live-learning) is safe to flip default-ON, by calling the REAL production organs (comprehension_production_organ.ComprehensionProductionOrgan.repair_target, d6_multiref_wm_production_organ.MultiReferentWMOrgan.judge/load, onebrain_xedge_production.get_xedge_pool) exactly as webapp/server.py's /api/brain-chat handler calls them, rather than the finding's own self-test (_selftest_livelearn) which manually assigns sh.xedge_focus directly and never exercises the real d6-organ-triggered write path or a second session",
+  "pool_cross_weights": {"w0->A": 16.7788, "w0->P": 4.3919, "w1->A": 0.05, "w1->P": 0.05, "w2->A": 5.676, "w2->P": 16.7183},
+  "pool_role_assignment": {"p_agent": "w0", "p_patient": "w2", "p_ctrl": "w1"},
+  "session_A_hold_judge": {"n_referents": 2, "input_order": ["fox", "wolf"], "hold_alive_min": 0.06388888888888891, "all_recovered": true},
+  "pool_xedge_focus_after_A_hold": "w0",
+  "session_A_repair_target_own_turn": {
+    "svo": ["fox", "chase", "wolf"], "a0": 0.2, "a1": 0.3090277777777778, "pair_max": 0.3090277777777778,
+    "net_lean": 0.5090277777777779, "role_floor": 0.06333333333333334, "lean_margin": 0.31666666666666665,
+    "role": "agent", "wm_resolved": true, "wm_margin": 0.020000000000000018, "content_role": "patient"
+  },
+  "session_C_never_held_anything_repair_target_after_A": {
+    "note": "orgC._slot_of_ref confirmed EMPTY {} before this read -- session C never called .load()",
+    "svo": ["fox", "chase", "wolf"], "a0": 0.21666666666666667, "a1": 0.3333333333333333, "pair_max": 0.3333333333333333,
+    "net_lean": 0.55, "role_floor": 0.06333333333333334, "lean_margin": 0.31666666666666665,
+    "role": "agent", "wm_resolved": true, "wm_margin": 0.0177777777777778, "content_role": "patient"
+  },
+  "repair_target_after_lesion_cross": {
+    "svo": ["fox", "chase", "wolf"], "a0": 0.21666666666666667, "a1": 0.3090277777777778, "pair_max": 0.3090277777777778,
+    "net_lean": 0.5256944444444445, "role_floor": 0.06333333333333334, "lean_margin": 0.31666666666666665,
+    "role": "patient", "wm_resolved_key_present": false
+  },
+  "well_formed_judge_ON_shared_pool": {
+    "svo": ["dog", "chase", "ball"], "margin": 0.39722222222222225, "threshold": 0.32847222222222217, "comprehended": true
+  },
+  "well_formed_judge_OFF_standalone_same_process": {
+    "svo": ["dog", "chase", "ball"], "margin": 0.03680555555555556, "threshold": 0.24861111111111112, "comprehended": false
+  },
+  "well_formed_judge_OFF_fresh_process_baseline": {
+    "note": "xedge module never imported in this process -- rules out same-process RNG-order contamination as the explanation",
+    "margin": 0.0375, "threshold": 0.24861111111111112, "comprehended": false
+  },
+  "OFF_standalone_repair_target_same_process": {
+    "svo": ["fox", "chase", "wolf"], "a0": 0.014583333333333334, "a1": 0.06388888888888888, "pair_max": 0.06388888888888888,
+    "net_lean": 0.07847222222222222, "role_floor": 0.037708333333333344, "lean_margin": 0.1885416666666667, "role": "either"
+  },
+  "OFF_fresh_process_repair_target": {
+    "svo": ["fox", "chase", "wolf"], "a0": -0.06249999999999999, "a1": 0.030555555555555555, "pair_max": 0.06249999999999999,
+    "net_lean": -0.03194444444444444, "role_floor": 0.037708333333333344, "lean_margin": 0.1885416666666667, "role": "either"
+  },
+  "verdict": "NO-GO for default-flip",
+  "preconditions": [
+    {"kind": "instrument", "name": "real production call path used, not the self-test's manual xedge_focus assignment",
+     "ok": true, "note": "",
+     "detail": "confirmed comp_organ is pool_holder.comp_organ (the SAME singleton webapp/server.py's _get_comprehension_organ() returns) and MultiReferentWMOrgan(seed=42, shared=pool.pool) matches server.py's own _get_multiref_organ() construction"},
+    {"kind": "control", "name": "session C's own referent codebook was confirmed empty before the cross-session read",
+     "ok": true, "note": "rules out session C having secretly held something itself",
+     "detail": "orgC._slot_of_ref == {} verified immediately before calling comp_organ.repair_target for session C"},
+    {"kind": "reaches", "name": "lesion still reverts the WM-driven role on this same real call path",
+     "ok": true, "note": "",
+     "detail": "pool.lesion_cross() reverted role to patient (== content_role), wm_resolved key absent, confirming the mechanism's lesion-attributability still holds outside the self-test"}
+  ],
+  "conclusion": "Confirmed a process-global cross-session state leak: pool.xedge_focus is written by d6_multiref_wm_production_organ.py (always CAND_POOLS[0], a positional constant) whenever ANY session's turn holds >=2 referents, and is NEVER cleared by any live code path. Session A held 2 referents through the real production call and its own ambiguous transitive read role=agent/wm_resolved=true/wm_margin=0.020 (content_role=patient) -- lesion-attributable (lesioning the cross-edge reverted role to patient, wm_resolved absent). Session C -- a brand-new organ instance whose own referent codebook was confirmed empty, i.e. it never held anything -- was given the IDENTICAL ambiguous sentence and read role=agent/wm_resolved=true/wm_margin=0.018, indistinguishable from session A's own result, purely because session A's unrelated hold happened earlier in the SAME process. The mechanism itself (cross-edge learning + lesion-attributable role drive) is real and reproduced here through the real production call path; what fails is the real wiring's session isolation, never exercised by the finding's own self-test (which manually assigns xedge_focus rather than driving it through d6org.judge/.load). This blocks the default-flip under the moat-safe / no-cross-session-bleed bar. A secondary, UNRELATED-to-xedge observation surfaced in passing: the well-formed control sentence read comprehended=false on a truly fresh, xedge-never-imported standalone organ at seed 42 (margin 0.038 vs threshold 0.249) -- a pre-existing property of this organ's own calibration on this sentence, not caused by xedge, left as an open item."
+}
