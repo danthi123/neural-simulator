@@ -64,7 +64,14 @@ import sys
 # ── the battery ──────────────────────────────────────────────────────────────────────────────────────────────
 WELL_ITEMS = ["the wolf bites the apple", "the dog chases the cat"]   # comprehensible transitives (no repair)
 QUESTION = "what does the wolf bite"                                  # a question -> None comprehension
-AMB_ITEMS = ["the book carries the cup", "the cup holds the book"]    # content-ambiguous -> the repair/xedge path
+# CONTENT-"EITHER" ambiguous transitive (2-animate: content net_lean is WITHIN lean_margin -> role='either', a
+# generic clarification). This is the visible-test item: with NO focus the repair asks the generic "who does what"
+# question; with a GROWN-focus WM held (seed 42/100 -> agent, 101/102 -> patient) the cross-edge breaks the tie to a
+# SPECIFIC role -> the clarification wording changes ("...didn't resolve the AGENT/PATIENT...") and reverts under
+# lesion. Verified content_role='either' on the standalone organ (seed 42): net_lean~+0.08 < lean_margin~0.19. An
+# 'agent'-content item (e.g. "the book carries the cup", net_lean~-0.54) would AGREE with seed 42's agent focus ->
+# no visible change, so it is NOT the right item for the shipped-seed visibility bar.
+AMB_ITEMS = ["the wolf watches the owl"]
 HOLD_TURN = "the fox and the wolf walked in"                          # >=2 referents -> d6 sets this session's focus
 ALL_SEEDS = [42, 43, 44, 100, 101, 102]
 SHIPPED_SEED = 42
