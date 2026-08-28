@@ -1,0 +1,23 @@
+{
+ "run_id": "1787885851-3651895",
+ "runner": "unknown",
+ "argv": [
+  "-c"
+ ],
+ "git_sha": "119ac7bb7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T22:57:31",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_stale_weight_cache_confound_sweep/evidence.json"
+}
