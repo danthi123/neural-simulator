@@ -1,0 +1,364 @@
+{
+  "probe": "onebrain_declarative_crossedge_r1_repro",
+  "verdict": "GO \u2014 the declarative `cross_edges=[CrossEdge(...)]` param on `merge_organs` (onebrain_merge_framework.py) REPRODUCES R1's bespoke d6->comprehension hand-wired cross-edge: 6/6 seeds match on BOTH arms passing their own full F1-F4+emergence+migration gate AND the reproduction check (grown weight maxdelta<1.0, F2 lesion-attributable fraction within 0.15). The 4 CrossEdge rows replace R1's hand-typed `_dense(...)` union + 3-line whitelist freeze with ONE `merge_organs(cross_edges=[...])` call + ONE `pool.apply_cross_edge_freeze()` call -- same wiring data, same protocol (DeclarativeR1Pool subclasses R1Pool, only __init__ differs), different construction path. numpy CPU; NO sim/ edit.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "bespoke_arm_all_pass",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb0adf1fec0>",
+      "note": "R1's own bespoke F1-F4+emergence+migration gate must pass every seed, or the baseline this reproduction is measured against is itself unearned"
+    },
+    {
+      "kind": "require",
+      "name": "declarative_arm_all_pass",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb0adf1fec0>",
+      "note": "the declaratively-wired pool must independently pass the SAME F-gate, not merely match numbers"
+    },
+    {
+      "kind": "require",
+      "name": "weight_reproduction_bitidentical",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fb0adf1fec0>",
+      "note": "max|delta| between bespoke and declarative grown weights, across every seed and pair"
+    },
+    {
+      "kind": "require",
+      "name": "f2_attribution_reproduction",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fb0adf1fec0>",
+      "note": "max|delta| of the F2 lesion-attributable fraction between the two arms"
+    },
+    {
+      "kind": "require",
+      "name": "declarative_lesion_moves_margin_every_seed",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb0adf1fec0>",
+      "note": "each seed's lever() call (tools.lab, above in compare_seed) RAISES immediately if the declarative arm's intact->lesion margin failed to move; reaching this aggregation with len(runs)==len(seeds) is proof every per-seed lever already passed (a raise would have crashed the run before payload construction, not merely recorded a False here)"
+    }
+  ],
+  "cross_edges_schema": [
+    {
+      "key": "x_w0_sela",
+      "source_key": "d6_multiref_wm",
+      "source_region": "w0",
+      "target_key": "comprehension",
+      "target_region": "sel_agent",
+      "init_weight": 0.05,
+      "plastic": true,
+      "gate": "wm_to_sel",
+      "learn_rule": "rate_hebbian",
+      "freeze_rest": true
+    },
+    {
+      "key": "x_w0_selp",
+      "source_key": "d6_multiref_wm",
+      "source_region": "w0",
+      "target_key": "comprehension",
+      "target_region": "sel_patient",
+      "init_weight": 0.05,
+      "plastic": true,
+      "gate": "wm_to_sel",
+      "learn_rule": "rate_hebbian",
+      "freeze_rest": true
+    },
+    {
+      "key": "x_w1_sela",
+      "source_key": "d6_multiref_wm",
+      "source_region": "w1",
+      "target_key": "comprehension",
+      "target_region": "sel_agent",
+      "init_weight": 0.05,
+      "plastic": true,
+      "gate": "wm_to_sel",
+      "learn_rule": "rate_hebbian",
+      "freeze_rest": true
+    },
+    {
+      "key": "x_w1_selp",
+      "source_key": "d6_multiref_wm",
+      "source_region": "w1",
+      "target_key": "comprehension",
+      "target_region": "sel_patient",
+      "init_weight": 0.05,
+      "plastic": true,
+      "gate": "wm_to_sel",
+      "learn_rule": "rate_hebbian",
+      "freeze_rest": true
+    }
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 13.606,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.439
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 13.606,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.439
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 17.1,
+      "declarative_elapsed_s": 17.2
+    },
+    {
+      "seed": 43,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 12.0056,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.7429
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 12.0056,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.7429
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 16.8,
+      "declarative_elapsed_s": 17.0
+    },
+    {
+      "seed": 44,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 14.5271,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.3545
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 14.5271,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.3545
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 17.0,
+      "declarative_elapsed_s": 21.2
+    },
+    {
+      "seed": 100,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 10.7885,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 10.9884
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 10.7885,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 10.9884
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 24.6,
+      "declarative_elapsed_s": 15.4
+    },
+    {
+      "seed": 101,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 10.8835,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.3519
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 10.8835,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.3519
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 15.4,
+      "declarative_elapsed_s": 16.8
+    },
+    {
+      "seed": 102,
+      "bespoke_PASS": true,
+      "declarative_PASS": true,
+      "reproduces": true,
+      "bespoke_grown": {
+        "ep": 40,
+        "w0->A": 10.5188,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.5359
+      },
+      "declarative_grown": {
+        "ep": 40,
+        "w0->A": 10.5188,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.5359
+      },
+      "weight_maxdelta": 0.0,
+      "weight_delta": {
+        "w0->A": 0.0,
+        "w0->P": 0.0,
+        "w1->A": 0.0,
+        "w1->P": 0.0
+      },
+      "bespoke_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "declarative_frac_attributable": {
+        "ref0": 1.0,
+        "ref1": 1.0
+      },
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "bespoke_elapsed_s": 16.0,
+      "declarative_elapsed_s": 15.7
+    }
+  ]
+}

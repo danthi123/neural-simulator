@@ -72,6 +72,67 @@ class OrganDescriptor:
     defer_reason: str = ""                     # non-empty == Group-B/C deferred; why (the engine seam it needs)
 
 
+@dataclass(frozen=True)
+class CrossEdge:
+    """A DECLARATIVE cross-organ synapse — the registry-ROW form of what R1/R3-v3/R4 each hand-wired in a bespoke
+    ~37-46KB runner's `_build_pool` (a hand-typed `_dense(pre,post,w,gate)` union into `inject_explicit_wiring` +
+    a hand-typed 3-line whitelist gain-0 freeze). One entry names a directed edge SOURCE-organ-region ->
+    TARGET-organ-region; `merge_organs(..., cross_edges=[...])` applies it via the SAME `inject_explicit_wiring`
+    (the existing wire=True inject, `_install_organ_read_wiring`) + a gain-0-freeze whitelist
+    (`MergedPool.apply_cross_edge_freeze`, mirroring `_apply_gain0_freeze`'s freeze-then-selectively-reopen
+    pattern) the bespoke runners use by hand — so a new edge is a data row, not a bespoke script. 2026-08-27,
+    one-brain-completeness-audit framework investment #185 (`research/findings/2026-08-27-onebrain-completeness-
+    audit.md` §4 step 2). Only takes effect when `wire=True` (a cross-synapse needs the actual wired substrate,
+    not just the substrate-init gate); an empty/None `cross_edges` is BYTE-IDENTICAL to today (unchanged code path
+    — see `_smoke`/`_smoke2`/`_determinism2`, re-run clean after this field was added)."""
+    key: str                                   # stable id; also the default plasticity_gate name + the wiring
+                                               #   union key `inject_explicit_wiring` receives
+    source_key: str                            # OrganDescriptor.key owning the SOURCE region (documentation only;
+                                               #   the wiring itself keys on region NAME, like every other seam here)
+    source_region: str                         # region NAME within the source organ (e.g. "w0")
+    target_key: str                            # OrganDescriptor.key owning the TARGET region
+    target_region: str                         # region NAME within the target organ (e.g. "sel_agent")
+    init_weight: float = 0.05                  # seed weight — near-zero for a LEARNED edge (must GROW, not be
+                                               #   pre-wired, exactly like R1's W0=0.05)
+    plastic: bool = True                       # False == a frozen (forever-fixed) cross-synapse
+    gate: str = None                           # plasticity_gate name; defaults to `key` when None
+    learn_rule: str = "rate_hebbian"            # "rate_hebbian" | "da_credit" | "none" — documents which engine
+                                               #   mechanism a plastic edge rides. The framework does NOT auto-set
+                                               #   the hebbian/reward hyperparams (learning rate, decay, ...): the
+                                               #   caller still supplies those via a config-only descriptor unioned
+                                               #   into `config_descriptors`, exactly as R1's
+                                               #   `types.SimpleNamespace(config={"hebbian_rate_window": True})` —
+                                               #   this keeps the schema small; the hyperparameter union already
+                                               #   exists and needs no new mechanism.
+    freeze_rest: bool = True                   # apply_cross_edge_freeze()'s whitelist inversion: gain0-freeze
+                                               #   every OTHER edge in the pool, keep only THIS edge's gate plastic
+                                               #   (the R1 3-line pattern, generalized to N declared edges)
+
+    @property
+    def gate_name(self) -> str:
+        return self.gate or self.key
+
+
+def _cross_edge_dense(bridge, ce: "CrossEdge") -> dict:
+    """The dense pre/post/weight population shape `inject_explicit_wiring` consumes — the ONE piece of mechanism
+    R1's hand-written `_dense(pre, post, w, gate)` helper implemented, generalized to read its two endpoints off
+    the pool's OWN region indices (`region_manager.indices(name)`) so a cross-edge descriptor needs no bespoke
+    callable, only a region-name pair. Byte-identical in shape/dtype/order to R1's `_dense` (same
+    `np.repeat(pre, post.size)` / `np.tile(post, pre.size)` construction), so a declared edge reproduces the
+    bespoke wiring exactly, not merely approximately."""
+    rm = bridge.region_manager
+    pre = np.asarray(rm.indices(ce.source_region), dtype=np.int64)
+    post = np.asarray(rm.indices(ce.target_region), dtype=np.int64)
+    P = np.repeat(pre, post.size)
+    Q = np.tile(post, pre.size)
+    out = {"pre_indices": P, "post_indices": Q,
+          "initial_weights": np.full(P.size, float(ce.init_weight), dtype=np.float32),
+          "plastic": bool(ce.plastic), "conn_type": "E_TO_E", "count": int(P.size)}
+    if ce.plastic:
+        out["plasticity_gate"] = ce.gate_name
+    return out
+
+
 class MergeConflict(ValueError):
     """Two descriptors REQUIRE a config key at different values — a genuine global-config incompatibility
     (param-het ON vs OFF; OU on vs off). Raised at BUILD so it fails loudly at registration, never silently
@@ -166,8 +227,12 @@ class MergedPool:
         "cp_neuron_firing_thresholds", "cp_neuron_activity_ema", "cp_external_input_current",
     )
 
-    def __init__(self, seed, descriptors, config_descriptors=None, legacy=False, force_het_off=False, wire=False):
+    def __init__(self, seed, descriptors, config_descriptors=None, legacy=False, force_het_off=False, wire=False,
+                cross_edges=None):
         self.seed = int(seed)
+        # DECLARATIVE cross-organ synapses (framework investment #185, 2026-08-27) — a list of `CrossEdge`. Empty/
+        # None -> every new code path below is a no-op -> byte-identical to before this field existed.
+        self.cross_edges = list(cross_edges) if cross_edges else []
         # wire=True == the ORGAN-READ substrate: after the base build, rebuild cp_connections from ONE
         # per-region-seamed wiring plan (`build_wiring_plan(per_region_seed=True)`, co-residence + order INVARIANT)
         # UNIONed with every descriptor's explicit_wiring_fn (assembly loops / member->attend / block-diagonals),
@@ -196,6 +261,9 @@ class MergedPool:
     def ensure_built(self):
         if self._built:
             return
+        if self.cross_edges and not self.wire:
+            raise MergeConflict("cross_edges requires wire=True (a declared cross-synapse needs the actual wired "
+                                "substrate the wire=True inject builds, not just the substrate-init gate)")
         from sim.bridge import SimulationBridge
         from sim.config import RuntimeState, GPUConfig, VisualizationConfig
         from sim.backend import get_backend
@@ -337,6 +405,13 @@ class MergedPool:
                 extra = d.explicit_wiring_fn(bridge, rm)
                 if extra:
                     union.update(extra)
+        # DECLARATIVE cross-organ synapses — the registry-row generalization of what R1's `_build_pool` hand-typed
+        # (its `x_w0_sela`/`x_w0_selp`/`x_w1_sela`/`x_w1_selp` union entries). Appended AFTER the base plan + every
+        # descriptor's own explicit_wiring_fn, in `self.cross_edges` list order — the SAME position R1's manual
+        # union placed its cross-edge entries, so the resulting `cp_connections` insertion order (and therefore any
+        # FP-summation-order-sensitive matvec) matches a hand-wired reproduction of the same edges exactly.
+        for ce in self.cross_edges:
+            union[ce.key] = _cross_edge_dense(bridge, ce)
         inh = []
         for region in rm.regions():
             inh.extend(rm.inhibitory_indices(region.name))
@@ -364,6 +439,29 @@ class MergedPool:
         g = np.asarray(_host(bridge.cp_plasticity_rate_gain)).copy()
         g[in_frozen] = 0.0
         bridge.cp_plasticity_rate_gain = xp.asarray(g, dtype=xp.float32)
+
+    def apply_cross_edge_freeze(self):
+        """The R1 whitelist inversion (`R1Pool.__init__`'s 3 hand-typed lines: `set_plasticity_gate(GATE,1.0)` /
+        `cp_plasticity_rate_gain[:]=0.0` / `set_plasticity_gate(GATE,1.0)`), generalized to every registered
+        `CrossEdge` with `freeze_rest=True`: ensure each declared edge's gate exists, then zero
+        `cp_plasticity_rate_gain` EVERYWHERE and re-open ONLY those edges' gates — so a declared cross-edge is the
+        SOLE plastic synapse in the pool (every migrated organ edge stays byte-frozen; a cross-edge with
+        `freeze_rest=False` stays whatever the base config left it at). A no-op (returns immediately) when no
+        registered edge wants it, so a `cross_edges=None`/all-`freeze_rest=False` pool is untouched by this call.
+
+        Call AFTER any `organ_cls(shared=pool)` construction that installs its OWN weights (e.g. comprehension's
+        cue->role validities) — exactly the point R1Pool.__init__ calls the hand-typed version, so an organ's own
+        build-time setup is not clobbered by a freeze that ran before it existed."""
+        self.ensure_built()
+        b = self.bridge
+        to_freeze = [ce for ce in self.cross_edges if ce.freeze_rest]
+        if not to_freeze:
+            return
+        for ce in to_freeze:
+            b.set_plasticity_gate(ce.gate_name, 1.0)    # ensure the gate index map + gain array exist
+        b.cp_plasticity_rate_gain[:] = 0.0               # freeze EVERYTHING
+        for ce in to_freeze:
+            b.set_plasticity_gate(ce.gate_name, 1.0)    # whitelist ONLY the declared cross-edge(s)
 
     # ── per-organ idx accessors, dispatched by key to the descriptor's idx_fn ──
     def idx(self, key):
@@ -477,7 +575,7 @@ class MergedPool:
 
 
 def merge_organs(descriptors, seed: int = 42, config_descriptors=None, legacy: bool = False,
-                 force_het_off: bool = False, wire: bool = False) -> MergedPool:
+                 force_het_off: bool = False, wire: bool = False, cross_edges=None) -> MergedPool:
     """Build ONE shared spiking bridge holding all `descriptors`' regions. The N-organ generalization of the
     bespoke per-pool MergedSubstrate (DESIGN §2). Returns a MergedPool ready for `desc.organ_cls(shared=pool)`.
 
@@ -486,9 +584,13 @@ def merge_organs(descriptors, seed: int = 42, config_descriptors=None, legacy: b
     legacy=True -> the DISCRIMINATOR (name-keyed seams OFF; merged-vs-coresident should diverge).
     force_het_off=True -> the LOAD-BEARING control (per-region param-het mask cleared).
     wire=True -> the ORGAN-READ substrate (one per-region-seamed wiring inject + settle-to-rest snapshot; needed
-    when a `shared=` organ actually RUNS its read/judge pipeline on the pool, not just the substrate-init gate)."""
+    when a `shared=` organ actually RUNS its read/judge pipeline on the pool, not just the substrate-init gate).
+    cross_edges -> an optional list of `CrossEdge` (framework investment #185): DECLARATIVE cross-organ synapses,
+    injected via the SAME wire=True inject as every other wiring, with no bespoke `_build_pool` needed. Requires
+    wire=True (raises MergeConflict otherwise). None/empty -> BYTE-IDENTICAL to calling merge_organs without this
+    param (the code path this file shipped with before 2026-08-27 is unchanged)."""
     pool = MergedPool(seed, descriptors, config_descriptors=config_descriptors, legacy=legacy,
-                      force_het_off=force_het_off, wire=wire)
+                      force_het_off=force_het_off, wire=wire, cross_edges=cross_edges)
     pool.ensure_built()
     return pool
 
