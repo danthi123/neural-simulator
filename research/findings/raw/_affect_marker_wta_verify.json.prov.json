@@ -1,0 +1,27 @@
+{
+ "run_id": "1787932062-3969777",
+ "runner": "research/runners/_affect_marker_wta_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a5925b30c343d999f/research/runners/_affect_marker_wta_verify.py",
+  "--out",
+  "research/findings/raw/_affect_marker_wta_verify.json"
+ ],
+ "git_sha": "f6722fde7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T11:47:42",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_marker_wta_verify.json"
+}

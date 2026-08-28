@@ -62,11 +62,21 @@ HONEST RESIDUALS (named, not claimed closed).
   1. The message->valence APPRAISAL is host (a language-comprehension boundary, like the SVO parser). The felt READ
      (body-state -> graded valence x arousal off cp_firing_states) and its embodiment dependence ARE the #81 neural
      mechanism (lesion-proven). The body-state VARIABLES (h, a) are the standard body boundary.
-  2. The level->EXPRESSION-MARKER map is a HOST conditioned-articulation scaffold (the "mouth"): the affect that
-     DRIVES it is the neural ladder read (load-bearing -- the lesion collapses the marker), but the surface STRING
-     for a given level is a host template, exactly the sanctioned articulation-crutch pattern (owner:
-     scaffold-ok-as-conditioned-articulation IF the faculty is load-bearing on the tone, which the lesion proves).
-     A brain-native affective mouth (the marker itself emitted by a spiking prosody circuit) is the named next rung.
+  2. The level->EXPRESSION-MARKER SELECTION is now available as a SPIKING lateral-inhibition WTA circuit (board
+     #86, 2026-08-28; `research/runners/_affect_marker_wta_derisk.py`), additive and DEFAULT-OFF pending owner
+     review of the affect-path default (`BRAIN_AFFECT_MARKER_SPIKING=1`). Intact: the felt mood/arousal projects,
+     as a topographic population code, onto 6 (resp. 2) small excitatory marker/arousal assemblies with their own
+     cross-inhibiting FSI sub-pools (mutual lateral inhibition -- the SAME motif already 6-seed flip-soak GO'd at
+     N=2 by the BG action selector); the assembly whose spiking rate clears the others by a dead margin, after the
+     network settles, NAMES the marker -- the host renders the winner's fixed TOKEN, but the SELECTION is
+     neurons/synapses, not `_LEAD_WORD[level]`. Verified byte-identical-OFF, load-bearing (mood sweep -> the
+     marker changes, matching the register the host table would have picked, 6/6 seeds), lesioned (cutting the
+     felt-state -> assembly projection collapses every pool to no clean winner -> the marker VANISHES, i.e. an
+     honest no-lead turn, NOT a silent revert to the host template), and shuffle-anti-cheated (mis-routing which
+     physical assembly receives which register's tuning drive changes the REPORTED marker, proving the identity is
+     read off which assembly won, not re-derived from the raw mood float). See
+     `research/findings/2026-08-28-affect-marker-spiking-wta-derisk.md`. `_LEAD_WORD` and the pre-existing
+     host-dict `expression_lead` path remain the exact behavior when the flag is off (the default).
   3. This module reads its OWN co-resident #81 ladder bridge, run ALONGSIDE the recall composer, not merged onto the
      single recall bridge (the one-brain consolidation step, shared with the Gate-B affect burn-down).
 """
@@ -133,6 +143,34 @@ def affect_drives_lesioned() -> bool:
     return os.environ.get("BRAIN_AFFECT_DRIVES_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def marker_selection_spiking_enabled() -> bool:
+    """Board #86 (2026-08-28). `BRAIN_AFFECT_MARKER_SPIKING` truthy -> the level/mood -> expression-MARKER
+    SELECTION step routes through the spiking lateral-inhibition WTA circuit
+    (`research.runners._affect_marker_wta_derisk`) instead of the host `_LEAD_WORD[level]` dict lookup.
+    DEFAULT-OFF (unset/falsy) -> the EXACT pre-existing host-template behavior, byte-identical -- this faculty's
+    default is an owner-review decision, not flipped autonomously by this change."""
+    return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def marker_selection_lesioned() -> bool:
+    """`BRAIN_AFFECT_MARKER_SPIKING_LESION` truthy -> (only meaningful when the spiking selector is enabled) cut
+    the felt-state -> marker-assembly topographic PROJECTION on every read: every assembly receives the SAME
+    baseline current, so the lateral-inhibition competition has no differentiating signal to resolve. The
+    documented fallback is an HONEST NO-LEAD turn ('' -- the same safe fallback the circuit uses whenever it
+    cannot find a clean winner), NOT a silent revert to the host `_LEAD_WORD` template. The load-bearing proof for
+    the SELECTION step itself (distinct from `BRAIN_AFFECT_DRIVES_LESION`, which collapses the FELT STATE the
+    ladder reads, upstream of this circuit)."""
+    return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def marker_selection_shuffled() -> bool:
+    """`BRAIN_AFFECT_MARKER_SPIKING_SHUFFLE` truthy -> the anti-cheat control: mis-route which physical marker
+    assembly receives which register's topographic tuning drive (a fixed random permutation). Verification-only
+    (never set in normal operation) -- proves the reported marker identity tracks WHICH ASSEMBLY actually won the
+    spiking competition, not a fixed host formula re-derived from the raw mood float."""
+    return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING_SHUFFLE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def _valence_to_body(valence: float, arousal: float) -> tuple:
     """Map the appraised message affect to the #81 body-state. valence in [-1,1] -> comfort/homeostasis h in [0,1]
     (h = 0.5 + 0.5*valence: valence 0 -> the neutral set-point h=0.5; +1 -> comfort; -1 -> discomfort). arousal in
@@ -156,13 +194,44 @@ def mood_to_level(mood: float) -> int:
     return 1 * s
 
 
-def expression_lead(level: int, high_arousal: bool) -> str:
-    """The affective EXPRESSION marker for this turn's felt state (the conditioned-articulation scaffold; DRIVEN by
-    the neural ladder read). Level 0 (neutral) -> '' so the surface is byte-identical. Non-neutral -> a graded
-    warmth/curtness marker; high felt-arousal makes it emphatic ('! '), else measured (' — '). The FACT after it is
-    unchanged (VERIFY re-parse intact) -- this colors HOW the reply sounds, never WHICH fact is true."""
+def expression_lead(level: int, high_arousal: bool, *,
+                    mood: Optional[float] = None, felt_arousal: Optional[float] = None,
+                    seed: int = _DEFAULT_SEED) -> str:
+    """The affective EXPRESSION marker for this turn's felt state. Level 0 (neutral) -> '' so the surface is
+    byte-identical, REGARDLESS of which selection path is active (the neutral gate is checked first, before any
+    spiking circuit would even be invoked, so a neutral turn never pays for or depends on it).
+
+    Non-neutral: two selection paths.
+      * DEFAULT (marker_selection_spiking_enabled() is False, i.e. `BRAIN_AFFECT_MARKER_SPIKING` unset) -- the
+        ORIGINAL host conditioned-articulation scaffold: `_LEAD_WORD[level]` + '! '/' — ' by `high_arousal`.
+        Exact pre-existing behavior, byte-identical.
+      * BRAIN_AFFECT_MARKER_SPIKING=1 (and `mood`/`felt_arousal` supplied) -- board #86: the level/word and the
+        emphasis are each SELECTED by a spiking lateral-inhibition WTA circuit
+        (`research.runners._affect_marker_wta_derisk.AffectMarkerWTA`) reading the CONTINUOUS felt mood/arousal
+        as a topographic population code, instead of a host dict lookup on the pre-binned `level`/`high_arousal`.
+        `BRAIN_AFFECT_MARKER_SPIKING_LESION=1` cuts the felt-state->assembly projection (documented fallback: ''
+        -- an honest no-lead turn, not a silent revert to the host table). Any internal failure (import/build
+        error) ALSO degrades to '' -- never raises, never silently falls back to the host template (mirrors the
+        `mouth_tone_marker` fail-safe convention elsewhere in this repo) -- so enabling the flag can only ever
+        REMOVE or CHANGE a lead, never crash a turn."""
     if int(level) == 0:
         return ""
+    if marker_selection_spiking_enabled() and mood is not None:
+        try:
+            from research.runners._affect_marker_wta_derisk import get_reader, marker_from_level
+            reader = get_reader(seed=seed)
+            lesion = marker_selection_lesioned()
+            shuffle = marker_selection_shuffled()
+            sel_level, _rates, _meta = reader.select_valence(float(mood), lesion=lesion, shuffle=shuffle)
+            word = marker_from_level(sel_level)
+            if not word:
+                return ""
+            fa = float(felt_arousal) if felt_arousal is not None else (0.075 if high_arousal else 0.0)
+            high, _r2, _m2 = reader.select_arousal(fa, lesion=lesion, shuffle=shuffle)
+            emphatic = bool(high) if high is not None else bool(high_arousal)
+            return (word + "! ") if emphatic else (word + " — ")
+        except Exception:
+            return ""            # never raise, never silently revert to the host template -- an honest no-lead turn
     word = _LEAD_WORD.get(int(level))
     if not word:
         return ""
@@ -284,7 +353,7 @@ class AffectDrivesWorkspace:
                 felt = float(r["felt_arousal"])
                 level = mood_to_level(mood)
                 high = bool(felt > _AROUSAL_HIGH)
-                lead = expression_lead(level, high)
+                lead = expression_lead(level, high, mood=mood, felt_arousal=felt, seed=self.seed)
                 info.update({"acted": True, "mood": mood, "felt_arousal": felt, "level": int(level),
                              "high_arousal": high, "lead": lead,
                              "vplus_rate": float(r.get("vplus_rate", 0.0)),
@@ -329,7 +398,7 @@ class AffectDrivesWorkspace:
                 felt = float(r["felt_arousal"])
                 level = mood_to_level(mood)
                 high = bool(felt > _AROUSAL_HIGH)
-                lead = expression_lead(level, high)
+                lead = expression_lead(level, high, mood=mood, felt_arousal=felt, seed=self.seed)
                 info.update({"acted": True, "mood": mood, "felt_arousal": felt, "level": int(level),
                              "high_arousal": high, "lead": lead,
                              "vplus_rate": float(r.get("vplus_rate", 0.0)),
