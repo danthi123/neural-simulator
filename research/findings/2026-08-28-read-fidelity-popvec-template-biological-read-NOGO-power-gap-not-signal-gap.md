@@ -13,6 +13,8 @@ runner: research/runners/_read_fidelity_popvec_template_derisk.py
 
 # Read-fidelity: the biological popvec/template spiking read is NO-GO (0/6) — a READ-POWER gap, not a signal gap
 
+> ⭐ **CROSS-REFERENCE (added post-hoc): the perceived-vs-generated source-monitoring FACULTY is ALREADY GO 6/6 on `main`** via [`2026-08-25-laneC-source-provenance-opponent-perceived-vs-generated-6seed-GO`](2026-08-25-laneC-source-provenance-opponent-perceived-vs-generated-6seed-GO.md) (#129, commit `831a014e9`). That construction solves the faculty with the exact levers this arc identified as the upstream fix: **two neuromodulatory context-gated SEPARATE Hebbian traces + a divisively-normalized OPPONENT RATIO read** `d=(r_true-r_false)/(r_true+r_false)` (immune to the absolute-rate weakness). So THIS arc characterizes a *harder/different* sub-question — reading provenance off ONE SHARED trained cross-edge (`surprise->source_provenance` F2) — which is the rate-floor family #129 superseded. The read-power gap here is real, but it is NOT an open FACULTY gap: source monitoring is delivered. The opponent-push-pull run in flight now tests whether an opponent read alone rescues the SHARED edge, or whether #129's separate-trace WIRING is necessary — a characterization, not a blocker.
+
 Artifact: `research/findings/raw/_read_fidelity_popvec_template_derisk_6seed.json` (numpy, 6 seeds; same trained cross-edge + same captured rasters iterations 1/2/3 used — no retraining confound). Runner iteration 4 of the read-fidelity arc.
 
 ## The arc so far (one crux, five reads)
