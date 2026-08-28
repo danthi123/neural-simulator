@@ -5,6 +5,12 @@ lane: gap#1
 date: 2026-08-14
 ---
 
+> ⚠️ **CONFOUND CORRECTION (2026-08-27) — the SUBSTRATE-integration ratio was measured through a STALE weight cache.**
+> The 2026-08-27 stale-weight-cache confound sweep found this rung's runner (`_wkv_mouth_readout_eprop_learn_derisk.py::LearnedReadout.set_weights`) REASSIGNS `cp_connections.data`, which breaks the megakernel-v2 transposed-CSR (WT) transmission cache's view-safety — so the substrate read transmitted STALE weights.
+> The headline **`sub_recov_ratio_mean ~1.00` ("learned ≈ copied") is CONFOUNDED**: a fixed-vs-buggy A/B measured the ratio drop to **~0.865** under the fix. That still clears the ≥0.85 GO bar (so this rung is NOT retracted), but the "learned reads on the substrate IDENTICALLY to copied" claim is DOWNGRADED to "~0.865 of copied". A faithful 6-seed re-measurement under the fix is QUEUED (`--feature substrate --weight-decay 0.0008`).
+> The RULE-RECOVERY half (host-linear recov ~0.93, weight-cosine ~0.51) is UNAFFECTED — it runs on the host-linear path, not the substrate read.
+> See [`2026-08-27-stale-weight-cache-confound-sweep-PARTIAL`](2026-08-27-stale-weight-cache-confound-sweep-PARTIAL.md) + [`2026-08-27-mouth-stale-coo-training-fix-PARTIAL`](2026-08-27-mouth-stale-coo-training-fix-PARTIAL.md).
+
 # Fluid mouth — the read-out head LEARNED on the substrate by a local three-factor rule (e-prop / delta), retiring the copied Qwen weights — GO on rule-recovery + substrate integration
 
 **Date:** 2026-08-14 · **Type:** de-risk finding (research) · **Lane:** gap#1 / A1 (fluid mouth), emergence-bar burn-down.
