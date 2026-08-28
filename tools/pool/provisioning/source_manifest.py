@@ -17,7 +17,10 @@ IGNORED_PARTS = frozenset({".git", "__pycache__"})
 RUNTIME_PREFIXES = (
     PurePosixPath("research/experiment-runtime"),
     PurePosixPath("research/findings/raw"),
+    PurePosixPath("data"),                 # runtime data/corpus/models — gitignored, needed by runners, NOT source
 )
+# Runtime output accretions on a live pool node (dispatch logs, job status) — never source.
+RUNTIME_SUFFIXES = frozenset({".out", ".log"})
 
 
 class SourceManifestError(ValueError):
@@ -38,6 +41,8 @@ def _ignored(relative: PurePosixPath) -> bool:
     if any(part in IGNORED_PARTS for part in relative.parts):
         return True
     if relative.parts and relative.parts[0].startswith(".venv"):
+        return True
+    if relative.suffix in RUNTIME_SUFFIXES:
         return True
     return any(relative == prefix or prefix in relative.parents for prefix in RUNTIME_PREFIXES)
 
