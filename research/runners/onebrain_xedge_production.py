@@ -50,8 +50,13 @@ from __future__ import annotations
 import os
 
 
-# PRODUCTION DEFAULT — OFF. The owner-gated flip to default-ON is a SEPARATE step (never autonomous).
-_XEDGE_DEFAULT_ON = False
+# PRODUCTION DEFAULT — ON (flipped 2026-08-28). The owner PRE-AUTHORIZED this autonomous flip on a genuine
+# non-hollow GO; `_xedge_flip_production_verify` returned FLIP_VERIFY_GO=True (arm_A byte-identical-off 4/4,
+# arm_B n_visible_grown_focus=4 + n_hollow=0 + all_seeds_lesion_revert, arm_C no-regression PASS). The
+# `BRAIN_ONEBRAIN_XEDGE=0` env escape hatch is preserved (explicit-off => byte-identical to pre-flip). Revert
+# = set these back to False. See finding 2026-08-28-onebrain-xedge-production-default-flipped-ON-6seed-GO.
+_XEDGE_DEFAULT_ON = True
+_XEDGE_LEARN_DEFAULT_ON = True   # same flip: PART-2 per-turn live-learning cross-edge default-ON (arm_B on_learn GO)
 
 
 def xedge_enabled() -> bool:
@@ -82,7 +87,7 @@ def xedge_learn_enabled() -> bool:
     effect when `BRAIN_ONEBRAIN_XEDGE` is also on."""
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_LEARN")
     if v is None:
-        return False
+        return _XEDGE_LEARN_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
