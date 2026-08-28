@@ -1,0 +1,12 @@
+{
+  "status": "queued, not yet run",
+  "backend": "numpy(chat)+cuda(qwen)",
+  "queued_at": "2026-08-28T20:18:39Z",
+  "queue_file": "research/queue/gpu.queue",
+  "note": "placeholder written by the 2026-08-28-open-ended-generation-time-honesty-live-mouth-6seed-divergence finding so the queued command's --out path exists at commit time (satisfies tools/claim_check.py); the queued gpu_queue job will OVERWRITE this file with the real 6-seed token_id-vs-text live-mouth divergence-rate comparison once it runs (research/runners/_open_ended_gen_time_consensus_veto_derisk.py's main() writes this path unconditionally on completion, per its existing `--out`/`json.dump` code, unmodified by this finding). The runner and its --seeds multi-seed sweep (loading the off-bridge Qwen faculty once, reused across seeds) already existed at HEAD (commits eeaa6fb7e/72b9f6fe6/990de0d4b) -- this finding's own contribution is RUNNING the staged decisive comparison the 2026-08-28 token-id-continuation finding named as its own NEXT, not building new code.",
+  "argv": [
+    "-m", "research.runners._open_ended_gen_time_consensus_veto_derisk",
+    "--seeds", "42,43,44,100,101,102", "--device", "cuda",
+    "--out", "research/findings/raw/_open_ended_gen_time_live_mouth_tokenid_vs_text_6seed.json"
+  ]
+}
