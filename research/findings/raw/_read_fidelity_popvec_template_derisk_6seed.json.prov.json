@@ -1,0 +1,30 @@
+{
+ "run_id": "1787935884-3719182",
+ "runner": "research/runners/_read_fidelity_popvec_template_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_read_fidelity_popvec_template_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_read_fidelity_popvec_template_derisk_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "b8735e4f0742530846c1316e420e866d198e95f8f83a9588a39e9cad8c9c585f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T12:51:24",
+ "env": {
+  "POOL_CHECKED_REASON": "new",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_read_fidelity_popvec_template_derisk_6seed.json"
+}

@@ -1,0 +1,40 @@
+---
+type: finding
+status: negative
+date: 2026-08-28
+verdict: The biological population-vector / matched-filter spiking read is a NO-GO on the surprise->source_provenance F2 crux — 0/6 seeds clear the z>=2.0 primary gate (per-seed primary z = [0.05, 0.18, 0.04, 1.13, 0.09, 1.32]; only seed 102 is lesion-attributable, and still sub-threshold at z=1.32). The instrument is VALID (neuron-identity shuffle anti-cheat collapses 6/6 on every combo, seed-trap build-twice hashes identical, all 3 preconditions OK), so this is a genuine read verdict, not an artifact. The decisive comparison: a linear/MLP DECODER over the SAME per-neuron pattern separated 6/6 shuffle-clean (the prior decoder-SIGNAL-FOUND finding), but a substrate-faithful spiking read (a rectified Dale's-law matched-filter template driving a single LIF readout neuron, neuron-identity CV) recovers essentially nothing. So the F2 crux is a READ-POWER gap, not a no-signal gap and not a wiring gap: the generated-vs-perceived signal is present in the distributed code (decoder-provable) but is NOT accessible to this biological read primitive. NEXT LEVER (NO-DEFER): a MORE POWERFUL but still substrate-faithful read — an opponent / push-pull population readout (recovers the negative-weight information that Dale's-law rectification discards) and/or a dendritic-nonlinear readout (recovers the MLP nonlinearity the single LIF lacks) — before concluding the decoder's separability relies on non-biological read power.
+mechanism: population-vector / matched-filter template + LIF readout vs the offline decoder on the F2 crux (read-power gap characterization)
+lane: read-fidelity
+seed-waiver: 6-seed run (42/43/44/100/101/102) — this IS the 6-seed de-risk; the clean 0/6 + the 6/6-valid instrument are the result.
+artifacts:
+  - research/findings/raw/_read_fidelity_popvec_template_derisk_6seed.json
+runner: research/runners/_read_fidelity_popvec_template_derisk.py
+---
+
+# Read-fidelity: the biological popvec/template spiking read is NO-GO (0/6) — a READ-POWER gap, not a signal gap
+
+Artifact: `research/findings/raw/_read_fidelity_popvec_template_derisk_6seed.json` (numpy, 6 seeds; same trained cross-edge + same captured rasters iterations 1/2/3 used — no retraining confound). Runner iteration 4 of the read-fidelity arc.
+
+## The arc so far (one crux, five reads)
+
+The surprise->`source_provenance` F2 crux asks whether a spiking read can separate GENERATED from PERCEIVED on the trained cross-edge. Scalar reads failed: **mean-rate 0/6**, **first-spike-latency 0/6** (clean instrument), **ISI-CV/Fano dispersion 1/6**. A **linear+MLP DECODER over the full 10-bin per-neuron profile then separated 6/6, shuffle-clean** ([decoder-SIGNAL-FOUND](2026-08-28-read-fidelity-decoder-SIGNAL-FOUND-its-a-read-limit-not-wiring.md)) — proving the signal IS in the distributed pattern, and repointing the question to: can a BIOLOGICAL spiking read (not an offline decoder) extract it?
+
+## This rung — a substrate-faithful spiking read — NO-GO
+
+The read (runner iteration 4): a per-time-bin matched-filter TEMPLATE (`clip(mean(train_gen) - mean(train_perc), 0, None) / pooled_std`; Georgopoulos 1986 population-vector coding, Salinas & Abbott 1994 optimal-linear-estimator normalization), **rectified** so no synapse flips sign over time (Dale's law), driving a genuine **LIF readout neuron** whose own spike count is the margin. Template fit on a TRAIN fold of neuron identities, evaluated on the HELD-OUT fold's raw spikes; threshold calibrated from TRAIN only.
+
+- **`GO = False`; `n_seeds_pass_primary = 0/6`.** Primary gate = `delta_held_base` (the cross-edge-attributable component, per iteration 3's own flag): z>=2.0 AND lesion-attributable AND shuffle-collapse.
+- **Per-seed primary z = [0.05, 0.18, 0.04, 1.13, 0.09, 1.32]** (seeds 42/43/44/100/101/102). Only seed 102 is `lesion_ok=True` (z=1.32); seed 100 reaches z=1.13 but not lesion-attributable; the other four are ~0. Nothing clears the 2.0 floor.
+- **Instrument VALID:** neuron-identity permutation null collapses on 24/24 combo-seed pairs (`n_seeds_shuffle_ok=6`); `seed_trap_build_twice.identical=True` (build hashes `df4c33e6...` both times — genuinely seeded); all 3 preconditions (`shuffle_anticheat_collapses_on_every_combo`, `emergence_grew_from_near_zero`, `anti_cheat_random_assignment`) OK. So the 0/6 is a real read verdict.
+
+## What this settles + the next lever (NO-DEFER — a verdict on the READ, not the capability)
+
+The decoder-vs-biological-read contrast is the whole result: the SAME distributed pattern that a linear/MLP decoder separates 6/6 yields ~0 to a rectified single-LIF matched-filter read. So the F2 "below floor" is a **READ-POWER gap** — the signal is present but the specific biological read tried cannot reach it. Three constraints separate this read from the decoder, and each is the next lever:
+
+1. **Rectification (Dale's law) discards the negative-weight information.** The decoder uses arbitrary signed weights; the template is clipped to >=0. A **push-pull / opponent population read** (an excitatory template channel + an inhibitory opponent channel, both Dale's-law-respecting) recovers the sign information the single rectified channel throws away — and is MORE biologically faithful, not less (opponent codes are ubiquitous).
+2. **Single-LIF pooling loses per-neuron discrimination + the decoder's nonlinearity.** A **dendritic-nonlinear readout** (dendritic subunits computing multidimensional sigmoids — a two-layer nonlinear network the substrate already has in the gap5 dendritic work; Jadi, Behabadi, Poleg-Polsky, Schiller & Mel 2014, *An Augmented Two-Layer Model Captures Nonlinear Analog Spatial Integration Effects in Pyramidal Neuron Dendrites*, Proc IEEE 102(5), PMID 25554708) supplies the MLP-like nonlinearity a single point-neuron LIF lacks. ⚠️ CAVEAT from our own record: a two-layer nonlinear (granule-cell-expansion) spiking readout did NOT lift a linear ceiling on a related vision crux ([2026-08-25-vision-nonlinear-2layer-granule-expansion-readout-does-not-lift-the-c2-linear-ceiling](2026-08-25-vision-nonlinear-2layer-granule-expansion-readout-does-not-lift-the-c2-linear-ceiling.md)) — so nonlinearity alone may not be the missing ingredient here either. That ranks the OPPONENT (sign-recovery) lever ABOVE the dendritic-nonlinear one as the first bet.
+3. **The template (mean-difference) is a weaker estimator than logistic regression.** A biologically-plausible local learning rule on the readout weights (e.g. a delta/perceptron rule the substrate can run) would close part of the estimator gap without leaving spiking.
+
+External touch-point (deep-research-at-wall, read-fidelity lane): the dendritic-readout lever is grounded in Jadi et al. 2014 (PMID 25554708) above; the vision-2layer precedent is the countervailing internal evidence. Both inform ranking opponent > dendritic.
+
+The honest residual: it is not yet ruled out that the decoder's separability relies on read power a spiking substrate CANNOT realize (unconstrained signed weights + nonlinearity + full-population access). If the opponent + dendritic reads ALSO fail, THAT becomes the finding — the signal is "there" only to a non-biological reader — and the fix moves upstream to how the cross-edge shapes `source_provenance` (a wiring lever), not the read. But the opponent/dendritic reads are the cheaper, substrate-faithful levers to try first.

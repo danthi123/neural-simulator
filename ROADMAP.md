@@ -17,13 +17,14 @@ Six things landed this session.
 
 (3) KNOWLEDGE-AWARE ELABORATION: the reply-composer can now draw on the brain's routed long-term knowledge, not just the last few turns — this both lets it hedge properly when unsure and gives richer knowledge answers. Off by default, pending a flip call.
 
-(4) THE "READ FROM SPIKES" WALL is now well-mapped: no spike read tried (firing rate, first-spike timing, or irregularity/dispersion) separates the two conditions in the memory-novelty test — with a now-trustworthy measurement — so the wall is likely "there is no separable signal here" (a wiring/credit problem) rather than "we're reading it wrong". The next step tests that directly.
+(4) THE "READ FROM SPIKES" WALL is now precisely mapped — and it is a READ-POWER gap, NOT a missing signal. No scalar spike read (firing rate, first-spike timing, irregularity/dispersion) separated the two conditions, so the natural guess was "there is no separable signal here". A decoder over the full per-neuron spike pattern then REFUTED that: it separates the two conditions on all 6 seeds, shuffle-clean — the signal IS present, in the distributed pattern. But a biological spiking read (a matched-filter template driving a readout neuron) recovers essentially none of it (0 of 6 seeds). So the signal is there yet the specific biological reads tried cannot reach it — a read-power gap, not a wiring gap.
+Next lever: a more powerful but still biology-faithful read — an opponent / push-pull read that recovers the sign information a single rectified channel discards (ranked first), then a dendritic nonlinear read (Jadi/Mel 2014).
 
 (5) A false "hollow" verdict in the record was corrected, and the cross-backend crash class was logged so it can't recur silently.
 
 (6) INFRASTRUCTURE: the mini-PC compute pool (36 cores) was unblocked — its provisioning had been silently rejecting every node because they carried old files the strict integrity check counted as tampering.
 
-Findings: `2026-08-28-wkv-learned-vs-native-head-AB-worth-keeping-opt-in`, `2026-08-28-mouth-repetition-decode-suppressible-GO`, `2026-08-28-onebrain-xedge-production-default-flip-NO-GO` (VOID-corrected: it was a cupy build crash), `2026-08-28-read-fidelity-nonrate-latency-UNDEFINED`, `2026-08-28-read-fidelity-dispersion-instrument-fixed-still-NO-read-beats-rate`.
+Findings: `2026-08-28-wkv-learned-vs-native-head-AB-worth-keeping-opt-in`, `2026-08-28-mouth-repetition-decode-suppressible-GO`, `2026-08-28-onebrain-xedge-production-default-flip-NO-GO` (VOID-corrected: it was a cupy build crash), `2026-08-28-read-fidelity-nonrate-latency-UNDEFINED`, `2026-08-28-read-fidelity-dispersion-instrument-fixed-still-NO-read-beats-rate`, `2026-08-28-read-fidelity-decoder-SIGNAL-FOUND-its-a-read-limit-not-wiring`, `2026-08-28-read-fidelity-popvec-template-biological-read-NOGO-power-gap-not-signal-gap`.
 
 ## 2026-08-28 — the e-prop-learned WKV-mouth head is confirmed swappable, and its save/load plumbing now exists
 
