@@ -285,3 +285,9 @@ de-risked, still default-OFF `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY`). No other task
 - READ-FIDELITY crux SETTLED as a READ problem: decoder separates 6/6 shuffle-clean (rate/latency/dispersion all miss it) -> a read-fidelity limit, not wiring; next = a population-vector/template spiking read.
 - AFFECT #86: expression-marker now brain-native spiking WTA (de-risked GO, default-OFF).
 - INFRA: the mini-PC pool (36 cores) UNBLOCKED (manifest guard scoped + safe reconcile); RAG #83 resolved. No production-default flips (all owner-gated); no board task newly DONE (de-risks stay open under de-risked label until wired-default-on).
+
+## reconcile 2026-08-28 (at main fe1911f2..) — one-brain xedge flip + this session
+- #177 one-brain cross-edge: appended the MILESTONE note — d6-WM->comprehension flipped PRODUCTION-DEFAULT-ON (fe1911f2, 6-seed FLIP_VERIFY_GO=True). First learned cross-edge live-by-default + learning per-turn.
+- LTM-shard elaboration cupy 6-seed GO (finding 2026-08-28-ltm-shard-elaboration-cupy...) — unblocks confidence->forthcomingness #94 re-test (elaboration now reaches past the buffer tier) + deepens knowledge-in-chat #66.
+- read-fidelity arc (rate/latency/dispersion/decoder/popvec/opponent) characterized; the perceived-vs-generated FACULTY is already GO 6/6 via #129 (separate-trace + opponent-ratio wiring).
+- honesty skip-and-continue built+merged (default-OFF, 28/28 wiring GO); gen-time honesty confirmed already-merged.

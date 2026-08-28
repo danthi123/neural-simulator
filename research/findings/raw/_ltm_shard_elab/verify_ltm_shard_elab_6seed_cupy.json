@@ -1,0 +1,1397 @@
+{
+  "probe": "rich_answer_composer_elaborate_from_ltm_shard",
+  "flag": "BRAIN_ELABORATE_FROM_LTM_SHARD (additive, default-OFF, byte-identical when off)",
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "varying_shard_changes_elaboration",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "lesion_reverts",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "moat",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "confidence_cap_engages",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    }
+  ],
+  "undefined_reasons": [],
+  "per_check_all_seeds": {
+    "byte_identical_off": true,
+    "load_bearing": true,
+    "varying_shard_changes_elaboration": true,
+    "lesion_reverts": true,
+    "moat": true,
+    "confidence_cap_engages": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "varying_shard_changes_elaboration": true,
+        "lesion_reverts": true,
+        "moat": true,
+        "confidence_cap_engages": true
+      },
+      "detail": {
+        "byte_identical_off": {
+          "ok": true,
+          "noLTM_tier_flag_is_noop": true,
+          "off_accessors_are_buffer_only": true,
+          "on_toggle_draws_ltm": true,
+          "facts_about_canada_off": [],
+          "facts_about_canada_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ],
+            [
+              "canada",
+              "export",
+              "oil"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "load_bearing": {
+          "ok": true,
+          "host_off_n": 2,
+          "host_on_n": 4,
+          "host_off": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "host_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_facts": [
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "extra_all_from_ltm": true,
+          "neural_off_n": 2,
+          "neural_on_n": 4
+        },
+        "varying_shard_changes_elaboration": {
+          "ok": true,
+          "full_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ],
+          "fewer_shard_on": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "contain",
+              "ontario"
+            ],
+            [
+              "canada",
+              "border",
+              "arctic"
+            ]
+          ]
+        },
+        "lesion_reverts": {
+          "ok": true,
+          "lesioned_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ]
+          ],
+          "intact_gather": [
+            [
+              "canada",
+              "border",
+              "usa"
+            ],
+            [
+              "usa",
+              "border",
+              "mexico"
+            ],
+            [
+              "canada",
+              "has",
+              "provinces"
+            ],
+            [
+              "canada",
+              "speak",
+              "english"
+            ]
+          ]
+        },
+        "moat": {
+          "ok": true,
+          "unknown_abstained": true,
+          "unknown_facts": [],
+          "on_facts_all_brain_sourced": true,
+          "unknown_answer": "I don't know about that."
+        },
+        "confidence_cap_engages": {
+          "ok": true,
+          "floor": 4,
+          "reach": 5,
+          "on_reach_facts": 5,
+          "off_reach_facts": 2,
+          "on_low_reason": "low_confidence_capped",
+          "on_low_kept": 4,
+          "on_high_reason": "high_confidence",
+          "on_high_granted": true,
+          "off_reason": "nothing_to_cap"
+        }
+      },
+      "summary": {
+        "host_off_n": 2,
+        "host_on_n": 4,
+        "neural_off_n": 2,
+        "neural_on_n": 4,
+        "reach_on_facts": 5,
+        "floor": 4,
+        "on_low_reason": "low_confidence_capped",
+        "on_high_reason": "high_confidence",
+        "off_reason": "nothing_to_cap"
+      }
+    }
+  ]
+}
