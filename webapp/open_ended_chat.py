@@ -342,7 +342,11 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         try:
             from webapp import wkv_mouth_generator as _WKV
             if _WKV.in_vocab_scope(msg, seed=seed):
-                raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens)
+                # de-risked 2026-08-28 (_wkv_rep_penalty_derisk.json, GO decode_suppressible): a decode-time
+                # repetition guard kills the learned-head looping residual (2/2 -> 0 loops, byte-identical-off);
+                # only reached when BRAIN_OPEN_ENDED_WKV_MOUTH is on, so the default path is unaffected.
+                raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens,
+                                          repetition_penalty=1.3, no_repeat_ngram_size=3)
                 wkv_used = True
                 generator_name = "wkv_mouth"
         except Exception:

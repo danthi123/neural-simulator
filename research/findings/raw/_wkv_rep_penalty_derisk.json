@@ -1,0 +1,801 @@
+{
+ "probe": "wkv_mouth_repetition_penalty_derisk",
+ "backend": "numpy",
+ "seed": 102,
+ "head_path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+ "npz_meta": {
+  "W_hat": [
+   1000,
+   128
+  ],
+  "head_b": [
+   1000
+  ],
+  "seed": 102,
+  "V": 1000,
+  "D": 128,
+  "sub_recov_ratio": 0.9132,
+  "sub_learned_recov": 0.8941,
+  "sub_copied_recov": 0.9791,
+  "integrated_go": true,
+  "source_runner": "_wkv_mouth_readout_eprop_batched_substrate_derisk"
+ },
+ "gen_seed_indices": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "n_prompts": 8,
+ "max_new_tokens": 50,
+ "read_window": 40,
+ "repetition_penalty": 1.3,
+ "no_repeat_ngram_size": 3,
+ "cycle_window": 20,
+ "fail_ngram_count": 4,
+ "fail_period2_run": 4,
+ "native_self_nll_mean_cited": 1.469,
+ "self_nll_slack": 0.15,
+ "self_nll_ceiling": 1.619,
+ "baseline_runs": [
+  {
+   "prompt": "once upon a time there was a little boy named tim who had a dog",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "once upon a time there was a little boy named tim who had a dog named max lived in better blue and wanted to play with everyone what are sad and sad too tight as she could not find it home or go outside or play with it but it was too high high high high in the air high house outside there was a",
+   "continuation": "named max lived in better blue and wanted to play with everyone what are sad and sad too tight as she could not find it home or go outside or play with it but it was too high high high high in the air high house outside there was a",
+   "gen_seconds": 0.104,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.272645538667521,
+   "n_words_scored": 65,
+   "n_continuation_words": 50,
+   "distinct_1": 0.7,
+   "distinct_2": 0.9387755102040817,
+   "distinct_3": 0.9791666666666666,
+   "max_repeat_run": 4,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 3,
+    "max_2gram": [
+     "high",
+     "high"
+    ],
+    "max_3gram_repeat_count": 2,
+    "max_3gram": [
+     "high",
+     "high",
+     "high"
+    ],
+    "period2_max_run": 2,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "tell me a story about a happy dog and his best friend",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "tell me a story about a happy dog and his best friend ever after together for why they could help everyone find everyone was happy and needed help others again for everyone what happened and again ever again and again ever again and again ever again and again again and again i was safe again and again for the lesson and again",
+   "continuation": "ever after together for why they could help everyone find everyone was happy and needed help others again for everyone what happened and again ever again and again ever again and again ever again and again again and again i was safe again and again for the lesson and again",
+   "gen_seconds": 0.093,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 2.17602037814563,
+   "n_words_scored": 62,
+   "n_continuation_words": 50,
+   "distinct_1": 0.44,
+   "distinct_2": 0.6938775510204082,
+   "distinct_3": 0.7916666666666666,
+   "max_repeat_run": 2,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 5,
+    "max_2gram": [
+     "and",
+     "again"
+    ],
+    "max_3gram_repeat_count": 3,
+    "max_3gram": [
+     "again",
+     "and",
+     "again"
+    ],
+    "period2_max_run": 1,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": true,
+    "gate_fail": true
+   }
+  },
+  {
+   "prompt": "lily and her mom went to the park to play with a ball",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "lily and her mom went to the park to play with a ball and they lived happily decided ever after together or go home for everyone what job happened to the kind squirrel saw everyone was walking in the park and saw a big tree there was a little boy named tim wanted to help everyone what are you doing here and kind",
+   "continuation": "and they lived happily decided ever after together or go home for everyone what job happened to the kind squirrel saw everyone was walking in the park and saw a big tree there was a little boy named tim wanted to help everyone what are you doing here and kind",
+   "gen_seconds": 0.087,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.23244845094643,
+   "n_words_scored": 63,
+   "n_continuation_words": 50,
+   "distinct_1": 0.78,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "big",
+     "tree"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "big",
+     "tree",
+     "there"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "the little girl saw a big red ball in the yard",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "the little girl saw a big red ball in the yard and go to the icy park fell down from the tree and started to turns down the sun went down the tree and the little boy was very happy and thanked the bird as the bird flew closer to the nest high tree high house outside there was a little",
+   "continuation": "and go to the icy park fell down from the tree and started to turns down the sun went down the tree and the little boy was very happy and thanked the bird as the bird flew closer to the nest high tree high house outside there was a little",
+   "gen_seconds": 0.087,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.408010647439063,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.6,
+   "distinct_2": 0.8979591836734694,
+   "distinct_3": 0.9791666666666666,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 2,
+    "max_2gram": [
+     "the",
+     "bird"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "thanked",
+     "the",
+     "bird"
+    ],
+    "period2_max_run": 1,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "tom was very happy because he had a new toy car",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "tom was very happy because he had a new toy car zoom around the park before she saw a big tree there was a little scary girl named lucy came to the park with her mom and dad took him from the lesson of the park or go to the park to buy some food for food and cars apples books",
+   "continuation": "zoom around the park before she saw a big tree there was a little scary girl named lucy came to the park with her mom and dad took him from the lesson of the park or go to the park to buy some food for food and cars apples books",
+   "gen_seconds": 0.088,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.3711583301576127,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.76,
+   "distinct_2": 0.9183673469387755,
+   "distinct_3": 0.9791666666666666,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 2,
+    "max_2gram": [
+     "the",
+     "park"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "the",
+     "lesson",
+     "of"
+    ],
+    "period2_max_run": 1,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "one day a cat and a dog became good friends and played together",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "one day a cat and a dog became good friends and played together together and had fun on the day together ever had made a fun day different song than everyone had made a new friend ever after before everyone was walking in the park and saw a big tree there was a little boy named tim lived in a small house there",
+   "continuation": "together and had fun on the day together ever had made a fun day different song than everyone had made a new friend ever after before everyone was walking in the park and saw a big tree there was a little boy named tim lived in a small house there",
+   "gen_seconds": 0.085,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.544901546761549,
+   "n_words_scored": 63,
+   "n_continuation_words": 50,
+   "distinct_1": 0.66,
+   "distinct_2": 0.9591836734693877,
+   "distinct_3": 0.9791666666666666,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "the",
+     "park"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "the",
+     "park",
+     "and"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "the little boy was so happy to see his mom and dad",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "the little boy was so happy to see his mom and dad took him from the broken toy car from the tree than the ball high puddle high in the air and it was a bird named bob was happy and thanked the park or go outside or play with it again or again or again or again or again or again",
+   "continuation": "took him from the broken toy car from the tree than the ball high puddle high in the air and it was a bird named bob was happy and thanked the park or go outside or play with it again or again or again or again or again or again",
+   "gen_seconds": 0.092,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.2911888576629156,
+   "n_words_scored": 62,
+   "n_continuation_words": 50,
+   "distinct_1": 0.6,
+   "distinct_2": 0.8163265306122449,
+   "distinct_3": 0.8541666666666666,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 5,
+    "max_2gram": [
+     "again",
+     "or"
+    ],
+    "max_3gram_repeat_count": 5,
+    "max_3gram": [
+     "again",
+     "or",
+     "again"
+    ],
+    "period2_max_run": 9,
+    "period2_active_at_end": 9,
+    "unresolved_at_cutoff": true,
+    "gate_fail": true
+   }
+  },
+  {
+   "prompt": "sam and his sister went outside to play in the sun",
+   "repetition_penalty": 1.0,
+   "no_repeat_ngram_size": 0,
+   "text": "sam and his sister went outside to play in the sun and the sun went else saw a tree there was a big tree there eyes cat named tom went to the park to buy some food for food and cars apples books and books on the other animals and danced together together and had fun together all the animals in",
+   "continuation": "and the sun went else saw a tree there was a big tree there eyes cat named tom went to the park to buy some food for food and cars apples books and books on the other animals and danced together together and had fun together all the animals in",
+   "gen_seconds": 0.089,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.813733450736703,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.66,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 2,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "apples",
+     "books"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "apples",
+     "books",
+     "and"
+    ],
+    "period2_max_run": 1,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  }
+ ],
+ "treated_runs": [
+  {
+   "prompt": "once upon a time there was a little boy named tim who had a dog",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "once upon a time there was a little boy named tim who had a dog named max lived in small house there squirrel named spot went to the park wish ever again and again for everyone what happened or help you get down from the tree as she could not find it home but it was too high for her ball high up in the",
+   "continuation": "named max lived in small house there squirrel named spot went to the park wish ever again and again for everyone what happened or help you get down from the tree as she could not find it home but it was too high for her ball high up in the",
+   "gen_seconds": 0.1,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.325251991718702,
+   "n_words_scored": 65,
+   "n_continuation_words": 50,
+   "distinct_1": 0.84,
+   "distinct_2": 1.0,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "tree",
+     "as"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "tree",
+     "as",
+     "she"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "tell me a story about a happy dog and his best friend",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "tell me a story about a happy dog and his best friend ever after together for never dance everyone was walking in the park and had field go to the slide high outside high house there was a little boy named tim went to the park with his mom and dad took him from the lesson but he could not find it",
+   "continuation": "ever after together for never dance everyone was walking in the park and had field go to the slide high outside high house there was a little boy named tim went to the park with his mom and dad took him from the lesson but he could not find it",
+   "gen_seconds": 0.087,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 2.078353732956393,
+   "n_words_scored": 62,
+   "n_continuation_words": 50,
+   "distinct_1": 0.84,
+   "distinct_2": 0.9591836734693877,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "went",
+     "to"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "went",
+     "to",
+     "the"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "lily and her mom went to the park to play with a ball",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "lily and her mom went to the park to play with a ball near the woods under water from the tree bob decided he could not get them or go outside or play with it but it was too high for everyone what happened out inside why are walking in the park there was two friends called him else to help others up",
+   "continuation": "near the woods under water from the tree bob decided he could not get them or go outside or play with it but it was too high for everyone what happened out inside why are walking in the park there was two friends called him else to help others up",
+   "gen_seconds": 0.088,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.6665932669420447,
+   "n_words_scored": 63,
+   "n_continuation_words": 50,
+   "distinct_1": 0.9,
+   "distinct_2": 1.0,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "happened",
+     "out"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "happened",
+     "out",
+     "inside"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "the little girl saw a big red ball in the yard",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "the little girl saw a big red ball in the yard and go to the icy park fell down from the tree alone and started spin around the garden there was a little boy named tim went to the park with his mom and dad took him home and gave it some water from a funny monkey am outside or anna",
+   "continuation": "and go to the icy park fell down from the tree alone and started spin around the garden there was a little boy named tim went to the park with his mom and dad took him home and gave it some water from a funny monkey am outside or anna",
+   "gen_seconds": 0.087,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.5674513032946236,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.8,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "his",
+     "mom"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "his",
+     "mom",
+     "and"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "tom was very happy because he had a new toy car",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "tom was very happy because he had a new toy car zoom around the park to buy some food and more fun together for everyone or help others everyone what are you doing here and kind squirrel look at my name are you okay max said no i am okay now can help you fly your hat away from the tree",
+   "continuation": "zoom around the park to buy some food and more fun together for everyone or help others everyone what are you doing here and kind squirrel look at my name are you okay max said no i am okay now can help you fly your hat away from the tree",
+   "gen_seconds": 0.091,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.4566408632611854,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.84,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "are",
+     "you"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "are",
+     "you",
+     "okay"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "one day a cat and a dog became good friends and played together",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "one day a cat and a dog became good friends and played together all day long around turns the other animals came to the park with everyone and danced at the animals in the park they saw a big tree there was a little boy named tim wanted to help jump but he could not get out anymore or go outside his way",
+   "continuation": "all day long around turns the other animals came to the park with everyone and danced at the animals in the park they saw a big tree there was a little boy named tim wanted to help jump but he could not get out anymore or go outside his way",
+   "gen_seconds": 0.098,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.5331113411852049,
+   "n_words_scored": 63,
+   "n_continuation_words": 50,
+   "distinct_1": 0.86,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "little",
+     "boy"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "little",
+     "boy",
+     "named"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "the little boy was so happy to see his mom and dad",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "the little boy was so happy to see his mom and dad took him from the bed of their hands and they lived happily ever after tom can help or go outside or play with it but he could not find it again or again for everyone what happened or help you get down from the tree as she saw a big",
+   "continuation": "took him from the bed of their hands and they lived happily ever after tom can help or go outside or play with it but he could not find it again or again for everyone what happened or help you get down from the tree as she saw a big",
+   "gen_seconds": 0.088,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.391950955868011,
+   "n_words_scored": 62,
+   "n_continuation_words": 50,
+   "distinct_1": 0.84,
+   "distinct_2": 0.9795918367346939,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "again",
+     "or"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "again",
+     "or",
+     "again"
+    ],
+    "period2_max_run": 1,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  },
+  {
+   "prompt": "sam and his sister went outside to play in the sun",
+   "repetition_penalty": 1.3,
+   "no_repeat_ngram_size": 3,
+   "text": "sam and his sister went outside to play in the sun shadow tree down and watch everyone was happy and thanked the animals as thank better he could not get out anymore or go home for yoga ever after before everyone what happened or she asked if she could help her mom can i have some honey from them alone and",
+   "continuation": "shadow tree down and watch everyone was happy and thanked the animals as thank better he could not get out anymore or go home for yoga ever after before everyone what happened or she asked if she could help her mom can i have some honey from them alone and",
+   "gen_seconds": 0.089,
+   "learned_head_status": {
+    "enabled": true,
+    "path": "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_6seed.npz",
+    "applied": true,
+    "reason": null,
+    "sub_recov_ratio": 0.9132,
+    "sub_learned_recov": 0.8941,
+    "sub_copied_recov": 0.9791,
+    "integrated_go": true
+   },
+   "self_nll": 1.956455170090233,
+   "n_words_scored": 61,
+   "n_continuation_words": 50,
+   "distinct_1": 0.88,
+   "distinct_2": 1.0,
+   "distinct_3": 1.0,
+   "max_repeat_run": 1,
+   "cycle_metrics": {
+    "window_tokens": 20,
+    "max_2gram_repeat_count": 1,
+    "max_2gram": [
+     "what",
+     "happened"
+    ],
+    "max_3gram_repeat_count": 1,
+    "max_3gram": [
+     "what",
+     "happened",
+     "or"
+    ],
+    "period2_max_run": 0,
+    "period2_active_at_end": 0,
+    "unresolved_at_cutoff": false,
+    "gate_fail": false
+   }
+  }
+ ],
+ "baseline_self_nll_mean": 1.5137634000646778,
+ "treated_self_nll_mean": 1.6219760781645496,
+ "n_baseline_loop": 2,
+ "n_treated_loop": 0,
+ "n_treated_unresolved_at_cutoff": 0,
+ "decode_suppressible": true,
+ "self_nll_secondary_guard_ok": false,
+ "all_learned_applied": true,
+ "rng_untouched_across_run": true,
+ "elapsed_s": 1.5,
+ "verdict": {
+  "label": "decode-time repetition_penalty/no_repeat_ngram_size guard suppresses the learned-head repetition/looping residual named by the A/B GO's SS5, through the production entry point",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(lever) the learned head loader reports applied=True on every call (no silent fallback)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(RNG) host process-global numpy RNG state is byte-identical before/after the whole run",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(primary gate) every penalty-ON sample passes the cycle-aware repetition gate",
+    "ok": true,
+    "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f5f6f963e20>",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "GO": true,
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(lever) the learned head loader reports applied=True on every call (no silent fallback)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(RNG) host process-global numpy RNG state is byte-identical before/after the whole run",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(primary gate) every penalty-ON sample passes the cycle-aware repetition gate",
+   "ok": true,
+   "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7f5f6f963e20>",
+   "note": ""
+  }
+ ]
+}

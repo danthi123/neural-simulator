@@ -245,3 +245,14 @@ BRAIN_OPEN_ENDED channel specifically) with two flagged open residuals (vocab sc
 recurrent-store training provenance). No sim/ edit, no production wiring built — scope-only, so no other
 task changed state. Did not touch #80/#182 (shared read-fidelity wall) — not open in the current board
 view, left as-is.
+
+2026-08-28 ~09:25 · mouth crutch-burndown + xedge-correction cycle · reconciled:
+- ADDED #191 (Speech&language, de-risked, p3): "The brain's own voice can speak coherently" — the from-scratch
+  spiking WKV mouth generates coherently (learned-vs-native head A/B GO 2026-08-28) + the looping residual is
+  DECODE-SUPPRESSIBLE (2026-08-28-mouth-repetition-decode-suppressible-GO, wired opt-in BRAIN_OPEN_ENDED_WKV_MOUTH
+  default-OFF) + the stale-cache training unblock + learned-head persistence. Opt-in, not yet production-default.
+- #83 (RAG index auto-update): marked DONE — verified the worktree auto-update works on main (a worktree commit
+  triggered a real index refresh); the unmerged research/rag-worktree-fix branch is stale, not merged.
+- xedge one-brain flip: the 2026-08-28 NO-GO was CORRECTED — it was a cupy build crash (comprehension_production_organ
+  _snapshot_rest host->device), fixed a8c8a2d18; 6-seed cupy re-verify bumped to gpu.queue front -> autonomous flip
+  if 6/6 GO. Left #108's one-brain thread as-is pending the re-verify verdict (did not mark anything done there).
