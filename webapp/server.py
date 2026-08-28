@@ -5159,6 +5159,23 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 except Exception:
                     known = False
                 comprehension_info["known_binding"] = bool(known)
+                # ── ONE-BRAIN XEDGE PER-TURN LIVE PLASTICITY (PART 3, 2026-08-27) ───────────────────────────────
+                # LEARN THROUGH THE CONVERSATION: on a turn where a WM referent is HELD (the d6 multiref organ set
+                # pool.xedge_focus this turn) AND comprehension RESOLVED confidently, apply ONE in-brain
+                # self-supervised credited plasticity step to the d6-WM->comprehension cross-edge (three-factor,
+                # DA-coincidence-gated, bounded by stdp_w_max) -- the SAME atom PART 2 fires over a build curriculum,
+                # now fired ONCE per REAL chat turn so the edge GROWS from W0=0.05 through the conversation itself.
+                # The credit VALUE + teach DIRECTION are read off the brain's OWN confident spiking resolution (no
+                # host label). Behind BRAIN_ONEBRAIN_XEDGE + BRAIN_ONEBRAIN_XEDGE_LEARN (both default-OFF) ->
+                # byte-identical no-op when off / no referent held / content inconclusive. Never crashes a turn.
+                if cj["comprehended"] or known:
+                    try:
+                        from research.runners.onebrain_xedge_production import credit_live_turn_from_comprehension
+                        _xtrace = credit_live_turn_from_comprehension(corg, cj["svo"])
+                        if _xtrace is not None:
+                            comprehension_info["xedge_live_learn"] = _xtrace
+                    except Exception as _xe:
+                        comprehension_info["xedge_live_learn"] = {"error": f"{type(_xe).__name__}: {_xe}"}
                 if (not cj["comprehended"]) and (not known):
                     # LOW margin + not a known binding -> the brain did not comprehend the roles -> honest abstain.
                     comprehension_info["abstained"] = True

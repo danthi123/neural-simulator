@@ -86,22 +86,71 @@ def xedge_learn_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
-def grow_live_selfsupervised(p, n_turns: int = 80, conf: float = 0.02):
-    """PART 2 LIVE-LEARNING. Grow the cross-edge from W0=0.05 via an IN-BRAIN, SELF-SUPERVISED credit signal: no
-    host ground-truth label anywhere. Per turn: hold a WM candidate pool, present a role-resolving discourse
-    (agent- or patient-leaning content), READ the brain's OWN sel resolution (`amb_read` margin), and IFF the
-    comprehension is CONFIDENT (|margin| > `conf`) drive teach_{the-role-the-brain-resolved} -- the DA-coincidence
-    machinery then grows w{held}->sel_{resolved}. Interleaves agent-discourse-while-holding-p_agent and
-    patient-discourse-while-holding-p_patient so BOTH role edges learn from use. Freezes the candidate gate at the
-    end (no further growth in production reads). Returns the weight trajectory. `p` is an R3Pool (gate open, edge
-    at 0.05). Credit VALUE = comprehension's own spiking verdict; the WM->role association is the LEARNED content."""
-    from research.runners._onebrain_integration_r2_threefactor_selforganized import CUE_PA, GATE, _role_assignment
-    pa, pp, pc = _role_assignment(p.seed)
-    ix = p.ix
+# PART 3 PER-TURN LIVE PLASTICITY — module toggle. When True (the LIVE production intent), the learn build LEAVES
+# the cross-edge at W0=0.05 with the gate OPEN (no build-time curriculum, no freeze), so it grows PER-TURN from
+# in-brain credit during real chat. When False, the learn build pre-grows over the PART-2 build curriculum then
+# freezes (reproduces `2026-08-27-...-live-learning-GO`); the PART-2 `--verify-live` entrypoint sets it False.
+_LIVE_PER_TURN = True
+
+
+def live_per_turn_enabled() -> bool:
+    """Whether the LEARN build grows the cross-edge PER-TURN during live chat (True, production intent) vs the
+    PART-2 build-time curriculum (False). Only meaningful when `BRAIN_ONEBRAIN_XEDGE_LEARN` is also on."""
+    return bool(_LIVE_PER_TURN)
+
+
+def set_live_per_turn(on: bool) -> None:
+    """Select per-turn live growth (True) vs the PART-2 build curriculum (False) for the LEARN build. Must be set
+    BEFORE the first `get_xedge_pool` (the pool is built once + cached)."""
+    global _LIVE_PER_TURN
+    _LIVE_PER_TURN = bool(on)
+
+
+# discourse cue directions (host/teacher-scaffold, declared residual #1 -- WHICH discourse is presented). The
+# in-brain part is the credit VALUE + teach DIRECTION, read off the brain's OWN confident amb_read below.
+def _cue_dirs(ix):
+    from research.runners._onebrain_integration_r2_threefactor_selforganized import CUE_PA
     AG_KEYS = [("cue_animacy_pos", CUE_PA), ("cue_verbfit_pos", CUE_PA)]           # amb_read: string keys
     PA_KEYS = [("cue_animacy_neg", CUE_PA), ("cue_verbfit_neg", CUE_PA)]
     AG_IX = [(ix["cue_animacy_pos"], CUE_PA), (ix["cue_verbfit_pos"], CUE_PA)]     # _episode: index arrays
     PA_IX = [(ix["cue_animacy_neg"], CUE_PA), (ix["cue_verbfit_neg"], CUE_PA)]
+    return AG_KEYS, PA_KEYS, AG_IX, PA_IX
+
+
+def _credit_turn_step(p, hold, cue_keys, cue_ix, conf: float, gate=None):
+    """ONE in-brain self-supervised credit step (the atom of PART 2's curriculum AND PART 3's per-turn chat). Hold
+    `hold`, present the role-resolving discourse `cue_keys`, READ the brain's OWN sel resolution (`amb_read`
+    margin), and IFF CONFIDENT (|margin| > `conf`) drive teach_{the-role-the-brain-resolved} for ONE credited
+    `_episode` -- the DA-coincidence machinery then grows w{hold}->sel_{resolved} (three-factor, bounded by
+    stdp_w_max). NO host ground-truth label: the credit VALUE + DIRECTION are both the substrate's own spikes.
+    When `gate` is given (PART 3 per-turn), OPEN it for exactly this one credited episode then RE-FREEZE, so every
+    production READ is a frozen forward pass (the sel-WTA margin a live read consumes is unreliable while the gate
+    is open). `gate=None` (PART 2 curriculum) leaves the gate as the caller manages it. The confidence `amb_read`
+    is always a frozen read (it drives no teach pool -> no credit). Returns (credited: bool, teach: str|None,
+    margin: float)."""
+    margin = float(p.amb_read(hold, cue_keys, band=True)["margin"])                # the brain's OWN resolution (frozen)
+    if abs(margin) > conf:                                                         # confident comprehension = credit
+        teach = "teach_agent" if margin > 0 else "teach_patient"
+        if gate is not None:
+            p.b.set_plasticity_gate(gate, 1.0)                                     # open for exactly ONE credited step
+        p._episode(hold, cue_ix, credited=True, teach_pool=teach)                  # self-supervised credited episode
+        if gate is not None:
+            p.b.set_plasticity_gate(gate, 0.0)                                     # re-freeze -> reads stay frozen
+        return True, teach, margin
+    return False, None, margin
+
+
+def grow_live_selfsupervised(p, n_turns: int = 80, conf: float = 0.02):
+    """PART 2 LIVE-LEARNING (build-time curriculum). Grow the cross-edge from W0=0.05 via an IN-BRAIN,
+    SELF-SUPERVISED credit signal: no host ground-truth label anywhere. Per turn: hold a WM candidate pool,
+    present a role-resolving discourse (agent- or patient-leaning content), and run `_credit_turn_step` (READ the
+    brain's OWN sel resolution, IFF confident credit teach_{resolved}). Interleaves agent-discourse-while-holding-
+    p_agent and patient-discourse-while-holding-p_patient so BOTH role edges learn from use. Freezes the candidate
+    gate at the end (no further growth in production reads). Returns the weight trajectory. `p` is an R3Pool (gate
+    open, edge at 0.05). PART 3 fires the SAME `_credit_turn_step` ONCE per LIVE chat turn instead (no freeze)."""
+    from research.runners._onebrain_integration_r2_threefactor_selforganized import GATE, _role_assignment
+    pa, pp, pc = _role_assignment(p.seed)
+    AG_KEYS, PA_KEYS, AG_IX, PA_IX = _cue_dirs(p.ix)
     traj = [dict(turn=0, **p.cross_weights())]
     n_credited = 0
     for t in range(n_turns):
@@ -110,10 +159,8 @@ def grow_live_selfsupervised(p, n_turns: int = 80, conf: float = 0.02):
             hold, cue_keys, cue_ix = pa, AG_KEYS, AG_IX
         else:
             hold, cue_keys, cue_ix = pp, PA_KEYS, PA_IX
-        margin = float(p.amb_read(hold, cue_keys, band=True)["margin"])            # the brain's OWN resolution
-        if abs(margin) > conf:                                                     # confident comprehension = credit
-            teach = "teach_agent" if margin > 0 else "teach_patient"
-            p._episode(hold, cue_ix, credited=True, teach_pool=teach)              # self-supervised credited episode
+        credited, _teach, _margin = _credit_turn_step(p, hold, cue_keys, cue_ix, conf)
+        if credited:
             n_credited += 1
         if (t + 1) % 20 == 0 or t == n_turns - 1:
             traj.append(dict(turn=t + 1, **p.cross_weights()))
@@ -148,6 +195,8 @@ class XedgeProductionPool:
         self.grow_traj = None
         self.cross_weights = None
         self.learned = False        # True when the edge was GROWN LIVE (self-supervised, PART 2) vs frozen host-grown
+        self.live_per_turn = False  # PART 3: the edge starts at W0=0.05, gate OPEN, and grows PER real chat turn
+        self.n_live_credited = 0    # PART 3: count of live turns that produced a credited plasticity step
 
     def ensure_built(self):
         if self._built:
@@ -171,12 +220,23 @@ class XedgeProductionPool:
         from research.runners._onebrain_integration_r2_threefactor_selforganized import _role_assignment
 
         if xedge_learn_enabled():
-            # PART 2 LIVE-LEARNING: start the edge at W0=0.05 (R3Pool, gate OPEN) and GROW it from the in-brain
-            # self-supervised credit signal over a multi-turn sequence, then freeze. Emergent, not pre-grown.
+            # LIVE-LEARNING: start the edge at W0=0.05 (R3Pool, gate OPEN). Emergent, not pre-grown.
             from research.runners._onebrain_integration_r3_spiking_dopamine_credit import R3Pool
             p = R3Pool(self.seed, mode="intact")
-            self.grow_traj = grow_live_selfsupervised(p)
             self.learned = True
+            if live_per_turn_enabled():
+                # PART 3 PER-TURN: leave the edge at W0=0.05, but FREEZE the candidate gate now (R3Pool.__init__
+                # opened it) -- do NOT run a build curriculum. The cross-edge GROWS one credited step per LIVE chat
+                # turn via `credit_live_turn`, which OPENS the gate for exactly that one step then RE-FREEZES, so
+                # every production READ is a frozen forward pass. The trajectory starts at the near-zero baseline.
+                from research.runners._onebrain_integration_r2_threefactor_selforganized import GATE as _GATE
+                p.b.set_plasticity_gate(_GATE, 0.0)
+                self.live_per_turn = True
+                self.grow_traj = [dict(turn=0, **p.cross_weights())]
+            else:
+                # PART 2 BUILD-CURRICULUM: grow over a multi-turn build-time sequence, then freeze (reproduces the
+                # 2026-08-27 live-learning-GO; the `--verify-live` entrypoint sets `set_live_per_turn(False)`).
+                self.grow_traj = grow_live_selfsupervised(p)
         else:
             # PART 1 FROZEN: grow via R3-v3's host-schedule credit-gated training, freeze on return.
             p = R3v3Pool(self.seed, mode="intact")
@@ -236,6 +296,80 @@ class XedgeProductionPool:
         if register_index is None or register_index < 0:
             return None
         return CAND_POOLS[min(int(register_index), len(CAND_POOLS) - 1)]
+
+    # ── PART 3 PER-TURN LIVE PLASTICITY: grow the cross-edge ONE credited step per real chat turn ──
+    def credit_live_turn(self, content_direction: str, conf: float = 0.02, lesion_plasticity: bool = False):
+        """Apply ONE in-brain self-supervised credited plasticity step to the cross-edge from the HELD focus pool
+        (`self.pool.xedge_focus`), during a LIVE chat turn -- the SAME `_credit_turn_step` PART 2 fires over a
+        build curriculum, now fired ONCE per turn. The gate is OPENED for exactly this one credited step then
+        RE-FROZEN (every production READ is a frozen forward pass). `content_direction` in {"agent","patient"} is
+        the turn's discourse content (host/teacher scaffold, declared residual #1 -- WHICH discourse); the credit
+        VALUE + the teach DIRECTION are read off the brain's OWN confident `amb_read` (|margin|>conf), so NO host
+        label writes the weight. Bounded by stdp_w_max (F3, the R3Pool gate). `lesion_plasticity=True` runs the
+        SAME credit path but LEAVES THE GATE FROZEN (the load-bearing lesion: the credited episode drives, yet no
+        weight can accumulate). No-op (byte-identical, returns None) unless `live_per_turn` is active, a focus is
+        held, and the content resolves. Appends the new weights to `grow_traj` and returns a small trace dict."""
+        if not self.ok or not self.live_per_turn:
+            return None
+        foc = getattr(self.pool, "xedge_focus", None)
+        if foc is None or content_direction not in ("agent", "patient"):
+            return None
+        p = self._r3pool
+        from research.runners._onebrain_integration_r2_threefactor_selforganized import GATE
+        AG_KEYS, PA_KEYS, AG_IX, PA_IX = _cue_dirs(p.ix)
+        if content_direction == "agent":
+            cue_keys, cue_ix = AG_KEYS, AG_IX
+        else:
+            cue_keys, cue_ix = PA_KEYS, PA_IX
+        w_before = dict(self.cross_weights) if self.cross_weights else {}
+        # OPEN the gate for exactly this one credited step, then RE-FREEZE (reads stay a frozen forward pass). The
+        # lesion runs the identical credit path with the gate LEFT FROZEN (gate=None) -> no weight accumulates.
+        credited, teach, margin = _credit_turn_step(p, foc, cue_keys, cue_ix, conf,
+                                                    gate=(None if lesion_plasticity else GATE))
+        w_after = p.cross_weights()
+        self.cross_weights = w_after
+        if credited:
+            self.n_live_credited += 1
+        self.grow_traj.append(dict(turn=len(self.grow_traj), focus=foc, content=content_direction,
+                                   credited=bool(credited), teach=teach, margin=round(float(margin), 4), **w_after))
+        return {"credited": bool(credited), "teach": teach, "margin": float(margin), "focus": foc,
+                "content_direction": content_direction, "w_before": w_before, "w_after": w_after,
+                "n_live_credited": self.n_live_credited}
+
+
+def credit_live_turn_from_comprehension(comp_organ, svo, conf: float = 0.02):
+    """LIVE reply-path hook (PART 3). Called from `webapp.server.brain_reply` on a real chat turn where a WM
+    referent is HELD (the d6 multiref organ set `pool.xedge_focus` this turn) AND comprehension resolved (a
+    competent transitive). Derives the held referent's DISCOURSE role IN-BRAIN -- the sign of the first noun's
+    per-noun agent-evidence a0 off `cp_firing_states` (positional focus = the primary held referent ~ n0,
+    declared residual) -- and applies ONE credited plasticity step via `pool.credit_live_turn`. No-op
+    (byte-identical, returns None) unless the flags are on, the learn build is per-turn, a focus is held, and the
+    content commits (|a0| clears the calibrated role floor). Never raises into the turn (best-effort)."""
+    try:
+        if not (xedge_enabled() and xedge_learn_enabled()):
+            return None
+        pool = get_xedge_pool()
+        if pool is None or not getattr(pool, "live_per_turn", False):
+            return None
+        if getattr(pool.pool, "xedge_focus", None) is None:
+            return None
+        n0, v, n1 = svo
+        comp_organ.ensure_built()
+        # in-brain content read of the held (first) referent: a0 = sel_agent-sel_patient evidence for n0.
+        with comp_organ._guard():
+            a0, a1 = comp_organ._read_per_noun(comp_organ.comp, n0, v, n1)
+        floor = float(getattr(comp_organ, "role_floor", 0.0) or 0.0)
+        if abs(a0) <= floor:
+            return None                                  # content did not commit a role -> no self-supervised credit
+        direction = "agent" if a0 > 0 else "patient"
+        trace = pool.credit_live_turn(direction, conf=conf)
+        if trace is not None:
+            trace["a0"] = float(a0)
+            trace["a1"] = float(a1)
+            trace["role_floor"] = floor
+        return trace
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {e}"}
 
 
 _POOL: "XedgeProductionPool | None" = None
@@ -376,6 +510,98 @@ def _selftest_livelearn(pool, seed):
             "GO": bool(grew_agent and grew_patient and bounded and flips_i > 0 and flips_l == 0)}
 
 
+def _selftest_perturn(seed, n_turns=24, conf=0.02):
+    """PART 3 end-to-end (offline, exercises the SAME per-turn credit path the live handler calls): over a
+    sequence of turns on the SAME held focus pool (w0 = the positional focus), the cross-edge (1) RISES from
+    W0=0.05 one credited step at a time (emergent per-turn, NOT a build curriculum); (2) stays BOUNDED by
+    stdp_w_max (F3); (3) is LOAD-BEARING across the session -- a session that TEACHES the held referent the AGENT
+    role makes a LATER balanced read resolve it AGENT, a session that teaches PATIENT resolves it PATIENT (the
+    later resolution reflects what earlier turns taught); (4) LESION the per-turn plasticity (freeze the gate ->
+    no weight moves) and the edge does NOT accumulate -> the later read reverts to baseline (no resolved role)."""
+    import numpy as np
+    from research.runners import comprehension_production_organ as _CO
+    from research.runners._onebrain_integration_r2_threefactor_selforganized import CAND_POOLS, HMAX
+    from research.runners._spiking_comprehension_monitor_derisk import build_battery
+    global _POOL
+    foc = CAND_POOLS[0]                                    # the positional live focus (declared residual)
+    ambig = [it for it in build_battery(seed, n_per_cond=3) if it[0] == 0 and "ambig" in it[1]][:5]
+
+    def run_session(direction, lesion_plasticity):
+        global _POOL
+        _POOL = None                                      # FRESH pool per session (module global, not a local)
+        _CO._ORGAN = None
+        pool = get_xedge_pool(seed)                       # per-turn build: edge at 0.05, gate FROZEN between turns
+        assert pool is not None and pool.ok and pool.live_per_turn, "per-turn pool failed to build"
+        pool.set_focus(foc)
+        role_key = f"{foc}->{'A' if direction == 'agent' else 'P'}"
+        traj = [float(pool.cross_weights[role_key])]
+        for _t in range(n_turns):
+            # ONE in-brain self-supervised credited step per turn (opens the gate for that step then re-freezes).
+            # LESION: the identical credit path with the gate LEFT FROZEN -> no weight accumulates.
+            pool.credit_live_turn(direction, conf=conf, lesion_plasticity=lesion_plasticity)
+            traj.append(float(pool.cross_weights[role_key]))
+        # LATER read #1 (headline, content-cancelled + edge-attributable): the WM-RESOLVED balanced margin for the
+        # held focus -- EXACTLY the quantity `_wm_resolved_role` thresholds. delta = margin(foc) - baseline(no-edge
+        # control hold) is signed ONLY by the grown cross-edge, so it isolates what the per-turn turns taught.
+        amb = pool.pool.xedge_amb_read
+        cues = pool.pool.xedge_balanced_cues
+        base_pool = pool.pool.xedge_base_pool
+        baseline = float(amb(base_pool, cues)["margin"])
+        wm_margins = [float(amb(foc, cues)["margin"]) for _ in range(3)]
+        delta = float(np.mean(wm_margins)) - baseline
+        # LATER read #2 (decision-level, through the REAL production repair path): the role + whether the edge
+        # SIGNED it (wm_resolved). Content-ambiguous items -> the cross-edge is the tiebreaker the content lacked.
+        corg = pool.comp_organ
+        corg.ensure_built()
+        pool.pool.xedge_focus = foc
+        reads = []
+        for (lab, tag, n0, v, n1) in ambig:
+            r = corg.repair_target(f"{n0} {v} {n1}")
+            reads.append({"item": f"{n0}/{v}/{n1}", "role": (r.get("role") if r else None),
+                          "wm_resolved": bool(r.get("wm_resolved")) if r else False})
+        wmax = max(pool.cross_weights.values())
+        return {"direction": direction, "lesion": lesion_plasticity, "w_focus_start": traj[0],
+                "w_focus_end": traj[-1], "w_traj": [round(x, 4) for x in traj], "wmax": round(float(wmax), 4),
+                "n_live_credited": pool.n_live_credited, "baseline_margin": round(baseline, 4),
+                "wm_delta_margin": round(delta, 4), "reads": reads,
+                "wm_resolved_reads": sum(rd["wm_resolved"] for rd in reads)}
+
+    agent_sess = run_session("agent", lesion_plasticity=False)
+    patient_sess = run_session("patient", lesion_plasticity=False)
+    lesion_sess = run_session("agent", lesion_plasticity=True)
+
+    eps = max(0.004, 3.0 * abs(agent_sess["baseline_margin"]))
+    grew = agent_sess["w_focus_end"] > 0.5 and agent_sess["w_focus_start"] <= 0.06 and \
+        patient_sess["w_focus_end"] > 0.5 and patient_sess["w_focus_start"] <= 0.06
+    bounded = agent_sess["wmax"] <= HMAX + 1e-6 and patient_sess["wmax"] <= HMAX + 1e-6
+    # LOAD-BEARING (headline): the taught role SIGNS the later content-cancelled read -- agent-taught -> delta>+eps
+    # (resolves AGENT), patient-taught -> delta<-eps (resolves PATIENT); vary the taught role -> the later
+    # resolution DIFFERS in sign. Plus the decision-level read: the edge SIGNS >=1 real repair role per session.
+    da, dp = agent_sess["wm_delta_margin"], patient_sess["wm_delta_margin"]
+    taught_signs_read = da > eps and dp < -eps
+    differs = bool(da > eps and dp < -eps)                # opposite-signed -> the later resolution differs by taught role
+    decision_load_bearing = agent_sess["wm_resolved_reads"] > 0 and patient_sess["wm_resolved_reads"] > 0
+    # LESION (per-turn plasticity frozen): the edge does NOT accumulate (stays ~0.05) -> the later content-cancelled
+    # read stays at baseline (|delta|<eps) and the edge signs NO repair role.
+    lesion_no_accum = (lesion_sess["w_focus_end"] <= 0.06 and abs(lesion_sess["wm_delta_margin"]) < eps
+                       and lesion_sess["wm_resolved_reads"] == 0)
+    # ATTRIBUTION (whose difference IS the later-read shift?): the content-cancelled wm_delta_margin the taught turns
+    # produce must be OWNED by the per-turn plasticity, not by anything the credit path does with a frozen gate.
+    # max|delta| over the two intact taught sessions vs the frozen-gate lesion -- forces the subtraction (gap#5).
+    from tools.lab import attributable_to
+    max_intact_delta = max(abs(da), abs(dp))
+    frac = attributable_to(f"seed{seed} per-turn xedge plasticity: taught wm_delta vs frozen-gate lesion",
+                           max_intact_delta, abs(lesion_sess["wm_delta_margin"]))
+    GO = bool(grew and bounded and taught_signs_read and differs and decision_load_bearing and lesion_no_accum)
+    return {"seed": seed, "n_turns": n_turns, "focus": foc, "eps": round(eps, 4),
+            "agent_session": agent_sess, "patient_session": patient_sess, "lesion_session": lesion_sess,
+            "grew_from_0.05_per_turn": bool(grew), "bounded_F3": bool(bounded),
+            "taught_role_signs_later_read": bool(taught_signs_read), "later_resolution_differs": bool(differs),
+            "decision_load_bearing": bool(decision_load_bearing),
+            "frac_attributable_to_per_turn_plasticity": (None if frac is None else float(frac)),
+            "lesion_no_accumulation": bool(lesion_no_accum), "GO": GO}
+
+
 def main():
     import argparse
     import json
@@ -384,6 +610,8 @@ def main():
     ap.add_argument("--grow", action="store_true", help="build+grow the FROZEN pool and self-verify load-bearing")
     ap.add_argument("--verify-live", action="store_true",
                     help="PART 2: build the LIVE-LEARNED pool (edge grows from in-brain credit) + verify caveat close")
+    ap.add_argument("--verify-per-turn", action="store_true",
+                    help="PART 3: grow the edge ONE credited step per LIVE turn (0.05->), load-bearing + lesion")
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
@@ -391,8 +619,46 @@ def main():
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
 
     global _POOL
+    if args.verify_per_turn:
+        os.environ["BRAIN_ONEBRAIN_XEDGE_LEARN"] = "1"
+        set_live_per_turn(True)
+        results = []
+        for s in seeds:
+            sv = _selftest_perturn(s)
+            a = sv["agent_session"]; p = sv["patient_session"]; l = sv["lesion_session"]
+            print(f"[seed {s}] grew_0.05_per_turn={sv['grew_from_0.05_per_turn']} bounded_F3={sv['bounded_F3']} "
+                  f"taught_signs_read={sv['taught_role_signs_later_read']} differs={sv['later_resolution_differs']} "
+                  f"decision_LB={sv['decision_load_bearing']} lesion_no_accum={sv['lesion_no_accumulation']} "
+                  f"eps={sv['eps']} GO={sv['GO']}", flush=True)
+            print(f"    agent-taught  w{sv['focus']}->A {a['w_focus_start']}->{a['w_focus_end']:.3f} "
+                  f"(credited {a['n_live_credited']}) wm_delta={a['wm_delta_margin']:+.4f} "
+                  f"wm_resolved_reads={a['wm_resolved_reads']}/{len(a['reads'])}")
+            print(f"    agent traj: {a['w_traj']}")
+            print(f"    patient-taught w{sv['focus']}->P {p['w_focus_start']}->{p['w_focus_end']:.3f} "
+                  f"(credited {p['n_live_credited']}) wm_delta={p['wm_delta_margin']:+.4f} "
+                  f"wm_resolved_reads={p['wm_resolved_reads']}/{len(p['reads'])}")
+            print(f"    LESION(agent) w{sv['focus']}->A {l['w_focus_start']}->{l['w_focus_end']:.3f} "
+                  f"(credited {l['n_live_credited']}) wm_delta={l['wm_delta_margin']:+.4f} "
+                  f"wm_resolved_reads={l['wm_resolved_reads']}/{len(l['reads'])}")
+            results.append({"seed": s, "selftest": sv})
+        payload = {"probe": "onebrain_xedge_production_per_turn_live_plasticity", "seeds": seeds,
+                   "backend": os.environ.get("SIM_BACKEND", "numpy"), "results": results,
+                   "n_go": sum(r["selftest"]["GO"] for r in results),
+                   "note": ("PART 3: the cross-edge grows ONE in-brain self-supervised credited step PER LIVE turn "
+                            "(via pool.credit_live_turn, the SAME atom PART 2's build curriculum runs) -- rises from "
+                            "W0=0.05 emergently, bounded by stdp_w_max (F3), LOAD-BEARING across the session (the "
+                            "taught role shows in a LATER balanced read; varying it flips the later resolution), and "
+                            "LESIONING the per-turn plasticity (frozen gate) yields no accumulation. Semantic "
+                            "referent->pool binding + WHICH discourse are declared residuals (host/teacher scaffold).")}
+        if args.out:
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(payload, indent=2, default=str))
+            print(f"wrote {args.out}", flush=True)
+        return 0
+
     if args.verify_live:
         os.environ["BRAIN_ONEBRAIN_XEDGE_LEARN"] = "1"
+        set_live_per_turn(False)                          # PART 2 uses the build-time curriculum (not per-turn)
         results = []
         for s in seeds:
             _POOL = None
