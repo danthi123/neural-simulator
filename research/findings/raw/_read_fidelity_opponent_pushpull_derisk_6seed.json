@@ -1,0 +1,772 @@
+{
+  "probe": "read_fidelity_opponent_pushpull_derisk",
+  "verdict": "NO-GO/PARTIAL. A downstream spiking READOUT NEURON (LIF, threshold-calibrated from TRAIN data only) whose synaptic drive is the NET of TWO Dale's-law-respecting, always-non-negative OPPONENT channels (Hirsch, Alonso, Reid & Martinez 1998, J Neurosci 18(22):9517-9528, PMID 9801388: cortical simple-cell push-pull -- excitation minus inhibition, never a single sign-flipping synapse) fit on a TRAIN fold of neurons (stratified K_FOLDS=5-fold CV over neuron identity, R_REPEATS=5) and evaluated on the HELD-OUT test fold's own raw spike trains, on the SAME trained cross-edge and SAME captured rasters iterations 1-4 used (no retraining confound). PRIMARY gate = delta_held_base (cross-edge-attributable component): 0/6 seeds PASS (z>=Z_FLOOR=2.0 AND lesion-attributable AND shuffle anti-cheat collapses). Anti-cheat: K_SHUF=20-draw neuron-identity permutation null, shuffle collapses on 24/24 combo-seed pairs. Per-seed z-shift vs iteration 4's single-channel template: [{'seed': 42, 'z_iteration4': 0.05, 'z_opponent': -1.2068408077740285, 'shift': -1.2568}, {'seed': 43, 'z_iteration4': 0.18, 'z_opponent': 0.5105835576266857, 'shift': 0.3306}, {'seed': 44, 'z_iteration4': 0.04, 'z_opponent': 0.08914558578630598, 'shift': 0.0491}, {'seed': 100, 'z_iteration4': 1.13, 'z_opponent': 1.138846051988391, 'shift': 0.0088}, {'seed': 101, 'z_iteration4': 0.09, 'z_opponent': 0.8090167014047681, 'shift': 0.719}, {'seed': 102, 'z_iteration4': 1.32, 'z_opponent': -0.06140354561251363, 'shift': -1.3814}].",
+  "GO": false,
+  "n_seeds": 6,
+  "n_seeds_pass_primary": 0,
+  "n_seeds_shuffle_ok": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "shuffle_anticheat_collapses_on_every_combo",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f15f2bd8b80>",
+      "note": "the neuron-identity permutation null must individually clear Z_FLOOR on <= 0.15 of its own draws, on EVERY combo, before the opponent readout's verdict can be trusted -- same instrument-validity bar as iteration 2/3/4"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f15f2bd8b80>",
+      "note": "the reused cross-edge trained normally (sanity on the shared substrate)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f15f2bd8b80>",
+      "note": "the per-seed block pair must actually vary (inherited from the parent runner)"
+    }
+  ],
+  "seed_trap_build_twice": {
+    "identical": true,
+    "n_neurons": 1408,
+    "hash_build1": "df4c33e6261f5d4a",
+    "hash_build2": "df4c33e6261f5d4a"
+  },
+  "z_shift_vs_iteration4": [
+    {
+      "seed": 42,
+      "z_iteration4": 0.05,
+      "z_opponent": -1.2068408077740285,
+      "shift": -1.2568
+    },
+    {
+      "seed": 43,
+      "z_iteration4": 0.18,
+      "z_opponent": 0.5105835576266857,
+      "shift": 0.3306
+    },
+    {
+      "seed": 44,
+      "z_iteration4": 0.04,
+      "z_opponent": 0.08914558578630598,
+      "shift": 0.0491
+    },
+    {
+      "seed": 100,
+      "z_iteration4": 1.13,
+      "z_opponent": 1.138846051988391,
+      "shift": 0.0088
+    },
+    {
+      "seed": 101,
+      "z_iteration4": 0.09,
+      "z_opponent": 0.8090167014047681,
+      "shift": 0.719
+    },
+    {
+      "seed": 102,
+      "z_iteration4": 1.32,
+      "z_opponent": -0.06140354561251363,
+      "shift": -1.3814
+    }
+  ],
+  "config": {
+    "n_bins": 10,
+    "z_floor": 2.0,
+    "shuf_collapse_max_rate": 0.15,
+    "k_folds": 5,
+    "r_repeats": 5,
+    "k_shuf": 20,
+    "tau_mem_steps": 5.0,
+    "v_reset": 0.0,
+    "calib_target_frac": 0.5,
+    "v_th_floor": 1e-06,
+    "weight_conds": [
+      "intact",
+      "lesion"
+    ],
+    "feat_kinds": [
+      "raw_held",
+      "delta_held_base"
+    ],
+    "recall_steps": 100,
+    "n_reads": 8,
+    "pre_steps": 60,
+    "episode_drive_pa": 2500.0,
+    "f2_lesion_ratio": 0.34,
+    "cross_edge_hebbian_lr": 0.15,
+    "n_episodes": 150,
+    "hebbian_max_weight": 20.0,
+    "cue_pa": 2000.0,
+    "ctx_drive_pa": 2500.0,
+    "rng_formula": "seed*179424673+337, +combo_index*8237 per combo (this module's own distinct offset family; does not collide with _assign_blocks(*104729+17), _shuffle_mask(*65599+41), iteration-2's permutation rng(*7919+101), _make_ambiguous_pattern(*997+3), iteration-3's rng(*15485863+271, +combo*104651), or iteration-4's rng(*50331653+191, +combo*7247)"
+  },
+  "mechanism": "Reuses ReadFidelityPool (build/train/lesion + the raster-capturing `_drive2`) VERBATIM from iteration-1, `_capture_reads` VERBATIM from iteration-2, `_binned_features`/`_avg_binned`/`_stratified_folds`/`_seed_trap_check` VERBATIM from iteration-3, and `_expand_template_to_steps`/`_lif_batch_spike_counts`/`_calibrate_v_th`/`_arm_verdict` VERBATIM from iteration-4. Changes ONLY the template: instead of iteration 4's single RECTIFIED matched-filter channel (Fisher-style, clipped at 0), fits TWO always-non-negative channels on the TRAIN fold -- template_E = clip(mu_gen-mu_perc, 0, None)/pooled_std (PUSH/excitatory, identical to iteration 4's own channel) and template_I = clip(mu_perc-mu_gen, 0, None)/pooled_std (PULL/inhibitory OPPONENT channel: the magnitude of exactly the bins iteration 4 discarded). The LIF readout's input current is now the NET of the two channels' contributions (I_push - I_pull) applied to the TEST fold's own raw per-step raster, signed by each TEST neuron's known (structural, non-leaked) pool membership -- algebraically reconstructing the FULL SIGNED template (template_E - template_I == the un-rectified mean-difference) iteration 4 rejected as a single sign-flipping synapse, now realized as two Dale's-law-faithful non-negative populations whose antagonism carries the sign.",
+  "biology": "Hirsch, Alonso, Reid & Martinez 1998, J Neurosci 18(22):9517-9528, 'Synaptic integration in striate cortical simple cells', PMID 9801388, doi:10.1523/JNEUROSCI.18-22-9517.1998 -- whole-cell recordings establishing that a cat V1 simple cell's response SIGN at any instant is set by the antagonism (push-pull) between a separate excitatory (push) and inhibitory (pull) synaptic drive, never by any single synapse changing polarity; the circuit-level basis for how the SAME sign information a signed linear decoder can use for free is instead realized biologically via two opposite-polarity populations. Confirmed as a recurring cortical motif (not a one-off): Troyer, Krukowski, Priebe & Miller 1998, J Neurosci 18(15):5908-5927, PMID 9671678 (correlation-based push-pull circuitry); Martinez et al. 2005, Nat Neurosci 8(3):372-379, PMID 15711543 (push-pull receptive-field structure across V1 layers); Taylor, Sedigh-Sarvestani, Vigeland, Palmer & Contreras 2017, J Neurosci 38(3):595-612, PMID 29196320 (push-pull inhibition spanning the receptive field). Retains Georgopoulos, Schwartz & Kettner 1986 (Science 233:1416-1419) and Salinas & Abbott 1994 (J Neurosci 14(9):5667-5680) for the underlying population-vector/matched-filter readout formalism, unchanged from iteration 4 -- this run's addition is ONLY the opponent (two-channel, Dale's-law-respecting) realization of that filter's sign.",
+  "scaffold_residuals": [
+    "each opponent channel is INDIVIDUALLY rectified (Dale's law preserved per-channel), but the readout neuron's own membrane sums their NET (push-minus-pull) drive with UNCONSTRAINED arithmetic subtraction -- a real postsynaptic neuron's E/I balance is a conductance-based computation (driving-force-dependent, not a bare current subtraction); this is a current-based LIF simplification, same class of simplification iteration 4 already carried",
+    "per-bin (diagonal) matched-filter normalization (pooled std per bin) for EACH channel separately, not a full covariance-whitened Fisher LDA across bins -- unchanged from iteration 4",
+    "the LIF readout uses INSTANTANEOUS current injection per spike (no synaptic rise/decay kinetics) for EITHER channel -- a standard simplified LIF, not conductance-based synapses",
+    "TAU_MEM_STEPS/CALIB_TARGET_FRAC/K_FOLDS/R_REPEATS/K_SHUF are host-chosen statistical-power/dynamics knobs, not computed features, UNCHANGED from iteration 4 (kept identical deliberately so the ONLY changed variable is the opponent-vs-single-channel template)",
+    "N_READS=8 reads averaged into the per-combo margin (denoising only, per this pool family's deterministic dynamics); the genuine per-seed resampling axis is neuron identity via the K_FOLDS/R_REPEATS/K_SHUF draws, not read repetition -- unchanged from iteration 2-4",
+    "the readout is trained/tested on NEURON IDENTITY folds, not independent TRIALS (this pool family has no independent trials to split) -- unchanged, inherited constraint",
+    "same host-curated training schedule / topology as the parent crossedge runner (declared there, unchanged)",
+    "the two channels' RELATIVE gain (push vs pull) is fixed 1:1 by construction (I_push - I_pull, no learned or biologically-derived E/I balance ratio) -- a genuinely LEARNED opponent gain (e.g. via a local delta/perceptron-style rule on each channel's overall scale) is the next estimator-power lever if this one under- or over-shoots"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 68.0,
+      "cue_concept": 1,
+      "assert_concept": 5,
+      "final_weight_trained_block": 3.9776554107666016,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.38,
+          "real_margin_std": 0.18148691412881535,
+          "real_margin_all": [
+            0.375,
+            0.2,
+            0.575,
+            0.55,
+            0.2
+          ],
+          "null_margin_mean": 0.24875000000000003,
+          "null_margin_std": 0.2710208527615153,
+          "z": 0.48428007905167864,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": -0.4,
+          "real_margin_std": 0.1334634781503914,
+          "real_margin_all": [
+            -0.375,
+            -0.3,
+            -0.4,
+            -0.625,
+            -0.3
+          ],
+          "null_margin_mean": 0.017499999999999998,
+          "null_margin_std": 0.34594454986160333,
+          "z": -1.2068408077740285,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.17,
+          "real_margin_std": 0.20109077552190205,
+          "real_margin_all": [
+            0.075,
+            0.0,
+            0.0,
+            0.4,
+            0.375
+          ],
+          "null_margin_mean": 0.195,
+          "null_margin_std": 0.16274778679067547,
+          "z": -0.153611919971328,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": -0.125,
+          "real_margin_std": 0.26575364531836626,
+          "real_margin_all": [
+            -0.2,
+            -0.425,
+            -0.3,
+            0.1,
+            0.2
+          ],
+          "null_margin_mean": -0.032499999999999994,
+          "null_margin_std": 0.18762714987021747,
+          "z": -0.492999014609467,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 0.6875,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 0.5526315789473684,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 70.1,
+      "cue_concept": 6,
+      "assert_concept": 7,
+      "final_weight_trained_block": 6.112188816070557,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.2800000000000001,
+          "real_margin_std": 0.130384048104053,
+          "real_margin_all": [
+            0.4,
+            0.2,
+            0.3,
+            0.1,
+            0.4
+          ],
+          "null_margin_mean": 0.19250000000000003,
+          "null_margin_std": 0.15730041656852528,
+          "z": 0.5562604467857982,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.13999999999999999,
+          "real_margin_std": 0.1495827530165159,
+          "real_margin_all": [
+            0.225,
+            0.1,
+            -0.075,
+            0.325,
+            0.125
+          ],
+          "null_margin_mean": 0.020000000000000007,
+          "null_margin_std": 0.23502519461807314,
+          "z": 0.5105835576266857,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.36000000000000004,
+          "real_margin_std": 0.3100403199585499,
+          "real_margin_all": [
+            0.575,
+            0.775,
+            0.225,
+            0.225,
+            0.0
+          ],
+          "null_margin_mean": 0.17875000000000002,
+          "null_margin_std": 0.16883404339920996,
+          "z": 1.0735394139168508,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.365,
+          "real_margin_std": 0.23822258499143187,
+          "real_margin_all": [
+            0.575,
+            0.025,
+            0.225,
+            0.575,
+            0.425
+          ],
+          "null_margin_mean": -0.12625000000000003,
+          "null_margin_std": 0.337704616336136,
+          "z": 1.4546736296640725,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -1.6071428571428574,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.2857142857142855,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 68.3,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.177545547485352,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.0,
+          "real_margin_std": 0.0,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.19000000000000003,
+          "null_margin_std": 0.17610553056260567,
+          "z": -1.0788985410793495,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.08,
+          "real_margin_std": 0.10954451150103324,
+          "real_margin_all": [
+            0.2,
+            0.0,
+            0.2,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.05625,
+          "null_margin_std": 0.26641812705041795,
+          "z": 0.08914558578630598,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.005,
+          "real_margin_std": 0.011180339887498949,
+          "real_margin_all": [
+            0.0,
+            0.025,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.27125000000000005,
+          "null_margin_std": 0.21753327029263944,
+          "z": -1.2239507071347009,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.15,
+          "real_margin_std": 0.1571225636247067,
+          "real_margin_all": [
+            0.0,
+            0.2,
+            0.0,
+            0.375,
+            0.175
+          ],
+          "null_margin_mean": -0.028749999999999998,
+          "null_margin_std": 0.2784207106255983,
+          "z": 0.6420140211493502,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.8749999999999999,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": null,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 68.4,
+      "cue_concept": 3,
+      "assert_concept": 0,
+      "final_weight_trained_block": 5.6903815269470215,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.36,
+          "real_margin_std": 0.21693893149916635,
+          "real_margin_all": [
+            0.2,
+            0.725,
+            0.3,
+            0.375,
+            0.2
+          ],
+          "null_margin_mean": 0.16000000000000003,
+          "null_margin_std": 0.13869694338832114,
+          "z": 1.4419928450769361,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.22000000000000003,
+          "real_margin_std": 0.07786205751198719,
+          "real_margin_all": [
+            0.1,
+            0.3,
+            0.275,
+            0.2,
+            0.225
+          ],
+          "null_margin_mean": -0.027500000000000004,
+          "null_margin_std": 0.21732524740097442,
+          "z": 1.138846051988391,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.32500000000000007,
+          "real_margin_std": 0.175,
+          "real_margin_all": [
+            0.6,
+            0.2,
+            0.4,
+            0.2,
+            0.225
+          ],
+          "null_margin_mean": 0.19000000000000003,
+          "null_margin_std": 0.1746048169589349,
+          "z": 0.7731745455324438,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.24,
+          "real_margin_std": 0.2971741913423842,
+          "real_margin_all": [
+            0.6,
+            -0.2,
+            0.225,
+            0.4,
+            0.175
+          ],
+          "null_margin_mean": -0.012499999999999994,
+          "null_margin_std": 0.32102836405264223,
+          "z": 0.7865348619432115,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.09090909090909073,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 0.097222222222222,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 68.2,
+      "cue_concept": 4,
+      "assert_concept": 0,
+      "final_weight_trained_block": 6.75588846206665,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.08,
+          "real_margin_std": 0.10954451150103323,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.0,
+            0.2,
+            0.2
+          ],
+          "null_margin_mean": 0.15750000000000003,
+          "null_margin_std": 0.17417096863653678,
+          "z": -0.44496508578147986,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.085,
+          "real_margin_std": 0.23358617253596156,
+          "real_margin_all": [
+            0.025,
+            -0.3,
+            0.225,
+            0.25,
+            0.225
+          ],
+          "null_margin_mean": -0.06625,
+          "null_margin_std": 0.18695534929918145,
+          "z": 0.8090167014047681,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.24,
+          "real_margin_std": 0.08944271909999159,
+          "real_margin_all": [
+            0.2,
+            0.4,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "null_margin_mean": 0.13999999999999999,
+          "null_margin_std": 0.2062190965683675,
+          "z": 0.4849211429206662,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": -0.06,
+          "real_margin_std": 0.09778803607803974,
+          "real_margin_all": [
+            -0.125,
+            -0.2,
+            0.025,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": -0.17750000000000002,
+          "null_margin_std": 0.25699426575622064,
+          "z": 0.457208644925401,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.7058823529411766,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -1.9999999999999996,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 68.9,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.735973358154297,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "intact__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.08,
+          "real_margin_std": 0.10954451150103323,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.2,
+            0.2,
+            0.0
+          ],
+          "null_margin_mean": 0.19,
+          "null_margin_std": 0.17740824166460337,
+          "z": -0.6200388379247844,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.09999999999999999,
+          "real_margin_std": 0.1030776406404415,
+          "real_margin_all": [
+            0.175,
+            -0.025,
+            0.175,
+            0.175,
+            0.0
+          ],
+          "null_margin_mean": 0.12250000000000001,
+          "null_margin_std": 0.3664283515806402,
+          "z": -0.06140354561251363,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "real_margin_mean": 0.28500000000000003,
+          "real_margin_std": 0.17642278764377353,
+          "real_margin_all": [
+            0.4,
+            0.0,
+            0.4,
+            0.225,
+            0.4
+          ],
+          "null_margin_mean": 0.18000000000000002,
+          "null_margin_std": 0.1935812083093974,
+          "z": 0.5424080204736628,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "real_margin_mean": 0.004999999999999999,
+          "real_margin_std": 0.12424773639789177,
+          "real_margin_all": [
+            0.025,
+            0.175,
+            0.0,
+            0.0,
+            -0.175
+          ],
+          "null_margin_mean": 0.07125,
+          "null_margin_std": 0.30112453709736986,
+          "z": -0.22000864040706777,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        }
+      },
+      "PRIMARY_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 0.95,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -2.5625,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 4,
+      "n_combos": 4,
+      "PASS": false
+    }
+  ]
+}
