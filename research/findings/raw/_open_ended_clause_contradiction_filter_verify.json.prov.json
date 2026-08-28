@@ -1,10 +1,10 @@
 {
- "run_id": "1787924259-3895387",
+ "run_id": "1787938455-4043715",
  "runner": "research/runners/_open_ended_clause_contradiction_filter_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-aafef44fca8bc3d2c/research/runners/_open_ended_clause_contradiction_filter_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3c9950b38a60c959/research/runners/_open_ended_clause_contradiction_filter_verify.py"
  ],
- "git_sha": "5e802e254",
+ "git_sha": "7fd699a4d",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,14 +12,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-28T09:37:39",
+ "started": "2026-08-28T13:34:15",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": null,
- "corpus_check_query": null,
+ "corpus_check_age_s": 492.6,
+ "corpus_check_query": "skip-and-continue past a vetoed sentence in generation-time honesty",
+ "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_open_ended_clause_contradiction_filter_verify.json"
 }

@@ -36,6 +36,14 @@ that concrete and all are GO on `main`:
     object (see `answer_turn`'s `chat=` parameter); with no `chat`, or the flag off, or an unknown topic, this
     mode never activates and the one-shot path above runs unchanged. The string post-filter (`post_filter`,
     everything above) still runs afterward on whatever this mode emits — a SAFETY NET, never bypassed.
+  * `_open_ended_gen_time_consensus_veto_derisk._generate_tokenid_continuation_skip` (2026-08-28,
+    `BRAIN_HONESTY_SKIP_CONTINUE`, default-OFF, see `skip_continue_enabled` below) — SKIP-AND-CONTINUE, stacked
+    on top of `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` (all three flags must be truthy for anything to change). The
+    generation-time veto above conservatively STOPS the whole reply at the first sentence it cannot repair; this
+    mode instead DROPS that one sentence and CONTINUES generating the next one in the SAME reply (the token-id
+    context still advances past the dropped span, so the mouth's own state moves forward), so a later,
+    verifiable sentence is still reached instead of being truncated away with the unverifiable one. Same
+    `clause_filter_sentence` veto, same string safety net afterward — only what happens AFTER a drop changes.
   * `webapp.wkv_mouth_generator` (2026-08-28, `BRAIN_OPEN_ENDED_WKV_MOUTH`, default-OFF, see
     `wkv_mouth_enabled` below) — a genuine CRUTCH-BURNDOWN lever, not a fourth honesty layer: swaps the FORM
     generator itself, for IN-VOCAB prompts only, from the literal Qwen2.5-0.5B model to a from-scratch,
@@ -183,6 +191,22 @@ def gen_time_honesty_enabled() -> bool:
     return os.environ.get("BRAIN_OPEN_ENDED_GEN_TIME_HONESTY", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def skip_continue_enabled() -> bool:
+    """`BRAIN_HONESTY_SKIP_CONTINUE` truthy -> when generation-time honesty is ALSO active (see
+    `gen_time_honesty_enabled` -- flag ON + a live `chat` + a KNOWN topic), a sentence the LIVE consensus veto
+    cannot safely repair is DROPPED and generation CONTINUES to the NEXT sentence (the token-id context
+    advances past the dropped span; see `research.runners._open_ended_gen_time_consensus_veto_derisk.
+    _generate_tokenid_continuation_skip`) instead of truncating the whole reply there. A THIRD, independent
+    gate stacked on top of `BRAIN_OPEN_ENDED` + `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` -- all three must be
+    truthy for anything to change. Default OFF (unset/0/false/off/no): `answer_turn` passes
+    `skip_continue=False` to `generate_with_generation_time_veto`, which is BYTE-IDENTICAL
+    to the pre-existing conservative-truncate token-id path (the parameter's own default) -- this flag can only
+    ADD a behavior (a later, verifiable sentence in the same reply is still reached after an earlier one was
+    vetoed), never remove the existing truncating one, and never bypasses the string `post_filter` safety net,
+    which still runs afterward on whatever text is ultimately emitted, unconditionally, exactly as before."""
+    return os.environ.get("BRAIN_HONESTY_SKIP_CONTINUE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
 # Longest-first so "what do you know about" wins over "what is"; each strips a natural lead-in to the bare entity.
 _LEADINS = sorted([
@@ -311,7 +335,10 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
     CONSENSUS VETO instead of one-shot (generation-TIME honesty); otherwise (WKV used, flag off, `chat is None`,
     or an unknown topic) the existing one-shot `OpenEndedGenerator.generate` path runs, byte-identical to before
     this parameter existed. Either way, `post_filter` still runs afterward — the safety net is never skipped,
-    regardless of which generator wrote `raw`.
+    regardless of which generator wrote `raw`. When the gen-time veto path IS taken, `skip_continue_enabled()`
+    (a FOURTH, independent, default-OFF gate — `BRAIN_HONESTY_SKIP_CONTINUE`) additionally controls whether a
+    sentence the veto cannot repair truncates the reply there (default) or is dropped-and-skipped so a later
+    verifiable sentence in the same reply is still reached — see that flag's own docstring.
 
     Returns a dict with the final `answer` (the filtered reply) plus a trace (`raw`, `filtered`, `topic`, `known`,
     `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`, `generator` —
@@ -363,7 +390,8 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
             )
             t0 = time.time()
             raw, gen_time_trace, _consensus_info = generate_with_generation_time_veto(
-                gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens)
+                gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens,
+                skip_continue=skip_continue_enabled())
             secs = round(time.time() - t0, 2)
             gen_time_used = True
         except Exception:
