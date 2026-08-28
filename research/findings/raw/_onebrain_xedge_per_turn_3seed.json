@@ -1,0 +1,649 @@
+{
+  "probe": "onebrain_xedge_production_per_turn_live_plasticity",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "results": [
+    {
+      "seed": 42,
+      "selftest": {
+        "seed": 42,
+        "n_turns": 24,
+        "focus": "w0",
+        "eps": 0.0093,
+        "agent_session": {
+          "direction": "agent",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.621,
+          "w_traj": [
+            0.05,
+            0.6929,
+            1.4274,
+            2.3302,
+            3.1763,
+            4.042,
+            4.8466,
+            5.5945,
+            6.2899,
+            6.9375,
+            7.5407,
+            8.1009,
+            8.6212,
+            9.1045,
+            9.5534,
+            9.9705,
+            10.3581,
+            10.7182,
+            11.053,
+            11.3641,
+            11.6533,
+            11.9222,
+            12.1722,
+            12.4047,
+            12.621
+          ],
+          "wmax": 12.621,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0031,
+          "wm_delta_margin": 0.0108,
+          "reads": [
+            {
+              "item": "bird/watch/bird",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "ball/kick/apple",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "leaf/carry/stick",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "agent",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "patient_session": {
+          "direction": "patient",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.6186,
+          "w_traj": [
+            0.05,
+            0.6929,
+            1.4188,
+            2.3229,
+            3.1661,
+            4.0325,
+            4.8378,
+            5.5864,
+            6.2823,
+            6.93,
+            7.5337,
+            8.0945,
+            8.6152,
+            9.0989,
+            9.5483,
+            9.9658,
+            10.3537,
+            10.7141,
+            11.0492,
+            11.3606,
+            11.6501,
+            11.9192,
+            12.1695,
+            12.4022,
+            12.6186
+          ],
+          "wmax": 12.6186,
+          "n_live_credited": 24,
+          "baseline_margin": -0.0014,
+          "wm_delta_margin": -0.0122,
+          "reads": [
+            {
+              "item": "bird/watch/bird",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "ball/kick/apple",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "leaf/carry/stick",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "patient",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "lesion_session": {
+          "direction": "agent",
+          "lesion": true,
+          "w_focus_start": 0.05,
+          "w_focus_end": 0.05,
+          "w_traj": [
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "wmax": 0.05,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0031,
+          "wm_delta_margin": -0.0025,
+          "reads": [
+            {
+              "item": "bird/watch/bird",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "ball/kick/apple",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "leaf/carry/stick",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "owl/chase/wolf",
+              "role": "patient",
+              "wm_resolved": false
+            }
+          ],
+          "wm_resolved_reads": 0
+        },
+        "grew_from_0.05_per_turn": true,
+        "bounded_F3": true,
+        "taught_role_signs_later_read": true,
+        "later_resolution_differs": true,
+        "decision_load_bearing": true,
+        "frac_attributable_to_per_turn_plasticity": 0.7950819672131147,
+        "lesion_no_accumulation": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 43,
+      "selftest": {
+        "seed": 43,
+        "n_turns": 24,
+        "focus": "w0",
+        "eps": 0.0057,
+        "agent_session": {
+          "direction": "agent",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.7377,
+          "w_traj": [
+            0.05,
+            0.704,
+            1.5599,
+            2.4686,
+            3.3191,
+            4.1463,
+            4.9196,
+            5.6426,
+            6.3187,
+            6.9509,
+            7.542,
+            8.0939,
+            8.6101,
+            9.0929,
+            9.5447,
+            9.9673,
+            10.3627,
+            10.7328,
+            11.079,
+            11.4031,
+            11.7064,
+            11.9903,
+            12.256,
+            12.5048,
+            12.7377
+          ],
+          "wmax": 12.7377,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0019,
+          "wm_delta_margin": 0.0125,
+          "reads": [
+            {
+              "item": "dog/chase/wolf",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "rock/grab/book",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/chase/fox",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "bone/carry/apple",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/chase/frog",
+              "role": "agent",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "patient_session": {
+          "direction": "patient",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.7385,
+          "w_traj": [
+            0.05,
+            0.704,
+            1.5637,
+            2.4726,
+            3.3227,
+            4.1497,
+            4.9227,
+            5.6455,
+            6.3214,
+            6.9533,
+            7.5443,
+            8.096,
+            8.6121,
+            9.0948,
+            9.5464,
+            9.9689,
+            10.3642,
+            10.7341,
+            11.0803,
+            11.4042,
+            11.7074,
+            11.9913,
+            12.2569,
+            12.5056,
+            12.7385
+          ],
+          "wmax": 12.7385,
+          "n_live_credited": 24,
+          "baseline_margin": -0.003,
+          "wm_delta_margin": -0.0109,
+          "reads": [
+            {
+              "item": "dog/chase/wolf",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "rock/grab/book",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/chase/fox",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "bone/carry/apple",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/chase/frog",
+              "role": "patient",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "lesion_session": {
+          "direction": "agent",
+          "lesion": true,
+          "w_focus_start": 0.05,
+          "w_focus_end": 0.05,
+          "w_traj": [
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "wmax": 0.05,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0025,
+          "wm_delta_margin": -0.0031,
+          "reads": [
+            {
+              "item": "dog/chase/wolf",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "rock/grab/book",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "fox/chase/fox",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "bone/carry/apple",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "fox/chase/frog",
+              "role": "patient",
+              "wm_resolved": false
+            }
+          ],
+          "wm_resolved_reads": 0
+        },
+        "grew_from_0.05_per_turn": true,
+        "bounded_F3": true,
+        "taught_role_signs_later_read": true,
+        "later_resolution_differs": true,
+        "decision_load_bearing": true,
+        "frac_attributable_to_per_turn_plasticity": 0.752,
+        "lesion_no_accumulation": true,
+        "GO": true
+      }
+    },
+    {
+      "seed": 44,
+      "selftest": {
+        "seed": 44,
+        "n_turns": 24,
+        "focus": "w0",
+        "eps": 0.0093,
+        "agent_session": {
+          "direction": "agent",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.633,
+          "w_traj": [
+            0.05,
+            0.721,
+            1.5868,
+            2.5006,
+            3.3623,
+            4.2031,
+            4.9854,
+            5.7133,
+            6.3908,
+            7.0193,
+            7.6046,
+            8.1496,
+            8.6573,
+            9.1304,
+            9.5711,
+            9.9819,
+            10.3648,
+            10.7219,
+            11.0548,
+            11.3654,
+            11.6551,
+            11.9254,
+            12.1777,
+            12.4131,
+            12.633
+          ],
+          "wmax": 12.633,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0031,
+          "wm_delta_margin": 0.01,
+          "reads": [
+            {
+              "item": "fox/chase/bear",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "ball/grab/stick",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/watch/bird",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "bone/bite/book",
+              "role": "agent",
+              "wm_resolved": true
+            },
+            {
+              "item": "frog/watch/wolf",
+              "role": "agent",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "patient_session": {
+          "direction": "patient",
+          "lesion": false,
+          "w_focus_start": 0.05,
+          "w_focus_end": 12.6076,
+          "w_traj": [
+            0.05,
+            0.721,
+            1.4766,
+            2.398,
+            3.2569,
+            4.105,
+            4.8942,
+            5.6285,
+            6.3119,
+            6.9459,
+            7.5363,
+            8.0861,
+            8.5982,
+            9.0753,
+            9.5198,
+            9.9342,
+            10.3204,
+            10.6804,
+            11.0162,
+            11.3294,
+            11.6216,
+            11.8941,
+            12.1485,
+            12.386,
+            12.6076
+          ],
+          "wmax": 12.6076,
+          "n_live_credited": 24,
+          "baseline_margin": -0.0013,
+          "wm_delta_margin": -0.0121,
+          "reads": [
+            {
+              "item": "fox/chase/bear",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "ball/grab/stick",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "fox/watch/bird",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "bone/bite/book",
+              "role": "patient",
+              "wm_resolved": true
+            },
+            {
+              "item": "frog/watch/wolf",
+              "role": "patient",
+              "wm_resolved": true
+            }
+          ],
+          "wm_resolved_reads": 5
+        },
+        "lesion_session": {
+          "direction": "agent",
+          "lesion": true,
+          "w_focus_start": 0.05,
+          "w_focus_end": 0.05,
+          "w_traj": [
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
+          ],
+          "wmax": 0.05,
+          "n_live_credited": 24,
+          "baseline_margin": 0.0031,
+          "wm_delta_margin": -0.0023,
+          "reads": [
+            {
+              "item": "fox/chase/bear",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "ball/grab/stick",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "fox/watch/bird",
+              "role": "patient",
+              "wm_resolved": false
+            },
+            {
+              "item": "bone/bite/book",
+              "role": "agent",
+              "wm_resolved": false
+            },
+            {
+              "item": "frog/watch/wolf",
+              "role": "patient",
+              "wm_resolved": false
+            }
+          ],
+          "wm_resolved_reads": 0
+        },
+        "grew_from_0.05_per_turn": true,
+        "bounded_F3": true,
+        "taught_role_signs_later_read": true,
+        "later_resolution_differs": true,
+        "decision_load_bearing": true,
+        "frac_attributable_to_per_turn_plasticity": 0.8099173553719008,
+        "lesion_no_accumulation": true,
+        "GO": true
+      }
+    }
+  ],
+  "n_go": 3,
+  "note": "PART 3: the cross-edge grows ONE in-brain self-supervised credited step PER LIVE turn (via pool.credit_live_turn, the SAME atom PART 2's build curriculum runs) -- rises from W0=0.05 emergently, bounded by stdp_w_max (F3), LOAD-BEARING across the session (the taught role shows in a LATER balanced read; varying it flips the later resolution), and LESIONING the per-turn plasticity (frozen gate) yields no accumulation. Semantic referent->pool binding + WHICH discourse are declared residuals (host/teacher scaffold)."
+}
