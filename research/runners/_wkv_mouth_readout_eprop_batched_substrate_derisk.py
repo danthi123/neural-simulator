@@ -279,6 +279,12 @@ class BatchedSubstrateReadout(ComposedEndToEndRead):
         data = self._b.cp_connections.data
         data[self._pos_slot] = wp_all.astype(data.dtype)
         data[self._neg_slot] = wn_all.astype(data.dtype)
+        # STALE-COO/WT FIX (2026-08-27): this edits cp_connections.data IN PLACE (same object id + nnz), so the
+        # read-only megakernel-v2 transposed-CSR cache (keyed on id+nnz) would otherwise transmit the PREVIOUS
+        # set_weights' matrix -- the artifact that manufactured the "structure-selective read wall" AND starved
+        # this eprop training loop of its own weight updates (||W||->cap runaway). Signal the in-place edit so the
+        # next batch_margin transmits THESE weights. Byte-identical on a fresh build (cache already rebuilds).
+        self._b.mark_weights_edited()
         self.head_w = np.asarray(W_hat, dtype=np.float64)
 
     def batch_margin(self, feats_signed, silence_bias=True):

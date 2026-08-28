@@ -1,0 +1,250 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 16,
+      "n_train_pos": 1600,
+      "n_eval_pos": 400,
+      "n_sub_demo": 120,
+      "n_grad_steps": 400,
+      "n_grad_steps_shuffle": 136,
+      "substrate_reads": 547,
+      "main_substrate_reads": 400,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 4,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.954635,
+      "gain_substrate_vs_linear_corr": 0.9554,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 100,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 27.06,
+      "head_w_norm": 37.53,
+      "learn_secs": 51.5,
+      "shuffle_secs": 17.6,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.591,
+        0.0015
+      ],
+      "verify_first_argerr": [
+        1.0,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.677,
+      "hostlinear_argmax_agree": 0.46,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0637,
+        "lesion_err": 0.0632,
+        "shuffle_teach": 0.0007
+      },
+      "hostlinear_floor_recov": 0.0637,
+      "weight_cosine_to_head_diag": 0.1976,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": -0.0023
+      },
+      "weight_cosine_floor": 0.0023,
+      "sub_learned": {
+        "argmax_agree": 0.5417,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.7456,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.8417,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9791,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.0001,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.7615,
+      "integrated_bar_0.85xcopied": 0.8322,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 43,
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "B": 16,
+      "n_train_pos": 1600,
+      "n_eval_pos": 400,
+      "n_sub_demo": 120,
+      "n_grad_steps": 400,
+      "n_grad_steps_shuffle": 136,
+      "substrate_reads": 547,
+      "main_substrate_reads": 400,
+      "forward_read_matches_grad_steps": true,
+      "lr": 0.5,
+      "epochs": 4,
+      "weight_decay": 0.0008,
+      "w_target": 40.0,
+      "gain": 9.955354,
+      "gain_substrate_vs_linear_corr": 0.9501,
+      "forward_mode": "substrate",
+      "eval_every_epochs": 0,
+      "recovery_trajectory": [],
+      "sub_read_window": 100,
+      "sub_hid_pop": 4,
+      "sub_pop": 1,
+      "w_hat_norm": 29.06,
+      "head_w_norm": 37.52,
+      "learn_secs": 51.4,
+      "shuffle_secs": 17.7,
+      "host_matmul_on_learning_forward": 0,
+      "forward_source": "batched_substrate_graded_conductance_read",
+      "verify_first_ok": true,
+      "verify_first_ce": [
+        6.6415,
+        0.0021
+      ],
+      "verify_first_argerr": [
+        1.0,
+        0.0
+      ],
+      "hostlinear_recov_argmax": 0.4877,
+      "hostlinear_argmax_agree": 0.2925,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0529,
+        "lesion_err": 0.0449,
+        "shuffle_teach": 0.0027
+      },
+      "hostlinear_floor_recov": 0.0529,
+      "weight_cosine_to_head_diag": 0.2045,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0017,
+        "lesion_err": 0.0017,
+        "shuffle_teach": -0.0006
+      },
+      "weight_cosine_floor": 0.0017,
+      "sub_learned": {
+        "argmax_agree": 0.375,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.662,
+        "host_rng_draws": 0
+      },
+      "sub_copied": {
+        "argmax_agree": 0.8667,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9773,
+        "host_rng_draws": 0
+      },
+      "sub_shuffle": {
+        "argmax_agree": 0.0,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.001,
+        "host_rng_draws": 0
+      },
+      "sub_recov_ratio_learned_over_copied": 0.6774,
+      "integrated_bar_0.85xcopied": 0.8307,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "forward_is_substrate": true,
+      "anticheats_collapse": true,
+      "integrated_go": false,
+      "parity_recovery": false,
+      "go": false,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "1d90c97348ccaf4a",
+        "thr_hash_2": "1d90c97348ccaf4a",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 2,
+    "go_count": 0,
+    "go_5of6": false,
+    "integrated_go_count": 0,
+    "parity_recovery_count": 0,
+    "anticheats_collapse_count": 2,
+    "forward_is_substrate_all": true,
+    "host_matmul_on_forward_max": 0,
+    "verify_first_all_ok": true,
+    "sub_learned_recov_mean": 0.7038,
+    "sub_copied_recov_mean": 0.9782,
+    "sub_shuffle_recov_mean": 0.0006,
+    "sub_recov_ratio_mean": 0.7194,
+    "sub_recov_ratio_min": 0.6774,
+    "hostlinear_recov_mean": 0.5824,
+    "hostlinear_floor_recov_max": 0.0637,
+    "weight_cosine_mean": 0.2011,
+    "weight_cosine_floor_max": 0.0023
+  },
+  "seeds": [
+    42,
+    43
+  ],
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "batched_substrate_graded_conductance_read",
+  "gain_per_seed": {
+    "42": 9.954635,
+    "43": 9.955354
+  },
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "1d90c97348ccaf4a",
+    "thr_hash_2": "1d90c97348ccaf4a",
+    "seeded": true
+  },
+  "backend": "cupy",
+  "elapsed_s": 337.9,
+  "argv": [
+    "ab",
+    "--seeds",
+    "42,43",
+    "--batch",
+    "16",
+    "--epochs",
+    "4",
+    "--n-train-pos",
+    "1600",
+    "--sub-read-window",
+    "100",
+    "--read-window",
+    "120",
+    "--n-sub-demo",
+    "120",
+    "--n-eval-pos",
+    "400",
+    "--n-sentences",
+    "40000",
+    "--w-target",
+    "40",
+    "--json",
+    "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/ab_on.json"
+  ]
+}

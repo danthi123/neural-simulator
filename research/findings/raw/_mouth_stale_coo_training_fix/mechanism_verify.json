@@ -1,0 +1,31 @@
+{
+  "megakernel_v2_can_dispatch": true,
+  "stale_repro": {
+    "fix_off": {
+      "corr_readA_hostA": 0.4313,
+      "corr_readB_hostB": -0.0124,
+      "corr_readB_hostA": 0.5216
+    },
+    "fix_on": {
+      "corr_readA_hostA": 0.4313,
+      "corr_readB_hostB": 0.5197,
+      "corr_readB_hostA": 0.015
+    },
+    "fresh_build_readB_hostB": 0.4195,
+    "interpretation": "fix_off: readB transmits WA (corr_readB_hostA high, corr_readB_hostB ~0) = STALE. fix_on: readB reflects WB (corr_readB_hostB high, corr_readB_hostA ~0) = CORRECT, matching the fresh build."
+  },
+  "byte_identity_no_weight_change": {
+    "m_a_hash_fix_on": "1c3ab831f29cbbaa",
+    "m_a_hash_fix_off": "1c3ab831f29cbbaa",
+    "m_a_identical": true,
+    "m_b_hash_fix_on": "d54acbc86e72dbc3",
+    "m_b_hash_fix_off": "d54acbc86e72dbc3",
+    "m_b_identical": true,
+    "note": "same-W re-set between reads; fix rebuilds the WT cache to identical data -> byte-identical."
+  },
+  "provenance": "research/runners/_wkv_mouth_readout_eprop_batched_substrate_derisk.py + sim/bridge.py::mark_weights_edited; B=2 seed42",
+  "argv": [
+    "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/mechanism_verify.py"
+  ],
+  "backend": "cupy"
+}
