@@ -1,4 +1,22 @@
-"""GENERATION-TIME consensus-veto honesty for open-ended chat (Vikunja #112 follow-on, 2026-08-27/28).
+"""GENERATION-TIME consensus-veto honesty for open-ended chat (Vikunja #112 follow-on, 2026-08-27/28/29).
+
+TOKEN-ID CONTINUATION (2026-08-28, this file's own NEXT rung from the 2026-08-27-open-ended-generation-time-
+honesty-PARTIAL.md finding). The original v1 stepped the mouth sentence-by-sentence by DECODING the growing
+accepted text back to a string and RE-TOKENIZING `prompt_string + accepted_text_string` on every single step
+(`_continue_chunk`, kept below for direct A/B comparison) -- an honest, disclosed text-roundtrip confound that
+made the live decode NOT byte-identical to one-shot generation even when nothing was ever suppressed, capping
+the live-mouth vary/lesion demonstration at 1/3 topics. `generate_with_generation_time_veto` now defaults to
+`continuation="token_id"` (`_generate_tokenid_continuation` / `_continue_chunk_ids`): the growing context is
+carried as TOKEN IDS, never decoded-and-reencoded. A KEPT sentence (the common case: nothing to suppress) has
+its own model-generated ids appended to the context DIRECTLY -- zero retokenization, byte-identical continuation
+to what one-shot generation would have produced up to that point. Only a REPAIRED sentence (an actual text
+edit -- the store-wrong span was removed) requires a re-encode, and only of that one repaired span, not the
+whole accumulated reply -- a narrow, disclosed, unavoidable exception (you cannot continue token IDs through an
+edit that changed the text) instead of the old confound's every-step-every-sentence roundtrip. `continuation=
+"text"` still runs the original v1 path unchanged, for a direct same-run comparison of the two technique's
+live-mouth divergence rates (see `run_battery`). NO `sim/` edit; no change to `clause_filter_sentence` /
+`sentence_contradicts` / `consensus_facts_for_topic` / the string safety net -- only the ORCHESTRATION of how
+the off-bridge Qwen mouth is stepped between them.
 
 THE GAP THIS CLOSES. `webapp/open_ended_chat.py`'s honesty moat runs AFTER the free Qwen reply is fully written:
 generate the WHOLE thing, then strip/repair whatever `sentence_contradicts` (a host STRING match against a static
@@ -111,6 +129,10 @@ LTM_FACTS = {
 
 _SENT_END_RE = re.compile(r"[.!?]+")
 
+# torch imported lazily inside the functions that need it (kept out of module scope so this file's pure-logic
+# pieces -- consensus_facts_for_topic, run_controlled_unit_battery -- stay importable/runnable with no GPU/torch
+# dependency at all, exactly as before this token-id-continuation addition).
+
 
 # =====================================================================================================
 # (1) A lightweight, genuinely-spiking chat with a real LTM tier over the SAME topics the string battery uses.
@@ -172,13 +194,22 @@ def consensus_facts_for_topic(chat, topic: str, seed: int, *, lesion_coupling: b
 
 
 # =====================================================================================================
-# (3) SENTENCE-BY-SENTENCE generation: continue from the ACCEPTED text, one candidate sentence at a time.
+# (3) SENTENCE-BY-SENTENCE generation: continue from the ACCEPTED context, one candidate sentence at a time.
+# TWO continuation techniques, selectable via `continuation=` on `generate_with_generation_time_veto`:
+#   "text"     -- v1 (2026-08-27): decode accepted ids -> string, re-tokenize prompt+string every step. Kept
+#                 verbatim below for A/B comparison; this is the technique the PARTIAL finding's "NEXT" named.
+#   "token_id" -- v2 (2026-08-28, NEW DEFAULT): accepted context stays TOKEN IDS; a kept sentence's own
+#                 generated ids are appended directly (zero retokenization); only a repaired sentence re-encodes
+#                 its own (edited) span. See the module docstring for the full rationale.
 # =====================================================================================================
 def _continue_chunk(gen: OpenEndedGenerator, system: str, user: str, accepted_text: str, seed: int,
                     budget_tokens: int):
-    """Generate up to `budget_tokens` MORE tokens, continuing the assistant turn from `accepted_text` (what has
-    already been committed). Greedy + re-seeded exactly like `OpenEndedGenerator.generate` -- deterministic given
-    (system, user, accepted_text, seed). Returns (new_text_chunk, eos_reached)."""
+    """v1 TEXT continuation (kept for A/B comparison -- see `continuation="text"`). Generate up to
+    `budget_tokens` MORE tokens, continuing the assistant turn from `accepted_text` (what has already been
+    committed) by DECODING it to a string and RE-TOKENIZING `prompt + accepted_text` from scratch every step.
+    Greedy + re-seeded exactly like `OpenEndedGenerator.generate` -- deterministic given (system, user,
+    accepted_text, seed), but NOT byte-identical to a continuous decode (the retokenization confound the
+    token-id path below removes). Returns (new_text_chunk, eos_reached)."""
     torch = gen.fac._torch
     B1 = gen.fac._B1
     msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -198,15 +229,11 @@ def _continue_chunk(gen: OpenEndedGenerator, system: str, user: str, accepted_te
     return txt, eos_reached
 
 
-def generate_with_generation_time_veto(gen: OpenEndedGenerator, chat, topic: str, seed: int, system: str,
-                                       user: str, *, max_new_tokens: int = 160, sentence_budget: int = 64,
-                                       max_sentences: int = 6, lesion_coupling: bool = False, bus: str = "three"):
-    """Generate the reply ONE SENTENCE AT A TIME. Before each candidate sentence is fixed into the ACCEPTED text
-    (the context every later sentence is generated from), it is run through the imported `clause_filter_sentence`
-    against the LIVE, per-topic `consensus_facts_for_topic` verdict (not a static dict). A sentence that cannot
-    be safely repaired conservatively STOPS generation (v1 scope: truncate, never skip-and-continue past an
-    unverifiable point -- see the module docstring). Returns `(accepted_text, trace, consensus_info)`."""
-    facts, consensus_info = consensus_facts_for_topic(chat, topic, seed, lesion_coupling=lesion_coupling, bus=bus)
+def _generate_text_continuation(gen: OpenEndedGenerator, topic: str, seed: int, system: str, user: str,
+                                facts, max_new_tokens: int, sentence_budget: int, max_sentences: int):
+    """v1 TEXT-continuation sentence loop (unchanged behavior from the 2026-08-27 PARTIAL finding). Factored out
+    of `generate_with_generation_time_veto` verbatim so `continuation="text"` reproduces it exactly, byte-for-
+    byte, for A/B comparison against the new token-id path."""
     accepted = ""
     trace = []
     tokens_used = 0
@@ -226,14 +253,134 @@ def generate_with_generation_time_veto(gen: OpenEndedGenerator, chat, topic: str
             break
         repaired = clause_filter_sentence(candidate, topic, facts)
         if repaired is None:
-            trace.append({"raw": candidate, "kept": None, "action": "dropped_stop", "consensus_facts": facts})
+            trace.append({"raw": candidate, "kept": None, "action": "dropped_stop", "consensus_facts": facts,
+                          "continuation": "text"})
             break                                   # conservative truncation -- v1 scope, see module docstring
         action = "kept" if repaired.strip() == candidate.strip() else "repaired"
         accepted = (accepted + " " + repaired).strip()
-        trace.append({"raw": candidate, "kept": repaired, "action": action, "consensus_facts": facts})
+        trace.append({"raw": candidate, "kept": repaired, "action": action, "consensus_facts": facts,
+                      "continuation": "text"})
         if eos or incomplete:
             break
-    return accepted.strip(), trace, consensus_info
+    return accepted.strip(), trace
+
+
+def _find_sentence_boundary_ids(tok, ids_1d) -> tuple[int, bool]:
+    """Find the smallest token-count `k` such that decoding `ids_1d[:k]` ends (after right-stripping
+    whitespace) on a sentence terminator (`.`/`!`/`?`, one or more) -- i.e. the token that completes the FIRST
+    sentence in this freshly-generated chunk. Works purely by incremental DECODE (never re-encodes), so the
+    returned `k` slices the model's own generated ids exactly, with nothing lost or altered. Returns
+    `(k, incomplete)`; `incomplete=True` (k = len(ids_1d)) if no terminator is found within the chunk (mirrors
+    the v1 text path's `m is None` case)."""
+    n = int(ids_1d.shape[-1])
+    for k in range(1, n + 1):
+        text = tok.decode(ids_1d[:k], skip_special_tokens=True)
+        stripped = text.rstrip()
+        if not stripped:
+            continue
+        m = _SENT_END_RE.search(stripped)
+        if m is not None and m.end() == len(stripped):
+            return k, False
+    return n, True
+
+
+def _continue_chunk_ids(gen: OpenEndedGenerator, prompt_ids, accepted_ids, seed: int, budget_tokens: int):
+    """v2 TOKEN-ID continuation. Generate up to `budget_tokens` MORE tokens continuing directly from
+    `cat(prompt_ids, accepted_ids)` -- IDS concatenation, never a decode-then-re-encode string roundtrip. Greedy
+    + re-seeded exactly like `OpenEndedGenerator.generate` / the v1 text path. Returns
+    `(new_ids: LongTensor[1, k], eos_reached)`."""
+    torch = gen.fac._torch
+    B1 = gen.fac._B1
+    if accepted_ids is not None and accepted_ids.numel() > 0:
+        full_ids = torch.cat([prompt_ids, accepted_ids], dim=1)
+    else:
+        full_ids = prompt_ids
+    attn = torch.ones_like(full_ids)
+    torch.manual_seed(int(seed))
+    if B1.SPK.gen is not None:
+        B1.SPK.gen.manual_seed(1000 + int(seed))
+    with torch.no_grad():
+        out = gen.fac.model.generate(input_ids=full_ids, attention_mask=attn, max_new_tokens=int(budget_tokens),
+                                     do_sample=False, pad_token_id=gen.fac.tok.eos_token_id)
+    new_ids = out[:, full_ids.shape[1]:]
+    eos_id = gen.fac.tok.eos_token_id
+    eos_reached = bool(eos_id is not None and (new_ids == eos_id).any().item())
+    return new_ids, eos_reached
+
+
+def _generate_tokenid_continuation(gen: OpenEndedGenerator, topic: str, seed: int, system: str, user: str,
+                                   facts, max_new_tokens: int, sentence_budget: int, max_sentences: int):
+    """v2 TOKEN-ID-continuation sentence loop (2026-08-28, NEW DEFAULT). Same suppress/repair/stop contract as
+    `_generate_text_continuation` (same `clause_filter_sentence` call, same conservative-stop-on-drop v1 scope),
+    but the context that carries between sentences is TOKEN IDS, not a decoded string: a KEPT sentence's own
+    generated ids are appended to `accepted_ids` directly (`torch.cat`, no decode/re-encode at all); a REPAIRED
+    sentence re-encodes ONLY its own (edited) text span (unavoidable -- the text itself changed) and appends
+    THAT. This removes the every-step retokenization confound for the common (kept) case."""
+    torch = gen.fac._torch
+    msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    prompt = gen.fac.tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+    prompt_ids = gen.fac.tok(prompt, return_tensors="pt").to(gen.fac.device).input_ids
+    accepted_ids = torch.zeros((1, 0), dtype=prompt_ids.dtype, device=prompt_ids.device)
+    trace = []
+    tokens_used = 0
+    for _ in range(max_sentences):
+        remaining = max_new_tokens - tokens_used
+        if remaining <= 0:
+            break
+        budget = min(sentence_budget, remaining)
+        new_ids, eos = _continue_chunk_ids(gen, prompt_ids, accepted_ids, seed, budget)
+        tokens_used += budget
+        if new_ids.shape[1] == 0:
+            break
+        k, incomplete = _find_sentence_boundary_ids(gen.fac.tok, new_ids[0])
+        candidate_ids = new_ids[:, :k]
+        candidate = gen.fac.tok.decode(candidate_ids[0], skip_special_tokens=True).strip()
+        if not candidate:
+            break
+        repaired = clause_filter_sentence(candidate, topic, facts)
+        if repaired is None:
+            trace.append({"raw": candidate, "kept": None, "action": "dropped_stop", "consensus_facts": facts,
+                          "continuation": "token_id"})
+            break                                   # conservative truncation -- v1 scope, see module docstring
+        action = "kept" if repaired.strip() == candidate.strip() else "repaired"
+        if action == "kept":
+            accepted_ids = torch.cat([accepted_ids, candidate_ids], dim=1)    # the model's OWN ids, unaltered
+        else:
+            lead = " " if accepted_ids.numel() > 0 else ""
+            repair_ids = gen.fac.tok(lead + repaired, add_special_tokens=False,
+                                     return_tensors="pt").to(gen.fac.device).input_ids
+            accepted_ids = torch.cat([accepted_ids, repair_ids], dim=1)       # the ONLY re-encode: an edit
+        trace.append({"raw": candidate, "kept": repaired, "action": action, "consensus_facts": facts,
+                      "continuation": "token_id"})
+        if eos or incomplete:
+            break
+    accepted_text = (gen.fac.tok.decode(accepted_ids[0], skip_special_tokens=True).strip()
+                     if accepted_ids.numel() else "")
+    return accepted_text, trace
+
+
+def generate_with_generation_time_veto(gen: OpenEndedGenerator, chat, topic: str, seed: int, system: str,
+                                       user: str, *, max_new_tokens: int = 160, sentence_budget: int = 64,
+                                       max_sentences: int = 6, lesion_coupling: bool = False, bus: str = "three",
+                                       continuation: str = "token_id"):
+    """Generate the reply ONE SENTENCE AT A TIME. Before each candidate sentence is fixed into the ACCEPTED
+    context (what every later sentence is generated from), it is run through the imported `clause_filter_
+    sentence` against the LIVE, per-topic `consensus_facts_for_topic` verdict (not a static dict). A sentence
+    that cannot be safely repaired conservatively STOPS generation (v1 scope: truncate, never skip-and-continue
+    past an unverifiable point -- see the module docstring). `continuation` selects the stepping technique:
+    `"token_id"` (default, 2026-08-28) carries context as token ids (no retokenization on a kept sentence);
+    `"text"` reproduces the original 2026-08-27 decode-and-re-encode path verbatim, for A/B comparison. Returns
+    `(accepted_text, trace, consensus_info)`."""
+    facts, consensus_info = consensus_facts_for_topic(chat, topic, seed, lesion_coupling=lesion_coupling, bus=bus)
+    if continuation == "text":
+        accepted, trace = _generate_text_continuation(gen, topic, seed, system, user, facts, max_new_tokens,
+                                                       sentence_budget, max_sentences)
+    elif continuation == "token_id":
+        accepted, trace = _generate_tokenid_continuation(gen, topic, seed, system, user, facts, max_new_tokens,
+                                                          sentence_budget, max_sentences)
+    else:
+        raise ValueError(f"unknown continuation technique: {continuation!r}")
+    return accepted, trace, consensus_info
 
 
 # =====================================================================================================
@@ -287,7 +434,7 @@ def run_controlled_unit_battery(chat, seed: int, bus: str):
         on_low = (kept_on or "").lower()
         les_low = (kept_les or "").lower()
         rows.append({
-            "topic": topic, "sentence": sentence, "must_keep": must_keep, "must_drop": must_drop,
+            "topic": topic, "seed": seed, "sentence": sentence, "must_keep": must_keep, "must_drop": must_drop,
             "consensus_facts_ON": facts_on, "consensus_facts_LESIONED": facts_les,
             "kept_ON": kept_on, "kept_LESIONED": kept_les,
             "ON_drops_wrong": must_drop not in on_low, "ON_keeps_correct": must_keep in on_low,
@@ -298,12 +445,19 @@ def run_controlled_unit_battery(chat, seed: int, bus: str):
 
 
 def run_battery(seed: int, T: int, max_new_tokens: int, sentence_budget: int, max_sentences: int, bus: str,
-                device: str):
+                device: str, gen: OpenEndedGenerator | None = None):
+    """`gen=None` builds a fresh off-bridge Qwen (the original single-seed entry point, unchanged). A caller
+    doing a MULTI-SEED sweep (see `main`'s `--seeds`) passes an already-built `gen` so the (expensive: model
+    load + calibration pass) Qwen faculty is loaded ONCE and reused across seeds -- generation is re-seeded
+    per-call regardless (`torch.manual_seed(seed)` inside `_continue_chunk_ids`/`_continue_chunk`), so reusing
+    `gen` does not confound the per-seed comparison. `chat` (the lightweight numpy consensus organs) is always
+    rebuilt fresh per seed -- it IS the thing whose seed-dependence this battery is measuring."""
     print("[gt-veto] building the lightweight consensus chat (numpy, no GPU) ...", flush=True)
     chat = build_consensus_chat(seed)
-    print("[gt-veto] building the off-bridge spiking Qwen (calibration pass) ...", flush=True)
-    gen = OpenEndedGenerator(T=T, max_new_tokens=max_new_tokens, seed=seed, device=device)
-    print(f"[gt-veto] Qwen ready (load {gen.fac.load_seconds}s)", flush=True)
+    if gen is None:
+        print("[gt-veto] building the off-bridge spiking Qwen (calibration pass) ...", flush=True)
+        gen = OpenEndedGenerator(T=T, max_new_tokens=max_new_tokens, seed=seed, device=device)
+        print(f"[gt-veto] Qwen ready (load {gen.fac.load_seconds}s)", flush=True)
 
     rows = []
     for topic in ("canada", "france", "morocco"):
@@ -317,51 +471,63 @@ def run_battery(seed: int, T: int, max_new_tokens: int, sentence_budget: int, ma
 
         t0 = time.time()
         raw_one_shot, _secs = gen.generate(system, user, seed=seed, max_new_tokens=max_new_tokens)
-
-        gt_on_text, gt_on_trace, info_on = generate_with_generation_time_veto(
-            gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens, sentence_budget=sentence_budget,
-            max_sentences=max_sentences, lesion_coupling=False, bus=bus)
-        gt_les_text, gt_les_trace, info_les = generate_with_generation_time_veto(
-            gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens, sentence_budget=sentence_budget,
-            max_sentences=max_sentences, lesion_coupling=True, bus=bus)
-
-        final_on = _string_post_filter(gt_on_text, topic) if gt_on_text else ""
-        final_les = _string_post_filter(gt_les_text, topic) if gt_les_text else ""
-
         wrong_raw = _wrong_present(raw_one_shot, topic)
-        wrong_final_on = _wrong_present(final_on, topic)
-        wrong_final_les = _wrong_present(final_les, topic)
 
-        # GENERAL (topic-agnostic), UNAMBIGUOUS live-mouth signal: does the coupling change what the mouth
-        # itself emitted, comparing the two PRE-safety-net texts directly (NOT routed through `_sentences()` +
-        # `" ".join`, which drops sentence-ending punctuation on rejoin regardless of whether anything was
-        # actually flagged -- an unrelated, pre-existing property of the safety net's own known-topic loop that
-        # would otherwise read as a false "something was caught" on every multi-sentence reply). A topic where
-        # the off-bridge Qwen mouth's own (genuinely non-byte-identical-to-one-shot, see the module docstring)
-        # decode produced the SAME text either way had nothing for the coupling to have a chance to suppress
-        # this run -- UNDEFINED for the live vary/lesion check, not a pass; reported honestly, not forced.
-        live_diverged = bool(gt_on_text != gt_les_text)
+        # Run BOTH continuation techniques (token_id = new default, text = the original 2026-08-27 path) so
+        # this run reports a DIRECT, same-seed, same-prompt A/B of whether removing the retokenization confound
+        # actually raises the live-mouth vary/lesion divergence rate -- not asserted, measured.
+        per_technique = {}
+        for tech in ("token_id", "text"):
+            gt_on_text, gt_on_trace, info_on = generate_with_generation_time_veto(
+                gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens,
+                sentence_budget=sentence_budget, max_sentences=max_sentences, lesion_coupling=False, bus=bus,
+                continuation=tech)
+            gt_les_text, gt_les_trace, info_les = generate_with_generation_time_veto(
+                gen, chat, topic, seed, system, user, max_new_tokens=max_new_tokens,
+                sentence_budget=sentence_budget, max_sentences=max_sentences, lesion_coupling=True, bus=bus,
+                continuation=tech)
+
+            final_on = _string_post_filter(gt_on_text, topic) if gt_on_text else ""
+            final_les = _string_post_filter(gt_les_text, topic) if gt_les_text else ""
+            wrong_final_on = _wrong_present(final_on, topic)
+            wrong_final_les = _wrong_present(final_les, topic)
+
+            # GENERAL (topic-agnostic), UNAMBIGUOUS live-mouth signal: does the coupling change what the mouth
+            # itself emitted, comparing the two PRE-safety-net texts directly (NOT routed through `_sentences()`
+            # + `" ".join`, which drops sentence-ending punctuation on rejoin regardless of whether anything was
+            # actually flagged -- an unrelated, pre-existing property of the safety net's own known-topic loop
+            # that would otherwise read as a false "something was caught" on every multi-sentence reply). A
+            # topic where the mouth's own decode produced the SAME text either way had nothing for the coupling
+            # to have a chance to suppress this run -- UNDEFINED for the live vary/lesion check, not a pass.
+            live_diverged = bool(gt_on_text != gt_les_text)
+
+            per_technique[tech] = {
+                "gen_time_veto_ON": {"text": gt_on_text, "trace": gt_on_trace, "chars": len(gt_on_text)},
+                "gen_time_veto_LESIONED": {"text": gt_les_text, "trace": gt_les_trace, "chars": len(gt_les_text)},
+                "final_after_string_safety_net": {
+                    "ON_then_filtered": final_on, "LESIONED_then_filtered": final_les,
+                    "wrong_present_ON": sorted(wrong_final_on), "wrong_present_LESIONED": sorted(wrong_final_les),
+                },
+                "consensus_info_ON": info_on,
+                "live_mouth_output_diverged_on_vs_lesioned": live_diverged,
+                "safety_net_never_leaks_ON": bool(len(wrong_final_on) == 0),
+                "safety_net_never_leaks_LESIONED": bool(len(wrong_final_les) == 0),
+            }
+            print(f"[gt-veto] {topic} [{tech}]: gt_ON  ({len(gt_on_text)}c)={gt_on_text!r}", flush=True)
+            print(f"[gt-veto] {topic} [{tech}]: gt_LES ({len(gt_les_text)}c)={gt_les_text!r}", flush=True)
+            print(f"[gt-veto] {topic} [{tech}]: live_diverged={live_diverged} "
+                  f"final_ON_wrong={sorted(wrong_final_on)} final_LESIONED_wrong={sorted(wrong_final_les)}",
+                  flush=True)
 
         rows.append({
-            "topic": topic, "facts_injected": facts_for_state, "must_drop": sorted(MUST_DROP[topic]),
+            "topic": topic, "seed": seed, "facts_injected": facts_for_state,
+            "must_drop": sorted(MUST_DROP[topic]),
             "raw_one_shot": raw_one_shot, "wrong_in_raw_one_shot": sorted(wrong_raw),
-            "gen_time_veto_ON": {"text": gt_on_text, "trace": gt_on_trace, "chars": len(gt_on_text)},
-            "gen_time_veto_LESIONED": {"text": gt_les_text, "trace": gt_les_trace, "chars": len(gt_les_text)},
-            "final_after_string_safety_net": {
-                "ON_then_filtered": final_on, "LESIONED_then_filtered": final_les,
-                "wrong_present_ON": sorted(wrong_final_on), "wrong_present_LESIONED": sorted(wrong_final_les),
-            },
-            "consensus_info_ON": info_on,
-            "live_mouth_output_diverged_on_vs_lesioned": live_diverged,   # this decode's ON output != LESIONED
-                                                                          # output -- a genuine live test case
-            "safety_net_never_leaks_ON": bool(len(wrong_final_on) == 0),
-            "safety_net_never_leaks_LESIONED": bool(len(wrong_final_les) == 0),
+            # top-level keys mirror the (now default) token_id technique for backward-compatible readers of
+            # this artifact's prior shape; `by_continuation` carries the full token_id vs text A/B.
+            **{k: v for k, v in per_technique["token_id"].items()},
+            "by_continuation": per_technique,
         })
-        print(f"[gt-veto] {topic}: gt_ON  ({len(gt_on_text)}c)={gt_on_text!r}", flush=True)
-        print(f"[gt-veto] {topic}: gt_LES ({len(gt_les_text)}c)={gt_les_text!r}", flush=True)
-        print(f"[gt-veto] {topic}: live_diverged={live_diverged} "
-              f"final_ON_wrong={sorted(wrong_final_on)} final_LESIONED_wrong={sorted(wrong_final_les)}",
-              flush=True)
 
     unit_rows = run_controlled_unit_battery(chat, seed, bus)
     for r in unit_rows:
@@ -376,6 +542,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--seeds", type=str, default=None,
+                    help="comma-separated seed list (e.g. 42,43,44,100,101,102) -- overrides --seed; the "
+                         "off-bridge Qwen faculty is loaded ONCE and reused across seeds (generation is "
+                         "re-seeded per-call regardless), so a 6-seed sweep costs one model load, not six.")
     ap.add_argument("--T", type=int, default=16)
     ap.add_argument("--max-new-tokens", type=int, default=160)
     ap.add_argument("--sentence-budget", type=int, default=64)
@@ -384,8 +554,16 @@ def main():
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
 
-    rows, unit_rows, _gen = run_battery(args.seed, args.T, args.max_new_tokens, args.sentence_budget,
-                                        args.max_sentences, args.bus, args.device)
+    seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
+
+    rows, unit_rows = [], []
+    gen = None
+    for i, sd in enumerate(seeds):
+        print(f"[gt-veto] === seed {sd} ({i + 1}/{len(seeds)}) ===", flush=True)
+        r, u, gen = run_battery(sd, args.T, args.max_new_tokens, args.sentence_budget, args.max_sentences,
+                                args.bus, args.device, gen=gen)
+        rows.extend(r)
+        unit_rows.extend(u)
 
     n = len(rows)
     n_safety_on_ok = sum(r["safety_net_never_leaks_ON"] for r in rows)
@@ -399,16 +577,25 @@ def main():
     n_unit_lesioned_keeps_wrong = sum(r["LESIONED_keeps_wrong"] for r in unit_rows)
 
     # SECONDARY (opportunistic) confirmation AT the real, live off-bridge Qwen mouth: honest scope limit (named
-    # in the module docstring) -- the sentence-by-sentence continuation decode is NOT byte-identical to one-shot
-    # (a text-roundtrip retokenization effect), so a given run's ON and LESIONED decodes may or may not diverge
-    # at all. Only topics where the mouth's own OWN output actually differed (`live_mouth_output_diverged_on_
-    # vs_lesioned`) are a genuine test of the vary/lesion property; the rest are UNDEFINED for this check, not a
-    # pass -- reported honestly rather than forced into a 3/3 the live decode did not actually exercise.
+    # in the module docstring) -- the sentence-by-sentence continuation decode is NOT necessarily byte-identical
+    # to one-shot, so a given run's ON and LESIONED decodes may or may not diverge at all. Only topics where the
+    # mouth's own OWN output actually differed (`live_mouth_output_diverged_on_vs_lesioned`) are a genuine test
+    # of the vary/lesion property; the rest are UNDEFINED for this check, not a pass -- reported honestly rather
+    # than forced into a 3/3 the live decode did not actually exercise. `n_live_diverged` (top-level) is the
+    # NEW DEFAULT token_id technique; `n_live_diverged_text` is the same measurement for the original v1 text
+    # technique, computed in the SAME run at the SAME seed/prompts -- a direct, disclosed A/B of whether the
+    # 2026-08-28 token-id-continuation change actually raises the divergence rate over the 2026-08-27 baseline.
     n_live_diverged = sum(r["live_mouth_output_diverged_on_vs_lesioned"] for r in rows)
+    n_live_diverged_text = sum(r["by_continuation"]["text"]["live_mouth_output_diverged_on_vs_lesioned"]
+                               for r in rows)
+    n_safety_on_ok_text = sum(r["by_continuation"]["text"]["safety_net_never_leaks_ON"] for r in rows)
+    n_safety_les_ok_text = sum(r["by_continuation"]["text"]["safety_net_never_leaks_LESIONED"] for r in rows)
 
     v = Verdict("generation-time LTM-exempt organ-B/C consensus veto suppresses a known-supplement clause AT "
                "generation (controlled unit battery, decisive) and vanishes when the coupling is lesioned; "
-               "string safety net unaffected; live-mouth confirmation reported honestly (opportunistic)")
+               "string safety net unaffected; live-mouth confirmation reported honestly (opportunistic); "
+               "token-id continuation (2026-08-28) vs the original text continuation (2026-08-27) A/B'd "
+               "same-run")
     v.require("(PRIMARY, controlled) coupling ON: clause_filter_sentence drops the store-wrong border on the "
               "fixed adversarial sentence, every topic", n_unit_drops_wrong, expect=lambda x: x == n_unit)
     v.require("(PRIMARY, controlled) coupling ON: the store-correct border is KEPT, every topic",
@@ -421,26 +608,30 @@ def main():
               "coupling LESIONED (never less safe than before this file existed)", n_safety_les_ok,
               expect=lambda x: x == n)
     v.disabled("a live-mouth vary/lesion demonstration on EVERY probed topic",
-               why=f"the sentence-by-sentence off-bridge Qwen decode is not byte-identical to one-shot "
-                   f"generation (text-roundtrip retokenization -- an honest, disclosed property, not a bug in "
-                   f"the consensus mechanism); this run the ON and LESIONED decodes actually diverged on "
-                   f"{n_live_diverged}/{n} topics (the rest produced the SAME text either way -- nothing for "
-                   f"the coupling to have a chance to suppress THIS run, UNDEFINED not a pass). The PRIMARY, "
-                   f"decisive evidence is the controlled unit battery above, which is deterministic and "
-                   f"topic-complete -- see individual rows for the per-topic live text.")
+               why=f"even with token-id continuation removing the retokenization confound for kept sentences, "
+                   f"the mouth's own greedy decode may still legitimately produce the SAME text ON vs LESIONED "
+                   f"when the coupling has nothing to suppress this run -- an honest scope limit, not a bug. "
+                   f"token_id technique: ON/LESIONED actually diverged on {n_live_diverged}/{n} topics this "
+                   f"run; text technique (the original 2026-08-27 path, same seed/prompts): diverged on "
+                   f"{n_live_diverged_text}/{n}. The PRIMARY, decisive evidence remains the controlled unit "
+                   f"battery above, which is deterministic and topic-complete -- see `by_continuation` on each "
+                   f"row for the full token_id-vs-text comparison.")
     go = (n_unit_drops_wrong == n_unit and n_unit_keeps_correct == n_unit
          and n_unit_lesioned_keeps_wrong == n_unit and n_safety_on_ok == n and n_safety_les_ok == n)
     decided = v.decide(go=go)
 
     art = {
         "probe": "open_ended_gen_time_consensus_veto_derisk", "backend": "numpy(chat)+cuda(qwen)",
-        "seed": args.seed, "T": args.T, "max_new_tokens": args.max_new_tokens,
+        "seed": args.seed, "seeds": seeds, "T": args.T, "max_new_tokens": args.max_new_tokens,
         "sentence_budget": args.sentence_budget, "max_sentences": args.max_sentences, "bus": args.bus,
         "rows": rows, "unit_rows": unit_rows, "n_topics": n,
         "n_unit_drops_wrong": n_unit_drops_wrong, "n_unit_keeps_correct": n_unit_keeps_correct,
         "n_unit_lesioned_keeps_wrong": n_unit_lesioned_keeps_wrong, "n_unit": n_unit,
         "n_safety_net_ok_ON": n_safety_on_ok, "n_safety_net_ok_LESIONED": n_safety_les_ok,
         "n_live_diverged": n_live_diverged,
+        "continuation_default": "token_id",
+        "n_live_diverged_text": n_live_diverged_text,
+        "n_safety_net_ok_ON_text": n_safety_on_ok_text, "n_safety_net_ok_LESIONED_text": n_safety_les_ok_text,
         "verdict": decided, "preconditions": decided.get("preconditions", []), "GO": bool(go),
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
@@ -448,8 +639,9 @@ def main():
         json.dump(art, fh, indent=2, ensure_ascii=False)
     print(f"\n[gt-veto] OVERALL {'GO' if go else 'NO-GO/PARTIAL'} "
           f"(unit: drops_wrong {n_unit_drops_wrong}/{n_unit} | keeps_correct {n_unit_keeps_correct}/{n_unit} | "
-          f"lesioned_keeps_wrong {n_unit_lesioned_keeps_wrong}/{n_unit} || live: safety-ON {n_safety_on_ok}/{n} "
-          f"| safety-LESIONED {n_safety_les_ok}/{n} | mouth_diverged {n_live_diverged}/{n})", flush=True)
+          f"lesioned_keeps_wrong {n_unit_lesioned_keeps_wrong}/{n_unit} || live[token_id]: safety-ON "
+          f"{n_safety_on_ok}/{n} | safety-LESIONED {n_safety_les_ok}/{n} | mouth_diverged {n_live_diverged}/{n} "
+          f"|| live[text]: mouth_diverged {n_live_diverged_text}/{n})", flush=True)
     print(f"[gt-veto] wrote {os.path.relpath(args.out, _REPO)}", flush=True)
     return decided["status"]
 
