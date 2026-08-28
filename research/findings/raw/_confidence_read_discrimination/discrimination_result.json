@@ -1,0 +1,18 @@
+{
+  "probe": "confidence_read_discrimination_through_real_handler",
+  "query": "what does the brain use",
+  "brain": "tiny-demo",
+  "ROLE_CONF_LO": 0.3, "ROLE_CONF_HI": 0.5,
+  "turns": [
+    {"cond": "clean",     "sigma": 0.0, "mrc": 0.6080886903614127, "n_sentences": 3, "abstained": false, "hedge": false},
+    {"cond": "sigma0.3",  "sigma": 0.3, "mrc": 0.5764636252076519, "n_sentences": 3, "abstained": false, "hedge": false},
+    {"cond": "sigma0.6",  "sigma": 0.6, "mrc": 0.5156282529631442, "n_sentences": 3, "abstained": false, "hedge": false},
+    {"cond": "sigma0.9",  "sigma": 0.9, "mrc": 0.3994925326866421, "n_sentences": 3, "abstained": false, "hedge": true},
+    {"cond": "sigma1.2",  "sigma": 1.2, "mrc": 0.3863051779767728, "n_sentences": 3, "abstained": false, "hedge": true},
+    {"cond": "sigma1.5",  "sigma": 1.5, "mrc": 0.3731791206560046, "n_sentences": 3, "abstained": false, "hedge": true}
+  ],
+  "DISCRIMINATES": true,
+  "clean_mrc_above_HI": true,
+  "low_but_answering_turns": 3,
+  "note": "Single-query targeted confirmation through the real webapp.server.brain_chat handler; the multi-seed discrimination itself was established by #181 (da84fde7) + 2026-06-18-emergent-graceful-degradation-derisk. mean_role_confidence reads the OneBrainComposer margin (peak-runnerup)/peak, LOW on a close-runnerup (degraded) decode, HIGH on a dominant one."
+}
