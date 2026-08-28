@@ -1,0 +1,403 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 19.74,
+      "head_w_norm": 37.53,
+      "hostlinear_recov_argmax": 0.9117,
+      "hostlinear_argmax_agree": 0.7113,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.047,
+        "lesion_err": 0.0421,
+        "shuffle_teach": 0.0044
+      },
+      "hostlinear_floor_recov": 0.047,
+      "weight_cosine_to_head_diag": 0.5106,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0023,
+        "lesion_err": -0.0023,
+        "shuffle_teach": 0.0101
+      },
+      "weight_cosine_floor": 0.0101,
+      "sub_learned": {
+        "argmax_agree": 0.656,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8654
+      },
+      "sub_copied": {
+        "argmax_agree": 0.74,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9414
+      },
+      "sub_recov_ratio_learned_over_copied": 0.9193,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 56.4,
+      "demo_secs": 58.8,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 43,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 19.96,
+      "head_w_norm": 37.52,
+      "hostlinear_recov_argmax": 0.9261,
+      "hostlinear_argmax_agree": 0.755,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0439,
+        "lesion_err": 0.0405,
+        "shuffle_teach": 0.0016
+      },
+      "hostlinear_floor_recov": 0.0439,
+      "weight_cosine_to_head_diag": 0.5103,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0017,
+        "lesion_err": 0.0017,
+        "shuffle_teach": 0.0036
+      },
+      "weight_cosine_floor": 0.0036,
+      "sub_learned": {
+        "argmax_agree": 0.676,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8837
+      },
+      "sub_copied": {
+        "argmax_agree": 0.724,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9378
+      },
+      "sub_recov_ratio_learned_over_copied": 0.9423,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 57.2,
+      "demo_secs": 58.8,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 44,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 20.1,
+      "head_w_norm": 37.6,
+      "hostlinear_recov_argmax": 0.9362,
+      "hostlinear_argmax_agree": 0.7775,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.035,
+        "lesion_err": 0.0537,
+        "shuffle_teach": 0.0011
+      },
+      "hostlinear_floor_recov": 0.0537,
+      "weight_cosine_to_head_diag": 0.5209,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0006,
+        "lesion_err": 0.0006,
+        "shuffle_teach": -0.0007
+      },
+      "weight_cosine_floor": 0.0007,
+      "sub_learned": {
+        "argmax_agree": 0.684,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.883
+      },
+      "sub_copied": {
+        "argmax_agree": 0.748,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9477
+      },
+      "sub_recov_ratio_learned_over_copied": 0.9317,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 56.4,
+      "demo_secs": 58.4,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 100,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 19.85,
+      "head_w_norm": 37.48,
+      "hostlinear_recov_argmax": 0.9296,
+      "hostlinear_argmax_agree": 0.7662,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0562,
+        "lesion_err": 0.0515,
+        "shuffle_teach": 0.0007
+      },
+      "hostlinear_floor_recov": 0.0562,
+      "weight_cosine_to_head_diag": 0.5169,
+      "weight_cosine_anticheat": {
+        "frozen": -0.0002,
+        "lesion_err": -0.0002,
+        "shuffle_teach": 0.0027
+      },
+      "weight_cosine_floor": 0.0027,
+      "sub_learned": {
+        "argmax_agree": 0.716,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8884
+      },
+      "sub_copied": {
+        "argmax_agree": 0.764,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.951
+      },
+      "sub_recov_ratio_learned_over_copied": 0.9342,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 64.9,
+      "demo_secs": 58.7,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 101,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 19.31,
+      "head_w_norm": 37.46,
+      "hostlinear_recov_argmax": 0.9349,
+      "hostlinear_argmax_agree": 0.7512,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.0562,
+        "lesion_err": 0.0505,
+        "shuffle_teach": 0.0006
+      },
+      "hostlinear_floor_recov": 0.0562,
+      "weight_cosine_to_head_diag": 0.4952,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0007,
+        "lesion_err": 0.0007,
+        "shuffle_teach": -0.0004
+      },
+      "weight_cosine_floor": 0.0007,
+      "sub_learned": {
+        "argmax_agree": 0.704,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8959
+      },
+      "sub_copied": {
+        "argmax_agree": 0.748,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9474
+      },
+      "sub_recov_ratio_learned_over_copied": 0.9456,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 54.8,
+      "demo_secs": 58.6,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    },
+    {
+      "seed": 102,
+      "feature": "substrate",
+      "V": 1000,
+      "D": 128,
+      "chance_1_over_v": 0.001,
+      "n_train_pos": 40000,
+      "n_eval_pos": 800,
+      "n_sub_demo": 250,
+      "lr": 0.5,
+      "epochs": 30,
+      "weight_decay": 0.001,
+      "elig_alpha": 0.0,
+      "w_hat_norm": 19.41,
+      "head_w_norm": 37.52,
+      "hostlinear_recov_argmax": 0.9271,
+      "hostlinear_argmax_agree": 0.7488,
+      "hostlinear_copied_recov_argmax": 1.0,
+      "hostlinear_anticheat_recov": {
+        "frozen": 0.044,
+        "lesion_err": 0.0433,
+        "shuffle_teach": 0.0004
+      },
+      "hostlinear_floor_recov": 0.044,
+      "weight_cosine_to_head_diag": 0.5012,
+      "weight_cosine_anticheat": {
+        "frozen": 0.0003,
+        "lesion_err": 0.0003,
+        "shuffle_teach": 0.0085
+      },
+      "weight_cosine_floor": 0.0085,
+      "sub_learned": {
+        "argmax_agree": 0.644,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.8515
+      },
+      "sub_copied": {
+        "argmax_agree": 0.732,
+        "silent_frac": 0.0,
+        "recov_argmax": 0.9561
+      },
+      "sub_recov_ratio_learned_over_copied": 0.8906,
+      "host_rng_draws_on_read_path": 0,
+      "no_transport": true,
+      "no_host_grad": true,
+      "learn_secs": 140.9,
+      "demo_secs": 58.9,
+      "rule_recovery_go": true,
+      "anticheats_collapse": true,
+      "integrated_go": true,
+      "go": true,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "ddf5661b1c4d2e73",
+        "thr_hash_2": "ddf5661b1c4d2e73",
+        "seeded": true
+      }
+    }
+  ],
+  "summary": {
+    "feature": "substrate",
+    "n_seeds": 6,
+    "go_count": 6,
+    "go_5of6": true,
+    "rule_recovery_go_count": 6,
+    "integrated_go_count": 6,
+    "anticheats_collapse_count": 6,
+    "hostlinear_recov_mean": 0.9276,
+    "hostlinear_recov_min": 0.9117,
+    "hostlinear_agree_mean": 0.7517,
+    "hostlinear_floor_recov_max": 0.0562,
+    "weight_cosine_to_head_diag_mean": 0.5092,
+    "weight_cosine_to_head_diag_min": 0.4952,
+    "weight_cosine_floor_max": 0.0101,
+    "sub_learned_recov_mean": 0.878,
+    "sub_copied_recov_mean": 0.9469,
+    "sub_recov_ratio_mean": 0.9273,
+    "sub_recov_ratio_min": 0.8906
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "feature": "substrate",
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "ddf5661b1c4d2e73",
+    "thr_hash_2": "ddf5661b1c4d2e73",
+    "seeded": true
+  },
+  "no_transport": true,
+  "no_host_grad": true,
+  "forward_during_learning": "host_linear_proxy_for_substrate_read",
+  "backend": "cupy",
+  "elapsed_s": 878.1,
+  "argv": [
+    "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_eprop_learn_derisk.py",
+    "--feature",
+    "substrate",
+    "--seeds",
+    "42,43,44,100,101,102",
+    "--save-w-hat",
+    "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_0p94_s{seed}.npz",
+    "--json",
+    "research/findings/raw/_persist_eprop_head_scope/eprop_learn_persist_6seed.json"
+  ]
+}

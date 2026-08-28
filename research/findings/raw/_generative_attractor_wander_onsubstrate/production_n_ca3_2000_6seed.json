@@ -1,0 +1,232 @@
+{
+ "rows": [
+  {
+   "seed": 42,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    33,
+    16,
+    23
+   ],
+   "w_within": 85.87,
+   "cross_dw": 0.0014,
+   "nonmem_dw": 0.0002,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.0,
+   "blend_balance_min": 0.0,
+   "blend_overlap_others": 0.0,
+   "persistence_gap": 0.188,
+   "blend_overlaps_driven": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "blend_overlaps_released": [
+    0.0,
+    0.188,
+    0.0
+   ],
+   "single_recovered": 0.818,
+   "single_overlap_others": 0.826,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  },
+  {
+   "seed": 43,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    29,
+    26,
+    17
+   ],
+   "w_within": 82.64,
+   "cross_dw": -0.0056,
+   "nonmem_dw": 0.0,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.552,
+   "blend_balance_min": 0.5,
+   "blend_overlap_others": 0.118,
+   "persistence_gap": 0.077,
+   "blend_overlaps_driven": [
+    0.552,
+    0.5,
+    0.118
+   ],
+   "blend_overlaps_released": [
+    0.552,
+    0.577,
+    0.118
+   ],
+   "single_recovered": 0.966,
+   "single_overlap_others": 0.154,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  },
+  {
+   "seed": 44,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    28,
+    13,
+    16
+   ],
+   "w_within": 80.53,
+   "cross_dw": 0.0038,
+   "nonmem_dw": 0.0003,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.143,
+   "blend_balance_min": 0.0,
+   "blend_overlap_others": 0.0,
+   "persistence_gap": 0.25,
+   "blend_overlaps_driven": [
+    0.143,
+    0.0,
+    0.0
+   ],
+   "blend_overlaps_released": [
+    0.393,
+    0.154,
+    0.062
+   ],
+   "single_recovered": 0.893,
+   "single_overlap_others": 0.077,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  },
+  {
+   "seed": 100,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    18,
+    24,
+    21
+   ],
+   "w_within": 82.06,
+   "cross_dw": 0.0039,
+   "nonmem_dw": 0.0,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.458,
+   "blend_balance_min": 0.444,
+   "blend_overlap_others": 0.143,
+   "persistence_gap": 0.111,
+   "blend_overlaps_driven": [
+    0.444,
+    0.458,
+    0.143
+   ],
+   "blend_overlaps_released": [
+    0.556,
+    0.458,
+    0.238
+   ],
+   "single_recovered": 0.778,
+   "single_overlap_others": 0.333,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  },
+  {
+   "seed": 101,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    25,
+    25,
+    21
+   ],
+   "w_within": 81.23,
+   "cross_dw": -0.0009,
+   "nonmem_dw": 0.0003,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.36,
+   "blend_balance_min": 0.04,
+   "blend_overlap_others": 0.048,
+   "persistence_gap": 0.0,
+   "blend_overlaps_driven": [
+    0.36,
+    0.04,
+    0.048
+   ],
+   "blend_overlaps_released": [
+    0.36,
+    0.04,
+    0.048
+   ],
+   "single_recovered": 0.88,
+   "single_overlap_others": 0.048,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  },
+  {
+   "seed": 102,
+   "n_ca3": 2000,
+   "emergent": true,
+   "assembly_sizes": [
+    30,
+    25,
+    20
+   ],
+   "w_within": 81.87,
+   "cross_dw": 0.0066,
+   "nonmem_dw": -0.0002,
+   "genuine_formation": true,
+   "novelty_max_overlap": 0.16,
+   "blend_balance_min": 0.0,
+   "blend_overlap_others": 0.0,
+   "persistence_gap": 0.12,
+   "blend_overlaps_driven": [
+    0.0,
+    0.16,
+    0.0
+   ],
+   "blend_overlaps_released": [
+    0.0,
+    0.28,
+    0.0
+   ],
+   "single_recovered": 0.833,
+   "single_overlap_others": 0.1,
+   "noise_best_overlap": 0.0,
+   "noise_2nd_overlap": 0.0,
+   "untrained_best_overlap": 0.0
+  }
+ ],
+ "params": {
+  "n_ca3": 2000,
+  "ca3_density": 0.5,
+  "assembly_frac": 0.18,
+  "cue_frac": 0.5,
+  "kthresh": 8.0,
+  "plateau_strength": 30.0,
+  "apical_R": 0.15,
+  "self_regen": 2.0,
+  "v_hold": -35.0,
+  "apical_kir_g": 1.0,
+  "apical_gc": 0.3,
+  "apical_gc_read": 0.3,
+  "up_thresh": -20.0,
+  "ca3_fb_inhib": 60.0,
+  "btsp_lr": 0.05,
+  "wmax": 100.0,
+  "encode_drive": 700.0,
+  "encode_plateau_pA": 250.0,
+  "train_events": 60,
+  "drive_steps": 48,
+  "reset_steps": 15,
+  "drive_pA": 300.0,
+  "warm_steps": 100,
+  "read_steps": 100,
+  "silence_steps": 50,
+  "hold_steps": 100,
+  "blend_cells_each": 3
+ },
+ "elapsed_seconds": 494.7783076763153
+}
