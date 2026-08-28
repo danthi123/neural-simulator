@@ -401,8 +401,16 @@ class ComprehensionProductionOrgan:
         included, so no clobber), and no extra settle steps footprint the shared bridge."""
         if self._shared is not None and self._shared.snap is not None:
             snap = self._shared.snap
-            self._rest[id(comp)] = (np.asarray(snap["cp_membrane_potential_v"]).copy(),
-                                    np.asarray(snap["cp_recovery_variable_u"]).copy())
+            # BACKEND-MATCH (cupy build fix, 2026-08-28): store the rest snapshot in the comp bridge's OWN backend
+            # so `_hard_reset`'s `b.cp_*[:] = rest` is a device->device (cupy) / host->host (numpy) assignment. The
+            # pool snapshots to HOST, so a bare `np.asarray(...)` stored a numpy array that cupy's __setitem__ then
+            # rejected ("non-scalar numpy.ndarray cannot be used for fill") -> the WHOLE shared (flag-on) xedge pool
+            # build failed on cupy at calibration and SILENTLY degraded to standalone organs (every production cupy
+            # seed's `wm_resolved` was then None -- the real cause of the flip NO-GO, NOT margin fragility). On numpy
+            # `comp.xp is np`, so `xp.asarray(np.asarray(...))` is the identical host array -> byte-identical.
+            xp = comp.xp
+            self._rest[id(comp)] = (xp.asarray(np.asarray(snap["cp_membrane_potential_v"])).copy(),
+                                    xp.asarray(np.asarray(snap["cp_recovery_variable_u"])).copy())
             return
         b = comp.bridge
         b.cp_external_input_current[:] = 0.0
