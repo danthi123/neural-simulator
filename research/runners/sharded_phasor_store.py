@@ -109,6 +109,13 @@ class ShardedPhasorStore:
                 sh.pol_words = base.pol_words
                 sh.words = base.words          # SAME list object -> bisect.insort in one shard grows all
                 sh._growth_rng = base._growth_rng
+                # (#66 knowledge-scale) DG sparse-index GRAFT: a non-base shard delegates index-building to `base`
+                # instead of lazily building its OWN DGSparseIndex over the identical shared codebook on first use
+                # -- same memory rationale as the codebook graft above (S shards x an independent V-sized index
+                # would multiply the RSS budget by S; grafting keeps it at ONE index for the whole store). Only
+                # matters when `enable_sparse_index` is actually on (composer_kwargs / BRAIN_SHARD_SPARSE_INDEX);
+                # a byte-identical no-op default-off (the attribute exists but `_ensure_dg_index` is never called).
+                sh._dg_index_source = base
                 self.shards.append(sh)
         else:
             # same seed+vocab -> byte-identical codebooks in every shard (no sharing = S independent copies).

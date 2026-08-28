@@ -64,7 +64,9 @@ class RFPhasorComposer:
                  encoding_gain_fn=None, local_reciprocal_unbind=False, trace=False,
                  enable_source_monitor=False, source_monitor_D=None, source_monitor_seed_offset=1000003,
                  enable_plastic_source_monitor=False, plastic_source_config=None,
-                 plastic_source_seed_offset=0):
+                 plastic_source_seed_offset=0,
+                 enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
+                 sparse_index_c=8, sparse_index_conf_floor=0.5):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -190,6 +192,45 @@ class RFPhasorComposer:
         for tag in self.pol_words:
             self.concepts[tag] = rng.uniform(0.0, 1.0, self.D)
         self.roles = {r: rng.uniform(0.0, 1.0, self.D) for r in ROLES}
+        # enable_sparse_index (KNOWLEDGE-SCALE fast path, board #66, PORT of OneBrainComposer's validated DG-indexed
+        # cleanup -- research/runners/one_brain_composer.py `_ensure_dg_index`/`_dg_shard_select`/`_full_host_select`,
+        # itself a reuse-by-import of `_sparse_indexed_retrieval_derisk.DGSparseIndex`, 6-seed GO). ADDITIVE + DEFAULT
+        # OFF = BYTE-IDENTICAL to today. WHY: `_cleanup`/`_cleanup_all` match the recovered role phasor against ALL V
+        # rows of the concept codebook (a V x D matched-filter) then argmax -- LINEAR in vocabulary. This composer is
+        # the SHARD engine behind `ShardedPhasorStore` (the tiered LTM's cortical store), whose shards already keep
+        # the PER-SHARD FACT COUNT flat (~200/shard) via agent-hash routing -- but every shard shares ONE global
+        # codebook, so the CLEANUP step a routed query still pays is O(V) in the FULL vocabulary, not the shard's own
+        # ~200 facts (2026-08-28 finding: 1.37s@24k words -> 20.7s@347k -> 33.8s@581k, tracking V not fact count).
+        # Same brain-grounded fix as OneBrainComposer: a DG-like sparse index (dentate-gyrus pattern separation +
+        # CA3-conjunction routing) routes the recovered phasor to a SMALL candidate shard of the codebook; the SAME
+        # matched-filter cleanup (`np.cos(2pi(rec-code)).sum()`, mathematically identical to this class's own
+        # `_cleanup`/`_cleanup_all` cosine score up to the /D normalization constant, so argmax is unaffected) then
+        # runs only over that shard's rows. NO-REGRESSION: (1) the shard is a SUBSET of the codebook, so its peak
+        # score <= the full peak -- an abstain under the full scan abstains under the shard too (the moat is intact
+        # by construction); (2) a per-cleanup CONFIDENCE FALLBACK escalates a non-decisive shard read (peak <
+        # conf_floor*D) to the full-codebook scan, so the decoded word is IDENTICAL to the full scan whenever the
+        # shard read is ambiguous. Only engages for the MAIN vocabulary cleanup (`words is None`, i.e. `self.words`);
+        # the 2-word `pol_words` polarity cleanup is always the direct scan (too small to benefit, and callers pass
+        # `words=self.pol_words` explicitly, which this flag never intercepts). `_dg_index_source` (opt-in, None by
+        # default): when set to ANOTHER RFPhasorComposer instance sharing this one's `words`/`concepts` objects (the
+        # `ShardedPhasorStore(share_codebook=True)` graft), the index is built ONCE on that source and every sharing
+        # shard reuses the SAME DGSparseIndex/codebook objects instead of each of S shards redundantly building its
+        # own copy over the identical global vocabulary (a real S-fold memory blow-up avoided, not merely an
+        # optimization -- S=3745 shards x an independent V=347k index would multiply the RSS budget by S). Env
+        # BRAIN_SHARD_SPARSE_INDEX=1 flips it on without a code change (kept a DISTINCT env var from OneBrainComposer's
+        # BRAIN_SPARSE_INDEX_RETRIEVAL so the two composers' defaults are reviewed/flipped independently -- the
+        # 2026-08-27 finding already GO'd-but-left-OFF the OneBrainComposer flag as answers-identical/redundant at
+        # 100k-bundle scale; this shard composer is the ACTUALLY-BLOCKING path at bulk-KB vocab scale). Biology
+        # binding: research/biology/dg-ca3-sparse-index.md (shared with OneBrainComposer's port of the same mechanism).
+        import os as _os
+        self.enable_sparse_index = bool(enable_sparse_index) or (
+            _os.environ.get("BRAIN_SHARD_SPARSE_INDEX", "").strip().lower() in ("1", "true", "on", "yes"))
+        self._dg_g = int(sparse_index_g); self._dg_G = int(sparse_index_G); self._dg_c = int(sparse_index_c)
+        self._dg_conf_floor = float(sparse_index_conf_floor)   # shard peak < floor*D -> escalate to the full scan
+        self._dg_index = None          # the DGSparseIndex over the concept codebook (lazy; reuse-by-import)
+        self._dg_codebook = None       # (V, D) concept phase-matrix aligned to self.words (fractional-cycle phases)
+        self._dg_built_V = -1          # len(self.words) the current index/codebook were built for (rebuild on change)
+        self._dg_index_source = None   # another RFPhasorComposer to delegate index-building to (shared-codebook graft)
         self.kb = []  # (fact_dict, composite_phases)
         self._source_kb = []  # (roles_present, independent_source_composite_phases)
         if self.enable_source_monitor:
@@ -655,10 +696,70 @@ class RFPhasorComposer:
             return words[int(np.argmax(scores))]
         return words[int(np.argmax(firing))]
 
+    # --- (#66 knowledge-scale, PORTED from OneBrainComposer) DG-indexed cleanup fast path ---------------------
+    def _ensure_dg_index(self):
+        """Build (lazily, once per codebook mutation) the DG-like sparse index + the concept phase-matrix over the
+        CURRENT cleanup codebook `self.words`. Reuse-by-import of the validated de-risk (research/runners/
+        _sparse_indexed_retrieval_derisk.py, 6-seed GO -- the SAME class OneBrainComposer already uses; import
+        deferred so a default-off composer never imports it). If `_dg_index_source` is set (the ShardedPhasorStore
+        share_codebook graft), delegate entirely to that source composer's index instead of building a redundant
+        copy over the identical shared `words`/`concepts` objects -- avoids an S-fold memory blow-up across shards.
+        Rebuilt only when len(self.words) changed (a recruit/grow), so the moat is never served a stale index. m ~
+        V^(1/g) keeps bucket occupancy O(1) -> the shard stays ~constant as V grows. Seeds from self.seed."""
+        if self._dg_index_source is not None:
+            self._dg_index_source._ensure_dg_index()
+            self._dg_index = self._dg_index_source._dg_index
+            self._dg_codebook = self._dg_index_source._dg_codebook
+            self._dg_built_V = self._dg_index_source._dg_built_V
+            return
+        V = len(self.words)
+        if self._dg_index is not None and self._dg_built_V == V:
+            return
+        from research.runners._sparse_indexed_retrieval_derisk import DGSparseIndex
+        # concept codebook aligned to self.words, in FRACTIONAL-CYCLE phases (this composer's convention; the
+        # phasor is exp(2pi i phase)). The de-risk index's feature convention is [cos(phase_rad), sin(phase_rad)],
+        # so build/query in RADIANS (phase * 2pi).
+        cb = np.stack([np.asarray(self.concepts[w], dtype=float) for w in self.words])   # (V, D) fractional-cycle
+        m = max(2, int(np.ceil(V ** (1.0 / self._dg_g))))
+        idx = DGSparseIndex(D=self.D, m=m, g=self._dg_g, G=self._dg_G, c=self._dg_c, seed=self.seed)
+        idx.build(cb * (2.0 * np.pi))       # store each concept's band-winner conjunctive key -> bucket (id = word idx)
+        self._dg_index = idx
+        self._dg_codebook = cb
+        self._dg_built_V = V
+
+    def _dg_shard_select(self, rec_phases):
+        """Route the recovered phasor (fractional-cycle phases) to its DG shard and decode it by the matched filter
+        over ONLY the shard concepts. Returns (word, peak_score), or (None, peak) to signal ESCALATE-to-full when
+        the shard is empty or its peak is not decisive (< conf_floor*D) -- the no-regression fallback. The score is
+        this composer's own matched filter over fewer rows: score_w = sum_k cos(2pi(rec - code_w)) (== `_cleanup`'s
+        mean-cos up to the /D constant, so argmax is unaffected)."""
+        self._ensure_dg_index()
+        rec = np.asarray(rec_phases, dtype=float)
+        shard = self._dg_index.query(rec * (2.0 * np.pi))          # candidate word indices (the routed CA3 ensemble)
+        if shard.size == 0:
+            return None, 0.0
+        cb = self._dg_codebook[shard]                              # (s, D) shard concept phases
+        sc = np.cos(2.0 * np.pi * (rec[None, :] - cb)).sum(axis=1)  # (s,) matched-filter cleanup over the shard
+        t = int(np.argmax(sc)); peak = float(sc[t])
+        if peak < self._dg_conf_floor * self.D:
+            return None, peak                                     # not decisive -> escalate to the full scan (parity)
+        return self.words[int(shard[t])], peak
+
+    def _full_host_select(self, rec_phases):
+        """Full-codebook matched-filter argmax over the recovered phasor (the escalation path == the full scan,
+        reusing the already-built `_dg_codebook` so escalation costs no extra codebook rebuild). Same operator as
+        `_dg_shard_select`, over ALL V rows -- decode is IDENTICAL to the pre-port `_cleanup` full scan."""
+        rec = np.asarray(rec_phases, dtype=float)
+        sc = np.cos(2.0 * np.pi * (rec[None, :] - self._dg_codebook)).sum(axis=1)
+        return self.words[int(np.argmax(sc))]
+
     def _cleanup(self, rec_phases, words=None):
-        words = words if words is not None else self.words
         if self.enable_spiking_cleanup:
-            return self._spiking_cleanup(rec_phases, words)
+            return self._spiking_cleanup(rec_phases, words if words is not None else self.words)
+        if self.enable_sparse_index and words is None:
+            w, _pk = self._dg_shard_select(rec_phases)
+            return w if w is not None else self._full_host_select(rec_phases)
+        words = words if words is not None else self.words
         sims = [float(np.mean(np.cos(2.0 * np.pi * (rec_phases - self.concepts[w])))) for w in words]
         return words[int(np.argmax(sims))]
 
@@ -700,7 +801,42 @@ class RFPhasorComposer:
     def _cleanup_all(self, rec, words=None):
         """Batched matched-filter cleanup (the resonator C·Cᵀ): nearest concept per row of (K, D). Returns K words.
         sims = Re(rec_phasor @ conj(codebook_phasor)ᵀ) (= the single `_cleanup`'s mean-cos up to the /D constant,
-        so argmax is IDENTICAL). One matmul over the whole codebook instead of a per-word loop."""
+        so argmax is IDENTICAL). One matmul over the whole codebook instead of a per-word loop.
+
+        (#66 knowledge-scale) When `enable_sparse_index` and `words is None` (the MAIN-vocabulary cleanup a routed
+        ShardedPhasorStore shard pays on every query), each row routes through the DG shard instead of building the
+        full (V, D) codebook matrix + a K x V matmul -- this is the O(V) term the 2026-08-28 vocab-latency-wall
+        finding identified (every routed query still cleans up against the FULL shared codebook regardless of the
+        shard's own ~200-fact size). A non-decisive row ESCALATES to the full-codebook scan, so the decoded word is
+        IDENTICAL to the full scan whenever the shard read is ambiguous -- byte-identical decisions, not just
+        usually-right ones. Escalated rows are batched into ONE matmul (`rec_z @ conj(cb_z).T`, the SAME BLAS op the
+        non-indexed path below already uses), not a per-row Python loop over `_full_host_select` -- found DURING
+        this port's own scale verify (2026-08-28): a naive per-row loop over real-Wikidata cues, where the DG shard
+        is frequently non-decisive (many entities share thin margins at 347k-word scale), made escalation-heavy
+        queries SLOWER than the pre-port full scan (each row paying its own broadcast-and-sum instead of one BLAS
+        matmul over all escalated rows at once). Reuses the cached `_dg_codebook` (no rebuild)."""
+        if self.enable_sparse_index and words is None:
+            n = len(rec)
+            if n == 0:
+                return []
+            rec_arr = np.asarray(rec)
+            out = [None] * n
+            escalate_idx = []
+            for i in range(n):
+                w, _pk = self._dg_shard_select(rec_arr[i])
+                if w is not None:
+                    out[i] = w
+                else:
+                    escalate_idx.append(i)
+            if escalate_idx:
+                # self._dg_codebook is guaranteed built (every _dg_shard_select call above ran _ensure_dg_index).
+                esc_z = np.exp(2j * np.pi * rec_arr[escalate_idx])                    # (m, D)
+                cb_z = np.exp(2j * np.pi * self._dg_codebook)                         # (V, D) -- built on demand,
+                sims = (esc_z @ np.conj(cb_z).T).real                                 # not cached (RSS budget)
+                widx = np.argmax(sims, axis=1)
+                for j, i in enumerate(escalate_idx):
+                    out[i] = self.words[int(widx[j])]
+            return out
         words = words if words is not None else self.words
         if len(rec) == 0:
             return []
