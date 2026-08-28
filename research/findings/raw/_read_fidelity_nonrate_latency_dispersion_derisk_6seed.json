@@ -1,0 +1,489 @@
+{
+  "probe": "read_fidelity_nonrate_latency_dispersion_derisk",
+  "verdict": "LATENCY(instrument-fixed)=UNDEFINED -- shuffle anti-cheat collapses 6/6 (was 3/6 under the iteration-1 across-read-SEM instrument); latency PASS 0/6 (permutation z>=Z_FLOOR=2.0 AND lesion-attributable). DISPERSION(ISI-CV)=NO-GO -- shuffle anti-cheat collapses 6/6, defined on 6/6 seeds, PASS 1/6. RATE (unchanged, reproduce-the-known-crux sanity, NOT the arm under repair) PASS 0/6. Same trained cross-edge, same lesion event, same simulated trajectory feeds all three reads (no retraining-noise confound). Root cause of iteration 1's 3/6 anti-cheat ambiguity: this pool family runs with enable_ou_process=False AND enable_short_term_plasticity=False (fully deterministic given a fixed reset+drive), so the old across-READ SEM was computed over quasi-duplicated (non-independent) samples -- fixed here by resampling over NEURON IDENTITY (a permutation test) instead of read repetition. LATENCY UNDEFINED, NOT a validated verdict either way: 1 precondition(s) unmet -- unmet: latency_clears_floor_and_lesion_attributable (measured=0 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>).",
+  "GO_latency": false,
+  "GO_dispersion": false,
+  "n_seeds": 6,
+  "n_rate_pass": 0,
+  "n_latency_pass": 0,
+  "n_latency_shuffle_collapse": 6,
+  "n_dispersion_pass": 1,
+  "n_dispersion_shuffle_collapse": 6,
+  "n_dispersion_defined": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "latency_shuffle_instrument_fixed",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "note": "STEP 1 precondition: the permutation-based anti-cheat must collapse (frac_null_clears_floor <= 0.15) on every seed before the latency verdict can be trusted either way"
+    },
+    {
+      "kind": "require",
+      "name": "latency_clears_floor_and_lesion_attributable",
+      "ok": false,
+      "detail": "measured=0 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "note": "the latency margin's permutation z must clear Z_FLOOR AND vanish under lesion, on every seed, for a latency GO"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "note": "the reused cross-edge trained normally (sanity on the shared substrate)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fa16a176660>",
+      "note": "the per-seed block pair must actually vary (inherited from the parent runner)"
+    }
+  ],
+  "config": {
+    "Z_FLOOR": 2.0,
+    "K_PERM": 300,
+    "SHUF_COLLAPSE_MAX_RATE": 0.15,
+    "MIN_ISI_SPIKES": 2,
+    "MIN_EVALUABLE_READS": 4,
+    "recall_steps": 100,
+    "n_reads": 8,
+    "pre_steps": 60,
+    "episode_drive_pa": 2500.0,
+    "f2_lesion_ratio": 0.34,
+    "cross_edge_hebbian_lr": 0.15,
+    "n_episodes": 150,
+    "hebbian_max_weight": 20.0,
+    "cue_pa": 2000.0,
+    "ctx_drive_pa": 2500.0,
+    "rng_formula": "seed*7919+101 (latency+dispersion null draws, paired); inherited _assign_blocks=seed*104729+17"
+  },
+  "mechanism": "Reuses ReadFidelityPool (build/train/lesion + the raster-capturing `_drive2`) VERBATIM from the committed iteration-1 file. Replaces the across-READ SEM significance test (degenerate under this pool's fully-deterministic dynamics) with a permutation test over NEURON IDENTITY: K_PERM fresh random re-labelings of which neurons count as generated/perceived, each re-scored on the SAME already-captured N_READS raster pairs (no new simulation). Adds a dispersion (ISI-CV) read-kind computed identically, from the identical raster.",
+  "biology": "Thorpe/Gollisch-Meister (latency) as in iteration 1; dispersion: Softky & Koch 1993 (J Neurosci 13(1):334-350) -- cortical spike trains are highly irregular (inter-spike-interval CV near or above 1), a statistic independent of both mean rate and first-spike timing, so it can in principle carry stimulus information through the SAME rate-saturating regime Sanzeni/Histed/Brunel 2020 attribute to refractory-period-driven mean-rate compression.",
+  "scaffold_residuals": [
+    "the permutation null's K_PERM=300 and SHUF_COLLAPSE_MAX_RATE=0.15 are host-chosen statistical-power/tolerance knobs, not computed features",
+    "N_READS=8 real-identity reads inherited from iteration 1's own calibration, kept for point-estimate continuity even though this run's own diagnosis shows repeated reads under this pool's deterministic dynamics are largely duplicated (see module docstring) -- the FIX targets the significance test, not the mean estimate",
+    "ISI-CV per-neuron averaging (not a pooled-ISI CV) -- the more standard Softky-Koch convention, a host choice of statistic among the dispersion family (CV vs Fano factor)",
+    "same host-curated training schedule / topology as the parent crossedge runner (declared there, unchanged)"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 70.9,
+      "cue_concept": 1,
+      "assert_concept": 5,
+      "final_weight_trained_block": 3.9776554107666016,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.004609374999999985,
+          "sem": 0.0013281249999999994,
+          "n": 8,
+          "z": 3.470588235294108
+        },
+        "lesion_mean": 0.0035156249999999944,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": -0.00019531249999999584,
+          "null_mean": 4.9479166666666455e-05,
+          "null_std": 0.0011801172196899566,
+          "z": -0.2074299591450539,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.03666666666666667,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.005781250000000005,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 30.60000000000066,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.008461906471011249,
+          "null_mean": -0.0005974558728890544,
+          "null_std": 0.00590766551141693,
+          "z": 1.5334927690798548,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.03666666666666667,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": -0.003942476894988334,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.4659088242696192,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": false
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 73.1,
+      "cue_concept": 6,
+      "assert_concept": 7,
+      "final_weight_trained_block": 6.112188816070557,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.0062890625000000065,
+          "sem": 0.0018302295387793677,
+          "n": 8,
+          "z": 3.436215166866098
+        },
+        "lesion_mean": 0.0028124999999999956,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": -0.0007421874999999946,
+          "null_mean": -0.00011588541666666706,
+          "null_std": 0.001200186818584685,
+          "z": -0.5218371620443987,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.05333333333333334,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.006796875000000001,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 10.157894736842174,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.030535750768213764,
+          "null_mean": -0.000831672869154645,
+          "null_std": 0.009940222295396779,
+          "z": 3.155605851178435,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.03333333333333333,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.010488648158861781,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "frac_attributable": 0.6565125174593724,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": false
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 71.2,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.177545547485352,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.0073046875,
+          "sem": 0.0017578125000000007,
+          "n": 8,
+          "z": 4.155555555555554
+        },
+        "lesion_mean": 0.003437500000000003,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": -0.004843749999999987,
+          "null_mean": 9.635416666666644e-05,
+          "null_std": 0.001264028095046225,
+          "z": -3.9082233899919734,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.03666666666666667,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.005039062500000009,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 2.040322580645166,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.01366522682218229,
+          "null_mean": -0.00032394140214076216,
+          "null_std": 0.007858020756732222,
+          "z": 1.7802406811331055,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.04,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": -0.010173317997785404,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.7444675547771669,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": false
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 71.3,
+      "cue_concept": 3,
+      "assert_concept": 0,
+      "final_weight_trained_block": 5.6903815269470215,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.005429687500000004,
+          "sem": 0.0008837601582437993,
+          "n": 8,
+          "z": 6.143847342914658
+        },
+        "lesion_mean": 0.002343749999999995,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.0009765624999999965,
+          "null_mean": -1.0416666666665941e-05,
+          "null_std": 0.0012093596152147413,
+          "z": 0.8161171865255386,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.056666666666666664,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.005273437499999997,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -4.400000000000016,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.01548948187680698,
+          "null_mean": -0.0005192688380556163,
+          "null_std": 0.008511223891831662,
+          "z": 1.8808987894474747,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.043333333333333335,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.0018631202860335885,
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 0.879717068598446,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": false
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 71.2,
+      "cue_concept": 4,
+      "assert_concept": 0,
+      "final_weight_trained_block": 6.75588846206665,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.005273437500000004,
+          "sem": 0.0004991535105761911,
+          "n": 8,
+          "z": 10.564760916762225
+        },
+        "lesion_mean": 0.0020312499999999966,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": -0.0051171875,
+          "null_mean": 9.843749999999984e-05,
+          "null_std": 0.0011578004440345165,
+          "z": -4.504770253693659,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.05333333333333334,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.0008593750000000008,
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 1.16793893129771,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.03755324359739752,
+          "null_mean": 0.0006550570284214021,
+          "null_std": 0.00857342047541302,
+          "z": 4.303788280860979,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.06,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.00496219210517336,
+        "floor_ok": true,
+        "lesion_ok": true,
+        "frac_attributable": 0.8678624898990817,
+        "PASS": true,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": true
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 70.5,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.735973358154297,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "rate": {
+        "intact": {
+          "mean": 0.007851562500000001,
+          "sem": 0.0012109375,
+          "n": 8,
+          "z": 6.483870967741936
+        },
+        "lesion_mean": 0.0035546874999999954,
+        "floor_ok": true,
+        "lesion_ok": false,
+        "PASS": false
+      },
+      "latency": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.0013281250000000046,
+          "null_mean": 3.906249999999836e-06,
+          "null_std": 0.0010518142610606632,
+          "z": 1.2589853541866274,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.05333333333333334,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": 0.0028906250000000026,
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -1.1764705882352884,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "dispersion": {
+        "intact": {
+          "undefined": false,
+          "mean": 0.024260644827104404,
+          "null_mean": -8.172426507205112e-05,
+          "null_std": 0.013193241389088265,
+          "z": 1.845063572649349,
+          "n_evaluable_reads": 8,
+          "n_reads": 8,
+          "n_null_draws": 300,
+          "frac_null_clears_floor": 0.03666666666666667,
+          "shuffle_collapses": true
+        },
+        "lesion_mean": -0.005454131557995734,
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 1.2248139567956695,
+        "PASS": false,
+        "undefined": false,
+        "shuffle_collapses": true
+      },
+      "PASS_latency": false,
+      "PASS_dispersion": false
+    }
+  ]
+}
