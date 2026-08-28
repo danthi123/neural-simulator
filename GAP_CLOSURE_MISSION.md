@@ -15,6 +15,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (READ FIRST; LATEST anchor — supersedes every header below)
 
+**UPDATE — 2026-08-28 ~12:45 — `main` = `5b87ecd8` (both remotes clean, zero merge debt). LIVE-RUN STATE (compaction-critical):**
+- ⚠️ **GPU QUEUE IS PAUSED** — resume with `bash tools/gpu_queue.sh resume`. Paused deliberately to protect an OUT-OF-BAND xedge re-verify (launched directly, not via the queue) from being stacked on by the daemon. RESUME the queue the moment the xedge verdict is harvested. 11 jobs queued behind it (LTM-shard-cupy verify · 60-day longitudinals · gap5-dendritic).
+- ⭐ **xedge INDIRECTION re-verify IS IN FLIGHT on the GPU** (controller pid ~3982692, `_xedge_flip_production_verify`, writing `research/findings/raw/_xedge_flip_verify/flip_verify_cupy_6seed_indirection.json` — NOT yet written). The position-invariant indirection fix (Kriete 2013) is already MERGED (`ca3dd7c1a`, additive/default-OFF). ⚠️ The `~11:20` "xedge LANDED NO-GO 2/4" entry below is the PRE-indirection run — do NOT read it as the indirection verdict. HARVEST PLAN: read the artifact's `aggregate`; if `FLIP_VERIFY_GO=True` + `n_hollow=0` + `n_visible_grown_focus=4/4` + arm_A byte-identical-off + arm_C no-regression → FLIP `BRAIN_ONEBRAIN_XEDGE` + `_LEARN` default-ON (owner-authorized one-brain milestone) + finding + `push_both` + board/vikunja sync + resume queue.
+  Else bank the residual + next lever.
+- CONCURRENT (no GPU): read-fidelity popvec/template spiking-read agent `a78f1c6a` building on CPU (the decoder-SIGNAL-FOUND next lever). Pool: mouth-repetition 8-gen-seed decode-suppressible confirmation enqueued (`_wkv_rep_penalty_derisk_pool_s102.json`) to soak idle cores.
+
+
 **UPDATE — 2026-08-27, LATEST: the one-brain full-7 STRICT-simultaneous migration batch is CLOSED, 7/7 organs GO
 6/6 seeds.** Every prior reference below to "the full-7 strict batch" needing `deterministic_transpose_matvec`
 across all matvec paths, or "closes when nmda_slow lands," is SUPERSEDED — that characterization was refuted by
