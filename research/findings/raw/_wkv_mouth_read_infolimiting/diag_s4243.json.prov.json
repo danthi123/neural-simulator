@@ -1,0 +1,36 @@
+{
+ "run_id": "1787961022-372290",
+ "runner": "research/runners/_wkv_mouth_read_infolimiting_diagnostic.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_wkv_mouth_read_infolimiting_diagnostic.py",
+  "--seeds",
+  "42,43",
+  "--n-trials",
+  "60",
+  "--n-channels",
+  "15",
+  "--n-channels-pooled",
+  "20",
+  "--json",
+  "research/findings/raw/_wkv_mouth_read_infolimiting/diag_s4243.json"
+ ],
+ "git_sha": "c66058616",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-28T19:50:22",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 301.6,
+ "corpus_check_query": "variance-weighted regularized local read optimal linear estimator mouth",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_mouth_read_infolimiting/diag_s4243.json"
+}
