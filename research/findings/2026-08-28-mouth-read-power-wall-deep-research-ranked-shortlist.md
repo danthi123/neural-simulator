@@ -27,6 +27,18 @@ external:
 
 # Mouth read-power wall (#80 / gap#4): deep-research synthesis + a ranked de-risk-ready shortlist
 
+> **⚠️ CORRECTION 2026-08-28 (same day, from the rank-3 diagnostic
+> `2026-08-28-mouth-read-power-infolimiting-diagnostic-and-deep-plateau-already-vanished.md`): this doc's §1/§5
+> framing of a SEPARATE "deep ~0.34-0.37 plateau" is OVERSTATED — that 0.3744 number is the PRE-fix
+> (`2026-08-27-mouth-stale-coo-training-fix-PARTIAL`) read; the post-stale-cache-fix confirmation on the identical
+> config is `sub_learned_recov_mean=0.8499` (`2026-08-28-mouth-stale-coo-training-fix-fullscale-confirmation-GO`).
+> So the "deep plateau" and the "narrow 0.84-0.91 residual" are the SAME post-fix residual (3/6 seeds under the
+> strict 0.85 bar — a TUNING residual, tested by the pending coverage/epochs readout), not two problems. The read
+> is genuinely information-limiting but SMALL (z=3.95/2.47, CV~5-6%). NET: ranks 1-2 (dendritic, variance-weighted)
+> remain the right CLASS of lever but at MUCH lower stakes (closing a ~13-pt ratio gap, not a 50-pt wall), and may
+> be moot if the readout GOes; ranks 4-7 DROP (their "structure-selective" premise was already retracted). The
+> mouth read is NOT architecturally broken. Read this correction before acting on the ranking below.**
+
 > **HONESTY BANNER.** This is a RESEARCH-SCOPING reference doc, not a result. No GO/NO-GO is claimed here.
 > It ranks build-ahead de-risks the controller can queue when the GPU frees. Every item carries its own
 > pre-registered 6-seed gate that must actually run before any claim. The ranking is a prior, weighted by
