@@ -1,0 +1,85 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "V": 1000,
+      "D": 128,
+      "B": 4,
+      "repeats_probe": 2,
+      "repeats_train": 3,
+      "repeats_test": 3,
+      "read_window": 25,
+      "feat_scale": 1.8459,
+      "capture_secs": 25.1,
+      "seed_hash_check": {
+        "seed": 42,
+        "thr_hash_1": "a45d2385f84619f0",
+        "thr_hash_2": "a45d2385f84619f0",
+        "seeded": true
+      },
+      "probe_diag": {
+        "c_shrink": 17.623958,
+        "snr_d_mean": 18.0988,
+        "snr_d_median": 17.624,
+        "w_d_mean": 0.4969,
+        "w_d_min": 0.3186,
+        "w_d_max": 0.7002,
+        "gain_d_mean": 10.8208
+      },
+      "gain_fixed": 2.87767,
+      "gain_var": 3.114277,
+      "held_out": {
+        "fixed_recov": 0.9326,
+        "fixed_argmax_agree": 0.5833,
+        "var_recov": 0.9844,
+        "var_argmax_agree": 0.75,
+        "delta": 0.0518
+      },
+      "in_sample": {
+        "fixed_recov": 1.0,
+        "var_recov": 1.0,
+        "delta": 0.0
+      },
+      "permutation_null": {
+        "k_perm": 3,
+        "null_mean": 0.0044,
+        "null_std": 0.0094,
+        "z": 5.035
+      },
+      "go_seed": true
+    }
+  ],
+  "summary": {
+    "n_seeds": 1,
+    "go_count": 1,
+    "go_5of6": false,
+    "fixed_recov_mean": 0.9326,
+    "var_recov_mean": 0.9844,
+    "delta_mean": 0.0518,
+    "z_mean": 5.035,
+    "n_seeds_delta_positive": 1,
+    "n_seeds_z_ge_floor": 1
+  },
+  "seeds": [
+    42
+  ],
+  "z_floor": 2.0,
+  "seed_hash_check": {
+    "seed": 42,
+    "thr_hash_1": "a45d2385f84619f0",
+    "thr_hash_2": "a45d2385f84619f0",
+    "seeded": true
+  },
+  "backend": "numpy",
+  "device": "cpu",
+  "provenance": "reanalysis+small-capture: NO raw traces existed on disk (checked _wkv_mouth_readout_snr_ensemble/, _mouth_readout_tuning/, _wkv_mouth_hid_correlation_diagnostic/ -- summary JSON only), so this runner does a SMALL fixed-weight (head_w, head_w*reliability -- neither ever gradient-trained) capture on a reduced-scale (B/read_window cut from the decisive 48/120) numpy CPU substrate. No GPU. Iteration 1 (per-output-word gain, ill-conditioned) is documented and superseded in-module by iteration 2 (per-input-channel reliability reweighting) -- see the module docstring.",
+  "elapsed_s": 58.8,
+  "argv": [
+    "/home/dant123/Projects/sim/research/runners/_wkv_mouth_readout_variance_weighted_read_derisk.py",
+    "--smoke",
+    "--seeds",
+    "42",
+    "--json",
+    "research/findings/raw/_wkv_mouth_readout_variance_weighted_read/iter2_seed42_smoke.json"
+  ]
+}
