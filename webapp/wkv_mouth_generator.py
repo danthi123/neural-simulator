@@ -75,7 +75,10 @@ _WORD_RE = re.compile(r"[a-zA-Z']+")
 _LEARNED_HEAD_ENV = "BRAIN_WKV_MOUTH_LEARNED_HEAD"
 _LEARNED_HEAD_PATH_TEMPLATE = os.environ.get(
     "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH",
-    str(_REPO_ROOT / "research/findings/raw/_wkv_eprop_learned_head_seed{seed}.npz"),
+    # Default points at the 6/6-GO persisted heads (ratio 0.9273, min 0.8906; finding
+    # 2026-08-28-mouth-better-head-persist-6seed-GO-plus-wander-production-partial). Still behind the
+    # default-OFF BRAIN_WKV_MOUTH_LEARNED_HEAD flag; override with BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH.
+    str(_REPO_ROOT / "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_0p94_s{seed}.npz"),
 )
 
 
