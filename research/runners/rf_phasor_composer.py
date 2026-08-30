@@ -66,7 +66,8 @@ class RFPhasorComposer:
                  enable_plastic_source_monitor=False, plastic_source_config=None,
                  plastic_source_seed_offset=0,
                  enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
-                 sparse_index_c=8, sparse_index_conf_floor=0.5):
+                 sparse_index_c=8, sparse_index_conf_floor=0.5,
+                 enable_codebook_cache=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -231,6 +232,20 @@ class RFPhasorComposer:
         self._dg_codebook = None       # (V, D) concept phase-matrix aligned to self.words (fractional-cycle phases)
         self._dg_built_V = -1          # len(self.words) the current index/codebook were built for (rebuild on change)
         self._dg_index_source = None   # another RFPhasorComposer to delegate index-building to (shared-codebook graft)
+        # (#66 knowledge-scale, board #192, DEFAULT-OFF = byte-identical). Cache the (V,D) cleanup codebook ONCE
+        # per vocab state (rebuild only when len(words) changes -- the same invalidation rule `_dg_built_V` uses)
+        # and reuse it in the full-vocabulary cleanup paths instead of re-stacking the phasor matrix from the
+        # `concepts` dict on every query. The cached matrices ARE exactly what the parent rebuilds, so decode is
+        # byte-identical by construction (independent of seed). This is the O(V) codebook-rebuild hot loop the
+        # 2026-08-30 finding identified (~40% of per-query time at V~24k, scaling with V not the shard's ~200
+        # facts). The (V,D) codebook object is shared across shards via the existing `_dg_index_source` graft when a
+        # store is constructed with `share_codebook=True` (one 16.4MB object for all shards vs S independent
+        # copies), so RSS stays flat at scale. `enable_codebook_cache=False` (default) reproduces the current
+        # rebuild-every-query path exactly.
+        self.enable_codebook_cache = bool(enable_codebook_cache)
+        self._cb_frac = None       # (V,D) fractional-cycle codebook (V*D floats; read-only, shared)
+        self._cb_z = None          # (V,D) phasor codebook (V*D complex128; read-only, shared)
+        self._cb_cache_V = -1      # len(words) the cached codebook was built for; -1 = unbuilt
         self.kb = []  # (fact_dict, composite_phases)
         self._source_kb = []  # (roles_present, independent_source_composite_phases)
         if self.enable_source_monitor:

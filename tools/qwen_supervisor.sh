@@ -24,8 +24,14 @@ HERMES="${HERMES_BIN:-/home/dant123/.local/bin/hermes}"
 
 log(){ echo "$(date '+%F %T') $*" >> "$LOG"; }
 local_gpu_busy(){ [ -s "$QUEUE" ] || [ -f "$RUNNING" ]; }
-qwen_running(){ bash "$SERVE" status 2>/dev/null | grep -q '^\[qwen\] UP'; }
-qwen_ready(){ bash "$SERVE" status 2>/dev/null | grep -q 'ready=yes'; }
+# Detect Qwen by the HTTP ENDPOINT, NOT `qwen_serve status` — the latter shells out to nvidia-smi
+# (via vram()), which is slow/flaky under GPU contention and made this check intermittently return
+# the wrong answer, so the daemon skipped the unload and deadlocked (three times, 2026-08-30). A
+# bare curl with a hard timeout can neither hang nor mis-read.
+QPORT="${QWEN_PORT:-8033}"
+qwen_up(){ curl -sf -m3 "http://127.0.0.1:$QPORT/health" >/dev/null 2>&1; }
+qwen_running(){ qwen_up; }
+qwen_ready(){ qwen_up; }
 
 CONTINUE_PROMPT='You are Hermes, now driving the neural-simulator project autonomously because Claude usage is exhausted. A local GPU job just completed and your model was reloaded. FIRST read research/coordination/live_state.md and the CURRENT STATE at the top of GAP_CLOSURE_MISSION.md, then harvest the just-completed run(s), then continue the ordered next action. Obey CLAUDE.md constraints (brain-based-only, one-brain, no-defer, 6-seed, gates are authoritative). Commit BOTH remotes via tools/push_both.sh, never --no-verify. Run GPU work only via tools/hermes_gpu_run.sh (it hands the GPU off from your model safely).'
 
@@ -51,24 +57,29 @@ fire_hermes_continue(){
   log "fired hermes continue-turn headless (pid $(cat "$TRIGLOCK" 2>/dev/null))"
 }
 
+down_qwen(){ timeout 40 bash "$SERVE" down >>"$LOG" 2>&1; }   # timeout-bounded: a stuck call can't wedge the loop
+up_qwen(){   timeout 600 bash "$SERVE" up   >>"$LOG" 2>&1; }
 daemon(){
-  log "supervisor up (poll=${POLL}s)"
+  log "supervisor up (poll=${POLL}s, endpoint-detect)"
+  local last_state="" hb=0
   while :; do
-    if [ ! -f "$ACTIVE" ]; then                       # Claude drives (or nobody) -> Qwen must be down, GPU untouched
-      qwen_running && { log "HERMES_ACTIVE off -> unloading Qwen"; bash "$SERVE" down >>"$LOG" 2>&1; }
-      sleep "$POLL"; continue
+    local state up; up=$(qwen_up && echo up || echo down)
+    if [ ! -f "$ACTIVE" ] || [ -f "$GAME" ]; then     # Claude drives OR owner gaming -> Qwen down, GPU untouched
+      state="hold"; [ "$up" = up ] && { log "hold ($([ -f "$GAME" ] && echo GAME_MODE || echo HERMES_ACTIVE-off)) -> unloading Qwen"; down_qwen; }
+    elif local_gpu_busy; then                          # a LOCAL job needs the full GPU -> Qwen out of the way
+      state="job"; [ "$up" = up ] && { log "local GPU job present -> unloading Qwen for the run"; down_qwen; touch "$JOBRAN"; }
+    else                                               # idle: Hermes driving, no job -> Qwen UP + fire a turn if a run just finished
+      state="idle"
+      [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); }
+      if [ -f "$JOBRAN" ] && [ "$up" = up ]; then rm -f "$JOBRAN"; log "run(s) done + Qwen ready -> firing Hermes turn"; fire_hermes_continue; fi
     fi
-    if [ -f "$GAME" ]; then                            # owner wants the GPU -> Qwen down, hands off
-      qwen_running && { log "GAME_MODE -> unloading Qwen for the owner"; bash "$SERVE" down >>"$LOG" 2>&1; }
-      sleep "$POLL"; continue
+    # Heartbeat: log on every state change, plus a keepalive every ~5min, so a wedge is VISIBLE in the
+    # log (silence during a state that demands action = something is wrong) rather than a silent deadlock.
+    hb=$((hb+1))
+    if [ "$state" != "$last_state" ] || [ "$hb" -ge 38 ]; then
+      log "hb state=$state qwen=$up queue=$(wc -l <"$QUEUE" 2>/dev/null || echo 0) running=$([ -f "$RUNNING" ] && echo y || echo n)"
+      last_state="$state"; hb=0
     fi
-    if local_gpu_busy; then                            # a LOCAL job needs the GPU -> Qwen out of the way
-      if qwen_running; then log "local GPU job present -> unloading Qwen"; bash "$SERVE" down >>"$LOG" 2>&1; touch "$JOBRAN"; fi
-      sleep "$POLL"; continue
-    fi
-    # idle: no local job, Hermes driving, owner not gaming -> Qwen should be UP for Hermes
-    if ! qwen_running; then log "local GPU idle -> loading Qwen for Hermes"; bash "$SERVE" up >>"$LOG" 2>&1; fi
-    if [ -f "$JOBRAN" ] && qwen_ready; then rm -f "$JOBRAN"; log "job(s) done + Qwen ready -> nudging Hermes"; fire_hermes_continue; fi
     sleep "$POLL"
   done
 }
