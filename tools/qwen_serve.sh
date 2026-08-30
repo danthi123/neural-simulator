@@ -23,7 +23,7 @@ TARGET_HF="${QWEN_TARGET_HF:-sdkyuan/qwen3.8-27B-qat-q2_0-gguf}"              # 
 DRAFT_HF="${QWEN_DRAFT_HF:-HermiHg/Qwen3.8-27B-DFlash2-Q2_K_S-MIX-GGUF:Q2_K_S}"  # the DFlash2 drafter (535 MiB, auto-downloads)
 PORT="${QWEN_PORT:-8033}"
 HOSTADDR="${QWEN_HOST:-127.0.0.1}"
-CTX="${QWEN_CTX:-32768}"
+CTX="${QWEN_CTX:-163840}"
 NGL="${QWEN_NGL:-99}"
 SPEC_NMAX="${QWEN_SPEC_NMAX:-3}"                                              # DFlash2 draft block size
 
@@ -45,7 +45,7 @@ case "${1:-status}" in
     # the draft path resolve to '' and the server exited on "failed to load draft model, ''").
     _launch() {   # $1 = draft|nodraft
       local a=(-hf "$TARGET_HF" --jinja --reasoning-budget -1 --ctx-size "$CTX" --host "$HOSTADDR" --port "$PORT" \
-               -ngl "$NGL" --flash-attn on --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 --presence-penalty 0.0 \
+               -ngl "$NGL" --flash-attn on --parallel 1 --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 --presence-penalty 0.0 \
                --repeat-penalty 1.0 --no-mmproj)
       [ "$1" = draft ] && a+=(-hfd "$DRAFT_HF" --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX")
       setsid "$LLAMA" "${a[@]}" </dev/null >>"$LOG" 2>&1 &
