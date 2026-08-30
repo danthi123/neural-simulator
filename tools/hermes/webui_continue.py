@@ -110,6 +110,27 @@ def _create_session(base: str, headers: dict) -> str | None:
     return None
 
 
+def _most_recent_session(base: str, headers: dict) -> str | None:
+    """The session the owner is actively working = the loop session. The supervisor targets THIS,
+    so the owner just starts a normal chat + sets /goal — no fixed/pre-created session id to match.
+    (Empty webui sessions aren't even listed, so a pre-created id can't be opened; and once the loop
+    runs, its session is the most-recently-updated one, self-reinforcing across the supervisor's own
+    fires.) Read-only imports (Claude Code sessions) simply reject the write and are skipped safely."""
+    try:
+        req = urllib.request.Request(base + "/api/sessions?limit=1", headers=headers, method="GET")
+        resp = urllib.request.urlopen(req, timeout=8)
+        d = json.loads(resp.read() or b"{}")
+        ss = d.get("sessions") if isinstance(d, dict) else d
+        if ss:
+            sid = ss[0].get("session_id")
+            if sid:
+                _write_sid(sid)
+                return sid
+    except Exception as e:
+        print("webui_continue: /api/sessions failed: %s" % e, file=sys.stderr)
+    return None
+
+
 def _login(base: str, pw: str) -> str | None:
     if not pw:
         return None
@@ -140,9 +161,10 @@ def main() -> int:
     elif pw:
         return 2  # a password is set but login failed -> do not proceed unauth
 
-    sid = _read_sid() or _create_session(base, headers)
+    # Target the session the owner is actively working (the loop session), not a fixed id.
+    sid = _most_recent_session(base, headers) or _read_sid()
     if not sid:
-        return 5  # could not obtain a session id
+        return 5  # no session to continue yet (owner hasn't started the loop)
 
     # PRIMARY re-engagement: if the owner set a standing goal (/goal ...), the loop drives itself
     # turn-after-turn — but a GPU run unloads Qwen and stalls its auto-continue, so after the run we
