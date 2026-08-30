@@ -30,11 +30,23 @@ qwen_ready(){ bash "$SERVE" status 2>/dev/null | grep -q 'ready=yes'; }
 CONTINUE_PROMPT='You are Hermes, now driving the neural-simulator project autonomously because Claude usage is exhausted. A local GPU job just completed and your model was reloaded. FIRST read research/coordination/live_state.md and the CURRENT STATE at the top of GAP_CLOSURE_MISSION.md, then harvest the just-completed run(s), then continue the ordered next action. Obey CLAUDE.md constraints (brain-based-only, one-brain, no-defer, 6-seed, gates are authoritative). Commit BOTH remotes via tools/push_both.sh, never --no-verify. Run GPU work only via tools/hermes_gpu_run.sh (it hands the GPU off from your model safely).'
 
 fire_hermes_continue(){
-  # nudge Hermes to take a fresh turn — detached, single-flight (never overlap turns)
+  # nudge Hermes to take a fresh turn once a GPU run finished + Qwen reloaded.
+  # PREFER the VISIBLE path: drive the single persistent webui conversation the owner watches
+  # AND types into (tools/hermes/webui_continue.py -> /api/chat/start on a reused session). This
+  # is what makes "monitor + engage the autonomous loop in the web UI" real. It falls back to a
+  # headless `hermes -z` turn only if the webui is down / auth fails, so autonomy never stalls.
+  # (JOBRAN-clear upstream already makes this fire once per completed run — the single-flight guard.)
+  if [ "${HERMES_CONTINUE_VIA_WEBUI:-1}" = "1" ] \
+     && command -v python3 >/dev/null 2>&1 \
+     && ( cd "$ROOT" && python3 "$ROOT/tools/hermes/webui_continue.py" "$CONTINUE_PROMPT" >>"$STATE/qwen_hermes_turns.log" 2>&1 ); then
+    log "fired hermes continue-turn via WEBUI (visible session)"
+    return
+  fi
+  log "webui continue unavailable -> headless hermes -z fallback"
   if [ -f "$TRIGLOCK" ] && kill -0 "$(cat "$TRIGLOCK" 2>/dev/null)" 2>/dev/null; then return; fi
   [ -x "$HERMES" ] || { log "hermes bin not executable at $HERMES — skip continue-trigger"; return; }
   ( cd "$ROOT" && setsid "$HERMES" -z "$CONTINUE_PROMPT" </dev/null >>"$STATE/qwen_hermes_turns.log" 2>&1 & echo $! > "$TRIGLOCK" )
-  log "fired hermes continue-turn (pid $(cat "$TRIGLOCK" 2>/dev/null))"
+  log "fired hermes continue-turn headless (pid $(cat "$TRIGLOCK" 2>/dev/null))"
 }
 
 daemon(){
