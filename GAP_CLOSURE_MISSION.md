@@ -15,10 +15,18 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-30 (READ FIRST; LATEST anchor — supersedes every header below)
 
-**⛔ LOCAL COMPUTE PAUSED (GAME_MODE + GPU_PAUSE set).** The plan (owner, 2026-08-30): install CachyOS updates +
-REBOOT, then go live with HERMES (local Qwen) as the autonomous dev-driver via `~/Desktop/hermes-sim.sh start`
-(one command; clears this pause, brings up Qwen + autonomous heartbeat). The mini-PC pool is SEPARATE and keeps
-running through the reboot. Do NOT resume local GPU / dispatch GPU work yourself — the owner's `start` does it.
+**🟢 HERMES IS LIVE + AUTONOMOUS (2026-08-30 post-reboot go-live).** HERMES_ACTIVE is set — HERMES (local Qwen3.8-27B
++ DFlash2) is the sole active driver: Qwen resident (~15GB VRAM), gateway + 15-min sim-heartbeat cron running,
+supervisor managing VRAM. Go-live hit + FIXED 3 real bugs (commit 9070668b): Qwen draft-load (target now via -hf so
+-hfd resolves), gateway install (idempotent install --start-now), and queue contention (autofill gated on
+HERMES_ACTIVE + takeover defers the old research queue → gpu.queue.deferred.*, restored on handback). Health check
+ALL GREEN; Qwen verified generating. **The old perpetual longitudinal queue is DEFERRED while Hermes drives; Hermes
+owns the GPU agenda via tools/hermes_gpu_run.sh.**
+
+**⛔ TWO-DRIVER ETIQUETTE — CLAUDE IS READ-MOSTLY QA NOW.** While HERMES_ACTIVE is set, do NOT co-drive, commit, or
+dispatch GPU work as Claude — review Hermes' work (git log, findings, live_state) when the owner asks. Owner controls
+via `~/Desktop/hermes-sim.sh` (stop/resume/status/say/handback). Hand back to Claude: `tools/hermes_takeover.sh off`
+(restores the deferred queue + re-enables autofill).
 
 **⭐ HERMES FALLBACK DEV-AGENT IS READY (2026-08-30) — do NOT rebuild it.** Full build on `main` (see
 [HERMES_HANDOFF.md](HERMES_HANDOFF.md) + memory `project_hermes_local_qwen_fallback_agent`): Hermes on local
