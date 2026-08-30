@@ -93,7 +93,10 @@ daemon(){
       else state="job"; log "GPU job queued + turn finished (queue settled ${QUEUE_GRACE}s) -> unloading Qwen for the run"; down_qwen; touch "$JOBRAN"; fi
     else                                               # idle: Hermes driving, no GPU job -> Qwen UP + keep the loop turning
       state="idle"
-      [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); }
+      # Loading Qwen: after it comes up, DEFER the next fire (set LASTFIRE=now) so a turn isn't fired
+      # into a model that's up on /health but not yet generation-ready (caused '503 Loading model' /
+      # 'Connection error' turns). The FIRE_COOLDOWN then gives it time to settle before firing.
+      [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); echo "$(date +%s)" > "$LASTFIRE"; }
       if [ "$up" = up ]; then
         now=$(date +%s); lastf=$(cat "$LASTFIRE" 2>/dev/null || echo 0)
         if [ -f "$JOBRAN" ]; then                       # a run just finished -> harvest turn now
