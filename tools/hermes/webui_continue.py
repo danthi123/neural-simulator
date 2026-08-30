@@ -126,7 +126,7 @@ def main():
     sid = _read_sid() or _create(base, headers)
     if not sid:
         return 5
-    for attempt in (1, 2):
+    for attempt in (1, 2, 3):
         code, out = _post(base, "/api/chat/start", headers, {"session_id": sid, "message": msg})
         if code == 200:
             if out.get("status") == "suppressed":
@@ -134,8 +134,18 @@ def main():
                 return 4
             print("webui_continue: fired a visible turn into %s (%s)" % (sid, out.get("status", "ok")))
             return 0
-        if code == 404 and attempt == 1:
-            print("webui_continue: session %s gone -> recreating" % sid, file=sys.stderr)
+        # 409 = the session is jammed by a stale active-stream lock (left by an interrupted turn).
+        # Self-heal: delete the jammed session and start a fresh one so the loop never permanently
+        # stalls (the overnight-jam failure mode). 404 = session gone -> just recreate.
+        if code in (404, 409) and attempt < 3:
+            print("webui_continue: session %s %s -> deleting + recreating (self-heal)"
+                  % (sid, "jammed(409)" if code == 409 else "gone(404)"), file=sys.stderr)
+            if code == 409:
+                _post(base, "/api/session/delete", headers, {"session_id": sid})
+            try:
+                os.remove(SID_FILE)
+            except Exception:
+                pass
             sid = _create(base, headers)
             if not sid:
                 return 5
