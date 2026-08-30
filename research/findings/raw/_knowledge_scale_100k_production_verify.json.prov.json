@@ -1,0 +1,36 @@
+{
+ "run_id": "1787804398-1571336",
+ "runner": "research/runners/_knowledge_scale_100k_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_knowledge_scale_100k_production_verify.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "--n-oracle-agents",
+  "15",
+  "--n-scale-probes",
+  "50",
+  "--n-moat",
+  "20",
+  "--json",
+  "research/findings/raw/_knowledge_scale_100k_production_verify.json"
+ ],
+ "git_sha": "24102ca6b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-27T00:19:58",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 102614.9,
+ "corpus_check_query": "gap5 readout discreteness: sustained/latched multi-assembly activity dilutes forward_frac (duty 0.34-0.77) despite forward-ordered store",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_knowledge_scale_100k_production_verify.json"
+}

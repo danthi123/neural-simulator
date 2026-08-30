@@ -1,0 +1,185 @@
+{
+  "harvest": "dendritic consolidation operating-point sweep (point-plateau), 2026-08-29 collect",
+  "cells": 343,
+  "errors": 0,
+  "candidates_robust": 0,
+  "top12": [
+    {
+      "config_index": 463,
+      "seed": 43,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.007,
+      "op": {
+        "self_regen": 0.2,
+        "k_thresh": 5.0,
+        "wta": 10.0,
+        "kir_g": 1.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 457,
+      "seed": 43,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.007,
+      "op": {
+        "self_regen": 0.2,
+        "k_thresh": 5.0,
+        "wta": 5.0,
+        "kir_g": 1.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 165,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.007,
+      "op": {
+        "self_regen": 0.05,
+        "k_thresh": 4.0,
+        "wta": 40.0,
+        "kir_g": 3.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 159,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.007,
+      "op": {
+        "self_regen": 0.05,
+        "k_thresh": 4.0,
+        "wta": 20.0,
+        "kir_g": 3.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 147,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.007,
+      "op": {
+        "self_regen": 0.05,
+        "k_thresh": 4.0,
+        "wta": 5.0,
+        "kir_g": 3.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 58,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.004,
+      "op": {
+        "self_regen": 0.0,
+        "k_thresh": 4.0,
+        "wta": 10.0,
+        "kir_g": 5.0,
+        "slot_drive": 700.0
+      }
+    },
+    {
+      "config_index": 52,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.004,
+      "op": {
+        "self_regen": 0.0,
+        "k_thresh": 4.0,
+        "wta": 5.0,
+        "kir_g": 5.0,
+        "slot_drive": 700.0
+      }
+    },
+    {
+      "config_index": 478,
+      "seed": 42,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.002,
+      "op": {
+        "self_regen": 0.2,
+        "k_thresh": 5.0,
+        "wta": 40.0,
+        "kir_g": 5.0,
+        "slot_drive": 700.0
+      }
+    },
+    {
+      "config_index": 472,
+      "seed": 42,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.002,
+      "op": {
+        "self_regen": 0.2,
+        "k_thresh": 5.0,
+        "wta": 20.0,
+        "kir_g": 5.0,
+        "slot_drive": 700.0
+      }
+    },
+    {
+      "config_index": 460,
+      "seed": 42,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.002,
+      "op": {
+        "self_regen": 0.2,
+        "k_thresh": 5.0,
+        "wta": 5.0,
+        "kir_g": 5.0,
+        "slot_drive": 700.0
+      }
+    },
+    {
+      "config_index": 271,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.002,
+      "op": {
+        "self_regen": 0.1,
+        "k_thresh": 5.0,
+        "wta": 10.0,
+        "kir_g": 1.0,
+        "slot_drive": 1400.0
+      }
+    },
+    {
+      "config_index": 269,
+      "seed": 44,
+      "sep": 0,
+      "sel": 2,
+      "ratio": 1.002,
+      "op": {
+        "self_regen": 0.1,
+        "k_thresh": 5.0,
+        "wta": 5.0,
+        "kir_g": 5.0,
+        "slot_drive": 1400.0
+      }
+    }
+  ],
+  "provenance": {
+    "runner": "tools/pool_opsweep_collect.sh + research.runners._consol_dendritic_opsweep",
+    "argv": "--config-index N --seed S --out research/findings/raw/consol_opsweep (per-cell, pool-dispatched)",
+    "git_sha": "aa7c3a23c",
+    "collected_from": "pool40/41/42"
+  },
+  "backend": "numpy",
+  "device": "cpu (mini-pc pool)",
+  "conclusion": "NO-GO: no point-plateau operating point robustly separates (dend_separated AND selective>=2 AND beats linear); top candidates sep=0/3, ratio ~1.00. Named surpass: dendritic LINE/BUMP continuous attractor (design NEXT-(b))."
+}
