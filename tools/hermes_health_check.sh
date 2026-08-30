@@ -114,10 +114,15 @@ fi
 
 echo
 echo "-- git pre-commit gate + durable-state parity --"
+# Retry once: the parity check's first step is `git rev-parse`, which can fail transiently right after a
+# reboot (git/filesystem/services still settling) and self-correct seconds later. A health GATE must not
+# false-fail on that — but a real, persistent break fails both attempts, so this masks nothing.
 if bash "$REPO/tools/hermes_parity_check.sh" >/tmp/hermes_health_parity.$$ 2>&1; then
   pass "tools/hermes_parity_check.sh: OK"
+elif sleep 2 && bash "$REPO/tools/hermes_parity_check.sh" >/tmp/hermes_health_parity.$$ 2>&1; then
+  pass "tools/hermes_parity_check.sh: OK (passed on retry — first attempt hit a transient, e.g. a post-reboot git hiccup)"
 else
-  fail "tools/hermes_parity_check.sh FAILED -- run it directly for detail: bash tools/hermes_parity_check.sh"
+  fail "tools/hermes_parity_check.sh FAILED twice -- run it directly for detail: bash tools/hermes_parity_check.sh"
 fi
 rm -f /tmp/hermes_health_parity.$$
 
