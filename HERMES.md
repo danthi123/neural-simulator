@@ -16,6 +16,27 @@ that file. When it's stale, thin, or you're starting a new arc, also read
 committed finding under `research/findings/`, the finding wins — fix the summary, don't trust it
 blindly.
 
+## WHEN YOUR CONTEXT COMPACTS (auto-compaction is on; the summary is lossy — do not trust it)
+
+Your context auto-compacts at ~75% full. The generated summary is REFERENCE-ONLY and lossy; your
+system prompt (this file) and `MEMORY.md` stay authoritative, and the `pre_llm_call` hook re-injects
+`research/coordination/live_state.md` on the first turn after a compaction. So the mission, constraints,
+frontier and next action always survive — **re-read `live_state.md` (and `GAP_CLOSURE_MISSION.md` CURRENT
+STATE) after any compaction, never the summary.**
+
+What the summary CAN lose is TRANSIENT state, so keep it on disk BEFORE the window fills — treat this as
+continuous, not a pre-compaction scramble:
+- After any meaningful step, update `GAP_CLOSURE_MISSION.md` CURRENT STATE (the header the live-state
+  regenerator reads) with the current frontier + the single literal next command, so a compacted you resumes exactly.
+- **Never leave results uncommitted** — commit to BOTH remotes via `tools/push_both.sh` as you go; an
+  uncommitted result is the one thing a compaction (or a crash) truly loses.
+- Record every IN-FLIGHT run so it is neither lost nor double-launched: a local GPU job you launched via
+  `tools/hermes_gpu_run.sh` (it's in `research/queue/gpu.queue`/`gpu.running` + the supervisor re-invokes you on
+  completion), a `tools/sweep_pool.sh` pool run, and the exact output path each writes.
+- Preserve VERBATIM (write into GAP_CLOSURE CURRENT STATE): any owner directive given this session, and any
+  `hermes_say` feedback you have not yet acted on.
+Done right, a mid-task compaction costs you nothing — you resume from disk, not from the summary.
+
 ## Non-negotiable constraints (full reasoning in CLAUDE.md)
 
 - **Brain-based only.** Host code is legitimate ONLY for the world/environment and the body/motor
