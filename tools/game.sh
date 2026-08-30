@@ -30,6 +30,13 @@ case "${1:-status}" in
     # or nudge Hermes until you run 'off' — nothing auto-spins-back-up during your break, and GAME_MODE persists
     # across reboot (so a reboot mid-break stays paused; a reboot when NOT paused resumes development normally).
     bash "$ROOT/tools/qwen_serve.sh" down >/dev/null 2>&1 || true
+    # If Hermes is the driver, also pause the autonomous heartbeat cron -- belt-and-suspenders alongside
+    # sim_heartbeat.sh's own GAME_MODE gate (a tick already in flight when GAME_MODE lands would otherwise
+    # still run to completion once).
+    if [ -f "$ROOT/research/queue/HERMES_ACTIVE" ]; then
+      echo "[game] Hermes is the driver -> pausing the autonomous heartbeat cron too…"
+      bash "$ROOT/tools/hermes_autonomous.sh" off >/dev/null 2>&1 || true
+    fi
     if [ "${2:-}" = "--force" ]; then
       echo "[game] --force: killing any standalone brain-loading GPU python not under the queue…"
       pgrep -af "python .*(research\.runners|webapp)" 2>/dev/null | grep -v "gpu_queue.sh" \
@@ -47,7 +54,12 @@ case "${1:-status}" in
     rm -f "$GAME"
     bash "$GPUQ" resume || echo "[game] warn: gpu_queue resume returned nonzero (start it with: bash tools/gpu_queue.sh __daemon &)"
     echo "[game] GAME_MODE cleared; GPU queue will pick the re-queued job back up. VRAM: $(vram)"
-    if [ -f "$ROOT/research/queue/HERMES_ACTIVE" ]; then echo "[game] Hermes is the driver -> the supervisor will reload Qwen within ~8s and resume development."; else echo "[game] Claude is the driver -> Qwen stays down (GPU free for research); tell Claude 'continue' to resume."; fi
+    if [ -f "$ROOT/research/queue/HERMES_ACTIVE" ]; then
+      echo "[game] Hermes is the driver -> the supervisor will reload Qwen within ~8s; resuming the autonomous heartbeat cron…"
+      bash "$ROOT/tools/hermes_autonomous.sh" on || echo "[game] warn: autonomous-mode resume had issues (see above) — Hermes still usable interactively."
+    else
+      echo "[game] Claude is the driver -> Qwen stays down (GPU free for research); tell Claude 'continue' to resume."
+    fi
     ;;
   status)
     echo "[game] GAME_MODE: $([ -f "$GAME" ] && echo ON || echo off)"

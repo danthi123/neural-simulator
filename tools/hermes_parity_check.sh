@@ -221,10 +221,60 @@ else
 fi
 
 echo
+echo "════ 4. AUTONOMOUS-MODE PIECES (BLOCKING — these are in-repo files, same rationale as ════"
+echo "════    section 2: their absence is a regression, not just an unapplied ~/.hermes step)   ════"
+
+for f in tools/hermes_say.sh tools/hermes_autonomous.sh tools/hermes_health_check.sh tools/hermes_desktop_control.sh; do
+    if [ ! -f "$REPO_ROOT/$f" ]; then
+        fail "missing: $f"
+    elif ! bash -n "$REPO_ROOT/$f" 2>/tmp/hermes_parity_bashn.$$; then
+        fail "$f: syntax error — $(cat /tmp/hermes_parity_bashn.$$)"
+    else
+        pass "$f present, bash -n clean"
+    fi
+    rm -f /tmp/hermes_parity_bashn.$$
+done
+
+if [ -f "$REPO_ROOT/tools/hermes/hook_live_state_context.py" ] && grep -q "_drain_feedback_queue\|hermes_feedback_queue" "$REPO_ROOT/tools/hermes/hook_live_state_context.py" 2>/dev/null; then
+    pass "pre_llm_call hook drains the hermes_say.sh feedback queue (owner can queue feedback without interrupting)"
+else
+    fail "tools/hermes/hook_live_state_context.py does not drain the feedback queue — hermes_say.sh's messages would never surface"
+fi
+
+if [ -f "$REPO_ROOT/hermes-parity/scripts/sim_heartbeat.sh" ] && grep -q "HERMES_ACTIVE" "$REPO_ROOT/hermes-parity/scripts/sim_heartbeat.sh" 2>/dev/null && grep -q "GAME_MODE" "$REPO_ROOT/hermes-parity/scripts/sim_heartbeat.sh" 2>/dev/null; then
+    pass "hermes-parity/scripts/sim_heartbeat.sh gates on HERMES_ACTIVE/GAME_MODE (a stray cron tick is a safe no-op)"
+else
+    fail "hermes-parity/scripts/sim_heartbeat.sh missing the HERMES_ACTIVE/GAME_MODE gate — a stray tick while Claude drives or the owner is paused would still run the full heartbeat body"
+fi
+
+if [ -f "$REPO_ROOT/tools/hermes_takeover.sh" ] && grep -q "hermes_autonomous.sh" "$REPO_ROOT/tools/hermes_takeover.sh" 2>/dev/null; then
+    pass "tools/hermes_takeover.sh wires autonomous mode on/off into the driver handoff"
+else
+    fail "tools/hermes_takeover.sh does not call hermes_autonomous.sh — autonomous mode would not turn on/off with the driver switch"
+fi
+
+if [ -f "$REPO_ROOT/tools/game.sh" ] && grep -q "hermes_autonomous.sh" "$REPO_ROOT/tools/game.sh" 2>/dev/null; then
+    pass "tools/game.sh pauses/resumes autonomous mode around a gaming break"
+else
+    fail "tools/game.sh does not call hermes_autonomous.sh — a gaming pause would not pause the autonomous heartbeat cron"
+fi
+
+# --- autonomous-mode ~/.hermes pieces (owner-applied; INFO, not BLOCKING) ---
+if [ -n "$HERMES_BIN" ]; then
+    if timeout 15 hermes gateway status 2>/dev/null | grep -qi "gateway service is running"; then
+        live "hermes gateway running (the cron ticker can fire)"
+    else
+        pend "hermes gateway (run: bash tools/hermes_autonomous.sh on)"
+    fi
+else
+    skip "hermes gateway status (hermes not found on PATH)"
+fi
+
+echo
 if [ "$FAIL" -eq 0 ]; then
-    echo "RESULT: OK — the git-gate + durable-state-reanchor parity checks are intact. See PENDING"
-    echo "        lines above for owner steps still needed on this machine's ~/.hermes/"
-    echo "        (hermes-parity/README.md has the order)."
+    echo "RESULT: OK — the git-gate + durable-state-reanchor + autonomous-mode parity checks are"
+    echo "        intact. See PENDING lines above for owner steps still needed on this machine's"
+    echo "        ~/.hermes/ (hermes-parity/README.md has the order)."
 else
     printf 'RESULT: FAIL \xe2\x80\x94 one or more BLOCKING checks failed (see \xe2\x9b\x94 lines above).\n'
 fi

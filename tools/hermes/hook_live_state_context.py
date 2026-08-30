@@ -9,12 +9,15 @@ not a separate Hermes event -- pre_llm_call fires at the same place and already 
 injection", website/docs/user-guide/features/hooks.md, worked example 3). `on_session_start`'s
 return value is never consumed by the caller (agent/conversation_loop.py:1049-1061 fires it
 fire-and-forget), so it CANNOT re-inject text -- only pre_llm_call can. This hook therefore does
-both halves Claude Code split across two events: (1) prints the current
+three things Claude Code splits across separate mechanisms: (1) prints the current
 research/coordination/live_state.md (regenerating it if missing, via `tools/live_state.py --emit`)
-as ephemeral per-turn context, and (2) drains any PENDING advisory left by hook_post_edit.py (the
+as ephemeral per-turn context, (2) drains any PENDING advisory left by hook_post_edit.py (the
 post_tool_call sibling, whose own return value is an observer-only no-op in Hermes and so cannot
 inject anything itself) so a doc-drift / sync-documentation nudge surfaces on the NEXT LLM call
-instead of being silently dropped.
+instead of being silently dropped, and (3) drains any owner feedback queued via
+`tools/hermes_say.sh` -- the AUTONOMOUS-MODE side channel that lets the owner leave Hermes a note
+WITHOUT interrupting whatever it is mid-doing (a GPU-job wait, a long tool call): the note surfaces
+here, once, on Hermes's own next turn.
 
 Registration (~/.hermes/config.yaml, see hermes-parity/config.hooks.snippet.yaml):
 
@@ -33,6 +36,7 @@ import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PENDING_ADVISORY = os.path.join(REPO, "research", "coordination", ".hermes_pending_advisory")
+FEEDBACK_QUEUE = os.path.join(REPO, "research", "coordination", ".hermes_feedback_queue")
 
 
 def _live_state_text() -> str:
@@ -61,6 +65,23 @@ def _drain_pending_advisory() -> str:
         return ""
 
 
+def _drain_feedback_queue() -> str:
+    """Read-then-delete research/coordination/.hermes_feedback_queue -- owner notes appended by
+    `tools/hermes_say.sh`. Same drain-once contract as the advisory file above: this is the
+    AUTONOMOUS-MODE answer to "queue feedback without interrupting" -- the owner leaves a note any
+    time (Hermes may be mid-GPU-job-wait, mid-tool-call, or simply not listening), and it surfaces
+    exactly once, on whichever turn reads it next."""
+    try:
+        with open(FEEDBACK_QUEUE, "r", encoding="utf-8") as fh:
+            text = fh.read().strip()
+        os.remove(FEEDBACK_QUEUE)
+        return text
+    except FileNotFoundError:
+        return ""
+    except Exception:
+        return ""
+
+
 def main() -> None:
     try:
         sys.stdin.read()  # discard the pre_llm_call payload -- this hook is unconditional
@@ -74,6 +95,13 @@ def main() -> None:
     advisory = _drain_pending_advisory()
     if advisory:
         parts.append("PENDING ADVISORY (from a recent edit, surfaced once):\n" + advisory)
+
+    feedback = _drain_feedback_queue()
+    if feedback:
+        parts.append(
+            "OWNER FEEDBACK (queued via tools/hermes_say.sh, surfaced once -- read it, act on it "
+            "if it calls for action, do not wait for anything else before doing so):\n" + feedback
+        )
 
     if not parts:
         return  # silent no-op -- matches Hermes's "empty output is fine" contract

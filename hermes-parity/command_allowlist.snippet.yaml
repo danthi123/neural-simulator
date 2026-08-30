@@ -1,0 +1,89 @@
+# Hermes `command_allowlist` — the "dangerous-but-trusted" list that stops a repeat command from
+# re-prompting for approval. Produced by empirically testing 10 representative commands this
+# project's tooling actually runs, via `hermes approvals test` (the real runtime guard, dry-run --
+# "without executing the command, prompting anyone, or persisting anything").
+#
+# HONEST RESULT: the list below is EMPTY, on purpose. Every "safe dev command" this project's
+# overnight/autonomous tooling runs already gets verdict "allow" with ZERO entries in
+# command_allowlist -- Hermes's dangerous-command classifier does not flag any of them. Only the
+# commands that SHOULD stay gated got flagged, and they should stay gated. There was nothing safe
+# to add.
+#
+# ---- Tested 2026-08-30, `hermes approvals test --json -- <cmd>` against the real installed Hermes
+#      (v0.20.6), env_type=local (no docker/isolated backend, so the real guard runs) ----
+#
+#   VERDICT allow (no prompt today, no allowlist entry needed):
+#     git commit -m "..."                                     rule: none
+#     bash tools/push_both.sh                                 rule: none
+#     bash tools/gpu_queue.sh add "python foo.py"              rule: none
+#     .venv/bin/python -m research.runners.g11_bg_runner ...   rule: none
+#     kill -TERM <pid>   (qwen_supervisor.sh's own pattern)    rule: none
+#     kill -9 <pid>       (qwen_supervisor.sh's own pattern)   rule: none
+#     rm -f research/queue/HERMES_ACTIVE   (single-file rm)    rule: none
+#     pkill -f qwen_supervisor.sh          (game.sh's pattern) rule: none
+#     bash tools/aws_gpu.sh stop                                rule: none
+#     git commit --no-verify -m "..."      (still runs freely -- the PROJECT policy against
+#                                            --no-verify is a discipline rule, not something
+#                                            Hermes's approval system enforces; see HERMES.md)
+#
+#   VERDICT ask-approval (correctly gated -- these should STAY gated, not be allowlisted):
+#     rm -rf /tmp/foo                       rule: "delete in root path"
+#     rm -rf research/findings/raw/_x       rule: "recursive delete"
+#     git push --force origin main          rule: "git force push (rewrites remote history)"
+#     curl -sL <url> | bash                 rule: "pipe remote content to shell"
+#     git reset --hard HEAD                 rule: "git reset --hard (destroys uncommitted changes)"
+#     sudo systemctl restart <service>      rule: "stop/restart system service"
+#
+# WHY NONE OF THESE ARE ALLOWLISTED, EVEN THOUGH SOME ARE USED BY OUR OWN SCRIPTS FOR SAFE,
+# RECOVERABLE PURPOSES (e.g. `trap 'rm -rf "$T"' EXIT` on a mktemp scratch dir in
+# tools/gpu_queue.sh's --selftest, tools/dispatcher_selftest.sh, tools/pool_provision.sh):
+#
+#   1. Hermes's OWN `hermes approvals suggest` tool (the sanctioned way to mine allowlist
+#      candidates from approval history) documents this exact refusal by design:
+#      "Destructive / privilege / credential / obfuscation classes are never proposed, no matter
+#      how often they were approved. `rm -rf build/` approved 100 times still never yields an `rm`
+#      allowlist entry." (hermes_cli/approvals_suggest.py docstring, read directly from the
+#      installed source.) Hand-editing command_allowlist to force `rm -rf`/`recursive delete` in
+#      anyway would be fighting Hermes's own safety design, not using it -- so this snippet does not
+#      do that. If the selftest scripts above ever actually stall Hermes on approval overnight
+#      (they are not part of the routine heartbeat/cron path today, so this is not expected), the
+#      right fix is to change THOSE scripts to avoid `rm -rf` on their scratch dirs (e.g. `find
+#      "$T" -delete` after removing files individually, or a non-recursive cleanup), not to
+#      allowlist recursive delete globally.
+#   2. `git push --force` is one of Hermes's own generically-"eligible" classes (its docstring
+#      calls "git force push" a benign/recoverable pattern in general), but THIS project's own
+#      policy is stricter: CLAUDE.md says never force-push without explicit, deliberate ask. The
+#      project rule overrides Hermes's generic default here -- stays gated.
+#   3. `sudo systemctl restart ...` is the kind of action this project's own GPU-crash recovery
+#      script (tools/gpu_recover.sh) uses for a genuinely rare, high-stakes situation (the 3090
+#      falling off the PCIe bus). That is exactly the class of "highest-risk action" the owner
+#      wants to keep gated even in autonomous mode ("hands-off, but the very-highest-risk actions
+#      still prompt/gate") -- if Hermes ever needs it, it should wait for the owner, not self-approve.
+#
+# If a genuinely safe, repeated command DOES start stalling overnight (check
+# research/queue/hermes_autonomous.log and `hermes cron runs sim-heartbeat` for an "asking for
+# approval"/timeout pattern), the correct next step is:
+#   1. Re-run: hermes approvals test --json -- <the exact command that stalled>
+#   2. If it is genuinely safe and NOT in the destructive/privilege/credential/obfuscation classes,
+#      add ONE narrow entry (the exact command or a tight prefix, never a bare `rm`/`sudo` glob) to
+#      command_allowlist below, or use `hermes approvals suggest` (mines real approval history) and
+#      `--apply` the specific numbered proposal.
+#   3. Never widen this file to a wildcard "allow everything" pattern -- that is functionally
+#      --yolo by another name, which the owner explicitly rejected in favor of this narrower knob.
+#
+# command_allowlist entries merge into the TOP-LEVEL `command_allowlist:` list in
+# ~/.hermes/config.yaml (list of exact commands or patterns; see `hermes approvals suggest --help`
+# for the pattern grammar). Apply with:
+#
+#   .venv/bin/python - <<'PY'
+#   import yaml
+#   cfg_path = "/home/dant123/.hermes/config.yaml"
+#   with open(cfg_path) as f: cfg = yaml.safe_load(f) or {}
+#   with open("hermes-parity/command_allowlist.snippet.yaml") as f: snippet = yaml.safe_load(f)
+#   cfg["command_allowlist"] = sorted(set(cfg.get("command_allowlist", [])) | set(snippet.get("command_allowlist", [])))
+#   with open(cfg_path, "w") as f: yaml.safe_dump(cfg, f, sort_keys=False)
+#   PY
+#
+# (BACK UP ~/.hermes/config.yaml first, same as the hooks snippet.)
+
+command_allowlist: []

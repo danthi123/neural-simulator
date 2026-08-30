@@ -28,16 +28,24 @@ case "${1:-status}" in
     if ! bash "$SERVE" status >/dev/null 2>&1; then echo "[takeover] warn: qwen_serve.sh status failed"; fi
     : > "$ACTIVE"
     start_supervisor
-    echo "[takeover] HERMES_ACTIVE set + supervisor running. Bringing Qwen up (first run downloads ~9GB)…"
+    echo "[takeover] HERMES_ACTIVE set + supervisor running."
+    # AUTONOMOUS IS THE DEFAULT the moment Hermes drives (gateway + the 15-min sim-heartbeat cron)
+    # -- non-fatal if it can't fully confirm (Hermes still usable interactively either way).
+    echo "[takeover] enabling autonomous mode (gateway + heartbeat cron)…"
+    bash "$ROOT/tools/hermes_autonomous.sh" on || echo "[takeover] warn: autonomous mode not fully confirmed (see lines above) — Hermes is still usable interactively; fix + re-run 'bash tools/hermes_autonomous.sh on' when ready."
+    echo "[takeover] Bringing Qwen up (first run downloads ~9GB)…"
     bash "$SERVE" up || { echo "[takeover] Qwen failed to come up — see $STATE/qwen_server.log. HERMES_ACTIVE still set; fix + re-run 'on'."; exit 1; }
-    echo "[takeover] ✅ Hermes is the driver. Wire Hermes once with:  bash tools/hermes_local_setup.sh   (or 'hermes setup')"
+    echo "[takeover] ✅ Hermes is the driver, AUTONOMOUS mode active. Wire Hermes once with:  bash tools/hermes_local_setup.sh   (or 'hermes setup')"
     echo "[takeover]    then run:  hermes    — it will use the local Qwen at http://127.0.0.1:${QWEN_PORT:-8033}/v1"
-    echo "[takeover] Claude should stay idle while Hermes drives. Hand back later with: bash tools/hermes_takeover.sh off" ;;
+    echo "[takeover] Two-driver etiquette: Hermes is the SOLE ACTIVE DRIVER while autonomous mode is on;"
+    echo "[takeover] a human or a concurrently-open Claude session should be READ-MOSTLY (review, don't act) to avoid two drivers racing."
+    echo "[takeover] Hand back later with: bash tools/hermes_takeover.sh off" ;;
   off)
     echo "[takeover] handing the project back to CLAUDE…"
+    bash "$ROOT/tools/hermes_autonomous.sh" off || true
     rm -f "$ACTIVE"
     bash "$SERVE" down
-    echo "[takeover] ✅ Qwen unloaded, GPU free for research runs, supervisor is now inert (leave it running; harmless)."
+    echo "[takeover] ✅ Qwen unloaded, GPU free for research runs, supervisor is now inert (leave it running; harmless), autonomous heartbeat paused."
     echo "[takeover]    Resume Claude-side compute if it was paused:  bash tools/gpu_queue.sh resume" ;;
   status)
     echo "[takeover] driver: $([ -f "$ACTIVE" ] && echo HERMES\ \(local\ Qwen\) || echo Claude)"

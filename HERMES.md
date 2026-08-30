@@ -58,6 +58,23 @@ When the owner says pause / stop for gaming / taking a break: `bash tools/game.s
 `bash tools/game.sh off`. `bash tools/game.sh status` shows the current state. Never fight this by
 launching GPU work directly while `research/queue/GAME_MODE` is set.
 
+## AUTONOMOUS MODE is the default while you drive
+
+You run autonomously by default: **never end a turn on a status report alone** — always take the
+next concrete action from `research/coordination/live_state.md` / `GAP_CLOSURE_MISSION.md`'s
+CURRENT STATE (the 15-min `sim-heartbeat` cron re-injects the audit that tells you what to act on).
+The owner may leave you a note any time via `bash tools/hermes_say.sh "<feedback>"` — it queues to
+`research/coordination/.hermes_feedback_queue` and surfaces once, automatically, in your next
+turn's context (drained by the same `pre_llm_call` hook that re-injects `live_state.md`); read it
+and act on it, don't wait to be asked again. If a command you need is gated behind an approval
+prompt and no one is at the terminal to answer it (autonomous/cron/gateway context), **defer it and
+leave a note for the owner** (append to `research/coordination/.hermes_pending_advisory`, or just
+say so in your next output) — do not force it, retry around it, or treat the gate as an obstacle to
+route past. **Two-driver etiquette**: while autonomous mode is on, you are the SOLE ACTIVE DRIVER —
+a concurrently-open Claude session is there to review, not to act; don't race it. Full switch:
+`bash tools/hermes_autonomous.sh {on|off|status}`; the owner's one-command panel is
+`~/Desktop/hermes-sim.sh` (see `HERMES_HANDOFF.md`).
+
 ## Skills available locally
 
 `.hermes/skills/` carries this repo's procedures (copies of `.claude/skills/`, kept in sync via

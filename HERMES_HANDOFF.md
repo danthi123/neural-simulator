@@ -68,10 +68,97 @@ pool keeps running** either way (it's remote, doesn't touch your local GPU/CPU).
 Claude or Hermes is driving.
 
 ## Takeover / hand-back
-- **To Hermes** (Claude usage out): `bash tools/hermes_takeover.sh on` → then work in `hermes`.
-- **Back to Claude** (usage reset): `bash tools/hermes_takeover.sh off` → Qwen unloads, GPU frees for research;
-  then resume Claude-side compute (`bash tools/gpu_queue.sh resume` if it was paused). Tell Claude "continue" — it
-  re-anchors from `research/coordination/live_state.md` + `GAP_CLOSURE_MISSION.md` and judges/continues Hermes' work.
+- **To Hermes** (Claude usage out): `bash tools/hermes_takeover.sh on` → then work in `hermes`. This now ALSO turns
+  on autonomous mode (see below) — Hermes works hands-off from the moment it becomes the driver.
+- **Back to Claude** (usage reset): `bash tools/hermes_takeover.sh off` → Qwen unloads, GPU frees for research,
+  autonomous mode pauses; then resume Claude-side compute (`bash tools/gpu_queue.sh resume` if it was paused). Tell
+  Claude "continue" — it re-anchors from `research/coordination/live_state.md` + `GAP_CLOSURE_MISSION.md` and
+  judges/continues Hermes' work.
+
+## AUTONOMOUS MODE — the default while Hermes drives
+
+**Goal**: Hermes works overnight/hands-off, Claude-bypass-permissions style — the `approvals` system still prompts
+for genuinely dangerous commands (never bypassed with `--yolo`), but ordinary dev commands never interrupt it, and
+the 15-minute heartbeat cron IS the autonomous loop (it re-injects the parallelism/lanes/frontier audit and its own
+prompt tells Hermes to act on it, never end a turn on a status report alone).
+
+**The switch**: `bash tools/hermes_autonomous.sh {on|off|status}` — `on` ensures `hermes gateway` (the process that
+hosts Hermes's built-in cron ticker — confirmed against the installed Hermes's own test suite: the ticker only runs
+inside the gateway process) is installed (first time; a **user-level systemd service, no sudo**) and running, then
+resumes the `sim-heartbeat` cron job; `off` pauses the job (gateway stays up, harmless idle); `status` shows both.
+Already wired into the driver switches: `hermes_takeover.sh on/off` call it automatically, and `game.sh on/off`
+pause/resume it around a gaming break (belt-and-suspenders alongside `sim_heartbeat.sh`'s own `HERMES_ACTIVE`/
+`GAME_MODE` gate — a stray tick during a pause is a safe no-op either way).
+
+**Queueing feedback without interrupting**: `bash tools/hermes_say.sh "<feedback>"` appends a timestamped line to
+`research/coordination/.hermes_feedback_queue`; the `pre_llm_call` hook drains it and injects it into Hermes's next
+turn's context automatically, exactly once. No `hermes -z` interrupt, no context switch mid-task.
+
+**The desktop control panel** (`~/Desktop/hermes-sim.sh` — copy it there once from the repo's tracked original):
+
+```bash
+cp /home/dant123/Projects/sim/tools/hermes_desktop_control.sh ~/Desktop/hermes-sim.sh
+chmod +x ~/Desktop/hermes-sim.sh
+```
+
+| Command | Does |
+| --- | --- |
+| `~/Desktop/hermes-sim.sh start` | **The one-command go-live**, safe from ANY starting state (idempotent): clears any earlier pause (`gpu_queue resume` + `GAME_MODE`/`GPU_PAUSE` off via `game.sh off`), hands the project to Hermes, confirms autonomous mode, brings Qwen up. Prints a clear ✓/✗ per step. |
+| `~/Desktop/hermes-sim.sh stop` / `resume` | `game.sh on` / `off` — pause/resume for gaming or a break; pauses/resumes the autonomous cron too. |
+| `~/Desktop/hermes-sim.sh handback` | `hermes_takeover.sh off` — back to Claude. |
+| `~/Desktop/hermes-sim.sh status` | One screen: driver, Qwen, supervisor, autonomous cron, GAME_MODE. |
+| `~/Desktop/hermes-sim.sh check` | **Post-reboot / post-system-update health gate** — run before trusting an overnight run after a CachyOS update or any reboot. Read-only, green/red per line (see below). |
+| `~/Desktop/hermes-sim.sh say "<feedback>"` | `hermes_say.sh` — queue a note for Hermes without interrupting it. |
+| `~/Desktop/hermes-sim.sh logs` | Tail the Qwen/supervisor/autonomous/cron logs. |
+
+### Reboot-resilience — verified against the real installed services, not assumed
+
+- **`qwen-supervisor.service`** — already a `systemctl --user` unit, `enabled` + `WantedBy=default.target`, and
+  `loginctl show-user` on this box reports **`Linger=yes`** — confirmed directly, not inferred. Linger is what makes
+  a user-level service start **at boot without a login**; without it a user unit only starts at the next interactive
+  login. **Verdict: survives reboot automatically, no owner action.**
+- **`hermes gateway install`** (no `--system`) is also a **user-level** systemd unit, and its own installer
+  auto-enables linger if it's somehow off (verified by reading `hermes_cli/gateway.py`'s `_preflight_user_systemd`).
+  Read directly from source: in a non-interactive context (or accepting the default prompt) it installs with
+  `enable_on_startup=True` and starts immediately — i.e. plain `hermes gateway install` already behaves like
+  `--start-now --start-on-login` by default; `hermes_autonomous.sh` passes those flags explicitly anyway, for
+  certainty rather than reliance on a default. **Verdict: once installed, survives reboot automatically** (same
+  linger mechanism as the supervisor).
+- **The `sim-heartbeat` cron job** persists in Hermes's own state once created (`hermes-parity/apply_cron.sh`) —
+  reboot does not remove it, only PAUSING it does (`hermes cron pause`).
+- **So: which is true, "auto-resumes" or "run start once"?** Both, depending on what's ALREADY true when the
+  reboot happens: **IF** `research/queue/HERMES_ACTIVE` is set, `GAME_MODE`/`GPU_PAUSE` are absent, the gateway was
+  already installed, and the cron job was not paused — **autonomous work resumes automatically** with zero owner
+  action (both services restart via linger, the supervisor's own poll loop re-evaluates state and reloads Qwen, the
+  gateway's ticker resumes firing the already-scheduled job). **BUT** `GAME_MODE`/`GPU_PAUSE` are themselves
+  **persistent sentinel files by design** (`tools/game.sh`'s own contract: "a reboot mid-break stays paused") — so
+  a reboot that happens while paused for a test/break stays paused, correctly, until something clears it. **For a
+  reboot you are about to trigger yourself** (e.g. after a system update), the reliable, idempotent move is: run
+  `~/Desktop/hermes-sim.sh start` once, after the reboot — it clears any stale pause and re-confirms every piece
+  regardless of what state it finds, so it is correct whether or not auto-resume already happened.
+- **After the reboot**: the mini-PC **pool** keeps running (it's remote, on separate machines, entirely unaffected
+  by this box rebooting). Any **local GPU** job that was mid-run when the box went down is **requeued intact** by
+  `tools/gpu_queue.sh`'s own design (a killed/interrupted job re-runs from the front of the queue on restart) — at
+  most that job's in-progress work is lost, never the job itself.
+
+### Post-reboot / post-CachyOS-update health check
+
+`bash tools/hermes_health_check.sh` (or `~/Desktop/hermes-sim.sh check`) — read-only, no GPU load, safe to run any
+time. Checks, green/red: llama.cpp present **and still built with `--spec-type draft-dflash`** (a system package
+update can silently replace it with a build lacking the flag — `qwen_serve.sh` already refuses to launch in that
+case; this surfaces the same check proactively, before you try), the local target GGUF still present, `nvidia-smi`
+responsive, `systemd` linger + `qwen-supervisor.service` + `hermes gateway` all active, the `pre_llm_call` hook
+registered **and allowlisted** (`hermes hooks doctor` — a hook can be registered but not yet allowlisted if the
+gateway has never run a session since the hooks were configured; the check tells the two states apart rather than
+flagging the expected-pending case as a failure), the git pre-commit gate (`tools/hermes_parity_check.sh`), and —
+only if Qwen is currently up — the local endpoint's reachability.
+
+### Two-driver etiquette while autonomous mode is on
+
+Hermes is the **sole active driver** during autonomous mode. If a Claude session is also open (e.g. for QA/review
+while Claude usage isn't the blocker), it should stay **read-mostly** — read `live_state.md` / `GAP_CLOSURE_MISSION.md`
+to see what Hermes did and judge it, but not take actions that would race Hermes's own. `hermes_takeover.sh on`
+prints this reminder every time it hands over.
 
 ## Workflow parity (so Hermes works with the same discipline)
 Hermes must obey the same non-negotiables as Claude — see **`CLAUDE.md`** + the CONSTRAINTS block in
