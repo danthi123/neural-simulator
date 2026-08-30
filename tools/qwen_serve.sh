@@ -30,16 +30,13 @@ SPEC_NMAX="${QWEN_SPEC_NMAX:-3}"                                              # 
 endpoint() { echo "http://$HOSTADDR:$PORT/v1"; }
 running()  { [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; }
 ready()    { curl -sf -m 4 "http://$HOSTADDR:$PORT/health" >/dev/null 2>&1 || curl -sf -m 4 "$(endpoint)/models" >/dev/null 2>&1; }
-vram()     { command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader 2>/dev/null || echo n/a; }
+# timeout 8: when the 3090 falls off the bus, nvidia-smi HANGS rather than erroring (documented GPU-crash mode).
+# Without the cap, a status echo here hangs `down`/`up`, whose caller (loop.py) then TimeoutExpires and crashes.
+# Mirrors gpu_queue.sh:freevram. (M5)
+vram()     { command -v nvidia-smi >/dev/null 2>&1 && timeout 8 nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader 2>/dev/null || echo n/a; }
 
 case "${1:-status}" in
   up)
-    if running && ready; then echo "[qwen] already up + ready at $(endpoint)"; exit 0; fi
-    [ -x "$LLAMA" ] || { echo "[qwen] ERROR: llama-server not found/executable at $LLAMA (set QWEN_LLAMA_SERVER)"; exit 1; }
-    # DFlash2 support check — refuse to launch a build that lacks the drafter (would silently fall back / error)
-    if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
-      echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
-    fi
     # Target via -hf (resolves from the HF cache — the GGUF is already downloaded, so NO re-download — and,
     # crucially, keeps the HF machinery active so the -hfd DRAFT resolves; mixing local --model with -hfd made
     # the draft path resolve to '' and the server exited on "failed to load draft model, ''").
@@ -54,6 +51,21 @@ case "${1:-status}" in
     _wait_ready() {   # returns 0 ready, 1 exited/timeout
       for _ in $(seq 1 "${1:-600}"); do ready && return 0; running || return 1; sleep 2; done; return 1
     }
+    # M7: NEVER launch a second server while one is alive (loading OR ready). A `running`-but-not-`ready`
+    # process is MID-LOAD; launching again would allocate the 27B a SECOND time during load -> OOM / card off
+    # the bus. The old guard was `running && ready` (it fell through while loading). If one is loading, WAIT
+    # for it; never double-launch.
+    if running; then
+      if ready; then echo "[qwen] already up + ready at $(endpoint)"; exit 0; fi
+      echo "[qwen] a server is already loading (pid $(cat "$PIDF")) -> waiting for ready, NOT launching a second"
+      if _wait_ready 300; then echo "[qwen] became ready at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
+      echo "[qwen] existing server still not ready after wait — leaving it in place (no double-launch)"; exit 1
+    fi
+    [ -x "$LLAMA" ] || { echo "[qwen] ERROR: llama-server not found/executable at $LLAMA (set QWEN_LLAMA_SERVER)"; exit 1; }
+    # DFlash2 support check — refuse to launch a build that lacks the drafter (would silently fall back / error)
+    if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
+      echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
+    fi
     echo "[qwen] launching WITH DFlash2 drafter (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
     _launch draft
     echo "[qwen] pid $(cat "$PIDF"); waiting (first run may download)…"
