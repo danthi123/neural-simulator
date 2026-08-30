@@ -1,0 +1,78 @@
+# Hermes shell-hooks snippet for the neural-simulator repo.
+#
+# WHAT THIS IS: the `hooks:` block to MERGE into ~/.hermes/config.yaml (top-level key, alongside
+# `model:`, `agent:`, etc.). It is NOT applied automatically by anything in this worktree -- the
+# task that produced it was explicitly told not to touch the owner's global ~/.hermes/. Merge it
+# by hand, or with:
+#
+#   .venv/bin/python - <<'PY'
+#   import yaml
+#   cfg_path = "/home/dant123/.hermes/config.yaml"
+#   with open(cfg_path) as f: cfg = yaml.safe_load(f) or {}
+#   with open("hermes-parity/config.hooks.snippet.yaml") as f: snippet = yaml.safe_load(f)
+#   cfg.setdefault("hooks", {}).update(snippet["hooks"])
+#   with open(cfg_path, "w") as f: yaml.safe_dump(cfg, f, sort_keys=False)
+#   PY
+#
+# (BACK UP ~/.hermes/config.yaml first -- it already carries a lot of unrelated state.)
+#
+# PATHS ARE HARDCODED to /home/dant123/Projects/sim, the canonical checkout -- Hermes's shell-hook
+# `command:` field is not restricted to any special directory (unlike `cron create --script`, which
+# is sandboxed to ~/.hermes/scripts/), so pointing directly at the repo's tools/hermes/*.py files is
+# the intended, symlink-free wiring. If Hermes ever needs to operate from a *different* checkout
+# (a worktree), edit the paths below to match.
+#
+# CONSENT: shell hooks are quarantined behind a first-use TTY prompt (~/.hermes/shell-hooks-
+# allowlist.json). An interactive `hermes chat` session will prompt once per (event, command) pair
+# the first time each fires -- answer yes. For NON-interactive use (gateway, cron), nothing below
+# will register at all unless ONE of: `hooks_auto_accept: true` here, `--accept-hooks` on the
+# `hermes` invocation, or `HERMES_ACCEPT_HOOKS=1` in the environment. Hooks run arbitrary code with
+# the owner's full privileges -- auto-accept is a real trust decision, made deliberately here
+# because these are the same repo tools the owner already trusts (tools/*.py|sh) wrapped for the
+# JSON wire protocol; see docs/HERMES_WORKFLOW_PARITY.md for the reasoning per-hook.
+
+hooks:
+  # --- Claude Code SessionStart-equivalent HALF (regenerate) ---
+  # on_session_start's return value is never consumed by Hermes (agent/conversation_loop.py:1049-
+  # 1061 fires it fire-and-forget) -- it cannot inject text. Used here purely for its SIDE EFFECT:
+  # force a full rebuild of research/coordination/live_state.md at the start of a brand-new session
+  # (not on continuation), the same event Claude Code's SessionStart regenerates on.
+  on_session_start:
+    - command: "python3 /home/dant123/Projects/sim/tools/live_state.py"
+      timeout: 20
+
+  # --- Claude Code UserPromptSubmit-equivalent (read + inject every turn) ---
+  # This is Hermes's OWN documented UserPromptSubmit equivalent (website/docs/user-guide/features/
+  # hooks.md, worked example 3: "Claude Code's UserPromptSubmit event is intentionally not a
+  # separate Hermes event -- pre_llm_call fires at the same place and already supports context
+  # injection"). Prints the current live_state.md (fast read, regenerates only if missing) plus any
+  # queued advisory left by the post_tool_call hook below.
+  pre_llm_call:
+    - command: "python3 /home/dant123/Projects/sim/tools/hermes/hook_live_state_context.py"
+      timeout: 15
+
+  # --- Claude Code PostToolUse-equivalent (live_state_nudge.py + check_doc_drift.py merged) ---
+  # matcher is a regex, fullmatch against Hermes's tool_name -- write_file (new file) and patch
+  # (edit) are Hermes's two file-mutation tools (agent/display.py:459). post_tool_call is
+  # OBSERVER-ONLY in Hermes (its return value is discarded), so this hook's only channel back to
+  # the agent is the pending-advisory file the pre_llm_call hook above drains -- one turn behind
+  # Claude Code's immediate systemMessage, not zero. See tools/hermes/hook_post_edit.py.
+  post_tool_call:
+    - matcher: "write_file|patch"
+      command: "python3 /home/dant123/Projects/sim/tools/hermes/hook_post_edit.py"
+      timeout: 30
+
+  # --- The self-matching-kill guard (ported from .claude/hooks/block_self_matching_kill.py) ---
+  # `pkill -f <pattern>` matches the invoking shell's own command line and kills the caller --
+  # a shell/process-model fact, not Claude-Code-specific, so it applies identically here. Exit
+  # code 2 blocks the terminal call (Claude-Code/Cursor-compatible, honored by Hermes).
+  pre_tool_call:
+    - matcher: "terminal"
+      command: "python3 /home/dant123/Projects/sim/tools/hermes/hook_block_dangerous_kill.py"
+      timeout: 5
+      fail_closed: false
+
+# Required for the hooks above to register under `hermes cron` / gateway / any non-interactive
+# invocation (an interactive `hermes chat` can instead approve each at the first-use TTY prompt).
+# See the CONSENT note above before flipping this on.
+hooks_auto_accept: true

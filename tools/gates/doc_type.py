@@ -66,7 +66,7 @@ def _check_one(path, text=None):
     # Skills + rules are NOT research docs: they use a `name:`/`description:` (or `paths:`) frontmatter schema,
     # never a research `type:`. Exempt them so the research-doc-type gate does not force `type:` on a SKILL.md.
     relslash = rel.replace("\\", "/")
-    if ".claude/skills/" in relslash or "/.claude/rules/" in relslash or relslash.startswith(".claude/rules/"):
+    if ".claude/skills/" in relslash or "/.claude/rules/" in relslash or relslash.startswith(".claude/rules/") or ".hermes/skills/" in relslash:
         return problems
     try:
         text = text if text is not None else open(path, errors="ignore").read()
