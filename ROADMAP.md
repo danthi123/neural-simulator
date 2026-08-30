@@ -7,6 +7,18 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-08-30 (newest) — early harvest + three moves: a memory-consolidation dead-end mapped, the knowledge-latency cause found (30% win in hand), the brain-voice made the default in its channel
+
+A focused session against the remaining compute, with a pause partway through so the owner could use the machine.
+
+(1) MEMORY CONSOLIDATION — a whole family of settings ruled out, and the better idea named. The brain stores several facts in nearby memory slots; we swept 343 combinations of one storage design (isolated "sticky" slots) looking for one that keeps the facts cleanly separable. None did — they blur together. That is a clean dead-end for that design, and it points at the successor the design doc already named: laying the slots on a continuous ring that holds each memory as a stable "bump" (a well-known brain circuit). That successor is now built and screening on the mini-PC cluster.
+
+(2) KNOWLEDGE AT SCALE — recall is already solved; the slowness has a specific, fixable cause. With ~79,000 facts loaded the brain recalls the right one every time and exactly matches the reference — but each answer takes ~1-2 seconds. We found why: it rebuilds a big lookup table from scratch on every single query. Caching that table once (shared across all the memory shards) cuts the time ~32% with a bit-for-bit identical answer, and it's memory-safe. The fix is de-risked and ready to wire in; the owner's #1 priority moved from "why is it slow" to "apply the known fix."
+
+(3) THE BRAIN'S OWN VOICE is now the default in its channel. The from-scratch spiking voice (not the language-model scaffold) is now the default generator for the experimental open-ended channel, with the scaffold as automatic fallback. This changes nothing in the normal product (that channel is off there) — it's a step in weaning off the scaffold.
+
+Mid-session the owner asked to free the local machine (CPU + GPU) for an unrelated test; that was done with no work lost (the running job was re-queued to resume on their word), while the separate mini-PC cluster kept working.
+
 ## 2026-08-28 (later, newest) — ⭐ the one-brain milestone LANDED, validated safe over long chats; the mouth "wall" was a measurement confound
 
 Four things landed this afternoon.

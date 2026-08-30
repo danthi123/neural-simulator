@@ -34,8 +34,15 @@ Bundle: **78,857 facts across 395 shards**.
   oracle exactly (n_mismatches=0).
 - **Latency is the wall:** scale-battery latency ~1.1s median, ~2.2s p95 (70 samples); the inertness path is
   slower still (~1.8-1.9s median, up to ~3.5s p95).
-- **Sparse-index not in the production composer:** `RFPhasorComposer_accepts_enable_sparse_index = False` —
-  the lever that would reduce the shard-scan cost is not wired into the path the verify exercises.
+- **Sparse-index arch-check read False** (`RFPhasorComposer_accepts_enable_sparse_index = False`) in this
+  verify — but see the correction below.
+
+> ⚠️ CORRECTION (2026-08-30): that arch-check was STALE — the `enable_sparse_index` kwarg was added to
+> `RFPhasorComposer.__init__` (`rf_phasor_composer.py:68`) *after* this verify ran, so the composer accepts it
+> now. And the sparse index is NOT the right latency lever anyway: profiling
+> ([`2026-08-30-knowledge-66-latency-hot-loop-is-codebook-rebuild-cache-31pct-byte-identical.md`](2026-08-30-knowledge-66-latency-hot-loop-is-codebook-rebuild-cache-31pct-byte-identical.md))
+> shows the hot loop is an O(V) codebook rebuilt every query; caching it (board #192) cuts median latency 31.7%
+> byte-identically, decoupled from the DG index.
 
 ## Interpretation
 Knowledge-in-chat is *correct* at LLM-ish scale — recall and exact oracle match hold at ~79k facts. The blocker for

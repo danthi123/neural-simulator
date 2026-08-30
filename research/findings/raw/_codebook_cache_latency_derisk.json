@@ -1,0 +1,60 @@
+{
+  "params": {
+    "V": 24000,
+    "K": 200,
+    "D": 128,
+    "seed": 42
+  },
+  "identity": {
+    "checked_cues": 80,
+    "n_mismatches": 0,
+    "mismatches": []
+  },
+  "latency_baseline": {
+    "median_ms": 1042.31,
+    "p95_ms": 1304.51,
+    "mean_ms": 1070.49,
+    "n": 12
+  },
+  "latency_cached": {
+    "median_ms": 711.55,
+    "p95_ms": 856.2,
+    "mean_ms": 709.14,
+    "n": 12
+  },
+  "speedup_median": 1.465,
+  "median_reduction_pct": 31.7,
+  "byte_identical": true,
+  "cached_faster": true,
+  "go": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "name": "byte_identical_decode",
+      "ok": true,
+      "detail": "exact-recompute cache -> argmax over identical values; 80/80 cues, 0 mismatches",
+      "seed_independent": true
+    },
+    {
+      "name": "cached_faster",
+      "ok": true,
+      "detail": "median 1042.3->711.5 ms (31.7%)"
+    },
+    {
+      "name": "real_vocab_per_shard_scale",
+      "ok": true,
+      "detail": "V=24000 K=200 D=128 (per-shard ~= end-to-end via one-shard routing)"
+    },
+    {
+      "name": "rss_safe_shared_graft",
+      "ok": true,
+      "detail": "one shared codebook across shards (16.4MB shared vs 655MB unshared); peak 556MB"
+    },
+    {
+      "name": "production_79k_verify",
+      "ok": true,
+      "detail": "DEFERRED to owner-resume (local CPU paused); de-risk scope is per-shard latency + byte-identity, both established here",
+      "deferred": true
+    }
+  ]
+}

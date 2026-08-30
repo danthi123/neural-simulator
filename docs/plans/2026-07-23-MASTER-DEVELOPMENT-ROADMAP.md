@@ -1016,6 +1016,24 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
+**2026-08-30 (newest — early-harvest + 3 owner-requested moves; local compute PAUSED for an owner test):**
+- **Consolidation (#64):** the point-plateau operating-point sweep is a 343-cell NO-GO (no operating point
+  separates per-slot targets). Successor BUILT + screening on the pool: a continuous-attractor (ring/CANN
+  line/bump) de-risk (`_consol_dendritic_lineattractor_derisk.py`, 2-seed screen via
+  `pool_lineattractor_dispatch.sh`). **NEXT: harvest the screen → 6-seed the candidates** (distinct from the
+  refuted dendritic deep-CREDIT rule — this is a memory-separation geometry).
+- **Knowledge-scale (#66, owner #1):** recall is SOLVED at 78,857 facts (rate 1.0, oracle-exact); the wall is
+  ~1-2s latency. Cause FOUND: an O(V) codebook rebuilt every query (not the resonate, not hot shards). Lever
+  DE-RISKED: cache it shared across shards (board #192) = median 31.7% faster, byte-identical, RSS-safe.
+  **NEXT (on owner-resume): apply the additive default-OFF codebook-cache to `rf_phasor_composer.py`, re-run
+  the 79k-fact scale verify with it ON.** (The verify's `enable_sparse_index=False` arch-check was STALE —
+  kwarg since added; the sparse index is still not the lever.)
+- **Mouth de-Qwen (#80):** rung-3 LANDED — `BRAIN_OPEN_ENDED_WKV_MOUTH` default-ON (zero prod risk; second
+  gate under default-OFF `BRAIN_OPEN_ENDED`). **NEXT: rung-4 (wider-vocab checkpoint) + measure in-vocab
+  coverage.**
+- **Compute:** GPU + local CPU PAUSED for an owner test (resume on owner's word: `gpu_queue.sh resume` +
+  rm `research/queue/GAME_MODE`); the requeued longitudinal resumes intact. Mini-PC pool kept running.
+
 **2026-08-27 (continuation, same day — supersedes the items below):**
 - ~~decide whether to merge `research/onebrain-integration-design`, then build the first learned cross-edge~~
   **DONE.** Merged; **R1** (d6 WM → comprehension, two-factor Hebbian, host-picked edge pair) is 6/6 GO on
