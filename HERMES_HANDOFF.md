@@ -196,9 +196,22 @@ the CSRF gate and cookies are `Secure` over https — while plain-http LAN acces
 decided per-request). If caddy is set to rewrite the upstream Host, the explicit
 `HERMES_WEBUI_ALLOWED_ORIGINS=https://hermes.dant123.com` allowlist still lets it through.
 
-**Option C — the webui drives the SAME agent the cron drives (no more two-driver problem).** Chat routes
-through the gateway HTTP API (`HERMES_WEBUI_CHAT_BACKEND=gateway`, `..._GATEWAY_BASE_URL=http://127.0.0.1:8642`,
-`..._GATEWAY_USE_RUNS_API=true`), which is enabled by `API_SERVER_KEY` (+ `API_SERVER_HOST=127.0.0.1`) in
-`~/.hermes/.env`. So the webui *is* the live window into the `sim-heartbeat` cron's autonomous session — watch
-it work and interject in the same thread, from anywhere. Verify: authenticate, then
-`curl -b <cookies> http://127.0.0.1:8787/api/health/agent` → `gateway_chat.enabled: true`.
+**Option C — the webui drives the gateway agent directly.** Chat routes through the gateway HTTP API
+(`HERMES_WEBUI_CHAT_BACKEND=gateway`, `..._GATEWAY_BASE_URL=http://127.0.0.1:8642`,
+`..._GATEWAY_USE_RUNS_API=true`), enabled by `API_SERVER_KEY` (+ `API_SERVER_HOST=127.0.0.1`) in
+`~/.hermes/.env`. So sending a message in the webui starts a self-continuing gateway RUN on the same Qwen +
+repo + `live_state.md` + memory — you watch it stream live (thinking, tool cards) and interject via steer, from
+anywhere; the run lives on the gateway server, so it keeps going if you close the browser and you reattach to
+watch. Verify: authenticate, then `curl -b <cookies> http://127.0.0.1:8787/api/health/agent` →
+`gateway_chat.enabled: true` (end-to-end proven: a `POST /v1/runs` returned the agent's reply).
+
+**OPERATING MODEL (owner, 2026-08-30) — webui drives, extremely simple manual swap.** The `sim-heartbeat` cron
+is a SEPARATE headless session (its turns are NOT viewable in the webui — a `deliver:local` cron session is never
+exposed as a transcript, and the gateway has no list-runs endpoint). To avoid it racing an active driver it is
+**PAUSED by default** (`bash tools/hermes_autonomous.sh off` — gateway stays up). **When Claude's usage runs out,
+the swap is: open the webui → log in → send a message** (e.g. "Continue the mission — read
+`research/coordination/live_state.md` and take the next action"); watch + steer from there. That's it — Qwen is
+already loaded and everything survives reboot. OPTIONAL unattended-overnight: `bash tools/hermes_autonomous.sh on`
+turns the 15-min heartbeat back on (then it self-drives between your check-ins; flip it off again if you want the
+webui to be the sole driver). No automated cron/webui guard exists by design — `active_agents` in
+`gateway_state.json` is not a real-time signal, and the owner runs one driver at a time manually.
