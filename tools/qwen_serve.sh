@@ -17,8 +17,10 @@ LOG="$STATE/qwen_server.log"
 
 # --- configurable (env overrides) ------------------------------------------------------------------------------------
 LLAMA="${QWEN_LLAMA_SERVER:-/home/dant123/.unsloth/llama.cpp/llama-server}"   # unsloth build has --spec-type draft-dflash
-TARGET_HF="${QWEN_TARGET_HF:-sdkyuan/qwen3.8-27B-qat-q2_0-gguf}"              # the 27B Q2 target (auto-downloads via -hf)
-DRAFT_HF="${QWEN_DRAFT_HF:-HermiHg/Qwen3.8-27B-DFlash2-Q2_K_S-MIX-GGUF:Q2_K_S}"  # the DFlash2 block-diffusion drafter
+# Target: prefer the already-downloaded local GGUF (fast, no HF re-resolution); fall back to -hf auto-download.
+TARGET_GGUF="${QWEN_TARGET_GGUF:-/home/dant123/.cache/huggingface/hub/models--sdkyuan--qwen3.8-27B-qat-q2_0-gguf/snapshots/a5885499d443cbf4a7998001508ddb3b279eeb5f/qwen38-27b-qat-q2_0.gguf}"
+TARGET_HF="${QWEN_TARGET_HF:-sdkyuan/qwen3.8-27B-qat-q2_0-gguf}"              # fallback if the local GGUF is absent
+DRAFT_HF="${QWEN_DRAFT_HF:-HermiHg/Qwen3.8-27B-DFlash2-Q2_K_S-MIX-GGUF:Q2_K_S}"  # the DFlash2 drafter (535 MiB, auto-downloads)
 PORT="${QWEN_PORT:-8033}"
 HOSTADDR="${QWEN_HOST:-127.0.0.1}"
 CTX="${QWEN_CTX:-32768}"
@@ -38,9 +40,11 @@ case "${1:-status}" in
     if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
       echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
     fi
-    echo "[qwen] launching (first run auto-downloads ~9 GB from HF)…  log: $LOG"
+    # target: local GGUF if present (no download), else -hf
+    if [ -f "$TARGET_GGUF" ]; then TARGET_ARGS=(--model "$TARGET_GGUF"); echo "[qwen] target: local $TARGET_GGUF"; else TARGET_ARGS=(-hf "$TARGET_HF"); echo "[qwen] target: -hf $TARGET_HF (will auto-download)"; fi
+    echo "[qwen] launching (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
     setsid "$LLAMA" \
-      -hf "$TARGET_HF" -hfd "$DRAFT_HF" \
+      "${TARGET_ARGS[@]}" -hfd "$DRAFT_HF" \
       --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX" \
       --jinja --reasoning-budget -1 --ctx-size "$CTX" \
       --host "$HOSTADDR" --port "$PORT" -ngl "$NGL" --flash-attn on \

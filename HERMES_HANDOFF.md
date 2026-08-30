@@ -52,6 +52,21 @@ brain for VRAM).
 4. Confirm the VRAM dance: `bash tools/hermes_gpu_run.sh "SIM_BACKEND=cupy .venv/bin/python -c 'import cupy; print(cupy.zeros(3))'"`
    then watch `research/queue/qwen_supervisor.log` — Qwen should unload, the job run, Qwen reload.
 
+## Pause / resume for gaming or a break (the important one)
+**Closing Hermes is NOT a pause** — while `HERMES_ACTIVE` is set, the supervisor will happily reload Qwen and
+nudge a fresh Hermes turn, so it would "spin back up" on you. To actually take a break, use the pause button —
+either run it yourself or just tell Hermes ("pause for a break" / "I'm going to game") and it will run it:
+```bash
+bash tools/game.sh on      # frees the local GPU + CPU NOW: pauses local runs (current requeues, no loss),
+                           #   unloads Qwen, and STAYS down — nothing auto-restarts until you resume.
+bash tools/game.sh off     # resume: local runs pick back up; if Hermes is the driver, Qwen reloads within ~8s
+bash tools/game.sh status  # paused or running?
+```
+Guarantees: `game.sh on` sets a **persistent** `GAME_MODE` sentinel — so a **reboot mid-break stays paused**, and
+a reboot when you're **not** paused resumes development automatically (the services are enabled). The **mini-PC
+pool keeps running** either way (it's remote, doesn't touch your local GPU/CPU). This is the same button whether
+Claude or Hermes is driving.
+
 ## Takeover / hand-back
 - **To Hermes** (Claude usage out): `bash tools/hermes_takeover.sh on` → then work in `hermes`.
 - **Back to Claude** (usage reset): `bash tools/hermes_takeover.sh off` → Qwen unloads, GPU frees for research;

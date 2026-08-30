@@ -23,9 +23,13 @@ vram() { command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi --query-gpu=memory.
 
 case "${1:-status}" in
   on)
-    echo "[game] pausing the 3090 for gaming (minipc pool KEEPS running)…"
+    echo "[game] pausing local compute for gaming/break (minipc pool KEEPS running)…"
     bash "$GPUQ" pause --now || echo "[game] warn: gpu_queue pause returned nonzero (dispatcher may be down); continuing"
     : > "$GAME"
+    # unload the Hermes local-Qwen model NOW (frees ~10GB). The supervisor sees GAME_MODE and will NOT reload it
+    # or nudge Hermes until you run 'off' — nothing auto-spins-back-up during your break, and GAME_MODE persists
+    # across reboot (so a reboot mid-break stays paused; a reboot when NOT paused resumes development normally).
+    bash "$ROOT/tools/qwen_serve.sh" down >/dev/null 2>&1 || true
     if [ "${2:-}" = "--force" ]; then
       echo "[game] --force: killing any standalone brain-loading GPU python not under the queue…"
       pgrep -af "python .*(research\.runners|webapp)" 2>/dev/null | grep -v "gpu_queue.sh" \
@@ -43,6 +47,7 @@ case "${1:-status}" in
     rm -f "$GAME"
     bash "$GPUQ" resume || echo "[game] warn: gpu_queue resume returned nonzero (start it with: bash tools/gpu_queue.sh __daemon &)"
     echo "[game] GAME_MODE cleared; GPU queue will pick the re-queued job back up. VRAM: $(vram)"
+    if [ -f "$ROOT/research/queue/HERMES_ACTIVE" ]; then echo "[game] Hermes is the driver -> the supervisor will reload Qwen within ~8s and resume development."; else echo "[game] Claude is the driver -> Qwen stays down (GPU free for research); tell Claude 'continue' to resume."; fi
     ;;
   status)
     echo "[game] GAME_MODE: $([ -f "$GAME" ] && echo ON || echo off)"
