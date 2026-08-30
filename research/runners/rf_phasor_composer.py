@@ -768,6 +768,24 @@ class RFPhasorComposer:
         sc = np.cos(2.0 * np.pi * (rec[None, :] - self._dg_codebook)).sum(axis=1)
         return self.words[int(np.argmax(sc))]
 
+    def _ensure_codebook_cache(self):
+        """(#66 knowledge-scale, board #192) build + cache the (V, D) cleanup codebook (fractional-cycle
+        + phasor) ONCE per vocab state (rebuild only when len(self.words) changes -- the same invalidation
+        rule `_dg_built_V` uses) and reuse it in the full-vocabulary cleanup paths instead of re-stacking
+        the phasor matrix from the `concepts` dict on every query. The cached matrices are EXACTLY what the
+        parent rebuilds each call, so decode is byte-identical by construction (independent of seed). This
+        is the O(V) codebook-rebuild hot loop the 2026-08-30 finding identified (~40% of per-query time at
+        V~24k, scaling with V not the shard's ~200 facts). `enable_codebook_cache=False` (default) leaves
+        this method uncallable by the cleanup paths -> the current rebuild-every-query path is preserved."""
+        V = len(self.words)
+        if self._cb_cache_V == V and self._cb_frac is not None:
+            return
+        # fractional-cycle codebook (V, D) aligned to self.words (the single-cleanup convention)
+        self._cb_frac = np.stack([np.asarray(self.concepts[w], dtype=float) for w in self.words])
+        # phasor codebook (V, D) (the batched-cleanup convention)
+        self._cb_z = np.exp(2j * np.pi * self._cb_frac)
+        self._cb_cache_V = V
+
     def _cleanup(self, rec_phases, words=None):
         if self.enable_spiking_cleanup:
             return self._spiking_cleanup(rec_phases, words if words is not None else self.words)
@@ -775,6 +793,10 @@ class RFPhasorComposer:
             w, _pk = self._dg_shard_select(rec_phases)
             return w if w is not None else self._full_host_select(rec_phases)
         words = words if words is not None else self.words
+        if self.enable_codebook_cache and words is self.words:
+            self._ensure_codebook_cache()
+            scores = np.cos(2.0 * np.pi * (np.asarray(rec_phases)[None, :] - self._cb_frac)).sum(axis=1)
+            return self.words[int(np.argmax(scores))]
         sims = [float(np.mean(np.cos(2.0 * np.pi * (rec_phases - self.concepts[w])))) for w in words]
         return words[int(np.argmax(sims))]
 

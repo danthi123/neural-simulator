@@ -17,8 +17,8 @@ NCFG=$(.venv/bin/python -m research.runners._consol_dendritic_lineattractor_deri
 if [ "${1:-}" = "--status" ]; then
   tot=0; nseeds=$(echo $SEEDS | wc -w)
   for h in "${NODES[@]}"; do
-    n=$(ssh "$h" "ls $REMOTE/$OUT/op*_seed*.json 2>/dev/null | wc -l" 2>/dev/null)
-    cand=$(ssh "$h" "grep -l '\"candidate\": true' $REMOTE/$OUT/op*.json 2>/dev/null | wc -l" 2>/dev/null)
+    n=$(ssh "$h" "ls $REMOTE/$OUT/la*_seed*.json 2>/dev/null | wc -l" 2>/dev/null)
+    cand=$(ssh "$h" "grep -l '\"candidate\": true' $REMOTE/$OUT/la*.json 2>/dev/null | wc -l" 2>/dev/null)
     echo "$h: ${n:-0} json, candidates=${cand:-0}"
     tot=$((tot + ${n:-0}))
   done
@@ -34,7 +34,7 @@ OUT=research/findings/raw/consol_lineattractor
 mkdir -p "$OUT" logs
 run_one(){
   local ci="$1" seed="$2"
-  local f; f="$OUT/op$(printf %03d "$ci")_seed${seed}.json"
+  local f; f="$OUT/la$(printf %03d "$ci")_seed${seed}.json"
   [ -s "$f" ] && return 0                       # RESUME: skip completed cells
   timeout 5400 ~/simvenv/bin/python -m research.runners._consol_dendritic_lineattractor_derisk \
     --config-index "$ci" --seed "$seed" --out "$OUT" >> logs/lineattractor.log 2>&1
