@@ -15,11 +15,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-30 (READ FIRST; LATEST anchor — supersedes every header below)
 
-**⛔ LOCAL COMPUTE PAUSED for an owner test (2026-08-30 ~00:20).** GPU queue is `--now`-paused (GPU_PAUSE set;
-the current longitudinal was killed+requeued at the front, resumes intact; owner OK'd losing ~13 min) and
-GAME_MODE is set. **RESUME ONLY ON THE OWNER'S WORD:** `bash tools/gpu_queue.sh resume && rm research/queue/GAME_MODE`.
-The mini-PC pool is SEPARATE and kept running (owner-approved). A large GPU VRAM figure right now is the owner's
-own test, not our job — do NOT resume, do NOT dispatch GPU work, until the owner says so.
+**⛔ LOCAL COMPUTE PAUSED (GAME_MODE + GPU_PAUSE set).** The plan (owner, 2026-08-30): install CachyOS updates +
+REBOOT, then go live with HERMES (local Qwen) as the autonomous dev-driver via `~/Desktop/hermes-sim.sh start`
+(one command; clears this pause, brings up Qwen + autonomous heartbeat). The mini-PC pool is SEPARATE and keeps
+running through the reboot. Do NOT resume local GPU / dispatch GPU work yourself — the owner's `start` does it.
+
+**⭐ HERMES FALLBACK DEV-AGENT IS READY (2026-08-30) — do NOT rebuild it.** Full build on `main` (see
+[HERMES_HANDOFF.md](HERMES_HANDOFF.md) + memory `project_hermes_local_qwen_fallback_agent`): Hermes on local
+Qwen3.8-27B takes over when Claude usage is out. **TWO-DRIVER ETIQUETTE: if `research/queue/HERMES_ACTIVE` is set,
+HERMES is the sole active driver — Claude is READ-MOSTLY QA (review its work via live_state/findings/git log; do
+NOT co-drive or dispatch GPU work).** Owner operates it via the desktop panel (start/stop/resume/handback/status/
+say/logs/check). Hand-back to Claude: `tools/hermes_takeover.sh off` (or desktop `handback`).
 
 **↓ CURRENT ARC 2026-08-30 — `main` = `2f4a3c6d`. Owner asked for the 3 highest-value moves in a token-light
 window (8% usage, resets Tue 11:00); all delivered.** HARVEST landed (`7a7311c8`): the consolidation
