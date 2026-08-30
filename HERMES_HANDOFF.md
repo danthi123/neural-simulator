@@ -167,3 +167,23 @@ commit BOTH remotes via `tools/push_both.sh` · cost-routing). The gate system i
 gates run as the git **pre-commit hook** (`tools/githooks/`), so Hermes' commits are gated exactly like Claude's.
 The Claude-Code-specific layer (PostToolUse hooks, the heartbeat, skills) is translated to Hermes' hooks/cron/skills
 in **`docs/HERMES_WORKFLOW_PARITY.md`**; verify it with **`bash tools/hermes_parity_check.sh`**.
+
+## hermes-webui — watch/drive the session from a browser (anywhere)
+Installed at `~/hermes-webui` (nesquena/hermes-webui), runs as the reboot-persistent user service
+`hermes-webui.service` (repo copy: `tools/systemd/hermes-webui.service`), serving
+**http://127.0.0.1:8787** — a live-streaming (SSE) UI (thinking, tool cards, context usage) that reads
+`~/.hermes` so it uses the same local Qwen. Manage: `~/hermes-webui/ctl.sh {start|stop|status|logs}` or
+`systemctl --user {status|restart} hermes-webui`.
+
+**Access from anywhere (pick one):**
+- SSH tunnel (easiest, secure): `ssh -N -L 8787:127.0.0.1:8787 <you>@<host>` → open http://localhost:8787
+- VPN/LAN direct: in `~/.config/systemd/user/hermes-webui.service` uncomment `Environment=HERMES_WEBUI_HOST=0.0.0.0`
+  and set `Environment=HERMES_WEBUI_PASSWORD=<your-password>` (REQUIRED before exposing), then
+  `systemctl --user daemon-reload && systemctl --user restart hermes-webui`.
+- Reverse proxy: point nginx/caddy at `127.0.0.1:8787` (add auth at the proxy).
+
+**Two-driver caution:** the webui runs an in-process agent. Do NOT drive via the webui while the
+`sim-heartbeat` cron is also driving (two Hermes agents editing the repo). Either drive from the webui and
+pause the cron (`~/Desktop/hermes-sim.sh stop` pauses autonomous, or `hermes cron pause sim-heartbeat`), or
+let the cron drive and use the webui to watch session/memory. Unifying them (webui drives the gateway's agent)
+is `HERMES_WEBUI_CHAT_BACKEND=gateway` — see the repo's `docs/advanced-chat-setup.md` reference.

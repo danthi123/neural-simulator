@@ -1,0 +1,21 @@
+[Unit]
+Description=Hermes WebUI — browser interface for the local-Qwen Hermes agent (localhost:8787)
+After=default.target
+
+[Service]
+Type=forking
+PIDFile=%h/.hermes/webui.pid
+WorkingDirectory=%h/hermes-webui
+# localhost-only by default (secure). To expose for VPN/LAN: add Environment lines
+#   Environment=HERMES_WEBUI_HOST=0.0.0.0
+#   Environment=HERMES_WEBUI_PASSWORD=<your-password>
+# (or reverse-proxy 127.0.0.1:8787). Then: systemctl --user daemon-reload && restart.
+Environment=HERMES_WEBUI_HOST=127.0.0.1
+Environment=HERMES_WEBUI_CTL_ALLOW_SYSTEMD_CONFLICT=1
+ExecStart=/bin/bash %h/hermes-webui/ctl.sh start --no-browser
+ExecStop=/bin/bash %h/hermes-webui/ctl.sh stop
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
