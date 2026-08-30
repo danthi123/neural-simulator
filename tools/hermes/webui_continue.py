@@ -138,14 +138,16 @@ def main():
                 return 4
             print("webui_continue: fired a visible turn into %s (%s)" % (sid, out.get("status", "ok")))
             return 0
-        # 409 = the session is jammed by a stale active-stream lock (left by an interrupted turn).
-        # Self-heal: delete the jammed session and start a fresh one so the loop never permanently
-        # stalls (the overnight-jam failure mode). 404 = session gone -> just recreate.
-        if code in (404, 409) and attempt < 3:
-            print("webui_continue: session %s %s -> deleting + recreating (self-heal)"
-                  % (sid, "jammed(409)" if code == 409 else "gone(404)"), file=sys.stderr)
-            if code == 409:
-                _post(base, "/api/session/delete", headers, {"session_id": sid})
+        # 409 = a turn is ALREADY streaming in this session. This is the atomic lock: it means the
+        # loop is mid-turn -> just SKIP (do NOT delete; deleting would kill the live turn). The
+        # supervisor fires on a cadence, so a skipped fire simply means "a turn is already running,
+        # try again next cadence". Exit 6 = benign skip.
+        if code == 409:
+            print("webui_continue: a turn is already active (409) -> skip", file=sys.stderr)
+            return 6
+        # 404 = the session was deleted -> recreate once and retry.
+        if code == 404 and attempt < 3:
+            print("webui_continue: session %s gone(404) -> recreating" % sid, file=sys.stderr)
             try:
                 os.remove(SID_FILE)
             except Exception:

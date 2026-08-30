@@ -44,6 +44,13 @@ llm_active(){ local ts age; ts=$(cat "$LLM_ACTIVE" 2>/dev/null) || return 1; [ -
 # against unloading Qwen mid-turn (which killed the turn overnight).
 QUEUE_GRACE="${QWEN_QUEUE_GRACE:-90}"
 queue_settled(){ [ -s "$QUEUE" ] || return 1; local age; age=$(( $(date +%s) - $(stat -c %Y "$QUEUE" 2>/dev/null || echo 0) )); [ "$age" -ge "$QUEUE_GRACE" ] 2>/dev/null; }
+# COGNITIVE CONTINUATION: a Hermes turn that does no GPU run (harvest/analysis/edit) leaves nothing
+# to trigger the next turn, so the loop dead-ends (the ~30min stall). So when Qwen is idle with NO
+# GPU job, we fire the next turn on a cadence. It's SAFE to over-fire: webui_continue does an atomic
+# /api/chat/start which 409-skips if a turn is already streaming, so a fire during an active turn is
+# a harmless no-op. FIRE_COOLDOWN paces the attempts.
+FIRE_COOLDOWN="${QWEN_FIRE_COOLDOWN:-90}"
+LASTFIRE="$STATE/.qwen_last_fire"
 
 CONTINUE_PROMPT='You are Hermes, now driving the neural-simulator project autonomously because Claude usage is exhausted. A local GPU job just completed and your model was reloaded. FIRST read research/coordination/live_state.md and the CURRENT STATE at the top of GAP_CLOSURE_MISSION.md, then harvest the just-completed run(s), then continue the ordered next action. Obey CLAUDE.md constraints (brain-based-only, one-brain, no-defer, 6-seed, gates are authoritative). Commit BOTH remotes via tools/push_both.sh, never --no-verify. Run GPU work only via tools/hermes_gpu_run.sh (it hands the GPU off from your model safely).'
 
@@ -84,10 +91,17 @@ daemon(){
       elif llm_active; then state="job-wait"           # a turn is streaming (heartbeat, headless path) -> don't cut it
       elif ! queue_settled; then state="job-wait"      # a run was just queued -> the launching turn is finishing; wait
       else state="job"; log "GPU job queued + turn finished (queue settled ${QUEUE_GRACE}s) -> unloading Qwen for the run"; down_qwen; touch "$JOBRAN"; fi
-    else                                               # idle: Hermes driving, no job -> Qwen UP + fire a turn if a run just finished
+    else                                               # idle: Hermes driving, no GPU job -> Qwen UP + keep the loop turning
       state="idle"
       [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); }
-      if [ -f "$JOBRAN" ] && [ "$up" = up ]; then rm -f "$JOBRAN"; log "run(s) done + Qwen ready -> firing Hermes turn"; fire_hermes_continue; fi
+      if [ "$up" = up ]; then
+        now=$(date +%s); lastf=$(cat "$LASTFIRE" 2>/dev/null || echo 0)
+        if [ -f "$JOBRAN" ]; then                       # a run just finished -> harvest turn now
+          rm -f "$JOBRAN"; log "run(s) done + Qwen ready -> firing Hermes turn"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
+        elif [ $(( now - ${lastf:-0} )) -ge "$FIRE_COOLDOWN" ] 2>/dev/null; then   # cognitive continuation (409-skips if a turn is live)
+          log "idle -> firing Hermes turn (cognitive continuation)"; fire_hermes_continue; echo "$now" > "$LASTFIRE"
+        fi
+      fi
     fi
     # Heartbeat: log on every state change, plus a keepalive every ~5min, so a wedge is VISIBLE in the
     # log (silence during a state that demands action = something is wrong) rather than a silent deadlock.
