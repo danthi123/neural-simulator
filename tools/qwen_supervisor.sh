@@ -36,13 +36,15 @@ fire_hermes_continue(){
   # is what makes "monitor + engage the autonomous loop in the web UI" real. It falls back to a
   # headless `hermes -z` turn only if the webui is down / auth fails, so autonomy never stalls.
   # (JOBRAN-clear upstream already makes this fire once per completed run — the single-flight guard.)
-  if [ "${HERMES_CONTINUE_VIA_WEBUI:-1}" = "1" ] \
-     && command -v python3 >/dev/null 2>&1 \
-     && ( cd "$ROOT" && python3 "$ROOT/tools/hermes/webui_continue.py" "$CONTINUE_PROMPT" >>"$STATE/qwen_hermes_turns.log" 2>&1 ); then
-    log "fired hermes continue-turn via WEBUI (visible session)"
+  if [ "${HERMES_CONTINUE_VIA_WEBUI:-1}" = "1" ] && command -v python3 >/dev/null 2>&1; then
+    # DETACHED (setsid ... &): /api/chat/start is async so this returns fast, but detaching
+    # guarantees a slow/unresponsive webui can NEVER block this VRAM-management loop (the earlier
+    # freeze lesson). Fire-and-forget; webui_continue.py logs its own success/failure.
+    ( cd "$ROOT" && setsid python3 "$ROOT/tools/hermes/webui_continue.py" "$CONTINUE_PROMPT" </dev/null >>"$STATE/qwen_hermes_turns.log" 2>&1 & )
+    log "fired hermes continue-turn via WEBUI (visible session, detached)"
     return
   fi
-  log "webui continue unavailable -> headless hermes -z fallback"
+  log "headless hermes -z continuation (webui-drive disabled)"
   if [ -f "$TRIGLOCK" ] && kill -0 "$(cat "$TRIGLOCK" 2>/dev/null)" 2>/dev/null; then return; fi
   [ -x "$HERMES" ] || { log "hermes bin not executable at $HERMES — skip continue-trigger"; return; }
   ( cd "$ROOT" && setsid "$HERMES" -z "$CONTINUE_PROMPT" </dev/null >>"$STATE/qwen_hermes_turns.log" 2>&1 & echo $! > "$TRIGLOCK" )
