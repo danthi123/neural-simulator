@@ -50,24 +50,17 @@ ensure_gateway() {
     echo "  ✓ hermes gateway already running"
     return 0
   fi
-  if echo "$out" | grep -qi "not installed"; then
-    echo "  gateway not installed -- installing as a user service (no sudo; auto-starts on login/boot)…"
-    if timeout 60 "$h" gateway install --start-now --start-on-login >>"$LOG" 2>&1; then
-      echo "  ✓ hermes gateway installed + started (log: $LOG)"
-    else
-      echo "  ⛔ 'hermes gateway install --start-now --start-on-login' FAILED — see $LOG"
-      echo "     run by hand: hermes gateway install --start-now --start-on-login"
-      return 1
-    fi
+  # Not running -> `gateway install --start-now --start-on-login` unconditionally. It is IDEMPOTENT (safe on an
+  # already-installed service — re-registers the user unit + starts it), so it covers BOTH not-installed AND
+  # installed-but-stopped without fragile status-string branching (the branching mis-fired at go-live: status
+  # didn't match "not installed", so it ran `gateway start` on a service that wasn't installed and failed).
+  echo "  gateway not running -- installing+starting as a user service (no sudo; auto-starts on login/boot)…"
+  if timeout 90 "$h" gateway install --start-now --start-on-login >>"$LOG" 2>&1; then
+    echo "  ✓ hermes gateway install+start ran (log: $LOG)"
   else
-    echo "  gateway installed but not running -- starting…"
-    if timeout 30 "$h" gateway start >>"$LOG" 2>&1; then
-      echo "  ✓ hermes gateway started (log: $LOG)"
-    else
-      echo "  ⛔ 'hermes gateway start' FAILED — see $LOG"
-      echo "     run by hand: hermes gateway start"
-      return 1
-    fi
+    echo "  ⛔ 'hermes gateway install --start-now --start-on-login' FAILED — see $LOG"
+    echo "     run by hand: hermes gateway install --start-now --start-on-login"
+    return 1
   fi
   out=$(timeout 20 "$h" gateway status 2>&1)
   if echo "$out" | grep -qi "gateway service is running"; then

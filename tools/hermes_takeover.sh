@@ -29,6 +29,17 @@ case "${1:-status}" in
     : > "$ACTIVE"
     start_supervisor
     echo "[takeover] HERMES_ACTIVE set + supervisor running."
+    # Claim the GPU for Qwen (Hermes' brain): stop+requeue any running research job, DEFER the old perpetual
+    # queue (autofill is now gated off by HERMES_ACTIVE), then resume so hermes_gpu_run's future jobs still
+    # dispatch. Without this the pre-existing longitudinal stream keeps the supervisor from ever loading Qwen.
+    echo "[takeover] claiming the GPU for Qwen (deferring the old research queue; autofill pauses while Hermes drives)…"
+    bash "$ROOT/tools/gpu_queue.sh" pause --now >/dev/null 2>&1 || true
+    if [ -s "$STATE/gpu.queue" ]; then
+      ts=$(date +%s); cp "$STATE/gpu.queue" "$STATE/gpu.queue.deferred.$ts" 2>/dev/null
+      echo "[takeover]   deferred $(wc -l < "$STATE/gpu.queue" 2>/dev/null) old jobs -> gpu.queue.deferred.$ts (restored on handback)"
+      : > "$STATE/gpu.queue"
+    fi
+    bash "$ROOT/tools/gpu_queue.sh" resume >/dev/null 2>&1 || true
     # AUTONOMOUS IS THE DEFAULT the moment Hermes drives (gateway + the 15-min sim-heartbeat cron)
     # -- non-fatal if it can't fully confirm (Hermes still usable interactively either way).
     echo "[takeover] enabling autonomous mode (gateway + heartbeat cron)…"
@@ -44,6 +55,9 @@ case "${1:-status}" in
     echo "[takeover] handing the project back to CLAUDE…"
     bash "$ROOT/tools/hermes_autonomous.sh" off || true
     rm -f "$ACTIVE"
+    # restore the research queue deferred at takeover (autofill also auto-resumes now HERMES_ACTIVE is clear)
+    latest=$(ls -t "$STATE"/gpu.queue.deferred.* 2>/dev/null | grep -v '\.restored$' | head -1)
+    if [ -n "$latest" ]; then cat "$latest" >> "$STATE/gpu.queue"; echo "[takeover] restored $(wc -l < "$latest") deferred research jobs -> gpu.queue"; mv "$latest" "$latest.restored" 2>/dev/null; fi
     bash "$SERVE" down
     echo "[takeover] ✅ Qwen unloaded, GPU free for research runs, supervisor is now inert (leave it running; harmless), autonomous heartbeat paused."
     echo "[takeover]    Resume Claude-side compute if it was paused:  bash tools/gpu_queue.sh resume" ;;

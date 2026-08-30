@@ -20,6 +20,13 @@ LOG=$MAIN/research/queue/autofill.log
 LOW=${GPU_QUEUE_LOW_WATERMARK:-8}
 OUT=research/findings/raw/four_day            # relative to $WT (jobs cd there)
 
+# Do NOT restock while HERMES drives: the local Qwen (Hermes' brain) must stay GPU-resident, and Hermes owns the
+# GPU agenda via tools/hermes_gpu_run.sh. A perpetual refill here would starve Qwen (the supervisor keeps it down
+# whenever a local job runs). Auto-resumes when HERMES_ACTIVE clears (handback to Claude).
+if [ -f "$MAIN/research/queue/HERMES_ACTIVE" ]; then
+  echo "$(date '+%F %T') HERMES_ACTIVE set — no refill (Hermes drives the GPU)" >> "$LOG"; exit 0
+fi
+
 depth=$(wc -l < "$QUEUE" 2>/dev/null || echo 0)
 if [ "${depth:-0}" -ge "$LOW" ]; then
   echo "$(date '+%F %T') depth=$depth >= $LOW — no refill" >> "$LOG"; exit 0

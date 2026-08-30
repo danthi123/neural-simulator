@@ -40,21 +40,33 @@ case "${1:-status}" in
     if ! "$LLAMA" --help 2>&1 | grep -q 'draft-dflash'; then
       echo "[qwen] ERROR: $LLAMA has no --spec-type draft-dflash (needs a llama.cpp built after 2026-08-27). Aborting."; exit 1
     fi
-    # target: local GGUF if present (no download), else -hf
-    if [ -f "$TARGET_GGUF" ]; then TARGET_ARGS=(--model "$TARGET_GGUF"); echo "[qwen] target: local $TARGET_GGUF"; else TARGET_ARGS=(-hf "$TARGET_HF"); echo "[qwen] target: -hf $TARGET_HF (will auto-download)"; fi
-    echo "[qwen] launching (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
-    setsid "$LLAMA" \
-      "${TARGET_ARGS[@]}" -hfd "$DRAFT_HF" \
-      --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX" \
-      --jinja --reasoning-budget -1 --ctx-size "$CTX" \
-      --host "$HOSTADDR" --port "$PORT" -ngl "$NGL" --flash-attn on \
-      --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 --presence-penalty 0.0 --repeat-penalty 1.0 \
-      --no-mmproj \
-      </dev/null >>"$LOG" 2>&1 &
-    echo $! > "$PIDF"
-    echo "[qwen] pid $(cat "$PIDF"); waiting for endpoint (first run can take minutes for the download)…"
-    for _ in $(seq 1 600); do ready && { echo "[qwen] READY at $(endpoint)  (VRAM: $(vram))"; exit 0; }; running || { echo "[qwen] server exited early — see $LOG:"; tail -5 "$LOG"; exit 1; }; sleep 2; done
-    echo "[qwen] timed out waiting for ready (still downloading? check $LOG)"; exit 1 ;;
+    # Target via -hf (resolves from the HF cache — the GGUF is already downloaded, so NO re-download — and,
+    # crucially, keeps the HF machinery active so the -hfd DRAFT resolves; mixing local --model with -hfd made
+    # the draft path resolve to '' and the server exited on "failed to load draft model, ''").
+    _launch() {   # $1 = draft|nodraft
+      local a=(-hf "$TARGET_HF" --jinja --reasoning-budget -1 --ctx-size "$CTX" --host "$HOSTADDR" --port "$PORT" \
+               -ngl "$NGL" --flash-attn on --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 --presence-penalty 0.0 \
+               --repeat-penalty 1.0 --no-mmproj)
+      [ "$1" = draft ] && a+=(-hfd "$DRAFT_HF" --spec-type draft-dflash --spec-draft-n-max "$SPEC_NMAX")
+      setsid "$LLAMA" "${a[@]}" </dev/null >>"$LOG" 2>&1 &
+      echo $! > "$PIDF"
+    }
+    _wait_ready() {   # returns 0 ready, 1 exited/timeout
+      for _ in $(seq 1 "${1:-600}"); do ready && return 0; running || return 1; sleep 2; done; return 1
+    }
+    echo "[qwen] launching WITH DFlash2 drafter (drafter auto-downloads if absent, ~535 MiB)…  log: $LOG"
+    _launch draft
+    echo "[qwen] pid $(cat "$PIDF"); waiting (first run may download)…"
+    if _wait_ready 600; then echo "[qwen] READY (DFlash2) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
+    # Drafter failed? DFlash2 is a SPEED optimization, not correctness — fall back to target-only so Hermes still
+    # gets a working brain. (Only retry if the failure was draft-related and the server actually exited.)
+    if ! running && grep -qi "draft model" "$LOG" 2>/dev/null; then
+      echo "[qwen] ⚠ drafter failed to load — retrying TARGET-ONLY (no DFlash2; a bit slower, fully functional)…"
+      "$0" down >/dev/null 2>&1; sleep 1
+      _launch nodraft
+      if _wait_ready 600; then echo "[qwen] READY (target-only, no DFlash2) at $(endpoint)  (VRAM: $(vram))"; exit 0; fi
+    fi
+    echo "[qwen] server failed/timed out — see $LOG:"; tail -8 "$LOG"; exit 1 ;;
   down)
     if running; then p=$(cat "$PIDF"); kill -TERM "$p" 2>/dev/null; for _ in 1 2 3 4 5; do kill -0 "$p" 2>/dev/null || break; sleep 1; done; kill -KILL "$p" 2>/dev/null; fi
     # belt-and-suspenders: any stray llama-server on our port
