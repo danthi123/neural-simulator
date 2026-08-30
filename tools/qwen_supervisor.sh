@@ -32,6 +32,18 @@ QPORT="${QWEN_PORT:-8033}"
 qwen_up(){ curl -sf -m3 "http://127.0.0.1:$QPORT/health" >/dev/null 2>&1; }
 qwen_running(){ qwen_up; }
 qwen_ready(){ qwen_up; }
+# A Hermes turn touches .qwen_llm_active (pre_llm_call hook) on every LLM call. While it's fresh, a
+# turn is mid-flight -> do NOT unload Qwen for a queued run (that killed the turn overnight). It goes
+# stale a few minutes after the turn's last call, then the pending run is allowed to take the GPU.
+GRACE_LLM="${QWEN_TURN_GRACE:-240}"
+LLM_ACTIVE="$STATE/.qwen_llm_active"
+llm_active(){ local ts age; ts=$(cat "$LLM_ACTIVE" 2>/dev/null) || return 1; [ -n "$ts" ] || return 1; age=$(( $(date +%s) - ts )); [ "$age" -lt "$GRACE_LLM" ] 2>/dev/null; }
+# Gateway/webui turns don't fire the pre_llm_call hook, so llm_active can't see them. But a Hermes
+# turn launches its run NEAR THE END of the turn, so "gpu.queue unchanged for QUEUE_GRACE seconds"
+# reliably means the launching turn has finished -> safe to take the GPU. This is the primary guard
+# against unloading Qwen mid-turn (which killed the turn overnight).
+QUEUE_GRACE="${QWEN_QUEUE_GRACE:-90}"
+queue_settled(){ [ -s "$QUEUE" ] || return 1; local age; age=$(( $(date +%s) - $(stat -c %Y "$QUEUE" 2>/dev/null || echo 0) )); [ "$age" -ge "$QUEUE_GRACE" ] 2>/dev/null; }
 
 CONTINUE_PROMPT='You are Hermes, now driving the neural-simulator project autonomously because Claude usage is exhausted. A local GPU job just completed and your model was reloaded. FIRST read research/coordination/live_state.md and the CURRENT STATE at the top of GAP_CLOSURE_MISSION.md, then harvest the just-completed run(s), then continue the ordered next action. Obey CLAUDE.md constraints (brain-based-only, one-brain, no-defer, 6-seed, gates are authoritative). Commit BOTH remotes via tools/push_both.sh, never --no-verify. Run GPU work only via tools/hermes_gpu_run.sh (it hands the GPU off from your model safely).'
 
@@ -67,7 +79,11 @@ daemon(){
     if [ ! -f "$ACTIVE" ] || [ -f "$GAME" ]; then     # Claude drives OR owner gaming -> Qwen down, GPU untouched
       state="hold"; [ "$up" = up ] && { log "hold ($([ -f "$GAME" ] && echo GAME_MODE || echo HERMES_ACTIVE-off)) -> unloading Qwen"; down_qwen; }
     elif local_gpu_busy; then                          # a LOCAL job needs the full GPU -> Qwen out of the way
-      state="job"; [ "$up" = up ] && { log "local GPU job present -> unloading Qwen for the run"; down_qwen; touch "$JOBRAN"; }
+      if [ "$up" = down ]; then state="job"            # Qwen already unloaded, the run has the GPU
+      elif [ -f "$RUNNING" ]; then state="job"; log "run active but Qwen still up -> unloading"; down_qwen; touch "$JOBRAN"
+      elif llm_active; then state="job-wait"           # a turn is streaming (heartbeat, headless path) -> don't cut it
+      elif ! queue_settled; then state="job-wait"      # a run was just queued -> the launching turn is finishing; wait
+      else state="job"; log "GPU job queued + turn finished (queue settled ${QUEUE_GRACE}s) -> unloading Qwen for the run"; down_qwen; touch "$JOBRAN"; fi
     else                                               # idle: Hermes driving, no job -> Qwen UP + fire a turn if a run just finished
       state="idle"
       [ "$up" = down ] && { log "idle -> loading Qwen for Hermes"; up_qwen; up=$(qwen_up && echo up || echo down); }

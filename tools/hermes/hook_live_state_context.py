@@ -88,6 +88,18 @@ def main() -> None:
     except Exception:
         pass
 
+    # VRAM-supervisor heartbeat: mark that an LLM turn is active RIGHT NOW. The supervisor refuses
+    # to unload Qwen while this is fresh, so it can never cut a Hermes turn mid-generation to start a
+    # queued run (the overnight failure: the turn was killed and lost its work). Touched on every LLM
+    # call; goes stale a few minutes after the turn's last call, at which point the supervisor may
+    # unload for the pending run. Fail-open.
+    try:
+        import time as _t
+        with open(os.path.join(REPO, "research", "queue", ".qwen_llm_active"), "w") as _f:
+            _f.write(str(int(_t.time())))
+    except Exception:
+        pass
+
     parts = []
     live_state = _live_state_text()
     if live_state.strip():
