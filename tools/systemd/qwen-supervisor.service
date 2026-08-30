@@ -1,0 +1,13 @@
+[Unit]
+Description=Qwen VRAM supervisor for Hermes (unload/reload around local GPU jobs; inert unless HERMES_ACTIVE)
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Projects/sim
+ExecStart=/bin/bash %h/Projects/sim/tools/qwen_supervisor.sh __daemon
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
