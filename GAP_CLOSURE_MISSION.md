@@ -13,7 +13,39 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (READ FIRST; LATEST anchor — supersedes every header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-30 (READ FIRST; LATEST anchor — supersedes every header below)
+
+**⛔ LOCAL COMPUTE PAUSED for an owner test (2026-08-30 ~00:20).** GPU queue is `--now`-paused (GPU_PAUSE set;
+the current longitudinal was killed+requeued at the front, resumes intact; owner OK'd losing ~13 min) and
+GAME_MODE is set. **RESUME ONLY ON THE OWNER'S WORD:** `bash tools/gpu_queue.sh resume && rm research/queue/GAME_MODE`.
+The mini-PC pool is SEPARATE and kept running (owner-approved). A large GPU VRAM figure right now is the owner's
+own test, not our job — do NOT resume, do NOT dispatch GPU work, until the owner says so.
+
+**↓ CURRENT ARC 2026-08-30 — `main` = `2f4a3c6d`. Owner asked for the 3 highest-value moves in a token-light
+window (8% usage, resets Tue 11:00); all delivered.** HARVEST landed (`7a7311c8`): the consolidation
+point-plateau operating-point sweep is a 343-cell NO-GO (no operating point separates per-slot targets → the
+named surpass is a continuous-attractor ring/CANN geometry, distinct from the refuted dendritic deep-CREDIT
+rule, board #64); and #66 knowledge-scale is recall-SOLVED at 78,857 facts (rate 1.0, oracle-exact) with
+~1-2 s latency as the wall. MOUTH rung-3 flip landed (`ba577565`): `BRAIN_OPEN_ENDED_WKV_MOUTH` default-ON,
+zero-prod-risk. TWO build agents delivered + integrated: A = continuous-attractor de-risk runner (now screening
+on the pool, 2-seed × 216); B = #66 latency cause FOUND (an O(V) codebook rebuilt every query, not the
+resonate) + lever DE-RISKED (cache it shared across shards, board #192: median 31.7% faster, byte-identical,
+RSS-safe).
+
+**PRE-DECIDED NEXT ACTIONS (ordered) — 2026-08-30:**
+1. ON OWNER-RESUME of local compute: `gpu_queue.sh resume && rm research/queue/GAME_MODE`; the requeued
+   longitudinal resumes intact.
+2. HARVEST the pool continuous-attractor screen (`bash tools/pool_lineattractor_dispatch.sh --status`; collect
+   like the opsweep) → 6-seed the candidate operating points (board #64).
+3. #66 latency (owner #1): apply the additive DEFAULT-OFF codebook-cache to `research/runners/rf_phasor_composer.py`
+   (agent B's diff), then re-run the 79k-fact scale verify with it ON to confirm end-to-end (~31.7%, median
+   bar <1000 ms). Needs a real run → do on owner-resume. Board #192/#66.
+4. Mouth rung-4: wider-vocab checkpoint + measure in-vocab coverage (board #80).
+5. Keep BREADTH; every sim-running agent carries a MEMORY BUDGET (RSS < ~4 GB, watch `free -m`).
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-27 OVERNIGHT (history — superseded by the 2026-08-30 header above)
 
 **⭐ OWNER DIRECTIVES — 2026-08-28 ~20:15 (STANDING until the Tuesday 11AM usage reset; `main` = latest, both remotes clean):**
 - **(1) OWNER-GATED → CLAUDE-AUTONOMOUS.** Every "owner-gated" flip is now Claude's call — apply the SAME rigor (byte-identical-off · genuinely LOAD-BEARING/non-hollow · 6-seed soak · no-regression), just do NOT wait for approval. Flip the ready faculties.
