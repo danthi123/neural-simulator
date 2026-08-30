@@ -168,22 +168,37 @@ gates run as the git **pre-commit hook** (`tools/githooks/`), so Hermes' commits
 The Claude-Code-specific layer (PostToolUse hooks, the heartbeat, skills) is translated to Hermes' hooks/cron/skills
 in **`docs/HERMES_WORKFLOW_PARITY.md`**; verify it with **`bash tools/hermes_parity_check.sh`**.
 
-## hermes-webui — watch/drive the session from a browser (anywhere)
+## hermes-webui — watch AND drive the autonomous session from a browser (anywhere)
 Installed at `~/hermes-webui` (nesquena/hermes-webui), runs as the reboot-persistent user service
-`hermes-webui.service` (repo copy: `tools/systemd/hermes-webui.service`), serving
-**http://127.0.0.1:8787** — a live-streaming (SSE) UI (thinking, tool cards, context usage) that reads
-`~/.hermes` so it uses the same local Qwen. Manage: `~/hermes-webui/ctl.sh {start|stop|status|logs}` or
-`systemctl --user {status|restart} hermes-webui`.
+`hermes-webui.service` (secret-free repo template: `tools/systemd/hermes-webui.service`). A live-streaming
+(SSE) UI — thinking, tool cards, context usage — that reads `~/.hermes` so it uses the same local Qwen.
+Manage: `~/hermes-webui/ctl.sh {start|stop|status|logs}` or `systemctl --user {status|restart} hermes-webui`.
 
-**Access from anywhere (pick one):**
-- SSH tunnel (easiest, secure): `ssh -N -L 8787:127.0.0.1:8787 <you>@<host>` → open http://localhost:8787
-- VPN/LAN direct: in `~/.config/systemd/user/hermes-webui.service` uncomment `Environment=HERMES_WEBUI_HOST=0.0.0.0`
-  and set `Environment=HERMES_WEBUI_PASSWORD=<your-password>` (REQUIRED before exposing), then
-  `systemctl --user daemon-reload && systemctl --user restart hermes-webui`.
-- Reverse proxy: point nginx/caddy at `127.0.0.1:8787` (add auth at the proxy).
+**Reachable THREE ways (configured + verified 2026-08-30), one exposed surface, password-gated:**
+- **Local** — http://127.0.0.1:8787
+- **LAN** — `http://<this-desktop-LAN-IP>:8787` (currently `192.168.0.68:8787`; open it from a phone on the same wifi)
+- **External** — https://hermes.dant123.com (homelab caddy reverse-proxies to this host:8787)
 
-**Two-driver caution:** the webui runs an in-process agent. Do NOT drive via the webui while the
-`sim-heartbeat` cron is also driving (two Hermes agents editing the repo). Either drive from the webui and
-pause the cron (`~/Desktop/hermes-sim.sh stop` pauses autonomous, or `hermes cron pause sim-heartbeat`), or
-let the cron drive and use the webui to watch session/memory. Unifying them (webui drives the gateway's agent)
-is `HERMES_WEBUI_CHAT_BACKEND=gateway` — see the repo's `docs/advanced-chat-setup.md` reference.
+The webui binds `0.0.0.0:8787` and is the ONLY network-exposed surface. The gateway HTTP API
+(`127.0.0.1:8642`) and Qwen (`127.0.0.1:8033`) stay **localhost-only** — never exposed. The login password
+lives only in the LIVE unit (`~/.config/systemd/user/hermes-webui.service`, `HERMES_WEBUI_PASSWORD=`); change
+it anytime in the webui **Settings**, or edit that line + `systemctl --user daemon-reload && restart`.
+
+**Caddy snippet** (owner's homelab caddy, not in this repo — Caddy v2 handles SSE/WebSocket automatically):
+```
+hermes.dant123.com {
+    reverse_proxy 192.168.0.68:8787
+}
+```
+Caddy v2 passes the original `Host` upstream and sets `X-Forwarded-Proto`/`X-Forwarded-Host` by default; the
+service trusts those (`HERMES_WEBUI_TRUST_FORWARDED_HOST/PROTO=1`) so the `hermes.dant123.com` origin passes
+the CSRF gate and cookies are `Secure` over https — while plain-http LAN access still works (the Secure flag is
+decided per-request). If caddy is set to rewrite the upstream Host, the explicit
+`HERMES_WEBUI_ALLOWED_ORIGINS=https://hermes.dant123.com` allowlist still lets it through.
+
+**Option C — the webui drives the SAME agent the cron drives (no more two-driver problem).** Chat routes
+through the gateway HTTP API (`HERMES_WEBUI_CHAT_BACKEND=gateway`, `..._GATEWAY_BASE_URL=http://127.0.0.1:8642`,
+`..._GATEWAY_USE_RUNS_API=true`), which is enabled by `API_SERVER_KEY` (+ `API_SERVER_HOST=127.0.0.1`) in
+`~/.hermes/.env`. So the webui *is* the live window into the `sim-heartbeat` cron's autonomous session — watch
+it work and interject in the same thread, from anywhere. Verify: authenticate, then
+`curl -b <cookies> http://127.0.0.1:8787/api/health/agent` → `gateway_chat.enabled: true`.

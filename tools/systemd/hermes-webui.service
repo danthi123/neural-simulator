@@ -1,17 +1,44 @@
 [Unit]
-Description=Hermes WebUI — browser interface for the local-Qwen Hermes agent (localhost:8787)
+Description=Hermes WebUI — remote-accessible window into the local-Qwen autonomous agent (LAN + caddy)
 After=default.target
+
+# ⚠ TEMPLATE / REFERENCE COPY — the LIVE unit at ~/.config/systemd/user/hermes-webui.service
+# carries the real secrets (webui password + gateway API key). Those secrets live ONLY there
+# (root/owner-readable), never in the repo. Replace the __PLACEHOLDER__ values below when
+# re-provisioning on a fresh machine, then: systemctl --user daemon-reload && systemctl --user restart hermes-webui.
+#
+# Access model (owner, 2026-08-30): reachable THREE ways, one exposed surface:
+#   1. Local   — http://127.0.0.1:8787
+#   2. LAN      — http://<this-desktop-LAN-IP>:8787  (e.g. phone on the same wifi)
+#   3. External — https://hermes.dant123.com         (homelab caddy → reverse_proxy to this host:8787)
+# The gateway HTTP API (127.0.0.1:8642) and Qwen (127.0.0.1:8033) stay LOCALHOST-ONLY — never exposed.
+# Only this webui is network-exposed, and it is password-gated. Caddy snippet: see HERMES_HANDOFF.md.
 
 [Service]
 Type=forking
 PIDFile=%h/.hermes/webui.pid
 WorkingDirectory=%h/hermes-webui
-# localhost-only by default (secure). To expose for VPN/LAN: add Environment lines
-#   Environment=HERMES_WEBUI_HOST=0.0.0.0
-#   Environment=HERMES_WEBUI_PASSWORD=<your-password>
-# (or reverse-proxy 127.0.0.1:8787). Then: systemctl --user daemon-reload && restart.
-Environment=HERMES_WEBUI_HOST=127.0.0.1
+# --- Bind 0.0.0.0 so both the LAN and the homelab caddy can reach it. Auth REQUIRED (exposed).
+Environment=HERMES_WEBUI_HOST=0.0.0.0
+Environment=HERMES_WEBUI_PORT=8787
+Environment=HERMES_WEBUI_PASSWORD=__WEBUI_PASSWORD__
 Environment=HERMES_WEBUI_CTL_ALLOW_SYSTEMD_CONFLICT=1
+# --- Reverse-proxy (caddy) trust: honor forwarded host/proto so the external https origin
+#     passes the CSRF/same-origin gate and cookies are Secure over https — while plain-http
+#     LAN access still works (the Secure flag is decided per-request, not globally).
+Environment=HERMES_WEBUI_ALLOWED_ORIGINS=https://hermes.dant123.com
+Environment=HERMES_WEBUI_TRUST_FORWARDED_HOST=1
+Environment=HERMES_WEBUI_TRUST_FORWARDED_PROTO=1
+Environment=HERMES_WEBUI_TRUST_FORWARDED_FOR=1
+Environment=HERMES_WEBUI_TRUSTED_PROXY_CIDRS=192.168.0.0/16,127.0.0.1/32
+# --- Option C: the webui IS the live window into the gateway's autonomous cron agent.
+#     Chat routes through the gateway HTTP API (localhost-only), so watching AND interjecting
+#     happen in the SAME session the cron drives. Enable the gateway API first by setting
+#     API_SERVER_KEY (+ API_SERVER_HOST=127.0.0.1) in ~/.hermes/.env, then restart hermes-gateway.
+Environment=HERMES_WEBUI_CHAT_BACKEND=gateway
+Environment=HERMES_WEBUI_GATEWAY_BASE_URL=http://127.0.0.1:8642
+Environment=HERMES_WEBUI_GATEWAY_API_KEY=__GATEWAY_API_SERVER_KEY__
+Environment=HERMES_WEBUI_GATEWAY_USE_RUNS_API=true
 ExecStart=/bin/bash %h/hermes-webui/ctl.sh start --no-browser
 ExecStop=/bin/bash %h/hermes-webui/ctl.sh stop
 Restart=on-failure
