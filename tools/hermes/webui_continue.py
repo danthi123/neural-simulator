@@ -102,7 +102,11 @@ def _login(base, pw):
 
 
 def _create(base, headers):
-    code, out = _post(base, "/api/session/new", headers, {})
+    # Pin the workspace to the repo EXPLICITLY. /api/session/new does NOT reliably apply
+    # HERMES_WEBUI_DEFAULT_WORKSPACE (a fresh session defaulted to ~/workspace), so the agent
+    # couldn't find research/coordination/live_state.md and flailed. Passing it here guarantees
+    # every fired turn operates IN the repo.
+    code, out = _post(base, "/api/session/new", headers, {"workspace": ROOT})
     if code == 200:
         sid = ((out or {}).get("session") or {}).get("session_id")
         if sid:
