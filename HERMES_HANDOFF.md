@@ -223,3 +223,23 @@ operates IN the repo), `agent.reasoning_effort: xhigh` + `model.reasoning: xhigh
 autonomous stretches before an auto-pause), all in `~/.hermes/config.yaml` / the webui unit. The `sim-heartbeat`
 cron is **paused/retired** for this model (`bash tools/hermes_autonomous.sh off`) — its `deliver:local` turns were
 never viewable in the webui anyway. Gateway + Qwen stay up so the webui is always ready.
+
+**RESEARCH-LOOP MODE (owner, 2026-08-30) — autonomous GPU-interleaved research, VISIBLE + engageable in the
+webui.** For runs that need the whole GPU (Qwen 20 GB XOR a sweep — never both on one card), the VRAM supervisor
+(`tools/qwen_supervisor.sh`) runs the loop: `[Qwen up: Hermes harvests the last run → decides → edits → launches the
+next via tools/hermes_gpu_run.sh → commits] → [Qwen down: the GPU run executes] → [Qwen reloads: the supervisor
+fires the next turn]`. The between-runs turn is fired INTO one persistent webui conversation titled
+**"🤖 Autonomous research loop"** (via `tools/hermes/webui_continue.py` → `/api/chat/start` on a reused session id
+in `research/queue/.hermes_webui_session_id`), so you **watch every harvest/decide turn stream there and type into
+the same conversation to steer** (falls back to headless `hermes -z` only if the webui is unreachable). Toggle the
+visible path with `HERMES_CONTINUE_VIA_WEBUI=1` (default on).
+- **Start it:** either restore the deferred research queue (`cat research/queue/gpu.queue.deferred.* >> research/queue/gpu.queue`)
+  so the first run completes and fires the first visible harvest turn, OR open the "🤖 Autonomous research loop"
+  session and type `Start the loop: read live_state.md, launch the next run, keep going`. It then self-sustains
+  (each turn launches the next run; each completion fires the next turn).
+- **Monitor:** open that session — turns stream in between runs. **Engage:** type in it; messages land during the
+  "Qwen up" windows (Qwen is down mid-run, so it responds between runs). **Pause:** `bash tools/game.sh on` (frees
+  the GPU immediately) or tell it to stop launching runs (the queue drains → the loop ends).
+- Trade-off vs the dev `/goal` mode above: in research mode Qwen cycles (responsive between runs, not during); in
+  dev mode Qwen is pinned (always responsive) but no local GPU sweeps run. Pick per session. The mini-PC **pool
+  (CPU)** runs in parallel in either mode (never touches the GPU).
