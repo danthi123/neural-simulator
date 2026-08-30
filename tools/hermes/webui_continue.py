@@ -143,6 +143,21 @@ def main() -> int:
     sid = _read_sid() or _create_session(base, headers)
     if not sid:
         return 5  # could not obtain a session id
+
+    # PRIMARY re-engagement: if the owner set a standing goal (/goal ...), the loop drives itself
+    # turn-after-turn — but a GPU run unloads Qwen and stalls its auto-continue, so after the run we
+    # RESUME the goal (it then harvests + takes the next step). Falls through to a one-shot chat/start
+    # continuation only when there is no active goal to resume.
+    if os.environ.get("HERMES_CONTINUE_RESUME_GOAL", "1") == "1":
+        code, out = _post(base, "/api/goal", headers, {"session_id": sid, "args": "resume"})
+        blob = json.dumps(out).lower()
+        no_goal = ("no active goal" in blob or "no goal" in blob or "not found" in blob
+                   or (isinstance(out, dict) and out.get("error")))
+        if code == 200 and not no_goal:
+            print("webui_continue: resumed the standing goal in session %s" % sid)
+            return 0
+        # else: no goal set (or resume unavailable) -> one-shot continuation below.
+
     # Send; if the persisted session was deleted (404), recreate once and retry.
     for attempt in (1, 2):
         code, out = _post(base, "/api/chat/start", headers, {"session_id": sid, "message": msg})
