@@ -168,12 +168,14 @@ def open_ended_enabled() -> bool:
 def wkv_mouth_enabled() -> bool:
     """`BRAIN_OPEN_ENDED_WKV_MOUTH` truthy -> `answer_turn` tries the from-scratch WKV mouth (genuine few-spike
     spiking-WTA decode, `webapp.wkv_mouth_generator`) FIRST, for IN-VOCAB prompts only, before falling back to the
-    existing Qwen path. Default OFF (unset/0/false/off/no): the flag read is the ONLY thing that runs — no import,
-    no vocab check, no generation-path change — so `answer_turn` is BYTE-IDENTICAL to its pre-existing behavior.
-    This is a SECOND, independent gate on top of `BRAIN_OPEN_ENDED` (both must be truthy, and the topic must be
-    in-scope, for anything to change); an out-of-vocab prompt or an exception from the WKV path always falls back
-    to Qwen, never crashes the turn."""
-    return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH", "0").strip().lower() in ("1", "true", "on", "yes")
+    existing Qwen path. DEFAULT-ON as of 2026-08-30 (rung-3 crutch-burndown): unset now reads as ON, so when the
+    open-ended channel is active the from-scratch mouth is the default in-vocab generator (set the flag to 0 to
+    force the Qwen path). This is ZERO PRODUCTION RISK: it is a SECOND gate UNDER `BRAIN_OPEN_ENDED`, which is
+    default-OFF and is the ONLY thing that imports this module (webapp/server.py) — with BRAIN_OPEN_ENDED off the
+    open-ended block never runs, so production `answer_turn`/chat is BYTE-IDENTICAL to before the flip. When the
+    channel IS on, an out-of-vocab prompt or any exception from the WKV path still falls back to Qwen and never
+    crashes the turn."""
+    return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 def gen_time_honesty_enabled() -> bool:
