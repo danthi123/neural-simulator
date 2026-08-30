@@ -38,6 +38,10 @@ Creating/updating tasks + labels on the owner's own board is low-risk (no per-ac
 - **NEW frontier / owner steer** → add the plain-language task(s) with the right label + priority so the next session sees it.
 
 ## Guardrails
+- **⛔ A finding's / commit's internal `board: N` number is NOT the Vikunja task-id.** Always resolve the task by
+  CONTENT — `list-tasks 2`, match the title — before `set-desc`/`update-task`. Never assume `board #N` == Vikunja
+  task #N. (2026-08-30: `set-desc 64/66` by that false assumption overwrote two unrelated CLOSED tasks; the real
+  homes were #192 (latency) and #91 (memory-separation). Read-before-overwrite; the originals were unrecoverable.)
 - The board is a SUMMARY/pointer; the findings are ground truth. Never adopt a Vikunja "next" without the RAG check.
 - Never echo or commit the token — it lives only in `~/.claude-config/secrets/vikunja.json`. If the script errors on a missing secrets file, recreate it (owner supplies the token); never hardcode it in the repo.
 - Keep it plain (rule 2) and single-project (rule 1) on EVERY edit, or it stops being human-readable and the owner stops trusting it.
