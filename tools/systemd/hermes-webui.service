@@ -23,6 +23,9 @@ Environment=HERMES_WEBUI_HOST=0.0.0.0
 Environment=HERMES_WEBUI_PORT=8787
 Environment=HERMES_WEBUI_PASSWORD=__WEBUI_PASSWORD__
 Environment=HERMES_WEBUI_CTL_ALLOW_SYSTEMD_CONFLICT=1
+# --- Workspace: the agent operates IN the repo so `read research/coordination/live_state.md`,
+#     the mission work, and the project skills under .hermes/skills all resolve (default was $HOME).
+Environment=HERMES_WEBUI_DEFAULT_WORKSPACE=/home/dant123/Projects/sim
 # --- Reverse-proxy (caddy) trust: honor forwarded host/proto so the external https origin
 #     passes the CSRF/same-origin gate and cookies are Secure over https — while plain-http
 #     LAN access still works (the Secure flag is decided per-request, not globally).

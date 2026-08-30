@@ -205,13 +205,21 @@ anywhere; the run lives on the gateway server, so it keeps going if you close th
 watch. Verify: authenticate, then `curl -b <cookies> http://127.0.0.1:8787/api/health/agent` →
 `gateway_chat.enabled: true` (end-to-end proven: a `POST /v1/runs` returned the agent's reply).
 
-**OPERATING MODEL (owner, 2026-08-30) — webui drives, extremely simple manual swap.** The `sim-heartbeat` cron
-is a SEPARATE headless session (its turns are NOT viewable in the webui — a `deliver:local` cron session is never
-exposed as a transcript, and the gateway has no list-runs endpoint). To avoid it racing an active driver it is
-**PAUSED by default** (`bash tools/hermes_autonomous.sh off` — gateway stays up). **When Claude's usage runs out,
-the swap is: open the webui → log in → send a message** (e.g. "Continue the mission — read
-`research/coordination/live_state.md` and take the next action"); watch + steer from there. That's it — Qwen is
-already loaded and everything survives reboot. OPTIONAL unattended-overnight: `bash tools/hermes_autonomous.sh on`
-turns the 15-min heartbeat back on (then it self-drives between your check-ins; flip it off again if you want the
-webui to be the sole driver). No automated cron/webui guard exists by design — `active_agents` in
-`gateway_state.json` is not a real-time signal, and the owner runs one driver at a time manually.
+**OPERATING MODEL (owner, 2026-08-30) — the webui `/goal` loop drives, fully visible, controlled by chat. NO
+headless cron.** The owner switches to Hermes whenever they want (not tied to Claude usage) by driving one webui
+session:
+- **Start working:** in a webui session, set a standing goal — `/goal Continuously advance the neural-simulator
+  mission. Each turn read research/coordination/live_state.md and do the next concrete action from CURRENT STATE;
+  commit via tools/push_both.sh. Never consider this complete; keep going until I say stop.` Hermes then works
+  turn-after-turn AUTONOMOUSLY and VISIBLY (thinking + tool cards stream; "↻ Continuing toward goal (N/500)").
+- **Control by chat:** `/goal clear` stops · `/goal resume` continues after a pause · just typing steers/interjects.
+- **Hand back to Claude / pause:** tell it to stop (`/goal clear`); for the GPU too, `bash tools/game.sh on`.
+- **Switch back to Hermes later:** in the same session, `/goal resume` (or set the goal again). Continuity is via
+  DURABLE STATE (`live_state.md` + repo + memory), not the transcript — so "pick up where Claude left off" works
+  because Hermes reads the current `live_state.md`; no session-import needed.
+
+Config that makes this work (all set 2026-08-30): `HERMES_WEBUI_DEFAULT_WORKSPACE=/home/dant123/Projects/sim` (agent
+operates IN the repo), `agent.reasoning_effort: xhigh` + `model.reasoning: xhigh`, `goals.max_turns: 500` (long
+autonomous stretches before an auto-pause), all in `~/.hermes/config.yaml` / the webui unit. The `sim-heartbeat`
+cron is **paused/retired** for this model (`bash tools/hermes_autonomous.sh off`) — its `deliver:local` turns were
+never viewable in the webui anyway. Gateway + Qwen stay up so the webui is always ready.
