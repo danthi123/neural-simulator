@@ -59,7 +59,7 @@ is NO-GO (board #64).
    DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1.
 3. ✅ #66 latency (owner #1) — DONE: end-to-end 79k scale verify with codebook-cache ON is GO on numpy + cupy (seed 42).
    Technical wall closed; now in the 6-seed confirmation phase (see #1).
-4. Mouth rung-4: wider-vocab checkpoint + measure in-vocab coverage (board #80).
+4. ✅ Mouth rung-4 (board #80) — measured: V=4000 checkpoint covers 37.59% of TinyStories content words (vs 8.85% at V=1000; +28.7pp) and raises the in_vocab_scope gate pass rate from 95.41% to 99.04% (+3.63pp) over 337294 5–200-word prompts. Raw: `research/findings/raw/_wkv_ckpt_in_vocab_coverage.txt`.
 5. Keep BREADTH; every sim-running agent carries a MEMORY BUDGET (RSS < ~4 GB, watch `free -m`).
 
 ---
