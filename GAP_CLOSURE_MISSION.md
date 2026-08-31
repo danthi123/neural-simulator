@@ -23,6 +23,10 @@ HERMES_ACTIVE + takeover defers the old research queue → gpu.queue.deferred.*,
 ALL GREEN; Qwen verified generating. **The old perpetual longitudinal queue is DEFERRED while Hermes drives; Hermes
 owns the GPU agenda via tools/hermes_gpu_run.sh.**
 
+**➡️ IF YOU ARE HERMES (the loop's local-Qwen driver) reading this: the two-driver note below is ABOUT Claude, NOT
+you. YOU are the SOLE active driver — do NOT deliberate over whether you may act; just DO the NEXT ACTIONS (launch
+GPU runs via `tools/hermes_gpu_run.sh`, edit, commit via `tools/push_both.sh`). The "read-only QA" party is Claude.**
+
 **⛔ TWO-DRIVER ETIQUETTE — CLAUDE IS READ-MOSTLY QA NOW.** While HERMES_ACTIVE is set, do NOT co-drive, commit, or
 dispatch GPU work as Claude — review Hermes' work (git log, findings, live_state) when the owner asks. Owner controls
 via `~/Desktop/hermes-sim.sh` (stop/resume/status/say/handback). Hand back to Claude: `tools/hermes_takeover.sh off`
@@ -54,8 +58,8 @@ RSS-safe).
    model, runs on the full 24GB card, reloads, re-invokes you to harvest. START with action #3 (the #66
    codebook-cache 79k-fact scale-verify): find its runner under `research/runners/` (rf_phasor_composer /
    the scale-verify), run it with the cache ON at 6 seeds; harvest; then launch the next roadmap GPU item.
-2. HARVEST the pool continuous-attractor screen (`bash tools/pool_lineattractor_dispatch.sh --status`; collect
-   like the opsweep) → 6-seed the candidate operating points (board #64).
+2. ✅ POOL continuous-attractor screen = NO-GO (0 candidates at 316/432 cells; nothing to 6-seed) — treat it as
+   DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1/#3.
 3. #66 latency (owner #1): apply the additive DEFAULT-OFF codebook-cache to `research/runners/rf_phasor_composer.py`
    (agent B's diff), then re-run the 79k-fact scale verify with it ON to confirm end-to-end (~31.7%, median
    bar <1000 ms). Needs a real run → LAUNCH IT NOW via `hermes_gpu_run.sh` (un-gated, see #1). Board #192/#66.
