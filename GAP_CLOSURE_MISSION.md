@@ -47,13 +47,18 @@ resonate) + lever DE-RISKED (cache it shared across shards, board #192: median 3
 RSS-safe).
 
 **PRE-DECIDED NEXT ACTIONS (ordered) — 2026-08-30:**
-1. ON OWNER-RESUME of local compute: `gpu_queue.sh resume && rm research/queue/GAME_MODE`; the requeued
-   longitudinal resumes intact.
+1. ⭐ GPU IS AVAILABLE + UN-GATED — launch real GPU runs AUTONOMOUSLY every turn there is GPU work; do
+   NOT wait for owner-resume and do NOT just re-check pool/queue status (per the 2026-08-28 owner
+   directive GPU work is Claude/Hermes-autonomous; GAME_MODE is unset + the dispatcher is live). ENQUEUE
+   ONE real run via `bash tools/hermes_gpu_run.sh '<full cmd incl --out>'` — VALIDATED: it unloads the
+   model, runs on the full 24GB card, reloads, re-invokes you to harvest. START with action #3 (the #66
+   codebook-cache 79k-fact scale-verify): find its runner under `research/runners/` (rf_phasor_composer /
+   the scale-verify), run it with the cache ON at 6 seeds; harvest; then launch the next roadmap GPU item.
 2. HARVEST the pool continuous-attractor screen (`bash tools/pool_lineattractor_dispatch.sh --status`; collect
    like the opsweep) → 6-seed the candidate operating points (board #64).
 3. #66 latency (owner #1): apply the additive DEFAULT-OFF codebook-cache to `research/runners/rf_phasor_composer.py`
    (agent B's diff), then re-run the 79k-fact scale verify with it ON to confirm end-to-end (~31.7%, median
-   bar <1000 ms). Needs a real run → do on owner-resume. Board #192/#66.
+   bar <1000 ms). Needs a real run → LAUNCH IT NOW via `hermes_gpu_run.sh` (un-gated, see #1). Board #192/#66.
 4. Mouth rung-4: wider-vocab checkpoint + measure in-vocab coverage (board #80).
 5. Keep BREADTH; every sim-running agent carries a MEMORY BUDGET (RSS < ~4 GB, watch `free -m`).
 
