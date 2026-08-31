@@ -52,12 +52,13 @@ is NO-GO (board #64).
    NOT wait for owner-resume and do NOT just re-check pool/queue status (per the 2026-08-28 owner
    directive GPU work is Claude/Hermes-autonomous; GAME_MODE is unset + the dispatcher is live). ENQUEUE
    ONE real run via `bash tools/hermes_gpu_run.sh '<full cmd incl --out>'` — VALIDATED: it unloads the
-   model, runs on the full 24GB card, reloads, re-invokes you to harvest. Next GPU item: 6-seed codebook-cache
-   production-load soak (42/43/44/100/101/102), then the next roadmap frontier item.
+   model, runs on the full 24GB card, reloads, re-invokes you to harvest. IN FLIGHT NOW: the 6-seed codebook-cache
+   production-load soak (42/43/44/100/101/102, cupy) is queued (depth 1) at `research/runners/_knowledge_scale_100k_cacheon_6seed.py`;
+   GO iff all 6 seeds pass median<1000ms + recall>=0.99 + moat=0. After it lands, launch the next roadmap frontier item.
 2. ✅ POOL continuous-attractor screen = NO-GO (0 candidates at 316/432 cells; nothing to 6-seed) — treat it as
    DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1.
-3. ✅ #66 latency (owner #1) — DONE: end-to-end 79k scale verify with codebook-cache ON is GO on numpy + cupy.
-   Technical wall closed; move to the next frontier.
+3. ✅ #66 latency (owner #1) — DONE: end-to-end 79k scale verify with codebook-cache ON is GO on numpy + cupy (seed 42).
+   Technical wall closed; now in the 6-seed confirmation phase (see #1).
 4. Mouth rung-4: wider-vocab checkpoint + measure in-vocab coverage (board #80).
 5. Keep BREADTH; every sim-running agent carries a MEMORY BUDGET (RSS < ~4 GB, watch `free -m`).
 
