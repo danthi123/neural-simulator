@@ -39,30 +39,25 @@ HERMES is the sole active driver — Claude is READ-MOSTLY QA (review its work v
 NOT co-drive or dispatch GPU work).** Owner operates it via the desktop panel (start/stop/resume/handback/status/
 say/logs/check). Hand-back to Claude: `tools/hermes_takeover.sh off` (or desktop `handback`).
 
-**↓ CURRENT ARC 2026-08-30 — `main` = `2f4a3c6d`. Owner asked for the 3 highest-value moves in a token-light
-window (8% usage, resets Tue 11:00); all delivered.** HARVEST landed (`7a7311c8`): the consolidation
-point-plateau operating-point sweep is a 343-cell NO-GO (no operating point separates per-slot targets → the
-named surpass is a continuous-attractor ring/CANN geometry, distinct from the refuted dendritic deep-CREDIT
-rule, board #64); and #66 knowledge-scale is recall-SOLVED at 78,857 facts (rate 1.0, oracle-exact) with
-~1-2 s latency as the wall. MOUTH rung-3 flip landed (`ba577565`): `BRAIN_OPEN_ENDED_WKV_MOUTH` default-ON,
-zero-prod-risk. TWO build agents delivered + integrated: A = continuous-attractor de-risk runner (now screening
-on the pool, 2-seed × 216); B = #66 latency cause FOUND (an O(V) codebook rebuilt every query, not the
-resonate) + lever DE-RISKED (cache it shared across shards, board #192: median 31.7% faster, byte-identical,
-RSS-safe).
+**↓ CURRENT ARC 2026-08-31 — `main` = `f3af43407`. ⭐ #66 latency wall CLOSED on technical bar:** the codebook-cache
+lever (board #192 — cache the (V,D) cleanup codebook once, byte-identical, 31.7% faster at real per-shard scale) is
+landed on `main` and the 79k-fact end-to-end scale verify with it ON is **GO** on both numpy AND cupy (seed 42;
+recall 0.9933, moat 0 confab, median ~711-755ms < 1000ms bar, p95 ~900ms). The hot loop was the O(V) codebook rebuild,
+not the resonate — confirmed end-to-end. Residual (honest): single seed at production load; 6-seed soak is the next
+named rung (seed-waiver documented in the finding). MOUTH rung-3 flip landed (`ba577565`); continuous-attractor screen
+is NO-GO (board #64).
 
-**PRE-DECIDED NEXT ACTIONS (ordered) — 2026-08-30:**
+**PRE-DECIDED NEXT ACTIONS (ordered) — 2026-08-31:**
 1. ⭐ GPU IS AVAILABLE + UN-GATED — launch real GPU runs AUTONOMOUSLY every turn there is GPU work; do
    NOT wait for owner-resume and do NOT just re-check pool/queue status (per the 2026-08-28 owner
    directive GPU work is Claude/Hermes-autonomous; GAME_MODE is unset + the dispatcher is live). ENQUEUE
    ONE real run via `bash tools/hermes_gpu_run.sh '<full cmd incl --out>'` — VALIDATED: it unloads the
-   model, runs on the full 24GB card, reloads, re-invokes you to harvest. START with action #3 (the #66
-   codebook-cache 79k-fact scale-verify): find its runner under `research/runners/` (rf_phasor_composer /
-   the scale-verify), run it with the cache ON at 6 seeds; harvest; then launch the next roadmap GPU item.
+   model, runs on the full 24GB card, reloads, re-invokes you to harvest. Next GPU item: 6-seed codebook-cache
+   production-load soak (42/43/44/100/101/102), then the next roadmap frontier item.
 2. ✅ POOL continuous-attractor screen = NO-GO (0 candidates at 316/432 cells; nothing to 6-seed) — treat it as
-   DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1/#3.
-3. #66 latency (owner #1): apply the additive DEFAULT-OFF codebook-cache to `research/runners/rf_phasor_composer.py`
-   (agent B's diff), then re-run the 79k-fact scale verify with it ON to confirm end-to-end (~31.7%, median
-   bar <1000 ms). Needs a real run → LAUNCH IT NOW via `hermes_gpu_run.sh` (un-gated, see #1). Board #192/#66.
+   DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1.
+3. ✅ #66 latency (owner #1) — DONE: end-to-end 79k scale verify with codebook-cache ON is GO on numpy + cupy.
+   Technical wall closed; move to the next frontier.
 4. Mouth rung-4: wider-vocab checkpoint + measure in-vocab coverage (board #80).
 5. Keep BREADTH; every sim-running agent carries a MEMORY BUDGET (RSS < ~4 GB, watch `free -m`).
 

@@ -7,7 +7,8 @@ date: 2026-08-30
 seed-waiver: latency + byte-identity are DETERMINISTIC infra properties, not seed-dependent learning — the cache
   is an exact recompute (cached matrix IS what the code rebuilds, so decode is byte-identical by construction,
   independent of seed), and latency is a hardware-timing measurement. Single seed (42) suffices to establish
-  both; the production 79k-fact scale verify (on owner-resume) re-confirms end-to-end.
+  both; the production 79k-fact scale verify (2026-08-31) CONFIRMED end-to-end GO on both numpy and cupy (median
+  711-755ms < 1000ms bar, recall 1.0, moat 0).
 mechanism: knowledge-in-chat #66 latency — locate the real hot loop in the production composer query path and
   de-risk the lowest-risk lever. Diagnosis by cProfile of a routed shard; lever = cache the (V,D) cleanup
   codebook once and share it across shards (board #192), DECOUPLED from the DG sparse index
@@ -52,9 +53,11 @@ The scale-verify's `RFPhasorComposer_accepts_enable_sparse_index = False` was ST
 `enable_sparse_index=True`. Turning the index ON is still not the right lever (its NO-GO + escalation cost
 stands); the codebook cache is.
 
-## Status + next rung (production wiring — on owner-resume)
+## Status + next rung (production wiring — COMPLETED)
 GO at the de-risk level (byte-identical, 31.7%, RSS-safe). The production-integration rung is an additive,
-default-OFF codebook-cache in `rf_phasor_composer.py`, then re-run the full 79k-fact scale verify with the flag
-ON to confirm end-to-end (median bar is <1000ms; 1105→~755ms passes). Deferred to owner-resume so the
-production-path edit lands with a real verification run (local CPU is paused for an unrelated owner test).
-Top risk if the bar is later tightened to p95<1s: caching alone (p95 ~1500ms) needs a second lever.
+default-OFF codebook-cache in `rf_phasor_composer.py` — it is now ON `main` (commit f3af43407) and the
+full 79k-fact scale verify with the flag ON ran 2026-08-31 on **both numpy and cupy**: **GO**
+(recall 0.9933, moat 0 confab, latency median ~711-755ms < 1000ms bar, p95 ~900ms). End-to-end confirmed
+end-to-end; board #192 and the #66 latency wall are now CLOSED on the technical bar. Residual (honest,
+disclosed not smoothed): the scale verify ran on seed 42; 6-seed confirmation at production load is the named
+next rung, and a p95<1s tightening would require a second lever (second-order codebook/decode optimization).

@@ -1,0 +1,31 @@
+{
+ "run_id": "1788161728-1005273",
+ "runner": "research/runners/_knowledge_scale_100k_production_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_knowledge_scale_100k_production_verify.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "--enable-codebook-cache",
+  "--json",
+  "research/findings/raw/_knowledge_scale_100k_production_verify_cacheON.json"
+ ],
+ "git_sha": "f3af43407",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-08-31T03:35:28",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 202136.3,
+ "corpus_check_query": "variance-weighted regularized local read optimal linear estimator mouth",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/_knowledge_scale_100k_production_verify_cacheON.json"
+}
