@@ -329,16 +329,21 @@ class ShardedPhasorStore:
         return manifest["n_facts"]
 
     @classmethod
-    def load(cls, path):
+    def load(cls, path, extra_kwargs=None):
         """Reconstruct a store saved by `save()` WITHOUT re-resonating (codebook regenerates from seed+vocab; each
-        fact's composite is set directly into its shard's kb)."""
+        fact's composite is set directly into its shard's kb). `extra_kwargs`: optional dict of additional
+        composer kwargs to merge with the manifest's `composer_kwargs` (e.g. `{"enable_codebook_cache": True}`
+        to activate the codebook-cache opt-in on a previously-saved bundle whose manifest doesn't record it)."""
         import json
         import os
         import numpy as np
         with open(os.path.join(path, "manifest.json")) as f:
             m = json.load(f)
+        store_kwargs = dict(m.get("composer_kwargs") or {})
+        if extra_kwargs:
+            store_kwargs.update(extra_kwargs)
         store = cls(n_shards=m["n_shards"], seed=m["seed"], D=m["D"], vocab=m["vocab"],
-                    share_codebook=m.get("share_codebook", True), **(m.get("composer_kwargs") or {}))
+                    share_codebook=m.get("share_codebook", True), **store_kwargs)
         with open(os.path.join(path, "facts.json")) as f:
             facts = json.load(f)
         comps = np.load(os.path.join(path, "composites.npz"))
