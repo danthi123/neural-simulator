@@ -22,8 +22,9 @@ the genuine spiking read, and it is what decides the reply's framing.
 
 MOAT-SAFE + ADDITIVE: this organ NEVER produces an answer or flips an abstain — it only reframes the TEXT of an
 already-produced, moat-verified answer (assert -> flagged-generated), or leaves it untouched (assert -> assert,
-the dominant perceived case). Default-OFF: `BRAIN_SOURCE_PROVENANCE_HONESTY` unset -> the byte-identical oracle
-(the organ is never built, no substrate step is taken).
+the dominant perceived case). PRODUCTION DEFAULT-ON (2026-09-01, `_DEFAULT_ON`): `BRAIN_SOURCE_PROVENANCE_HONESTY`
+unset now builds the organ; `=0` (explicit off) is the byte-identical escape to the pre-flip oracle (the organ
+is never built, no substrate step is taken).
 
 LESION-LOAD-BEARING: `BRAIN_SOURCE_PROVENANCE_HONESTY_LESION=1` rebuilds the organ with its Hebbian plasticity
 gate held shut at encode (the de-risk's own verified failing-direction anti-cheat: "LEARNING-OFF -> no
@@ -45,13 +46,24 @@ _ORGAN: SourceProvenanceHonestyMonitor | None = None
 _ORGAN_KEY: tuple | None = None
 
 
+# 2026-09-01 FLIPPED DEFAULT-ON (owner auto-flip directive; the #140 rung -- webapp/source_monitoring_honesty_
+# chat.py's `BRAIN_SOURCE_MONITORING_FRAMES_HONESTY`, itself flipped default-ON the same session -- nests
+# ENTIRELY inside this organ's `source_provenance_enabled()` gate in webapp/server.py, so #140 was hollow until
+# THIS flag was also default-ON; independently re-verified through the real `webapp.server.brain_chat` handler,
+# 6-seed, before commit: research/findings/raw/_source_provenance_honesty_flip/flip_verify.json. `BRAIN_
+# SOURCE_PROVENANCE_HONESTY=0` is the byte-identical escape to the pre-flip (organ never built) behavior.
+_DEFAULT_ON = True
+
+
 def source_provenance_enabled() -> bool:
-    """Default-OFF (board #129: 'wire it additive/default-off behind a flag'). `BRAIN_SOURCE_PROVENANCE_HONESTY`
-    in {1,true,on,yes} turns the faculty on."""
+    """DEFAULT-ON anchor (`_DEFAULT_ON`, board #129 + #140 rung): enabled UNLESS `BRAIN_SOURCE_PROVENANCE_HONESTY`
+    is an explicit off (0/false/no/off/""); `=0` reverts byte-identically to the pre-flip (organ never built,
+    no substrate step taken, no `provenance` key added) behavior. Mirrors the `_LEARNED_ANIMACY_CUE_DEFAULT_ON`
+    / `_MERGE2_DEFAULT_ON` convention used elsewhere for a validated default-ON flip."""
     v = os.environ.get("BRAIN_SOURCE_PROVENANCE_HONESTY")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "on", "yes")
+    if _DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def source_provenance_lesioned() -> bool:
