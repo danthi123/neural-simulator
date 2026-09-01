@@ -3269,6 +3269,33 @@ def _bg_select_flag_on() -> bool:
     return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
+# ─── COMMON GROUND DRIVES THE RESPONSE (2026-08-26): the 6-seed-GO common-ground ledger (a per-referent bistable
+# NMDA-attractor store latched by grounding acts + held by recurrence; research/runners/
+# _learned_common_ground_ledger_derisk.py) made LOAD-BEARING on the live turn's REFERRING EXPRESSION — a referent
+# ALREADY in this conversation's common ground (mentioned earlier, its ledger slot latched + self-sustained) reads
+# GROUNDED off the substrate -> audience design wins REDUCE -> the reply LEADS with a reduced/pronominal reference
+# ("As for it — <answer>"); a first-mention referent reads UNGROUNDED -> the novelty prior wins INTRODUCE -> NO reduced
+# lead (the reply names it in full). The production-integration anchor. When `_CG_DRIVES_DEFAULT_ON` is False the block
+# is gated on the env flag alone (`BRAIN_CG_DRIVES=1` opts in for review); the response carries NO `common_ground_drives`
+# key and NO reduced-reference lead -> byte-identical. LESION (`BRAIN_CG_DRIVES_LESION=1`): build the ledger recurrence
+# at weight 0 -> it cannot HOLD -> even a re-mentioned referent reads ungrounded -> audience design goes static (always
+# INTRODUCE) -> the reduced lead VANISHES (the load-bearing proof). See webapp/common_ground_drives_chat.py.
+_CG_DRIVES_DEFAULT_ON = False
+
+
+def _common_ground_drives_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-OFF anchor: enabled only on an explicit
+    truthy `BRAIN_CG_DRIVES` opt-in. Default-ON anchor (a later flip): enabled UNLESS `BRAIN_CG_DRIVES` is an explicit
+    off. Kept lightweight so the disabled path builds no ledger + does no substrate work."""
+    try:
+        from webapp import common_ground_drives_chat as _CGD
+    except Exception:
+        return False
+    if _CG_DRIVES_DEFAULT_ON:
+        return not _CGD.cg_drives_off()
+    return _CGD.cg_drives_enabled()
+
+
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
     own mouth + selection substrate for THIS conversation; cleared on reset. See
@@ -4638,6 +4665,30 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             da_drives_info = {"on": True, "error": f"{type(_dde).__name__}: {_dde}", "lead": ""}
             da_drives_suffix = ""
 
+    # ── COMMON GROUND DRIVES THE RESPONSE (2026-08-26) ──────────────────────────────────────────────────────────
+    # Read this turn's referent's common-ground state off the persistent spiking ledger (a per-referent bistable NMDA
+    # store latched by earlier grounding acts + held by recurrence; the 6-seed-GO de-risk, reuse-by-import, NO sim/
+    # edit) and turn the audience-design verdict into a REDUCED-REFERENCE LEAD (`cg_drives_lead`, prepended to the
+    # answer surface — a grounded referent gets pronominalized, a first mention named in full) + a `cg_drives_info`
+    # trace (topic, slot, decision, in_common_ground, the substrate read rates, the lead). The moat/recall/abstain
+    # verdict runs FIRST and unchanged — this DECORATES an already-matched surface, never a fact; the content fields
+    # (abstained/recalled_svo/verified) are byte-identical with it on or off. The ledger runs its substrate steps
+    # inside a numpy global-RNG save/restore (in the organ), so the other response fields stay byte-identical.
+    # Default-OFF (anchor); `BRAIN_CG_DRIVES` unset -> the block is fully skipped (no key, no lead -> byte-identical
+    # oracle). LESION (`BRAIN_CG_DRIVES_LESION=1`): build the ledger recurrence at 0 -> it cannot HOLD -> a re-mentioned
+    # referent reads ungrounded -> the decision goes static (always INTRODUCE) -> the reduced lead VANISHES (the
+    # load-bearing proof). See webapp/common_ground_drives_chat.py.
+    cg_drives_info = None
+    cg_drives_lead = ""
+    if _common_ground_drives_on():
+        try:
+            from webapp import common_ground_drives_chat as _CGD
+            cg_drives_info = _CGD.observe_turn(chat, msg, cache_key=cache_key)
+            cg_drives_lead = str(cg_drives_info.get("lead", "") or "")
+        except Exception as _cge:  # never let the common-ground coupling crash a turn — degrade to the un-led answer
+            cg_drives_info = {"on": True, "error": f"{type(_cge).__name__}: {_cge}", "lead": ""}
+            cg_drives_lead = ""
+
     # ── DA-GATED ENCODING (board WAVE-0, Gap-4 write-side coupling) ──────────────────────────────────────────
     # The brain's OWN self-produced tonic DA (the DA-mode read just above — chat._last_da_drives["da_level"]) scales
     # the WRITE MAGNITUDE of a taught fact AT STORE TIME (Lisman-Grace hippocampal-VTA loop; Kandel D.16 — dopamine
@@ -5778,6 +5829,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             resp["answer"] = swap_drives_lead + resp["answer"]
         if swap_drives_info is not None:
             resp["swap_drives"] = swap_drives_info
+        # COMMON GROUND DRIVES THE RESPONSE (2026-08-26): prepend the reduced-reference lead (a grounded referent is
+        # pronominalized) + attach the additive `common_ground_drives` trace. Empty lead / no key when disabled or on a
+        # first mention -> byte-identical. The content fields above are unchanged (the ledger frames HOW the reply
+        # refers, never a fact); the lead VANISHES under the neural ledger-recurrence lesion (the load-bearing proof).
+        if cg_drives_lead:
+            resp["answer"] = cg_drives_lead + resp["answer"]
+        if cg_drives_info is not None:
+            resp["common_ground_drives"] = cg_drives_info
         # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86): prepend the idle-wander lead OUTERMOST (what the
         # brain was just thinking about, announced first) + attach the additive `wander_drives` trace. Empty lead /
         # no key when disabled or no recent wander -> byte-identical.
@@ -6069,6 +6128,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _resp["answer"] = swap_drives_lead + _resp["answer"]
     if swap_drives_info is not None:
         _resp["swap_drives"] = swap_drives_info
+    # COMMON GROUND DRIVES THE RESPONSE (2026-08-26, single-fact path): prepend the reduced-reference lead (a grounded
+    # referent is pronominalized) + attach the additive `common_ground_drives` trace. Empty lead / no key when disabled
+    # or on a first mention -> byte-identical. The content fields are unchanged (the ledger frames HOW the reply refers,
+    # never a fact); the lead VANISHES under the neural ledger-recurrence lesion (the load-bearing proof).
+    if cg_drives_lead:
+        _resp["answer"] = cg_drives_lead + _resp["answer"]
+    if cg_drives_info is not None:
+        _resp["common_ground_drives"] = cg_drives_info
     # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, single-fact path): prepend the idle-wander lead
     # OUTERMOST + attach the additive `wander_drives` trace. Empty lead / no key when disabled or no recent
     # wander -> byte-identical.
