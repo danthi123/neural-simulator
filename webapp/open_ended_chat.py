@@ -57,6 +57,22 @@ that concrete and all are GO on `main`:
     docstring for the two honest residuals this rung does NOT resolve (the specific e-prop-learned read-out head
     was never persisted to disk, so this uses the checkpoint's own native head; the checkpoint's recurrent-store
     training method — local rule vs host-BPTT — is unverified).
+  * `webapp.np_entailment_moat_gate` (2026-09-01, `BRAIN_OPEN_ENDED_NP_ENTAILMENT`, default-OFF, see
+    `np_entailment_enabled` below) — wires NPHeadBinder (spiking NP-boundary binding,
+    `_spiking_np_boundary_extraction_derisk.py`) + entailment classification (`FactStore`/`classify_claim`,
+    `_open_text_moat_verifier_derisk.py`) into the KNOWN-topic branch of `post_filter`, ON TOP OF the existing
+    gazetteer-based `_clause_filter_sentence`. The gazetteer only recognizes THREE relation shapes (borders/
+    continent/capital) plus a bare number/year regex, so a wrong supplement on any OTHER relation ("Mercury
+    discovered Neptune" against a store holding only mercury/orbits/sun) trips no branch and leaks through
+    unedited. This gate extracts an (agent, action, patient) triple with the SAME spiking, vocabulary-agnostic
+    role assignment other de-risks already validated (BridgeParser + NPHeadBinder, both reused UNCHANGED) and
+    checks it with the SAME entailment semantics production's single-triple moat already uses — catching that
+    whole class of wrong-relation confabulation the gazetteer is structurally blind to. Additive and
+    MONOTONIC-ONLY: it can only drop a sentence the earlier stages already kept, is a no-op on anything it
+    cannot confidently parse, on a claim not about the retrieved topic, and on a copula predicate nominal (an
+    elaborative descriptive object the strict entailment check would false-reject — see that module's own
+    docstring for why). See research/findings/2026-09-01-np-entailment-moat-gate-wired-into-live-open-ended-
+    postfilter.md for the load-bearing before/after/lesion proof.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
@@ -141,12 +157,28 @@ def post_filter(reply, topic, known, facts):
     known-topic branch and the pre-clause sentence-level filter this replaced (verified directly against both,
     unchanged code, before this fix); it simply never fired on the 3 saved multi-sentence replies because some
     sentence always survived. Fixed HERE (the only code path a live known-topic turn actually takes) by falling
-    back to `_empty_known_fallback(topic)` -- a fixed, non-fabricating honest string -- instead of the raw reply."""
+    back to `_empty_known_fallback(topic)` -- a fixed, non-fabricating honest string -- instead of the raw reply.
+
+    `BRAIN_OPEN_ENDED_NP_ENTAILMENT` (default OFF, see `np_entailment_enabled`): when truthy, a sentence the
+    gazetteer-based `_clause_filter_sentence` KEPT is additionally screened by the spiking NPHeadBinder-
+    extraction + entailment gate (`webapp.np_entailment_moat_gate.gate_sentence`) -- it can only drop that
+    sentence further (monotonic-only; see that module's own docstring for the exact no-op scope), never restore
+    what the gazetteer already removed. Flag off: this branch is never reached and `post_filter` is
+    byte-identical to before this parameter existed."""
     if not known:
         return _base_post_filter(reply, topic, known, facts)
     pairs = _facts_as_relation_pairs(facts)
     sents = [s for s in _sentences(reply) if not persona_leak(s)]
-    keep = [k for s in sents for k in [_clause_filter_sentence(s, topic, pairs)] if k]
+    np_gate_on = np_entailment_enabled()
+    if np_gate_on:
+        from webapp.np_entailment_moat_gate import gate_sentence as _np_gate_sentence
+    keep = []
+    for s in sents:
+        k = _clause_filter_sentence(s, topic, pairs)
+        if k and np_gate_on:
+            k = _np_gate_sentence(k, topic, facts)
+        if k:
+            keep.append(k)
     return " ".join(keep).strip() or _empty_known_fallback(topic)
 
 
@@ -191,6 +223,19 @@ def gen_time_honesty_enabled() -> bool:
     (`post_filter`) still runs afterward on whatever this mode emits, unconditionally -- a safety net, never
     bypassed, so this flag can only ever ADD a generation-time suppression, never remove the existing one."""
     return os.environ.get("BRAIN_OPEN_ENDED_GEN_TIME_HONESTY", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def np_entailment_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_NP_ENTAILMENT` truthy -> `post_filter`'s KNOWN-topic branch additionally screens
+    every sentence the existing gazetteer-based `_clause_filter_sentence` KEPT through the spiking
+    NPHeadBinder-extraction + entailment gate (`webapp.np_entailment_moat_gate.gate_sentence`) -- see that
+    module's docstring for what it catches (wrong-relation confabulations the 3-relation gazetteer cannot see)
+    and its exact no-op scope (monotonic-only: it can only drop a sentence, never restore one; a no-op on
+    anything it cannot confidently parse, off-topic, or a copula predicate nominal). Default OFF
+    (unset/0/false/off/no): `post_filter` never imports `webapp.np_entailment_moat_gate` (which in turn would
+    pull in the spiking BridgeParser/NPHeadBinder build + their own `SIM_BACKEND` default) and is
+    BYTE-IDENTICAL to before this flag existed. A SECOND, independent gate on top of `BRAIN_OPEN_ENDED`."""
+    return os.environ.get("BRAIN_OPEN_ENDED_NP_ENTAILMENT", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def skip_continue_enabled() -> bool:
