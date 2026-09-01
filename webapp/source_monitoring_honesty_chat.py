@@ -62,7 +62,7 @@ import os
 
 # PRODUCTION DEFAULT -- OFF. The flip to default-ON is a separate, later, owner-gated step (this is a NEW,
 # additive lever; it does not touch or re-decide `BRAIN_SOURCE_PROVENANCE_HONESTY`'s own default).
-_SOURCE_MONITORING_FRAMES_HONESTY_DEFAULT_ON = False
+_SOURCE_MONITORING_FRAMES_HONESTY_DEFAULT_ON = True
 
 
 def source_monitoring_frames_honesty_enabled() -> bool:
