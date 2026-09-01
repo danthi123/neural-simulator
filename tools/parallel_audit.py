@@ -13,7 +13,7 @@ build/research, pool for CPU de-risks, GPU for the big run) BEFORE holding.
 
 Output is one heartbeat-friendly block. Exit 0 always (advisory-to-the-shell, blocking-to-me).
 """
-import json, os, subprocess, sys
+import json, os, re, subprocess, sys
 
 ROOT = "/home/dant123/Projects/sim"
 POOL = ["pool40", "pool41", "pool42"]
@@ -40,6 +40,22 @@ def gpu_state():
         return int(u)
     except Exception:
         return -1  # no GPU / unknown
+
+
+def gpu_queue_busy():
+    # The single-GPU lane is COMMITTED (not idle-wasted) when the queue is running a job, or draining a backlog
+    # under a live dispatcher. A CPU-heavy GPU job (e.g. a 60-day develop-loop) legitimately holds the lane at low
+    # util%, so nvidia-smi utilization ALONE misreads it as free (the 2026-09-01 recurring false-positive: a healthy
+    # queue with 13 queued + a running job read as "GPU idle(4%)" every cycle, costing a re-diagnosis each heartbeat).
+    # ONE brain-loading GPU proc at a time => a running or queued job IS saturation of this lane, not waste.
+    st = sh("bash %s/tools/gpu_queue.sh status 2>/dev/null" % ROOT, timeout=10)
+    if not st:
+        return False
+    up = "dispatcher: up" in st
+    running = ("current:" in st) and ("(idle)" not in st)
+    m = re.search(r"queued:\s*(\d+)", st)
+    queued = int(m.group(1)) if m else 0
+    return up and (running or queued > 0)
 
 
 def pool_idle():
@@ -89,7 +105,7 @@ def main():
     agents = active_agents()
 
     total_lanes = lanes_local + lanes_pool + agents
-    gpu_free = (0 <= gpu < 30)
+    gpu_free = (0 <= gpu < 30) and not gpu_queue_busy()   # low util is NOT idle when the queue is draining a backlog
     # idle CAPACITY worth filling, for the informative message: >6 local cores, idle pool cores (>10), or a free GPU.
     cap = []
     if idle_local > 6: cap.append("%d local cores" % idle_local)
