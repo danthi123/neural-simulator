@@ -965,7 +965,27 @@ class RFPhasorComposer:
         match confidence in [0,1]). sims = Re(rec_phasor @ conj(codebook)ᵀ)/D (the mean-cos the cleanup argmax uses);
         the score = max_j sims[i,j] (== mean cos in [-1,1], clipped to [0,1] for display). Read-only of the SAME
         matched-filter the cleanup already computes -- no new resonate, only the per-row max is extra arithmetic.
-        Returns per-row dicts with the winner plus runner-up/margin conflict evidence for trace-only consumers."""
+        Returns per-row dicts with the winner plus runner-up/margin conflict evidence for trace-only consumers.
+
+        `margin_norm` (ADDED 2026-09-01, board #94 calibration-at-scale): a peak-NORMALIZED decisiveness read,
+        `(top_r - runner_r) / (top_r + eps)` with both rectified to >=0 first -- the IDENTICAL formula
+        `OneBrainComposer._margin(scores)` already uses ((peak-runner_up)/peak, 2026-06-18-emergent-graceful-
+        degradation-derisk). ADDITIVE ONLY: `margin` (the raw, UNNORMALIZED `top_raw - runner_raw` cosine
+        difference) is UNCHANGED -- `self_schema_honesty.py` and `tests/test_rf_phasor_composer.py` read that
+        field directly and must stay byte-identical. WHY THIS FIELD EXISTS: `metacog_production_organ.
+        mean_role_confidence` averages a `margin` field across composer types under ONE shared name, but
+        `OneBrainComposer`'s own `margin` key is ALREADY the peak-normalized ratio while this composer's `margin`
+        is the raw cosine difference -- two different formulas colliding under the same key. Measured directly
+        (2026-09-02, the shipped `wikidata_core_15k` LTM, 80 real correct recalls through `ShardedPhasorStore`):
+        the RAW `margin` field sits in [0.155, 0.275] (mean 0.216) for genuinely CORRECT, unambiguous recalls --
+        entirely BELOW the metacog band's own LOW floor (`ROLE_CONF_LO=0.30`), so evidence saturates at 0 and
+        `confident` can never read True on this store regardless of true recall quality. The SAME 80 recalls'
+        `margin_norm` sits in [0.393, 0.552] (mean 0.473) -- squarely inside the EXISTING 0.30/0.50 band (already
+        calibrated against `OneBrainComposer`'s normalized reads on the tiny-demo buffer, mrc 0.504-0.615), with
+        NO band change needed: the fix is comparing like-with-like, not re-tuning the threshold per codebook size.
+        A larger codebook DOES shrink the raw cosine margin (more candidate words inflate the runner-up's extreme
+        value) but the PEAK-relative ratio is far less sensitive to that -- see
+        research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md."""
         words = words if words is not None else self.words
         if len(rec) == 0:
             return []
@@ -981,6 +1001,9 @@ class RFPhasorComposer:
             runner_raw = float(sims[i, runner])
             confidence = float(np.clip(top_raw, 0.0, 1.0))
             runner_conf = float(np.clip(runner_raw, 0.0, 1.0))
+            top_r = max(top_raw, 0.0)
+            runner_r = max(runner_raw, 0.0)
+            margin_norm = float((top_r - runner_r) / (top_r + 1e-9)) if top_r > 0.0 else 0.0
             out.append({
                 "word": words[top],
                 "confidence": confidence,
@@ -989,6 +1012,7 @@ class RFPhasorComposer:
                 "runner_confidence": runner_conf,
                 "runner_score_raw": runner_raw,
                 "margin": float(top_raw - runner_raw),
+                "margin_norm": margin_norm,
                 "conflict": float(runner_conf / (confidence + runner_conf + 1e-9)),
             })
         return out

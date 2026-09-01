@@ -82,6 +82,46 @@ def test_rf_trace_exposes_cleanup_margin_and_source_fact():
     assert pol["margin"] >= 0.0
 
 
+def test_rf_trace_margin_norm_is_peak_relative_and_additive():
+    """2026-09-01 (board #94 calibration-at-scale): `margin_norm` is an ADDITIVE field on top of `margin` -- the
+    raw `top_raw - runner_raw` cosine difference `margin` reports stays UNCHANGED (self_schema_honesty.py and the
+    test above depend on it byte-identical), while `margin_norm` = `(top_r - runner_r) / (top_r + eps)` (both
+    rectified >= 0 first) is the SAME peak-normalized formula `OneBrainComposer._margin` uses -- the field
+    `metacog_production_organ.mean_role_confidence` now prefers so the SAME ROLE_CONF_LO/HI band applies across
+    composer types without a per-codebook-size retune (see that function's own docstring)."""
+    comp = RFPhasorComposer(seed=42, D=64, period=200, trace=True)
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+
+    assert comp.query_patient("dog", "go") == "north"
+    tr = comp.last_trace
+    patient = next(ch for ch in tr["roles"] if ch["role"] == "patient" and not ch["cue"])
+    assert patient["margin_norm"] is not None
+    assert 0.0 <= patient["margin_norm"] <= 1.0
+    top_r = max(patient["winner_score_raw"], 0.0)
+    runner_r = max(patient["runner_score_raw"], 0.0)
+    expected = (top_r - runner_r) / (top_r + 1e-9) if top_r > 0.0 else 0.0
+    assert patient["margin_norm"] == pytest.approx(expected, abs=1e-9)
+    # margin_norm is a DIFFERENT number from the raw margin (not a renamed duplicate) whenever the peak isn't 1.0.
+    if top_r not in (0.0, 1.0):
+        assert patient["margin_norm"] != pytest.approx(patient["margin"], abs=1e-9)
+
+
+def test_mean_role_confidence_prefers_margin_norm_over_raw_margin():
+    """`metacog_production_organ.mean_role_confidence` must read the peak-normalized `margin_norm` when present
+    (an RFPhasorComposer/ShardedPhasorStore-sourced trace) instead of the raw `margin` field -- and stay
+    byte-identical (falls through to `margin`) for any role chip that does not carry `margin_norm` (e.g.
+    OneBrainComposer's own trace, whose `margin` field IS already the normalized ratio)."""
+    from research.runners.metacog_production_organ import mean_role_confidence
+
+    # a role carrying BOTH fields (the RFPhasorComposer/ShardedPhasorStore shape) -> margin_norm wins.
+    activity_with_norm = {"roles": [{"role": "patient", "margin": 0.05, "margin_norm": 0.55, "confidence": 0.9}]}
+    assert mean_role_confidence(activity_with_norm) == pytest.approx(0.55)
+
+    # a role with only the legacy `margin` field (e.g. OneBrainComposer) -> unchanged fallback behavior.
+    activity_legacy = {"roles": [{"role": "patient", "margin": 0.55, "confidence": 0.9}]}
+    assert mean_role_confidence(activity_legacy) == pytest.approx(0.55)
+
+
 def test_rf_source_monitor_echo_checks_candidate_without_source_fact():
     comp = RFPhasorComposer(
         seed=42,

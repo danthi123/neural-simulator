@@ -11,15 +11,15 @@
     102
   ],
   "n_seeds": 6,
-  "elapsed_s": 2130.5211617946625,
-  "GO": true,
-  "status": "GO",
+  "elapsed_s": 1401.7787256240845,
+  "GO": false,
+  "status": "UNDEFINED",
   "preconditions": [
     {
       "kind": "require",
       "name": "byte_identical_off",
-      "ok": true,
-      "detail": "measured=True expect=True",
+      "ok": false,
+      "detail": "measured=False expect=True",
       "note": "holds on all 6 seeds"
     },
     {
@@ -44,9 +44,11 @@
       "note": "holds on all 6 seeds"
     }
   ],
-  "undefined_reasons": [],
+  "undefined_reasons": [
+    "unmet: byte_identical_off (measured=False expect=True)"
+  ],
   "per_check_all_seeds": {
-    "byte_identical_off": true,
+    "byte_identical_off": false,
     "load_bearing": true,
     "lesion_reverts": true,
     "moat": true
@@ -55,16 +57,16 @@
     {
       "seed": 42,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -183,26 +185,26 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     },
     {
       "seed": 43,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -297,26 +299,26 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     },
     {
       "seed": 44,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -411,26 +413,26 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     },
     {
       "seed": 100,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -537,26 +539,26 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     },
     {
       "seed": 101,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -651,26 +653,26 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     },
     {
       "seed": 102,
       "byte_identical": {
-        "off_n_sentences": 2,
+        "off_n_sentences": 4,
         "off_has_cf_key": false,
         "noltm_n_sentences": 2,
-        "off_matches_no_ltm_tier": true,
+        "off_matches_no_ltm_tier": false,
         "elab_only_n_sentences": 4,
         "elab_only_has_cf_key": false,
         "elab_only_is_floor": true,
-        "cf_only_n_sentences": 2,
-        "cf_only_reproduces_old_hollow": true,
-        "ok": true
+        "cf_only_n_sentences": 5,
+        "cf_only_reproduces_old_hollow": false,
+        "ok": false
       },
       "clean": {
         "n_sentences": 5,
@@ -777,12 +779,12 @@
         "lesioned_uncertain_reason": "low_confidence_capped"
       },
       "checks": {
-        "byte_identical_off": true,
+        "byte_identical_off": false,
         "load_bearing": true,
         "lesion_reverts": true,
         "moat": true
       },
-      "GO": true
+      "GO": false
     }
   ]
 }
