@@ -37,6 +37,18 @@ results across every frontier:
 Everything is committed to both backups; no default behavior was changed (the flips remain the owner's call). A
 workflow lesson was banked too: run parallel build-agents in isolated copies so their saves can't collide.
 
+Follow-on waves landed three more, still all-parallel: (1) the no-making-things-up filter now also catches two
+more sentence shapes it used to miss ("City, bordering Virginia, …" and "It's often associated with …"), so it
+covers the three constructions real machine-written prose actually uses; (2) MEMORY — the brain now decides for
+ITSELF which memory slot to put a new thing in (it picks whichever slot its own activity shows is free), instead
+of us assigning it by word order — proven on all six seeds, and it correctly avoids a slot that's already holding
+something, which the old word-order method never could; (3) VISION — a careful 36-way tuning sweep of the object-
+recognition read-out found no setting that clears the recognition bar (a small real gain, but ~3× short), and
+precisely mapped why, so the next lever is the invariance-learning rule itself, not the read-out. Two "already
+done" checks also saved wasted work: the brain's emotion state is already a smooth graded feeling (not the old
+two-state flip), and the nickname/alias knowledge lookup already worked — both just needed confirming, not
+building.
+
 ## 2026-09-01 (newest) — growing the brain's internal wiring is now cheap, and the second new connection already landed
 
 Point (3) from 2026-08-28 below ("migrating more faculties is now cheap") is now proven twice over. The generic
