@@ -67,7 +67,9 @@ class RFPhasorComposer:
                  plastic_source_seed_offset=0,
                  enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
                  sparse_index_c=8, sparse_index_conf_floor=0.5,
-                 enable_codebook_cache=False):
+                 enable_codebook_cache=False,
+                 enable_decode_escalation=False, decode_escalate_margin=0.02,
+                 decode_escalate_period=2000):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -246,6 +248,29 @@ class RFPhasorComposer:
         self._cb_frac = None       # (V,D) fractional-cycle codebook (V*D floats; read-only, shared)
         self._cb_z = None          # (V,D) phasor codebook (V*D complex128; read-only, shared)
         self._cb_cache_V = -1      # len(words) the cached codebook was built for; -1 = unbuilt
+        # (#66 seed-44 recall hole, 2026-09-01, DEFAULT-OFF = byte-identical). Confidence-gated finer-period
+        # re-examination of a MATCH candidate ("effortful second look"). ROOT CAUSE it closes: the RF phase
+        # readout `((period - spike_step) % period)/period` quantizes the recovered phase to 1/period (= 0.005 at
+        # period=200), coarser than the real inter-word cleanup margin for some facts. When a fact's stored cue
+        # role decodes (argmax over the full vocab) to the WRONG word by a razor-thin margin, `_scan_first_match`
+        # rejects a fact that GENUINELY encodes the cued value -> a false abstain (the seed-44 hole:
+        # berkeley_county_virginia's `located_in...` role lost to `pelagonians` by 0.0022 of mean-cos, flipping
+        # what_does to None + ask_yes_no to unknown). The fix: for a fact still viable on the earlier cue roles
+        # whose stored `role` decoded to a different word than the cued value BUT where the cued value is a
+        # near-tie runner-up (winner_score - value_score <= margin), re-unbind THAT ONE fact's role at a FINER
+        # resonate period (a more faithful, longer-integrated neural readout -- speed-secondary/faithfulness-first)
+        # and accept the match iff the finer decode now argmaxes to the cued value. MOAT-SAFE BY CONSTRUCTION:
+        # (1) it only fires for an IN-VOCABULARY cued value (an unknown cue word is not in `self.concepts`, so an
+        # unknown-agent/unknown-relation moat query never escalates -> it always abstains); (2) the finer readout
+        # converges to the ideal (closed-form) representation, so a fact that does not genuinely encode the cued
+        # value stays rejected (escalation can only RECOVER a truly-stored fact the coarse readout dropped, never
+        # manufacture a wrong match). Biology binding: a difficulty-dependent decision time -- an uncertain /
+        # near-tie readout triggers longer evidence integration before committing (speed-accuracy trade-off /
+        # drift-diffusion decision-time). Latency stays at the fast common case (period unchanged) because the
+        # finer re-resonate touches only the rare near-tie candidates, not every query.
+        self.enable_decode_escalation = bool(enable_decode_escalation)
+        self.decode_escalate_margin = float(decode_escalate_margin)
+        self.decode_escalate_period = int(decode_escalate_period)
         self.kb = []  # (fact_dict, composite_phases)
         self._source_kb = []  # (roles_present, independent_source_composite_phases)
         if self.enable_source_monitor:
@@ -268,17 +293,20 @@ class RFPhasorComposer:
         self._bridge_cache = {}  # (c-opt) reuse RF bridges by neuron count -> avoid _initialize_simulation_data per op
 
     # --- RF complex-synapse ops (each op a per-op RF bridge; reuse-by-import the substrate) ---
-    def _resonate(self, n, conns, kick):
+    def _resonate(self, n, conns, kick, period=None):
         # (c-opt) reuse a cached bridge per neuron count; zero its complex weights (rf_set_complex_weights appends)
         # and rf_kick resets the RF state -> each op is clean. Avoids _initialize_simulation_data per op.
+        # `period` (default None -> self.period) lets a caller run a FINER-resolution resonate for the same op (the
+        # decode-escalation "second look"); period is per-rf_kick, so the cached bridge is reused unchanged.
+        per = self.period if period is None else int(period)
         b = self._bridge_cache.get(n)
         if b is None:
             b = _build_rf_bridge(n, self.seed)
             b.core_config.enable_rf_cudagraph = self._enable_rf_cudagraph   # opt-in megakernel resonate fast path
             self._bridge_cache[n] = b
         b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
-        b.rf_kick(kick, period=self.period, lam=0.0)
-        b.rf_resonate_steps(self.period + 8)   # (c-opt) fast RF dynamics loop -- skips the full-step machinery
+        b.rf_kick(kick, period=per, lam=0.0)
+        b.rf_resonate_steps(per + 8)   # (c-opt) fast RF dynamics loop -- skips the full-step machinery
         if self.trace:
             self._last_resonate_n = n          # remember which cached bridge to read for the gauge (trace-only)
         return np.asarray(b.rf_read_phases())
@@ -612,7 +640,7 @@ class RFPhasorComposer:
             return f"{a} {ac} {pt}"
         return self._cleanup(rec)
 
-    def _unbind_phases(self, composite_phases, role):
+    def _unbind_phases(self, composite_phases, role, period=None):
         """recovered = conj(role_phasor) (x) composite, via a conj diagonal complex synapse.
 
         The unbind synapse weights are conj(role). DEFAULT (local_reciprocal_unbind=False): the host computes
@@ -631,7 +659,7 @@ class RFPhasorComposer:
             conns = [(D + k, k, zr_conj[k]) for k in range(D)]
         kick = np.zeros(2 * D, dtype=np.complex128)
         kick[:D] = zc
-        return self._resonate(2 * D, conns, kick)[D:]
+        return self._resonate(2 * D, conns, kick, period=period)[D:]
 
     def _izh_bank(self, V):
         """A cached Izhikevich concept bank of V neurons (no wiring; driven by external current) -- the Stage-2 WTA."""
@@ -884,14 +912,52 @@ class RFPhasorComposer:
 
     def _scan_first_match(self, **cue_roles):
         """First stored-fact index whose cue roles ALL match (batched unbind+cleanup over the whole store), or None
-        -- the batched equivalent of the per-fact match loop (first-match semantics preserved)."""
+        -- the batched equivalent of the per-fact match loop (first-match semantics preserved).
+
+        With `enable_decode_escalation` (default OFF = byte-identical: the extra branch never runs), a fact whose
+        stored role decoded to a different word than the cued value BUT for which the cued value is a near-tie
+        runner-up is re-examined at a finer resonate period before being dropped -- the confidence-gated
+        "effortful second look" that recovers a genuinely-stored fact the coarse phase readout mis-argmaxed. See
+        the `enable_decode_escalation` note in __init__ (root cause: the 1/period phase-readout quantization)."""
         comps = [comp for _f, comp in self.kb]
         mask = np.ones(len(comps), dtype=bool)
         for role, val in cue_roles.items():
-            words = self._cleanup_all(self._unbind_all_phases(comps, role))
-            mask &= np.fromiter((w == val for w in words), dtype=bool, count=len(words))
+            rec = self._unbind_all_phases(comps, role)
+            words = self._cleanup_all(rec)
+            role_mask = np.fromiter((w == val for w in words), dtype=bool, count=len(words))
+            if self.enable_decode_escalation:
+                role_mask = self._escalate_role_match(rec, comps, role, val, words, role_mask, mask)
+            mask &= role_mask
         idx = np.where(mask)[0]
         return int(idx[0]) if len(idx) else None
+
+    def _escalate_role_match(self, rec, comps, role, val, words, role_mask, prior_mask):
+        """Confidence-gated finer-period re-examination of near-tie MATCH candidates (see `_scan_first_match` +
+        the `enable_decode_escalation` note). For a fact still viable on the earlier cue roles (`prior_mask`)
+        whose stored `role` decoded (coarse argmax) to a word other than the cued `val`, but where `val` is a
+        near-tie runner-up (winner mean-cos - `val` mean-cos <= `decode_escalate_margin`), re-unbind THAT fact's
+        role at `decode_escalate_period` (a finer, longer-integrated readout) and set its match bit iff the finer
+        decode now argmaxes to `val`. MOAT-SAFE: (1) an out-of-vocabulary `val` (an unknown-agent / unknown-relation
+        moat cue) is never in `self.concepts`, so escalation is skipped entirely and the query abstains as before;
+        (2) the finer readout converges to the ideal representation, so a fact that does not genuinely encode `val`
+        is never promoted (recovers a truly-stored fact only, never manufactures a wrong match). Returns the
+        (possibly-updated) role_mask; a byte-identical no-op when no candidate is a near-tie."""
+        if not isinstance(val, str) or val not in self.concepts:
+            return role_mask                                   # unknown/non-vocab cue -> abstain path unchanged (moat)
+        cand = np.where(prior_mask & ~role_mask)[0]            # viable-so-far AND not-yet-matching this role
+        if len(cand) == 0:
+            return role_mask
+        rec_arr = np.asarray(rec)
+        val_code = self.concepts[val]
+        s_val = np.cos(2.0 * np.pi * (rec_arr[cand] - val_code[None, :])).mean(axis=1)      # (m,) cued-value score
+        win_codes = np.stack([self.concepts[words[i]] for i in cand])                        # (m, D) coarse winners
+        s_win = np.cos(2.0 * np.pi * (rec_arr[cand] - win_codes)).mean(axis=1)               # (m,) winner score
+        near = cand[(s_win - s_val) <= self.decode_escalate_margin]                          # near-tie candidates only
+        for i in near:
+            fine = self._unbind_phases(np.asarray(comps[i]), role, period=self.decode_escalate_period)
+            if self._cleanup(fine) == val:                     # finer readout confirms the fact truly encodes val
+                role_mask[i] = True
+        return role_mask
 
     # --- (B3) READ-ONLY per-turn trace helpers (only invoked on the trace path; default OFF = byte-identical) ---
     def _cleanup_all_score_stats(self, rec, words=None):

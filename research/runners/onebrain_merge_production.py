@@ -549,13 +549,14 @@ class Pool1BoundComposer(RFPhasorComposer):
         self._rf_mask = m
         return self
 
-    def _resonate(self, n, conns, kick):
+    def _resonate(self, n, conns, kick, period=None):
+        per = self.period if period is None else int(period)   # finer-period "second look" (decode escalation)
         n = int(n)
         pool1 = getattr(self, "_pool1", None)
         if pool1 is None or n > self._rf_size:
             # FALLBACK: an op bigger than the composer region (a large-K batched scan) runs on a private per-op
             # RF bridge -- byte-identical to the shared-slice op, but off the shared pool (the sizing residual).
-            return super()._resonate(n, conns, kick)
+            return super()._resonate(n, conns, kick, period=period)
         b = pool1.bridge
         base = self._rf_base
         N = int(b.core_config.num_neurons)
@@ -564,8 +565,8 @@ class Pool1BoundComposer(RFPhasorComposer):
         full_kick = np.zeros(N, dtype=np.complex128)
         kk = np.asarray(kick, dtype=np.complex128).reshape(-1)
         full_kick[base:base + n] = kk[:n]
-        b.rf_kick(full_kick, period=self.period, lam=0.0, neuron_mask=self._rf_mask)
-        b.rf_resonate_steps(self.period + 8)
+        b.rf_kick(full_kick, period=per, lam=0.0, neuron_mask=self._rf_mask)
+        b.rf_resonate_steps(per + 8)
         phases = np.asarray(b.rf_read_phases())
         if self.trace:
             self._last_resonate_n = n

@@ -194,6 +194,9 @@ def main():
     ap.add_argument("--json", default=None)
     ap.add_argument("--enable-codebook-cache", action="store_true",
                    help="ON: pass enable_codebook_cache=True to the LTM store (board #192 latency lever)")
+    ap.add_argument("--enable-decode-escalation", action="store_true",
+                   help="ON: pass enable_decode_escalation=True to the LTM store (#66 seed-44 recall-hole fix -- "
+                        "confidence-gated finer-period re-examination of near-tie match candidates)")
     a = ap.parse_args()
 
     t_start = time.time()
@@ -236,7 +239,8 @@ def main():
         brain_dir, conv_facts = _make_production_brain(a.seed, D, tmp)
         t0 = time.time()
         agent, load_manifest = load_developed_brain(brain_dir, ltm_bundle=a.bundle, use_multiturn=False,
-                                             seed=a.seed, enable_codebook_cache=a.enable_codebook_cache)
+                                             seed=a.seed, enable_codebook_cache=a.enable_codebook_cache,
+                                             enable_decode_escalation=a.enable_decode_escalation)
         out["ltm_load_s"] = round(time.time() - t0, 2)
         inner = _inner_agent(agent)
         out["tiered_installed"] = type(inner.composer).__name__ == "TieredFactStore"

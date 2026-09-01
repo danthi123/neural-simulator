@@ -18,7 +18,7 @@ import time
 import numpy as np
 
 
-def _run_single(seed: int, bundle: str, out_path: str) -> dict:
+def _run_single(seed: int, bundle: str, out_path: str, enable_decode_escalation: bool = False) -> dict:
     """Run the single-seed verify and return its output dict."""
     from research.runners._knowledge_scale_100k_production_verify import main as verify_main
     import sys
@@ -30,6 +30,8 @@ def _run_single(seed: int, bundle: str, out_path: str) -> dict:
         "--seed", str(seed),
         "--json", out_path,
     ]
+    if enable_decode_escalation:
+        argv.append("--enable-decode-escalation")   # #66 seed-44 recall-hole fix
     sys.argv = argv
     ret = verify_main()
     # read the JSON back
@@ -42,6 +44,8 @@ def main():
     ap.add_argument("--bundle", default="/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k")
     ap.add_argument("--json", default="research/findings/raw/_knowledge_scale_100k_cacheon_6seed.json")
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
+    ap.add_argument("--enable-decode-escalation", action="store_true",
+                   help="ON: pass --enable-decode-escalation to each per-seed verify (#66 seed-44 recall-hole fix)")
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
     out_dir = os.path.dirname(a.json)
@@ -54,7 +58,7 @@ def main():
         print(f"[{seed}/{len(seeds)}] running 79k scale verify with codebook-cache ON, seed={seed} ...", flush=True)
         out_path = os.path.join(out_dir, f"_knowledge_scale_100k_cacheon_s{seed}.json")
         try:
-            res = _run_single(seed, a.bundle, out_path)
+            res = _run_single(seed, a.bundle, out_path, enable_decode_escalation=a.enable_decode_escalation)
             per_seed[seed] = res
             print(f"       status={res.get('status')} recall={res.get('scale_battery_flag_unset', {}).get('recall_rate')} "
                   f"lat_med={res.get('scale_battery_flag_unset', {}).get('latency_ms_median')}ms", flush=True)
