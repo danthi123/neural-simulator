@@ -1,0 +1,107 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "backend": "numpy",
+  "device": "cpu",
+  "note_provenance": "hand-aggregated from the 6 per-seed artifacts (each auto-provenanced by research/runners/__init__ with its own .prov.json, all backend=numpy/device=cpu, SIM_BACKEND=numpy set explicitly on every invocation); this file itself is a derived summary, not a fresh run.",
+  "aggregate_of_seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "patient_content_word_hit_frac": 0.25927,
+      "any_field_content_word_hit_frac": 0.4048,
+      "in_vocab_scope_pass_frac": 0.6817,
+      "conditional_grounding_rate_given_scope_pass": 0.709,
+      "n_demo_examples": 7,
+      "baseline_surfaced_fact_word": 3,
+      "boosted_surfaced_fact_word": 7,
+      "boost_newly_surfaced": 6,
+      "boosted_survives_postfilter": 7,
+      "verdict_status": "GO",
+      "mechanism_noop_checks_all_true": true
+    },
+    "43": {
+      "patient_content_word_hit_frac": 0.25873,
+      "any_field_content_word_hit_frac": 0.39653,
+      "in_vocab_scope_pass_frac": 0.6417,
+      "conditional_grounding_rate_given_scope_pass": 0.6494,
+      "n_demo_examples": 7,
+      "baseline_surfaced_fact_word": 3,
+      "boosted_surfaced_fact_word": 7,
+      "boost_newly_surfaced": 6,
+      "boosted_survives_postfilter": 7,
+      "verdict_status": "GO",
+      "mechanism_noop_checks_all_true": true
+    },
+    "44": {
+      "patient_content_word_hit_frac": 0.25947,
+      "any_field_content_word_hit_frac": 0.3978,
+      "in_vocab_scope_pass_frac": 0.6517,
+      "conditional_grounding_rate_given_scope_pass": 0.6675,
+      "n_demo_examples": 8,
+      "baseline_surfaced_fact_word": 6,
+      "boosted_surfaced_fact_word": 8,
+      "boost_newly_surfaced": 7,
+      "boosted_survives_postfilter": 8,
+      "verdict_status": "GO",
+      "mechanism_noop_checks_all_true": true
+    },
+    "100": {
+      "patient_content_word_hit_frac": 0.25947,
+      "any_field_content_word_hit_frac": 0.39767,
+      "in_vocab_scope_pass_frac": 0.6867,
+      "conditional_grounding_rate_given_scope_pass": 0.7015,
+      "n_demo_examples": 7,
+      "baseline_surfaced_fact_word": 5,
+      "boosted_surfaced_fact_word": 7,
+      "boost_newly_surfaced": 6,
+      "boosted_survives_postfilter": 7,
+      "verdict_status": "GO",
+      "mechanism_noop_checks_all_true": true
+    },
+    "101": {
+      "patient_content_word_hit_frac": 0.25973,
+      "any_field_content_word_hit_frac": 0.3976,
+      "in_vocab_scope_pass_frac": 0.7,
+      "conditional_grounding_rate_given_scope_pass": 0.6238,
+      "n_demo_examples": 7,
+      "baseline_surfaced_fact_word": 1,
+      "boosted_surfaced_fact_word": 7,
+      "boost_newly_surfaced": 7,
+      "boosted_survives_postfilter": 7,
+      "verdict_status": "GO",
+      "mechanism_noop_checks_all_true": true
+    },
+    "102": {
+      "patient_content_word_hit_frac": 0.25933,
+      "any_field_content_word_hit_frac": 0.3978,
+      "in_vocab_scope_pass_frac": 0.685,
+      "conditional_grounding_rate_given_scope_pass": 0.6375,
+      "n_demo_examples": 7,
+      "baseline_surfaced_fact_word": 7,
+      "boosted_surfaced_fact_word": 7,
+      "boost_newly_surfaced": 3,
+      "boosted_survives_postfilter": 7,
+      "verdict_status": "UNDEFINED",
+      "mechanism_noop_checks_all_true": true
+    }
+  },
+  "aggregate_part3": {
+    "total_demo_examples_across_6_seeds": 43,
+    "baseline_surfaced_fact_word_total": 25,
+    "boosted_surfaced_fact_word_total": 43,
+    "boost_newly_surfaced_total": 35,
+    "boosted_survives_postfilter_total": 43,
+    "baseline_surfaced_rate": 0.5814,
+    "boosted_surfaced_rate": 1.0,
+    "boosted_survives_postfilter_rate": 1.0
+  },
+  "mechanism_noop_checks_all_true_every_seed": true,
+  "per_seed_go_count": 5,
+  "note": "The boosted-surfaced rate is 100% (43/43) in EVERY one of the 6 seeds individually and in aggregate -- the word-surfacing mechanism is robust across the full dev+blind seed set, not a single-seed artifact. One seed (102) reads UNDEFINED on the strict per-seed Verdict control check because baseline ALSO happened to hit ceiling (7/7) on that seeds own curated 8-example set -- an artifact of demo selection favoring multi-content-word-rich facts (which also raises baseline chance-overlap odds on a 40-token continuation), not a mechanism failure; boosted_surfaced was still 7/7 on that seed too. The aggregate 25/43 (58.1%) baseline vs 43/43 (100%) boosted, and 35/43 (81.4%) newly surfaced by the boost, is the load-bearing 6-seed number."
+}

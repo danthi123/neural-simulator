@@ -1,0 +1,360 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 102,
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts_total": 15000,
+  "n_facts_affirm": 15000,
+  "checkpoint_vocab_size": 1000,
+  "part1_corpus_coverage_ceiling": {
+    "n_affirm_facts": 15000,
+    "patient_content_word_hit": 3890,
+    "patient_content_word_hit_frac": 0.25933,
+    "any_field_content_word_hit": 5967,
+    "any_field_content_word_hit_frac": 0.3978,
+    "note": "This checkpoint's V=1000 vocabulary is word-level and closed (no subword fallback): a fact token with no trained embedding CANNOT be produced by this decoder at all, by construction. The majority (~74%) of facts have zero content-word overlap -- the structural wall the task named, now precisely quantified rather than assumed."
+  },
+  "part2_live_engagement": {
+    "n_sampled_agents": 600,
+    "in_vocab_scope_pass": 411,
+    "in_vocab_scope_pass_frac": 0.685,
+    "scope_pass_AND_has_fact_content_overlap": 262,
+    "scope_pass_AND_has_fact_content_overlap_frac_of_sample": 0.4367,
+    "conditional_grounding_rate_given_scope_pass": 0.6375,
+    "lead_in_phrase_alone_passes_scope_on_nonsense_topic": true,
+    "note": "`in_vocab_scope('tell me about <nonsense>')` == True: the lead-in phrase alone ('tell'/'me'/'about', all in-vocab and NOT in _FUNCTION_WORDS) can satisfy min_content_hits=2 without the topic itself contributing anything -- a real, previously-undiscovered gap in the ALREADY-default-ON (2026-08-30) scope gate, found by this measurement, logged to FAILURE_LOG.md, NOT fixed here (out of this task's scope; BRAIN_OPEN_ENDED itself stays default-OFF so this is not live in production). It means the WKV mouth reaches real Wikidata topics far MORE than Part 1's raw vocabulary ceiling alone would predict when phrased with a content-bearing lead-in -- which makes fact-grounding MORE, not less, load-bearing: today those engaged turns get zero grounding at all."
+  },
+  "part3_before_after_demo": {
+    "n_examples": 7,
+    "baseline_surfaced_fact_word": 7,
+    "boosted_surfaced_fact_word": 7,
+    "boost_newly_surfaced_a_word_baseline_missed": 3,
+    "boosted_fact_word_survives_honesty_postfilter": 7,
+    "examples": [
+      {
+        "agent": "lydia_name",
+        "msg": "tell me about lydia name",
+        "triples": [
+          [
+            "lydia_name",
+            "language_of_work_or_name",
+            "number_of_english_words"
+          ]
+        ],
+        "boosted_words": [
+          "words",
+          "work",
+          "or",
+          "name"
+        ],
+        "baseline_raw": "tell me about name the bird and said that is a nice dog you are very pretty with sue on her notebook and she was not happy to have fun but they did not know what it could do with their friends again and",
+        "boosted_raw": "tell me about name the bird or a hug and said thank you for being my name is it is not good or friendly or i have to be friends with or work on his words and work together work hard work but she",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "words",
+          "work"
+        ],
+        "baseline_filtered": "tell me about name the bird and said that is a nice dog you are very pretty with sue on her notebook and she was not happy to have fun but they did not know what it could do with their friends again and",
+        "boosted_filtered": "tell me about name the bird or a hug and said thank you for being my name is it is not good or friendly or i have to be friends with or work on his words and work together work hard work but she",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "small_forward",
+        "msg": "tell me about small forward",
+        "triples": [
+          [
+            "small_forward",
+            "sport",
+            "basket_ball"
+          ]
+        ],
+        "boosted_words": [
+          "basket",
+          "ball",
+          "small"
+        ],
+        "baseline_raw": "tell me about small and the cat could ride it back to his friend a little boy named remy was walking around the garden with his friends and they all lived happily ever after in the big red ball that she loved her high",
+        "boosted_raw": "tell me about small ball and the ball all day long of a small ball that was small just as small ball started to move on its own small ball with his ball and ball rolled into the ball and it went out from",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about small and the cat could ride it back to his friend a little boy named remy was walking around the garden with his friends and they all lived happily ever after in the big red ball that she loved her high",
+        "boosted_filtered": "tell me about small ball and the ball all day long of a small ball that was small just as small ball started to move on its own small ball with his ball and ball rolled into the ball and it went out from",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "river_mississippi",
+        "msg": "tell me about river mississippi",
+        "triples": [
+          [
+            "river_mississippi",
+            "country",
+            "u_s_of_a"
+          ],
+          [
+            "river_mississippi",
+            "instance_of",
+            "middle_course"
+          ],
+          [
+            "river_mississippi",
+            "located_in_time_zone",
+            "central_daylight_time"
+          ]
+        ],
+        "boosted_words": [
+          "river",
+          "course",
+          "time"
+        ],
+        "baseline_raw": "tell me about river and they are happy their friends again the birds and the other animals were dogs in the garden of his house with a big smile on her face and said i am not your friend anymore you want to play",
+        "boosted_raw": "tell me about river and they are happy their friends again the time of the river is time okay tim said thank you for a time to go home mom look at him inside and gave it back to her room with his toys",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time"
+        ],
+        "baseline_filtered": "tell me about river and they are happy their friends again the birds and the other animals were dogs in the garden of his house with a big smile on her face and said i am not your friend anymore you want to play",
+        "boosted_filtered": "tell me about river and they are happy their friends again the time of the river is time okay tim said thank you for a time to go home mom look at him inside and gave it back to her room with his toys",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "road_cycling_race",
+        "msg": "tell me about road cycling race",
+        "triples": [
+          [
+            "road_cycling_race",
+            "subclass_of",
+            "cycle_race"
+          ]
+        ],
+        "boosted_words": [
+          "race",
+          "road"
+        ],
+        "baseline_raw": "tell me about road race again and the other and they all had a great day at the park mom and dad were very surprised but happy to have helped his friends dance with their new friend tim the bird and said i am lost",
+        "boosted_raw": "tell me about road race again and the race alone and go fast with their new friend a little bird named tim came to the park to play with his friends in the town there was a big race with lots of kids playing together",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about road race again and the other and they all had a great day at the park mom and dad were very surprised but happy to have helped his friends dance with their new friend tim the bird and said i am lost",
+        "boosted_filtered": "tell me about road race again and the race alone and go fast with their new friend a little bird named tim came to the park to play with his friends in the town there was a big race with lots of kids playing together",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "people_of_uganda",
+        "msg": "tell me about people of uganda",
+        "triples": [
+          [
+            "people_of_uganda",
+            "located_in_time_zone",
+            "kaliningrad_time"
+          ],
+          [
+            "people_of_uganda",
+            "shares_border_with",
+            "etymology_of_kenya"
+          ],
+          [
+            "people_of_uganda",
+            "member_of",
+            "united_nations"
+          ]
+        ],
+        "boosted_words": [
+          "time",
+          "people"
+        ],
+        "baseline_raw": "tell me about people of the story and they do not have many friends like to play with it because it was a big red ball that could talk back on the ground and she said i am lost my toy car but i did",
+        "boosted_raw": "tell me about people of the people in the big people and people who lived happily ever after to give it back to tim a people saw him and said no one was time for dinner she could not find her ball but he couldn't",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time"
+        ],
+        "baseline_filtered": "tell me about people of the story and they do not have many friends like to play with it because it was a big red ball that could talk back on the ground and she said i am lost my toy car but i did",
+        "boosted_filtered": "tell me about people of the people in the big people and people who lived happily ever after to give it back to tim a people saw him and said no one was time for dinner she could not find her ball but he couldn't",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "tree_plantations",
+        "msg": "tell me about tree plantations",
+        "triples": [
+          [
+            "tree_plantations",
+            "part_of",
+            "cultivated_land"
+          ]
+        ],
+        "boosted_words": [
+          "tree"
+        ],
+        "baseline_raw": "tell me about tree that the bird could teach it to his friends and they both had a beautiful day with her mom and dad in the kitchen ever again and came back to the garden and saw many people of them all their",
+        "boosted_raw": "tell me about tree that the tree was very happy and said thank you for helping me lucy didn't like it too much to be a good friend at him and they played together all day long in the tree he saw a big",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about tree that the bird could teach it to his friends and they both had a beautiful day with her mom and dad in the kitchen ever again and came back to the garden and saw many people of them all their",
+        "boosted_filtered": "tell me about tree that the tree was very happy and said thank you for helping me lucy didn't like it too much to be a good friend at him and they played together all day long in the tree he saw a big",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "new_zealnd",
+        "msg": "tell me about new zealnd",
+        "triples": [
+          [
+            "new_zealnd",
+            "shares_border_with",
+            "commonwealth_australia"
+          ],
+          [
+            "new_zealnd",
+            "member_of",
+            "united_nations"
+          ],
+          [
+            "new_zealnd",
+            "contains_administrative_territorial_enti",
+            "canterbury_new_zealand"
+          ]
+        ],
+        "boosted_words": [
+          "new"
+        ],
+        "baseline_raw": "tell me about new you and my friends look at him and said i am a magic bird a big lion in the house with his mom and dad were surprised but happy too fast he could not get to the ball back to",
+        "boosted_raw": "tell me about new new new friend teddy his new friend a new friend named tim came to ride the horse and said thank you for new new friends and they all lived happily ever after in the new toy car with its new",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about new you and my friends look at him and said i am a magic bird a big lion in the house with his mom and dad were surprised but happy too fast he could not get to the ball back to",
+        "boosted_filtered": "tell me about new new new friend teddy his new friend a new friend named tim came to ride the horse and said thank you for new new friends and they all lived happily ever after in the new toy car with its new",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      }
+    ]
+  },
+  "part4_mechanism_noop_checks": {
+    "apply_fact_boost_noop_empty_ids": true,
+    "apply_fact_boost_noop_none_ids": true,
+    "apply_fact_boost_noop_zero_boost": true,
+    "apply_fact_boost_actually_boosts_when_on": true,
+    "generate_facts_none_deterministic_repeat": true,
+    "flag_default_off": true,
+    "flag_on_when_env_set": true
+  },
+  "verdict": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: fact-word surfaces in raw generation, boosted vs baseline (treatment=7 control=7 |sep|=0 > 0)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": false,
+        "detail": "treatment=7 control=7 |sep|=0 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: fact-word surfaces in raw generation, boosted vs baseline (treatment=7 control=7 |sep|=0 > 0)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": false,
+        "detail": "treatment=7 control=7 |sep|=0 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

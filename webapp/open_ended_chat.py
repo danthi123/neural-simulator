@@ -254,6 +254,23 @@ def skip_continue_enabled() -> bool:
     return os.environ.get("BRAIN_HONESTY_SKIP_CONTINUE", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def wkv_fact_grounding_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND` truthy -> when the WKV mouth (see `wkv_mouth_enabled`) is about to
+    generate a KNOWN-topic reply, `answer_turn` passes the already-retrieved `facts` (the SAME triples the
+    post-filter's contradiction check already uses -- no new retrieval, no new store access) into
+    `webapp.wkv_mouth_generator.generate(facts=...)`, which gives their in-vocab CONTENT-word tokens an additive
+    decode-time logit boost (`fact_grounding_ids` / `_apply_fact_boost`) so the genuine few-spike spiking WTA is
+    more likely to actually select the TRUE recalled word, where this checkpoint's closed V=1000 vocabulary has
+    one at all (board #112's named "clean unlock": let a known-topic free generation surface the brain's
+    recalled fact). A FOURTH, independent gate: only reached when `BRAIN_OPEN_ENDED` + `wkv_mouth_enabled()` are
+    ALSO truthy, the prompt is in-vocab, AND the topic is KNOWN. Default OFF (unset/0/false/off/no): `answer_turn`
+    calls `_WKV.generate()` with `facts=None`, byte-identical to before this flag existed -- see
+    research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md for the measured coverage ceiling (this
+    checkpoint's vocabulary structurally cannot express the large majority of real Wikidata facts; this lever
+    only helps the minority whose content word already exists in-vocab) and the before/after generation samples."""
+    return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
 # Longest-first so "what do you know about" wins over "what is"; each strips a natural lead-in to the bare entity.
 _LEADINS = sorted([
@@ -419,8 +436,14 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 # de-risked 2026-08-28 (_wkv_rep_penalty_derisk.json, GO decode_suppressible): a decode-time
                 # repetition guard kills the learned-head looping residual (2/2 -> 0 loops, byte-identical-off);
                 # only reached when BRAIN_OPEN_ENDED_WKV_MOUTH is on, so the default path is unaffected.
+                # board #112 fact-grounding lever (default OFF, see `wkv_fact_grounding_enabled`): on a KNOWN
+                # topic, pass the ALREADY-retrieved `facts` (no new store access) so their in-vocab content
+                # words get a decode-time boost. Flag off, or `known` False (nothing was retrieved): `facts=None`,
+                # identical to before this parameter existed.
+                ground_facts = facts if (known and wkv_fact_grounding_enabled()) else None
                 raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens,
-                                          repetition_penalty=1.3, no_repeat_ngram_size=3)
+                                          repetition_penalty=1.3, no_repeat_ngram_size=3,
+                                          facts=ground_facts)
                 wkv_used = True
                 generator_name = "wkv_mouth"
         except Exception:
