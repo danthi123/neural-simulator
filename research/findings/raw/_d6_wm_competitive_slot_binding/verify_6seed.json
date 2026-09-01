@@ -1,0 +1,988 @@
+{
+  "probe": "d6_wm_competitive_slot_binding",
+  "verdict": "GO -- EMERGENT free-slot-wins register allocation (6/6 seeds pass): >=2 referents introduced together land in DISTINCT registers via a genuine MultiSlotHold.probe_occupancy() argmin read (not a host loop index), invariant to mention order; a referent introduced AFTER an already-held (anchor) referent correctly avoids the anchor's OCCUPIED register too (impossible for a pure position marker, which never reads occupancy); the selection-only LESION (register 0 forced regardless of the probe) COLLAPSES the separation into the already-validated SUPERPOSED-collide regime on every seed (load-bearing); competitive=False stays byte-identical to the pre-existing role-by-position path. Closes the D6/onebrain-xedge declared residual: register assignment is no longer a position-only host MARKER.",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "device": "cpu",
+  "smoke": false,
+  "cost_acknowledged": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "mechanism": "MultiSlotHold.probe_occupancy() (a genuine zero-input cp_firing_states read over every register's band-max rate) replaces the role-by-position write marker; the referent is routed to argmin(occupancy) -- the register the substrate itself currently shows as free -- instead of its position in the sentence/call. Additive; BRAIN_MULTIREF_COMPETITIVE default-OFF; BRAIN_MULTIREF_COMPETITION_LESION ablates ONLY the selection (forces register 0), independent of the pre-existing BRAIN_MULTIREF_LESION (recur=0, the HOLD itself).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.09166666666666667,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.09166666666666667,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.07777777777777778,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.07777777777777778
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.07777777777777778
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.08333333333333333,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "cat",
+          "2": "cat"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.1111111111111111
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 43,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.09722222222222224,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.09722222222222224,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.07777777777777778,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.07777777777777778
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.07777777777777778
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.1138888888888889,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog",
+          "2": "dog"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.1111111111111111
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 44,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.05000000000000001,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.05000000000000001,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.08055555555555556,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.08055555555555556
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.08055555555555556
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.1277777777777778,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "horse",
+          "2": "horse"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.11944444444444446
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 100,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.011111111111111112,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.011111111111111112,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.02222222222222222,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.02222222222222222
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.02222222222222222
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.10555555555555556,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog",
+          "2": "dog"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.12777777777777777
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 101,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.061111111111111116,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.061111111111111116,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.06944444444444446,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.06944444444444446
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.06944444444444446
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.10833333333333334,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog",
+          "2": "horse"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.10277777777777779
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 102,
+      "together_AB": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.07777777777777779,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_BA": {
+        "n_referents": 2,
+        "input_order": [
+          "cat",
+          "dog"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "dog"
+        },
+        "hold_alive_min": 0.07777777777777779,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k2_distinct_both_orders": true,
+      "together_k2_recovered_both_orders": true,
+      "together_k2_intact_collides": false,
+      "together_k3": {
+        "n_referents": 3,
+        "input_order": [
+          "dog",
+          "cat",
+          "bird"
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "cat",
+          "2": "bird"
+        },
+        "hold_alive_min": 0.06944444444444446,
+        "zero_input_ok": true,
+        "all_recovered": true,
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "distinct_registers": true,
+        "competitive": true,
+        "competition_lesioned": false
+      },
+      "together_k3_ok": true,
+      "anchor_AB": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "dog",
+          "2": "cat"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.06944444444444446
+      },
+      "anchor_BA": {
+        "input_order": [
+          "horse",
+          "cat",
+          "dog"
+        ],
+        "registers": [
+          0,
+          1,
+          2
+        ],
+        "recovered": {
+          "0": "horse",
+          "1": "cat",
+          "2": "dog"
+        },
+        "all_recovered": true,
+        "distinct_registers": true,
+        "hold_alive_min": 0.06944444444444446
+      },
+      "anchor_avoids_occupied_both_orders": true,
+      "anchor_all_three_recovered_both_orders": true,
+      "anchor_all_three_distinct_both_orders": true,
+      "lesion_together": {
+        "n_referents": 2,
+        "input_order": [
+          "dog",
+          "cat"
+        ],
+        "recovered": {
+          "0": "cat",
+          "1": "cat"
+        },
+        "hold_alive_min": 0.10833333333333334,
+        "zero_input_ok": true,
+        "all_recovered": false,
+        "registers": [
+          0,
+          0
+        ],
+        "distinct_registers": false,
+        "competitive": true,
+        "competition_lesioned": true
+      },
+      "lesion_anchor": {
+        "input_order": [
+          "horse",
+          "dog",
+          "cat"
+        ],
+        "registers": [
+          0,
+          0,
+          0
+        ],
+        "recovered": {
+          "0": "dog",
+          "1": "dog",
+          "2": "dog"
+        },
+        "all_recovered": false,
+        "distinct_registers": false,
+        "hold_alive_min": 0.10277777777777777
+      },
+      "lesion_together_collides": true,
+      "lesion_anchor_collides": true,
+      "byte_identical_off": true,
+      "seed_pass": true
+    }
+  ],
+  "elapsed_seconds": 5.7,
+  "HONEST_NOTE": "reuse-by-import of the banked-GO MultiSlotHold (D3 slow-NMDA hold, ONE shared FS) + RUNG6c HebbianBinder via the D6 production organ; NO sim/ edit, no new spiking mechanism. UNCHANGED residuals (declared, not closed by this): referent EXTRACTION (which tokens are referents) stays a host lexicon parse; the referent<->LOCAL-slot BIND stays the host-numpy RUNG6c binder; the register READ stays a host argmax over firing rate (the same read-out-instrument class used throughout this codebase's honest functional read-outs, e.g. affect/comprehension/metacog). What moved: WHICH REGISTER a referent lands in is now decided by a substrate READ, not a host loop index. This substrate has no background OU noise (ou_std_current_pA=0), so a probe over an all-baseline bank ties and breaks to the lowest free index -- a real (measured) tie, not a formula, but deterministic absent prior occupancy; the ANCHOR scenario is the non-trivial case where prior occupancy actually differs and the read demonstrably steers the allocation away from it."
+}
