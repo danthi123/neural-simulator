@@ -166,6 +166,140 @@ _REL_FRONTED_RE = re.compile(
 _REL_FRONTED_TRAILING_PREPS = ("from", "in", "of", "at", "on", "for", "with", "to")
 
 
+# ============================================================================================================
+# KB RELATION QUESTION TEMPLATES (2026-09-01, board #94 frontier -- the NL-parser-vs-real-KB residual named in
+# 2026-09-01-confidence-forthcomingness-ltm-elaboration-load-bearing-GO.md). See
+# `ChatBrain._kb_relation_question_route`'s docstring for the mechanism; summary here.
+#
+# THE GAP. The shipped `wikidata_core_15k` core's TOP relations (curation_report.json `relations_used`) include
+# many whose canonical token is a Wikidata property label COLLAPSED TO ONE UNDERSCORED TOKEN at curate time --
+# 'country_of_citizenship', 'member_of_political_party', 'place_of_birth', 'headquarters_location', ... --
+# because the store keys on ONE atomic vocab word per concept (module docstring of
+# `_knowledge_core_curate.py`). `_relation_fronted_route`'s regex deliberately requires the fronted relation to
+# be a SINGLE bare word ("a multi-word relation phrase is left to the generic parse, out of scope here" -- its
+# own docstring), and the generic `_extract_route` positional parse has no notion of a relation NOUN PHRASE at
+# all. So a natural question about any of these relations -- "what is X's country of citizenship?", "where was
+# X born?", "what political party is X a member of?" -- never reaches a routable (agent, action) pair and the
+# turn honestly (but wrongly) abstains, even though `composer.query_patient`/`what_does` answers instantly once
+# the right (entity_token, relation_token) pair reaches it (the SAME already-verified recall primitive every
+# other knowledge-grounding route uses; this closes ROUTING/COMPREHENSION only, not a recall or capacity gap).
+#
+# THE MECHANISM. A curated table maps each underscored relation to a SHORT list of natural-English question
+# shapes (regex, each capturing an `entity` group) -- two GENERIC shapes built from the relation's own
+# underscore-replaced phrase ("what is <entity>'s <phrase>?" / "what is the <phrase> of <entity>?", covers
+# every relation in the table with zero per-relation authoring) plus, for a subset that a real speaker phrases
+# more idiomatically ("where was X born?" rather than "what is X's place of birth?"), one or two EXTRA curated
+# shapes layered on top. This is COMPREHENSION-ONLY host code -- exactly the same honesty class as
+# `_relation_fronted_route`'s own regex and `_definitional_copula_route`'s hardcoded 'isa' -- a phrase-shape
+# scaffold; the entity side reuses `_ground_content_words`'s SAME genuine spiking alias-hop (or the naive
+# underscore-join fallback) already established for `_relation_fronted_route`, and the actual RECALL is
+# untouched (`what_does`/`query_patient` on the substrate). The no-confab moat is therefore intact: an unknown
+# entity, or a relation the store genuinely has no fact for, still returns nothing -> honest abstain. This can
+# only ADD a resolvable route, never invent an answer.
+#
+# LESION / LOAD-BEARING. `BRAIN_KB_RELATION_QUESTIONS` in {0,false,no,off} disables the whole pass -- byte-
+# identical to before this arc (the route never matches, `_extract_route` falls straight through to the
+# unchanged `_relation_fronted_route` / definitional-copula / generic parse for every question). Default-ON,
+# matching every other knowledge-grounding-arc flag (production-wired, not opt-in).
+# ============================================================================================================
+
+def _kb_relation_questions_enabled() -> bool:
+    """Default-ON (production-wired, not opt-in). `BRAIN_KB_RELATION_QUESTIONS` in {0,false,no,off} is the
+    LESION/escape."""
+    v = os.environ.get("BRAIN_KB_RELATION_QUESTIONS")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+# The shipped `wikidata_core_15k` core's TOP relations (curation_report.json `relations_used`) whose canonical
+# token carries an underscore -- exactly the set `_relation_fronted_route` cannot reach (its own docstring: "a
+# multi-word relation phrase is left to the generic parse"). 'instance_of' is deliberately EXCLUDED: it already
+# has a dedicated route (`_definitional_copula_route`'s alias-hop to 'is_a'/'is_an' -> 'instance_of'); adding a
+# second, differently-shaped route for the same relation risks two routes disagreeing on precedence for no gain.
+# A relation NOT in this table because its own canonical token is a single bare word (e.g. 'country', 'sport',
+# 'genre', 'follows') is already reachable via `_relation_fronted_route`'s "what <relation> is <entity>?" shape
+# or the generic 'what does X V' verb shape -- out of scope here for those. TWO single-word exceptions ARE kept
+# in this table: 'employer' and 'occupation' -- their natural phrasing ("who does X work for?", "what is X's
+# occupation?") does NOT fit `_relation_fronted_route`'s fixed "what <relation> is/are/was/were <entity>"
+# grammar (that route is never reached from these questions, so there is no double-routing risk); the generic
+# possessive/of templates below cover 'occupation' with zero extra authoring, and 'employer' gets its own idiom.
+_KB_UNDERSCORED_RELATIONS = (
+    "located_in_time_zone", "located_in_the_administrative_territoria", "subclass_of",
+    "headquarters_location", "shares_border_with", "language_of_work_or_name", "member_of", "part_of",
+    "taxon_rank", "country_of_citizenship", "followed_by", "contains_administrative_territorial_enti",
+    "country_of_origin", "languages_spoken_written_or_signed", "award_received", "participant_of",
+    "given_name", "place_of_birth", "place_of_death", "educated_at", "record_label", "work_location",
+    "original_language_of_film_or_tv_show", "member_of_political_party", "position_held", "parent_taxon",
+    "family_name", "employer", "occupation",
+)
+
+# A per-relation readability override for the GENERIC phrase (the plain underscore->space replacement reads
+# badly for these two -- both are curation-time TRUNCATIONS of a longer Wikidata property label, capped at
+# `sanitize(maxlen=40)` in `_knowledge_core_curate.py`, so there is no "correct" un-truncated phrase to recover;
+# this is a readable stand-in for the SAME literal canonical token, not a claim about the untruncated label).
+_KB_RELATION_PHRASE_OVERRIDE = {
+    "located_in_the_administrative_territoria": "administrative territorial entity",
+    "contains_administrative_territorial_enti": "administrative territorial entities it contains",
+}
+
+# Idiomatic EXTRA shapes for relations a real speaker phrases more naturally than the generic possessive/of
+# pair below (layered ON TOP of, never replacing, the generic pair -- both are always tried).
+_KB_RELATION_IDIOMS = {
+    "place_of_birth": [r"^where\s+was\s+(?P<entity>.+?)\s+born\??$"],
+    "place_of_death": [r"^where\s+did\s+(?P<entity>.+?)\s+die\??$"],
+    "educated_at": [r"^where\s+(?:was|is)\s+(?P<entity>.+?)\s+educated\??$",
+                     r"^where\s+did\s+(?P<entity>.+?)\s+study\??$"],
+    "work_location": [r"^where\s+does\s+(?P<entity>.+?)\s+work\??$"],
+    "headquarters_location": [r"^where\s+(?:is|are)\s+(?P<entity>.+?)\s+headquartered\??$",
+                               r"^where\s+are\s+(?P<entity>.+?)'s\s+headquarters\??$"],
+    "employer": [r"^who\s+does\s+(?P<entity>.+?)\s+work\s+for\??$"],
+    "award_received": [r"^what\s+award\s+did\s+(?P<entity>.+?)\s+receive\??$",
+                        r"^what\s+awards?\s+has\s+(?P<entity>.+?)\s+(?:received|won)\??$"],
+    "member_of_political_party": [r"^what\s+political\s+party\s+is\s+(?P<entity>.+?)\s+a\s+member\s+of\??$",
+                                   r"^what\s+party\s+does\s+(?P<entity>.+?)\s+belong\s+to\??$"],
+    "country_of_citizenship": [r"^what\s+country\s+is\s+(?P<entity>.+?)\s+a\s+citizen\s+of\??$",
+                                r"^what\s+is\s+(?P<entity>.+?)'s\s+nationality\??$"],
+    "followed_by": [r"^what\s+is\s+(?P<entity>.+?)\s+followed\s+by\??$"],
+    "subclass_of": [r"^what\s+is\s+(?P<entity>.+?)\s+a\s+subclass\s+of\??$"],
+    "part_of": [r"^what\s+is\s+(?P<entity>.+?)\s+part\s+of\??$"],
+    "member_of": [r"^what\s+is\s+(?P<entity>.+?)\s+a\s+member\s+of\??$"],
+    "participant_of": [r"^what\s+did\s+(?P<entity>.+?)\s+participate\s+in\??$"],
+    "shares_border_with": [r"^what\s+does\s+(?P<entity>.+?)\s+share\s+a\s+border\s+with\??$",
+                            r"^what\s+borders\s+(?P<entity>.+?)\??$"],
+    "record_label": [r"^what\s+record\s+label\s+is\s+(?P<entity>.+?)\s+signed\s+to\??$"],
+    "languages_spoken_written_or_signed": [r"^what\s+languages?\s+does\s+(?P<entity>.+?)\s+speak\??$"],
+}
+
+
+def _kb_relation_phrase(relation: str) -> str:
+    """The NATURAL noun phrase a question uses for `relation`'s generic templates: the readability override if
+    one exists, else the plain underscore->space replacement (reads fine for most of the table, e.g.
+    'country_of_citizenship' -> 'country of citizenship', 'given_name' -> 'given name')."""
+    return _KB_RELATION_PHRASE_OVERRIDE.get(relation, relation.replace("_", " "))
+
+
+def _build_kb_relation_patterns():
+    """Precompile every (regex, canonical_relation) pair ONCE at import time (not per-question) -- the idioms
+    plus the two generic shapes for every relation in `_KB_UNDERSCORED_RELATIONS`."""
+    out = []
+    for relation in _KB_UNDERSCORED_RELATIONS:
+        phrase = _kb_relation_phrase(relation)
+        phrase_re = re.escape(phrase).replace(r"\ ", r"\s+")
+        pats = list(_KB_RELATION_IDIOMS.get(relation, ()))
+        # 'who' as well as 'what' -- a person-typed relation ('employer', 'given_name', ...) reads as naturally
+        # with 'who'/'who's' as 'what'/"what's"; a non-person relation asked with 'who' simply finds no fact and
+        # honestly abstains (the moat), so broadening the WH-word here costs nothing.
+        pats.append(r"^(?:what|who)\s+is\s+(?P<entity>.+?)'s\s+%s\??$" % phrase_re)
+        pats.append(r"^(?:what|who)\s+is\s+the\s+%s\s+of\s+(?P<entity>.+?)\??$" % phrase_re)
+        for pat in pats:
+            out.append((re.compile(pat, re.IGNORECASE), relation))
+    return out
+
+
+_KB_RELATION_PATTERNS = _build_kb_relation_patterns()
+
+
 def _alias_hop(composer, candidate: str):
     """ONE genuinely-spiking hop: does the brain's OWN store know `candidate` as an ALIAS of some canonical
     concept? Reuses the EXACT `query_patient` primitive `compositional_chain_route.py`'s reasoning hops already
@@ -942,6 +1076,41 @@ class ChatBrain:
                 entity_final = grounded[0]
         return [entity_final, relation]
 
+    def _kb_relation_question_route(self, question):
+        """A KB RELATION question whose relation is an UNDERSCORED multi-word Wikidata property token the shipped
+        `wikidata_core_15k` core actually uses -- 'what is chelsea fc's country of citizenship?', 'where was X
+        born?', 'what political party is X a member of?'. `_relation_fronted_route` (above) deliberately excludes
+        this shape (its relation group is a single bare word only); this route covers exactly the complementary
+        multi-word-relation surface via the curated `_KB_RELATION_PATTERNS` table (see the module comment above
+        it for the mechanism + honesty note). Tries every precompiled pattern in order (idioms first, then the
+        two generic shapes, per relation); the first match wins. Returns [entity_final, relation] for a matched
+        + resolvable entity, or None (no shape matched, the lesion flag is set, or the entity/relation collides
+        with a self-alias) -- falls straight through to the unchanged definitional-copula / generic parse below,
+        byte-identical for every other question. COMPREHENSION only, mirroring `_relation_fronted_route` exactly:
+        recall stays on the caller's unchanged `what_does()`, so an unknown entity or a relation the store has no
+        fact for still honestly abstains -- this can only ADD a resolution, never invent a fact."""
+        if not _kb_relation_questions_enabled():
+            return None
+        q = question.strip()
+        for rx, relation in _KB_RELATION_PATTERNS:
+            m = rx.match(q)
+            if not m:
+                continue
+            entity = m.group("entity").strip().strip(".,!?").strip().lower()
+            if not entity:
+                continue
+            if relation in self.router.self_aliases or entity in self.router.self_aliases:
+                continue
+            entity_toks = entity.split()
+            entity_final = "_".join(entity_toks)              # this store's own canonical-token convention
+            if _knowledge_grounding_enabled():
+                composer = getattr(self.inner, "composer", None)
+                grounded = _ground_content_words(composer, entity_toks, min_span=1)
+                if len(grounded) == 1:
+                    entity_final = grounded[0]
+            return [entity_final, relation]
+        return None
+
     def _definitional_copula_route(self, question):
         """A DEFINITIONAL copula question -- 'what is X?', "what's a X?", 'who is X?', 'define X' -- asks for X's
         CATEGORY. English lexicalizes that relation as the copula 'is', which the stopword strip removes as a
@@ -1026,6 +1195,14 @@ class ChatBrain:
         _relf = self._relation_fronted_route(question)
         if _relf is not None:
             return _relf
+        # KB RELATION question ('what is X's country of citizenship?', 'where was X born?') -> a real
+        # wikidata_core_15k UNDERSCORED multi-word relation `_relation_fronted_route` cannot reach (see
+        # `_kb_relation_question_route`'s docstring). Runs on the RAW `question` (its own patterns do their own
+        # tokenizing), same convention as the relation-fronted check above. A non-match / disabled flag returns
+        # None -> falls straight through to the unchanged logic below, byte-identical for every other question.
+        _kbrel = self._kb_relation_question_route(question)
+        if _kbrel is not None:
+            return _kbrel
         # DEFINITIONAL COPULA question ('what is X?') -> the instance-of relation 'isa'. Fires ONLY when the copula
         # strip left <=1 content word (i.e. the normal (agent, action) parse has NO verb to work with), so a question
         # that already carries two content words is untouched -> byte-identical for every previously-routable query.

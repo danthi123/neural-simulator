@@ -1,0 +1,23 @@
+{
+  "probe": "nl-parser KB-relation question routing (comprehension-only, deterministic)",
+  "n_relations": 29,
+  "routing_mock_no_build": {
+    "resolution_flag_on": 29,
+    "lesion_flag_off_returns_none": 29,
+    "of": 29
+  },
+  "recall_seed42_full_production_path": {
+    "relations_recalled_exact_patient": 29,
+    "note": "through _build_tiny_demo(onebrain)+shipped 15k ShardedPhasorStore LTM via TieredFactStore; gate() = the /api/brain-chat call; a WRONG patient scores as FAIL identically to abstain (moat)",
+    "examples": [
+      "gate=['frank_lincoln_wright', 'country_of_citizenship', 'u_s_of_a'",
+      "gate=['cha', 'language_of_work_or_name', 'number_of_english_words'",
+      "gate=['doctor_who_series', 'original_language_of_film_or_tv_show', 'number_of_english_words'",
+      "gate=['frank_lincoln_wright', 'languages_spoken_written_or_signed', 'number_of_english_words'",
+      "gate=['g_ttingen_germany', 'located_in_time_zone', 'rome_time'",
+      "gate=['documentary_series', 'subclass_of', 'theatrical_film'"
+    ]
+  },
+  "byte_identical_off": "STRUCTURAL: the route is a pure additive branch in _extract_route returning ONLY on its own regex match; a non-match returns None -> unchanged downstream. The 29/29 lesion-None result confirms the fallthrough path.",
+  "verdict": "routing resolution 29/29 + lesion-attributable 29/29 (flag gates) + recall-exact-patient 29/29 through the real production brain+LTM (moat-preserving) + idioms route; comprehension-only, no recall/capacity/sim change"
+}
