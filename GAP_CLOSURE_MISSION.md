@@ -75,6 +75,13 @@ episodic ENCODE-decision crossedge (6/6) · curiosity→d6-WM crossedge (6/6) ·
 - **Wave-3** (2 agents): NP-entailment PARTICIPIAL/PRONOUN moat coverage + graded-affect CIRCUMPLEX (P0.3 emotion
   surpass, bistable→graded continuous-attractor).
 
+**⭐ POLICY 2026-09-01 (owner directive): AUTO-FLIP, do NOT owner-gate.** The autonomous workflow FLIPS a
+faculty to production-default-ON automatically the moment it is validated-GO AND genuinely LOAD-BEARING on
+the live /api/brain-chat (vary→differ→lesion→vanish, changes content/tone/focus) AND moat-safe AND
+byte-identical-off-reversible AND NO-REGRESSION (doesn't degrade an existing capability). No owner sign-off.
+The ONLY guard kept is the hollow-flip trap (a flip that changes no reply text, or trades away a capability,
+is NOT a clean GO — do not flip it). The former '(UX-gated)' list below is now the AUTO-FLIP QUEUE:
+
 **TEED UP FOR OWNER (UX-gated):** (a) `BRAIN_OPEN_ENDED` bundle flip #112 — n=32 moat-soak found the flip
 fabrication-SAFE (dangerous-class delta from the children = 0.0, already covered by the always-on base
 filter); `GEN_TIME_HONESTY` is the load-bearing child on KNOWN topics, `NP_ENTAILMENT` measured ~inert on
