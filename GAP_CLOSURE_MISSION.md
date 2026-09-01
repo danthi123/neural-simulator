@@ -56,11 +56,24 @@ load-bearing / retire scaffolds).
    `2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md`; artifact
    `_open_ended_bundle_moat_soak_full.json`.)
 
-**IN FLIGHT (async — a DECISIVE run; do not lose):** S7(a) TinyStories token-supply 6-seed sweep on pool40 →
-does deep-NLL reach the fluency band [3.0, 3.69] by ~20 tok/param on simple-style text (bracketing Chinchilla),
-or plateau above it? Result → `research/findings/raw/_gen_cortex_s7a_tinystories_token_supply.json` (a waiter is
-set). If it REACHES the band → the token-lever provably reaches fluency on matched text; residual = corpus
-BREADTH. Branch `research/gen-cortex-s7a-token-to-fluency` (draft finding `2026-09-01-gen-cortex-s7a-...`).
+**⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
+roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
+fact word 43/43 every seed; residual = V=1000 vocab ~26% + word-not-sentence) · NP-entailment COPULA coverage
+(catches the rugby-club-called-"football" fabrication) · entity-ALIAS resolution verified (29/29) · surprise→
+episodic ENCODE-decision crossedge (6/6) · curiosity→d6-WM crossedge (6/6) · confidence real-shipped-traffic
+(root-caused #184) · scaffold-retirement (Hebbian-plausibility QUALIFIED + 2 stale ledger claims fixed).
+
+**IN FLIGHT (async — do not lose / double-launch):**
+- **⛔ #184 UNBLOCK (agent, TOP next-action, board #195):** `TieredFactStore._tiered()` doesn't carry the
+  answering LTM tier's confidence trace + the LTM `ShardedPhasorStore` emits no `last_trace` → metacog/confidence
+  reads EMPTY on every LTM-answered turn (honesty hedge silently OFF there). Fix = make the answering tier emit a
+  metacog-compatible trace + propagate it. Unblocks confidence-forthcomingness real-traffic (#94) AND the
+  source-monitoring honesty-FRAMING coupling (both BUILT this wave, both blocked on this ONE bug).
+- **S7(a)** TinyStories token-supply 6-seed sweep on pool → does deep-NLL reach the fluency band [3.0,3.69] by
+  ~20 tok/param on simple text? Result → `research/findings/raw/_gen_cortex_s7a_tinystories_token_supply.json`
+  (waiter set). REACHES → the token-lever provably reaches fluency, residual = corpus BREADTH.
+- **Wave-3** (2 agents): NP-entailment PARTICIPIAL/PRONOUN moat coverage + graded-affect CIRCUMPLEX (P0.3 emotion
+  surpass, bistable→graded continuous-attractor).
 
 **TEED UP FOR OWNER (UX-gated):** (a) `BRAIN_OPEN_ENDED` bundle flip #112 — n=32 moat-soak found the flip
 fabrication-SAFE (dangerous-class delta from the children = 0.0, already covered by the always-on base
