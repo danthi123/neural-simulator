@@ -41,8 +41,10 @@ load-bearing / retire scaffolds).
 6. **Moat-soak (`0bfdc786`):** the `BRAIN_OPEN_ENDED` bundle flip is SAFER than the flip-plan framed — the moat
    children (NP_ENTAILMENT / GEN_TIME_HONESTY) are byte-identical across arms on the DANGEROUS
    (Qwen-known/brain-unknown) class because `open_ended_chat.py` returns `_base_post_filter` (which abstains)
-   before either child is consulted; children matter only for KNOWN topics. n=2 smoke; fuller KNOWN-class battery
-   pending.
+   before either child is consulted; children matter only for KNOWN topics. CONFIRMED at n=32 (finding
+   `922e0c1d`): the flip is fabrication-SAFE (base filter abstains on all dangerous/unknown, 0 reaches the user);
+   the real cost is a KNOWN-topic GROUNDING regression — free-gen replaces exact recall and the WKV V=1000 mouth
+   can't express the 15k-KB's facts. The clean unlock (makes the flip a strict win) is the WKV mouth's KB grounding.
 
 **IN FLIGHT (async — a DECISIVE run; do not lose):** S7(a) TinyStories token-supply 6-seed sweep on pool40 →
 does deep-NLL reach the fluency band [3.0, 3.69] by ~20 tok/param on simple-style text (bracketing Chinchilla),
