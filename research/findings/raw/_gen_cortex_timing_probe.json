@@ -1,0 +1,87 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    6000,
+    24000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "25b341d7de52",
+      "vocab_sha": "c62a862b1b4b",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 6000,
+          "n_train_passages": 6000,
+          "n_tokens": 240000,
+          "tok_per_active_param": 0.567,
+          "wkv_deep_nll": 4.4938,
+          "trigram_deep_nll": 4.6959,
+          "bigram_deep_nll": 5.1248,
+          "margin_vs_trigram": 0.2021,
+          "perm_collapse": 0.8744,
+          "mless_collapse": 0.1168,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.3894,
+          "overfit_gap": 0.1044,
+          "n_deep": 45000,
+          "elapsed_s": 45.3
+        },
+        {
+          "max_train_sents": 24000,
+          "n_train_passages": 24000,
+          "n_tokens": 960000,
+          "tok_per_active_param": 2.268,
+          "wkv_deep_nll": 4.1399,
+          "trigram_deep_nll": 4.3254,
+          "bigram_deep_nll": 4.7225,
+          "margin_vs_trigram": 0.1855,
+          "perm_collapse": 1.5333,
+          "mless_collapse": 0.0936,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0185,
+          "overfit_gap": 0.1214,
+          "n_deep": 45000,
+          "elapsed_s": 61.6
+        }
+      ],
+      "delta_nll_min_to_max_tokens": 0.3539,
+      "top_segment_slope": 0.3539,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.3539,
+    "mean_top_point_wkv_deep_nll": 4.1399,
+    "max_tok_per_active_param_reached": 2.268,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.4499
+  },
+  "elapsed_s": 113.0
+}
