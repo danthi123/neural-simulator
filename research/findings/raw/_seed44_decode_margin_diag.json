@@ -1,0 +1,24 @@
+{
+  "backend": "numpy",
+  "device": "cpu",
+  "seed": 44,
+  "runner": "research.runners._knowledge_scale_100k_production_verify (+ manual decode-margin diagnostic)",
+  "argv": ["_knowledge_scale_100k_production_verify", "--bundle", "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k", "--enable-codebook-cache", "--enable-decode-escalation", "--seed", "44"],
+  "what": "seed-44 recall-hole decode-margin diagnostic + seed-44 gate result (numpy, wikidata_100k bundle, D=128, vocab 23914, shard 271)",
+  "cue": {"agent": "berkeley_county_virginia", "action": "located_in_the_administrative_territoria", "ground_truth_patient": "culture_of_west_virginia"},
+  "phase_readout_quantization": 0.005,
+  "phase_readout_quantization_note": "1/period = 1/200 = 0.005; RF first-spike readout ((period-spike_step)%period)/period",
+  "action_role_decode_margins": {
+    "stored_resonate_period200": {"winner": "pelagonians", "true_word_mean_cos": 0.32606, "pelagonians_mean_cos": 0.32829, "margin_true_minus_winner": -0.0022, "margin_abs": 0.0022, "correct": false},
+    "stored_resonate_period2000": {"winner": "located_in_the_administrative_territoria", "true_word_mean_cos": 0.33342, "pelagonians_mean_cos": 0.32872, "margin": 0.0047, "correct": true},
+    "stored_closed_form_infinite": {"winner": "located_in_the_administrative_territoria", "true_word_mean_cos": 0.33428, "pelagonians_mean_cos": 0.32879, "margin": 0.0055, "correct": true},
+    "ideal_encode_fast_period200_ORACLE_path": {"winner": "located_in_the_administrative_territoria", "true_word_mean_cos": 0.3385, "pelagonians_mean_cos": 0.33, "margin": 0.0085, "correct": true}
+  },
+  "stored_vs_encode_fast_composite_circular_phase_diff": {"L_inf": 0.0336, "mean": 0.0152},
+  "period_sweep_first_correct_period": 400,
+  "config_defaults": {"decode_escalate_margin": 0.02, "decode_escalate_period": 2000},
+  "cache_on_vs_off_query_patient": {"cache_off": null, "cache_on": null, "note": "both None -> the miss is PRE-EXISTING, not cache-induced"},
+  "byte_identity_and_moat_check": {"n_real_cues": 40, "off_vs_on_diffs": 0, "n_moat_cues": 70, "moat_confab": 0, "common_cue_latency_off_ms": 805, "common_cue_latency_on_ms": 813, "escalating_cue_extra_ms": 320, "latency_bar_ms": 1000},
+  "seed44_gate_result": {"oracle_mismatches": 0, "oracle_mismatches_before": 2, "checked": 558, "recall_rate": 1.0, "moat_confab": 0, "latency_ms_median": 969.27, "latency_ms_median_rounded": 969, "status": "GO"},
+  "seed_independence": {"ltm_manifest_seed": 42, "note": "LTM loads at manifest seed=42 for all 6 test seeds; the hole is in every seed, only seed-44's probe sample hit it"}
+}

@@ -114,7 +114,8 @@ class SharedBridgeComposer(RFPhasorComposer):
         m[cmp_idx] = True
         self._rf_mask = m
 
-    def _resonate(self, n, conns, kick):
+    def _resonate(self, n, conns, kick, period=None):
+        per = self.period if period is None else int(period)   # finer-period "second look" (decode escalation)
         n = int(n)
         if n > self._rf_size:
             raise ValueError(f"RF op needs {n} neurons but composer region is {self._rf_size}")
@@ -126,8 +127,8 @@ class SharedBridgeComposer(RFPhasorComposer):
         full_kick = np.zeros(N, dtype=np.complex128)
         kk = np.asarray(kick, dtype=np.complex128).reshape(-1)
         full_kick[base:base + n] = kk[:n]
-        b.rf_kick(full_kick, period=self.period, lam=0.0, neuron_mask=self._rf_mask)
-        b.rf_resonate_steps(self.period + 8)
+        b.rf_kick(full_kick, period=per, lam=0.0, neuron_mask=self._rf_mask)
+        b.rf_resonate_steps(per + 8)
         phases = np.asarray(b.rf_read_phases())
         return phases[base:base + n]
 
