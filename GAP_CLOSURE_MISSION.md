@@ -71,7 +71,14 @@ real prose so far — present both children's real contribution to the owner, th
 **⛔ OPS LESSON (this arc — apply going forward):** compute agents launched WITHOUT `isolation:worktree` run in
 the MAIN checkout and their `git checkout -b`/commit RACE (the S7a + moat-soak agents did; my NL-parser commit
 briefly stacked on the S7a branch — recovered cleanly, nothing lost). FUTURE compute agents MUST use
-`isolation:worktree`, or must not `git checkout` in the shared tree.
+`isolation:worktree`, or must not `git checkout` in the shared tree. TWO more recurring lapses this arc:
+(2) agents PARK then re-launch REDUNDANT heavy work in a loop — the NL-parser agent looped ~146 min / 335K
+tokens on an OOM-ing 15k-LTM verify AFTER its work was already landed on main; the fix is `TaskStop <agent-id>`
+once an agent's deliverable is on main + it keeps re-notifying (don't let it loop; don't keep resuming it).
+(3) a comprehension/ROUTING verify that rebuilds the 15k-LTM production brain per test case OOMs (RSS
+accumulates over ~12 builds) — verify deterministic ROUTING via the unbound route method + a mock `self`
+(pure parsing, no brain build, seconds) and confirm RECALL separately (it's the already-6-seed-GO
+`query_patient` primitive), instead of a full-brain rebuild per case. → run `evolve-skills` to bank (2)+(3).
 
 ---
 
