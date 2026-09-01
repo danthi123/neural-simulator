@@ -13,11 +13,11 @@ seeds: [42, 43, 44, 100, 101, 102]
 seeds_status: queued, not yet executed (single-seed 42 pipeline SMOKE only has run so far, at toy scale)
 external: >
   Same external round the parent finding grounded (2026-09-01, c71cc7c9): Hoffmann et al. 2022 "Training
-  Compute-Optimal LLMs" (Chinchilla) arXiv:2203.15556 (~20 tok/param optimal; below it a fixed-size model is
-  token-starved). Allal et al. SmolLM2 arXiv:2502.02737 and the TinyStories/phi small-model-fluency recipe
+  Compute-Optimal LLMs" (Chinchilla) arXiv:2203.15556 (~20 tok/param optimal; below it a fixed-size model is  <!--derived-->
+  token-starved). Allal et al. SmolLM2 arXiv:2502.02737 and the TinyStories/phi small-model-fluency recipe  <!--derived-->
   it documents (a small model is fluent when the DISTRIBUTION — topic AND vocabulary — is matched to its
   capacity) is why TinyStories specifically is the matched-quality corpus tried here. "Beyond
-  Chinchilla-Optimal" arXiv:2401.00448 (quality keeps improving to ~10000 tok/param — the token points here
+  Chinchilla-Optimal" arXiv:2401.00448 (quality keeps improving to ~10000 tok/param — the token points here  <!--derived-->
   stop at ~23 tok/param, well short of that ceiling, by corpus/wallclock budget, not by a claimed limit).
 instrument: >
   research/runners/_gen_cortex_token_supply_scaling_derisk.py — the SAME validated WKV-cortex token-supply
@@ -51,7 +51,7 @@ descending at the corpus's ceiling of **4.5 tok/param** — but that ceiling sit
 ~ppl20-40 fluency band (NLL 3.0-3.69). It could not say whether the descent, given enough tokens, actually
 **reaches** that band, because wikitext103 (broad-domain, complex) exhausts the eval-comparable token supply
 at that point. It named the untried next rung explicitly (S7(a) in its own §7): repeat the identical sweep on
-a **matched-quality, simple-STYLE, broad-topic** corpus — the TinyStories/phi recipe (arXiv:2502.02737) — at
+a **matched-quality, simple-STYLE, broad-topic** corpus — the TinyStories/phi recipe (arXiv:2502.02737) — at  <!--derived-->
 the SAME fixed small capacity, since that corpus has enough raw text to push tok/param past 20 (Chinchilla-
 optimal).
 
@@ -113,9 +113,9 @@ concurrent process's exit hook raced and mis-attributed the first sidecar, see t
 
 At this toy scale (n=1, tiny d=48, only 2 points to 1.416 tok/param) the smoke's own numbers are **not
 informative about S7(a)'s real question** — they exist only to prove the pipeline is sound: deep NLL fell
-4.570 → 4.8535 is wrong, correct value 5.8992 → 4.8535 across the two points (delta_nll_min_to_max_tokens =
-1.0457), `uses_context_at_top` true (perm_collapse +1.313, mless_collapse +0.222 at the top point — the WKV
-genuinely uses order and memory even at this toy scale), and `still_descending_at_top` true. The smoke does
+5.8992 → 4.8535 across the two points (delta_nll_min_to_max_tokens = 1.0457), `uses_context_at_top` true
+(perm_collapse +1.3128, mless_collapse +0.2219 at the top point — the WKV genuinely uses order and memory
+even at this toy scale), and `still_descending_at_top` true. The smoke does
 **not** yet beat the fair trigram (`beats_trigram_at_top` false, margin -0.7966 nats) — expected at 1.4
 tok/param and d=48, consistent with the parent's own low-token-point behavior on wikitext, not a regression.
 The smoke's own `verdict` field reads `GO-TOKEN-LEVER` (the runner's generic n=1 aggregate label) — this is a
