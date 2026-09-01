@@ -26,6 +26,18 @@ as before. This is a small but real step toward the brain's sense of "did I say 
 grounded in its own memory system, not just a label supplied from outside. Finding:
 `2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO`.
 
+Also 2026-09-01 — the brain's own-voice fluency "wall" turns out to be a DATA problem, not a design wall.
+The from-scratch language cortex (the brain-native generator meant to replace the language-model scaffold)
+had seemed to hit a ceiling on broad, everyday text, which we'd read as "the design has run out of capacity."
+A clean, size-matched test now shows that ceiling was simply too little training text: at a fair operating
+point the text keeps getting more fluent the more it trains on — still improving at ~4.5× the old training
+amount, on all 6 test seeds, genuinely using context (beating a strong simple baseline by a growing margin).
+So the path to open-ended fluency is more and better training text on the brain-native generator, not a
+fundamentally bigger or different design — and the old "needs ~10,000× more parameters" framing overstated
+the wall at a fair operating point. Honest limit: it is not fluent yet (still a little short of the target
+band), and closing that needs pushing the training-text scale much further. Finding:
+`2026-09-01-generative-cortex-token-supply-lever-broad-domain-plateau-is-starvation-not-capacity-wall`.
+
 ## 2026-08-30 — early harvest + three moves: a memory-consolidation dead-end mapped, the knowledge-latency cause found (30% win in hand), the brain-voice made the default in its channel
 
 A focused session against the remaining compute, with a pause partway through so the owner could use the machine.

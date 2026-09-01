@@ -1,8 +1,8 @@
 {
  "schema": "tool-health-v1",
  "generator": "tools/tool_health.py",
- "generated_at": "2026-09-01T18:01:18Z",
- "any_rotted": true,
+ "generated_at": "2026-09-01T18:30:11Z",
+ "any_rotted": false,
  "results": [
   {
    "tool": "experiment-engine",
@@ -10,23 +10,23 @@
    "status": "ready",
    "why": "built 4 current presets; swept basic_stimulus_response [[100.0, 4221], [200.0, 4221]] on cupy",
    "checked": "build 4 presets + step basic_stimulus_response x2",
-   "at": "2026-09-01T18:01:14Z"
+   "at": "2026-09-01T18:29:46Z"
   },
   {
    "tool": "auto-tune",
    "lane": "experiment",
-   "status": "ROTTED",
-   "why": "exit rc=1. __\n  File \"cupy/_core/_kernel.pyx\", line 167, in cupy._core._kernel._preprocess_args\n  File \"cupy/_core/_kernel.pyx\", line 154, in cupy._core._kernel._preprocess_arg\n  File \"cupy/_core/_scalar.pyx\", line 344, in cupy._core._scalar.CScalar.__init__\nTypeError: Unsupported type <class 'numpy.ndarray'>\n",
+   "status": "ready",
+   "why": "quick tuning sweep completed (rc=0)",
    "checked": "neural-simulator.py --auto-tune --quick",
-   "at": "2026-09-01T18:01:15Z"
+   "at": "2026-09-01T18:30:08Z"
   },
   {
    "tool": "gpu-queue",
    "lane": "gpu",
    "status": "ready",
-   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim-worktrees/four-day-queue && SIM_BACKEND=cupy /home/dant123/Projects/si (pi",
+   "why": "status ok (1 dispatcher). == gpu_queue == shared queue: /home/dant123/Projects/sim/research/queue state: running current: cd /home/dant123/Projects/sim && SIM_BACKEND=cupy .venv/bin/python -u -m research.runners._open_ende (pi",
    "checked": "gpu_queue.sh status + singleton",
-   "at": "2026-09-01T18:01:15Z"
+   "at": "2026-09-01T18:30:08Z"
   },
   {
    "tool": "pool",
@@ -34,7 +34,7 @@
    "status": "ready",
    "why": "3/3 nodes healthy",
    "checked": "tools.pool_health --json + a trivial dispatch check",
-   "at": "2026-09-01T18:01:17Z"
+   "at": "2026-09-01T18:30:09Z"
   },
   {
    "tool": "pool-checkout",
@@ -42,7 +42,7 @@
    "status": "ready",
    "why": "3 nodes: code present + venv imports numpy/scipy",
    "checked": "code present + venv import",
-   "at": "2026-09-01T18:01:18Z"
+   "at": "2026-09-01T18:30:11Z"
   },
   {
    "tool": "cloud-aws",
@@ -50,23 +50,9 @@
    "status": "unknown",
    "why": "no AWS instance recorded \u2014 nothing to describe (no spend); provision via tools/aws_gpu.sh only when a run justifies it",
    "checked": "aws_gpu.sh status",
-   "at": "2026-09-01T18:01:18Z"
+   "at": "2026-09-01T18:30:11Z"
   }
  ],
- "backlog_items": [
-  {
-   "id": "toolrot-auto-tune",
-   "what": "Repair rotted tool 'auto-tune' \u2014 exit rc=1. __\n  File \"cupy/_core/_kernel.pyx\", line 167, in cupy._core._kernel._preprocess_args\n  File \"cupy/_core/_kernel.pyx\", line 154, in cupy._core._kernel",
-   "source": "tools/tool_health.py",
-   "anchor": "auto-tune",
-   "files": "neural-simulator.py",
-   "verify_cmd": "python tools/tool_health.py --only auto-tune",
-   "dependencies": [],
-   "lane": "agent",
-   "priority": 3,
-   "rough_start": "2026-09-01",
-   "rough_target": "2026-09-01"
-  }
- ],
+ "backlog_items": [],
  "_doc": "STEP B2 coordination surface: the backlog generator reads backlog_items (one repair item per ROTTED tool). Do NOT edit tools/backlog.py \u2014 add a scanner there that reads THIS file."
 }
