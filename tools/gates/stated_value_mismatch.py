@@ -38,7 +38,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__
 # Names that carry a verdict in this project. Kept short on purpose: each added word is a false-positive
 # surface, and the ones here are exactly those that decide whether a result is interpretable.
 WATCHED_NAMES = ("chance", "floor", "baseline", "majority", "n_seeds")
-ARTIFACT_RE = re.compile(r"[\w.\-/]+\.(?:json|jsonl)")
+ARTIFACT_RE = re.compile(r"[\w.\-/]+\.(?:jsonl|json)")
 FM_RE = re.compile(r"^type:\s*finding\s*$", re.M)
 
 

@@ -49,7 +49,7 @@ from tools.gates import discover, run_all          # the SAME registry the pre-c
 import tools.claim_check as claim_check            # the SAME GATE 2 module the hook shells out to
 
 # A cited artifact path in prose/frontmatter: must contain a "/" and end in .json/.jsonl (claim_check's rule).
-_ART_FILE_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:json|jsonl)")
+_ART_FILE_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json)")
 # A bare path token (may be a directory) — used only for frontmatter `artifacts:` items and existence-tested.
 _PATH_TOKEN_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+/?")
 

@@ -41,7 +41,7 @@ NUM_RE = re.compile(r"(?<![\w.])(-?\d+\.\d{3,})(?![\w])")
 # Globs are allowed: a finding over N seeds cites one pattern, not N paths.
 # Must contain a "/" -- a bare filename mentioned in prose ("as g5fix_d025_*.json shows") is a REFERENCE, not a
 # citation, and treating it as one reports a missing artifact that was never claimed to be a path.
-PATH_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:json|jsonl))")
+PATH_RE = re.compile(r"([\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json))")
 VERDICT_RE = re.compile(r"\b(GO|NO-GO|PASS|FAIL|REFUTED|CONFIRMED)\b")
 DERIVED_MARK = "<!--derived-->"
 

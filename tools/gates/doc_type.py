@@ -49,7 +49,7 @@ RESULT_RE = re.compile(
     r"^[#>*\s|-]*\**\s*(?:RESULT|VERDICT|OUTCOME)\b"                 # a result/verdict heading or line
     r"|\b(?:6-seed|6 seeds|n=6)\b[^.\n]{0,40}\b(?:GO|PASS|NEGATIVE|REFUTED)\b"
     r"|\bis a (?:GO|NO-GO)\b|\bverdict:\s*\S", re.I | re.M)
-ARTIFACT_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:json|jsonl)")
+ARTIFACT_RE = re.compile(r"[\w.\-*?\[\]]+(?:/[\w.\-*?\[\]]+)+\.(?:jsonl|json)")
 FM_RE = re.compile(r"^type:\s*([a-z-]+)\s*$", re.M)
 
 
