@@ -86,7 +86,18 @@ facts, permuted-teaching control collapses to 0.0, 100% attributable) — but th
 wired into the WKV's own decode, and the clause is not yet natural English: the "verb" is a naive relation-
 label morphology guess (`"follows"`→`"followses"`) and entities render as raw underscored slugs, not real NPs.
 Honest map + concrete next steps (relation→predicate mapping, multi-word NPs, actual WKV-decode wiring) in
-`research/findings/2026-09-01-wkv-fact-to-svo-clause-first-lever-investigation.md`. Rung 2 still OPEN.) ·
+`research/findings/2026-09-01-wkv-fact-to-svo-clause-first-lever-investigation.md`. **⭐ #112 RUNG 3 LANDED
+2026-09-01, branch `research/wkv-fact-to-sentence`: both rung-2-named residuals CLOSED for the live store's
+full relation inventory** — a curated 34/34-relation `RELATION_LEXICON` (e.g. `employer`→"works for",
+`place_of_birth`→"was born in") + a closed-class underscored-slug→NP surfacer (`asimov_isaac`→"Asimov Isaac"),
+both driving the SAME unmodified `SpikingClauseProducer`: readable/faithful/moat-safe all 1.0 on all 6 seeds
+(48/48 real facts), permuted control collapses to 0.0, fallback path proven byte-identical to rung 2 for any
+future uncovered relation. Real examples: "the Zdf Tv is headquartered in the Free City of Mainz", "the Xx
+Winter Olympics follows the Salt Lake Olympics" (no longer "followses"). STILL a PARALLEL renderer, not wired
+into the WKV's own decode (rung 2's residual #3, unchanged) — no flag exists, so nothing to auto-flip. See
+`research/findings/2026-09-01-wkv-fact-to-sentence-lexicon-and-np-lever.md`. Per `docs/TERMS.md` this is a
+mechanism-level GO, NOT `closed`/`integrated` (no flag, not wired) — the WKV-decode-wiring rung is the next
+open step.) ·
 NP-entailment COPULA coverage
 (catches the rugby-club-called-"football" fabrication) · entity-ALIAS resolution verified (29/29) · surprise→
 episodic ENCODE-decision crossedge (6/6) · curiosity→d6-WM crossedge (6/6) · confidence real-shipped-traffic

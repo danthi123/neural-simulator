@@ -1,0 +1,854 @@
+{
+  "runner": "_wkv_fact_to_sentence_lexicon_lever",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "lexicon_coverage_vs_live_store": {
+    "checked": true,
+    "n_live_relations": 34,
+    "n_covered": 34,
+    "n_uncovered": 0,
+    "uncovered": [],
+    "coverage_frac": 1.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "economy_of_arizona",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the Economy of Arizona is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Economy of Arizona is located in the U S of A"
+        },
+        {
+          "agent": "christine_first_name",
+          "action": "language_of_work_or_name",
+          "patient": "french_language",
+          "surface": "the Christine First Name is in the language of the French Language",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Christine First Name is in the language of the French Language"
+        },
+        {
+          "agent": "pennsylvania_township",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the Pennsylvania Township is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Pennsylvania Township is located in the U S of A"
+        },
+        {
+          "agent": "gottfried",
+          "action": "language_of_work_or_name",
+          "patient": "wie_gehts",
+          "surface": "the Gottfried is in the language of the Wie Gehts",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Gottfried is in the language of the Wie Gehts"
+        },
+        {
+          "agent": "reggio_nell_emilia",
+          "action": "instance_of",
+          "patient": "city_work",
+          "surface": "the Reggio Nell Emilia is a City Work",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Reggio Nell Emilia is a City Work"
+        },
+        {
+          "agent": "zdf_tv",
+          "action": "headquarters_location",
+          "patient": "free_city_of_mainz",
+          "surface": "the Zdf Tv is headquartered in the Free City of Mainz",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Zdf Tv is headquartered in the Free City of Mainz"
+        },
+        {
+          "agent": "meurthe_and_moselle",
+          "action": "country",
+          "patient": "franzoesische_republik",
+          "surface": "the Meurthe and Moselle is located in the Franzoesische Republik",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Meurthe and Moselle is located in the Franzoesische Republik"
+        },
+        {
+          "agent": "magyar_k_zt_rsas_g",
+          "action": "instance_of",
+          "patient": "sovereign_states",
+          "surface": "the Magyar K Zt Rsas G is a Sovereign States",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Magyar K Zt Rsas G is a Sovereign States"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "oise_valley",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the Oise Valley is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Oise Valley is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "british_royal_society",
+          "action": "headquarters_location",
+          "patient": "england_london",
+          "surface": "the British Royal Society is headquartered in the England London",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the British Royal Society is headquartered in the England London"
+        },
+        {
+          "agent": "tokyo_uni",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "tokyo_administrative_district",
+          "surface": "the Tokyo Uni is located in the Tokyo Administrative District",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Tokyo Uni is located in the Tokyo Administrative District"
+        },
+        {
+          "agent": "boulogne_billancourt_france",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the Boulogne Billancourt France is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Boulogne Billancourt France is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "hardcore_hip_hop",
+          "action": "instance_of",
+          "patient": "genre_of_music",
+          "surface": "the Hardcore Hip Hop is a Genre of Music",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Hardcore Hip Hop is a Genre of Music"
+        },
+        {
+          "agent": "george_harrison",
+          "action": "place_of_death",
+          "patient": "los_angelas",
+          "surface": "the George Harrison died in the Los Angelas",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the George Harrison died in the Los Angelas"
+        },
+        {
+          "agent": "cory_publishing",
+          "action": "original_language_of_film_or_tv_show",
+          "patient": "number_of_english_words",
+          "surface": "the Cory Publishing was originally produced in the Number of English Words",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Cory Publishing was originally produced in the Number of English Words"
+        },
+        {
+          "agent": "sussex_uni",
+          "action": "instance_of",
+          "patient": "higher_general_education",
+          "surface": "the Sussex Uni is a Higher General Education",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Sussex Uni is a Higher General Education"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "the_weather_in_stavenger",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the The Weather in Stavenger is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the The Weather in Stavenger is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "alicante_spain",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the Alicante Spain is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Alicante Spain is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "eu_treaties",
+          "action": "contains_administrative_territorial_enti",
+          "patient": "united_kingom",
+          "surface": "the Eu Treaties contains the United Kingom",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Eu Treaties contains the United Kingom"
+        },
+        {
+          "agent": "columbus_crew_soccer_club",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the Columbus Crew Soccer Club is associated with the sport of the Association Football Club",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Columbus Crew Soccer Club is associated with the sport of the Association Football Club"
+        },
+        {
+          "agent": "newcastle_united_f_c",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "newcastle_tyne_and_wear",
+          "surface": "the Newcastle United F C is located in the Newcastle Tyne and Wear",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Newcastle United F C is located in the Newcastle Tyne and Wear"
+        },
+        {
+          "agent": "xx_winter_olympics",
+          "action": "follows",
+          "patient": "salt_lake_olympics",
+          "surface": "the Xx Winter Olympics follows the Salt Lake Olympics",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Xx Winter Olympics follows the Salt Lake Olympics"
+        },
+        {
+          "agent": "numbered_highways_in_indiana",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "art_of_indiana",
+          "surface": "the Numbered Highways in Indiana is located in the Art of Indiana",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Numbered Highways in Indiana is located in the Art of Indiana"
+        },
+        {
+          "agent": "shareplay",
+          "action": "follows",
+          "patient": "playstation_iii",
+          "surface": "the Shareplay follows the Playstation Iii",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Shareplay follows the Playstation Iii"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "canker_worm",
+          "action": "instance_of",
+          "patient": "taxonomic_group",
+          "surface": "the Canker Worm is a Taxonomic Group",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Canker Worm is a Taxonomic Group"
+        },
+        {
+          "agent": "umea_sweden",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the Umea Sweden is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Umea Sweden is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "telangana_songs",
+          "action": "contains_administrative_territorial_enti",
+          "patient": "ranga_reddy",
+          "surface": "the Telangana Songs contains the Ranga Reddy",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Telangana Songs contains the Ranga Reddy"
+        },
+        {
+          "agent": "department_of_the_rhone",
+          "action": "shares_border_with",
+          "patient": "saone_et_loire",
+          "surface": "the Department of the Rhone shares a border with the Saone Et Loire",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Department of the Rhone shares a border with the Saone Et Loire"
+        },
+        {
+          "agent": "delhi_university",
+          "action": "instance_of",
+          "patient": "higher_general_education",
+          "surface": "the Delhi University is a Higher General Education",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Delhi University is a Higher General Education"
+        },
+        {
+          "agent": "bergen_belgium",
+          "action": "country",
+          "patient": "koninkrijk_belgi",
+          "surface": "the Bergen Belgium is located in the Koninkrijk Belgi",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Bergen Belgium is located in the Koninkrijk Belgi"
+        },
+        {
+          "agent": "rochester_raging_rhinos",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the Rochester Raging Rhinos is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Rochester Raging Rhinos is located in the U S of A"
+        },
+        {
+          "agent": "deportivo_manizales",
+          "action": "country",
+          "patient": "united_states_of_colombia",
+          "surface": "the Deportivo Manizales is located in the United States of Colombia",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Deportivo Manizales is located in the United States of Colombia"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "sport_in_paris",
+          "action": "award_received",
+          "patient": "croix_de_guerre_1914_1918",
+          "surface": "the Sport in Paris received the Croix de Guerre 1914 1918",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Sport in Paris received the Croix de Guerre 1914 1918"
+        },
+        {
+          "agent": "messina_italy",
+          "action": "instance_of",
+          "patient": "city_work",
+          "surface": "the Messina Italy is a City Work",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Messina Italy is a City Work"
+        },
+        {
+          "agent": "aldershot_fc",
+          "action": "country",
+          "patient": "united_kingom",
+          "surface": "the Aldershot Fc is located in the United Kingom",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Aldershot Fc is located in the United Kingom"
+        },
+        {
+          "agent": "grenoble_france",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the Grenoble France is located in the time zone of the Rome Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Grenoble France is located in the time zone of the Rome Time"
+        },
+        {
+          "agent": "mar_caribe",
+          "action": "part_of",
+          "patient": "atlantic_oceans",
+          "surface": "the Mar Caribe is part of the Atlantic Oceans",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Mar Caribe is part of the Atlantic Oceans"
+        },
+        {
+          "agent": "curazia",
+          "action": "subclass_of",
+          "patient": "populated_places",
+          "surface": "the Curazia is a type of Populated Places",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Curazia is a type of Populated Places"
+        },
+        {
+          "agent": "charleston_battery",
+          "action": "headquarters_location",
+          "patient": "charle_s_town",
+          "surface": "the Charleston Battery is headquartered in the Charle S Town",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Charleston Battery is headquartered in the Charle S Town"
+        },
+        {
+          "agent": "the_island_of_enchantment",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the The Island of Enchantment is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the The Island of Enchantment is located in the U S of A"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "readable_frac": 1.0,
+      "moat_safe_frac": 1.0,
+      "covered_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "fallback_byte_identical_to_rung2": true,
+      "examples": [
+        {
+          "agent": "ecm_records",
+          "action": "country",
+          "patient": "federal_republic_of_germany",
+          "surface": "the Ecm Records is located in the Federal Republic of Germany",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Ecm Records is located in the Federal Republic of Germany"
+        },
+        {
+          "agent": "ann_arbor_michigan",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the Ann Arbor Michigan is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Ann Arbor Michigan is located in the U S of A"
+        },
+        {
+          "agent": "arkansas_bay",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the Arkansas Bay is located in the U S of A",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Arkansas Bay is located in the U S of A"
+        },
+        {
+          "agent": "social_issues_in_lesotho",
+          "action": "located_in_time_zone",
+          "patient": "west_africa_summer_time",
+          "surface": "the Social Issues in Lesotho is located in the time zone of the West Africa Summer Time",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Social Issues in Lesotho is located in the time zone of the West Africa Summer Time"
+        },
+        {
+          "agent": "jpest_football_club",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the Jpest Football Club is associated with the sport of the Association Football Club",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Jpest Football Club is associated with the sport of the Association Football Club"
+        },
+        {
+          "agent": "england_national_under_23_football_team",
+          "action": "country",
+          "patient": "united_kingom",
+          "surface": "the England National Under 23 Football Team is located in the United Kingom",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the England National Under 23 Football Team is located in the United Kingom"
+        },
+        {
+          "agent": "2002_african_cup_of_nations",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the 2002 African Cup of Nations is associated with the sport of the Association Football Club",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the 2002 African Cup of Nations is associated with the sport of the Association Football Club"
+        },
+        {
+          "agent": "urban_pop",
+          "action": "instance_of",
+          "patient": "genre_of_music",
+          "surface": "the Urban Pop is a Genre of Music",
+          "well_formed": true,
+          "faithful": true,
+          "readable": true,
+          "covered": true,
+          "moat_safe": true,
+          "expected": "the Urban Pop is a Genre of Music"
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "well_formed": {
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "faithful": {
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "readable": {
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "moat_safe": {
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "covered": {
+      "mean": 1.0,
+      "min": 1.0
+    },
+    "permuted_control_well_formed": {
+      "mean": 0.0,
+      "min": 0.0
+    },
+    "permuted_control_faithful": {
+      "mean": 0.0,
+      "min": 0.0
+    },
+    "all_seeds_spiked": true,
+    "all_seeds_fallback_byte_identical": true,
+    "order_effect_fraction_attributable_to_manipulation": 1.0
+  },
+  "verdict": {
+    "label": "WKV fact-to-sentence lexicon lever: coherent-clause rate, all 6 seeds",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "every seed's bridge genuinely spiked",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lexicon covers every relation type live in the real store",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "readable (coherent-clause) rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "faithful rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "moat-safe (no fabricated tokens) on every seed, every fact",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "fallback path byte-identical to rung 2 on every seed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "faithful rate, correct-taught order vs PERMUTED-teaching control",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "order effect is genuinely attributable to the manipulation (not a control-shared artifact)",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673207c0>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "WKV fact-to-sentence lexicon lever: coherent-clause rate, all 6 seeds",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "every seed's bridge genuinely spiked",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lexicon covers every relation type live in the real store",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "readable (coherent-clause) rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "faithful rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "moat-safe (no fabricated tokens) on every seed, every fact",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673204a0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "fallback path byte-identical to rung 2 on every seed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "faithful rate, correct-taught order vs PERMUTED-teaching control",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "order effect is genuinely attributable to the manipulation (not a control-shared artifact)",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f54673207c0>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}
