@@ -1,0 +1,376 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 42,
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts_total": 15000,
+  "n_facts_affirm": 15000,
+  "checkpoint_vocab_size": 1000,
+  "part1_corpus_coverage_ceiling": {
+    "n_affirm_facts": 15000,
+    "patient_content_word_hit": 3889,
+    "patient_content_word_hit_frac": 0.25927,
+    "any_field_content_word_hit": 6072,
+    "any_field_content_word_hit_frac": 0.4048,
+    "note": "This checkpoint's V=1000 vocabulary is word-level and closed (no subword fallback): a fact token with no trained embedding CANNOT be produced by this decoder at all, by construction. The majority (~74%) of facts have zero content-word overlap -- the structural wall the task named, now precisely quantified rather than assumed."
+  },
+  "part2_live_engagement": {
+    "n_sampled_agents": 600,
+    "in_vocab_scope_pass": 409,
+    "in_vocab_scope_pass_frac": 0.6817,
+    "scope_pass_AND_has_fact_content_overlap": 290,
+    "scope_pass_AND_has_fact_content_overlap_frac_of_sample": 0.4833,
+    "conditional_grounding_rate_given_scope_pass": 0.709,
+    "lead_in_phrase_alone_passes_scope_on_nonsense_topic": true,
+    "note": "`in_vocab_scope('tell me about <nonsense>')` == True: the lead-in phrase alone ('tell'/'me'/'about', all in-vocab and NOT in _FUNCTION_WORDS) can satisfy min_content_hits=2 without the topic itself contributing anything -- a real, previously-undiscovered gap in the ALREADY-default-ON (2026-08-30) scope gate, found by this measurement, logged to FAILURE_LOG.md, NOT fixed here (out of this task's scope; BRAIN_OPEN_ENDED itself stays default-OFF so this is not live in production). It means the WKV mouth reaches real Wikidata topics far MORE than Part 1's raw vocabulary ceiling alone would predict when phrased with a content-bearing lead-in -- which makes fact-grounding MORE, not less, load-bearing: today those engaged turns get zero grounding at all."
+  },
+  "part3_before_after_demo": {
+    "n_examples": 7,
+    "baseline_surfaced_fact_word": 3,
+    "boosted_surfaced_fact_word": 7,
+    "boost_newly_surfaced_a_word_baseline_missed": 6,
+    "boosted_fact_word_survives_honesty_postfilter": 7,
+    "examples": [
+      {
+        "agent": "williams_last_name",
+        "msg": "tell me about williams last name",
+        "triples": [
+          [
+            "williams_last_name",
+            "language_of_work_or_name",
+            "number_of_english_words"
+          ],
+          [
+            "williams_last_name",
+            "instance_of",
+            "surname_page"
+          ]
+        ],
+        "boosted_words": [
+          "words",
+          "work",
+          "or",
+          "name",
+          "last"
+        ],
+        "baseline_raw": "tell me about last name the bird could you if it was just a big tree with his friends and they both laughed and played together every day long in the sun came to the park and tim saw many kids playing on the swing",
+        "boosted_raw": "tell me about last name the bird or her name was tim and sue to work on his work and showed it to their words of them or work together or work when they work hard work and ran in the end tom won the",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "words",
+          "work"
+        ],
+        "baseline_filtered": "tell me about last name the bird could you if it was just a big tree with his friends and they both laughed and played together every day long in the sun came to the park and tim saw many kids playing on the swing",
+        "boosted_filtered": "tell me about last name the bird or her name was tim and sue to work on his work and showed it to their words of them or work together or work when they work hard work and ran in the end tom won the",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "jeffersonian_republicans",
+        "msg": "tell me about jeffersonian republicans",
+        "triples": [
+          [
+            "jeffersonian_republicans",
+            "country",
+            "u_s_of_a"
+          ],
+          [
+            "jeffersonian_republicans",
+            "followed_by",
+            "us_democratic_party"
+          ],
+          [
+            "jeffersonian_republicans",
+            "headquarters_location",
+            "washington_dc"
+          ]
+        ],
+        "boosted_words": [
+          "us",
+          "party",
+          "followed"
+        ],
+        "baseline_raw": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_raw": "tell me about the party tim and his mom followed him to the party with her friends at the party they saw a big party in the party there lived an elephant named ella was very excited so he followed his party to",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "followed",
+          "party"
+        ],
+        "baseline_filtered": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_filtered": "tell me about the party tim and his mom followed him to the party with her friends at the party they saw a big party in the party there lived an elephant named ella was very excited so he followed his party to",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "ulm_germany",
+        "msg": "tell me about ulm germany",
+        "triples": [
+          [
+            "ulm_germany",
+            "located_in_time_zone",
+            "rome_time"
+          ],
+          [
+            "ulm_germany",
+            "country",
+            "federal_republic_of_germany"
+          ],
+          [
+            "ulm_germany",
+            "instance_of",
+            "city_work"
+          ]
+        ],
+        "boosted_words": [
+          "time",
+          "work"
+        ],
+        "baseline_raw": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_raw": "tell me about the time they were very happy and work together to work on their work and make a big mess but they saw many people in the town came running and helped him away from work with them work and ran",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time",
+          "work"
+        ],
+        "baseline_filtered": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_filtered": "tell me about the time they were very happy and work together to work on their work and make a big mess but they saw many people in the town came running and helped him away from work with them work and ran",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "strech_five",
+        "msg": "tell me about strech five",
+        "triples": [
+          [
+            "strech_five",
+            "sport",
+            "basket_ball"
+          ]
+        ],
+        "boosted_words": [
+          "basket",
+          "ball"
+        ],
+        "baseline_raw": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_raw": "tell me about the ball and it was a ball to play with his ball but he didn't understand why they could not move him or ball again and again until this time tim saw the ball in the basket there were many",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "ball",
+          "basket"
+        ],
+        "baseline_filtered": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_filtered": "tell me about the ball and it was a ball to play with his ball but he didn't understand why they could not move him or ball again and again until this time tim saw the ball in the basket there were many",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "orchid_flower",
+        "msg": "tell me about orchid flower",
+        "triples": [
+          [
+            "orchid_flower",
+            "instance_of",
+            "taxonomic_group"
+          ],
+          [
+            "orchid_flower",
+            "taxon_rank",
+            "taxonomical_family"
+          ]
+        ],
+        "boosted_words": [
+          "flower",
+          "family"
+        ],
+        "baseline_raw": "tell me about flower that the magic rock could talk to his mom and dad both smiled at them and said yes i will help you for your nest here with my friends can we go back home without their toys and they were",
+        "boosted_raw": "tell me about flower that the flower and the family went home together in a family came to the park with her family and they laughed and played together every day long singing its song for many more fun days playing together making different",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "family"
+        ],
+        "baseline_filtered": "tell me about flower that the magic rock could talk to his mom and dad both smiled at them and said yes i will help you for your nest here with my friends can we go back home without their toys and they were",
+        "boosted_filtered": "tell me about flower that the flower and the family went home together in a family came to the park with her family and they laughed and played together every day long singing its song for many more fun days playing together making different",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "electronic_role_playing_game",
+        "msg": "tell me about electronic role playing game",
+        "triples": [
+          [
+            "electronic_role_playing_game",
+            "subclass_of",
+            "leisure_software"
+          ]
+        ],
+        "boosted_words": [
+          "playing",
+          "game"
+        ],
+        "baseline_raw": "tell me about playing game the ball and it was a very big red ball with his mouth felt hot on the ground and he could not fly high enough to reach the sky but he saw them and said look at my car tim",
+        "boosted_raw": "tell me about playing game the game of game called timmy for playing with his friends playing in the yard when they got to playing near a game game tim playing game he could see it and was playing with her toys playing in their",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about playing game the ball and it was a very big red ball with his mouth felt hot on the ground and he could not fly high enough to reach the sky but he saw them and said look at my car tim",
+        "boosted_filtered": "tell me about playing game the game of game called timmy for playing with his friends playing in the yard when they got to playing near a game game tim playing game he could see it and was playing with her toys playing in their",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "pgp_rtb",
+        "msg": "tell me about pgp rtb",
+        "triples": [
+          [
+            "pgp_rtb",
+            "genre",
+            "jazz_lists"
+          ],
+          [
+            "pgp_rtb",
+            "instance_of",
+            "record_companies"
+          ],
+          [
+            "pgp_rtb",
+            "country",
+            "yugoslav_socialist_republics"
+          ]
+        ],
+        "boosted_words": [
+          "jazz"
+        ],
+        "baseline_raw": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_raw": "tell me about the jazz and said i can help you fly like a bird with my car from its nest in the sky and it was blue singing its song to make them happy too much noise because he could not move",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "jazz"
+        ],
+        "baseline_filtered": "tell me about the big dog and the cat said i will help you climb it too hard for making them fall from the tree and they were both very happy to play with their blocks and dolls cars and books are more",
+        "boosted_filtered": "tell me about the jazz and said i can help you fly like a bird with my car from its nest in the sky and it was blue singing its song to make them happy too much noise because he could not move",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      }
+    ]
+  },
+  "part4_mechanism_noop_checks": {
+    "apply_fact_boost_noop_empty_ids": true,
+    "apply_fact_boost_noop_none_ids": true,
+    "apply_fact_boost_noop_zero_boost": true,
+    "apply_fact_boost_actually_boosts_when_on": true,
+    "generate_facts_none_deterministic_repeat": true,
+    "flag_default_off": true,
+    "flag_on_when_env_set": true
+  },
+  "verdict": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=3 |sep|=4 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=3 |sep|=4 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

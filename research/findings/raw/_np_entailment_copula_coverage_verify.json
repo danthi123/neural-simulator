@@ -1,0 +1,296 @@
+{
+ "probe": "np_entailment_copula_coverage_verify",
+ "flag": "BRAIN_OPEN_ENDED_NP_ENTAILMENT_COPULA_COVERAGE",
+ "fabrication_battery": [
+  {
+   "name": "castleford_real_traffic_appositive",
+   "note": "exact real-traffic shape (soak artifact): appositive between subject and copula, underscored-slug topic vs human-readable subject text",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, commonly known as Castleford F , is a professional football club based in Castleford, West Yorkshire, England",
+   "flag_off_result": "Castleford FC, commonly known as Castleford F , is a professional football club based in Castleford, West Yorkshire, England",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "castleford_no_appositive",
+   "note": "same conflict, no appositive -- isolates the category-conflict check from the appositive-comma fix",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC is a professional football club.",
+   "flag_off_result": "Castleford FC is a professional football club.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "castleford_soccer_synonym",
+   "note": "synonym coverage: 'soccer' canonicalizes to the same family/word as 'football'",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC is a well-known soccer team.",
+   "flag_off_result": "Castleford FC is a well-known soccer team.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "chicago_bulls_baseball",
+   "note": "a second sport pair (basketball vs baseball), no underscore-slug quirk, no appositive",
+   "topic": "chicago_bulls",
+   "sent": "The Chicago Bulls is a professional baseball team.",
+   "flag_off_result": "The Chicago Bulls is a professional baseball team.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "underscore_slug_no_appositive",
+   "note": "another underscore-topic / space-subject pair, different sport conflict, no appositive",
+   "topic": "leeds_rhinos",
+   "sent": "Leeds Rhinos is a professional cricket club.",
+   "flag_off_result": "Leeds Rhinos is a professional cricket club.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  }
+ ],
+ "true_copula_battery": [
+  {
+   "name": "castleford_correct_sport",
+   "note": "SAME sentence shape as the caught case, but the predicate's category MATCHES the store's sport fact -- must not be flagged (false-positive guard)",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, commonly known as Castleford F , is a professional rugby club based in Castleford, West Yorkshire, England",
+   "flag_off_result": "Castleford FC, commonly known as Castleford F , is a professional rugby club based in Castleford, West Yorkshire, England",
+   "flag_on_result": "Castleford FC, commonly known as Castleford F , is a professional rugby club based in Castleford, West Yorkshire, England",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "canada_elaborated_copula",
+   "note": "the parent gate's own SAFETY_CASE (copula_untouched) -- no category word at all",
+   "topic": "canada",
+   "sent": "Canada is a vast country located in North America.",
+   "flag_off_result": "Canada is a vast country located in North America.",
+   "flag_on_result": "Canada is a vast country located in North America.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "eiffel_tower_landmark",
+   "note": "true copula, no category word -- must not be flagged",
+   "topic": "eiffel tower",
+   "sent": "The Eiffel Tower is a famous landmark.",
+   "flag_off_result": "The Eiffel Tower is a famous landmark.",
+   "flag_on_result": "The Eiffel Tower is a famous landmark.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "castleford_negated",
+   "note": "negated predicate -- widened path must back off (guarded), never assert the negation is itself the fabrication",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC is not a football club.",
+   "flag_off_result": "Castleford FC is not a football club.",
+   "flag_on_result": "Castleford FC is not a football club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "castleford_present_participle",
+   "note": "progressive aspect, not an identity predicate -- widened path must back off",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC is playing football this weekend.",
+   "flag_off_result": "Castleford FC is playing football this weekend.",
+   "flag_on_result": "Castleford FC is playing football this weekend.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "eiffel_tower_passive_by_agent",
+   "note": "passive construction (already handled by segment_clause's own passive pass) -- widened path must back off, not misread 'built' as a copula predicate nominal",
+   "topic": "gustave eiffel",
+   "sent": "The Eiffel Tower was built by Gustave Eiffel.",
+   "flag_off_result": "The Eiffel Tower was built by Gustave Eiffel.",
+   "flag_on_result": "The Eiffel Tower was built by Gustave Eiffel.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "offtopic_agent_untouched",
+   "note": "parent gate's own SAFETY_CASE: subject != retrieved topic -- out of scope either way",
+   "topic": "einstein",
+   "sent": "Newton discovered gravity.",
+   "flag_off_result": "Newton discovered gravity.",
+   "flag_on_result": "Newton discovered gravity.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "grounded_kept",
+   "note": "parent gate's own SAFETY_CASE: grounded non-copula claim -- unaffected by copula widening",
+   "topic": "mercury",
+   "sent": "Mercury orbits the sun.",
+   "flag_off_result": "Mercury orbits the sun.",
+   "flag_on_result": "Mercury orbits the sun.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  }
+ ],
+ "byte_identical_off_check": [
+  {
+   "name": "castleford_real_traffic_appositive",
+   "current_flag_off": "Castleford FC, commonly known as Castleford F , is a professional football club based in Castleford, West Yorkshire, England",
+   "original": "Castleford FC, commonly known as Castleford F , is a professional football club based in Castleford, West Yorkshire, England",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_no_appositive",
+   "current_flag_off": "Castleford FC is a professional football club.",
+   "original": "Castleford FC is a professional football club.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_soccer_synonym",
+   "current_flag_off": "Castleford FC is a well-known soccer team.",
+   "original": "Castleford FC is a well-known soccer team.",
+   "byte_identical": true
+  },
+  {
+   "name": "chicago_bulls_baseball",
+   "current_flag_off": "The Chicago Bulls is a professional baseball team.",
+   "original": "The Chicago Bulls is a professional baseball team.",
+   "byte_identical": true
+  },
+  {
+   "name": "underscore_slug_no_appositive",
+   "current_flag_off": "Leeds Rhinos is a professional cricket club.",
+   "original": "Leeds Rhinos is a professional cricket club.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_correct_sport",
+   "current_flag_off": "Castleford FC, commonly known as Castleford F , is a professional rugby club based in Castleford, West Yorkshire, England",
+   "original": "Castleford FC, commonly known as Castleford F , is a professional rugby club based in Castleford, West Yorkshire, England",
+   "byte_identical": true
+  },
+  {
+   "name": "canada_elaborated_copula",
+   "current_flag_off": "Canada is a vast country located in North America.",
+   "original": "Canada is a vast country located in North America.",
+   "byte_identical": true
+  },
+  {
+   "name": "eiffel_tower_landmark",
+   "current_flag_off": "The Eiffel Tower is a famous landmark.",
+   "original": "The Eiffel Tower is a famous landmark.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_negated",
+   "current_flag_off": "Castleford FC is not a football club.",
+   "original": "Castleford FC is not a football club.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_present_participle",
+   "current_flag_off": "Castleford FC is playing football this weekend.",
+   "original": "Castleford FC is playing football this weekend.",
+   "byte_identical": true
+  },
+  {
+   "name": "eiffel_tower_passive_by_agent",
+   "current_flag_off": "The Eiffel Tower was built by Gustave Eiffel.",
+   "original": "The Eiffel Tower was built by Gustave Eiffel.",
+   "byte_identical": true
+  },
+  {
+   "name": "offtopic_agent_untouched",
+   "current_flag_off": "Newton discovered gravity.",
+   "original": "Newton discovered gravity.",
+   "byte_identical": true
+  },
+  {
+   "name": "grounded_kept",
+   "current_flag_off": "Mercury orbits the sun.",
+   "original": "Mercury orbits the sun.",
+   "byte_identical": true
+  }
+ ],
+ "n_fabrication_cases": 5,
+ "n_caught_flag_on": 5,
+ "n_leaked_flag_off": 5,
+ "new_catch_rate": 1.0,
+ "n_true_cases": 8,
+ "n_false_positive": 0,
+ "false_positive_rate": 0.0,
+ "all_byte_identical_off": true,
+ "verdict": {
+  "label": "BRAIN_OPEN_ENDED_NP_ENTAILMENT_COPULA_COVERAGE widens the gate to catch copula category-conflict fabrications without regressing true copula content, and is byte-identical to the pre-widening module when the flag is off",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every fabrication case leaks with the flag OFF (the pre-existing gap, reproduced)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "zero false positives on the true-copula battery (flag ON == flag OFF on every case)",
+    "ok": true,
+    "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "flag OFF is byte-identical to the actual pre-widening (git HEAD) module on every case",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every fabrication case leaks with the flag OFF (the pre-existing gap, reproduced)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "zero false positives on the true-copula battery (flag ON == flag OFF on every case)",
+   "ok": true,
+   "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flag OFF is byte-identical to the actual pre-widening (git HEAD) module on every case",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true,
+ "elapsed_seconds": 20.1
+}
