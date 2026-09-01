@@ -47,8 +47,12 @@ load-bearing / retire scaffolds).
    `rugby_leauge` club a "football club" — survives the parent-only AND +NP_ENTAILMENT arms untouched, only
    `GEN_TIME_HONESTY`'s independent generation-time route catches it); `NP_ENTAILMENT` alone changed 0/12 known
    replies — its non-copula/parseable-clause scope essentially never fires on real free-form Qwen prose (a
-   coverage gap to widen, not a bug). VERDICT for #112: flip is fabrication-safe; if flipped, `GEN_TIME_HONESTY`
-   is the load-bearing child, `NP_ENTAILMENT` adds ~nothing yet on real prose. (finding
+   coverage gap to widen). ⚠️ FINAL CORRECTION (`79f7412f`): the earlier "flip is fabrication-SAFE" claim was an
+   OVERCLAIM — it rested on `held_out_violation_rate=0.0`, but that scorer runs the SAME `gate_sentence` the live
+   NP-entailment gate runs, so it shares that gate's blind spot (a metric that cannot fail); the castleford
+   wrong-fact SURVIVES to the user. So #112 is NOT cleanly moat-safe on KNOWN topics — DANGEROUS class is safe
+   (base filter), but `GEN_TIME_HONESTY` is the ESSENTIAL child and `NP_ENTAILMENT`'s real-prose coverage gap must
+   be widened before the flip is honest. (finding
    `2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md`; artifact
    `_open_ended_bundle_moat_soak_full.json`.)
 
