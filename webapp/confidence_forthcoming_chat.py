@@ -55,10 +55,11 @@ already-VERIFIED set (or leaves it as generated) -- it never manufactures conten
 the direct answer (floor_sentences is always >= 1, so `facts[0]` -- the direct recall -- is never touched), and
 the honesty filter (`render_paragraph`'s per-sentence VERIFY / claim-level entailment) governs the kept
 elaboration exactly as it already does today; truncation only removes verified content, it never adds unverified
-content. Default-OFF (`BRAIN_CONFIDENCE_FORTHCOMING`; a 2026-08-27 attempt to flip default-ON was reverted the
-SAME day once real-traffic verification found it hollow -- see the constant's own comment below); OFF -> the
-whole block in webapp/server.py is skipped (no bump, no truncation, no `confidence_forthcoming` key) ->
-byte-identical to pre-wiring.
+content. Default-ON (`BRAIN_CONFIDENCE_FORTHCOMING`; a 2026-08-27 attempt to flip default-ON was reverted the
+SAME day once real-traffic verification found it hollow, then RE-FLIPPED 2026-09-01 once the margin-scale
+calibration residual that caused the hollowness was closed -- see the constant's own comment below); an
+explicit `BRAIN_CONFIDENCE_FORTHCOMING=0` -> the whole block in webapp/server.py is skipped (no bump, no
+truncation, no `confidence_forthcoming` key) -> byte-identical to pre-wiring.
 
 LESION (reuses the metacog organ's OWN load-bearing lesion, `BRAIN_METACOG_LESION=1`; no separate lesion flag):
 cutting the evidence differential collapses EVERY turn's margin to ~0 -> `confident` reads False unconditionally
@@ -96,18 +97,39 @@ EXTRA_SENTENCES = 1
 # 1.0 and `confident` reads True unconditionally: no real LOW-confidence turn has been observed to compare
 # against, so the coupling's cap/grant behavior has never been exercised on genuine production content -- a
 # STILL-hollow flip by a different, more precisely characterized mechanism than before (calibration-band
-# saturation on this vocabulary, not a missing signal). `_CONFIDENCE_FORTHCOMING_DEFAULT_ON` therefore stays
-# False until a real LOW-confidence turn (a richer/more ambiguous vocabulary, or a recalibrated band) is
-# demonstrated. `BRAIN_CONFIDENCE_FORTHCOMING=1` remains the genuine, GO 6/6-verified opt-in (isolated + forced
-# evidence; see 2026-08-27-confidence-drives-forthcomingness-GO.md).
-_CONFIDENCE_FORTHCOMING_DEFAULT_ON = False
+# saturation on this vocabulary, not a missing signal). RESOLVED 2026-09-01 (below).
+#
+# 2026-09-01 FLIPPED DEFAULT-ON (owner 2026-09-01 auto-flip policy: validated-GO + load-bearing + moat-safe +
+# byte-identical-off -> default-ON, no owner-gate). The saturation residual above is CLOSED by a margin-
+# NORMALIZED (scale-invariant) confidence band (`research/runners/metacog_production_organ.py
+# mean_role_confidence` now prefers a role chip's `margin_norm` -- the SAME peak-relative `(peak-runner)/peak`
+# ratio `OneBrainComposer._margin` already used -- over the RAW, unnormalized `margin` field an LTM-sourced
+# `RFPhasorComposer`/`ShardedPhasorStore` trace carries under the same key; see
+# research/findings/2026-09-01-confidence-metacog-margin-norm-calibration-at-scale-discriminates-not-byte-id-off.md
+# for the residual this closes and research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md
+# for this flip's own re-verification). DISCRIMINATES on the literal shipped `wikidata_core_15k` LTM through the
+# real handler, 6/6 seeds (`vary_lesion_all_GO`): a clean KB-relation recall reads `confident=True`, a genuinely
+# noise-degraded recall (Gaussian phase jitter on the SAME stored fact, still a correct match, not an abstain)
+# reads `confident=False`, `BRAIN_METACOG_LESION=1` collapses both to `confident=False` --
+# research/findings/raw/_confidence_kb_relation_realtraffic/verify_margin_norm_recalibration_6seed.json.
+# NOT gated behind this flag (a global calibration fix, not a flag-conditioned band): re-running the
+# tiny-demo+LTM isolation harness FRESH after pulling the margin-norm change (the artifact this flag's
+# `_CONFIDENCE_FORTHCOMING_DEFAULT_ON` docstring used to cite was STALE -- generated before the fix in this same
+# development arc was finalized and never regenerated) shows `byte_identical_off=True` on ALL 6 seeds anyway
+# (flags explicitly OFF reproduces the pre-recalibration no-LTM-tier answer verbatim, in n_sentences AND answer
+# text) alongside `load_bearing`/`lesion_reverts`/`moat` all GO --
+# research/findings/raw/_confidence_ltm_loadbearing/verify_confidence_ltm_loadbearing.json (freshly regenerated
+# 2026-09-01, 1175s, all 4 checks PASS on all 6 seeds). `BRAIN_CONFIDENCE_FORTHCOMING=0` (or false/no/off/"")
+# is the byte-identical escape to the pre-flip behavior; `BRAIN_ELABORATE_FROM_LTM_SHARD` (research/runners/
+# rich_answer_composer.py `_ELABORATE_FROM_LTM_DEFAULT_ON`) is this coupling's own dependency (without it the
+# reach never has LTM content to trim) and was flipped default-ON in the SAME commit.
+_CONFIDENCE_FORTHCOMING_DEFAULT_ON = True
 
 
 def confidence_forthcoming_enabled() -> bool:
-    """Default-OFF (see the block above for why the 2026-08-27 default-ON attempt was reverted the same day).
-    `BRAIN_CONFIDENCE_FORTHCOMING` truthy (1/true/on/yes) enables the coupling. If `_CONFIDENCE_FORTHCOMING_
-    DEFAULT_ON` is ever flipped back to True (once a genuine real-traffic LOW-confidence turn is demonstrated),
-    this same function flips convention to the guarded-unset-means-ON reading, unchanged from that attempt."""
+    """Default-ON (2026-09-01; see the block above `_CONFIDENCE_FORTHCOMING_DEFAULT_ON` for why). `BRAIN_
+    CONFIDENCE_FORTHCOMING` an explicit off (0/false/no/off/"") reverts byte-identically to the pre-flip
+    (coupling fully skipped) behavior; unset or any other value keeps the coupling on."""
     v = os.environ.get("BRAIN_CONFIDENCE_FORTHCOMING")
     if _CONFIDENCE_FORTHCOMING_DEFAULT_ON:
         return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))

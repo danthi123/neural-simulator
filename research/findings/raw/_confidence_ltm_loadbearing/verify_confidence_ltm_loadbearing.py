@@ -174,19 +174,27 @@ def run_seed(seed):
     chat_noltm = build_chat(seed, with_ltm=False)
     chat_shared = build_chat(seed, with_ltm=True)
 
-    os.environ.pop("BRAIN_ELABORATE_FROM_LTM_SHARD", None)
-    os.environ.pop("BRAIN_CONFIDENCE_FORTHCOMING", None)
+    # 2026-09-01 (margin-scale recalibration session): BOTH flags flipped default-ON
+    # (research/runners/rich_answer_composer.py _ELABORATE_FROM_LTM_DEFAULT_ON,
+    # webapp/confidence_forthcoming_chat.py _CONFIDENCE_FORTHCOMING_DEFAULT_ON) once real-out-of-the-box-traffic
+    # GO was reached on the shipped wikidata_core_15k. `os.environ.pop(...)` (UNSET) no longer means "off" under
+    # this convention -- it now means the NEW default (ON). The "off" arms below MUST set the EXPLICIT `=0`
+    # escape (documented byte-identical-to-pre-flip by both flags' own docstrings) instead of relying on unset,
+    # or this harness tests the wrong condition. See
+    # research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md.
+    os.environ["BRAIN_ELABORATE_FROM_LTM_SHARD"] = "0"
+    os.environ["BRAIN_CONFIDENCE_FORTHCOMING"] = "0"
     d_noltm = ask(chat_noltm, session_prefix=f"z{seed}n")
 
-    os.environ.pop("BRAIN_ELABORATE_FROM_LTM_SHARD", None)
-    os.environ.pop("BRAIN_CONFIDENCE_FORTHCOMING", None)
+    os.environ["BRAIN_ELABORATE_FROM_LTM_SHARD"] = "0"
+    os.environ["BRAIN_CONFIDENCE_FORTHCOMING"] = "0"
     d_off = ask(chat_shared, session_prefix=f"z{seed}o")
 
     os.environ["BRAIN_ELABORATE_FROM_LTM_SHARD"] = "1"
-    os.environ.pop("BRAIN_CONFIDENCE_FORTHCOMING", None)
+    os.environ["BRAIN_CONFIDENCE_FORTHCOMING"] = "0"
     d_elab_only = ask(chat_shared, session_prefix=f"z{seed}e")
 
-    os.environ.pop("BRAIN_ELABORATE_FROM_LTM_SHARD", None)
+    os.environ["BRAIN_ELABORATE_FROM_LTM_SHARD"] = "0"
     os.environ["BRAIN_CONFIDENCE_FORTHCOMING"] = "1"
     d_cf_only = ask(chat_shared, session_prefix=f"z{seed}c")
 

@@ -69,6 +69,16 @@ load-bearing / retire scaffolds).
    codebook's decode margin on this fact reads below the metacog HIGH band (a margin-vs-scale calibration
    residual, not the #184 plumbing bug — see next action below). (finding
    `2026-09-01-184-tieredfactstore-ltm-trace-propagation-fix.md`.)
+8. **#94 CONFIDENCE-FORTHCOMINGNESS FLIPPED DEFAULT-ON (branch `research/confidence-flip-complete`):** the
+   margin-vs-scale residual from item 7 above is closed by a margin-NORMALIZED (scale-invariant) metacog band —
+   discriminates 6/6 on the literal shipped `wikidata_core_15k`
+   (`verify_margin_norm_recalibration_6seed.json`, `vary_lesion_all_GO: true`). The isolation harness's apparent
+   byte-identical-off failure (reported by an earlier same-day finding) was a STALE, unregenerated artifact — a
+   fresh re-run passes all 4 checks 6/6 (`verify_confidence_ltm_loadbearing.json`). AUTO-FLIPPED
+   `_CONFIDENCE_FORTHCOMING_DEFAULT_ON=True` + its dependency `_ELABORATE_FROM_LTM_DEFAULT_ON=True`; ledger
+   `on_by_default: YES`. See `research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md`
+   (partial-retracts `2026-09-01-confidence-metacog-margin-norm-calibration-at-scale-discriminates-not-byte-id-off.md`
+   per `docs/RETRACTED.md`).
 
 **⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
 roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
@@ -115,11 +125,16 @@ is NOT a clean GO — do not flip it). The former '(UX-gated)' list below is now
 fabrication-SAFE (dangerous-class delta from the children = 0.0, already covered by the always-on base
 filter); `GEN_TIME_HONESTY` is the load-bearing child on KNOWN topics, `NP_ENTAILMENT` measured ~inert on
 real prose so far — present both children's real contribution to the owner, then owner yes/no on the bundle;
-(b) confidence-forthcomingness flip #94 — the NL-parser vocab gap is closed AND the #184 plumbing bug that kept
-`confident` reading `null` on real LTM turns is now also fixed, but re-testing on the literal shipped
-`wikidata_core_15k` (item 7 above) found a NEW residual: this fixture's real 15k-scale decode margin reads
-below the metacog HIGH band, so the vary+lesion criterion still has nothing to demonstrate on real out-of-box
-traffic — NOT yet an owner-UX-only call; (c) source-monitoring-drives-honesty-framing flip #140 — GO 12/12
+(b) ✅ DONE 2026-09-01 — confidence-forthcomingness flip #94 is COMPLETE, not owner-gated: the real-15k-scale
+decode-margin residual named here was closed by a margin-NORMALIZED (scale-invariant) metacog band
+(`vary_lesion_all_GO` 6/6 on the literal shipped `wikidata_core_15k`,
+`research/findings/raw/_confidence_kb_relation_realtraffic/verify_margin_norm_recalibration_6seed.json`), and
+the isolation harness's apparent byte-identical-off failure turned out to be a STALE (unregenerated) artifact —
+a fresh re-run passes all 4 checks 6/6
+(`research/findings/raw/_confidence_ltm_loadbearing/verify_confidence_ltm_loadbearing.json`). AUTO-FLIPPED
+`_CONFIDENCE_FORTHCOMING_DEFAULT_ON=True` (+ its dependency `_ELABORATE_FROM_LTM_DEFAULT_ON=True`) per the
+2026-09-01 auto-flip policy — see `research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md`
+and the ledger row's `on_by_default: YES`. (c) source-monitoring-drives-honesty-framing flip #140 — GO 12/12
 (item 7 above), genuinely owner-UX-gated now (no known technical residual).
 
 **⛔ OPS LESSON (this arc — apply going forward):** compute agents launched WITHOUT `isolation:worktree` run in
@@ -550,7 +565,7 @@ took the continuous engine LIVE on cupy + closed learn-through-use de-risk; TODA
 **⚡ LATE-2026-08-21 LANDINGS (post-18:45, on `main`; these SUPERSEDE the LIVE LANES + PRE-DECIDED NEXT ACTIONS below
 where they conflict):**
 - **GNW three-organ bus FLIPPED DEFAULT-ON** (#126, `e2d428d4`) — real-vocab comprehension read fixed the D4 over-veto
-  (GO). ⇒ the "HELD default-OFF with sharp gates: … gnw-three-organ" note below is STALE (it is now on by default).
+  (GO). ⇒ the "HELD default-OFF with sharp gates: … gnw-three-organ" note below is STALE (it is on by default already).
 - **Enforcement engine (self-maintaining project OS) LANDED** (design `docs/plans/2026-08-21-enforcement-layer-...`):
   backlog gen + ratchet w/ cmd-field + real shared-queue dispatch (`8868326b`); LIVE-STATE re-injection + class-13 gate
   (`1b6acd98`); Vikunja single-pane + tool-health + CLASS BS/TH gates (`a82890fc`). KEY: the free-lane dispatch SEAM is
