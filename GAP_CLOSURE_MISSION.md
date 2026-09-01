@@ -72,7 +72,22 @@ load-bearing / retire scaffolds).
 
 **⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
 roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
-fact word 43/43 every seed; residual = V=1000 vocab ~26% + word-not-sentence) · NP-entailment COPULA coverage
+fact word 43/43 every seed; residual = V=1000 vocab ~26% + word-not-sentence; ⭐ #112 RUNG 1 LANDED
+2026-09-01, branch `research/wkv-grounding-followup`: the `in_vocab_scope` lead-in-phrase loophole this
+finding's own Part 2 logged to `FAILURE_LOG.md` is now FIXED — `_LEADIN_WORDS` excludes the caller's own "tell
+me about"/"what do you know about"/etc. template words from `min_content_hits` scoring; real-store n=600
+stratified re-measurement: the zero-genuine-content bucket (81.2% of the sample) drops 63.45%→0.00% wrongly
+passing, the 2+-genuine-content bucket stays 100%→100%, overall 68.17%→4.00%; 19/19 regression tests; see
+`research/findings/2026-09-01-wkv-mouth-invocab-scope-leadin-loophole-fix.md`. ⭐ #112 RUNG 2 INVESTIGATION +
+FIRST LEVER, same branch: slotting a real recalled fact directly into the already-6-seed-GO
+`SpikingClauseProducer` SVO frame (vocabulary-agnostic by construction, unlike the WKV's closed V=1000 table)
+renders a genuinely-spiking, structurally well-formed + role-faithful clause (1.0/1.0 on all 6 seeds, n=48
+facts, permuted-teaching control collapses to 0.0, 100% attributable) — but this is a PARALLEL renderer, NOT
+wired into the WKV's own decode, and the clause is not yet natural English: the "verb" is a naive relation-
+label morphology guess (`"follows"`→`"followses"`) and entities render as raw underscored slugs, not real NPs.
+Honest map + concrete next steps (relation→predicate mapping, multi-word NPs, actual WKV-decode wiring) in
+`research/findings/2026-09-01-wkv-fact-to-svo-clause-first-lever-investigation.md`. Rung 2 still OPEN.) ·
+NP-entailment COPULA coverage
 (catches the rugby-club-called-"football" fabrication) · entity-ALIAS resolution verified (29/29) · surprise→
 episodic ENCODE-decision crossedge (6/6) · curiosity→d6-WM crossedge (6/6) · confidence real-shipped-traffic
 (root-caused #184) · scaffold-retirement (Hebbian-plausibility QUALIFIED + 2 stale ledger claims fixed).
