@@ -1,0 +1,612 @@
+{
+  "runner": "_wkv_fact_svo_clause_first_lever",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "economy_of_arizona",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the economy_of_arizona countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "christine_first_name",
+          "action": "language_of_work_or_name",
+          "patient": "french_language",
+          "surface": "the christine_first_name language_of_work_or_names the french_language",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "pennsylvania_township",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the pennsylvania_township countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "gottfried",
+          "action": "language_of_work_or_name",
+          "patient": "wie_gehts",
+          "surface": "the gottfried language_of_work_or_names the wie_gehts",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "reggio_nell_emilia",
+          "action": "instance_of",
+          "patient": "city_work",
+          "surface": "the reggio_nell_emilia instance_ofs the city_work",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "zdf_tv",
+          "action": "headquarters_location",
+          "patient": "free_city_of_mainz",
+          "surface": "the zdf_tv headquarters_locations the free_city_of_mainz",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "meurthe_and_moselle",
+          "action": "country",
+          "patient": "franzoesische_republik",
+          "surface": "the meurthe_and_moselle countries the franzoesische_republik",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "magyar_k_zt_rsas_g",
+          "action": "instance_of",
+          "patient": "sovereign_states",
+          "surface": "the magyar_k_zt_rsas_g instance_ofs the sovereign_states",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "oise_valley",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the oise_valley located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "british_royal_society",
+          "action": "headquarters_location",
+          "patient": "england_london",
+          "surface": "the british_royal_society headquarters_locations the england_london",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "tokyo_uni",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "tokyo_administrative_district",
+          "surface": "the tokyo_uni located_in_the_administrative_territorias the tokyo_administrative_district",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "boulogne_billancourt_france",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the boulogne_billancourt_france located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "hardcore_hip_hop",
+          "action": "instance_of",
+          "patient": "genre_of_music",
+          "surface": "the hardcore_hip_hop instance_ofs the genre_of_music",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "george_harrison",
+          "action": "place_of_death",
+          "patient": "los_angelas",
+          "surface": "the george_harrison place_of_deaths the los_angelas",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "cory_publishing",
+          "action": "original_language_of_film_or_tv_show",
+          "patient": "number_of_english_words",
+          "surface": "the cory_publishing original_language_of_film_or_tv_shows the number_of_english_words",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "sussex_uni",
+          "action": "instance_of",
+          "patient": "higher_general_education",
+          "surface": "the sussex_uni instance_ofs the higher_general_education",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "the_weather_in_stavenger",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the the_weather_in_stavenger located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "alicante_spain",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the alicante_spain located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "eu_treaties",
+          "action": "contains_administrative_territorial_enti",
+          "patient": "united_kingom",
+          "surface": "the eu_treaties contains_administrative_territorial_entis the united_kingom",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "columbus_crew_soccer_club",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the columbus_crew_soccer_club sports the association_football_club",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "newcastle_united_f_c",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "newcastle_tyne_and_wear",
+          "surface": "the newcastle_united_f_c located_in_the_administrative_territorias the newcastle_tyne_and_wear",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "xx_winter_olympics",
+          "action": "follows",
+          "patient": "salt_lake_olympics",
+          "surface": "the xx_winter_olympics followses the salt_lake_olympics",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "numbered_highways_in_indiana",
+          "action": "located_in_the_administrative_territoria",
+          "patient": "art_of_indiana",
+          "surface": "the numbered_highways_in_indiana located_in_the_administrative_territorias the art_of_indiana",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "shareplay",
+          "action": "follows",
+          "patient": "playstation_iii",
+          "surface": "the shareplay followses the playstation_iii",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "canker_worm",
+          "action": "instance_of",
+          "patient": "taxonomic_group",
+          "surface": "the canker_worm instance_ofs the taxonomic_group",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "umea_sweden",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the umea_sweden located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "telangana_songs",
+          "action": "contains_administrative_territorial_enti",
+          "patient": "ranga_reddy",
+          "surface": "the telangana_songs contains_administrative_territorial_entis the ranga_reddy",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "department_of_the_rhone",
+          "action": "shares_border_with",
+          "patient": "saone_et_loire",
+          "surface": "the department_of_the_rhone shares_border_withs the saone_et_loire",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "delhi_university",
+          "action": "instance_of",
+          "patient": "higher_general_education",
+          "surface": "the delhi_university instance_ofs the higher_general_education",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "bergen_belgium",
+          "action": "country",
+          "patient": "koninkrijk_belgi",
+          "surface": "the bergen_belgium countries the koninkrijk_belgi",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "rochester_raging_rhinos",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the rochester_raging_rhinos countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "deportivo_manizales",
+          "action": "country",
+          "patient": "united_states_of_colombia",
+          "surface": "the deportivo_manizales countries the united_states_of_colombia",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "sport_in_paris",
+          "action": "award_received",
+          "patient": "croix_de_guerre_1914_1918",
+          "surface": "the sport_in_paris award_receiveds the croix_de_guerre_1914_1918",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "messina_italy",
+          "action": "instance_of",
+          "patient": "city_work",
+          "surface": "the messina_italy instance_ofs the city_work",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "aldershot_fc",
+          "action": "country",
+          "patient": "united_kingom",
+          "surface": "the aldershot_fc countries the united_kingom",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "grenoble_france",
+          "action": "located_in_time_zone",
+          "patient": "rome_time",
+          "surface": "the grenoble_france located_in_time_zones the rome_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "mar_caribe",
+          "action": "part_of",
+          "patient": "atlantic_oceans",
+          "surface": "the mar_caribe part_ofs the atlantic_oceans",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "curazia",
+          "action": "subclass_of",
+          "patient": "populated_places",
+          "surface": "the curazia subclass_ofs the populated_places",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "charleston_battery",
+          "action": "headquarters_location",
+          "patient": "charle_s_town",
+          "surface": "the charleston_battery headquarters_locations the charle_s_town",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "the_island_of_enchantment",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the the_island_of_enchantment countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "n": 8,
+      "spiked": true,
+      "well_formed_frac": 1.0,
+      "faithful_frac": 1.0,
+      "permuted_control_well_formed_frac": 0.0,
+      "permuted_control_faithful_frac": 0.0,
+      "examples": [
+        {
+          "agent": "ecm_records",
+          "action": "country",
+          "patient": "federal_republic_of_germany",
+          "surface": "the ecm_records countries the federal_republic_of_germany",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "ann_arbor_michigan",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the ann_arbor_michigan countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "arkansas_bay",
+          "action": "country",
+          "patient": "u_s_of_a",
+          "surface": "the arkansas_bay countries the u_s_of_a",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "social_issues_in_lesotho",
+          "action": "located_in_time_zone",
+          "patient": "west_africa_summer_time",
+          "surface": "the social_issues_in_lesotho located_in_time_zones the west_africa_summer_time",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "jpest_football_club",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the jpest_football_club sports the association_football_club",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "england_national_under_23_football_team",
+          "action": "country",
+          "patient": "united_kingom",
+          "surface": "the england_national_under_23_football_team countries the united_kingom",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "2002_african_cup_of_nations",
+          "action": "sport",
+          "patient": "association_football_club",
+          "surface": "the 2002_african_cup_of_nations sports the association_football_club",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        },
+        {
+          "agent": "urban_pop",
+          "action": "instance_of",
+          "patient": "genre_of_music",
+          "surface": "the urban_pop instance_ofs the genre_of_music",
+          "well_formed": true,
+          "faithful": true,
+          "why": "ok"
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 6,
+    "well_formed_frac_mean": 1.0,
+    "well_formed_frac_min": 1.0,
+    "faithful_frac_mean": 1.0,
+    "faithful_frac_min": 1.0,
+    "permuted_control_well_formed_frac_mean": 0.0,
+    "all_seeds_spiked": true,
+    "order_effect_fraction_attributable_to_manipulation": 1.0
+  },
+  "verdict": {
+    "label": "WKV fact-to-SVO-clause first lever: structural well-formedness + faithfulness, all 6 seeds",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "every seed's bridge genuinely spiked",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "well-formed clause rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ef20>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "faithful (correct SVO role assignment) rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ef20>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "well-formed rate, correct-taught order vs PERMUTED-teaching control",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "order effect is genuinely attributable to the manipulation (not a control-shared artifact)",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ed40>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "WKV fact-to-SVO-clause first lever: structural well-formedness + faithfulness, all 6 seeds",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "every seed's bridge genuinely spiked",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "well-formed clause rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ef20>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "faithful (correct SVO role assignment) rate >= 0.95 on every seed",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ef20>",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "well-formed rate, correct-taught order vs PERMUTED-teaching control",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "order effect is genuinely attributable to the manipulation (not a control-shared artifact)",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f0d2410ed40>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}
