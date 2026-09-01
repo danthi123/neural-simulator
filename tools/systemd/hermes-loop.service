@@ -6,7 +6,7 @@ After=default.target hermes-gateway.service
 Type=simple
 WorkingDirectory=/home/dant123/Projects/sim
 Environment=HERMES_LOOP_REASONING=xhigh
-Environment=HERMES_LOOP_TURN_MAX=3600
+Environment=HERMES_LOOP_TURN_MAX=7200
 ExecStart=/usr/bin/python3 /home/dant123/Projects/sim/tools/hermes/loop.py
 Restart=always
 RestartSec=10
