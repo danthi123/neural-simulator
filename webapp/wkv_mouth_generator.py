@@ -255,6 +255,72 @@ your my our its today now yesterday tomorrow
 """.split())
 
 
+# ── fact-grounding lever (board #112 "clean unlock" — the moat-soak's named next action, see
+# research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md and
+# research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md). HONEST SCOPE, stated up front: this checkpoint's
+# V=1000 vocabulary is closed (word-level, no subword fallback) and was trained on TinyStories, not Wikidata --
+# research/findings/2026-08-31-wkv-mouth-rung4-vocab-coverage.md already measured only 9.55% raw corpus-word
+# coverage for THIS checkpoint. A direct token-level measurement against the real shipped `wikidata_core_15k`
+# store's facts.json (15000 AFFIRM triples) finds the SAME structural ceiling from the fact side: only 25.9% of
+# facts have >=1 real CONTENT word (i.e. excluding `_FUNCTION_WORDS`) whose literal string sits in this
+# checkpoint's vocabulary at all (most of the 74.1% majority is Wikidata slugs -- `rugby_leauge`,
+# `castleford_f_c`, `deutsche_arbeiter_partei` -- that never had an embedding trained for them and structurally
+# CANNOT be produced by this fixed-vocabulary decoder, full stop; there is no way to inject an unseen word's
+# meaning into a fixed [V,D] embedding table without retraining). This lever does NOT close that structural gap
+# -- that would need a wider-vocab / subword checkpoint (the V=4000 checkpoint already measured, not yet wired,
+# per the rung-4 finding above) or new grounded fine-tuning. What THIS lever does: for the ~26% of facts whose
+# content word DOES already exist in this checkpoint's vocabulary, increase (not force) the odds the genuine
+# few-spike spiking WTA actually SELECTS that TRUE word during free generation, instead of leaving it to chance
+# alongside whatever TinyStories-plausible-but-unsupported word the model would otherwise favor.
+def fact_grounding_ids(facts, seed: int = 42, max_ids: int = 6) -> list:
+    """Decompose a list of (agent, action, patient) triples (the SAME shape `webapp.open_ended_chat.retrieve`
+    returns) into their real CONTENT words (excluding `_FUNCTION_WORDS`) and map each to this checkpoint's
+    vocabulary id where one exists. Returns a de-duplicated, ORDER-PRESERVING list of up to `max_ids` token ids
+    (patient words first, then action, then agent -- the patient is normally the informative slot: "sport" ->
+    "basketball", not the entity's own name). Empty facts, or facts with zero in-vocab content words, return `[]`
+    -- the honest majority case for this store (only fed a `facts=None`/falsy list from the caller in that case
+    anyway, but this function is itself pure/side-effect-free so it is safe to call regardless)."""
+    if not facts:
+        return []
+    _, _vocab, word_to_id = _get_readout(seed)
+    ids = []
+    seen = set()
+    for triple in facts:
+        if len(triple) != 3:
+            continue
+        _agent, action, patient = triple
+        for field in (patient, action, _agent):
+            for w in _WORD_RE.findall(str(field)):
+                wl = w.lower()
+                if wl in _FUNCTION_WORDS:
+                    continue
+                tid = word_to_id.get(wl)
+                if tid is None or tid in seen:
+                    continue
+                seen.add(tid)
+                ids.append(tid)
+                if len(ids) >= max_ids:
+                    return ids
+    return ids
+
+
+def _apply_fact_boost(lg: np.ndarray, fact_ids, boost: float) -> np.ndarray:
+    """Additive decode-time logit boost for `fact_ids` (see `fact_grounding_ids`) -- legitimately HOST territory,
+    the SAME category as the pre-existing `_apply_repetition_controls` (decode control over WHICH candidates
+    reach the spiking WTA read; the read mechanism itself, `reader.read(p)`, is never touched). Returns `lg`
+    UNCHANGED (same object, no allocation) when `fact_ids` is empty or `boost == 0.0` -- the exact no-op default
+    both the caller's own default (`fact_boost_ids=None`) and every pre-existing call site hit before this
+    function existed."""
+    if not fact_ids or boost == 0.0:
+        return lg
+    lg = lg.copy()
+    v = lg.shape[0]
+    for t in fact_ids:
+        if 0 <= t < v:
+            lg[t] += boost
+    return lg
+
+
 def in_vocab_scope(text: str, seed: int = 42, min_frac: float = 0.6, min_hits: int = 2,
                     min_content_hits: int = 2) -> bool:
     """True only when `text` carries substantial genuine CONTENT overlap with the checkpoint's V=1000 TinyStories
@@ -312,7 +378,8 @@ def _apply_repetition_controls(lg: np.ndarray, gen: list, repetition_penalty: fl
 
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
 def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float,
-              repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0):
+              repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
+              fact_boost_ids=None, fact_boost: float = 0.0):
     pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
     if not pid:
         pid = [0]
@@ -329,6 +396,12 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
             lg = lg.copy()
             lg[ro.unk_idx] = -1e30
         lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
+        # fact-grounding boost (board #112 clean-unlock lever, default off): applied AFTER the repetition guard,
+        # on the SAME full-vocab logits the repetition controls already touched -- so a boosted fact token can
+        # still be repetition-suppressed/n-gram-banned like any other candidate, and a repetition-banned token
+        # cannot be un-banned by the boost (an additive `+boost` cannot overcome a `-1e30` hard ban). No-op
+        # (same object, no allocation) when `fact_boost_ids` is empty or `fact_boost == 0.0`.
+        lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -342,12 +415,12 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         if ro.words[nxt] == "endoftext":
             break
     text = " ".join(ro.words[i] if 0 <= i < len(ro.words) else "<unk>" for i in gen if ro.words[i] != "endoftext")
-    return text, (self_nll / max(1, steps))
+    return text, (self_nll / max(1, steps)), gen
 
 
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
-             no_repeat_ngram_size: int = 0) -> tuple[str, float]:
+             no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
@@ -358,14 +431,22 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     `repetition_penalty` (default 1.0) and `no_repeat_ngram_size` (default 0) are DEFAULT-OFF decode-time
     repetition guards -- see `_apply_repetition_controls` -- addressing the repetition/looping residual named
     as the next lever by research/findings/2026-08-28-wkv-learned-vs-native-head-AB-worth-keeping-opt-in.md
-    SS5. Left at their defaults, `generate()` is byte-identical to before these kwargs existed."""
+    SS5. Left at their defaults, `generate()` is byte-identical to before these kwargs existed.
+
+    `facts` (default None) and `fact_boost` (default 6.0, inert while `facts` is None/empty): the board #112
+    fact-grounding lever. When `facts` (the SAME (agent, action, patient) triple list `open_ended_chat.retrieve`
+    returns) is truthy, its in-vocab CONTENT-word ids (`fact_grounding_ids`) get an additive decode-time logit
+    boost every generation step (`_apply_fact_boost`) -- byte-identical to before this parameter existed when
+    `facts` is None (the pre-existing default and every pre-existing call site)."""
     t0 = time.time()
 
     def _run():
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
-        text, _self_nll = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
-                                     repetition_penalty, no_repeat_ngram_size)
+        fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
+        text, _self_nll, _gen = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
+                                          repetition_penalty, no_repeat_ngram_size,
+                                          fact_boost_ids=fact_ids, fact_boost=fact_boost)
         return text
 
     text = _RNG.run(seed, _run)
