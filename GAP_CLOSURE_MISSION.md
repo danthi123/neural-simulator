@@ -39,22 +39,33 @@ HERMES is the sole active driver — Claude is READ-MOSTLY QA (review its work v
 NOT co-drive or dispatch GPU work).** Owner operates it via the desktop panel (start/stop/resume/handback/status/
 say/logs/check). Hand-back to Claude: `tools/hermes_takeover.sh off` (or desktop `handback`).
 
-**↓ CURRENT ARC 2026-08-31 — `main` = `f3af43407`. ⭐ #66 latency wall CLOSED on technical bar:** the codebook-cache
-lever (board #192 — cache the (V,D) cleanup codebook once, byte-identical, 31.7% faster at real per-shard scale) is
-landed on `main` and the 79k-fact end-to-end scale verify with it ON is **GO** on both numpy AND cupy (seed 42;
-recall 0.9933, moat 0 confab, median ~711-755ms < 1000ms bar, p95 ~900ms). The hot loop was the O(V) codebook rebuild,
-not the resonate — confirmed end-to-end. Residual (honest): single seed at production load; 6-seed soak is the next
-named rung (seed-waiver documented in the finding). MOUTH rung-3 flip landed (`ba577565`); continuous-attractor screen
-is NO-GO (board #64).
+**↓ CURRENT ARC 2026-09-01 — `main` = `06d31ebd` (CLAUDE driving; Hermes handed back via `hermes_takeover.sh off`).**
+**⭐ THE NORTH-STAR CRITICAL PATH IS NAMED — biological SPIKE READ-POWER: recovering a target signal from spike
+firing.** The signal is provably present (a full-population decoder recovers it 6/6) but every BIOLOGICAL read tried —
+rate / first-spike latency / dispersion / matched-filter — recovers ~0. It is the SHARED wall behind BOTH (a) the
+brain's own spiking mouth AND (b) learn-through-use recall (what gap#4 dissolved into — the mouth read-SNR wall). Lever
+IN FLIGHT: an opponent/push-pull read (recover the sign a rectified channel discards — the fix-shape that already
+worked 6/6 for surprise→episodic) on branch `research/spike-read-power-opponent-read`. DO NOT let it go idle.
 
-**PRE-DECIDED NEXT ACTIONS (ordered) — 2026-08-31:**
-1. ⭐ GPU IS AVAILABLE + UN-GATED — launch real GPU runs AUTONOMOUSLY every turn there is GPU work; do
-   NOT wait for owner-resume and do NOT just re-check pool/queue status (per the 2026-08-28 owner
-   directive GPU work is Claude/Hermes-autonomous; GAME_MODE is unset + the dispatcher is live). ENQUEUE
-   ONE real run via `bash tools/hermes_gpu_run.sh '<full cmd incl --out>'` — VALIDATED: it unloads the
-   model, runs on the full 24GB card, reloads, re-invokes you to harvest. IN FLIGHT NOW: the 6-seed codebook-cache
-   production-load soak (42/43/44/100/101/102, cupy) is queued (depth 1) at `research/runners/_knowledge_scale_100k_cacheon_6seed.py`;
-   GO iff all 6 seeds pass median<1000ms + recall>=0.99 + moat=0. After it lands, launch the next roadmap frontier item.
+**HONEST SCORECARD (grounded 2026-09-01 vs the 57-row ledger):** 0 faculties scaffold-retired; 1 production cross-edge
+(WM→comprehension); own-mouth frames only structured SVO (arbitrary prose still = the Qwen-0.5B scaffold); ~51
+faculties wired-DEFAULT-OFF and ALL chat-path flips are currently HOLLOW (flip-audit finding). The live product is
+~one integrated spiking family + a bench of ~40 unwired GO de-risks.
+
+**LANDED THIS ARC (both remotes):** #102 moat NPHead+entailment wired live (default-off); production-default flip-audit
+(no free flips — the confidence content-exhaustion fix converts it to a real one); #191 mouth rung-1 learned-head A/B
+GO 6/6; #110 batch sentence rendering 2-3× byte-identical; seed-44 recall hole root-caused (a phase-quantization
+READ-POWER instance) + decode-escalation fix. #66 latency wall stays CLOSED (codebook-cache, byte-identical verified).
+
+**NEXT ACTIONS (ordered) — 2026-09-01 (owner: work ALL important frontiers concurrently + consistently; parallelism
+bound is dev-capacity not compute):**
+1. ⭐ CRITICAL PATH — spike read-power (`research/spike-read-power-opponent-read`, agent in flight). Keep it worked.
+2. CONCURRENT FAN-OUT: cross-edges-declarative (one-brain) + brain-native-plausibility (retire host PPMI) running;
+   seed-44 decode-escalation + elaboration-past-buffer-tier (unblocks the confidence flip) finishing. Integrate each
+   branch (adversarial-verify → merge → board), then refill from the shipped-state-checked backlog.
+3. PRODUCTION-DEFAULT SPINE (`research/findings/2026-09-01-production-default-flip-plan.md`): no free flips today;
+   the confidence content-exhaustion fix (LTM candidate pool) is the one that becomes load-bearing; the
+   `BRAIN_OPEN_ENDED` bundle is the highest-value flip but needs a moat-safety fabrication-delta soak → owner UX call.
 2. ✅ POOL continuous-attractor screen = NO-GO (0 candidates at 316/432 cells; nothing to 6-seed) — treat it as
    DONE, do NOT keep re-checking its status turn after turn. Your productive work is the GPU verify in #1.
 3. ✅ #66 latency (owner #1) — DONE: end-to-end 79k scale verify with codebook-cache ON is GO on numpy + cupy (seed 42).
