@@ -1,0 +1,856 @@
+{
+  "probe": "onebrain_surprise_episodic_encode_decision",
+  "verdict": "GO \u2014 a learned cross-edge D2-surprise -> a NEW purpose-built episodic ENCODE-DECISION gate population (proxy for the Group-C-deferred d5_episodic CA3 pool, declared): 6/6 seeds GROW the edge from the substrate's own standard Hebbian rule, are LOAD-BEARING AT THE DECISION LEVEL (a genuinely high-surprise CONTRADICT trial flips the encode_gate's threshold-crossing decision from SKIP to ENCODE relative to a low-surprise CONFIRM trial, via the learned edge alone), the flip VANISHES on lesion, and the pool is byte-identical-off. numpy CPU; NO sim/ edit; additive; no production wiring.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_seeds_go",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7ff03c76e0c0>",
+      "note": "emergence + interaction + byte-off + decision-flip-vanishes all PASS on every seed"
+    },
+    {
+      "kind": "require",
+      "name": "decision_flips_intact",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7ff03c76e0c0>",
+      "note": "the discrete ENCODE/SKIP decision must actually DIFFER between low and high surprise with the edge intact, on every seed \u2014 else the 'load-bearing decision' claim is vacuous"
+    },
+    {
+      "kind": "require",
+      "name": "decision_flip_vanishes_on_lesion",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7ff03c76e0c0>",
+      "note": "the intact decision-flip must COLLAPSE (both conditions decode the same) once the cross-edge is lesioned, on every seed \u2014 the causal-attribution half of the claim"
+    },
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7ff03c76e0c0>",
+      "note": "the no-edge pool's base connectivity is byte-identical (integration added ONLY the edge)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_other_blocks_stay_near_w0",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7ff03c76e0c0>",
+      "note": "non-participating (never-mismatched) concept blocks' edges into encode_gate must stay near the W0=0.05 seed value \u2014 the edge tracks THIS seed's randomly-assigned surprise block, not every block indiscriminately"
+    }
+  ],
+  "gate_spec": {
+    "name": "SURPRISE_to_ENCODE_DECISION",
+    "correct_edges": [
+      "surprise_to_encode_gate"
+    ],
+    "conditions": [
+      "low",
+      "high"
+    ],
+    "control": "low",
+    "credit_signal": "rate_hebbian",
+    "encode_thresh": 0.042,
+    "cross_edges": [
+      {
+        "key": "surprise_to_encode_gate",
+        "src": "surprise",
+        "tgt": "encode_gate"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "GO": true,
+      "elapsed_s": 52.5,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7120799422264099
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.07972222222222221
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.07972222222222221,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.07972222222222221,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.4935
+        },
+        {
+          "ep": 10,
+          "w": 0.6354
+        },
+        {
+          "ep": 15,
+          "w": 0.6806
+        },
+        {
+          "ep": 20,
+          "w": 0.6975
+        },
+        {
+          "ep": 25,
+          "w": 0.7044
+        },
+        {
+          "ep": 30,
+          "w": 0.7077
+        },
+        {
+          "ep": 35,
+          "w": 0.7093
+        },
+        {
+          "ep": 40,
+          "w": 0.7102
+        },
+        {
+          "ep": 45,
+          "w": 0.711
+        },
+        {
+          "ep": 50,
+          "w": 0.7114
+        },
+        {
+          "ep": 55,
+          "w": 0.7117
+        },
+        {
+          "ep": 60,
+          "w": 0.7118
+        },
+        {
+          "ep": 65,
+          "w": 0.712
+        },
+        {
+          "ep": 70,
+          "w": 0.712
+        },
+        {
+          "ep": 75,
+          "w": 0.712
+        },
+        {
+          "ep": 80,
+          "w": 0.7121
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "elapsed_s": 44.4,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7114173769950867
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.07572916666666663
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.07572916666666663,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.07572916666666663,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.4865
+        },
+        {
+          "ep": 10,
+          "w": 0.6304
+        },
+        {
+          "ep": 15,
+          "w": 0.6775
+        },
+        {
+          "ep": 20,
+          "w": 0.6963
+        },
+        {
+          "ep": 25,
+          "w": 0.7042
+        },
+        {
+          "ep": 30,
+          "w": 0.7076
+        },
+        {
+          "ep": 35,
+          "w": 0.7092
+        },
+        {
+          "ep": 40,
+          "w": 0.71
+        },
+        {
+          "ep": 45,
+          "w": 0.7105
+        },
+        {
+          "ep": 50,
+          "w": 0.7108
+        },
+        {
+          "ep": 55,
+          "w": 0.711
+        },
+        {
+          "ep": 60,
+          "w": 0.7111
+        },
+        {
+          "ep": 65,
+          "w": 0.7112
+        },
+        {
+          "ep": 70,
+          "w": 0.7113
+        },
+        {
+          "ep": 75,
+          "w": 0.7113
+        },
+        {
+          "ep": 80,
+          "w": 0.7114
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "elapsed_s": 71.1,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7109326124191284
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.07788194444444439
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.07788194444444439,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.07788194444444439,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.474
+        },
+        {
+          "ep": 10,
+          "w": 0.6192
+        },
+        {
+          "ep": 15,
+          "w": 0.6698
+        },
+        {
+          "ep": 20,
+          "w": 0.6909
+        },
+        {
+          "ep": 25,
+          "w": 0.7002
+        },
+        {
+          "ep": 30,
+          "w": 0.7045
+        },
+        {
+          "ep": 35,
+          "w": 0.7068
+        },
+        {
+          "ep": 40,
+          "w": 0.7079
+        },
+        {
+          "ep": 45,
+          "w": 0.7086
+        },
+        {
+          "ep": 50,
+          "w": 0.7093
+        },
+        {
+          "ep": 55,
+          "w": 0.7099
+        },
+        {
+          "ep": 60,
+          "w": 0.7102
+        },
+        {
+          "ep": 65,
+          "w": 0.7106
+        },
+        {
+          "ep": 70,
+          "w": 0.7107
+        },
+        {
+          "ep": 75,
+          "w": 0.7108
+        },
+        {
+          "ep": 80,
+          "w": 0.7109
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "elapsed_s": 69.2,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7108323574066162
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.08093750000000001
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.08093750000000001,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.08093750000000001,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.4883
+        },
+        {
+          "ep": 10,
+          "w": 0.6298
+        },
+        {
+          "ep": 15,
+          "w": 0.6769
+        },
+        {
+          "ep": 20,
+          "w": 0.6946
+        },
+        {
+          "ep": 25,
+          "w": 0.7022
+        },
+        {
+          "ep": 30,
+          "w": 0.7056
+        },
+        {
+          "ep": 35,
+          "w": 0.7073
+        },
+        {
+          "ep": 40,
+          "w": 0.7083
+        },
+        {
+          "ep": 45,
+          "w": 0.7089
+        },
+        {
+          "ep": 50,
+          "w": 0.7094
+        },
+        {
+          "ep": 55,
+          "w": 0.7099
+        },
+        {
+          "ep": 60,
+          "w": 0.7102
+        },
+        {
+          "ep": 65,
+          "w": 0.7105
+        },
+        {
+          "ep": 70,
+          "w": 0.7106
+        },
+        {
+          "ep": 75,
+          "w": 0.7107
+        },
+        {
+          "ep": 80,
+          "w": 0.7108
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "elapsed_s": 70.2,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7120778560638428
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.07718749999999996
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.07718749999999996,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.07718749999999996,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.4572
+        },
+        {
+          "ep": 10,
+          "w": 0.6087
+        },
+        {
+          "ep": 15,
+          "w": 0.666
+        },
+        {
+          "ep": 20,
+          "w": 0.6884
+        },
+        {
+          "ep": 25,
+          "w": 0.6995
+        },
+        {
+          "ep": 30,
+          "w": 0.7049
+        },
+        {
+          "ep": 35,
+          "w": 0.7077
+        },
+        {
+          "ep": 40,
+          "w": 0.7092
+        },
+        {
+          "ep": 45,
+          "w": 0.7101
+        },
+        {
+          "ep": 50,
+          "w": 0.7107
+        },
+        {
+          "ep": 55,
+          "w": 0.7112
+        },
+        {
+          "ep": 60,
+          "w": 0.7115
+        },
+        {
+          "ep": 65,
+          "w": 0.7116
+        },
+        {
+          "ep": 70,
+          "w": 0.7118
+        },
+        {
+          "ep": 75,
+          "w": 0.712
+        },
+        {
+          "ep": 80,
+          "w": 0.7121
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "elapsed_s": 61.5,
+      "emergence": {
+        "grown": {
+          "surprise_to_encode_gate": 0.7111802697181702
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.0,
+          "high": 0.07913194444444444
+        },
+        "reads_lesion": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": 0.07913194444444444,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 235008,
+        "n_without": 221184,
+        "n_with_base": 221184,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "decision": {
+        "encode_thresh": 0.042,
+        "rate_low_intact": 0.0,
+        "rate_high_intact": 0.07913194444444444,
+        "rate_low_lesion": 0.0,
+        "rate_high_lesion": 0.0,
+        "decode_low_intact": "SKIP",
+        "decode_high_intact": "ENCODE",
+        "decode_low_lesion": "SKIP",
+        "decode_high_lesion": "SKIP",
+        "decision_varies_intact": true,
+        "decision_varies_lesion": false,
+        "decision_flip_vanishes_on_lesion": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.4888
+        },
+        {
+          "ep": 10,
+          "w": 0.6302
+        },
+        {
+          "ep": 15,
+          "w": 0.6765
+        },
+        {
+          "ep": 20,
+          "w": 0.6946
+        },
+        {
+          "ep": 25,
+          "w": 0.7025
+        },
+        {
+          "ep": 30,
+          "w": 0.7063
+        },
+        {
+          "ep": 35,
+          "w": 0.7083
+        },
+        {
+          "ep": 40,
+          "w": 0.7094
+        },
+        {
+          "ep": 45,
+          "w": 0.7101
+        },
+        {
+          "ep": 50,
+          "w": 0.7104
+        },
+        {
+          "ep": 55,
+          "w": 0.7106
+        },
+        {
+          "ep": 60,
+          "w": 0.7108
+        },
+        {
+          "ep": 65,
+          "w": 0.7109
+        },
+        {
+          "ep": 70,
+          "w": 0.711
+        },
+        {
+          "ep": 75,
+          "w": 0.7111
+        },
+        {
+          "ep": 80,
+          "w": 0.7112
+        }
+      ]
+    }
+  ]
+}
