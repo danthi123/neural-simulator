@@ -56,6 +56,14 @@ faculties wired-DEFAULT-OFF and ALL chat-path flips are currently HOLLOW (flip-a
 (no free flips — the confidence content-exhaustion fix converts it to a real one); #191 mouth rung-1 learned-head A/B
 GO 6/6; #110 batch sentence rendering 2-3× byte-identical; seed-44 recall hole root-caused (a phase-quantization
 READ-POWER instance) + decode-escalation fix. #66 latency wall stays CLOSED (codebook-cache, byte-identical verified).
+⭐ READ-POWER RESIDUAL CLOSED on the RECALL side (branch `research/separate-trace-recall-read`, de-risk): read-fidelity
+iteration 6 isolated the residual to READ ARCHITECTURE (not the estimator — a near-perfect decoder direction still
+reads null; the opponent + whitened-LDA + logistic estimator family is banked 0/6); reading the recall signal off the
+#129 SEPARATE TRACE (upstream shaping) then clears the SAME read-fidelity gate 6/6 (perm-null z 5.6–11.2 vs floor 2.0,
+lesion collapses the read to exact 0, shuffle-clean). The population-collapse read was never the problem in itself — it
+was fatal only when the shared edge hid the signal off the pool-identity axis. Recall-side read-power = closed by the
+right encoding, not a cleverer read (de-risk, not production-wired; mouth side is a separate mostly-closed track).
+Finding: `2026-09-01-read-fidelity-separate-trace-recall-read-GO-upstream-shaping-closes-read-power-residual`.
 
 **NEXT ACTIONS (ordered) — 2026-09-01 (owner: work ALL important frontiers concurrently + consistently; parallelism
 bound is dev-capacity not compute):**
