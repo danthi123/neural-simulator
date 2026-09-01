@@ -1,0 +1,293 @@
+{
+ "probe": "np_entailment_moat_gate_wiring_verify",
+ "flag": "BRAIN_OPEN_ENDED_NP_ENTAILMENT",
+ "off_path_no_import": true,
+ "off_is_false": true,
+ "on_is_true": true,
+ "catch_cases": [
+  {
+   "name": "mercury_discovered",
+   "topic": "mercury",
+   "raw": "Mercury orbits the sun. Mercury discovered Neptune.",
+   "flag_off_filtered": "Mercury orbits the sun Mercury discovered Neptune",
+   "flag_on_filtered": "Mercury orbits the sun",
+   "false_fragment": "discovered neptune",
+   "leaked_flag_off": true,
+   "leaked_flag_on": false,
+   "true_fragment_kept_flag_off": true,
+   "true_fragment_kept_flag_on": true,
+   "load_bearing": true
+  },
+  {
+   "name": "einstein_invented",
+   "topic": "einstein",
+   "raw": "Einstein developed relativity. Einstein invented the telephone.",
+   "flag_off_filtered": "Einstein developed relativity Einstein invented the telephone",
+   "flag_on_filtered": "Einstein developed relativity",
+   "false_fragment": "invented",
+   "leaked_flag_off": true,
+   "leaked_flag_on": false,
+   "true_fragment_kept_flag_off": true,
+   "true_fragment_kept_flag_on": true,
+   "load_bearing": true
+  }
+ ],
+ "safety_cases": [
+  {
+   "name": "grounded_kept",
+   "note": "grounded non-copula claim about the topic -> kept both ways",
+   "flag_off_filtered": "Mercury orbits the sun",
+   "flag_on_filtered": "Mercury orbits the sun",
+   "unchanged": true
+  },
+  {
+   "name": "offtopic_agent_untouched",
+   "note": "subject != retrieved topic -> out of this gate's adjudicable scope, untouched both ways",
+   "flag_off_filtered": "Newton discovered gravity",
+   "flag_on_filtered": "Newton discovered gravity",
+   "unchanged": true
+  },
+  {
+   "name": "copula_untouched",
+   "note": "copula predicate nominal -> excluded by design (would false-reject elaborated true content)",
+   "flag_off_filtered": "Canada is a vast country located in North America",
+   "flag_on_filtered": "Canada is a vast country located in North America",
+   "unchanged": true
+  }
+ ],
+ "component_lesions": [
+  {
+   "lesion": "entailment_classify_claim_always_grounded",
+   "name": "mercury_discovered",
+   "filtered": "Mercury orbits the sun Mercury discovered Neptune",
+   "leaked": true,
+   "catch_vanished": true
+  },
+  {
+   "lesion": "entailment_classify_claim_always_grounded",
+   "name": "einstein_invented",
+   "filtered": "Einstein developed relativity Einstein invented the telephone",
+   "leaked": true,
+   "catch_vanished": true
+  },
+  {
+   "lesion": "extraction_extract_svo_npbind_always_none",
+   "name": "mercury_discovered",
+   "filtered": "Mercury orbits the sun Mercury discovered Neptune",
+   "leaked": true,
+   "catch_vanished": true
+  },
+  {
+   "lesion": "extraction_extract_svo_npbind_always_none",
+   "name": "einstein_invented",
+   "filtered": "Einstein developed relativity Einstein invented the telephone",
+   "leaked": true,
+   "catch_vanished": true
+  }
+ ],
+ "post_restore_sanity": [
+  {
+   "name": "mercury_discovered",
+   "filtered": "Mercury orbits the sun",
+   "leaked": false
+  },
+  {
+   "name": "einstein_invented",
+   "filtered": "Einstein developed relativity",
+   "leaked": false
+  }
+ ],
+ "real_data_regression": [
+  {
+   "topic": "canada",
+   "byte_identical": true,
+   "flag_off_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated: Canada is a vast country located in North America, bordered by the United States to the south The capital city of Canada is Ottawa",
+   "flag_on_filtered": "As a brain that learns through conversation, I'm familiar with Canada's geography, history, culture, and political landscape Here\u2019s some knowledge I've accumulated: Canada is a vast country located in North America, bordered by the United States to the south The capital city of Canada is Ottawa"
+  },
+  {
+   "topic": "france",
+   "byte_identical": true,
+   "flag_off_filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world",
+   "flag_on_filtered": "However, I can tell you some general facts:\n\nFrance is a European country located on the Mediterranean Sea The capital city is Paris, known for its rich history, art, and culture France has a diverse population, including many ethnic groups such as French-speaking minorities and immigrants from around the world"
+  },
+  {
+   "topic": "morocco",
+   "byte_identical": true,
+   "flag_off_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes",
+   "flag_on_filtered": "As a spiking brain, I'm constantly learning new information Morocco is indeed a country, located on the African continent It's part of Africa and borders Spain The capital city is Rabat It's known for its rich history, culture, and diverse population The country borders the Mediterranean Sea and shares maritime boundaries with Mauritania Morocco is often referred to as \"the Rock\" due to its rugged terrain and beautiful landscapes"
+  }
+ ],
+ "catch_rate_unlesioned": 1.0,
+ "catch_rate_entailment_lesioned": 0.0,
+ "catch_rate_extraction_lesioned": 0.0,
+ "attributable_to_entailment": 1.0,
+ "attributable_to_extraction": 1.0,
+ "verdict": {
+  "label": "NPHeadBinder + entailment are load-bearing on webapp.open_ended_chat.post_filter's live moat verdict, and the coupling is attributable to each named mechanism",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "(a) flag OFF -> post_filter never imports webapp.np_entailment_moat_gate",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(a) BRAIN_OPEN_ENDED_NP_ENTAILMENT unset/0 -> np_entailment_enabled() is False",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(a) BRAIN_OPEN_ENDED_NP_ENTAILMENT=1 -> np_entailment_enabled() is True",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(b) every catch case is load-bearing: leaks flag-OFF, caught flag-ON, true content survives both ways",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) lesioning entailment (classify_claim forced to always 'grounded') makes the SAME catches vanish even with the flag ON",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) after restoring both lesions the catch reappears (flag ON, nothing monkeypatched) -- proves the lesions above were real and reversible, not a broken harness",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(d) false-reject safety: grounded / off-topic / copula cases unchanged flag on vs off",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(e) real saved known-topic Qwen replies: byte-identical flag on vs off (no new false rejects on real generated prose)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "control",
+    "name": "(b) mercury_discovered catch: flag ON vs flag OFF (same post_filter call, only the flag differs)",
+    "ok": true,
+    "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+    "note": "flag ON must catch (1); flag OFF (the lesion) must leak (0)"
+   },
+   {
+    "kind": "require",
+    "name": "(c) attribution: the entailment-lesion catch drop is attributable to the manipulation, not vacuous",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f798f5a84a0>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "(c) attribution: the extraction-lesion catch drop is attributable to the manipulation, not vacuous",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f798f5a84a0>",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "(a) flag OFF -> post_filter never imports webapp.np_entailment_moat_gate",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(a) BRAIN_OPEN_ENDED_NP_ENTAILMENT unset/0 -> np_entailment_enabled() is False",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(a) BRAIN_OPEN_ENDED_NP_ENTAILMENT=1 -> np_entailment_enabled() is True",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(b) every catch case is load-bearing: leaks flag-OFF, caught flag-ON, true content survives both ways",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) lesioning entailment (classify_claim forced to always 'grounded') makes the SAME catches vanish even with the flag ON",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) after restoring both lesions the catch reappears (flag ON, nothing monkeypatched) -- proves the lesions above were real and reversible, not a broken harness",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(d) false-reject safety: grounded / off-topic / copula cases unchanged flag on vs off",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(e) real saved known-topic Qwen replies: byte-identical flag on vs off (no new false rejects on real generated prose)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "(b) mercury_discovered catch: flag ON vs flag OFF (same post_filter call, only the flag differs)",
+   "ok": true,
+   "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+   "note": "flag ON must catch (1); flag OFF (the lesion) must leak (0)"
+  },
+  {
+   "kind": "require",
+   "name": "(c) attribution: the entailment-lesion catch drop is attributable to the manipulation, not vacuous",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f798f5a84a0>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "(c) attribution: the extraction-lesion catch drop is attributable to the manipulation, not vacuous",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f798f5a84a0>",
+   "note": ""
+  }
+ ],
+ "GO": true,
+ "elapsed_seconds": 4.5
+}
