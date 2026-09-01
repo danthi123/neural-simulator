@@ -1,0 +1,13 @@
+[0.1s] bundle loaded: 15000 plain facts, 30804 alias_of facts (6163 canonical concepts with >=1 alias)
+[0.8s] ShardedPhasorStore loaded (ONCE, reused for every mock-routing call below)
+[518.1s] [518s] seed 42: built onebrain tiny-demo + ALIAS-EXTENDED 15k LTM (vocab-with-aliases scale)
+[545.4s]   [full-gate INTACT] language_of_work_or_name: 'what is the language of work or name of margaret film?' -> ['margaret_movie', 'language_of_work_or_name', 'number_of_english_words'] PASS
+[627.1s]   [full-gate INTACT] located_in_time_zone: "what is udhagamandala's located in time zone?" -> ['udaka_mandala', 'located_in_time_zone', 'kunlun_time_zone'] PASS
+[639.0s]   [full-gate INTACT] headquarters_location: 'where is ens paris headquartered?' -> ['ens_ulm', 'headquarters_location', 'sport_in_paris'] PASS
+[645.8s]   [full-gate INTACT] subclass_of: 'what is ancient temple a subclass of?' -> ['hindi_temple', 'subclass_of', 'building_structure'] PASS
+[665.4s]   [full-gate INTACT] located_in_the_administrative_territoria: "what is california riverside's administrative territorial entity?" -> ['uc_riverside', 'located_in_the_administrative_territoria', 'california_state'] PASS
+[672.7s]   [full-gate INTACT] part_of: 'what is st alban s hall oxford part of?' -> ['alban_hall_oxford', 'part_of', 'conference_of_colleges'] PASS
+[678.9s]   [full-gate INTACT] member_of: 'what is ens paris a member of?' -> ['ens_ulm', 'member_of', 'consortium_couperin'] PASS
+[688.2s]   [full-gate INTACT] shares_border_with: 'what borders jamhuri ya kenya?' -> ['etymology_of_kenya', 'shares_border_with', 'people_of_uganda'] PASS
+[774.5s]   [full-gate INTACT canonical-form regression] 'what is the language of work or name of margaret movie?' -> ['margaret_movie', 'language_of_work_or_name', 'number_of_english_words'] PASS
+[881.8s]   [full-gate INTACT moat] "what is the glorble house of nonexistence's country of origin?" -> None PASS

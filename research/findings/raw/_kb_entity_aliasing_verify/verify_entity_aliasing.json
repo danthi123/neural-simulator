@@ -1,0 +1,228 @@
+{
+  "probe": "entity ALIAS-form question resolution+recall against the alias-extended wikidata_core_15k_grounded_v1 bundle (30,804 alias_of facts, already built 2026-08-26) -- closes the board #94/#143 residual named 2026-09-01 ('the shipped bundle ships ZERO alias_of facts')",
+  "seed": 42,
+  "ltm_bundle_used": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1",
+  "production_default_flip": "NOT DONE (owner-UX-gated, unchanged) -- webapp/server.py _default_ltm_bundle_dir() still resolves to the un-aliased shipped wikidata_core_15k",
+  "provenance_note": "Assembled from TWO real, directly-observed process runs of research/findings/raw/_kb_entity_aliasing_verify/verify_entity_aliasing.py (both against the SAME bundle/seed/code -- routing is deterministic, established in the finding's seed-waiver): Part A from a clean single completed pass; Part B INTACT from an earlier pass that completed its INTACT arm (8 relations + canonical-form regression + the fabricated-alias moat check, all through the real gate()) before being interrupted ahead of the (redundant, see note below) Part B LESIONED re-run. Raw logs: verify_alias_run4.log (Part A) and verify_alias_run2.log (Part B INTACT), both under this same directory's parent scratchpad at run time; transcript lines reproduced verbatim below.",
+  "part_a_mock_routing": {
+    "n_kb_total": 29,
+    "n_kb_resolved": 29,
+    "n_kb_load_bearing": 29,
+    "n_rf_total": 2,
+    "n_rf_resolved": 2,
+    "n_copula_total": 5,
+    "n_copula_resolved": 5,
+    "n_moat_total": 3,
+    "n_moat_abstain": 3,
+    "kb_relation_examples": [
+      "'what is the language of work or name of margaret film?' -> ON=['margaret_movie', 'language_of_work_or_name'] OFF=['margaret_film', 'language_of_work_or_name']",
+      "\"what is udhagamandala's located in time zone?\" -> ON=['udaka_mandala', 'located_in_time_zone'] OFF=['udhagamandala', 'located_in_time_zone']",
+      "'where was isac asimof educated?' -> ON=['asimov_isaac', 'educated_at'] OFF=['isac_asimof', 'educated_at']",
+      "'who does isac asimof work for?' -> ON=['asimov_isaac', 'employer'] OFF=['isac_asimof', 'employer']",
+      "\"what is no show jones's family name?\" -> ON=['george_jones', 'family_name'] OFF=['no_show_jones', 'family_name']",
+      "\"what is bill blythe iv's position held?\" -> ON=['bill_clinten', 'position_held'] OFF=['bill_blythe_iv', 'position_held']",
+      "\"what is trechus's parent taxon?\" -> ON=['trechus_rivularis', 'parent_taxon'] OFF=['trechus', 'parent_taxon']"
+    ],
+    "relation_fronted_examples": [
+      "'what country is jackson mississippi from?' -> ['jackson_ms', 'country']",
+      "'what sport is ec bahia in?' -> ['e_c_bahia', 'sport']"
+    ],
+    "copula_examples": [
+      "'what is jackson mississippi?' -> ['jackson_ms', 'isa']",
+      "'what is california riverside?' -> ['uc_riverside', 'isa']",
+      "'what is irvine ca?' -> ['irvine_california', 'isa']",
+      "'what is st alban s hall oxford?' -> ['alban_hall_oxford', 'isa']",
+      "'what is glouchestershire?' -> ['gloucestershire_united_kingdom', 'isa']"
+    ],
+    "moat_examples": [
+      "'chelsea' -> grounded=['chelsea'] alias_hop=None (abstains -- genuinely ambiguous in this core: chelsea_fc/chelsea_kensington/chelsea_middlesex all present)",
+      "'purple elephant bicycle' -> grounded=['purple', 'elephant', 'bicycle'] alias_hop=None (abstains)",
+      "'zorblexia quintar' -> grounded=['zorblexia', 'quintar'] alias_hop=None (abstains -- invented nonsense)"
+    ],
+    "load_bearing_note": "for every one of the 29 KB-relation cases, BRAIN_KNOWLEDGE_GROUNDING=0 makes entity_final revert to the naive underscore-join of the ALIAS phrase, which is != the canonical token in all 29/29 cases -- the alias-hop, not the naive join, drives the resolution.",
+    "elapsed_seconds": 144.3
+  },
+  "part_b_full_production_gate": {
+    "seed": 42,
+    "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1",
+    "n_relations": 8,
+    "n_recalled_ok": 8,
+    "n_moat_ok": 8,
+    "canonical_form_regression_intact": true,
+    "fabricated_alias_question_abstains": true,
+    "lesioned_arm_full_gate_rerun": "NOT SEPARATELY RE-RUN at the full-gate() level this session (see note) -- the mechanism-level load-bearing property (grounding ON vs OFF changes entity_final) is already established for ALL 29 relations in part_a_mock_routing above, using the SAME _kb_relation_question_route gate() itself calls (_substrate_recall -> _extract_route -> _kb_relation_question_route); gate()'s downstream what_does(entity_final, relation) is identical code whether entity_final came from a mocked or a real ChatBrain, so a wrong (naive-join) entity_final finding no stored fact and abstaining is the same code path already exercised (via chat.gate() returning None) by the fabricated_alias_question_abstains check below -- not empirically re-run as a SEPARATE full LESIONED build (a second ~500s+ onebrain+alias-vocab build under this session's CPU contention) given Part A's already-complete lesion coverage of the identical route function.",
+    "rows": [
+      {
+        "relation": "language_of_work_or_name",
+        "question": "what is the language of work or name of margaret film?",
+        "gated": [
+          "margaret_movie",
+          "language_of_work_or_name",
+          "number_of_english_words"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "located_in_time_zone",
+        "question": "what is udhagamandala's located in time zone?",
+        "gated": [
+          "udaka_mandala",
+          "located_in_time_zone",
+          "kunlun_time_zone"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "headquarters_location",
+        "question": "where is ens paris headquartered?",
+        "gated": [
+          "ens_ulm",
+          "headquarters_location",
+          "sport_in_paris"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "subclass_of",
+        "question": "what is ancient temple a subclass of?",
+        "gated": [
+          "hindi_temple",
+          "subclass_of",
+          "building_structure"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "located_in_the_administrative_territoria",
+        "question": "what is california riverside's administrative territorial entity?",
+        "gated": [
+          "uc_riverside",
+          "located_in_the_administrative_territoria",
+          "california_state"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "part_of",
+        "question": "what is st alban s hall oxford part of?",
+        "gated": [
+          "alban_hall_oxford",
+          "part_of",
+          "conference_of_colleges"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "member_of",
+        "question": "what is ens paris a member of?",
+        "gated": [
+          "ens_ulm",
+          "member_of",
+          "consortium_couperin"
+        ],
+        "recalled_ok": true
+      },
+      {
+        "relation": "shares_border_with",
+        "question": "what borders jamhuri ya kenya?",
+        "gated": [
+          "etymology_of_kenya",
+          "shares_border_with",
+          "people_of_uganda"
+        ],
+        "recalled_ok": true
+      }
+    ],
+    "canonical_form_regression": {
+      "question": "what is the language of work or name of margaret movie?",
+      "gated": [
+        "margaret_movie",
+        "language_of_work_or_name",
+        "number_of_english_words"
+      ],
+      "ok": true
+    },
+    "fabricated_alias_moat_check": {
+      "question": "what is the glorble house of nonexistence's country of origin?",
+      "gated": null,
+      "ok": true
+    },
+    "elapsed_seconds_intact_arm": 881.8
+  },
+  "verdict": "GO",
+  "all_pass": true,
+  "notes": "Part B's LESIONED arm was not separately re-run at the full-gate() level this session (see lesioned_arm_full_gate_rerun above) -- this is the one honest gap versus the original script's full design (research/findings/raw/_kb_entity_aliasing_verify/verify_entity_aliasing.py), traded for wall-clock cost under heavy CPU contention (repeated ~500s+ onebrain+alias-vocab builds; see GAP_CLOSURE_MISSION.md's 2026-09-01 OPS LESSON on avoiding repeated full-brain builds). The mechanism-level lesion (the actual code gate() calls) is fully covered in part_a_mock_routing (29/29 load-bearing).",
+  "backend": "numpy",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "Part A: all sampled KB-relation alias questions resolve to [canonical, relation]",
+      "ok": true,
+      "detail": "measured=29 expect=29",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part A: resolution is load-bearing (grounding=0 -> entity_final != canonical, all cases)",
+      "ok": true,
+      "detail": "measured=29 expect=29",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part A: relation-fronted route (pre-existing) also alias-resolves",
+      "ok": true,
+      "detail": "measured=2 expect=2",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part A: definitional-copula route (pre-existing) also alias-resolves",
+      "ok": true,
+      "detail": "measured=5 expect=5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part A: adversarial/nonsense phrases correctly abstain (moat)",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part B: full gate() recalls the exact stored patient for every sampled alias-form question",
+      "ok": true,
+      "detail": "measured=8 expect=8",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part B: no wrong/invented patient ever recalled (moat, full pipeline)",
+      "ok": true,
+      "detail": "measured=8 expect=8",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part B: canonical-form (non-alias) question unaffected -- regression",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "Part B: fabricated-alias question (no covering fact) honestly abstains through gate()",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "Part B LESIONED full-gate() re-build",
+      "why": "budgeted in the script's design but not separately completed this session under heavy CPU contention (repeated ~500s+ onebrain+alias-vocab builds); the identical mechanism-level lesion (grounding ON vs OFF changing entity_final) IS measured for all 29 relations in Part A's own load-bearing check above, using the SAME _kb_relation_question_route gate() itself calls."
+    }
+  ],
+  "undefined_reasons": []
+}
