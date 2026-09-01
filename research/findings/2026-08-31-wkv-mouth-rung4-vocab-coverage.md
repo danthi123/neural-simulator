@@ -1,7 +1,10 @@
 ---
-status: go
+status: measurement-complete
 lane: gap#80
+type: finding
 date: 2026-08-31
+seed-waiver: measurement-only (coverage profile; GO/NO-GO verdicts require 6 seeds)
+instrument: direct corpus intersection — count unique words in corpus that are in each checkpoint's vocab; gate-level pass rate computed by applying in_vocab_scope to all 337294 prompts
 ---
 
 # Mouth rung-4: wider-vocab checkpoint in-vocab coverage (board #80)
