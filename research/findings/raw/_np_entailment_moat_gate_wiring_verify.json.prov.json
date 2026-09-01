@@ -1,10 +1,10 @@
 {
- "run_id": "1788293414-2579384",
+ "run_id": "1788297181-2657216",
  "runner": "research/runners/_np_entailment_moat_gate_wiring_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_cf858665-037-1/research/runners/_np_entailment_moat_gate_wiring_verify.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_1bcfa766-4cb-1/research/runners/_np_entailment_moat_gate_wiring_verify.py"
  ],
- "git_sha": "e4680f4e3",
+ "git_sha": "f332391c0",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,10 +12,8 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-01T16:10:14",
- "env": {
-  "SIM_BACKEND": "numpy"
- },
+ "started": "2026-09-01T17:13:01",
+ "env": {},
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,

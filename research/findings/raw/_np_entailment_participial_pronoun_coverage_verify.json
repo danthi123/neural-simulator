@@ -1,0 +1,445 @@
+{
+ "probe": "np_entailment_participial_pronoun_coverage_verify",
+ "flag": "BRAIN_OPEN_ENDED_NP_ENTAILMENT_PARTICIPIAL_PRONOUN_COVERAGE",
+ "fabrication_battery": [
+  {
+   "name": "castleford_borders_conflict",
+   "note": "present-participle 'bordering' vs stored borders=normanton -- wakefield not in the store patient",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, bordering Wakefield to the south, is a rugby club.",
+   "flag_off_result": "Castleford FC, bordering Wakefield to the south, is a rugby club.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "deutsche_arbeiter_partei_founded_year_conflict",
+   "note": "past-participle 'founded' + leading-preposition-stripped year object vs stored founded=1919",
+   "topic": "deutsche_arbeiter_partei",
+   "sent": "Deutsche Arbeiter Partei, founded in 1920, was a political party.",
+   "flag_off_result": "Deutsche Arbeiter Partei, founded in 1920, was a political party.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "fleming_discovered_conflict",
+   "note": "'-ing' participle form of a lexicon entry vs stored discovered=penicillin",
+   "topic": "alexander_fleming",
+   "sent": "Alexander Fleming, discovering radium in 1898, changed medicine.",
+   "flag_off_result": "Alexander Fleming, discovering radium in 1898, changed medicine.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "castleford_pronoun_football_conflict",
+   "note": "leading pronoun 'It's' standing for the topic, category conflict vs stored sport=rugby_leauge",
+   "topic": "castleford_f_c",
+   "sent": "It's a well-known football team in the area.",
+   "flag_off_result": "It's a well-known football team in the area.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "chicago_bulls_pronoun_baseball_conflict",
+   "note": "second pronoun form ('They're'), second sport pair (basketball vs baseball)",
+   "topic": "chicago_bulls",
+   "sent": "They're a professional baseball team.",
+   "flag_off_result": "They're a professional baseball team.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "band_pronoun_nationality_conflict",
+   "note": "nationality family (new, this widening) -- 'American' predicate vs stored nationality=british",
+   "topic": "some_uk_band",
+   "sent": "It's an American rock band.",
+   "flag_off_result": "It's an American rock band.",
+   "flag_on_result": null,
+   "caught_flag_on": true,
+   "leaked_flag_off": true
+  }
+ ],
+ "true_battery": [
+  {
+   "name": "castleford_borders_correct",
+   "note": "SAME shape as the caught case, correct border town -- false-positive guard",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, bordering Normanton to the south, is a rugby club.",
+   "flag_off_result": "Castleford FC, bordering Normanton to the south, is a rugby club.",
+   "flag_on_result": "Castleford FC, bordering Normanton to the south, is a rugby club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "deutsche_arbeiter_partei_founded_year_correct",
+   "note": "correct founding year -- must not be flagged",
+   "topic": "deutsche_arbeiter_partei",
+   "sent": "Deutsche Arbeiter Partei, founded in 1919, was a political party.",
+   "flag_off_result": "Deutsche Arbeiter Partei, founded in 1919, was a political party.",
+   "flag_on_result": "Deutsche Arbeiter Partei, founded in 1919, was a political party.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "fleming_discovered_correct",
+   "note": "correct discovery -- must not be flagged",
+   "topic": "alexander_fleming",
+   "sent": "Alexander Fleming, discovering penicillin in 1928, changed medicine.",
+   "flag_off_result": "Alexander Fleming, discovering penicillin in 1928, changed medicine.",
+   "flag_on_result": "Alexander Fleming, discovering penicillin in 1928, changed medicine.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "no_matching_relation_fact",
+   "note": "store has NO founded fact for this topic at all -- must never trip (no opinion to conflict with)",
+   "topic": "some_topic",
+   "sent": "Some Topic, founded in 1990, is well known.",
+   "flag_off_result": "Some Topic, founded in 1990, is well known.",
+   "flag_on_result": "Some Topic, founded in 1990, is well known.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "participial_negated",
+   "note": "negated participial -- widened path must back off, never assert the negation itself",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, not bordering Wakefield, is a rugby club.",
+   "flag_off_result": "Castleford FC, not bordering Wakefield, is a rugby club.",
+   "flag_on_result": "Castleford FC, not bordering Wakefield, is a rugby club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "participial_unrecognized_verb",
+   "note": "'sitting' is not in the recognized relational-participle lexicon -- honest coverage limit",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC, sitting near the river, is a rugby club.",
+   "flag_off_result": "Castleford FC, sitting near the river, is a rugby club.",
+   "flag_on_result": "Castleford FC, sitting near the river, is a rugby club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "participial_no_comma",
+   "note": "no comma at all -- the whole-sentence extraction requires >=2 comma-segments, conservative no-op",
+   "topic": "castleford_f_c",
+   "sent": "Castleford FC bordering Wakefield is a rugby club.",
+   "flag_off_result": "Castleford FC bordering Wakefield is a rugby club.",
+   "flag_on_result": "Castleford FC bordering Wakefield is a rugby club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_correct_sport",
+   "note": "SAME word as the store's sport family (rugby) -- must not be flagged",
+   "topic": "castleford_f_c",
+   "sent": "It's a well-known rugby team in the area.",
+   "flag_off_result": "It's a well-known rugby team in the area.",
+   "flag_on_result": "It's a well-known rugby team in the area.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_no_category_word",
+   "note": "no recognized category word ('sports' plural is not a lexicon entry) -- must not be flagged",
+   "topic": "castleford_f_c",
+   "sent": "It's often associated with local sports culture.",
+   "flag_off_result": "It's often associated with local sports culture.",
+   "flag_on_result": "It's often associated with local sports culture.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_negated",
+   "note": "negated pronoun predicate -- widened path must back off",
+   "topic": "castleford_f_c",
+   "sent": "It's not a football club.",
+   "flag_off_result": "It's not a football club.",
+   "flag_on_result": "It's not a football club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_present_participle",
+   "note": "progressive aspect, not an identity predicate -- widened path must back off",
+   "topic": "castleford_f_c",
+   "sent": "It's playing football this weekend.",
+   "flag_off_result": "It's playing football this weekend.",
+   "flag_on_result": "It's playing football this weekend.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_passive",
+   "note": "passive construction -- widened path must back off, not misread 'built' as a predicate nominal",
+   "topic": "castleford_f_c",
+   "sent": "It's built by unknown architects.",
+   "flag_off_result": "It's built by unknown architects.",
+   "flag_on_result": "It's built by unknown architects.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "pronoun_not_sentence_initial",
+   "note": "pronoun is not the sentence's FIRST word -- out of scope by construction, an honest residual, not a false positive (identical on/off)",
+   "topic": "castleford_f_c",
+   "sent": "Meanwhile, it is a football club.",
+   "flag_off_result": "Meanwhile, it is a football club.",
+   "flag_on_result": "Meanwhile, it is a football club.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "offtopic_agent_untouched",
+   "note": "parent gate's own SAFETY_CASE: subject != retrieved topic -- out of scope either way",
+   "topic": "einstein",
+   "sent": "Newton discovered gravity.",
+   "flag_off_result": "Newton discovered gravity.",
+   "flag_on_result": "Newton discovered gravity.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  },
+  {
+   "name": "grounded_kept",
+   "note": "parent gate's own SAFETY_CASE: grounded non-copula claim -- unaffected by this widening",
+   "topic": "mercury",
+   "sent": "Mercury orbits the sun.",
+   "flag_off_result": "Mercury orbits the sun.",
+   "flag_on_result": "Mercury orbits the sun.",
+   "caught_flag_on": false,
+   "leaked_flag_off": true
+  }
+ ],
+ "byte_identical_off_check": [
+  {
+   "name": "castleford_borders_conflict",
+   "current_flag_off": "Castleford FC, bordering Wakefield to the south, is a rugby club.",
+   "original": "Castleford FC, bordering Wakefield to the south, is a rugby club.",
+   "byte_identical": true
+  },
+  {
+   "name": "deutsche_arbeiter_partei_founded_year_conflict",
+   "current_flag_off": "Deutsche Arbeiter Partei, founded in 1920, was a political party.",
+   "original": "Deutsche Arbeiter Partei, founded in 1920, was a political party.",
+   "byte_identical": true
+  },
+  {
+   "name": "fleming_discovered_conflict",
+   "current_flag_off": "Alexander Fleming, discovering radium in 1898, changed medicine.",
+   "original": "Alexander Fleming, discovering radium in 1898, changed medicine.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_pronoun_football_conflict",
+   "current_flag_off": "It's a well-known football team in the area.",
+   "original": "It's a well-known football team in the area.",
+   "byte_identical": true
+  },
+  {
+   "name": "chicago_bulls_pronoun_baseball_conflict",
+   "current_flag_off": "They're a professional baseball team.",
+   "original": "They're a professional baseball team.",
+   "byte_identical": true
+  },
+  {
+   "name": "band_pronoun_nationality_conflict",
+   "current_flag_off": "It's an American rock band.",
+   "original": "It's an American rock band.",
+   "byte_identical": true
+  },
+  {
+   "name": "castleford_borders_correct",
+   "current_flag_off": "Castleford FC, bordering Normanton to the south, is a rugby club.",
+   "original": "Castleford FC, bordering Normanton to the south, is a rugby club.",
+   "byte_identical": true
+  },
+  {
+   "name": "deutsche_arbeiter_partei_founded_year_correct",
+   "current_flag_off": "Deutsche Arbeiter Partei, founded in 1919, was a political party.",
+   "original": "Deutsche Arbeiter Partei, founded in 1919, was a political party.",
+   "byte_identical": true
+  },
+  {
+   "name": "fleming_discovered_correct",
+   "current_flag_off": "Alexander Fleming, discovering penicillin in 1928, changed medicine.",
+   "original": "Alexander Fleming, discovering penicillin in 1928, changed medicine.",
+   "byte_identical": true
+  },
+  {
+   "name": "no_matching_relation_fact",
+   "current_flag_off": "Some Topic, founded in 1990, is well known.",
+   "original": "Some Topic, founded in 1990, is well known.",
+   "byte_identical": true
+  },
+  {
+   "name": "participial_negated",
+   "current_flag_off": "Castleford FC, not bordering Wakefield, is a rugby club.",
+   "original": "Castleford FC, not bordering Wakefield, is a rugby club.",
+   "byte_identical": true
+  },
+  {
+   "name": "participial_unrecognized_verb",
+   "current_flag_off": "Castleford FC, sitting near the river, is a rugby club.",
+   "original": "Castleford FC, sitting near the river, is a rugby club.",
+   "byte_identical": true
+  },
+  {
+   "name": "participial_no_comma",
+   "current_flag_off": "Castleford FC bordering Wakefield is a rugby club.",
+   "original": "Castleford FC bordering Wakefield is a rugby club.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_correct_sport",
+   "current_flag_off": "It's a well-known rugby team in the area.",
+   "original": "It's a well-known rugby team in the area.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_no_category_word",
+   "current_flag_off": "It's often associated with local sports culture.",
+   "original": "It's often associated with local sports culture.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_negated",
+   "current_flag_off": "It's not a football club.",
+   "original": "It's not a football club.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_present_participle",
+   "current_flag_off": "It's playing football this weekend.",
+   "original": "It's playing football this weekend.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_passive",
+   "current_flag_off": "It's built by unknown architects.",
+   "original": "It's built by unknown architects.",
+   "byte_identical": true
+  },
+  {
+   "name": "pronoun_not_sentence_initial",
+   "current_flag_off": "Meanwhile, it is a football club.",
+   "original": "Meanwhile, it is a football club.",
+   "byte_identical": true
+  },
+  {
+   "name": "offtopic_agent_untouched",
+   "current_flag_off": "Newton discovered gravity.",
+   "original": "Newton discovered gravity.",
+   "byte_identical": true
+  },
+  {
+   "name": "grounded_kept",
+   "current_flag_off": "Mercury orbits the sun.",
+   "original": "Mercury orbits the sun.",
+   "byte_identical": true
+  }
+ ],
+ "copula_coverage_regression_check": {
+  "ran": true,
+  "n_checked": 13,
+  "n_mismatches": 0,
+  "mismatches": [],
+  "no_regression": true
+ },
+ "n_fabrication_cases": 6,
+ "n_caught_flag_on": 6,
+ "n_leaked_flag_off": 6,
+ "new_catch_rate": 1.0,
+ "n_true_cases": 15,
+ "n_false_positive": 0,
+ "false_positive_rate": 0.0,
+ "all_byte_identical_off": true,
+ "verdict": {
+  "label": "BRAIN_OPEN_ENDED_NP_ENTAILMENT_PARTICIPIAL_PRONOUN_COVERAGE widens the gate to catch participial-relation-conflict and pronoun-referent category-conflict fabrications without regressing true content (participial/pronoun OR the parent copula-coverage widening), and is byte-identical to the pre-widening module when the flag is off",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "every fabrication case leaks with the flag OFF (the pre-existing gap, reproduced)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
+    "ok": true,
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fc19df668e0>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "zero false positives on the true battery (flag ON == flag OFF on every case)",
+    "ok": true,
+    "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fc19df668e0>",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "flag OFF is byte-identical to the actual pre-widening (git HEAD) module on every case",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "no regression to the copula-coverage widening's own saved battery",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every fabrication case leaks with the flag OFF (the pre-existing gap, reproduced)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
+   "ok": true,
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fc19df668e0>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "zero false positives on the true battery (flag ON == flag OFF on every case)",
+   "ok": true,
+   "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fc19df668e0>",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "flag OFF is byte-identical to the actual pre-widening (git HEAD) module on every case",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "no regression to the copula-coverage widening's own saved battery",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "GO": true,
+ "elapsed_seconds": 8.9
+}

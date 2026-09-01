@@ -195,14 +195,14 @@
     "kind": "require",
     "name": "(c) attribution: the entailment-lesion catch drop is attributable to the manipulation, not vacuous",
     "ok": true,
-    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f599e7a4c20>",
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fdbfa5a4f40>",
     "note": ""
    },
    {
     "kind": "require",
     "name": "(c) attribution: the extraction-lesion catch drop is attributable to the manipulation, not vacuous",
     "ok": true,
-    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f599e7a4c20>",
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fdbfa5a4f40>",
     "note": ""
    }
   ],
@@ -277,17 +277,17 @@
    "kind": "require",
    "name": "(c) attribution: the entailment-lesion catch drop is attributable to the manipulation, not vacuous",
    "ok": true,
-   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f599e7a4c20>",
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fdbfa5a4f40>",
    "note": ""
   },
   {
    "kind": "require",
    "name": "(c) attribution: the extraction-lesion catch drop is attributable to the manipulation, not vacuous",
    "ok": true,
-   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f599e7a4c20>",
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fdbfa5a4f40>",
    "note": ""
   }
  ],
  "GO": true,
- "elapsed_seconds": 8.1
+ "elapsed_seconds": 4.5
 }

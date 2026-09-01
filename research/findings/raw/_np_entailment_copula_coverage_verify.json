@@ -240,14 +240,14 @@
     "kind": "require",
     "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
     "ok": true,
-    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+    "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f867816ea20>",
     "note": ""
    },
    {
     "kind": "require",
     "name": "zero false positives on the true-copula battery (flag ON == flag OFF on every case)",
     "ok": true,
-    "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+    "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f867816ea20>",
     "note": ""
    },
    {
@@ -273,14 +273,14 @@
    "kind": "require",
    "name": "every fabrication case is caught with the flag ON (new_catch_rate == 1.0)",
    "ok": true,
-   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+   "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f867816ea20>",
    "note": ""
   },
   {
    "kind": "require",
    "name": "zero false positives on the true-copula battery (flag ON == flag OFF on every case)",
    "ok": true,
-   "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f7ea2b59440>",
+   "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f867816ea20>",
    "note": ""
   },
   {
@@ -292,5 +292,5 @@
   }
  ],
  "GO": true,
- "elapsed_seconds": 20.1
+ "elapsed_seconds": 8.7
 }
