@@ -35,6 +35,14 @@ Agents are for BUILDS/integration that need judgment. **If you are about to put 
 agent, stop — it goes on the engine.** (This session's affect sensitivity map, lesion A/Bs and cupy verifies were
 run this way: 0 Claude tokens. Keep doing that; do not regress them into agents.)
 
+**RAM guard (2026-09-01) — the "careful with the computer's limits" half of engine-first.** The sim's 15k-LTM
+brain build is ~2GB RSS and ACCUMULATES over repeated builds; several concurrent LOCAL builds OOM (the 2026-08-26
+OOM; a heavy per-case verify this session). So: heavy 6-seed 15k-LTM sweeps go to the pool/gpu (above), and before
+ANY *local* sim smoke run `free -m` — build locally only with clear headroom (~5GB+ available), else queue it.
+For a DETERMINISTIC routing/parsing property, don't rebuild the brain per case at all — test via the unbound route
+method + a mock `self` (pure parsing, seconds, ~0 RAM) and confirm recall separately with the already-6-seed-GO
+primitive. Arm a `free -m` watchdog (fires below ~4GB) when fanning out many concurrent agents.
+
 ## Lever 3 — main-loop discipline (the priciest stream)
 The main Opus loop is the most expensive token stream in the session. Reason tersely; do not re-derive
 established facts; offload mechanical reads/edits to a haiku agent or the engine. Session **effort** (ultracode /
@@ -64,9 +72,20 @@ model-tiering + engine-first are the levers Claude controls and should be applie
    commit the PARTIAL) and treats any deferral as a failed run. NEVER let an agent's deliverable depend on a
    backgrounded run it then waits on. The `neural-simulator` skill carries the full "controller runs every smoke"
    rule + the RECOVERY RECIPE (a stranded agent's work is NOT lost — harvest its `.claude/worktrees/agent-<id>/`,
-   do NOT re-launch); this item is the dispatch-time trigger for it. (Earned/re-earned 2026-08-28: the rule was
+   do NOT re-launch; and if an agent whose deliverable is ALREADY on main keeps re-notifying / re-running redundant
+   heavy work — a runaway LOOP, not a one-time strand — `TaskStop <agent-id>` it, do not keep resuming it; earned
+   2026-09-01: an agent looped ~146 min / 335k tokens re-running an OOM-ing 15k-LTM verify after its work had
+   already landed); this item is the dispatch-time trigger for it. (Earned/re-earned 2026-08-28: the rule was
    already fully written in `neural-simulator` yet the lapse recurred all session — because the DISPATCH-TIME
    checklist, the thing actually run before spawning, did not carry it.)
+6. **Isolation: worktree for any COMMITTING agent?** An agent (Agent tool) or workflow `agent()` that will
+   `git checkout`/`commit`/push MUST run in its own git worktree — set `isolation: "worktree"` (Agent tool) /
+   `agent(prompt, {isolation: 'worktree'})` (Workflow). WITHOUT it the agent runs in the SHARED main checkout and
+   its `git checkout -b`/commit RACE the main session's and the other agents' git ops. (Earned 2026-09-01: two
+   un-isolated compute agents in one session switched the MAIN checkout's HEAD onto their own branches and swept a
+   main-session commit onto the wrong branch; one saw the main session's commits-of-its-work as a mystery
+   "auto-commit process." Recovered cleanly but cost real diagnosis. The SAME session's isolated workflow-wave
+   agents had ZERO races. Pure read/search agents that never commit don't need it.)
 
 `tools/parallel_audit.py`'s 💸 COST-ROUTING block is the per-heartbeat reminder + the engine pointers; THIS skill is
 the decision procedure that turns "I know I should" into "which model / which lane, decided before I dispatch."
