@@ -150,16 +150,45 @@ class TieredFactStore:
             object.__setattr__(self, name, value)
         else:
             setattr(self.buffer, name, value)
+            # ALSO arm the LTM tier's OWN trace flag (#184 fix, 2026-09-01): `webapp/server.py`'s per-turn
+            # `composer.trace = True` used to reach ONLY the buffer (the delegate above) -- a `ShardedPhasorStore`
+            # LTM's shards are independent `RFPhasorComposer`s with their own `.trace`, so an LTM-sourced answer
+            # never recorded a trace at all, regardless of `_tiered()`'s propagation below. Scoped to `trace`
+            # only (not a blanket delegate): several runners assign buffer-only bookkeeping through this same
+            # `__setattr__` (e.g. `composer.kb = []` to reset a conversation's working set) that must NOT also
+            # touch the LTM's actual stored knowledge. Guarded: an `ltm` without a `trace` attribute (a foreign
+            # store type) is a silent no-op, never an exception.
+            if name == "trace" and self.ltm is not None:
+                try:
+                    self.ltm.trace = value
+                except Exception:
+                    pass
 
     # -- WRITE: conversation-taught facts land in the recent working-set buffer -------------------------------
     def store(self, agent, action, patient, polarity=None):
         return self.buffer.store(agent, action, patient, polarity=polarity)
 
     # -- READ: buffer first; on an abstain, the routed LTM shard --------------------------------------------
+    def _propagate_ltm_trace(self):
+        """#184 fix: when the LTM tier is what actually answered, overwrite the buffer's own (abstain) trace
+        with the LTM's real match trace, so `composer.last_trace` -- which always reads through to
+        `self.buffer.last_trace` via `__getattr__` below, the SAME slot `webapp/server.py`'s metacog read
+        consults -- reports what the brain actually did this turn instead of the buffer's own abstain record.
+        Fabricates nothing: it is the LTM shard's own `_trace_scan` output (see `sharded_phasor_store.py`'s
+        `_note_trace`), the identical decode-confidence/margin machinery the buffer's own trace uses. No-op
+        unless tracing is armed (`self.buffer.trace`) or the LTM produced no trace (an LTM without `last_trace`,
+        e.g. a raw dict-shaped store predating this fix, degrades to leaving the buffer's abstain trace as-is)."""
+        if getattr(self.buffer, "trace", False):
+            ltm_trace = getattr(self.ltm, "last_trace", None)
+            if ltm_trace is not None:
+                self.buffer.last_trace = ltm_trace
+
     def _tiered(self, name, args, kwargs):
         r = getattr(self.buffer, name)(*args, **kwargs)
         if self.ltm is not None and self._abstained(name, r):
-            return getattr(self.ltm, name)(*args, **kwargs)
+            r2 = getattr(self.ltm, name)(*args, **kwargs)
+            self._propagate_ltm_trace()
+            return r2
         return r
 
     def query_patient(self, agent, action, order_fn=None):
@@ -199,7 +228,9 @@ class TieredFactStore:
         # a single-tier chain: buffer first (a few recent facts dead-end fast), else the LTM knowledge graph.
         r = self.buffer.query_chain(cue, actions)
         if self.ltm is not None and r is None:
-            return self.ltm.query_chain(cue, actions)
+            r2 = self.ltm.query_chain(cue, actions)
+            self._propagate_ltm_trace()
+            return r2
         return r
 
     def chain_of_thought(self, start, goal=None, max_hops=4, lesion=None, lesion_rng=None, return_path=False):
@@ -207,8 +238,10 @@ class TieredFactStore:
                                          lesion_rng=lesion_rng, return_path=return_path)
         terminal = r[0] if isinstance(r, tuple) else r
         if self.ltm is not None and terminal is None:
-            return self.ltm.chain_of_thought(start, goal=goal, max_hops=max_hops, lesion=lesion,
-                                             lesion_rng=lesion_rng, return_path=return_path)
+            r2 = self.ltm.chain_of_thought(start, goal=goal, max_hops=max_hops, lesion=lesion,
+                                           lesion_rng=lesion_rng, return_path=return_path)
+            self._propagate_ltm_trace()
+            return r2
         return r
 
     # -- CONSOLIDATION hook (hippocampal -> cortical; sleep-replay analogue; NOT auto-invoked in v1) ---------

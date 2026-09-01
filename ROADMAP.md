@@ -7,7 +7,25 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-01 (later, newest) — a nine-way parallel push: the brain-voice can say its real facts, the honesty filter closes a whole class of confident-wrong answers, and a hidden bug that silently switched the honesty check off is found
+## 2026-09-01 (even later, newest) — the hidden plumbing bug from the entry below is fixed, and it unblocks two finished builds
+
+The bug the previous entry found — the brain's confidence read silently coming back empty whenever it answers
+from long-term memory — is now fixed. The memory-tier wrapper now carries the answering tier's own confidence
+read up to where the honesty check looks for it, instead of leaving the recent-conversation buffer's stale
+"I don't know" record in place. Verified two ways: (1) a regression test that fails without the fix and passes
+with it; (2) re-running the exact real-traffic measurement that first found the bug — the honesty check's
+confidence reading is no longer empty (it used to print a warning and read `null` on every long-term-memory
+turn; now it reads a real yes/no). One of the two builds this unblocked is now a clean, fully-verified pass:
+letting the brain frame an answer differently depending on whether it directly recalled a fact or worked it out
+by reasoning ("I recall…" vs. "I believe…, but I reasoned that myself") now genuinely changes the wording, on
+six varied random starting points, and that difference collapses when the underlying circuit is silenced — the
+proof it's real and not just a coin flip. The other build (saying more when sure, less when unsure) is only
+partly there yet: the plumbing bug is confirmed fixed, but on the one real knowledge-base fact tested, the
+brain's own confidence reading for that specific fact lands just below its "sure" threshold — a separate,
+newly-found calibration question at this larger knowledge-base scale, not the plumbing bug. Neither build is
+turned on by default yet (that stays the owner's call).
+
+## 2026-09-01 (later) — a nine-way parallel push: the brain-voice can say its real facts, the honesty filter closes a whole class of confident-wrong answers, and a hidden bug that silently switched the honesty check off is found
 
 A large parallel wave (nine independent efforts at once, kept inside the machine's memory limit) landed seven
 results across every frontier:

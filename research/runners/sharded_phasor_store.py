@@ -92,6 +92,8 @@ class ShardedPhasorStore:
         self.D = int(D)
         self._composer_kwargs = dict(composer_kwargs)
         self._alias_index = None   # lazy-built bare-surface-form -> stored-key map (see build_alias_index)
+        self._trace = False        # per-query match-trace recording gate (#184 fix); see the `trace` property
+        self.last_trace = None     # the answering shard's OWN `last_trace`, captured after the last query
         # Build the shards. share_codebook: build the FULL {word:[D]} codebook ONCE (shard 0); the rest get a
         # 1-word vocab then GRAFT shard 0's codebook. Building all S shards with the full vocab FIRST allocated S
         # transient copies of a large codebook -> 500 shards x a 100k-word dict (~100 MB each) OOM-crashed a 46 GB
@@ -124,6 +126,36 @@ class ShardedPhasorStore:
                 for _ in range(self.n_shards)
             ]
         self._shared_codebook = bool(share_codebook)
+
+    # --- match-trace instrumentation (#184 fix) -------------------------------------------------------------
+    # WHY. Before this, `ShardedPhasorStore` emitted NO `last_trace` at all: each shard is its own independent
+    # `RFPhasorComposer` with its OWN `.trace`/`.last_trace` (see that class's `_trace_scan`), and nothing here
+    # ever armed a shard's flag or read its result back up to the store level -- so a query answered by the LTM
+    # tier left metacog's confidence read (`webapp/server.py`'s `composer.last_trace`) with nothing to see,
+    # even though the shard that answered had ALREADY computed a genuine per-role decode-confidence/margin (the
+    # identical `_cleanup_all_score_stats` machinery the small conversation buffer uses). Fixed here by (a) a
+    # `trace` property that arms every shard's own flag (any of them may be the one a routed query lands on),
+    # and (b) `_note_trace` capturing whichever shard actually produced (or attempted) the answer, so
+    # `self.last_trace` reports the SAME dict shape (`{"roles": [...], "abstained": ..., ...}`) the plain
+    # unsharded composer already does -- no confidence is fabricated, it is the real match the LTM recall
+    # already computed. `TieredFactStore._tiered` (research/runners/tiered_fact_store.py) then propagates this
+    # up to where the metacog read actually looks.
+    @property
+    def trace(self):
+        return self._trace
+
+    @trace.setter
+    def trace(self, value):
+        self._trace = bool(value)
+        for sh in self.shards:
+            sh.trace = self._trace
+
+    def _note_trace(self, sh):
+        """Capture shard `sh`'s own `last_trace` (whether it matched or abstained) as this store's `last_trace`.
+        No-op unless tracing is armed (byte-identical to before when `.trace` is never set, e.g. every caller
+        that doesn't opt in -- the default)."""
+        if self._trace:
+            self.last_trace = getattr(sh, "last_trace", None)
 
     # --- routing -------------------------------------------------------------------------------------------
     def route(self, agent) -> int:
@@ -187,30 +219,42 @@ class ShardedPhasorStore:
 
     # --- agent-cued reads (O(1) route + one-shard scan; answer-identical to the unsharded store) -----------
     def query_patient(self, agent, action, order_fn=None):
-        ans = self.shard_for(agent).query_patient(agent, action, order_fn=order_fn)
+        sh = self.shard_for(agent)
+        ans = sh.query_patient(agent, action, order_fn=order_fn)
+        self._note_trace(sh)
         if ans is None:
             alias = self._resolve_alias(agent)
             if alias is not None:
-                ans = self.shard_for(alias).query_patient(alias, action, order_fn=order_fn)
+                sh2 = self.shard_for(alias)
+                ans = sh2.query_patient(alias, action, order_fn=order_fn)
+                self._note_trace(sh2)
         return ans
 
     def ask_yes_no(self, agent, action, patient):
-        ans = self.shard_for(agent).ask_yes_no(agent, action, patient)
+        sh = self.shard_for(agent)
+        ans = sh.ask_yes_no(agent, action, patient)
+        self._note_trace(sh)
         if ans == "unknown":
             alias_a = self._resolve_alias(agent)
             alias_p = self._resolve_alias(patient)
             if alias_a is not None or alias_p is not None:
                 a2 = alias_a if alias_a is not None else agent
                 p2 = alias_p if alias_p is not None else patient
-                ans = self.shard_for(a2).ask_yes_no(a2, action, p2)
+                sh2 = self.shard_for(a2)
+                ans = sh2.ask_yes_no(a2, action, p2)
+                self._note_trace(sh2)
         return ans
 
     def render_fact(self, agent, order_fn=None):
-        ans = self.shard_for(agent).render_fact(agent, order_fn=order_fn)
+        sh = self.shard_for(agent)
+        ans = sh.render_fact(agent, order_fn=order_fn)
+        self._note_trace(sh)
         if ans is None:
             alias = self._resolve_alias(agent)
             if alias is not None:
-                ans = self.shard_for(alias).render_fact(alias, order_fn=order_fn)
+                sh2 = self.shard_for(alias)
+                ans = sh2.render_fact(alias, order_fn=order_fn)
+                self._note_trace(sh2)
         return ans
 
     def query_chain(self, cue, actions):
@@ -263,6 +307,7 @@ class ShardedPhasorStore:
         for sh in self.shards:
             if sh.kb:
                 ans = sh.query_agent(action, patient)
+                self._note_trace(sh)
                 if ans is not None:
                     return ans
         # key-routing alias fallback: the cue patient may be a bare surface form of a suffix-keyed entity
@@ -273,6 +318,7 @@ class ShardedPhasorStore:
             for sh in self.shards:
                 if sh.kb:
                     ans = sh.query_agent(action, alias_p)
+                    self._note_trace(sh)
                     if ans is not None:
                         return ans
         return None
