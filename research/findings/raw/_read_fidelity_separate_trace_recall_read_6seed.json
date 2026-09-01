@@ -1,0 +1,518 @@
+{
+  "probe": "read_fidelity_separate_trace_recall_read_derisk",
+  "verdict": "GO -- reading the recall signal off the SEPARATE TRACE CLOSES the read-power residual the shared edge could not. Reads the learn-through-use RECALL (source-provenance) signal off the #129 SEPARATE, context-gated Hebbian traces (episode->prov_perceived / episode->prov_generated, laneC substrate reused VERBATIM) via a POOL-MEAN opponent margin -- the SAME population-collapse statistic FORM the shared-edge iterations 1-6 used, graded by the SAME read-fidelity gate (perm-null z>=Z_FLOOR=2.0 AND lesion-attributable, F2_LESION_RATIO=0.34, AND neuron-identity shuffle collapses). PRIMARY: 6/6 seeds PASS. Per-seed perm-null z (min/mean/peak): 5.60/8.59/11.21 (the SHARED-edge read never cleared this floor on ANY seed across 6 banked iterations: mean-rate 0/6, latency 0/6, dispersion 1/6, popvec 0/6, opponent 0/6, learned-LDA 0/6). Pool-mean margin mean +8.9440; normalized d (laneC faculty metric, non-gating) worst-seed min 0.832, mean 0.913 (floor 0.5). The lesion of the learned trace collapses the read on every seed (attribution ~1.0), and the neuron-identity permutation null stays sub-floor on 6/6 seeds. MECHANISTIC READING: the population-collapse read was never the problem in itself -- it was fatal only when the SHARED-edge encoding hid the signal off the pool-identity axis; the separate-trace ENCODING (upstream shaping) moves it ONTO that axis, so the same collapse read recovers it. The read-power residual is a READ-ARCHITECTURE x ENCODING interaction, and separate-trace encoding is the biological fix.",
+  "GO": true,
+  "n_seeds": 6,
+  "n_seeds_pass_primary": 6,
+  "n_seeds_shuffle_ok": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "read_clears_floor_and_lesion_attributable",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff1af188540>",
+      "note": "the separate-trace pool-mean margin must be significantly positive (perm-null z>=Z_FLOOR) AND vanish when the learned trace is lesioned (|real_lesion|<F2_LESION_RATIO*|real_intact|) on every seed"
+    },
+    {
+      "kind": "require",
+      "name": "shuffle_identity_null_collapses",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff1af188540>",
+      "note": "scrambling which union neurons count as perceived/generated must keep the null sub-floor on every seed -- proves the read keys off genuine separate-trace pool identity"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_learned_trace_grew_from_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff1af188540>",
+      "note": "the separate provenance traces start at exactly 0 and experience grows them (LEARNED, not pre-wired)"
+    },
+    {
+      "kind": "require",
+      "name": "seed_trap_substrate_seeded",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7ff1af188540>",
+      "note": "same cfg.seed -> identical thresholds, different seed -> different (a real 6-seed de-risk)"
+    }
+  ],
+  "seed_trap_build_twice": {
+    "identical": true,
+    "differs_across_seed": true,
+    "n_neurons": 352,
+    "hash_build1": "02a1f0301568"
+  },
+  "z_summary_intact_perm_null": {
+    "per_seed": [
+      8.804531223914505,
+      9.664632469961663,
+      11.214304401225782,
+      8.557357925866171,
+      7.729289118556977,
+      5.599216198655173
+    ],
+    "mean": 8.594888556363378,
+    "min": 5.599216198655173,
+    "peak": 11.214304401225782
+  },
+  "margin_summary_intact": {
+    "per_seed": [
+      9.0859375,
+      8.625,
+      8.6015625,
+      8.95703125,
+      9.10546875,
+      9.2890625
+    ],
+    "mean": 8.944010416666666
+  },
+  "normalized_d_summary_intact_nongating": {
+    "min_over_seeds": 0.8321167882239864,
+    "mean": 0.9129525794476261
+  },
+  "config": {
+    "z_floor": 2.0,
+    "shuf_collapse_max_rate": 0.15,
+    "k_shuf": 20,
+    "f2_lesion_ratio": 0.34,
+    "recall_steps": 100,
+    "n_prov": 32,
+    "episode_drive_pa": 2500.0,
+    "d_floor_laneC_nongating": 0.5,
+    "n_pairs": 4,
+    "provenances": [
+      "perceived",
+      "generated"
+    ],
+    "rng_formula": "intact perm-null seed*2654435761+853; lesion perm-null seed*2654435761+971 (distinct from every seeded draw in the laneC + read-fidelity file families)"
+  },
+  "mechanism": "Reuses the #129 laneC separate-trace substrate VERBATIM: ProvenanceBrain builds TWO zero-init plastic traces episode->prov_perceived / episode->prov_generated, each gated open at encode ONLY by its own neuromodulatory context line (ctx_perceived/ctx_generated), so the three-factor Hebbian product potentiates ONLY the active provenance's trace (the rival stays ~0). make_paired_patterns + _encode_all reused VERBATIM (the 8-item battery with within-pair content overlap = the reality-monitoring stressor). THIS run adds ONLY: (1) a per-neuron recall-count capture that mirrors ProvenanceBrain.recall's exact gate/reset/drive protocol but records per-neuron spike counts over the union prov_perceived U prov_generated, (2) the read = a POOL-MEAN opponent margin mean(counts[true_pool])-mean(counts[false_pool]) signed toward each item's true provenance, meaned over the battery (the SAME signed pool-contrast statistic FORM the shared-edge read used -- no per-neuron matched filter, no ratio normalization for the gate), (3) the read-fidelity permutation-null gate (perm-null z, lesion-attribution, neuron-identity shuffle) applied verbatim in shape.",
+  "biology": "Reality monitoring / source memory (Johnson, Hashtroudi & Lindsay 1993; Simons & Schacter medial-aPFC): the perceived-vs-generated source axis is carried ORTHOGONAL to content by encoding-context neuromodulation (Hasselmo & Bower ACh feedforward-encoding mode), and read back as an OPPONENT comparison (Namburi-Tye biased competition). The separate-trace encoding is the biological realization of writing a memory's SOURCE onto a dedicated pool at encoding (a context-gated Hebbian trace) rather than trying to decode it from the content edge at recall -- the upstream-shaping fix the read-power finding named.",
+  "scaffold_residuals": [
+    "the read is a HOST spike-count of the substrate's own cp_firing_states (the accepted read scaffold used identically by the whole read-fidelity arc and the laneC faculty GO); the SIGNAL (which pool fires) is computed by the brain -- the learned traces + context gating drive the pools -- the host only counts spikes and takes the pool-mean difference",
+    "the pool-mean opponent margin is a POPULATION read (a difference of two pool means); it is NOT a per-neuron matched filter -- which is the point: on the separate-trace substrate the signal lives ON the pool-identity axis, so a population read suffices (per-neuron resolution is not needed once the encoding is right)",
+    "innate context routing + opponent interneuron wiring are the laneC scaffolds (unchanged); the context->provenance BINDING is LEARNED (zero-init Hebbian) -- verified by the emergence + lesion arms",
+    "an externally-timed encode window + caller-supplied sparse episode/content activity (laneC scaffolds, unchanged); OU noise off (deterministic substrate) -- the read variance is genuine item-to-item and permutation variance, not injected noise",
+    "the 8-item battery is a host-constructed reality-monitoring stressor (within-pair overlap), not an organic dialogue turn -- same class of scaffold as the read-fidelity arc's ambiguous item"
+  ],
+  "comparison_to_shared_edge": "This is a GATE comparison, NOT a single-variable A/B: the separate-trace read differs from the shared-edge read in BOTH the encoding (two context-gated traces vs one trained cross-edge) AND the substrate (pure #129 ProvenanceBrain vs the merged surprise->prov_generated pool) -- because the ENCODING is exactly the lever (upstream shaping). What is held identical is the GATE: Z_FLOOR=2.0, the neuron-identity permutation null, F2_LESION_RATIO=0.34, and the signed pool-contrast (population-collapse) statistic FORM. On that identical gate the shared-edge read is banked NO-GO 0/6 across 6 iterations and the separate-trace read is graded here.",
+  "runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 1.2,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 100046.34748458862,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 9.0859375,
+        "min_d": 0.8938053096501423,
+        "mean_d": 0.9114699652085342,
+        "perm_null": {
+          "real": 9.0859375,
+          "null_mean": -0.278515625,
+          "null_std": 1.0635947430755495,
+          "z": 8.804531223914505,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 9.0859375,
+          "std": 0.4409146084723047,
+          "sem": 0.1558868547874891,
+          "n": 8,
+          "z": 58.285462955720654
+        },
+        "per_item_d": [
+          0.8975903613592684,
+          0.8938053096501423,
+          0.9204892965460072,
+          0.9111111110185538,
+          0.9323076922158958,
+          0.9016393441676969,
+          0.9044368599694813,
+          0.9303797467412274
+        ],
+        "per_item_margin": [
+          9.3125,
+          9.46875,
+          9.40625,
+          8.96875,
+          9.46875,
+          8.59375,
+          8.28125,
+          9.1875
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 1.2,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 98257.08414459229,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 8.625,
+        "min_d": 0.8582089551214078,
+        "mean_d": 0.9182041560078099,
+        "perm_null": {
+          "real": 8.625,
+          "null_mean": 0.230859375,
+          "null_std": 0.8685421459211782,
+          "z": 9.664632469961663,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 8.625,
+          "std": 0.9339217426682878,
+          "sem": 0.33019119866915203,
+          "n": 8,
+          "z": 26.121229259784588
+        },
+        "per_item_d": [
+          0.9744408944690668,
+          0.880503144565484,
+          0.9411764704898116,
+          0.9380804952631003,
+          0.9804560259564346,
+          0.892617449568578,
+          0.8801498126285963,
+          0.8582089551214078
+        ],
+        "per_item_margin": [
+          9.53125,
+          8.75,
+          9.0,
+          9.46875,
+          9.40625,
+          8.3125,
+          7.34375,
+          7.1875
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 1.2,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 99241.32442092896,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 8.6015625,
+        "min_d": 0.8321167882239864,
+        "mean_d": 0.902950036450952,
+        "perm_null": {
+          "real": 8.6015625,
+          "null_mean": -0.175390625,
+          "null_std": 0.7826569362644226,
+          "z": 11.214304401225782,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 8.6015625,
+          "std": 1.0937818872902796,
+          "sem": 0.38671029482098834,
+          "n": 8,
+          "z": 22.242910559135076
+        },
+        "per_item_d": [
+          0.9651162789799892,
+          0.8888888888010974,
+          0.9395770391840892,
+          0.9093851131744326,
+          0.9112627985352887,
+          0.8321167882239864,
+          0.8836363635335405,
+          0.8936170211751924
+        ],
+        "per_item_margin": [
+          10.375,
+          9.0,
+          9.71875,
+          8.78125,
+          8.34375,
+          7.125,
+          7.59375,
+          7.875
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 1.3,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 98171.35576820374,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 8.95703125,
+        "min_d": 0.8535031846263945,
+        "mean_d": 0.9184601681853013,
+        "perm_null": {
+          "real": 8.95703125,
+          "null_mean": -0.202734375,
+          "null_std": 1.07039645932221,
+          "z": 8.557357925866171,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 8.95703125,
+          "std": 0.6162190072980199,
+          "sem": 0.21786631937823625,
+          "n": 8,
+          "z": 41.11251007297626
+        },
+        "per_item_d": [
+          0.8548895898190648,
+          0.907692307602935,
+          0.9374999998958333,
+          0.9744408944690668,
+          0.8535031846263945,
+          0.9192546582937386,
+          0.9696048631275764,
+          0.9307958476478011
+        ],
+        "per_item_margin": [
+          8.46875,
+          9.21875,
+          8.4375,
+          9.53125,
+          8.375,
+          9.25,
+          9.96875,
+          8.40625
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 1.2,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 102839.60503959656,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 9.10546875,
+        "min_d": 0.8686567163349342,
+        "mean_d": 0.9066588450055488,
+        "perm_null": {
+          "real": 9.10546875,
+          "null_mean": 0.445703125,
+          "null_std": 1.1203831933533286,
+          "z": 7.729289118556977,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 9.10546875,
+          "std": 0.6689747411084155,
+          "sem": 0.2365182879401378,
+          "n": 8,
+          "z": 38.49794799928778
+        },
+        "per_item_d": [
+          0.8961038960107944,
+          0.8773006134108171,
+          0.8686567163349342,
+          0.8885245900707122,
+          0.9493670885114565,
+          0.9318181817334711,
+          0.9178885629637172,
+          0.9236111110084877
+        ],
+        "per_item_margin": [
+          8.625,
+          8.9375,
+          9.09375,
+          8.46875,
+          9.375,
+          10.25,
+          9.78125,
+          8.3125
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 1.3,
+      "n_perc": 32,
+      "n_gen": 32,
+      "prov_l1_before": 0.0,
+      "prov_l1_after": 102292.41424179077,
+      "prov_l1_lesion": 0.0,
+      "emergence_grew_from_zero": true,
+      "intact": {
+        "real_margin": 9.2890625,
+        "min_d": 0.8475073312987677,
+        "mean_d": 0.9199723058276105,
+        "perm_null": {
+          "real": 9.2890625,
+          "null_mean": -0.123046875,
+          "null_std": 1.6809690930063768,
+          "z": 5.599216198655173,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "sem_z": {
+          "mean": 9.2890625,
+          "std": 0.8238814793186492,
+          "sem": 0.29128609046011056,
+          "n": 8,
+          "z": 31.889825172658107
+        },
+        "per_item_d": [
+          0.9099099098224711,
+          0.9886685551511688,
+          0.8475073312987677,
+          0.9635258357725446,
+          0.9041533545401504,
+          0.9452054793484707,
+          0.852090032066666,
+          0.9487179486206443
+        ],
+        "per_item_margin": [
+          9.46875,
+          10.90625,
+          9.03125,
+          9.90625,
+          8.84375,
+          8.625,
+          8.28125,
+          9.25
+        ]
+      },
+      "lesion": {
+        "real_margin": 0.0,
+        "min_d": 0.0,
+        "mean_d": 0.0,
+        "perm_null": {
+          "real": 0.0,
+          "null_mean": 0.0,
+          "null_std": 0.0,
+          "z": 0.0,
+          "frac_null_clears_floor": NaN,
+          "shuffle_collapses": false
+        }
+      },
+      "floor_ok": true,
+      "lesion_ok": true,
+      "shuffle_collapses": true,
+      "lesion_collapses_to_zero": true,
+      "PASS": true
+    }
+  ]
+}
