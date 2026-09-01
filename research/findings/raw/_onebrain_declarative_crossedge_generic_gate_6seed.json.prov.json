@@ -1,0 +1,30 @@
+{
+ "run_id": "1788282650-2402798",
+ "runner": "research/runners/_onebrain_declarative_crossedge_generic_gate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a383dc24196eefe79/research/runners/_onebrain_declarative_crossedge_generic_gate.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_declarative_crossedge_generic_gate_6seed.json"
+ ],
+ "git_sha": "3ad5fa228",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T13:10:50",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 565.3,
+ "corpus_check_query": "declarative cross-edge functional gate read credit lesion harness reciprocal feedback edge",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_declarative_crossedge_generic_gate_6seed.json"
+}

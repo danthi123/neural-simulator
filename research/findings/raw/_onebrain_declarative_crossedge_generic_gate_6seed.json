@@ -1,0 +1,1327 @@
+{
+  "probe": "onebrain_declarative_crossedge_generic_gate",
+  "verdict": "GO \u2014 DECLARATIVE cross-edge FUNCTIONAL GATE. PART A (refactor): the generic gate (onebrain_crossedge_gate.run_gate) reproduces R1's hand-typed _emergence_with_drift/_f2 BIT-FOR-BIT (6/6 seeds, max|delta|<1e-9) driven ONLY by the R1_GATE_SPEC data declaration + R1's own train/read. PART B (new edge by DECLARATION): the RECIPROCAL comprehension role -> d6 WM feedback edge (sel_agent/sel_patient -> w0/w1) \u2014 added as a CrossEdge list + train_fn + read_fn + conditions, NO bespoke F-gate \u2014 clears the 6-seed GO through the SAME generic gate: 6/6 seeds GROW from the substrate's own rate-window Hebbian, are LOAD-BEARING (the winning role biases its learned WM slot; the bias VANISHES on lesion), and are BYTE-IDENTICAL-OFF (no-edge base connectivity byte-identical). numpy CPU; NO sim/ edit; additive.",
+  "GO": true,
+  "partA_reproduces": 6,
+  "partB_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "partA_refactor_bit_identical",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7fb239b07380>",
+      "note": "the generic gate's emergence+interaction numbers equal R1's hand-typed _emergence/_f2 to <1e-9 on every seed (the harness is faithful, not a drifting reimplementation)"
+    },
+    {
+      "kind": "require",
+      "name": "partA_oracle_all_pass",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb239b07380>",
+      "note": "R1's own hand-typed gate must pass every seed, or the oracle is unearned"
+    },
+    {
+      "kind": "require",
+      "name": "partB_new_edge_all_go",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb239b07380>",
+      "note": "the NEW reciprocal edge clears emergence+interaction+byte-off on every seed, added purely by declaration through the generic gate"
+    },
+    {
+      "kind": "require",
+      "name": "partB_lesion_removes_bias",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fb239b07380>",
+      "note": "the WM-slot bias must VANISH under lesion or it is a confound, not the reciprocal edge"
+    },
+    {
+      "kind": "require",
+      "name": "partB_byte_identical_off",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7fb239b07380>",
+      "note": "the no-edge pool's base connectivity is byte-identical (integration added ONLY the edge)"
+    }
+  ],
+  "gate_spec_R1": {
+    "name": "R1_d6WM_to_comprehension",
+    "correct_edges": [
+      "x_w0_sela",
+      "x_w1_selp"
+    ],
+    "conditions": [
+      "none",
+      "ref0",
+      "ref1"
+    ],
+    "control": "none",
+    "credit_signal": "rate_hebbian"
+  },
+  "gate_spec_RECIP": {
+    "name": "RECIP_comprehension_to_d6WM",
+    "correct_edges": [
+      "x_sela_w0",
+      "x_selp_w1"
+    ],
+    "conditions": [
+      "balanced",
+      "agent",
+      "patient"
+    ],
+    "control": "balanced",
+    "credit_signal": "rate_hebbian",
+    "cross_edges": [
+      {
+        "key": "x_sela_w0",
+        "src": "sel_agent",
+        "tgt": "w0"
+      },
+      {
+        "key": "x_sela_w1",
+        "src": "sel_agent",
+        "tgt": "w1"
+      },
+      {
+        "key": "x_selp_w0",
+        "src": "sel_patient",
+        "tgt": "w0"
+      },
+      {
+        "key": "x_selp_w1",
+        "src": "sel_patient",
+        "tgt": "w1"
+      }
+    ]
+  },
+  "partA": [
+    {
+      "seed": 42,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 13.60602855682373,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 12.43901252746582
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 13.606,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.439
+      },
+      "f2_generic": {
+        "d0_i": 0.03069444444444447,
+        "d1_i": -0.017777777777777743,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.03069444444444447,
+        "d1_i": -0.017777777777777743,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 12.005621910095215,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 12.742938041687012
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 12.0056,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.7429
+      },
+      "f2_generic": {
+        "d0_i": 0.024444444444444408,
+        "d1_i": -0.015555555555555572,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.024444444444444408,
+        "d1_i": -0.015555555555555572,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 14.527148246765137,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 12.354490280151367
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 14.5271,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 12.3545
+      },
+      "f2_generic": {
+        "d0_i": 0.032499999999999994,
+        "d1_i": -0.017499999999999998,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.032499999999999994,
+        "d1_i": -0.017499999999999998,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 10.788485527038574,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 10.988398551940918
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 10.7885,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 10.9884
+      },
+      "f2_generic": {
+        "d0_i": 0.024305555555555542,
+        "d1_i": -0.015694444444444438,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.024305555555555542,
+        "d1_i": -0.015694444444444438,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 10.883471488952637,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 11.351895332336426
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 10.8835,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.3519
+      },
+      "f2_generic": {
+        "d0_i": 0.023749999999999993,
+        "d1_i": -0.017361111111111105,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.023749999999999993,
+        "d1_i": -0.017361111111111105,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "reproduces": true,
+      "max_delta": 0.0,
+      "oracle_PASS": true,
+      "generic_emergence_PASS": true,
+      "generic_interaction_PASS": true,
+      "weight_delta": {
+        "x_w0_sela": 0.0,
+        "x_w0_selp": 0.0,
+        "x_w1_sela": 0.0,
+        "x_w1_selp": 0.0
+      },
+      "drift_delta": 0.0,
+      "f2_delta": {
+        "delta_ref0_intact": 0.0,
+        "delta_ref1_intact": 0.0,
+        "delta_ref0_lesion": 0.0,
+        "delta_ref1_lesion": 0.0
+      },
+      "frac_delta": {
+        "ref0": 0.0,
+        "ref1": 0.0
+      },
+      "grown_generic": {
+        "x_w0_sela": 10.518793106079102,
+        "x_w0_selp": 0.05000000819563866,
+        "x_w1_sela": 0.05000000819563866,
+        "x_w1_selp": 11.535913467407227
+      },
+      "grown_oracle": {
+        "ep": 40,
+        "w0->A": 10.5188,
+        "w0->P": 0.05,
+        "w1->A": 0.05,
+        "w1->P": 11.5359
+      },
+      "f2_generic": {
+        "d0_i": 0.022916666666666623,
+        "d1_i": -0.017083333333333357,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      },
+      "f2_oracle": {
+        "d0_i": 0.022916666666666623,
+        "d1_i": -0.017083333333333357,
+        "d0_l": 0.0,
+        "d1_l": 0.0,
+        "frac0": 1.0,
+        "frac1": 1.0
+      }
+    }
+  ],
+  "partB": [
+    {
+      "seed": 42,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 10.06804370880127,
+          "x_sela_w1": 18.771875381469727,
+          "x_selp_w0": 19.21941375732422,
+          "x_selp_w1": 9.655685424804688
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": 0.007833333333333331,
+          "agent": 0.022333333333333306,
+          "patient": -0.01925
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.014499999999999975,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.02708333333333333,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54569,
+        "n_without": 52649,
+        "n_with_base": 52649,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 2.8646,
+          "x_sela_w1": 0.205,
+          "x_selp_w0": 0.5199,
+          "x_selp_w1": 2.4957
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 6.1447,
+          "x_sela_w1": 2.0708,
+          "x_selp_w0": 3.4044,
+          "x_selp_w1": 5.5697
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 8.2847,
+          "x_sela_w1": 5.4564,
+          "x_selp_w0": 7.0747,
+          "x_selp_w1": 7.9173
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 9.0761,
+          "x_sela_w1": 8.7728,
+          "x_selp_w0": 10.0993,
+          "x_selp_w1": 8.9977
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 9.4949,
+          "x_sela_w1": 11.1158,
+          "x_selp_w0": 12.2442,
+          "x_selp_w1": 9.3476
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 9.7444,
+          "x_sela_w1": 12.9819,
+          "x_selp_w0": 14.0605,
+          "x_selp_w1": 9.5451
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 9.9289,
+          "x_sela_w1": 14.5685,
+          "x_selp_w0": 15.6115,
+          "x_selp_w1": 9.6544
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 10.0153,
+          "x_sela_w1": 15.8536,
+          "x_selp_w0": 16.8631,
+          "x_selp_w1": 9.6909
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 10.0773,
+          "x_sela_w1": 16.9023,
+          "x_selp_w0": 17.6577,
+          "x_selp_w1": 9.7171
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 10.0989,
+          "x_sela_w1": 17.7206,
+          "x_selp_w0": 18.2529,
+          "x_selp_w1": 9.7053
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 10.085,
+          "x_sela_w1": 18.2688,
+          "x_selp_w0": 18.7634,
+          "x_selp_w1": 9.6847
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 10.068,
+          "x_sela_w1": 18.7719,
+          "x_selp_w0": 19.2194,
+          "x_selp_w1": 9.6557
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 10.096109390258789,
+          "x_sela_w1": 18.222644805908203,
+          "x_selp_w0": 18.658809661865234,
+          "x_selp_w1": 10.433374404907227
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": 0.0002499999999999991,
+          "agent": 0.018999999999999965,
+          "patient": -0.01799999999999999
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.018749999999999965,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.018249999999999992,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54856,
+        "n_without": 52936,
+        "n_with_base": 52936,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 2.38,
+          "x_sela_w1": 0.1492,
+          "x_selp_w0": 0.1822,
+          "x_selp_w1": 2.5625
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 5.4473,
+          "x_sela_w1": 2.0584,
+          "x_selp_w0": 2.2591,
+          "x_selp_w1": 5.8525
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 7.9301,
+          "x_sela_w1": 5.6243,
+          "x_selp_w0": 5.7357,
+          "x_selp_w1": 8.1999
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 9.0945,
+          "x_sela_w1": 8.9555,
+          "x_selp_w0": 8.904,
+          "x_selp_w1": 9.3058
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 9.5469,
+          "x_sela_w1": 11.2143,
+          "x_selp_w0": 11.2229,
+          "x_selp_w1": 9.753
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 9.783,
+          "x_sela_w1": 12.9941,
+          "x_selp_w0": 13.0449,
+          "x_selp_w1": 10.0346
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 9.9144,
+          "x_sela_w1": 14.462,
+          "x_selp_w0": 14.6224,
+          "x_selp_w1": 10.1898
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 9.9882,
+          "x_sela_w1": 15.6266,
+          "x_selp_w0": 15.8717,
+          "x_selp_w1": 10.3117
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 10.0277,
+          "x_sela_w1": 16.5172,
+          "x_selp_w0": 16.7275,
+          "x_selp_w1": 10.4059
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 10.0785,
+          "x_sela_w1": 17.2684,
+          "x_selp_w0": 17.4757,
+          "x_selp_w1": 10.4412
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 10.1103,
+          "x_sela_w1": 17.7941,
+          "x_selp_w0": 18.1161,
+          "x_selp_w1": 10.4581
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 10.0961,
+          "x_sela_w1": 18.2226,
+          "x_selp_w0": 18.6588,
+          "x_selp_w1": 10.4334
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 8.916656494140625,
+          "x_sela_w1": 18.105802536010742,
+          "x_selp_w0": 19.516332626342773,
+          "x_selp_w1": 10.62164306640625
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": 0.008166666666666668,
+          "agent": 0.026499999999999992,
+          "patient": -0.013999999999999985
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.018333333333333326,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.022166666666666654,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54735,
+        "n_without": 52815,
+        "n_with_base": 52815,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 3.0068,
+          "x_sela_w1": 0.13,
+          "x_selp_w0": 0.6824,
+          "x_selp_w1": 2.4205
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 6.1995,
+          "x_sela_w1": 1.7296,
+          "x_selp_w0": 3.7585,
+          "x_selp_w1": 5.344
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 7.8164,
+          "x_sela_w1": 4.9299,
+          "x_selp_w0": 7.4793,
+          "x_selp_w1": 7.9059
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 8.3543,
+          "x_sela_w1": 8.1479,
+          "x_selp_w0": 10.3063,
+          "x_selp_w1": 9.1825
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 8.6572,
+          "x_sela_w1": 10.5391,
+          "x_selp_w0": 12.4496,
+          "x_selp_w1": 9.8178
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 8.7976,
+          "x_sela_w1": 12.4525,
+          "x_selp_w0": 14.2573,
+          "x_selp_w1": 10.1862
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 8.843,
+          "x_sela_w1": 14.0995,
+          "x_selp_w0": 15.7351,
+          "x_selp_w1": 10.4367
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 8.8597,
+          "x_sela_w1": 15.4828,
+          "x_selp_w0": 16.9083,
+          "x_selp_w1": 10.5135
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 8.8773,
+          "x_sela_w1": 16.5783,
+          "x_selp_w0": 17.9221,
+          "x_selp_w1": 10.579
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 8.8922,
+          "x_sela_w1": 17.2154,
+          "x_selp_w0": 18.5109,
+          "x_selp_w1": 10.6394
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 8.9024,
+          "x_sela_w1": 17.6727,
+          "x_selp_w0": 19.0303,
+          "x_selp_w1": 10.6381
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 8.9167,
+          "x_sela_w1": 18.1058,
+          "x_selp_w0": 19.5163,
+          "x_selp_w1": 10.6216
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 10.610882759094238,
+          "x_sela_w1": 17.50824737548828,
+          "x_selp_w0": 18.37455177307129,
+          "x_selp_w1": 11.213333129882812
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": -0.004333333333333318,
+          "agent": 0.017499999999999974,
+          "patient": -0.01499999999999999
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.02183333333333329,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.010666666666666672,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54842,
+        "n_without": 52922,
+        "n_with_base": 52922,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 2.1895,
+          "x_sela_w1": 0.0759,
+          "x_selp_w0": 0.148,
+          "x_selp_w1": 2.1419
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 4.9501,
+          "x_sela_w1": 1.3094,
+          "x_selp_w0": 1.5857,
+          "x_selp_w1": 4.9296
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 7.6284,
+          "x_sela_w1": 4.4562,
+          "x_selp_w0": 4.813,
+          "x_selp_w1": 7.765
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 9.0766,
+          "x_sela_w1": 7.9283,
+          "x_selp_w0": 8.0335,
+          "x_selp_w1": 9.4214
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 9.7229,
+          "x_sela_w1": 10.6091,
+          "x_selp_w0": 10.4703,
+          "x_selp_w1": 10.0735
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 10.0221,
+          "x_sela_w1": 12.5487,
+          "x_selp_w0": 12.3112,
+          "x_selp_w1": 10.4167
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 10.2143,
+          "x_sela_w1": 13.9977,
+          "x_selp_w0": 13.9077,
+          "x_selp_w1": 10.5912
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 10.345,
+          "x_sela_w1": 15.1769,
+          "x_selp_w0": 15.3549,
+          "x_selp_w1": 10.7509
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 10.3984,
+          "x_sela_w1": 15.9781,
+          "x_selp_w0": 16.4459,
+          "x_selp_w1": 10.8297
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 10.4875,
+          "x_sela_w1": 16.6178,
+          "x_selp_w0": 17.164,
+          "x_selp_w1": 10.937
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 10.5627,
+          "x_sela_w1": 17.1307,
+          "x_selp_w0": 17.8704,
+          "x_selp_w1": 11.0603
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 10.6109,
+          "x_sela_w1": 17.5082,
+          "x_selp_w0": 18.3746,
+          "x_selp_w1": 11.2133
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 10.420065879821777,
+          "x_sela_w1": 17.635894775390625,
+          "x_selp_w0": 17.845252990722656,
+          "x_selp_w1": 11.3189697265625
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": -0.001583333333333337,
+          "agent": 0.012916666666666653,
+          "patient": -0.015499999999999986
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.01449999999999999,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.013916666666666648,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54777,
+        "n_without": 52857,
+        "n_with_base": 52857,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 2.2304,
+          "x_sela_w1": 0.1008,
+          "x_selp_w0": 0.1369,
+          "x_selp_w1": 2.3003
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 4.9602,
+          "x_sela_w1": 1.4103,
+          "x_selp_w0": 1.6085,
+          "x_selp_w1": 5.261
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 7.5826,
+          "x_sela_w1": 4.6576,
+          "x_selp_w0": 4.84,
+          "x_selp_w1": 7.9125
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 8.9294,
+          "x_sela_w1": 8.0073,
+          "x_selp_w0": 8.0316,
+          "x_selp_w1": 9.3046
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 9.6537,
+          "x_sela_w1": 10.437,
+          "x_selp_w0": 10.527,
+          "x_selp_w1": 10.0543
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 9.9852,
+          "x_sela_w1": 12.3266,
+          "x_selp_w0": 12.5744,
+          "x_selp_w1": 10.4915
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 10.1454,
+          "x_sela_w1": 13.7193,
+          "x_selp_w0": 14.1175,
+          "x_selp_w1": 10.7342
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 10.2047,
+          "x_sela_w1": 14.8405,
+          "x_selp_w0": 15.3063,
+          "x_selp_w1": 10.9708
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 10.2645,
+          "x_sela_w1": 15.7011,
+          "x_selp_w0": 16.2885,
+          "x_selp_w1": 11.0504
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 10.3136,
+          "x_sela_w1": 16.4353,
+          "x_selp_w0": 16.9631,
+          "x_selp_w1": 11.2146
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 10.368,
+          "x_sela_w1": 17.1046,
+          "x_selp_w0": 17.4151,
+          "x_selp_w1": 11.2975
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 10.4201,
+          "x_sela_w1": 17.6359,
+          "x_selp_w0": 17.8453,
+          "x_selp_w1": 11.319
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "emergence": {
+        "grown": {
+          "x_sela_w0": 10.671144485473633,
+          "x_sela_w1": 17.26079559326172,
+          "x_selp_w0": 17.63235092163086,
+          "x_selp_w1": 10.036751747131348
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "balanced": -0.003999999999999996,
+          "agent": 0.015583333333333305,
+          "patient": -0.016999999999999984
+        },
+        "reads_lesion": {
+          "balanced": 0.0,
+          "agent": 0.0,
+          "patient": 0.0
+        },
+        "per_condition": {
+          "agent": {
+            "delta_intact": 0.0195833333333333,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          },
+          "patient": {
+            "delta_intact": -0.012999999999999987,
+            "delta_lesion": 0.0,
+            "expected_sign": -1,
+            "floor": 0.008,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 54739,
+        "n_without": 52819,
+        "n_with_base": 52819,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "x_sela_w0": 0.05,
+          "x_sela_w1": 0.05,
+          "x_selp_w0": 0.05,
+          "x_selp_w1": 0.05
+        },
+        {
+          "ep": 5,
+          "x_sela_w0": 1.9734,
+          "x_sela_w1": 0.0708,
+          "x_selp_w0": 0.1451,
+          "x_selp_w1": 2.1429
+        },
+        {
+          "ep": 10,
+          "x_sela_w0": 4.4643,
+          "x_sela_w1": 1.3254,
+          "x_selp_w0": 1.2005,
+          "x_selp_w1": 4.8473
+        },
+        {
+          "ep": 15,
+          "x_sela_w0": 7.1842,
+          "x_sela_w1": 4.1717,
+          "x_selp_w0": 3.8688,
+          "x_selp_w1": 7.342
+        },
+        {
+          "ep": 20,
+          "x_sela_w0": 8.9515,
+          "x_sela_w1": 7.3536,
+          "x_selp_w0": 7.0429,
+          "x_selp_w1": 8.6876
+        },
+        {
+          "ep": 25,
+          "x_sela_w0": 9.6548,
+          "x_sela_w1": 9.8906,
+          "x_selp_w0": 9.6748,
+          "x_selp_w1": 9.2259
+        },
+        {
+          "ep": 30,
+          "x_sela_w0": 10.0593,
+          "x_sela_w1": 11.6859,
+          "x_selp_w0": 11.6478,
+          "x_selp_w1": 9.4984
+        },
+        {
+          "ep": 35,
+          "x_sela_w0": 10.3066,
+          "x_sela_w1": 13.1725,
+          "x_selp_w0": 13.2787,
+          "x_selp_w1": 9.6715
+        },
+        {
+          "ep": 40,
+          "x_sela_w0": 10.4645,
+          "x_sela_w1": 14.3331,
+          "x_selp_w0": 14.6517,
+          "x_selp_w1": 9.7976
+        },
+        {
+          "ep": 45,
+          "x_sela_w0": 10.5443,
+          "x_sela_w1": 15.282,
+          "x_selp_w0": 15.8385,
+          "x_selp_w1": 9.8822
+        },
+        {
+          "ep": 50,
+          "x_sela_w0": 10.6084,
+          "x_sela_w1": 16.1012,
+          "x_selp_w0": 16.6096,
+          "x_selp_w1": 9.98
+        },
+        {
+          "ep": 55,
+          "x_sela_w0": 10.6438,
+          "x_sela_w1": 16.6721,
+          "x_selp_w0": 17.2071,
+          "x_selp_w1": 10.0293
+        },
+        {
+          "ep": 60,
+          "x_sela_w0": 10.6711,
+          "x_sela_w1": 17.2608,
+          "x_selp_w0": 17.6324,
+          "x_selp_w1": 10.0368
+        }
+      ]
+    }
+  ]
+}
