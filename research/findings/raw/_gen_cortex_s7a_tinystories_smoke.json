@@ -1,0 +1,93 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/tinystories_train.txt",
+  "d_model": 48,
+  "vocab_cap": 2000,
+  "epochs": 3,
+  "max_len": 48,
+  "token_points": [
+    2000,
+    6000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 203408,
+      "eval_ids_sha": "a94ccf29b92b",
+      "vocab_sha": "6742dda67c79",
+      "n_eval": 500,
+      "points": [
+        {
+          "max_train_sents": 2000,
+          "n_train_passages": 2000,
+          "n_tokens": 96000,
+          "tok_per_active_param": 0.472,
+          "wkv_deep_nll": 5.8992,
+          "trigram_deep_nll": 4.4861,
+          "bigram_deep_nll": 5.4664,
+          "margin_vs_trigram": -1.4131,
+          "perm_collapse": 0.1484,
+          "mless_collapse": 0.1847,
+          "uses_context": true,
+          "beats_trigram": false,
+          "train_nll": 5.9208,
+          "overfit_gap": -0.0216,
+          "n_deep": 19000,
+          "elapsed_s": 19.1
+        },
+        {
+          "max_train_sents": 6000,
+          "n_train_passages": 6000,
+          "n_tokens": 288000,
+          "tok_per_active_param": 1.416,
+          "wkv_deep_nll": 4.8535,
+          "trigram_deep_nll": 4.0569,
+          "bigram_deep_nll": 4.946,
+          "margin_vs_trigram": -0.7966,
+          "perm_collapse": 1.3128,
+          "mless_collapse": 0.2219,
+          "uses_context": true,
+          "beats_trigram": false,
+          "train_nll": 4.8866,
+          "overfit_gap": -0.0331,
+          "n_deep": 19000,
+          "elapsed_s": 21.3
+        }
+      ],
+      "gen_samples_top_point": [
+        "the moon lucky thought colors his finger and saw said for you put and anymore before they saw and watched to the dog the ground it began says a red aunt a big cat sorry toy <unk> and had they were",
+        "in the dog they were <unk> the <unk> and became the bird saw the to the <unk> <unk> and endoftext once upon a time there was a little girl named the bird the box and the best and cute came maybe round",
+        "he was a big little big once to <unk> the so tim put and could was so over sad they the wind and thanked big nice next <unk> they and watched too of them saw <unk> the sky all it is the",
+        "it is a small to play with the <unk> the cake were red fast he had a cat with max one day about the table jumped endoftext and <unk> in the bird and her nice she he did a happened cat to go"
+      ],
+      "delta_nll_min_to_max_tokens": 1.0457,
+      "top_segment_slope": 1.0457,
+      "margin_grows_with_tokens": true,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": false
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 0,
+    "n_margin_grows_with_tokens": 1,
+    "mean_delta_nll_min_to_max_tokens": 1.0457,
+    "mean_top_point_wkv_deep_nll": 4.8535,
+    "max_tok_per_active_param_reached": 1.416,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 1.1635
+  },
+  "elapsed_s": 43.5
+}

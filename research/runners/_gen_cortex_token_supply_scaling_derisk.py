@@ -53,10 +53,30 @@ to a ~ppl 20-40 fluency target is reported). The transfer claim is the Chinchill
 response at a capacity-matched operating point; repeating the sweep at a larger capacity is the named next rung.
 
 Run (smoke, ~1 min): SIM_BACKEND=numpy python -m research.runners._gen_cortex_token_supply_scaling_derisk --smoke
-Run (full 6-seed): python -m research.runners._gen_cortex_token_supply_scaling_derisk \
+Run (full 6-seed, wikitext broad-domain -- the 2026-09-01 GO-TOKEN-LEVER run):
+    python -m research.runners._gen_cortex_token_supply_scaling_derisk \
     --corpus /home/dant123/Projects/sim/data/corpus/wikitext103.txt \
-    --seeds 42 43 44 100 101 102 --d-model 96 --vocab 2000 --epochs 12 --max-len 48 \
-    --n-sentences 140000 --token-points 4000 8000 16000 32000 64000
+    --seeds 42 43 44 100 101 102 --d-model 96 --vocab 2000 --epochs 6 --max-len 40 \
+    --n-sentences 140000 --token-points 4000 8000 16000 32000 48000
+
+S7(a) EXTENSION (2026-09-01, this task): wikitext103 caps out at ~4.5 tok/param for this eval slice (the
+len<=40 contiguous-passage cut exhausts the corpus) -- so the wikitext run above could show the descent was
+STILL GOING but could not show whether it REACHES the fluency band [3.0, 3.69]. TinyStories
+(data/corpus/tinystories_train.txt, 115MB / ~23.7M regex tokens -- simple STYLE, narrower domain, the
+phi/TinyStories small-model-fluency recipe cited in the parent finding's external round) has a far larger
+token budget at the SAME fixed capacity, so the identical runner/instrument (only --corpus, --n-sentences and
+--token-points change -- capacity/epochs/max_len/anti-cheats all held fixed, one-variable discipline
+preserved) can push to 20+ tok/param (Chinchilla-optimal). No runner-code change was needed for the corpus or
+token-count axes themselves (both were already plain CLI args); this revision only (a) prints a warning
+instead of silently dropping a --token-points value that exceeds the seed's train pool (a token point that
+is silently skipped because --n-sentences was set too low would otherwise just vanish from the sweep with no
+signal), and (b) documents the TinyStories invocation here.
+Run (full 6-seed, TinyStories S7(a) -- token-supply-to-fluency-band question):
+    python -m research.runners._gen_cortex_token_supply_scaling_derisk \
+    --corpus /home/dant123/Projects/sim/data/corpus/tinystories_train.txt \
+    --seeds 42 43 44 100 101 102 --d-model 96 --vocab 2000 --epochs 6 --max-len 40 \
+    --n-sentences 300000 --token-points 4000 8000 16000 32000 64000 128000 200000 240000 \
+    --json research/findings/raw/_gen_cortex_s7a_tinystories_token_supply.json
 """
 from __future__ import annotations
 import os
@@ -139,6 +159,9 @@ def run_seed(seed, sents, args, capture_gen=False):
     points = []
     for k in args.token_points:
         if k > len(pool):
+            print(f"  [seed {seed}] SKIP token_point k={k}: exceeds train pool ({len(pool)} passages available "
+                  f"from --n-sentences {args.n_sentences} x 0.85). Raise --n-sentences to reach this point.",
+                  flush=True)
             continue
         tr = pool[:k]                                          # NESTED prefix = the ONLY thing that changes
         tr_ids = [vocab.ids(s) for s in tr]
