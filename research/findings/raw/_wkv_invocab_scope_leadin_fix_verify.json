@@ -1,0 +1,437 @@
+{
+  "runner": "_wkv_invocab_scope_leadin_fix_verify",
+  "seed": 42,
+  "checkpoint_vocab_size": 1000,
+  "part_a_direct_adversarial_catch": {
+    "n_cases": 36,
+    "n_old_false_positive": 21,
+    "n_now_caught": 21,
+    "n_still_leaking": 0,
+    "examples": [
+      {
+        "msg": "what can you tell me about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what can you tell me about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what can you tell me about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      }
+    ],
+    "all_cases": [
+      {
+        "msg": "what can you tell me about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what can you tell me about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what can you tell me about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you know about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you think about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you think about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "what do you think about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "can you tell me about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "can you tell me about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "can you tell me about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know anything about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know anything about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know anything about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "do you know about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "tell me about zzznonsenseword qqqgibberish",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "tell me about xkcdplaceholder blorptastic",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "tell me about wibbleflorp yazzledeen",
+        "old_pass": true,
+        "new_pass": false,
+        "caught": true
+      },
+      {
+        "msg": "who is zzznonsenseword qqqgibberish",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "who is xkcdplaceholder blorptastic",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "who is wibbleflorp yazzledeen",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "who was zzznonsenseword qqqgibberish",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "who was xkcdplaceholder blorptastic",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "who was wibbleflorp yazzledeen",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "tell me zzznonsenseword qqqgibberish",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "tell me xkcdplaceholder blorptastic",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "tell me wibbleflorp yazzledeen",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "describe zzznonsenseword qqqgibberish",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "describe xkcdplaceholder blorptastic",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "describe wibbleflorp yazzledeen",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "explain zzznonsenseword qqqgibberish",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "explain xkcdplaceholder blorptastic",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      },
+      {
+        "msg": "explain wibbleflorp yazzledeen",
+        "old_pass": false,
+        "new_pass": false,
+        "caught": false
+      }
+    ]
+  },
+  "part_b_genuine_content_no_regression": {
+    "n_cases": 5,
+    "n_pass_before": 5,
+    "n_pass_after": 5,
+    "n_regressed": 0,
+    "cases": [
+      {
+        "msg": "once upon a time there was a little boy named tim who had a dog",
+        "old_pass": true,
+        "new_pass": true,
+        "regressed": false
+      },
+      {
+        "msg": "tell me a story about a happy dog and his best friend",
+        "old_pass": true,
+        "new_pass": true,
+        "regressed": false
+      },
+      {
+        "msg": "lily and her mom went to the park to play with a ball",
+        "old_pass": true,
+        "new_pass": true,
+        "regressed": false
+      },
+      {
+        "msg": "tell me about the big dog and the little cat and their ball",
+        "old_pass": true,
+        "new_pass": true,
+        "regressed": false
+      },
+      {
+        "msg": "what do you know about the happy boy and his best friend and their toy",
+        "old_pass": true,
+        "new_pass": true,
+        "regressed": false
+      }
+    ]
+  },
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "part_c_stratified_real_store": {
+    "n_sampled_agents": 600,
+    "overall_old_pass_frac": 0.6817,
+    "overall_new_pass_frac": 0.04,
+    "bucket_0_zero_genuine_content": {
+      "n": 487,
+      "old_pass": 309,
+      "old_pass_frac": 0.6345,
+      "new_pass": 0,
+      "new_pass_frac": 0.0
+    },
+    "bucket_1_one_genuine_content_word": {
+      "n": 89,
+      "old_pass": 76,
+      "old_pass_frac": 0.8539,
+      "new_pass": 0,
+      "new_pass_frac": 0.0
+    },
+    "bucket_2plus_genuine_content": {
+      "n": 24,
+      "old_pass": 24,
+      "old_pass_frac": 1.0,
+      "new_pass": 24,
+      "new_pass_frac": 1.0
+    },
+    "note": "bucket_0 = topic's own slug has ZERO in-vocab content words (independent of any lead-in) -- the pure loophole population; its old_pass_frac vs new_pass_frac IS the catch rate. bucket_2plus = topic alone already meets min_content_hits=2 -- its new_pass_frac staying ~1.0 IS the no-regression claim, on real store data. bucket_1 is an honest residual: a single real content word cannot reach the 2-hit floor alone, so it now correctly fails post-fix (was only passing via the lead-in before)."
+  },
+  "verdict": {
+    "label": "in_vocab_scope lead-in loophole fix",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "direct adversarial: every old false-positive is now caught",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no regression: every genuine multi-content-word sentence still passes",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "genuine sentences still pass after the fix (same count as before)",
+        "ok": true,
+        "detail": "measured=5 expect=5",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "bucket_0 (zero genuine topic content) collapses toward 0 after the fix",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "bucket_2plus (genuine 2+ content words) stays ~fully passing after the fix",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "overall pass rate on the real-store sample drops (loophole was inflating it)",
+        "ok": true,
+        "detail": "measured=0.04 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "in_vocab_scope lead-in loophole fix",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "direct adversarial: every old false-positive is now caught",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no regression: every genuine multi-content-word sentence still passes",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "genuine sentences still pass after the fix (same count as before)",
+        "ok": true,
+        "detail": "measured=5 expect=5",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "bucket_0 (zero genuine topic content) collapses toward 0 after the fix",
+        "ok": true,
+        "detail": "measured=0.0 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "bucket_2plus (genuine 2+ content words) stays ~fully passing after the fix",
+        "ok": true,
+        "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "overall pass rate on the real-store sample drops (loophole was inflating it)",
+        "ok": true,
+        "detail": "measured=0.04 expect=<function main.<locals>.<lambda> at 0x7f6e35fd3100>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

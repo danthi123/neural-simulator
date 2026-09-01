@@ -255,6 +255,29 @@ your my our its today now yesterday tomorrow
 """.split())
 
 
+# ── lead-in-phrase loophole fix (2026-09-01, closes the `research/FAILURE_LOG.md` entry logged the same day by
+# `research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md`'s Part 2 measurement). `in_vocab_scope`'s
+# `min_content_hits` check previously credited ANY non-`_FUNCTION_WORDS` vocab hit as genuine domain content --
+# including the caller's OWN conversational lead-in template ("tell me about", "what do you know about", ...,
+# the SAME phrases `webapp.open_ended_chat._LEADINS` strips before topic extraction; word set duplicated here so
+# this module stays import-independent of `open_ended_chat` -- keep in sync if `_LEADINS` changes). A handful of
+# those template words ("tell", "me", "about", "know", "think", "an", "describe", "explain", "what's", "who's")
+# sit in this checkpoint's V=1000 vocabulary AND are not `_FUNCTION_WORDS` (grammatical scaffolding), so a FIXED
+# lead-in phrase alone could satisfy `min_content_hits=2` regardless of the actual topic that followed --
+# `in_vocab_scope("tell me about " + <anything>)` measured True 68.17% of the time on a random real-store sample,
+# only 25.9-40.5% of which the topic's own facts could genuinely express (2026-09-01 fact-grounding finding,
+# Part 1/2). These are meta-conversational REQUEST verbs ("tell me", "describe", "explain") or grammatical
+# fragments of a question template ("what's", "who's", "an") -- never themselves the story-domain CONTENT a
+# TinyStories-trained checkpoint should be credited for recognizing, the same reasoning `_FUNCTION_WORDS` already
+# applies to plain grammatical scaffolding. (Superset of every word appearing across `_LEADINS`'s phrases --
+# several, e.g. "what"/"can"/"you"/"do"/"is"/"a"/"the"/"are"/"who"/"was", are already in `_FUNCTION_WORDS` and
+# listed again here only for legibility against that source list; the union with `_FUNCTION_WORDS` makes the
+# duplication harmless.)
+_LEADIN_WORDS = frozenset("""
+what can you tell me about do know think is a an the are what's who was who's describe explain
+""".split())
+
+
 # ── fact-grounding lever (board #112 "clean unlock" — the moat-soak's named next action, see
 # research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md and
 # research/findings/2026-09-01-wkv-mouth-fact-grounding-lever.md). HONEST SCOPE, stated up front: this checkpoint's
@@ -325,17 +348,23 @@ def in_vocab_scope(text: str, seed: int = 42, min_frac: float = 0.6, min_hits: i
                     min_content_hits: int = 2) -> bool:
     """True only when `text` carries substantial genuine CONTENT overlap with the checkpoint's V=1000 TinyStories
     vocabulary -- not merely common English function words the checkpoint's vocab (frequency-sorted) is itself
-    dominated by. The caller (`answer_turn`) MUST fall back to Qwen when this is False -- this module never
+    dominated by, AND NOT merely the caller's own conversational lead-in template ("tell me about", "what do you
+    know about", ...). The caller (`answer_turn`) MUST fall back to Qwen when this is False -- this module never
     attempts an out-of-scope prompt itself. Three conditions, all required: (1) `min_hits` total vocab-word
     matches (guards very short prompts), (2) `min_frac` overall word-overlap fraction, (3) `min_content_hits`
-    matches that are NOT in `_FUNCTION_WORDS` -- closes the stopword-only / function-word-dominated false-positive
-    an adversarial verify-go pass found in the first version of this gate (2026-08-28)."""
+    matches that are NOT in `_FUNCTION_WORDS` OR `_LEADIN_WORDS` -- closes both the stopword-only /
+    function-word-dominated false-positive an adversarial verify-go pass found in the first version of this gate
+    (2026-08-28), AND the lead-in-phrase-alone false-positive the 2026-09-01 fact-grounding measurement found
+    (`in_vocab_scope("tell me about " + <any nonsense>)` was True 68.17% of the time on a real-topic sample --
+    see `_LEADIN_WORDS`'s own docstring above and `research/FAILURE_LOG.md` 2026-09-01). `min_hits`/`min_frac`
+    are still scored over the FULL original `text` (unchanged) -- only which hits count as CONTENT changes, so a
+    genuinely content-bearing message is not penalized for also carrying a lead-in phrase."""
     _, vocab, _ = _get_readout(seed)
     words = [w.lower() for w in _WORD_RE.findall(text or "")]
     if not words:
         return False
     hits = [w for w in words if w in vocab]
-    content_hits = [w for w in hits if w not in _FUNCTION_WORDS]
+    content_hits = [w for w in hits if w not in _FUNCTION_WORDS and w not in _LEADIN_WORDS]
     return (len(hits) >= min_hits and (len(hits) / len(words)) >= min_frac
             and len(content_hits) >= min_content_hits)
 

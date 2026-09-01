@@ -58,7 +58,14 @@ load-bearing / retire scaffolds).
 
 **⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
 roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
-fact word 43/43 every seed; residual = V=1000 vocab ~26% + word-not-sentence) · NP-entailment COPULA coverage
+fact word 43/43 every seed; residual = V=1000 vocab ~26% + word-not-sentence; ⭐ #112 RUNG 1 LANDED
+2026-09-01, branch `research/wkv-grounding-followup`: the `in_vocab_scope` lead-in-phrase loophole this
+finding's own Part 2 logged to `FAILURE_LOG.md` is now FIXED — `_LEADIN_WORDS` excludes the caller's own "tell
+me about"/"what do you know about"/etc. template words from `min_content_hits` scoring; real-store n=600
+stratified re-measurement: the zero-genuine-content bucket (81.2% of the sample) drops 63.45%→0.00% wrongly
+passing, the 2+-genuine-content bucket stays 100%→100%, overall 68.17%→4.00%; 19/19 regression tests; see
+`research/findings/2026-09-01-wkv-mouth-invocab-scope-leadin-loophole-fix.md`. Rung 2 (word-vs-sentence) still
+open, see that finding's own SS5/SS6 + the fact-grounding finding's next-steps item 4) · NP-entailment COPULA coverage
 (catches the rugby-club-called-"football" fabrication) · entity-ALIAS resolution verified (29/29) · surprise→
 episodic ENCODE-decision crossedge (6/6) · curiosity→d6-WM crossedge (6/6) · confidence real-shipped-traffic
 (root-caused #184) · scaffold-retirement (Hebbian-plausibility QUALIFIED + 2 stale ledger claims fixed).
