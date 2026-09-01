@@ -38,13 +38,19 @@ load-bearing / retire scaffolds).
    R4's pair) — one-brain integration + honesty deliverable, 6/6 GO.
 5. **Gate fix (`7e2edc08`):** `PATH_RE (?:json|jsonl)` truncated every `.jsonl` citation to `.json` → false
    MISSING; swapped to `(?:jsonl|json)` in 4 sites.
-6. **Moat-soak (`0bfdc786`):** the `BRAIN_OPEN_ENDED` bundle flip is SAFER than the flip-plan framed — the moat
-   children (NP_ENTAILMENT / GEN_TIME_HONESTY) are byte-identical across arms on the DANGEROUS
-   (Qwen-known/brain-unknown) class because `open_ended_chat.py` returns `_base_post_filter` (which abstains)
-   before either child is consulted; children matter only for KNOWN topics. CONFIRMED at n=32 (finding
-   `922e0c1d`): the flip is fabrication-SAFE (base filter abstains on all dangerous/unknown, 0 reaches the user);
-   the real cost is a KNOWN-topic GROUNDING regression — free-gen replaces exact recall and the WKV V=1000 mouth
-   can't express the 15k-KB's facts. The clean unlock (makes the flip a strict win) is the WKV mouth's KB grounding.
+6. **Moat-soak, SHARPENED (`d5ac3ce3`, supersedes the `922e0c1d`/`0bfdc786` framing below):** dangerous class
+   unchanged — the moat children are byte-identical across arms on Qwen-known/brain-unknown topics because
+   `open_ended_chat.py` returns `_base_post_filter` (abstains) before either child is consulted; that base
+   filter alone already drives raw fabrication 1.0→0.0, delta from the children = 0.0. On the KNOWN class the
+   two children are NOT equivalent (n=32, real `/api/brain-chat` handler): `GEN_TIME_HONESTY` engages on 7/7
+   real Qwen-routed known turns and visibly drops wrong/unverifiable specifics (concrete catch: Qwen called a
+   `rugby_leauge` club a "football club" — survives the parent-only AND +NP_ENTAILMENT arms untouched, only
+   `GEN_TIME_HONESTY`'s independent generation-time route catches it); `NP_ENTAILMENT` alone changed 0/12 known
+   replies — its non-copula/parseable-clause scope essentially never fires on real free-form Qwen prose (a
+   coverage gap to widen, not a bug). VERDICT for #112: flip is fabrication-safe; if flipped, `GEN_TIME_HONESTY`
+   is the load-bearing child, `NP_ENTAILMENT` adds ~nothing yet on real prose. (finding
+   `2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md`; artifact
+   `_open_ended_bundle_moat_soak_full.json`.)
 
 **IN FLIGHT (async — a DECISIVE run; do not lose):** S7(a) TinyStories token-supply 6-seed sweep on pool40 →
 does deep-NLL reach the fluency band [3.0, 3.69] by ~20 tok/param on simple-style text (bracketing Chinchilla),
@@ -52,9 +58,11 @@ or plateau above it? Result → `research/findings/raw/_gen_cortex_s7a_tinystori
 set). If it REACHES the band → the token-lever provably reaches fluency on matched text; residual = corpus
 BREADTH. Branch `research/gen-cortex-s7a-token-to-fluency` (draft finding `2026-09-01-gen-cortex-s7a-...`).
 
-**TEED UP FOR OWNER (UX-gated):** (a) `BRAIN_OPEN_ENDED` bundle flip #112 — moat-soak found it safer than framed;
-needs a fuller KNOWN-class fabrication battery, then owner yes/no; (b) confidence-forthcomingness flip #94 — the
-NL-parser vocab gap is now closed, owner-UX call remains.
+**TEED UP FOR OWNER (UX-gated):** (a) `BRAIN_OPEN_ENDED` bundle flip #112 — n=32 moat-soak found the flip
+fabrication-SAFE (dangerous-class delta from the children = 0.0, already covered by the always-on base
+filter); `GEN_TIME_HONESTY` is the load-bearing child on KNOWN topics, `NP_ENTAILMENT` measured ~inert on
+real prose so far — present both children's real contribution to the owner, then owner yes/no on the bundle;
+(b) confidence-forthcomingness flip #94 — the NL-parser vocab gap is now closed, owner-UX call remains.
 
 **⛔ OPS LESSON (this arc — apply going forward):** compute agents launched WITHOUT `isolation:worktree` run in
 the MAIN checkout and their `git checkout -b`/commit RACE (the S7a + moat-soak agents did; my NL-parser commit
