@@ -1,0 +1,29 @@
+{
+ "run_id": "1788280305-2362108",
+ "runner": "research/runners/_read_fidelity_learned_opponent_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a4ff713a4ba97412a/research/runners/_read_fidelity_learned_opponent_read_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_read_fidelity_learned_opponent_read_derisk_6seed.json"
+ ],
+ "git_sha": "3ad5fa228",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T12:31:45",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_read_fidelity_learned_opponent_read_derisk_6seed.json"
+}
