@@ -73,6 +73,21 @@ that concrete and all are GO on `main`:
     elaborative descriptive object the strict entailment check would false-reject — see that module's own
     docstring for why). See research/findings/2026-09-01-np-entailment-moat-gate-wired-into-live-open-ended-
     postfilter.md for the load-bearing before/after/lesion proof.
+  * `webapp.wkv_mouth_generator.render_fact_sentence` (2026-09-01, `BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE`,
+    DEFAULT-ON as of 2026-09-01 — auto-flipped, GO, see `wkv_fact_sentence_enabled` below) — board #112 rung-3
+    "clean unlock" WIRE-IN. The 2026-09-01 lexicon lever
+    (`research/findings/2026-09-01-wkv-fact-to-sentence-lexicon-and-np-lever.md`, 6-seed GO) built a curated
+    relation->predicate lexicon + slug->NP surfacer driving the already-6-seed-GO `SpikingClauseProducer` to
+    render a real recalled fact as a coherent English clause, but left it a PARALLEL renderer never reachable
+    from the mouth's own decode. This flag closes that: on a KNOWN, in-vocab topic,
+    `webapp.wkv_mouth_generator.generate(sentence_facts=...)` tries the clause render FIRST, and when the
+    topic's relation is lexicon-covered, THAT coherent sentence becomes the WKV mouth's actual reply (skipping
+    free generation for the turn) — a known-topic reply now preserves the real fact instead of trading it for
+    fact-thin TinyStories free-gen, for the narrow slice of real topics that are both in-vocab and lexicon-
+    covered. INDEPENDENT of `wkv_fact_grounding_enabled()` (a separate `generate()` parameter, still default-
+    OFF); falls straight through to the pre-existing free-gen/fact-boost path when no covered relation is
+    found. ZERO PRODUCTION RISK today: gated two levels deep behind `BRAIN_OPEN_ENDED` (default OFF). See
+    research/findings/2026-09-01-wkv-mouth-fact-sentence-wirein.md for the measured coverage + before/after.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
@@ -271,6 +286,52 @@ def wkv_fact_grounding_enabled() -> bool:
     return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def wkv_fact_sentence_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE` truthy -> when the WKV mouth (see `wkv_mouth_enabled`) is
+    about to generate a KNOWN-topic reply, `answer_turn` passes the already-retrieved `facts` into
+    `webapp.wkv_mouth_generator.generate(sentence_facts=...)`, which — via the merged board #112 rung-3 lexicon
+    (`RELATION_LEXICON` + `slug_to_np`) driving the already-6-seed-GO `SpikingClauseProducer` — renders the
+    FIRST fact whose relation the lexicon covers as a coherent factual clause (e.g. "the Isaac Asimov works for
+    the University Of Boston"), FROM THE MOUTH's own `generate()` call, replacing that turn's free generation
+    entirely (board #112's "clean unlock": a known-topic reply now preserves the actual recalled fact instead
+    of trading it for fact-thin TinyStories free-gen — see research/findings/2026-09-01-wkv-mouth-fact-
+    grounding-lever.md for the word-boost lever this supersedes for covered relations).
+
+    A FIFTH, independent gate: only reached when `BRAIN_OPEN_ENDED` + `wkv_mouth_enabled()` are ALSO truthy,
+    the prompt is in-vocab for the WKV checkpoint, AND the topic is KNOWN. INDEPENDENT of
+    `wkv_fact_grounding_enabled()` — the two flags gate two SEPARATE `webapp.wkv_mouth_generator.generate()`
+    parameters (`sentence_facts` here vs `facts`/the decode-time boost there); either, both, or neither may be
+    on. When `sentence_facts` finds no covered relation (an honest degrade, not a crash), `generate()` falls
+    straight through to its pre-existing free-generation path — with the boost lever still applied if THAT
+    flag is also on.
+
+    DEFAULT-ON as of 2026-09-01 (the wire-in's own 6-seed verify GO, auto-flipped per the 2026-09-01 owner
+    policy: validated-GO + load-bearing + moat-safe + byte-identical-off + no-regression -- see
+    `research/findings/raw/_wkv_mouth_fact_sentence_wirein_verify.json`, GO on all 6 seeds, 48/48 real cases:
+    `generate()`'s own raw output is readable=faithful=moat_safe=1.0 on every seed; the end-to-end post-filtered
+    answer is ALWAYS either that exact clause or the fixed honest-abstain fallback, never a corrupted hybrid,
+    even on the one pre-existing-filter interaction named below). Unset now reads as ON; set the flag to 0 to
+    force the pre-existing free-gen/boost path even when a covered relation exists. ZERO PRODUCTION RISK today:
+    gated two levels deep behind `BRAIN_OPEN_ENDED` (default OFF) -- with that top-level channel off, this flag
+    is never even read.
+
+    HONEST SCOPE, unaffected by the flip: this covers only the narrow slice of real known topics that are ALSO
+    in-vocab for the WKV checkpoint's closed V=1000 TinyStories vocabulary (empirically ~3% of a real 400-agent
+    live-store sample, ALL of which had a lexicon-covered relation when in-vocab at all — see the 2026-09-01
+    wire-in finding) — it does NOT touch the much larger Qwen-routed (out-of-vocab) known-topic grounding
+    regression `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured,
+    which is a different generator on a different code path entirely. A NAMED, MAPPED residual (not a blocker
+    to the flip -- it fails SAFE): a pre-existing (2026-08-21) known-topic contradiction filter
+    (`_open_ended_known_supplement_filter_derisk.sentence_contradicts`) flags ANY bare 3+-digit number/year in
+    a sentence as "not in store," with no exemption for a number that is part of the topic's OWN slug/name
+    (e.g. `1974_football_world_cup`) -- a documented pre-existing SCOPE limit of that filter, not of this wire-
+    in. It causes the post-filter to over-cautiously fall back to the honest-abstain string on an otherwise-
+    correct rendered clause for that narrow sub-class (1/48 sampled cases here) -- never a leak, always the
+    safe degrade (verified 1.0 on every seed). Fixing that filter's number check is a separate, un-built next
+    step, out of this wire-in's own scope."""
+    return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE", "1").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
 # Longest-first so "what do you know about" wins over "what is"; each strips a natural lead-in to the bare entity.
 _LEADINS = sorted([
@@ -441,9 +502,14 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 # words get a decode-time boost. Flag off, or `known` False (nothing was retrieved): `facts=None`,
                 # identical to before this parameter existed.
                 ground_facts = facts if (known and wkv_fact_grounding_enabled()) else None
+                # board #112 rung-3 wire-in (default OFF, see `wkv_fact_sentence_enabled`): a SEPARATE, INDEPENDENT
+                # gate on the SAME already-retrieved `facts` -- `generate()` tries rendering a coherent clause
+                # FIRST (via the merged lexicon lever + SpikingClauseProducer) before any free generation. Flag
+                # off, or `known` False: `sentence_facts=None`, identical to before this parameter existed.
+                sentence_facts = facts if (known and wkv_fact_sentence_enabled()) else None
                 raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens,
                                           repetition_penalty=1.3, no_repeat_ngram_size=3,
-                                          facts=ground_facts)
+                                          facts=ground_facts, sentence_facts=sentence_facts)
                 wkv_used = True
                 generator_name = "wkv_mouth"
         except Exception:

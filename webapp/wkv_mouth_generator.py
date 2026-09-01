@@ -49,6 +49,17 @@ module is never imported by `answer_turn` (lazy import, mirrors the `BRAIN_OPEN_
 NO `sim/` edit. Reuse-by-import of `WKVReadout` / `FewSpikeWordRead` / `_softmax`; only the free-generation DRIVING
 LOOP is lifted out of `_wkv_fewspike_read_derisk.run_seed`'s nested `_free_gen` closure into a standalone function
 (the closure is not itself importable) — the spiking-WTA MECHANISM those classes implement is unchanged.
+
+FACT->SENTENCE WIRE-IN (`sentence_facts` on `generate()`, 2026-09-01, board #112 rung-3 "clean unlock" gate).
+`research/findings/2026-09-01-wkv-fact-to-sentence-lexicon-and-np-lever.md` built a curated relation->predicate
+lexicon + slug->NP surfacer driving the already-6-seed-GO `SpikingClauseProducer` (`research.runners.
+_spiking_fluent_surface_derisk`) to render a real recalled fact as a coherent English clause — but left it a
+PARALLEL renderer, never reachable from this module's own `generate()`. `render_fact_sentence` (below) closes
+that: called from `generate()`'s `_run()` closure, it is now genuinely part of the mouth's own generation path.
+Gated by `webapp.open_ended_chat.wkv_fact_sentence_enabled()` (`BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE`,
+default-OFF) — see that module's docstring for the live call-site wiring and honest scope (only fires for a
+known topic whose relation the lexicon covers; falls through to the pre-existing free-gen/fact-boost path
+otherwise).
 """
 from __future__ import annotations
 
@@ -327,6 +338,96 @@ def fact_grounding_ids(facts, seed: int = 42, max_ids: int = 6) -> list:
     return ids
 
 
+# ── fact->SENTENCE rendering (board #112 rung 3 wire-in, 2026-09-01 — the "clean unlock" gate). Reuse-by-import
+# of the JUST-MERGED lexicon lever (`research.runners._wkv_fact_to_sentence_lexicon_lever`, 6-seed GO:
+# readable=1.0, faithful=1.0, moat_safe=1.0 on every one of 48 real sampled facts, 34/34 live-relation
+# coverage) driving the already-6-seed-GO `SpikingClauseProducer` (`research.runners._spiking_fluent_surface_
+# derisk`, EMERGE-59/60/61) UNMODIFIED. THIS is the actual wire-in the lever's own finding named as the open
+# residual: unlike that lever's own runner (a PARALLEL renderer never reachable from `answer_turn`),
+# `render_fact_sentence` is called FROM `generate()`'s own `_run()` closure below via the new `sentence_facts`
+# parameter -- a known-topic reply is genuinely written by the mouth's fact->sentence path, not a side-channel.
+# Lazy-imported (only when actually invoked) so the default-OFF path (`sentence_facts=None`, the parameter's
+# own default and every pre-existing call site) never even imports the lever module -- this module's own
+# import-time behavior is unaffected either way, matching the "off imports nothing" discipline the module
+# docstring already states for `BRAIN_OPEN_ENDED_WKV_MOUTH` itself.
+_CLAUSE_PROD_LOCK = threading.Lock()
+_CLAUSE_PROD_CACHE: dict[tuple, object] = {}
+
+
+def _get_clause_producer(seed: int, n_slots: int):
+    """A `SpikingClauseProducer` built + taught ONCE per (seed, slot-count), then reused across calls/turns --
+    the SAME reuse pattern the lexicon lever's own `_render_facts` already uses within one seed's fact list
+    (its `by_len` dict there); this just extends the cache lifetime process-wide, exactly like `_get_readout`'s
+    own WKV-checkpoint cache above. Every `emit()` call still runs the EMERGE-61 inter-utterance wash-out
+    (`_restore_state(..., neuron_idx="slots")`) before reading rates, so reusing the producer object across
+    turns/facts is safe and does not leak state between emissions -- verified by the lexicon lever's own
+    6-seed GO, which reuses producers across all 8 facts of a seed this exact same way."""
+    key = (seed, n_slots)
+    hit = _CLAUSE_PROD_CACHE.get(key)
+    if hit is not None:
+        return hit
+    with _CLAUSE_PROD_LOCK:
+        hit = _CLAUSE_PROD_CACHE.get(key)
+        if hit is not None:
+            return hit
+        from research.runners._spiking_fluent_surface_derisk import SpikingClauseProducer
+        prod = SpikingClauseProducer(seed)
+        prod.learn(n_slots)
+        _CLAUSE_PROD_CACHE[key] = prod
+        return prod
+
+
+def pick_covered_fact(facts):
+    """The first (agent, action, patient) triple in `facts` whose relation exists in the lexicon lever's
+    `RELATION_LEXICON` (34/34 live-store coverage) -- i.e. the first fact this rung can render as a genuinely
+    COHERENT sentence, not the naive-morphology/raw-slug fallback. `None` when `facts` is empty/falsy or no
+    triple's relation is covered (the honest degrade case for a hypothetical future 35th relation type; none
+    exist in the live store today per the lever's own `_check_lexicon_coverage`)."""
+    if not facts:
+        return None
+    from research.runners._wkv_fact_to_sentence_lexicon_lever import RELATION_LEXICON
+    for triple in facts:
+        if len(triple) != 3:
+            continue
+        _agent, action, _patient = triple
+        if action in RELATION_LEXICON:
+            return triple
+    return None
+
+
+def render_fact_sentence(facts, seed: int = 42) -> str | None:
+    """Render ONE recalled fact from `facts` (the SAME (agent, action, patient) triples
+    `webapp.open_ended_chat.retrieve` returns) as a coherent factual clause, via the merged board #112 rung-3
+    lexicon (`RELATION_LEXICON` + `slug_to_np`) driving the UNMODIFIED, already-6-seed-GO
+    `SpikingClauseProducer` -- e.g. `("bounce_around_the_ground", "country", "united_kingom")` -> "the Bounce
+    Around the Ground is located in the United Kingom". Returns `None` (NEVER a fabricated or naive-morphology
+    guess) when `facts` carries no relation this lexicon covers -- the caller (`generate()`) then falls
+    through to the pre-existing free-generation path, unchanged.
+
+    MOAT-SAFE by construction (the same property the lever's own `parse_and_score` verified 1.0/6-seed): every
+    token in the returned surface is either the fact's own subject/object NP or a fixed closed-class
+    predicate/determiner word -- nothing else can appear.
+
+    Must be called from inside `_RngIsolation.run` (see `generate()`'s `_run()` below) -- `SpikingClauseProducer.
+    __init__` (reached on a cache miss, see `_get_clause_producer`) builds a real `SimulationBridge`
+    (`cfg.seed=seed`), which reseeds the process-global RNGs exactly like `WKVReadout` does (the #77 footgun
+    this module's own `_RngIsolation` class exists to guard)."""
+    triple = pick_covered_fact(facts)
+    if triple is None:
+        return None
+    from research.runners._wkv_fact_to_sentence_lexicon_lever import _dctx_and_slots
+    agent, action, patient = triple
+    slots, dctx, covered = _dctx_and_slots(agent, action, patient)
+    if not covered:                      # pick_covered_fact already guarantees this; belt-and-braces
+        return None
+    prod = _get_clause_producer(seed, len(slots))
+    words = prod.emit(slots, dctx)
+    if not prod.spiked:
+        # honesty: never claim a spiking-produced sentence the bridge did not genuinely spike for
+        return None
+    return " ".join(words)
+
+
 def _apply_fact_boost(lg: np.ndarray, fact_ids, boost: float) -> np.ndarray:
     """Additive decode-time logit boost for `fact_ids` (see `fact_grounding_ids`) -- legitimately HOST territory,
     the SAME category as the pre-existing `_apply_repetition_controls` (decode control over WHICH candidates
@@ -449,7 +550,8 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
 
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
-             no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0) -> tuple[str, float]:
+             no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0,
+             sentence_facts=None) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
@@ -466,10 +568,25 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     fact-grounding lever. When `facts` (the SAME (agent, action, patient) triple list `open_ended_chat.retrieve`
     returns) is truthy, its in-vocab CONTENT-word ids (`fact_grounding_ids`) get an additive decode-time logit
     boost every generation step (`_apply_fact_boost`) -- byte-identical to before this parameter existed when
-    `facts` is None (the pre-existing default and every pre-existing call site)."""
+    `facts` is None (the pre-existing default and every pre-existing call site).
+
+    `sentence_facts` (default None, INDEPENDENT of `facts`/`fact_boost` above -- board #112 rung-3 wire-in,
+    2026-09-01): when truthy, `_run()` tries `render_fact_sentence(sentence_facts, seed=seed)` FIRST, before
+    any free generation. If it returns a coherent clause (a covered relation was found -- see that function),
+    THAT clause is `generate()`'s entire return text, and `_free_gen`/the WKV checkpoint's own free decode
+    never runs for this turn -- a known-topic reply is genuinely written by the mouth's fact->sentence path,
+    not a parallel renderer. If it returns `None` (no covered relation in `sentence_facts`), `_run()` falls
+    straight through to the SAME free-generation path as before this parameter existed (still honoring `facts`/
+    `fact_boost` if those were also passed) -- so this parameter can only ADD a generator choice, never remove
+    the pre-existing fallback. `sentence_facts=None` (the default and every pre-existing call site) is
+    BYTE-IDENTICAL to before this parameter existed: `render_fact_sentence` is never even imported."""
     t0 = time.time()
 
     def _run():
+        if sentence_facts:
+            sentence = render_fact_sentence(sentence_facts, seed=seed)
+            if sentence is not None:
+                return sentence
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
