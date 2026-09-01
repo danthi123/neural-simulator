@@ -7,6 +7,17 @@ date: 2026-07-23
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
 **Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-19** (2026-08-19 **STRATEGIC REFRAME** — the ⭐⭐ block immediately below the header supersedes the near-term sequencing where they disagree: Qwen-as-form + state-fidelity honesty + the "make the brain continuous" primary arc; the long-term onebrain/crutch-burndown north-star is unchanged. Prior 2026-08-18 GNW-keystone + integration wave and the 2026-08-12/13 production-wiring + faculty-audit wave landed; **read the ⭐⭐ reframe, then §0**). Update it as results/walls land.
+**⭐ 2026-09-01 CONNECTOME-GROWTH ADDENDUM (scoped sync — one arc, not a full resync of the landings below):**
+`onebrain_crossedge_gate.py`'s GENERIC declarative functional gate landed (`4380e42d1`, `2026-09-01-declarative-
+cross-edge-functional-gate-...GO.md`): adding a learned cross-region edge is now a `CrossEdge` data row +
+`train_fn`/`read_fn`, run through ONE shared `run_gate` — the emergence/interaction/byte-off checks are generic.
+Its own proof edge (comprehension role -> d6 WM, the RECIPROCAL of R1) is 6/6 GO. A SECOND edge, on a DIFFERENT
+organ pair, closed the SAME cycle: **source_provenance.prov_generated -> self_schema.author**, completing R4's
+self_schema-authorship -> source_provenance pair in its other direction (`2026-09-01-onebrain-crossedge-
+provenance-to-selfschema-reciprocal-GO.md`, 6/6 GO — grows 0.05->4.0-4.7, +0.021 to +0.024 author-rate shift,
+100% lesion-attributable, byte-identical-off). **NEXT (queued, not yet built):** another reciprocal pair from
+the same connectome (surprise->source_provenance is still one-direction only), OR the production wire-in rung
+R4 itself already has a precedent for (`BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA`, default-OFF).
 **⭐ 2026-08-27 CONTINUATION LANDINGS (sync — the ⭐⭐ reframe below still governs sequencing):**
 - **ONE-BRAIN INTEGRATION reached its emergent goal.** A learned cross-region synapse (d6-WM→comprehension) is wired into the LIVE brain and now GROWS from the substrate's OWN activity (in-brain self-supervised credit — comprehension's own confident spiking resolution, no host label) AND changes conversation (flips the comprehension repair role 5/5 ambiguous items, lesion-attributable), 6-seed GO (`2026-08-27-onebrain-xedge-production-live-learning-GO`; `BRAIN_ONEBRAIN_XEDGE`+`_LEARN` default-OFF; per-turn-plasticity + a production-default flip in flight). Completeness audit: this is ~1 cross-edge vs mostly host-orchestrated organs; highest-leverage enabler = DECLARATIVE `cross_edges` on the framework (in flight). R4 self_schema→source_provenance also GO on the framework.
 - **The MOUTH read-SNR wall is now a characterized SUBSTRATE wall.** On cupy no structured/coherent target direction decodes (0/6 recodable) — neither a better objective (softmax + dendritic NO-GO) nor target-recoding opens it (`2026-08-27-mouth-readsnr-...cupy-SUBSTRATE-WALL`). NO-DEFER next = a DECORRELATION/whitening read (correlated drive onto shared conductance pools doesn't summate); LIKELY the SAME read-fidelity wall behind learn-through-use recall (a joint arc, in flight). Retiring Qwen stays long-horizon (form scaffold), so this is a mapped deep wall, not a near-term blocker.
@@ -1018,7 +1029,24 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
-**2026-08-30 (newest — early-harvest + 3 owner-requested moves; local compute PAUSED for an owner test):**
+**2026-09-01 (newest — one-brain connectome growth, now cheap via the declarative gate):**
+- **Declarative cross-edge functional gate landed** (`onebrain_crossedge_gate.py`, `4380e42d1`): the emergence/
+  interaction/byte-off checks are now GENERIC, driven from a `CrossEdgeGateSpec` declaration — a new edge is a
+  `CrossEdge` row + `train_fn` + `read_fn`, not a bespoke ~40KB runner. Proof edge: comprehension role -> d6 WM
+  (reciprocal of R1), 6/6 GO.
+- **Second edge, different organ pair, same cycle:** `source_provenance.prov_generated -> self_schema.author`
+  — the RECIPROCAL of R4's `author -> prov_generated` (`2026-09-01-onebrain-crossedge-provenance-to-selfschema-
+  reciprocal-GO.md`, `research/runners/_onebrain_crossedge_provenance_to_selfschema.py`). 6/6 GO: grows
+  0.05->4.0-4.7 via the substrate's own Hebbian rule, load-bearing (+0.021 to +0.024 self_schema author-rate
+  shift, recalling a genuinely-generated vs. genuinely-perceived memory, 100% lesion-attributable), byte-
+  identical-off. Honest calibration note in the finding: the FIRST control choice (a dual-context ambiguous
+  pattern, mirroring R4's own protocol) under-reported the effect ~4-5x because source_provenance's opponent
+  trace is graded, not binary — fixed by using a genuinely-perceived exemplar as the true zero baseline.
+  **NEXT (queued, not yet built):** another reciprocal pair on the same connectome (surprise->source_provenance
+  is still one direction only), or promote this edge to a production wire-in (runner-level GO only, matching
+  R4's own current state before ITS later default-OFF production flip, `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA`).
+
+**2026-08-30 (early-harvest + 3 owner-requested moves; local compute PAUSED for an owner test):**
 - **Consolidation (#64):** the point-plateau operating-point sweep is a 343-cell NO-GO (no operating point
   separates per-slot targets). Successor BUILT + screening on the pool: a continuous-attractor (ring/CANN
   line/bump) de-risk (`_consol_dendritic_lineattractor_derisk.py`, 2-seed screen via

@@ -7,7 +7,26 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-08-30 (newest) — early harvest + three moves: a memory-consolidation dead-end mapped, the knowledge-latency cause found (30% win in hand), the brain-voice made the default in its channel
+## 2026-09-01 (newest) — growing the brain's internal wiring is now cheap, and the second new connection already landed
+
+Point (3) from 2026-08-28 below ("migrating more faculties is now cheap") is now proven twice over. The generic
+machinery that checks whether a new brain-region-to-region connection is real — does it grow on its own, does it
+actually change behavior, does turning it off leave everything else untouched — is now fully reusable: adding a
+new connection is just naming the two regions and writing two small functions (what experience grows it, what
+behavior it should change), not building a bespoke check from scratch each time.
+
+Proof: a SECOND new connection landed the same day, wiring a genuinely different pair of regions. Earlier, the
+brain learned that "when I currently believe I'm the one who said something, lean toward remembering it as
+self-generated." This adds the connection running the OTHER way: "when the memory-source-tracking system itself
+concludes a memory reads as self-generated, that reinforces the ongoing sense of authorship." Both halves of that
+loop are now wired. It passed every check on all 6 test seeds: the connection grows from near-zero purely from
+experience, recalling a genuinely self-generated memory measurably shifts the authorship signal (and the shift
+disappears if the connection is cut), and turning the connection off leaves everything else in the brain exactly
+as before. This is a small but real step toward the brain's sense of "did I say this, or was it said to me" being
+grounded in its own memory system, not just a label supplied from outside. Finding:
+`2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO`.
+
+## 2026-08-30 — early harvest + three moves: a memory-consolidation dead-end mapped, the knowledge-latency cause found (30% win in hand), the brain-voice made the default in its channel
 
 A focused session against the remaining compute, with a pause partway through so the owner could use the machine.
 
