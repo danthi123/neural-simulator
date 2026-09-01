@@ -1,0 +1,2651 @@
+{
+  "runner": "research/runners/_source_monitoring_honesty_flip_verify.py",
+  "flag": "BRAIN_SOURCE_MONITORING_FRAMES_HONESTY",
+  "attribution": {
+    "vary_frac_attributable_to_lesion": 0.55,
+    "accuracy_attributable_to_lesion": 0.5916666666666666,
+    "note": "fraction of the mean unlesioned effect NOT present in the mean lesioned control (tools.lab.attributable_to) -- makes explicit what (1c)/(1d) already show qualitatively."
+  },
+  "mechanism_sweep_6seed": [
+    {
+      "seed": 42,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.5,
+        "vary_frac": 0.4
+      }
+    },
+    {
+      "seed": 43,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.45,
+        "vary_frac": 0.5
+      }
+    },
+    {
+      "seed": 44,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.45,
+        "vary_frac": 0.5
+      }
+    },
+    {
+      "seed": 100,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.35,
+        "vary_frac": 0.3
+      }
+    },
+    {
+      "seed": 101,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.35,
+        "vary_frac": 0.5
+      }
+    },
+    {
+      "seed": 102,
+      "unlesioned": {
+        "accuracy": 1.0,
+        "vary_frac": 1.0
+      },
+      "lesioned": {
+        "accuracy": 0.35,
+        "vary_frac": 0.5
+      }
+    }
+  ],
+  "handler_demo": {
+    "A_flag_on_unlesioned": {
+      "teach1": {
+        "answer": "the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "wolf",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "word": "hunt",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "deer"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 157,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 40192,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941110187135
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "wolf",
+            "hunts",
+            "deer"
+          ],
+          "recall_action": "hunts",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 1,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": null,
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "turn_engagement": 0.75,
+          "ema_engagement": 0.44999999999999996,
+          "afferent_pA": 629.9999999999999,
+          "da_level": 0.7155259371121526,
+          "snc_firing": 0.11083333333333327,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4310518742243052,
+          "da_level": 0.7155259371121526,
+          "lesioned": false
+        }
+      },
+      "teach2": {
+        "answer": "the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "deer",
+          "eat",
+          "worm"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "deer"
+            },
+            {
+              "word": "eat",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "eat"
+            },
+            {
+              "word": "worm",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "worm"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 197,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 50432,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941108455232
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "deer",
+            "eats",
+            "worm"
+          ],
+          "recall_action": "eats",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 2,
+          "topic": "deer",
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": "deer",
+          "evicted_topic": null,
+          "reason": "first_thought",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "held_rate_post": 0.3333333333333333,
+          "mm_peak": 0.05555555555555555,
+          "boost_max": 0.027777777777777776,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "first_thought"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.51,
+          "afferent_pA": 714.0,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      },
+      "direct": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "wolf",
+              "confidence": 1.0,
+              "margin": 0.5875233365555086,
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "role": "action",
+              "word": "hunt",
+              "confidence": 1.0,
+              "margin": 0.6146863974248253,
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "role": "patient",
+              "word": "deer",
+              "confidence": 1.0,
+              "margin": 0.652812231766354,
+              "cue": false
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.046035921862420795,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 5,
+          "n_facts_scanned": 7,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 45856,
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 8737.236427424528
+          },
+          "composer": "onebrain"
+        },
+        "provenance": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999906432749,
+          "rate_perceived": 0.106875,
+          "rate_generated": 0.0,
+          "encoded_as": "perceived",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5802115775218216
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 3,
+          "topic": "wolf",
+          "swapped": true,
+          "held_topic_before": "deer",
+          "held_topic": "wolf",
+          "evicted_topic": "deer",
+          "reason": "topic_change_swap",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 1,
+          "held_slot": 1,
+          "incumbent_slot": 0,
+          "winner_slot": 1,
+          "n_ignited_post": 1,
+          "old_residual_post": 0.0,
+          "new_rate_post": 0.3333333333333333,
+          "mm_peak": 0.3055555555555556,
+          "boost_max": 0.16,
+          "on": true,
+          "lead": "On wolf, then \u2014 ",
+          "new_topic": "wolf",
+          "reason_lead": "topic_transition"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "turn_engagement": 0.4,
+          "ema_engagement": 0.444,
+          "afferent_pA": 621.6,
+          "da_level": 0.7120044671947912,
+          "snc_firing": 0.11083333333333324,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4240089343895823,
+          "da_level": 0.7120044671947912,
+          "lesioned": false
+        },
+        "gnw_stop": {
+          "on": true,
+          "acted": true,
+          "reason": "swap_topic_break",
+          "n_held": 2,
+          "newcomer_topic": "wolf",
+          "n_ignited_pre": 2,
+          "n_ignited_post": 0,
+          "boost": 0.14166666666666666,
+          "cleared": true,
+          "lesioned": false,
+          "lead": "Setting the held thread aside \u2014 ",
+          "reason_lead": "clean_global_stop"
+        }
+      },
+      "chain": {
+        "answer": "I believe the deer eats the worm, but I reasoned that myself rather than being told it directly. \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": null,
+        "derived": true,
+        "derived_from": [
+          [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          [
+            "deer",
+            "eat",
+            "worm"
+          ]
+        ],
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "provenance": {
+          "known": true,
+          "label": "generated",
+          "d": -0.9999999907246377,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.1078125,
+          "encoded_as": "generated",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 4,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "wolf",
+          "held_topic": "wolf",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.5076,
+          "afferent_pA": 710.6400000000001,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      }
+    },
+    "B_flag_on_lesioned": {
+      "teach1": {
+        "answer": "the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "wolf",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "word": "hunt",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "deer"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 157,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 40192,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941110187135
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "wolf",
+            "hunts",
+            "deer"
+          ],
+          "recall_action": "hunts",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 1,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": null,
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "turn_engagement": 0.75,
+          "ema_engagement": 0.44999999999999996,
+          "afferent_pA": 629.9999999999999,
+          "da_level": 0.7155259371121526,
+          "snc_firing": 0.11083333333333327,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4310518742243052,
+          "da_level": 0.7155259371121526,
+          "lesioned": false
+        }
+      },
+      "teach2": {
+        "answer": "the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "deer",
+          "eat",
+          "worm"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "deer"
+            },
+            {
+              "word": "eat",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "eat"
+            },
+            {
+              "word": "worm",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "worm"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 197,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 50432,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941108455232
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "deer",
+            "eats",
+            "worm"
+          ],
+          "recall_action": "eats",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 2,
+          "topic": "deer",
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": "deer",
+          "evicted_topic": null,
+          "reason": "first_thought",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "held_rate_post": 0.3333333333333333,
+          "mm_peak": 0.05555555555555555,
+          "boost_max": 0.027777777777777776,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "first_thought"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.51,
+          "afferent_pA": 714.0,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      },
+      "direct": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 I believe the wolf hunts the deer, but I reasoned that myself rather than being told it directly. \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "wolf",
+              "confidence": 1.0,
+              "margin": 0.5875233365555086,
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "role": "action",
+              "word": "hunt",
+              "confidence": 1.0,
+              "margin": 0.6146863974248253,
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "role": "patient",
+              "word": "deer",
+              "confidence": 1.0,
+              "margin": 0.652812231766354,
+              "cue": false
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.046035921862420795,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 5,
+          "n_facts_scanned": 7,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 45856,
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 8737.236427424528
+          },
+          "composer": "onebrain"
+        },
+        "provenance": {
+          "known": true,
+          "label": "generated",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "encoded_as": "perceived",
+          "agrees_with_encoded": false
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5802115775218216
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 3,
+          "topic": "wolf",
+          "swapped": true,
+          "held_topic_before": "deer",
+          "held_topic": "wolf",
+          "evicted_topic": "deer",
+          "reason": "topic_change_swap",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 1,
+          "held_slot": 1,
+          "incumbent_slot": 0,
+          "winner_slot": 1,
+          "n_ignited_post": 1,
+          "old_residual_post": 0.0,
+          "new_rate_post": 0.3333333333333333,
+          "mm_peak": 0.3055555555555556,
+          "boost_max": 0.16,
+          "on": true,
+          "lead": "On wolf, then \u2014 ",
+          "new_topic": "wolf",
+          "reason_lead": "topic_transition"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "turn_engagement": 0.4,
+          "ema_engagement": 0.444,
+          "afferent_pA": 621.6,
+          "da_level": 0.7120044671947912,
+          "snc_firing": 0.11083333333333324,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4240089343895823,
+          "da_level": 0.7120044671947912,
+          "lesioned": false
+        },
+        "gnw_stop": {
+          "on": true,
+          "acted": true,
+          "reason": "swap_topic_break",
+          "n_held": 2,
+          "newcomer_topic": "wolf",
+          "n_ignited_pre": 2,
+          "n_ignited_post": 0,
+          "boost": 0.14166666666666666,
+          "cleared": true,
+          "lesioned": false,
+          "lead": "Setting the held thread aside \u2014 ",
+          "reason_lead": "clean_global_stop"
+        }
+      },
+      "chain": {
+        "answer": "I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": null,
+        "derived": true,
+        "derived_from": [
+          [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          [
+            "deer",
+            "eat",
+            "worm"
+          ]
+        ],
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "provenance": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.0,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.0,
+          "encoded_as": "generated",
+          "agrees_with_encoded": false
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 4,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "wolf",
+          "held_topic": "wolf",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.5076,
+          "afferent_pA": 710.6400000000001,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      }
+    },
+    "C_organ_on_flag_off": {
+      "teach1": {
+        "answer": "the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "wolf",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "word": "hunt",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "deer"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 157,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 40192,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941110187135
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "wolf",
+            "hunts",
+            "deer"
+          ],
+          "recall_action": "hunts",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 1,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": null,
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "turn_engagement": 0.75,
+          "ema_engagement": 0.44999999999999996,
+          "afferent_pA": 629.9999999999999,
+          "da_level": 0.7155259371121526,
+          "snc_firing": 0.11083333333333327,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4310518742243052,
+          "da_level": 0.7155259371121526,
+          "lesioned": false
+        }
+      },
+      "teach2": {
+        "answer": "the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "deer",
+          "eat",
+          "worm"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "deer"
+            },
+            {
+              "word": "eat",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "eat"
+            },
+            {
+              "word": "worm",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "worm"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 197,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 50432,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941108455232
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "deer",
+            "eats",
+            "worm"
+          ],
+          "recall_action": "eats",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 2,
+          "topic": "deer",
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": "deer",
+          "evicted_topic": null,
+          "reason": "first_thought",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "held_rate_post": 0.3333333333333333,
+          "mm_peak": 0.05555555555555555,
+          "boost_max": 0.027777777777777776,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "first_thought"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.51,
+          "afferent_pA": 714.0,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      },
+      "direct": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "wolf",
+              "confidence": 1.0,
+              "margin": 0.5875233365555086,
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "role": "action",
+              "word": "hunt",
+              "confidence": 1.0,
+              "margin": 0.6146863974248253,
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "role": "patient",
+              "word": "deer",
+              "confidence": 1.0,
+              "margin": 0.652812231766354,
+              "cue": false
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.046035921862420795,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 5,
+          "n_facts_scanned": 7,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 45856,
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 8737.236427424528
+          },
+          "composer": "onebrain"
+        },
+        "provenance": {
+          "known": true,
+          "label": "perceived",
+          "d": 0.9999999906432749,
+          "rate_perceived": 0.106875,
+          "rate_generated": 0.0,
+          "encoded_as": "perceived",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5802115775218216
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 3,
+          "topic": "wolf",
+          "swapped": true,
+          "held_topic_before": "deer",
+          "held_topic": "wolf",
+          "evicted_topic": "deer",
+          "reason": "topic_change_swap",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 1,
+          "held_slot": 1,
+          "incumbent_slot": 0,
+          "winner_slot": 1,
+          "n_ignited_post": 1,
+          "old_residual_post": 0.0,
+          "new_rate_post": 0.3333333333333333,
+          "mm_peak": 0.3055555555555556,
+          "boost_max": 0.16,
+          "on": true,
+          "lead": "On wolf, then \u2014 ",
+          "new_topic": "wolf",
+          "reason_lead": "topic_transition"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "turn_engagement": 0.4,
+          "ema_engagement": 0.444,
+          "afferent_pA": 621.6,
+          "da_level": 0.7120044671947912,
+          "snc_firing": 0.11083333333333324,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4240089343895823,
+          "da_level": 0.7120044671947912,
+          "lesioned": false
+        },
+        "gnw_stop": {
+          "on": true,
+          "acted": true,
+          "reason": "swap_topic_break",
+          "n_held": 2,
+          "newcomer_topic": "wolf",
+          "n_ignited_pre": 2,
+          "n_ignited_post": 0,
+          "boost": 0.14166666666666666,
+          "cleared": true,
+          "lesioned": false,
+          "lead": "Setting the held thread aside \u2014 ",
+          "reason_lead": "clean_global_stop"
+        }
+      },
+      "chain": {
+        "answer": "I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": null,
+        "derived": true,
+        "derived_from": [
+          [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          [
+            "deer",
+            "eat",
+            "worm"
+          ]
+        ],
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "provenance": {
+          "known": true,
+          "label": "generated",
+          "d": -0.9999999907246377,
+          "rate_perceived": 0.0,
+          "rate_generated": 0.1078125,
+          "encoded_as": "generated",
+          "agrees_with_encoded": true
+        },
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 4,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "wolf",
+          "held_topic": "wolf",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.5076,
+          "afferent_pA": 710.6400000000001,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      }
+    },
+    "D_all_off": {
+      "teach1": {
+        "answer": "the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "wolf",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "word": "hunt",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "deer"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 157,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 40192,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941110187135
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "wolf",
+            "hunts",
+            "deer"
+          ],
+          "recall_action": "hunts",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 1,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": null,
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 1,
+          "lesioned": false,
+          "turn_engagement": 0.75,
+          "ema_engagement": 0.44999999999999996,
+          "afferent_pA": 629.9999999999999,
+          "da_level": 0.7155259371121526,
+          "snc_firing": 0.11083333333333327,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4310518742243052,
+          "da_level": 0.7155259371121526,
+          "lesioned": false
+        }
+      },
+      "teach2": {
+        "answer": "the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "deer",
+          "eat",
+          "worm"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "word": "deer",
+              "confidence": null,
+              "role": "agent",
+              "cue": true,
+              "asserted": "deer"
+            },
+            {
+              "word": "eat",
+              "confidence": null,
+              "role": "action",
+              "cue": true,
+              "asserted": "eat"
+            },
+            {
+              "word": "worm",
+              "confidence": null,
+              "role": "patient",
+              "cue": true,
+              "asserted": "worm"
+            }
+          ],
+          "matched_fact_index": null,
+          "n_facts_scanned": 197,
+          "abstained": true,
+          "rf": {
+            "n_readout_neurons": 50432,
+            "frac_fired": 1.0,
+            "mean_magnitude": 104.49941108455232
+          },
+          "composer": "rf"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": {
+          "on": true,
+          "lesioned": false,
+          "in_scope": true,
+          "svo": [
+            "deer",
+            "eats",
+            "worm"
+          ],
+          "recall_action": "eats",
+          "asserted_polarity": "AFFIRM",
+          "recalled_yn": "unknown",
+          "stored_polarity": null,
+          "reject": false
+        },
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 2,
+          "topic": "deer",
+          "swapped": false,
+          "held_topic_before": null,
+          "held_topic": "deer",
+          "evicted_topic": null,
+          "reason": "first_thought",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 0,
+          "held_slot": 0,
+          "winner_slot": 0,
+          "n_ignited_post": 1,
+          "held_rate_post": 0.3333333333333333,
+          "mm_peak": 0.05555555555555555,
+          "boost_max": 0.027777777777777776,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "first_thought"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 2,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.51,
+          "afferent_pA": 714.0,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      },
+      "direct": {
+        "answer": "Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": [
+          "wolf",
+          "hunt",
+          "deer"
+        ],
+        "derived": false,
+        "derived_from": null,
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": {
+          "roles": [
+            {
+              "role": "agent",
+              "word": "wolf",
+              "confidence": 1.0,
+              "margin": 0.5875233365555086,
+              "cue": true,
+              "asserted": "wolf"
+            },
+            {
+              "role": "action",
+              "word": "hunt",
+              "confidence": 1.0,
+              "margin": 0.6146863974248253,
+              "cue": true,
+              "asserted": "hunt"
+            },
+            {
+              "role": "patient",
+              "word": "deer",
+              "confidence": 1.0,
+              "margin": 0.652812231766354,
+              "cue": false
+            },
+            {
+              "role": "attribute",
+              "word": null,
+              "confidence": 1.0,
+              "margin": 0.046035921862420795,
+              "cue": false
+            },
+            {
+              "role": "polarity",
+              "word": "AFFIRM",
+              "confidence": 1.0,
+              "margin": 0.9999999999999997,
+              "cue": false
+            }
+          ],
+          "matched_fact_index": 5,
+          "n_facts_scanned": 7,
+          "abstained": false,
+          "rf": {
+            "n_readout_neurons": 45856,
+            "frac_fired": 0.016769888346127006,
+            "mean_magnitude": 8737.236427424528
+          },
+          "composer": "onebrain"
+        },
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": {
+          "on": true,
+          "lesioned": false,
+          "evidence": 1.0,
+          "balance": 0.08564659007052086,
+          "threshold": 0.057845546432234586,
+          "confident": true,
+          "calib": {
+            "mean_hi": 0.07254469906489278,
+            "min_hi": 0.06324435069078038,
+            "mean_lo": 0.03623807287266029,
+            "max_lo": 0.05244674217368879,
+            "clean_gap": true,
+            "read_reps": 8,
+            "role_conf_lo": 0.3,
+            "role_conf_hi": 0.5,
+            "confidence_read": "nmda_norm"
+          },
+          "mean_role_conf": 0.5802115775218216
+        },
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": true,
+          "turn": 3,
+          "topic": "wolf",
+          "swapped": true,
+          "held_topic_before": "deer",
+          "held_topic": "wolf",
+          "evicted_topic": "deer",
+          "reason": "topic_change_swap",
+          "seed": 42,
+          "lesioned": false,
+          "proposed_slot": 1,
+          "held_slot": 1,
+          "incumbent_slot": 0,
+          "winner_slot": 1,
+          "n_ignited_post": 1,
+          "old_residual_post": 0.0,
+          "new_rate_post": 0.3333333333333333,
+          "mm_peak": 0.3055555555555556,
+          "boost_max": 0.16,
+          "on": true,
+          "lead": "On wolf, then \u2014 ",
+          "new_topic": "wolf",
+          "reason_lead": "topic_transition"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 3,
+          "lesioned": false,
+          "turn_engagement": 0.4,
+          "ema_engagement": 0.444,
+          "afferent_pA": 621.6,
+          "da_level": 0.7120044671947912,
+          "snc_firing": 0.11083333333333324,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.4240089343895823,
+          "da_level": 0.7120044671947912,
+          "lesioned": false
+        },
+        "gnw_stop": {
+          "on": true,
+          "acted": true,
+          "reason": "swap_topic_break",
+          "n_held": 2,
+          "newcomer_topic": "wolf",
+          "n_ignited_pre": 2,
+          "n_ignited_post": 0,
+          "boost": 0.14166666666666666,
+          "cleared": true,
+          "lesioned": false,
+          "lead": "Setting the held thread aside \u2014 ",
+          "reason_lead": "clean_global_stop"
+        }
+      },
+      "chain": {
+        "answer": "I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.",
+        "abstained": false,
+        "recalled_svo": null,
+        "derived": true,
+        "derived_from": [
+          [
+            "wolf",
+            "hunt",
+            "deer"
+          ],
+          [
+            "deer",
+            "eat",
+            "worm"
+          ]
+        ],
+        "verified": true,
+        "renderer": "template-stub (GPU-free)",
+        "brain": "tiny-demo",
+        "source": "tiny-demo +LTM",
+        "rich": false,
+        "activity": null,
+        "provenance": null,
+        "affect": {
+          "on": true,
+          "lesioned": false,
+          "composer": "onebrain",
+          "differential": 0.0,
+          "valence_sign": "0",
+          "tone_level": 0,
+          "tone_token": "",
+          "forthcomingness": {
+            "max_sentences": 4,
+            "max_elaborations": 2
+          },
+          "manner_template": "",
+          "appraisal_valence": 0.0,
+          "appraisal_arousal": 0.0,
+          "appraisal_hits": [],
+          "pos_rate": 0.0,
+          "neg_rate": 0.0
+        },
+        "comprehension": null,
+        "surprise": null,
+        "metacog": null,
+        "worldmodel": null,
+        "curiosity": null,
+        "multiref": null,
+        "noncontradiction": null,
+        "reconsolidation": null,
+        "pragmatic": null,
+        "episodic": null,
+        "affect_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "ema_valence": 0.0,
+          "ema_arousal": 0.0,
+          "body_h": 0.5,
+          "body_a": 0.0,
+          "mood": -0.003375000000000003,
+          "felt_arousal": 0.0,
+          "level": 0,
+          "high_arousal": false,
+          "lead": "",
+          "reason": "neutral_hold",
+          "seed": 42,
+          "vplus_rate": 0.03679166666666667,
+          "vminus_rate": 0.04016666666666667
+        },
+        "swap_drives": {
+          "acted": false,
+          "turn": 4,
+          "topic": null,
+          "swapped": false,
+          "held_topic_before": "wolf",
+          "held_topic": "wolf",
+          "evicted_topic": null,
+          "reason": "no_topic_hold",
+          "seed": 42,
+          "lesioned": false,
+          "on": true,
+          "lead": "",
+          "new_topic": null,
+          "reason_lead": "no_topic_hold"
+        },
+        "da_drives": {
+          "acted": true,
+          "turn": 4,
+          "lesioned": false,
+          "turn_engagement": 0.55,
+          "ema_engagement": 0.5076,
+          "afferent_pA": 710.6400000000001,
+          "da_level": 0.7905688460684012,
+          "snc_firing": 0.12499999999999997,
+          "mode": "focus",
+          "lead": " \u2014 worth going further here.",
+          "reason": "engaged",
+          "seed": 42,
+          "on": true
+        },
+        "da_encoding": {
+          "on": true,
+          "g": 1.5811376921368023,
+          "da_level": 0.7905688460684012,
+          "lesioned": false
+        }
+      }
+    }
+  },
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(1a) mechanism-level UNLESIONED accuracy >=0.9 on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+    },
+    {
+      "kind": "require",
+      "name": "(1b) mechanism-level UNLESIONED vary_frac >=0.9 on all 6 seeds (same content, different framing)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "[1.0, 1.0, 1.0, 1.0, 1.0, 1.0]"
+    },
+    {
+      "kind": "require",
+      "name": "(1c) mechanism-level LESIONED accuracy collapses <=0.75 on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "[0.5, 0.45, 0.45, 0.35, 0.35, 0.35]"
+    },
+    {
+      "kind": "require",
+      "name": "(1d) mechanism-level LESIONED vary_frac collapses <=0.75 on all 6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "[0.4, 0.5, 0.5, 0.3, 0.5, 0.5]"
+    },
+    {
+      "kind": "require",
+      "name": "(2a) handler: direct-recall (PERCEIVED) reply text unchanged across A/C/D",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "A='Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.' C='Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.' D='Setting the held thread aside \u2014 On wolf, then \u2014 the wolf hunts the deer \u2014 worth going further here.'"
+    },
+    {
+      "kind": "require",
+      "name": "(2b) handler: flag ON unlesioned chain reply SWAPPED to the #129 organ's own hedge wording",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "I believe the deer eats the worm, but I reasoned that myself rather than being told it directly. \u2014 worth going further here."
+    },
+    {
+      "kind": "require",
+      "name": "(2c) handler: flag ON unlesioned chain provenance.label == 'generated' (organ readback, not the is_chain_route flag)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "{'known': True, 'label': 'generated', 'd': -0.9999999907246377, 'rate_perceived': 0.0, 'rate_generated': 0.1078125, 'encoded_as': 'generated', 'agrees_with_encoded': True}"
+    },
+    {
+      "kind": "require",
+      "name": "(2d) handler: flag ON LESIONED chain reply is NOT swapped (falls back to frame_derived_answer)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here."
+    },
+    {
+      "kind": "require",
+      "name": "(2e) handler VARY: flag-ON chain reply text != flag-OFF/organ-off chain reply text",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "A='I believe the deer eats the worm, but I reasoned that myself rather than being told it directly. \u2014 worth going further here.' C='I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.'"
+    },
+    {
+      "kind": "require",
+      "name": "(2f) handler LESION collapses the vary-effect: lesioned reply == organ-off reply != unlesioned reply",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "B='I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.' C='I derived this from: wolf hunt deer; deer eat worm. the deer eats the worm \u2014 worth going further here.' A='I believe the deer eats the worm, but I reasoned that myself rather than being told it directly. \u2014 worth going further here.'"
+    },
+    {
+      "kind": "require",
+      "name": "(2g) MOAT shape: derived=True/recalled_svo=None unchanged in every arm",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(2h) MOAT content: the stated terminal fact ('worm') is identical in every arm",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ]
+}

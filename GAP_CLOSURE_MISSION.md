@@ -55,6 +55,20 @@ load-bearing / retire scaffolds).
    be widened before the flip is honest. (finding
    `2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md`; artifact
    `_open_ended_bundle_moat_soak_full.json`.)
+7. **#184/#195 FIXED — `TieredFactStore`/`ShardedPhasorStore` now propagate the LTM tier's own match trace**
+   (branch `research/fix-184-ltm-confidence-trace`, pushed to `origin`, NOT YET merged to main). The metacog
+   confidence read was silently EMPTY on every long-term-memory-answered turn (`METACOG WARNING (#184)` fired
+   verbatim on the real 15k-KB); root cause was two-part (the LTM emitted no trace at all + the tiered wrapper
+   never propagated it) and is now fixed additively, gated by `tests/test_tiered_fact_store.py` (7/7, confirmed
+   to fail pre-fix). Unblocked TWO faculties, re-tested on real traffic: **board #140 (source-monitoring drives
+   honesty framing) is now GO 12/12** through the real handler (mechanism-level 6-seed vary+lesion sweep +
+   handler demo, moat-safe) — still default-OFF, owner-UX-gated. **Board #94's plumbing bug is confirmed
+   closed** (0 empty-confidence-read warnings on the real 15k-KB re-test, was firing every turn before;
+   `confident` now reads a genuine `False`, not `null`) — but the ORIGINAL vary+lesion headline criterion is
+   STILL not met on this exact fixture, now for a newly-isolated DIFFERENT reason: the real 15k-entity shared
+   codebook's decode margin on this fact reads below the metacog HIGH band (a margin-vs-scale calibration
+   residual, not the #184 plumbing bug — see next action below). (finding
+   `2026-09-01-184-tieredfactstore-ltm-trace-propagation-fix.md`.)
 
 **⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
 roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
@@ -86,7 +100,12 @@ is NOT a clean GO — do not flip it). The former '(UX-gated)' list below is now
 fabrication-SAFE (dangerous-class delta from the children = 0.0, already covered by the always-on base
 filter); `GEN_TIME_HONESTY` is the load-bearing child on KNOWN topics, `NP_ENTAILMENT` measured ~inert on
 real prose so far — present both children's real contribution to the owner, then owner yes/no on the bundle;
-(b) confidence-forthcomingness flip #94 — the NL-parser vocab gap is now closed, owner-UX call remains.
+(b) confidence-forthcomingness flip #94 — the NL-parser vocab gap is closed AND the #184 plumbing bug that kept
+`confident` reading `null` on real LTM turns is now also fixed, but re-testing on the literal shipped
+`wikidata_core_15k` (item 7 above) found a NEW residual: this fixture's real 15k-scale decode margin reads
+below the metacog HIGH band, so the vary+lesion criterion still has nothing to demonstrate on real out-of-box
+traffic — NOT yet an owner-UX-only call; (c) source-monitoring-drives-honesty-framing flip #140 — GO 12/12
+(item 7 above), genuinely owner-UX-gated now (no known technical residual).
 
 **⛔ OPS LESSON (this arc — apply going forward):** compute agents launched WITHOUT `isolation:worktree` run in
 the MAIN checkout and their `git checkout -b`/commit RACE (the S7a + moat-soak agents did; my NL-parser commit

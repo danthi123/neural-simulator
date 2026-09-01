@@ -5836,6 +5836,11 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         # through to chat.gate(msg). See research/runners/compositional_chain_route.py.
         gate_svo = None
         _is_chain_route = False
+        # board #140 / BRAIN_SOURCE_MONITORING_FRAMES_HONESTY (2026-09-01): the pre-`frame_derived_answer` CORE
+        # text, kept ONLY so the #129-organ-driven alt-framing below (webapp/source_monitoring_honesty_chat.py)
+        # can wrap the un-annotated composed answer instead of double-wrapping an already-framed one. None on
+        # every branch that never reaches the chain-route arm -- byte-identical unless that new flag is on.
+        _chain_raw_answer = None
         try:
             from research.runners.compositional_chain_route import resolve_compositional_chain
             gate_svo = resolve_compositional_chain(chat.inner.composer, msg)
@@ -5860,6 +5865,7 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 # default-OFF and must not be the only thing standing between a derived answer and being
                 # presented as a plain perceived fact).
                 from research.runners.compositional_chain_route import frame_derived_answer
+                _chain_raw_answer = answer
                 answer = frame_derived_answer(answer, getattr(gate_svo, "derived_from", None))
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
@@ -5891,6 +5897,37 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 provenance_info = _sp_mon.judge_fact(_sp_key)
                 if not _is_chain_route:
                     answer = provenance_framed_text("what_does", answer, provenance_info["label"])
+                else:
+                    # ── BEGIN faculty: board #140 rung — SOURCE-MONITORING DRIVES HONESTY FRAMING, additive,
+                    #    DEFAULT-OFF (BRAIN_SOURCE_MONITORING_FRAMES_HONESTY; webapp/source_monitoring_honesty_
+                    #    chat.py). Closes the "GENERATED half has no live HTTP exposure" gap this same block's
+                    #    own comment names above: let the #129 organ's OWN live readback for THIS fact — not the
+                    #    `_is_chain_route` host flag — decide whether the derived answer is ALSO offered the
+                    #    monitor's substrate-driven hedge ("I believe ..., but I reasoned that myself rather than
+                    #    being told it directly.") in place of `frame_derived_answer`'s host-generic one. Fires
+                    #    ONLY when the readback AGREES this reads GENERATED — an ambiguous tie, or a LESIONED
+                    #    monitor (BRAIN_SOURCE_PROVENANCE_HONESTY_LESION=1, the de-risk's own verified failing-
+                    #    direction anti-cheat) collapsing the discrimination toward chance, leaves
+                    #    `frame_derived_answer`'s wording UNTOUCHED — so audit req #4's guarantee ("never the
+                    #    ONLY thing standing between a derived answer and a plain-perceived presentation") holds
+                    #    in every reachable state; this flag only ever SWAPS which honest hedge wording is used,
+                    #    it can never remove the hedge or manufacture an unhedged assertion. LOAD-BEARING: the
+                    #    swap rate collapses under the SAME lesion that collapses the #129 organ's own
+                    #    discrimination — proof the wording rides the LEARNED opponent-comparator trace, not a
+                    #    host if/else. Default-OFF -> this branch never touches `answer` (byte-identical to the
+                    #    pre-existing `frame_derived_answer`-only behavior). See
+                    #    research/runners/_source_monitoring_honesty_flip_verify.py.
+                    try:
+                        from webapp.source_monitoring_honesty_chat import (
+                            source_monitoring_frames_honesty_enabled as _smh_enabled,
+                        )
+                        if (_smh_enabled() and _chain_raw_answer is not None
+                                and provenance_info.get("label") == PROVENANCE_GENERATED):
+                            answer = provenance_framed_text("what_does", _chain_raw_answer, provenance_info["label"])
+                    except Exception as _smhe:   # never let this opt-in swap crash a turn — keep the moat framing
+                        provenance_info["source_monitoring_frames_honesty_error"] = (
+                            f"{type(_smhe).__name__}: {_smhe}")
+                    # ── END faculty: board #140 rung ──
         except Exception as _spe:   # never let an opt-in honesty read crash a turn
             provenance_info = {"on": True, "error": f"{type(_spe).__name__}: {_spe}"}
 
