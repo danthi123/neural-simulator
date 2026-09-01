@@ -1,0 +1,75 @@
+{
+  "probe": "confidence_forthcomingness_kb_relation_realtraffic",
+  "question": "who does asimov isaac work for?",
+  "expected_svo": [
+    "asimov_isaac",
+    "employer",
+    "university_of_boston"
+  ],
+  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "flags": "BRAIN_ELABORATE_FROM_LTM_SHARD=1 + BRAIN_CONFIDENCE_FORTHCOMING=1 + BRAIN_LTM_SHIP_DEFAULT=1 + BRAIN_KB_RELATION_QUESTIONS default-ON + BRAIN_CLAIM_MOAT=0 escape (residual 1), true floor",
+  "backend": "numpy",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "elapsed_s": 273.12162804603577,
+  "measurement_all_GO": true,
+  "vary_lesion_all_GO": false,
+  "per_seed": [
+    {
+      "seed": 42,
+      "claim_moat_residual": {
+        "on_abstained": true,
+        "on_n_sentences": 0,
+        "off_abstained": false,
+        "off_n_sentences": 4,
+        "on_drops_everything": true,
+        "off_restores": true
+      },
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": null,
+        "reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": null,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "n_sentences": 4,
+        "confident": null,
+        "reason": "low_confidence_capped",
+        "moat_ok": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "claim_moat_residual_confirmed": true,
+        "moat_clean_every_arm": true,
+        "vary_confident_high_on_clean_turn": false,
+        "vary_reach_granted_on_clean_turn": false
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": false
+    }
+  ]
+}
