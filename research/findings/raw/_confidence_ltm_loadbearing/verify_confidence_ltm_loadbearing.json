@@ -1,0 +1,788 @@
+{
+  "probe": "confidence_forthcomingness_ltm_loadbearing",
+  "flags": "BRAIN_ELABORATE_FROM_LTM_SHARD=1 + BRAIN_CONFIDENCE_FORTHCOMING=1, TRUE floor (no BRAIN_CONFIDENCE_FORTHCOMING_FLOOR override), through webapp.server.brain_chat in-process",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "elapsed_s": 2130.5211617946625,
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "load_bearing",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "lesion_reverts",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    },
+    {
+      "kind": "require",
+      "name": "moat",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "holds on all 6 seeds"
+    }
+  ],
+  "undefined_reasons": [],
+  "per_check_all_seeds": {
+    "byte_identical_off": true,
+    "load_bearing": true,
+    "lesion_reverts": true,
+    "moat": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 1.5,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 1.2,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 1.5,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 0.9,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 0.9,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 1.2,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 1.2,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 0.9,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "byte_identical": {
+        "off_n_sentences": 2,
+        "off_has_cf_key": false,
+        "noltm_n_sentences": 2,
+        "off_matches_no_ltm_tier": true,
+        "elab_only_n_sentences": 4,
+        "elab_only_has_cf_key": false,
+        "elab_only_is_floor": true,
+        "cf_only_n_sentences": 2,
+        "cf_only_reproduces_old_hollow": true,
+        "ok": true
+      },
+      "clean": {
+        "n_sentences": 5,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "mean_role_conf": true,
+        "cf_reason": "high_confidence",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true
+      },
+      "uncertain": {
+        "n_sentences": 4,
+        "abstained": false,
+        "recalled_svo": [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        "cf_reason": "low_confidence_capped",
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true
+      },
+      "sigma_used": 1.2,
+      "sigma_scan": [
+        {
+          "sigma": 0.3,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.6,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 0.9,
+          "n_sentences": 5,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": true,
+          "reason": "high_confidence"
+        },
+        {
+          "sigma": 1.2,
+          "n_sentences": 4,
+          "abstained": false,
+          "recalled_svo": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "confident": false,
+          "reason": "low_confidence_capped"
+        }
+      ],
+      "load_bearing_ok": true,
+      "lesion": {
+        "ok": true,
+        "lesioned_clean_n": 4,
+        "lesioned_uncertain_n": 4,
+        "lesioned_clean_confident": false,
+        "lesioned_uncertain_confident": false,
+        "lesioned_clean_reason": "low_confidence_capped",
+        "lesioned_uncertain_reason": "low_confidence_capped"
+      },
+      "checks": {
+        "byte_identical_off": true,
+        "load_bearing": true,
+        "lesion_reverts": true,
+        "moat": true
+      },
+      "GO": true
+    }
+  ]
+}
