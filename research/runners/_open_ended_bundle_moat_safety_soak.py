@@ -128,10 +128,16 @@ def main():
     ap.add_argument("--n-unknown", type=int, default=10)
     ap.add_argument("--n-dangerous", type=int, default=10)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--arms", type=str, default="A_parent_only,B_np_entailment,C_both_children",
+                     help="comma list of arms to run this invocation (a resilience escape: a mid-run kill "
+                          "on a shared dev machine loses only the in-flight arm's checkpoint, not the "
+                          "whole battery -- rerun with just the missing arm(s) and re-merge from the "
+                          "per-arm .partial.json checkpoints written after each arm completes).")
     ap.add_argument("--out", type=str,
                      default=str(_REPO / "research" / "findings" / "raw" /
                                  "_open_ended_bundle_moat_soak.json"))
     a = ap.parse_args()
+    want_arms = [x.strip() for x in a.arms.split(",") if x.strip()]
 
     import webapp.server as S  # noqa: E402 (heavy import; must come after env setup)
     from research.runners._open_ended_state_driven_generation_derisk import (  # noqa: E402
@@ -145,17 +151,56 @@ def main():
     dangerous_topics = [t for t in _QWEN_KNOWN_STORE_UNKNOWN[: a.n_dangerous]]
     log(f"battery: known={known_topics} unknown={unknown_topics} dangerous={dangerous_topics}")
 
-    ARMS = {
+    ALL_ARMS = {
         "A_parent_only":   {"BRAIN_OPEN_ENDED_NP_ENTAILMENT": "0", "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY": "0"},
         "B_np_entailment": {"BRAIN_OPEN_ENDED_NP_ENTAILMENT": "1", "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY": "0"},
         "C_both_children": {"BRAIN_OPEN_ENDED_NP_ENTAILMENT": "1", "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY": "1"},
     }
+    bad = [x for x in want_arms if x not in ALL_ARMS]
+    if bad:
+        raise SystemExit(f"--arms: unknown arm(s) {bad}; choose from {sorted(ALL_ARMS)}")
+    ARMS = {k: ALL_ARMS[k] for k in want_arms}
     os.environ["BRAIN_OPEN_ENDED"] = "1"   # the parent -- explicit ON for the whole soak (every arm needs it)
 
     def _chat(session, msg, reset):
         resp = S.brain_chat(S.BrainChatRequest(session=session, message=msg, brain="tiny-demo",
                                                reset=reset, rich=True, renderer=RENDERER))
         return json.loads(bytes(resp.body))
+
+    def _free_session(session):
+        """Pop this arm's ChatBrain + every per-session cache webapp/server.py's OWN `reset=True` branch
+        clears (mirrored here, pop-only -- no rebuild), then gc.collect(). A resilience fix: running all 3
+        arms in one process left 3 full onebrain composers + attached LTM stores resident simultaneously
+        (nothing evicted the previous arm's session before this fix existed) -- observed directly (a
+        re-run of this exact battery was killed, exit 144, mid arm-B on this shared dev machine, ~20/46GB
+        already in system use from unrelated processes before this run even started). Freeing the
+        previous arm's session between arms bounds residency to ONE composer at a time regardless."""
+        cache_key = (session, "tiny-demo", RENDERER)
+        S._BRAIN_CHATS.pop(cache_key, None)
+        S._BRAIN_RICH.pop(cache_key, None)
+        try:
+            from webapp import continuous_engine as _CE
+            _CE.forget_session(cache_key)
+        except Exception:
+            pass
+        for _dname in ("_SESSION_MOOD", "_SESSION_WORLDVIEW", "_SESSION_MULTIREF", "_SESSION_SILENT_WM",
+                       "_SESSION_SELFINIT", "_SESSION_DISCOURSE", "_SESSION_PMEM"):
+            try:
+                getattr(S, _dname).pop(cache_key, None)
+            except Exception:
+                pass
+        try:
+            import research.runners.d5_episodic_production_organ as _EP
+            _EP.reset_episodic_organ(cache_key)
+        except Exception:
+            pass
+        try:
+            import research.runners.causal_whatif_production_organ as _CA
+            _CA.reset_organ(cache_key)
+        except Exception:
+            pass
+        import gc
+        gc.collect()
 
     def _held_out_known_violation(final_text, topic, facts):
         """Uniform KNOWN-class fabrication scorer: run the held-out NP-entailment gate (imported
@@ -175,6 +220,9 @@ def main():
                 hit = True
         return hit
 
+    def _checkpoint_path(arm_name):
+        return Path(a.out).with_suffix(f".{arm_name}.partial.json")
+
     def run_arm(arm_name):
         for k, v in ARMS[arm_name].items():
             os.environ[k] = v   # explicit "0"/"1" every time -- never popped
@@ -182,6 +230,15 @@ def main():
             f"BRAIN_OPEN_ENDED_GEN_TIME_HONESTY={os.environ['BRAIN_OPEN_ENDED_GEN_TIME_HONESTY']} ===")
         session = f"oe_moat_soak_{arm_name}_{a.seed}"
         rows = {"known": [], "unknown": [], "dangerous": []}
+        ckpt = _checkpoint_path(arm_name)
+
+        def _save_checkpoint():
+            # written after EVERY topic, not just per-arm: a mid-arm kill on this shared dev machine (seen
+            # once already, exit 144, cause undetermined -- see _free_session's docstring) still leaves
+            # every topic completed so far on disk instead of losing the whole in-flight arm.
+            ckpt.parent.mkdir(parents=True, exist_ok=True)
+            ckpt.write_text(json.dumps({"arm": arm_name, "rows": rows, "complete": False}, indent=1))
+
         first = True
         t_arm0 = time.time()
         for topic in known_topics:
@@ -209,6 +266,7 @@ def main():
                 "held_out_violation": _held_out_known_violation(final, topic, facts),
             }
             rows["known"].append(row)
+            _save_checkpoint()
             log(f"  KNOWN {topic!r}: gen={row['generator']} wkv={row['wkv_mouth_used']} "
                 f"recall_preserved={row['recall_preserved']} held_out_violation={row['held_out_violation']}")
         for cls, topics in (("unknown", unknown_topics), ("dangerous", dangerous_topics)):
@@ -224,12 +282,57 @@ def main():
                     "abstained": d.get("abstained"),
                 }
                 rows[cls].append(row)
+                _save_checkpoint()
                 log(f"  {cls.upper()} {topic!r}: gen={row['generator']} fab_raw={row['fab_raw']} "
                     f"fab_filtered={row['fab_filtered']} abstained={row['abstained']}")
-        log(f"  arm {arm_name} done in {time.time() - t_arm0:.1f}s")
+        ckpt.write_text(json.dumps({"arm": arm_name, "rows": rows, "complete": True}, indent=1))
+        _free_session(session)
+        log(f"  arm {arm_name} done in {time.time() - t_arm0:.1f}s (session freed)")
         return rows
 
-    all_rows = {arm: run_arm(arm) for arm in ARMS}
+    all_rows = {}
+    for _arm in ARMS:
+        _ckpt = _checkpoint_path(_arm)
+        if _ckpt.exists():
+            try:
+                _prior = json.loads(_ckpt.read_text())
+                if _prior.get("complete"):
+                    log(f"=== arm {_arm}: found a COMPLETE checkpoint at {_ckpt} -- reusing, not re-running ===")
+                    all_rows[_arm] = _prior["rows"]
+                    continue
+            except Exception:
+                pass   # a corrupt/partial checkpoint -- fall through and re-run this arm
+        all_rows[_arm] = run_arm(_arm)
+
+    # backfill any arm NOT requested this invocation (e.g. `--arms C_both_children` re-running just the one
+    # arm that got killed last time) from its own complete checkpoint, so the combined summary below can
+    # still run without re-paying the other arms' ~2 min composer-build cost.
+    for _arm in ALL_ARMS:
+        if _arm in all_rows:
+            continue
+        _ckpt = _checkpoint_path(_arm)
+        if _ckpt.exists():
+            try:
+                _prior = json.loads(_ckpt.read_text())
+                if _prior.get("complete"):
+                    all_rows[_arm] = _prior["rows"]
+                    log(f"backfilled arm {_arm} from its complete checkpoint (not requested this invocation)")
+            except Exception:
+                pass
+
+    if set(all_rows) != set(ALL_ARMS):
+        missing = sorted(set(ALL_ARMS) - set(all_rows))
+        log(f"PARTIAL RUN: missing arm(s) {missing} -- writing per-arm rows only, no cross-arm summary "
+            f"(rerun with --arms {','.join(missing)} then rerun this command to merge).")
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps({
+            "runner": "_open_ended_bundle_moat_safety_soak", "partial": True, "missing_arms": missing,
+            "rows": all_rows, "seed": a.seed, "known_topics": known_topics,
+            "unknown_topics": unknown_topics, "dangerous_topics": dangerous_topics,
+            "wall_seconds": round(time.time() - _T0, 1),
+        }, indent=1))
+        log(f"wrote PARTIAL {a.out}")
+        return {"partial": True, "missing_arms": missing}
 
     def _rate(rows, key):
         return round(sum(1 for r in rows if r[key]) / len(rows), 3) if rows else None

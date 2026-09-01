@@ -1,5 +1,5 @@
 {
- "run_id": "1788288584-2506289",
+ "run_id": "1788289417-2523779",
  "runner": "research/runners/_open_ended_bundle_moat_safety_soak.py",
  "argv": [
   "/home/dant123/Projects/sim/research/runners/_open_ended_bundle_moat_safety_soak.py",
@@ -12,7 +12,7 @@
   "--out",
   "research/findings/raw/_open_ended_bundle_moat_soak_smoke.json"
  ],
- "git_sha": "7e2edc08e",
+ "git_sha": "0bfdc786c",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -20,14 +20,14 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-01T14:49:44",
+ "started": "2026-09-01T15:03:37",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": 1042.1,
+ "corpus_check_age_s": 1991.9,
  "corpus_check_query": "does the WKV token-supply descent reach the fluency band on a simple-style corpus (TinyStories) at fixed small capacity",
  "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_open_ended_bundle_moat_soak_smoke.json"
