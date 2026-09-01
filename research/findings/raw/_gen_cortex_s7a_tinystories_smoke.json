@@ -36,7 +36,7 @@
           "train_nll": 5.9208,
           "overfit_gap": -0.0216,
           "n_deep": 19000,
-          "elapsed_s": 19.1
+          "elapsed_s": 22.4
         },
         {
           "max_train_sents": 6000,
@@ -54,7 +54,7 @@
           "train_nll": 4.8866,
           "overfit_gap": -0.0331,
           "n_deep": 19000,
-          "elapsed_s": 21.3
+          "elapsed_s": 20.7
         }
       ],
       "gen_samples_top_point": [
@@ -89,5 +89,5 @@
     ],
     "residual_top_nll_above_fluency_band_hi": 1.1635
   },
-  "elapsed_s": 43.5
+  "elapsed_s": 48.0
 }
