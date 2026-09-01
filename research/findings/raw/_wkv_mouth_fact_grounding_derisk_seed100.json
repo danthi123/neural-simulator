@@ -1,0 +1,383 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 100,
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts_total": 15000,
+  "n_facts_affirm": 15000,
+  "checkpoint_vocab_size": 1000,
+  "part1_corpus_coverage_ceiling": {
+    "n_affirm_facts": 15000,
+    "patient_content_word_hit": 3892,
+    "patient_content_word_hit_frac": 0.25947,
+    "any_field_content_word_hit": 5965,
+    "any_field_content_word_hit_frac": 0.39767,
+    "note": "This checkpoint's V=1000 vocabulary is word-level and closed (no subword fallback): a fact token with no trained embedding CANNOT be produced by this decoder at all, by construction. The majority (~74%) of facts have zero content-word overlap -- the structural wall the task named, now precisely quantified rather than assumed."
+  },
+  "part2_live_engagement": {
+    "n_sampled_agents": 600,
+    "in_vocab_scope_pass": 412,
+    "in_vocab_scope_pass_frac": 0.6867,
+    "scope_pass_AND_has_fact_content_overlap": 289,
+    "scope_pass_AND_has_fact_content_overlap_frac_of_sample": 0.4817,
+    "conditional_grounding_rate_given_scope_pass": 0.7015,
+    "lead_in_phrase_alone_passes_scope_on_nonsense_topic": true,
+    "note": "`in_vocab_scope('tell me about <nonsense>')` == True: the lead-in phrase alone ('tell'/'me'/'about', all in-vocab and NOT in _FUNCTION_WORDS) can satisfy min_content_hits=2 without the topic itself contributing anything -- a real, previously-undiscovered gap in the ALREADY-default-ON (2026-08-30) scope gate, found by this measurement, logged to FAILURE_LOG.md, NOT fixed here (out of this task's scope; BRAIN_OPEN_ENDED itself stays default-OFF so this is not live in production). It means the WKV mouth reaches real Wikidata topics far MORE than Part 1's raw vocabulary ceiling alone would predict when phrased with a content-bearing lead-in -- which makes fact-grounding MORE, not less, load-bearing: today those engaged turns get zero grounding at all."
+  },
+  "part3_before_after_demo": {
+    "n_examples": 7,
+    "baseline_surfaced_fact_word": 5,
+    "boosted_surfaced_fact_word": 7,
+    "boost_newly_surfaced_a_word_baseline_missed": 6,
+    "boosted_fact_word_survives_honesty_postfilter": 7,
+    "examples": [
+      {
+        "agent": "tomas_first_name",
+        "msg": "tell me about tomas first name",
+        "triples": [
+          [
+            "tomas_first_name",
+            "language_of_work_or_name",
+            "swedish_lang"
+          ]
+        ],
+        "boosted_words": [
+          "work",
+          "or",
+          "name",
+          "first"
+        ],
+        "baseline_raw": "tell me about first name the animals and they did not know what to do with it but she was too small and didn't want to play with her toys all day long in a big box of snow from the tree and saw that",
+        "boosted_raw": "tell me about first name the doll or name him or name or i am lily or max or a big box in the park there was a little boy named tim found a toy car and wanted to play with it first kids too",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or"
+        ],
+        "baseline_filtered": "tell me about first name the animals and they did not know what to do with it but she was too small and didn't want to play with her toys all day long in a big box of snow from the tree and saw that",
+        "boosted_filtered": "tell me about first name the doll or name him or name or i am lily or max or a big box in the park there was a little boy named tim found a toy car and wanted to play with it first kids too",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "new_end_primary_school",
+        "msg": "tell me about new end primary school",
+        "triples": [
+          [
+            "new_end_primary_school",
+            "country",
+            "united_kingom"
+          ],
+          [
+            "new_end_primary_school",
+            "instance_of",
+            "town"
+          ],
+          [
+            "new_end_primary_school",
+            "located_in_the_administrative_territoria",
+            "camden_london_england"
+          ]
+        ],
+        "boosted_words": [
+          "new",
+          "end",
+          "school",
+          "town"
+        ],
+        "baseline_raw": "tell me about new end school when the sun was time to go home and have a big party for all of friends with them they were happy and played together every day she would come back soon again soon he heard his tail roar very",
+        "boosted_raw": "tell me about new end school when the new school she would new school to school so he decided to go back and explore new school in town there was a new town named tim wanted to play with his new toy car school that could",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "town"
+        ],
+        "baseline_filtered": "tell me about new end school when the sun was time to go home and have a big party for all of friends with them they were happy and played together every day she would come back soon again soon he heard his tail roar very",
+        "boosted_filtered": "tell me about new end school when the new school she would new school to school so he decided to go back and explore new school in town there was a new town named tim wanted to play with his new toy car school that could",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "tephritid_fruit_fly",
+        "msg": "tell me about tephritid fruit fly",
+        "triples": [
+          [
+            "tephritid_fruit_fly",
+            "instance_of",
+            "taxonomic_group"
+          ],
+          [
+            "tephritid_fruit_fly",
+            "taxon_rank",
+            "taxonomical_family"
+          ]
+        ],
+        "boosted_words": [
+          "fruit",
+          "fly",
+          "family"
+        ],
+        "baseline_raw": "tell me about fruit fly away and he was not a big dog to play with the ball all day long in his yard but they were very happy and played together every time she had lots of fun playing on the swings a bench",
+        "boosted_raw": "tell me about fruit fly away and fly away in the sky was blue and green grass and has a family that she loved to fly with her family of the family had so much fun family went back home and family enjoyed going together",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "family"
+        ],
+        "baseline_filtered": "tell me about fruit fly away and he was not a big dog to play with the ball all day long in his yard but they were very happy and played together every time she had lots of fun playing on the swings a bench",
+        "boosted_filtered": "tell me about fruit fly away and fly away in the sky was blue and green grass and has a family that she loved to fly with her family of the family had so much fun family went back home and family enjoyed going together",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "schlager_song",
+        "msg": "tell me about schlager song",
+        "triples": [
+          [
+            "schlager_song",
+            "subclass_of",
+            "topical_songs"
+          ],
+          [
+            "schlager_song",
+            "instance_of",
+            "genre_of_music"
+          ]
+        ],
+        "boosted_words": [
+          "song",
+          "music"
+        ],
+        "baseline_raw": "tell me about song that she could not have a crayon on the chair and said i am sorry mom i'm so proud of you to your friend lily look at my doll with her friends and they all lived happily ever have fun",
+        "boosted_raw": "tell me about song that she could not have a crayon on the chair and said i am sorry mom i'm so proud of you to your music for help him but he was too small to reach the top of it in the",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "music"
+        ],
+        "baseline_filtered": "tell me about song that she could not have a crayon on the chair and said i am sorry mom i'm so proud of you to your friend lily look at my doll with her friends and they all lived happily ever have fun",
+        "boosted_filtered": "tell me about song that she could not have a crayon on the chair and said i am sorry mom i'm so proud of you to your music for help him but he was too small to reach the top of it in the",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "red_star_beograd",
+        "msg": "tell me about red star beograd",
+        "triples": [
+          [
+            "red_star_beograd",
+            "sport",
+            "association_football_club"
+          ],
+          [
+            "red_star_beograd",
+            "country",
+            "serbia_yugoslavia"
+          ],
+          [
+            "red_star_beograd",
+            "headquarters_location",
+            "capital_of_serbia"
+          ]
+        ],
+        "boosted_words": [
+          "red",
+          "star"
+        ],
+        "baseline_raw": "tell me about red star the book and said they could not find it to eat them from the tree and had a big box of toys with many colors on top he found his way back home tim saw an open that he would",
+        "boosted_raw": "tell me about red star red and red red blue was red and shiny star on the floor with red red red and yellow red balloon to my red car but he does not like it very fast because i did something bad star could",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about red star the book and said they could not find it to eat them from the tree and had a big box of toys with many colors on top he found his way back home tim saw an open that he would",
+        "boosted_filtered": "tell me about red star red and red red blue was red and shiny star on the floor with red red red and yellow red balloon to my red car but he does not like it very fast because i did something bad star could",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "history_of_ferrara",
+        "msg": "tell me about history of ferrara",
+        "triples": [
+          [
+            "history_of_ferrara",
+            "located_in_time_zone",
+            "rome_time"
+          ],
+          [
+            "history_of_ferrara",
+            "country",
+            "italian_republic"
+          ],
+          [
+            "history_of_ferrara",
+            "instance_of",
+            "city_work"
+          ]
+        ],
+        "boosted_words": [
+          "time",
+          "work"
+        ],
+        "baseline_raw": "tell me about of you mom says to their surprise a big tree with lots of leaves and trees flowers are rocks by color as he was able to fly away but the cat said hi bird can i please help your toy boat",
+        "boosted_raw": "tell me about of you mom says to what i am time we can work together and work time they made not work hard work time to work together work on the time it was time for more fun days with his house but",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time",
+          "work"
+        ],
+        "baseline_filtered": "tell me about of you mom says to their surprise a big tree with lots of leaves and trees flowers are rocks by color as he was able to fly away but the cat said hi bird can i please help your toy boat",
+        "boosted_filtered": "tell me about of you mom says to what i am time we can work together and work time they made not work hard work time to work together work on the time it was time for more fun days with his house but",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "bharat_ganrajya",
+        "msg": "tell me about bharat ganrajya",
+        "triples": [
+          [
+            "bharat_ganrajya",
+            "shares_border_with",
+            "china_pr"
+          ],
+          [
+            "bharat_ganrajya",
+            "located_in_time_zone",
+            "kunlun_time_zone"
+          ],
+          [
+            "bharat_ganrajya",
+            "contains_administrative_territorial_enti",
+            "tamil_nade"
+          ]
+        ],
+        "boosted_words": [
+          "time"
+        ],
+        "baseline_raw": "tell me about the medal and agreed she said thank you mom i love my grandma says to lily look goodbye and thanked her for helping them find a new toy car in the park there was a big red balloon and had",
+        "boosted_raw": "tell me about the time to go back home and not safe time they were able to make a big sound in the tree there was time for more time to give them time to clean her mom said lily please ask mom",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time"
+        ],
+        "baseline_filtered": "tell me about the medal and agreed she said thank you mom i love my grandma says to lily look goodbye and thanked her for helping them find a new toy car in the park there was a big red balloon and had",
+        "boosted_filtered": "tell me about the time to go back home and not safe time they were able to make a big sound in the tree there was time for more time to give them time to clean her mom said lily please ask mom",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      }
+    ]
+  },
+  "part4_mechanism_noop_checks": {
+    "apply_fact_boost_noop_empty_ids": true,
+    "apply_fact_boost_noop_none_ids": true,
+    "apply_fact_boost_noop_zero_boost": true,
+    "apply_fact_boost_actually_boosts_when_on": true,
+    "generate_facts_none_deterministic_repeat": true,
+    "flag_default_off": true,
+    "flag_on_when_env_set": true
+  },
+  "verdict": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=5 |sep|=2 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=5 |sep|=2 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

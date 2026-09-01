@@ -1,5 +1,6 @@
 {
   "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 42,
   "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
   "n_facts_total": 15000,
   "n_facts_affirm": 15000,

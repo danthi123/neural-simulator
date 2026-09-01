@@ -1,0 +1,378 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 101,
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts_total": 15000,
+  "n_facts_affirm": 15000,
+  "checkpoint_vocab_size": 1000,
+  "part1_corpus_coverage_ceiling": {
+    "n_affirm_facts": 15000,
+    "patient_content_word_hit": 3896,
+    "patient_content_word_hit_frac": 0.25973,
+    "any_field_content_word_hit": 5964,
+    "any_field_content_word_hit_frac": 0.3976,
+    "note": "This checkpoint's V=1000 vocabulary is word-level and closed (no subword fallback): a fact token with no trained embedding CANNOT be produced by this decoder at all, by construction. The majority (~74%) of facts have zero content-word overlap -- the structural wall the task named, now precisely quantified rather than assumed."
+  },
+  "part2_live_engagement": {
+    "n_sampled_agents": 600,
+    "in_vocab_scope_pass": 420,
+    "in_vocab_scope_pass_frac": 0.7,
+    "scope_pass_AND_has_fact_content_overlap": 262,
+    "scope_pass_AND_has_fact_content_overlap_frac_of_sample": 0.4367,
+    "conditional_grounding_rate_given_scope_pass": 0.6238,
+    "lead_in_phrase_alone_passes_scope_on_nonsense_topic": true,
+    "note": "`in_vocab_scope('tell me about <nonsense>')` == True: the lead-in phrase alone ('tell'/'me'/'about', all in-vocab and NOT in _FUNCTION_WORDS) can satisfy min_content_hits=2 without the topic itself contributing anything -- a real, previously-undiscovered gap in the ALREADY-default-ON (2026-08-30) scope gate, found by this measurement, logged to FAILURE_LOG.md, NOT fixed here (out of this task's scope; BRAIN_OPEN_ENDED itself stays default-OFF so this is not live in production). It means the WKV mouth reaches real Wikidata topics far MORE than Part 1's raw vocabulary ceiling alone would predict when phrased with a content-bearing lead-in -- which makes fact-grounding MORE, not less, load-bearing: today those engaged turns get zero grounding at all."
+  },
+  "part3_before_after_demo": {
+    "n_examples": 7,
+    "baseline_surfaced_fact_word": 1,
+    "boosted_surfaced_fact_word": 7,
+    "boost_newly_surfaced_a_word_baseline_missed": 7,
+    "boosted_fact_word_survives_honesty_postfilter": 7,
+    "examples": [
+      {
+        "agent": "lester",
+        "msg": "tell me about lester",
+        "triples": [
+          [
+            "lester",
+            "language_of_work_or_name",
+            "number_of_english_words"
+          ]
+        ],
+        "boosted_words": [
+          "words",
+          "work",
+          "or",
+          "name"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the words or work on her work hard to work hard and work hard work hard for work but she did not know that it was going too high up in the sky all over the floor and started words",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "words",
+          "work"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the words or work on her work hard to work hard and work hard work hard for work but she did not know that it was going too high up in the sky all over the floor and started words",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "vincent_vangogh",
+        "msg": "tell me about vincent vangogh",
+        "triples": [
+          [
+            "vincent_vangogh",
+            "instance_of",
+            "human_specie"
+          ],
+          [
+            "vincent_vangogh",
+            "languages_spoken_written_or_signed",
+            "french_language"
+          ],
+          [
+            "vincent_vangogh",
+            "work_location",
+            "england_london"
+          ]
+        ],
+        "boosted_words": [
+          "or",
+          "work",
+          "name"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the story or work hard work hard to work on her work and said i can work hard that it was not work for him work but he could help his friend a work out of catch the bird or",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "work"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the story or work hard work hard to work on her work and said i can work hard that it was not work for him work but he could help his friend a work out of catch the bird or",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "svensk_uppslagsbok",
+        "msg": "tell me about svensk uppslagsbok",
+        "triples": [
+          [
+            "svensk_uppslagsbok",
+            "country_of_origin",
+            "climate_of_sweden"
+          ],
+          [
+            "svensk_uppslagsbok",
+            "language_of_work_or_name",
+            "swedish_lang"
+          ],
+          [
+            "svensk_uppslagsbok",
+            "instance_of",
+            "general_encyclopaedia"
+          ]
+        ],
+        "boosted_words": [
+          "work",
+          "or",
+          "name"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the story or work hard work hard to work on her work and said i can work hard that it was not work for him work but he could help his friend a work out of catch the bird or",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "work"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the story or work hard work hard to work on her work and said i can work hard that it was not work for him work but he could help his friend a work out of catch the bird or",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "youngstown_oh",
+        "msg": "tell me about youngstown oh",
+        "triples": [
+          [
+            "youngstown_oh",
+            "country",
+            "u_s_of_a"
+          ],
+          [
+            "youngstown_oh",
+            "instance_of",
+            "city_work"
+          ]
+        ],
+        "boosted_words": [
+          "oh",
+          "work"
+        ],
+        "baseline_raw": "tell me about oh i am lost my toy and can't find it too much for him to help her mom but she said no tim you must do not see the dog again soon it started to bake something very special with it",
+        "boosted_raw": "tell me about oh i work hard to work on her work and said oh no tom we can do it soon it was time for work but she could not find something very creative today to play by the park with his mom",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "work"
+        ],
+        "baseline_filtered": "tell me about oh i am lost my toy and can't find it too much for him to help her mom but she said no tim you must do not see the dog again soon it started to bake something very special with it",
+        "boosted_filtered": "tell me about oh i work hard to work on her work and said oh no tom we can do it soon it was time for work but she could not find something very creative today to play by the park with his mom",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "siena_italy",
+        "msg": "tell me about siena italy",
+        "triples": [
+          [
+            "siena_italy",
+            "located_in_time_zone",
+            "rome_time"
+          ],
+          [
+            "siena_italy",
+            "country",
+            "italian_republic"
+          ],
+          [
+            "siena_italy",
+            "instance_of",
+            "town"
+          ]
+        ],
+        "boosted_words": [
+          "time",
+          "town"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was time for him to go home sally and her old friend a little girl named",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was time for him to go home sally and her old friend a little girl named",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "progressive_rap",
+        "msg": "tell me about progressive rap",
+        "triples": [
+          [
+            "progressive_rap",
+            "subclass_of",
+            "hip_hop_music"
+          ],
+          [
+            "progressive_rap",
+            "instance_of",
+            "genre_of_music"
+          ]
+        ],
+        "boosted_words": [
+          "hop",
+          "music"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the music they could not see all the animals in the water and the music became good friends and played together every day she would hop to play with his toys instead of her music for the music so he",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "hop",
+          "music"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the music they could not see all the animals in the water and the music became good friends and played together every day she would hop to play with his toys instead of her music for the music so he",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "defensive_secondary",
+        "msg": "tell me about defensive secondary",
+        "triples": [
+          [
+            "defensive_secondary",
+            "sport",
+            "us_football"
+          ]
+        ],
+        "boosted_words": [
+          "us"
+        ],
+        "baseline_raw": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_raw": "tell me about the story about us when you get it tim said i am lost my toy and i love to play with us ball in her room for us too us next time we can bake a candy little bear said",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "us"
+        ],
+        "baseline_filtered": "tell me about the story about the bird and tim said i want to play with it too but she did not know what to do it was like a new friend again to go home sally thought for they could help her",
+        "boosted_filtered": "tell me about the story about us when you get it tim said i am lost my toy and i love to play with us ball in her room for us too us next time we can bake a candy little bear said",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      }
+    ]
+  },
+  "part4_mechanism_noop_checks": {
+    "apply_fact_boost_noop_empty_ids": true,
+    "apply_fact_boost_noop_none_ids": true,
+    "apply_fact_boost_noop_zero_boost": true,
+    "apply_fact_boost_actually_boosts_when_on": true,
+    "generate_facts_none_deterministic_repeat": true,
+    "flag_default_off": true,
+    "flag_on_when_env_set": true
+  },
+  "verdict": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=1 |sep|=6 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=1 |sep|=6 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

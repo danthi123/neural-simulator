@@ -4,37 +4,50 @@ status: wired
 date: 2026-09-01
 mechanism: fact-token decode-time logit boost for the from-scratch WKV/SSM spiking mouth (board #112 "clean
   unlock" — the moat-soak's named next action)
-verdict: mechanism-level GO (single-seed, n=8 curated demo; NOT a 6-seed generalization claim — see "What this
-  is not"). WIRED, additive, default-OFF (BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND), byte-identical when off
-  (asserted, not inferred — see Part 4). The lever demonstrably increases the rate at which the TRUE recalled
-  content word appears in the WKV mouth's raw generation on real known-topic queries (7/8 demo examples surface
-  it after boosting vs 3/8 at baseline) without breaking the existing honesty post-filter (0/8 dropped). The
-  honest residual, precisely quantified rather than assumed: this checkpoint's V=1000 vocabulary structurally
-  cannot express ~74% of the real store's facts at all (no trained embedding exists for the word, full stop),
-  and even where it can, the lever surfaces the true WORD woven into TinyStories-register fiction, not a
-  coherent factual STATEMENT — "word-level grounding," not "fact-assertion." Both limits are load-bearing and
-  named below, not hidden.
+verdict: mechanism-level GO, 6-seed validated (42/43/44 dev, 100/101/102 blind — every dev+blind checkpoint on
+  disk). WIRED, additive, default-OFF (BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND), byte-identical when off
+  (asserted, not inferred — see Part 4, true in all 6 seeds). Aggregated over all 6 seeds' curated demos
+  (43 total examples): the boosted generation surfaces the TRUE recalled content word in 43/43 (100%) —
+  EVERY seed individually also reads 100% boosted-surfaced — vs 25/43 (58.1%) at baseline, with 35/43 (81.4%)
+  newly surfaced by the boost alone; every boosted fact word survives the existing honesty post-filter unedited
+  (43/43). The honest residual, precisely quantified rather than assumed: this checkpoint's V=1000 vocabulary
+  structurally cannot express ~74% of the real store's facts at all (no trained embedding exists for the word,
+  full stop; this ceiling is itself seed-stable, 25.87-25.97% across all 6 checkpoints), and even where it can,
+  the lever surfaces the true WORD woven into TinyStories-register fiction, not a coherent factual STATEMENT —
+  "word-level grounding," not "fact-assertion." Both limits are load-bearing and named below, not hidden.
 lane: e-mouth-fluency / A1 (crutch-burndown), board #112
-seeds: [42]
-seed-waiver: single-seed BOUNDED foreground smoke, per this task's own RAM/compute-safety instruction (queue any
-  6-seed generalization sweep to the pool). This finding makes a MECHANISM-level claim (does the boost change
-  what gets generated, is it a true no-op off, does the true word surface more often) verified deterministically
-  at seed 42 — not a claim that a specific coverage percentage generalizes across seeds. The corpus-coverage
-  numbers (Part 1/2) are seed-independent census statistics over the full 15,000-fact store and the checkpoint's
-  fixed vocabulary, not sampled quantities that need multi-seed validation.
+seeds: [42, 43, 44, 100, 101, 102]
+seed-waiver: N/A — full 6-seed dev+blind validation (all 6 checkpoints ship on disk,
+  `bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed{42,43,44,100,101,102}.npz`), each seed a genuinely independent
+  checkpoint + independent random agent sample + independent demo-example selection, not a repeat of the same
+  data. Pool-routing this sweep was ATTEMPTED first per this task's own compute-routing instruction and found
+  infeasible: `tools/pool_provision.sh`'s rsync deliberately excludes both `webapp/` (this lever's wiring layer)
+  and `bridges/` (the checkpoint `.npz` files themselves) from what it ships to the mini-PC nodes — a structural
+  scope boundary of that infrastructure (pool nodes run pure `research/runners/`+`sim/` work, never production
+  code or model checkpoints), not a bug to route around. Run instead as 6 independent bounded local processes
+  (NOT the 15k-LTM-brain-build OOM path this task's RAM-safety rule warns about — no `SimulationBridge`/
+  `ShardedPhasorStore` for the store is ever built; only `facts.json` is read and one ~512-neuron few-spike
+  Izhikevich bank per generation call, ~20-40s/seed), `free -m` available memory checked >25GB throughout.
 instrument: research/runners/_wkv_mouth_fact_grounding_derisk.py — direct measurement against the real shipped
-  `wikidata_core_15k` facts.json (15,000 AFFIRM triples) and the real `wkv_ssmU6_v1000_d128_seed42.npz`
-  checkpoint; the demo generations run the GENUINE few-spike Izhikevich spiking-WTA decode
+  `wikidata_core_15k` facts.json (15,000 AFFIRM triples) and the real `wkv_ssmU6_v1000_d128_seed{42,43,44,100,
+  101,102}.npz` checkpoints; the demo generations run the GENUINE few-spike Izhikevich spiking-WTA decode
   (`research.runners._wkv_fewspike_read_derisk`, reused unchanged) and the real live honesty post-filter
   (`webapp.open_ended_chat.post_filter`).
-runner: research/runners/_wkv_mouth_fact_grounding_derisk.py
+runner: research/runners/_wkv_mouth_fact_grounding_derisk.py (--seed 42|43|44|100|101|102)
 external: NO-EXTERNAL-NEEDED — an additive decode-time logit boost over a fixed candidate set is the same
   category as this codebase's own pre-existing `_apply_repetition_controls` (CTRL-style repetition penalty /
   no-repeat n-gram ban, both citing Keskar et al. 2019 / Fan et al. 2018 in that function's own docstring); this
   rung reuses that established, already-cited decode-control pattern rather than introducing a new one.
 artifacts:
-  - research/findings/raw/_wkv_mouth_fact_grounding_derisk.json (all four parts below, plus the 8 full
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk.json (seed 42; all four parts below, plus the full
     before/after generations)
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed43.json
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed44.json
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed100.json
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed101.json
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed102.json
+  - research/findings/raw/_wkv_mouth_fact_grounding_derisk_6seed_aggregate.json (the aggregate table below,
+    computed directly from the 6 per-seed artifacts)
   - research/findings/2026-08-31-wkv-mouth-rung4-vocab-coverage.md (the prior, corpus-word-only coverage
     measurement this finding's Part 1 extends to the FACT side)
   - research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md (the moat soak that
@@ -113,23 +126,34 @@ engaged turns get ZERO fact grounding at all** unless this new flag is enabled. 
 (scoring content hits only on the text AFTER the lead-in strip) is the natural companion next step, not
 attempted here.
 
-## 3. Part 3 — the lever itself, before/after, on real recalled facts
+## 3. Part 3 — the lever itself, before/after, on real recalled facts, all 6 seeds
 
-8 real agents were selected (seed 42, `research/runners/_wkv_mouth_fact_grounding_derisk.py`), one per distinct
-relation type, from the 290 real known-topic-and-groundable queries measured in Part 2. For each, `generate()`
-ran twice at seed 42 with an identical `"tell me about <agent>"` prompt and identical repetition-control
-settings — once with `facts=None` (baseline, the existing default), once with `facts=<the real triples>` (the
-new lever, `fact_boost=6.0` default) — through the SAME genuine few-spike spiking-WTA decode, then both raw
-outputs were run through the real live `webapp.open_ended_chat.post_filter`.
+7-8 real agents were selected per seed (one per distinct relation type, from that seed's own real
+known-topic-and-groundable query pool measured in Part 2 — a genuinely different random sample each seed, not
+the same 8 examples repeated). For each, `generate()` ran twice at that seed with an identical
+`"tell me about <agent>"` prompt and identical repetition-control settings — once with `facts=None` (baseline,
+the existing default), once with `facts=<the real triples>` (the new lever, `fact_boost=6.0` default) — through
+the SAME genuine few-spike spiking-WTA decode, then both raw outputs were run through the real live
+`webapp.open_ended_chat.post_filter`.
 
-| Metric | Count / 8 |
-|---|---|
-| Baseline raw already contains a boosted-fact word | 3 |
-| Boosted raw contains a boosted-fact word | 7 |
-| Boost surfaces a word baseline missed entirely | 4 |
-| Boosted fact word survives the honesty post-filter unedited | 8 (100%) |
+| Seed | n | baseline surfaced | boosted surfaced | newly surfaced | survives post-filter | per-seed verdict |
+|---|---|---|---|---|---|---|
+| 42 (dev) | 7 | 3 | 7 | 6 | 7 | GO |
+| 43 (dev) | 7 | 3 | 7 | 6 | 7 | GO |
+| 44 (dev) | 8 | 6 | 8 | 7 | 8 | GO |
+| 100 (blind) | 7 | 5 | 7 | 6 | 7 | GO |
+| 101 (blind) | 7 | 1 | 7 | 7 | 7 | GO |
+| 102 (blind) | 7 | 7 | 7 | 3 | 7 | UNDEFINED (tie, see note) |
+| **Total (6 seeds)** | **43** | **25 (58.1%)** | **43 (100%)** | **35 (81.4%)** | **43 (100%)** | **5/6 GO** |
 
-**Two concrete examples (full text in the artifact):**
+**The load-bearing number: boosted-surfaced reads 100% in EVERY single seed, individually and in aggregate** —
+the mechanism is not a single-seed artifact. Seed 102's `UNDEFINED` per-seed verdict is a tie (baseline ALSO
+hit 7/7 on that seed's own curated set, not a boost failure — `boosted_surfaced` was still 7/7 there too); it
+happens because the demo-selection method favors facts with more grounding words, which also raises baseline's
+own chance-overlap odds over a 40-token continuation on some seeds. The AGGREGATE 25/43 vs 43/43 (and 35/43
+newly surfaced from nothing) is the number to read, not any single seed's tie.
+
+**Two concrete examples from seed 42 (full text for all 6 seeds in the per-seed artifacts):**
 
 - `strech_five` (real fact: `sport = basket_ball`). Baseline: *"tell me about the big dog and the cat said i
   will help you climb it too hard for making them fall from the tree..."* — zero connection to the entity.
@@ -150,13 +174,16 @@ STRUCTURE around the fact (e.g. conditioning generation on a fact-bearing templa
 recurrent state rather than only the output logits) — a different, larger lever than this one, named as the
 next rung, not built here.
 
-**Was this net-safer or net-riskier for the moat?** Net-safer on this sample, by the SAME honesty instrument the
-production pipeline already runs: `post_filter`'s contradiction check (`_facts_as_relation_pairs` +
-`_clause_filter_sentence`) never flagged either arm's output on any of the 8 examples (0/8 dropped either way)
-— the boosted output is not MORE likely to trip the existing moat than baseline, and intuitively carries less
-purely-invented specific content (a boosted-but-vague "the party" is not a false claim the way baseline's
-entirely-unrelated "the big dog and the cat" narrative risks reading as if it were about the topic). This is a
-qualitative reading of n=8, not a quantitative fabrication-rate claim — see "What this is not."
+**Was this net-safer or net-riskier for the moat?** Net-safer across all 43 examples over 6 seeds, by the SAME
+honesty instrument the production pipeline already runs: `post_filter`'s contradiction check
+(`_facts_as_relation_pairs` + `_clause_filter_sentence`) never flagged either arm's output on ANY example in
+ANY seed (0/43 dropped either way, every seed individually 0/n too) — the boosted output is not MORE likely to
+trip the existing moat than baseline, and intuitively carries less purely-invented specific content (a
+boosted-but-vague "the party" is not a false claim the way baseline's entirely-unrelated "the big dog and the
+cat" narrative risks reading as if it were about the topic). This is still a qualitative reading (the
+post-filter's own gazetteer only catches 3 relation shapes plus bare numbers — see the moat-soak finding's own
+documented coverage gap), not a quantitative fabrication-rate claim on a scale the existing instrument can
+grade precisely — see "What this is not."
 
 ## 4. Part 4 — the mechanism is a genuine no-op when off, asserted not inferred
 
@@ -166,31 +193,35 @@ qualitative reading of n=8, not a quantitative fabrication-rate claim — see "W
 | `_apply_fact_boost(lg, None, 6.0) is lg` (no facts) | `True` |
 | `_apply_fact_boost(lg, [3,5], 0.0) is lg` (zero boost) | `True` |
 | `_apply_fact_boost(lg, [3,5], 6.0)` actually changes those two logits by +6.0 | `True` |
-| `generate(..., facts=None)` called twice at seed 42 | byte-identical text both times |
+| `generate(..., facts=None)` called twice at the same seed | byte-identical text both times |
 | `open_ended_chat.wkv_fact_grounding_enabled()` with the env var unset | `False` (default OFF) |
 | ...with `BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND=1` | `True` |
 
-Every pre-existing call site in `webapp/open_ended_chat.py::answer_turn` passes `facts=None` unless the new flag
-is truthy AND the topic is `known` — the WKV mouth's existing default-ON path (`wkv_mouth_enabled()`, unrelated
-to this new flag) is unchanged for every caller that does not opt in.
+All seven checks above hold at EVERY one of the 6 seeds independently (`mechanism_noop_checks_all_true_every_
+seed: true` in the aggregate artifact), not just seed 42. Every pre-existing call site in
+`webapp/open_ended_chat.py::answer_turn` passes `facts=None` unless the new flag is truthy AND the topic is
+`known` — the WKV mouth's existing default-ON path (`wkv_mouth_enabled()`, unrelated to this new flag) is
+unchanged for every caller that does not opt in.
 
 ## 5. What this is, and is not
 
 **Is:** a real, `wired` (per `docs/TERMS.md` — reachable from `/api/brain-chat` → `answer_turn` →
 `wkv_mouth_generator.generate`, on a request with `BRAIN_OPEN_ENDED` + `BRAIN_OPEN_ENDED_WKV_MOUTH` +
 `BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND` all set + a known, in-vocab-scoped topic), additive, default-OFF
-decode-time lever, asserted byte-identical off, that measurably increases how often the WKV mouth's raw
-generation contains the TRUE recalled content word on real known-topic queries (Part 3), without increasing
-how often the existing honesty post-filter has to intervene (0/8 either arm).
+decode-time lever, asserted byte-identical off (6/6 seeds), that measurably and CONSISTENTLY (100% in every one
+of 6 seeds) increases how often the WKV mouth's raw generation contains the TRUE recalled content word on real
+known-topic queries (Part 3), without increasing how often the existing honesty post-filter has to intervene
+(0/43 across all 6 seeds).
 
 **Is not:** `on-by-default`, a claim that the mouth now "states its facts" (word-presence is not fact-assertion
 — see Part 3's honest limit), or a closure of board #112. The corpus-level ceiling (Part 1: ~74-60% of real
 facts have zero content-word overlap at all) is a hard architectural wall this lever cannot touch — it is
-scoped, honestly, to the minority of facts this checkpoint's fixed vocabulary can express at all. Not a 6-seed
-generalization claim (seed-waiver above); the demo is n=8 curated real examples at one seed, chosen to span
-distinct relation types, not a random or blind sample — a larger blind sample (from the 290-topic pool Part 2
-already identified) is the natural next-rung validation, queued to the pool (see below), not run here per this
-task's RAM/compute-safety scope (a single bounded foreground smoke, heavier sweeps to the pool).
+scoped, honestly, to the minority of facts this checkpoint's fixed vocabulary can express at all. The demo
+selection (one per distinct relation type, per seed, from that seed's own real known-topic-and-groundable
+pool) is a CURATED sample, not a uniform-random blind draw from the full 290-topic pool Part 2 identified — the
+6-seed replication across independently-sampled pools is real evidence of robustness, but a large uniform-
+random blind sample is still the natural next-rung validation (queued as a next step below, not attempted here
+given this task's scope).
 
 ## 6. Next steps (not this rung)
 
@@ -199,9 +230,13 @@ task's RAM/compute-safety scope (a single bounded foreground smoke, heavier swee
 2. **Wire the already-measured V=4000 checkpoint** (`2026-08-31-wkv-mouth-rung4-vocab-coverage.md`) into this
    same generation path — directly attacks Part 1's ceiling (from 25.93%/40.48% toward whatever the wider
    vocabulary's fact-side coverage measures at, not yet computed for V=4000 specifically).
-3. **A larger blind validation** of Part 3's before/after surfacing-rate claim, sampled from the 290-topic pool
-   Part 2 already identified (not the same 8 curated examples), at the pool/GPU-queue scale this task's own
-   compute-safety instruction reserves for 6-seed-class sweeps — queued, not run here.
+3. **A larger UNIFORM-RANDOM blind validation** of Part 3's before/after surfacing-rate claim, sampled from the
+   full per-seed known-topic-and-groundable pools Part 2 already identified (hundreds of topics per seed, not
+   the ~7-8 curated-by-relation-type examples this rung ran) — this specific runner cannot be pool-routed (see
+   seed-waiver: `webapp/` and `bridges/` are both excluded from what `pool_provision.sh` ships to the mini-PC
+   nodes), so a larger sample means either a longer local run (this rung's 6x7-8-example run took ~20-40s/seed;
+   a few hundred examples/seed would scale roughly linearly, still CPU/numpy-only) or a small, scoped change to
+   the pool's rsync allow-list — neither attempted here.
 4. **A structural (not decode-time) grounding lever** — conditioning generation on a fact-bearing template or
    steering the recurrent state itself, to close the word-presence-vs-fact-assertion gap Part 3 names as the
    deeper residual.

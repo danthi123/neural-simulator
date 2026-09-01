@@ -1,0 +1,386 @@
+{
+  "runner": "_wkv_mouth_fact_grounding_derisk",
+  "seed": 43,
+  "bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts_total": 15000,
+  "n_facts_affirm": 15000,
+  "checkpoint_vocab_size": 1000,
+  "part1_corpus_coverage_ceiling": {
+    "n_affirm_facts": 15000,
+    "patient_content_word_hit": 3881,
+    "patient_content_word_hit_frac": 0.25873,
+    "any_field_content_word_hit": 5948,
+    "any_field_content_word_hit_frac": 0.39653,
+    "note": "This checkpoint's V=1000 vocabulary is word-level and closed (no subword fallback): a fact token with no trained embedding CANNOT be produced by this decoder at all, by construction. The majority (~74%) of facts have zero content-word overlap -- the structural wall the task named, now precisely quantified rather than assumed."
+  },
+  "part2_live_engagement": {
+    "n_sampled_agents": 600,
+    "in_vocab_scope_pass": 385,
+    "in_vocab_scope_pass_frac": 0.6417,
+    "scope_pass_AND_has_fact_content_overlap": 250,
+    "scope_pass_AND_has_fact_content_overlap_frac_of_sample": 0.4167,
+    "conditional_grounding_rate_given_scope_pass": 0.6494,
+    "lead_in_phrase_alone_passes_scope_on_nonsense_topic": true,
+    "note": "`in_vocab_scope('tell me about <nonsense>')` == True: the lead-in phrase alone ('tell'/'me'/'about', all in-vocab and NOT in _FUNCTION_WORDS) can satisfy min_content_hits=2 without the topic itself contributing anything -- a real, previously-undiscovered gap in the ALREADY-default-ON (2026-08-30) scope gate, found by this measurement, logged to FAILURE_LOG.md, NOT fixed here (out of this task's scope; BRAIN_OPEN_ENDED itself stays default-OFF so this is not live in production). It means the WKV mouth reaches real Wikidata topics far MORE than Part 1's raw vocabulary ceiling alone would predict when phrased with a content-bearing lead-in -- which makes fact-grounding MORE, not less, load-bearing: today those engaged turns get zero grounding at all."
+  },
+  "part3_before_after_demo": {
+    "n_examples": 7,
+    "baseline_surfaced_fact_word": 3,
+    "boosted_surfaced_fact_word": 7,
+    "boost_newly_surfaced_a_word_baseline_missed": 6,
+    "boosted_fact_word_survives_honesty_postfilter": 7,
+    "examples": [
+      {
+        "agent": "jones_family_name",
+        "msg": "tell me about jones family name",
+        "triples": [
+          [
+            "jones_family_name",
+            "language_of_work_or_name",
+            "number_of_english_words"
+          ],
+          [
+            "jones_family_name",
+            "instance_of",
+            "surname_page"
+          ]
+        ],
+        "boosted_words": [
+          "words",
+          "work",
+          "or",
+          "name",
+          "family"
+        ],
+        "baseline_raw": "tell me about family name the story is that sharing and helping each fun together every day on they were paper to their friends in the park together and had a big box full of toys but he was very happy when it hit his",
+        "boosted_raw": "tell me about family name the words and it was too hot for tim to work together to work on but he always made sure or work or work hard to work words with his family in a big family of different colors from that",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "words",
+          "work"
+        ],
+        "baseline_filtered": "tell me about family name the story is that sharing and helping each fun together every day on they were paper to their friends in the park together and had a big box full of toys but he was very happy when it hit his",
+        "boosted_filtered": "tell me about family name the words and it was too hot for tim to work together to work on but he always made sure or work or work hard to work words with his family in a big family of different colors from that",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "randolph_parker",
+        "msg": "tell me about randolph parker",
+        "triples": [
+          [
+            "randolph_parker",
+            "instance_of",
+            "human_specie"
+          ],
+          [
+            "randolph_parker",
+            "country_of_citizenship",
+            "u_s_of_a"
+          ],
+          [
+            "randolph_parker",
+            "languages_spoken_written_or_signed",
+            "number_of_english_words"
+          ]
+        ],
+        "boosted_words": [
+          "words",
+          "or",
+          "place",
+          "music"
+        ],
+        "baseline_raw": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_raw": "tell me about you words and words she had a big bag full of fun toys in the house and started to laugh together or hide or my ball with us or i can eat it or or a or a fish or",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "or",
+          "words"
+        ],
+        "baseline_filtered": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_filtered": "tell me about you words and words she had a big bag full of fun toys in the house and started to laugh together or hide or my ball with us or i can eat it or or a or a fish or",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "new_dehli_india",
+        "msg": "tell me about new dehli india",
+        "triples": [
+          [
+            "new_dehli_india",
+            "country",
+            "bharat_ganrajya"
+          ],
+          [
+            "new_dehli_india",
+            "located_in_time_zone",
+            "kunlun_time_zone"
+          ],
+          [
+            "new_dehli_india",
+            "instance_of",
+            "city_work"
+          ]
+        ],
+        "boosted_words": [
+          "new",
+          "time",
+          "work"
+        ],
+        "baseline_raw": "tell me about new you said the fairy and lily are sad to her friends again soon they found lonely in a big box with lots toys of fun playing together in the park all day long laughing and having fun but he was",
+        "boosted_raw": "tell me about new work and new things to work together in her new school with his new work wanted to work on the new new scarf too time to work and work together to work down it was time for a new time",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time",
+          "work"
+        ],
+        "baseline_filtered": "tell me about new you said the fairy and lily are sad to her friends again soon they found lonely in a big box with lots toys of fun playing together in the park all day long laughing and having fun but he was",
+        "boosted_filtered": "tell me about new work and new things to work together in her new school with his new work wanted to work on the new new scarf too time to work and work together to work down it was time for a new time",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "rotterdam_south",
+        "msg": "tell me about rotterdam south",
+        "triples": [
+          [
+            "rotterdam_south",
+            "located_in_time_zone",
+            "rome_time"
+          ],
+          [
+            "rotterdam_south",
+            "instance_of",
+            "city_work"
+          ],
+          [
+            "rotterdam_south",
+            "country",
+            "netherlands_the"
+          ]
+        ],
+        "boosted_words": [
+          "time",
+          "work"
+        ],
+        "baseline_raw": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_raw": "tell me about you work and work together to work on their work together work together in time walking time playing with his work and all day long time for the work time it was time to go home without a work time",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time",
+          "work"
+        ],
+        "baseline_filtered": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_filtered": "tell me about you work and work together to work on their work together work together in time walking time playing with his work and all day long time for the work time it was time to go home without a work time",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "united_russia_party",
+        "msg": "tell me about united russia party",
+        "triples": [
+          [
+            "united_russia_party",
+            "headquarters_location",
+            "moscow_ussr"
+          ]
+        ],
+        "boosted_words": [
+          "party"
+        ],
+        "baseline_raw": "tell me about party the broken the ball and it was a yummy cake with lots of fun in your garden when they heard something unexpected the park together for him to make everyone happy and said thank you tim for his toy car",
+        "boosted_raw": "tell me about party the party buddy said i am sorry mom but they could not find it anymore just for a party at all day him and he was very happy to have fun with his party friends in the park every day",
+        "baseline_surfaces_fact_word": true,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [],
+        "baseline_filtered": "tell me about party the broken the ball and it was a yummy cake with lots of fun in your garden when they heard something unexpected the park together for him to make everyone happy and said thank you tim for his toy car",
+        "boosted_filtered": "tell me about party the party buddy said i am sorry mom but they could not find it anymore just for a party at all day him and he was very happy to have fun with his party friends in the park every day",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "u_s_of_a",
+        "msg": "tell me about u s of a",
+        "triples": [
+          [
+            "u_s_of_a",
+            "shares_border_with",
+            "canada_portal"
+          ],
+          [
+            "u_s_of_a",
+            "contains_administrative_territorial_enti",
+            "washington_dc"
+          ],
+          [
+            "u_s_of_a",
+            "located_in_time_zone",
+            "central_daylight_time"
+          ]
+        ],
+        "boosted_words": [
+          "time"
+        ],
+        "baseline_raw": "tell me about of a story and dad walking the park with his big red ball in it was a bow and a small dog named spot ran after him to play outside but he could not find any toy after all day long for",
+        "boosted_raw": "tell me about of a story and dad walking time the park there had ever heard something strange sound like the garden in his yard every day and he went to play outside with her toys and time it was time for time until they",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "time"
+        ],
+        "baseline_filtered": "tell me about of a story and dad walking the park with his big red ball in it was a bow and a small dog named spot ran after him to play outside but he could not find any toy after all day long for",
+        "boosted_filtered": "tell me about of a story and dad walking time the park there had ever heard something strange sound like the garden in his yard every day and he went to play outside with her toys and time it was time for time until they",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      },
+      {
+        "agent": "positive_punk",
+        "msg": "tell me about positive punk",
+        "triples": [
+          [
+            "positive_punk",
+            "subclass_of",
+            "alt_pop"
+          ],
+          [
+            "positive_punk",
+            "instance_of",
+            "genre_of_music"
+          ]
+        ],
+        "boosted_words": [
+          "music"
+        ],
+        "baseline_raw": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_raw": "tell me about you to be careful with the dog and it was a big red ball in said that music can we go now mom but they could not find any way home for more fun than ever after playing she heard",
+        "baseline_surfaces_fact_word": false,
+        "boosted_surfaces_fact_word": true,
+        "newly_surfaced_by_boost": [
+          "music"
+        ],
+        "baseline_filtered": "tell me about you to be careful with the dog and it was a big red ball in she saw a small box on the wall again and fell down not hurt anymore all over the floor together and tim became friends and",
+        "boosted_filtered": "tell me about you to be careful with the dog and it was a big red ball in said that music can we go now mom but they could not find any way home for more fun than ever after playing she heard",
+        "boosted_filtered_nonempty": true,
+        "boosted_word_in_filtered_output": true
+      }
+    ]
+  },
+  "part4_mechanism_noop_checks": {
+    "apply_fact_boost_noop_empty_ids": true,
+    "apply_fact_boost_noop_none_ids": true,
+    "apply_fact_boost_noop_zero_boost": true,
+    "apply_fact_boost_actually_boosts_when_on": true,
+    "generate_facts_none_deterministic_repeat": true,
+    "flag_default_off": true,
+    "flag_on_when_env_set": true
+  },
+  "verdict": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=3 |sep|=4 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "board #112 clean-unlock: known-topic WKV-mouth reply surfaces the brain's real recalled fact",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (empty ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (None ids)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism is an exact no-op off (zero boost)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "mechanism genuinely boosts when on",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag default-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "fact-word surfaces in raw generation, boosted vs baseline",
+        "ok": true,
+        "detail": "treatment=7 control=3 |sep|=4 > 0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

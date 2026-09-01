@@ -15,10 +15,14 @@ MEMORY DISCIPLINE. Reads ONLY `facts.json` from the shipped bundle (~2 MB; the S
 neuron few-spike Izhikevich bank (topk=64 * pop=8), the SAME small numpy-only bank the already-GO-verified
 `_wkv_mouth_open_ended_wiring_verify.py` used. CPU/numpy only, no GPU.
 
-Run: `SIM_BACKEND=numpy .venv/bin/python -m research.runners._wkv_mouth_fact_grounding_derisk`
+Run (single seed, default 42): `SIM_BACKEND=numpy .venv/bin/python -m research.runners._wkv_mouth_fact_grounding_derisk`
+Run (a specific seed, for a pool 6-seed fan-out -- 42/43/44 dev, 100/101/102 blind, all 6 checkpoints exist on
+disk at `bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed{42,43,44,100,101,102}.npz`):
+  `SIM_BACKEND=numpy .venv/bin/python -m research.runners._wkv_mouth_fact_grounding_derisk --seed 43`
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import random
@@ -58,8 +62,8 @@ def _content_hits(s: str, vocab: set) -> list:
     return [w for w in WKV._WORD_RE.findall(s.lower()) if w in vocab and w not in FUNC]
 
 
-def main() -> dict:
-    out: dict = {"runner": "_wkv_mouth_fact_grounding_derisk"}
+def main(seed: int = 42) -> dict:
+    out: dict = {"runner": "_wkv_mouth_fact_grounding_derisk", "seed": seed}
     bundle = _bundle_dir()
     out["bundle_dir"] = bundle
     if bundle is None:
@@ -73,7 +77,7 @@ def main() -> dict:
     out["n_facts_total"] = len(raw)
     out["n_facts_affirm"] = len(affirm)
 
-    _, vocab, word_to_id = WKV._get_readout(42)
+    _, vocab, word_to_id = WKV._get_readout(seed)
     out["checkpoint_vocab_size"] = len(vocab)
 
     # ── PART 1: corpus-level content-word coverage ceiling (per-fact, over ALL AFFIRM facts) ─────────────────────
@@ -107,7 +111,7 @@ def main() -> dict:
     for f in affirm:
         by_agent.setdefault(f["agent"], []).append((f["agent"], f["action"], f["patient"]))
     agents = sorted(by_agent.keys())
-    rng = random.Random(42)
+    rng = random.Random(seed)
     sample_agents = rng.sample(agents, min(600, len(agents)))
 
     scope_pass = 0
@@ -115,16 +119,16 @@ def main() -> dict:
     grounded_examples = []
     for a in sample_agents:
         msg = "tell me about " + a.replace("_", " ")
-        if WKV.in_vocab_scope(msg, seed=42):
+        if WKV.in_vocab_scope(msg, seed=seed):
             scope_pass += 1
             triples = by_agent[a]
-            ids = WKV.fact_grounding_ids(triples, seed=42)
+            ids = WKV.fact_grounding_ids(triples, seed=seed)
             if ids:
                 scope_and_grounding += 1
                 if len(grounded_examples) < 40:
                     grounded_examples.append({"agent": a, "msg": msg, "triples": triples[:3], "fact_ids": ids})
 
-    lead_in_alone_scope = WKV.in_vocab_scope("tell me about zzznonsenseword qqqgibberish", seed=42)
+    lead_in_alone_scope = WKV.in_vocab_scope("tell me about zzznonsenseword qqqgibberish", seed=seed)
     out["part2_live_engagement"] = {
         "n_sampled_agents": len(sample_agents),
         "in_vocab_scope_pass": scope_pass,
@@ -165,12 +169,12 @@ def main() -> dict:
     part3 = []
     for e in chosen:
         agent, msg, triples, fact_ids = e["agent"], e["msg"], e["triples"], e["fact_ids"]
-        ro, _v, _w2id = WKV._get_readout(42)
+        ro, _v, _w2id = WKV._get_readout(seed)
         boosted_words = [ro.words[i] for i in fact_ids]
 
-        base_text, base_secs = WKV.generate(msg, seed=42, max_new_tokens=40,
+        base_text, base_secs = WKV.generate(msg, seed=seed, max_new_tokens=40,
                                             repetition_penalty=1.3, no_repeat_ngram_size=3, facts=None)
-        boost_text, boost_secs = WKV.generate(msg, seed=42, max_new_tokens=40,
+        boost_text, boost_secs = WKV.generate(msg, seed=seed, max_new_tokens=40,
                                               repetition_penalty=1.3, no_repeat_ngram_size=3,
                                               facts=triples, fact_boost=6.0)
         base_words = set(base_text.split())
@@ -217,9 +221,9 @@ def main() -> dict:
     changed = WKV._apply_fact_boost(lg, [3, 5], 6.0)
     boost_actually_changes = not np.array_equal(changed, lg_orig) and changed[3] == 9.0 and changed[5] == 11.0
 
-    t1, _ = WKV.generate("once upon a time there was a little boy who liked to play", seed=42, max_new_tokens=25,
+    t1, _ = WKV.generate("once upon a time there was a little boy who liked to play", seed=seed, max_new_tokens=25,
                          facts=None)
-    t2, _ = WKV.generate("once upon a time there was a little boy who liked to play", seed=42, max_new_tokens=25,
+    t2, _ = WKV.generate("once upon a time there was a little boy who liked to play", seed=seed, max_new_tokens=25,
                          facts=None)
     off_deterministic = (t1 == t2)
 
@@ -265,9 +269,26 @@ def main() -> dict:
     return out
 
 
+def _parse_args():
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--seed", type=int, default=42,
+                    help="checkpoint + sampling seed (42/43/44 dev, 100/101/102 blind; all 6 checkpoints ship)")
+    p.add_argument("--out", type=str, default=None,
+                    help="output JSON path (default: research/findings/raw/_wkv_mouth_fact_grounding_derisk"
+                         "_seed<seed>.json for seed!=42, or the un-suffixed path for seed==42, so the single-seed"
+                         " smoke this task ran keeps its original artifact path)")
+    return p.parse_args()
+
+
 if __name__ == "__main__":
-    result = main()
-    out_path = REPO_ROOT / "research/findings/raw/_wkv_mouth_fact_grounding_derisk.json"
+    args = _parse_args()
+    result = main(seed=args.seed)
+    if args.out:
+        out_path = Path(args.out)
+    elif args.seed == 42:
+        out_path = REPO_ROOT / "research/findings/raw/_wkv_mouth_fact_grounding_derisk.json"
+    else:
+        out_path = REPO_ROOT / f"research/findings/raw/_wkv_mouth_fact_grounding_derisk_seed{args.seed}.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(result, indent=2, default=str), encoding="utf-8")
     print(f"\nWrote {out_path}")
