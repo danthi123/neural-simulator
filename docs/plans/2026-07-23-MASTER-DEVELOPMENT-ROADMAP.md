@@ -18,6 +18,21 @@ provenance-to-selfschema-reciprocal-GO.md`, 6/6 GO — grows 0.05->4.0-4.7, +0.0
 100% lesion-attributable, byte-identical-off). **NEXT (queued, not yet built):** another reciprocal pair from
 the same connectome (surprise->source_provenance is still one-direction only), OR the production wire-in rung
 R4 itself already has a precedent for (`BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA`, default-OFF).
+**⭐ 2026-09-01 PARALLEL-WAVE LANDINGS (9-way fan-out, 7 findings merged):**
+- surprise→episodic encode-DECISION cross-edge (6/6 GO — surprise flips a real ENCODE/SKIP, closing the
+  diagnostic-only residual named just above); curiosity→d6-WM cross-edge (6/6 GO, fresh pair).
+- WKV-mouth FACT-GROUNDING (#112 clean-unlock first step): the from-scratch voice surfaces the recalled fact word
+  43/43 every seed (up from 58%), moat-safe; residual = V=1000 vocab ceiling (~26% of facts expressible) +
+  word-not-yet-sentence. NP-entailment COPULA coverage: catches the rugby-club-called-"football" fabrication the
+  moat-soak found. Entity-ALIAS resolution verified (29/29 alias-form questions recall through the real gate,
+  against a pre-existing 30,804-alias bundle).
+- confidence-forthcomingness (real shipped-KB traffic) + a source-monitoring honesty-FRAMING coupling: both BUILT,
+  both BLOCKED on one root-caused bug.
+- **⛔ TOP NEXT (the unblock) — #184:** `TieredFactStore._tiered()` does not carry the answering LTM tier's
+  confidence trace, so metacog/confidence silently reads EMPTY on every LTM-answered turn → the honesty hedge is
+  OFF exactly there. The LTM (`ShardedPhasorStore`) emits no `last_trace` at all, so the fix is to make the
+  answering tier emit a metacog-compatible trace + propagate it. Unblocks #94 real-traffic AND the
+  source-monitoring honesty framing in one fix.
 **⭐ 2026-08-27 CONTINUATION LANDINGS (sync — the ⭐⭐ reframe below still governs sequencing):**
 - **ONE-BRAIN INTEGRATION reached its emergent goal.** A learned cross-region synapse (d6-WM→comprehension) is wired into the LIVE brain and now GROWS from the substrate's OWN activity (in-brain self-supervised credit — comprehension's own confident spiking resolution, no host label) AND changes conversation (flips the comprehension repair role 5/5 ambiguous items, lesion-attributable), 6-seed GO (`2026-08-27-onebrain-xedge-production-live-learning-GO`; `BRAIN_ONEBRAIN_XEDGE`+`_LEARN` default-OFF; per-turn-plasticity + a production-default flip in flight). Completeness audit: this is ~1 cross-edge vs mostly host-orchestrated organs; highest-leverage enabler = DECLARATIVE `cross_edges` on the framework (in flight). R4 self_schema→source_provenance also GO on the framework.
 - **The MOUTH read-SNR wall is now a characterized SUBSTRATE wall.** On cupy no structured/coherent target direction decodes (0/6 recodable) — neither a better objective (softmax + dendritic NO-GO) nor target-recoding opens it (`2026-08-27-mouth-readsnr-...cupy-SUBSTRATE-WALL`). NO-DEFER next = a DECORRELATION/whitening read (correlated drive onto shared conductance pools doesn't summate); LIKELY the SAME read-fidelity wall behind learn-through-use recall (a joint arc, in flight). Retiring Qwen stays long-horizon (form scaffold), so this is a mapped deep wall, not a near-term blocker.

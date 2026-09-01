@@ -1,0 +1,47 @@
+{
+  "probe": "single-common-word alias collision, discovered while verifying entity aliasing against the alias-extended bundle -- an ORTHOGONAL risk to the multi-word-nonsense-phrase moat check (which the len(grounded)==1 guard handles correctly). All THREE min_span=1 entity-alias-hop sites (_kb_relation_question_route, _relation_fronted_route, _definitional_copula_route) share this exposure; it was NEVER exercised against real data before because the shipped default wikidata_core_15k bundle carries zero alias_of facts.",
+  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k_grounded_v1",
+  "cases": [
+    {
+      "question": "what is house?",
+      "route": "_definitional_copula_route",
+      "result": [
+        "domestic_architecture",
+        "isa"
+      ],
+      "note": "the ordinary English word 'house' is a genuine (non-ambiguous within the KB) Wikidata alias for 'domestic_architecture' -- a SINGLE-token span, so the len(grounded)==1 guard accepts it. This is DIFFERENT from the multi-word-nonsense-phrase case (where a partial grounding is correctly rejected) -- a single common word CAN collide outright."
+    },
+    {
+      "question": "what country is house from?",
+      "route": "_relation_fronted_route",
+      "result": [
+        "domestic_architecture",
+        "country"
+      ],
+      "note": "same collision via the relation-fronted route."
+    },
+    {
+      "question": "what is house a subclass of?",
+      "route": "_kb_relation_question_route",
+      "result": [
+        "domestic_architecture",
+        "subclass_of"
+      ],
+      "note": "same collision via the KB-relation route."
+    },
+    {
+      "question": "what is of?",
+      "route": "_kb_relation_question_route + _definitional_copula_route",
+      "result": [
+        null,
+        null
+      ],
+      "note": "a pure stopword/self-alias-excluded token does not collide here (both routes return None) -- not every common word collides, only ones that happen to be genuine raw Wikidata aliases."
+    }
+  ],
+  "why_this_is_not_the_multi_word_moat_failure": "The multi-word case ('the glorble house of nonexistence') is SAFE because grounding leaves >1 residual token (partial match), and every entity-alias-hop call site checks `len(grounded) == 1` before trusting it -- a partial grounding is REJECTED and the route falls back to the naive underscore-join of the ORIGINAL phrase, which does not coincidentally match any real canonical entity, so recall still abstains. The single-word case has no 'partial' state to reject: one word IS one span, so if that single word happens to be a real (unambiguous, within-KB) Wikidata alias, the len(grounded)==1 guard has nothing to catch.",
+  "scope": "PRE-EXISTING design property of the 2026-08-26/2026-08-27 alias-hop wiring (research/runners/brain_chat_tui.py), not introduced by this arc -- this arc's alias-extended bundle + battery is simply the FIRST time it has been exercised against real production-scale alias data (the shipped default bundle has zero alias facts, so this path was previously dead code in production). Named here as an honest residual, not fixed in this arc (a fix would require a collision policy for the 3 min_span=1 sites -- e.g. a common-word stoplist or a known_words guard like _extract_route's own min_span=2 pass already has -- a real design decision, out of this arc's comprehension/recall verification scope).",
+  "backend": "numpy",
+  "runner": "ad-hoc probe, not itself a runner script -- exercises research.runners.brain_chat_tui.ChatBrain._kb_relation_question_route/_relation_fronted_route/_definitional_copula_route directly against the SAME loaded ShardedPhasorStore (wikidata_core_15k_grounded_v1) verify_entity_aliasing.py's Part A uses; seed 42 (the bundle's own build seed)",
+  "seed": 42
+}

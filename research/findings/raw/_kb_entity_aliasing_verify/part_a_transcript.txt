@@ -1,0 +1,43 @@
+[0.5s] bundle loaded: 15000 plain facts, 30804 alias_of facts (6163 canonical concepts with >=1 alias)
+[4.9s] ShardedPhasorStore loaded (ONCE, reused for every mock-routing call below)
+[5.0s] KB-relation alias-covered samples: 29/29
+[14.3s]   [kb-relation] language_of_work_or_name: 'what is the language of work or name of margaret film?' -> ON=['margaret_movie', 'language_of_work_or_name'] OFF=['margaret_film', 'language_of_work_or_name'] PASS
+[24.1s]   [kb-relation] located_in_time_zone: "what is udhagamandala's located in time zone?" -> ON=['udaka_mandala', 'located_in_time_zone'] OFF=['udhagamandala', 'located_in_time_zone'] PASS
+[34.3s]   [kb-relation] headquarters_location: 'where is ens paris headquartered?' -> ON=['ens_ulm', 'headquarters_location'] OFF=['ens_paris', 'headquarters_location'] PASS
+[43.9s]   [kb-relation] subclass_of: 'what is ancient temple a subclass of?' -> ON=['hindi_temple', 'subclass_of'] OFF=['ancient_temple', 'subclass_of'] PASS
+[49.1s]   [kb-relation] located_in_the_administrative_territoria: "what is california riverside's administrative territorial entity?" -> ON=['uc_riverside', 'located_in_the_administrative_territoria'] OFF=['california_riverside', 'located_in_the_administrative_territoria'] PASS
+[53.2s]   [kb-relation] part_of: 'what is st alban s hall oxford part of?' -> ON=['alban_hall_oxford', 'part_of'] OFF=['st_alban_s_hall_oxford', 'part_of'] PASS
+[56.5s]   [kb-relation] member_of: 'what is ens paris a member of?' -> ON=['ens_ulm', 'member_of'] OFF=['ens_paris', 'member_of'] PASS
+[58.8s]   [kb-relation] shares_border_with: 'what borders jamhuri ya kenya?' -> ON=['etymology_of_kenya', 'shares_border_with'] OFF=['jamhuri_ya_kenya', 'shares_border_with'] PASS
+[60.9s]   [kb-relation] taxon_rank: "what is tineid moths's taxon rank?" -> ON=['fungus_moth', 'taxon_rank'] OFF=['tineid_moths', 'taxon_rank'] PASS
+[62.8s]   [kb-relation] country_of_citizenship: "what is frank sinatra sr's nationality?" -> ON=['ol_blue_eyes', 'country_of_citizenship'] OFF=['frank_sinatra_sr', 'country_of_citizenship'] PASS
+[64.9s]   [kb-relation] languages_spoken_written_or_signed: 'what languages does frank sinatra sr speak?' -> ON=['ol_blue_eyes', 'languages_spoken_written_or_signed'] OFF=['frank_sinatra_sr', 'languages_spoken_written_or_signed'] PASS
+[67.6s]   [kb-relation] occupation: "what is frank sinatra sr's occupation?" -> ON=['ol_blue_eyes', 'occupation'] OFF=['frank_sinatra_sr', 'occupation'] PASS
+[70.3s]   [kb-relation] member_of_political_party: 'what political party is frank sinatra sr a member of?' -> ON=['ol_blue_eyes', 'member_of_political_party'] OFF=['frank_sinatra_sr', 'member_of_political_party'] PASS
+[73.0s]   [kb-relation] place_of_death: 'where did frank sinatra sr die?' -> ON=['ol_blue_eyes', 'place_of_death'] OFF=['frank_sinatra_sr', 'place_of_death'] PASS
+[75.0s]   [kb-relation] record_label: 'what record label is frank sinatra sr signed to?' -> ON=['ol_blue_eyes', 'record_label'] OFF=['frank_sinatra_sr', 'record_label'] PASS
+[78.6s]   [kb-relation] given_name: "what is frank sinatra sr's given name?" -> ON=['ol_blue_eyes', 'given_name'] OFF=['frank_sinatra_sr', 'given_name'] PASS
+[81.5s]   [kb-relation] award_received: 'what award did frank sinatra sr receive?' -> ON=['ol_blue_eyes', 'award_received'] OFF=['frank_sinatra_sr', 'award_received'] PASS
+[85.1s]   [kb-relation] contains_administrative_territorial_enti: "what is brazilian federative republic's administrative territorial entities it contains?" -> ON=['republic_of_brazil', 'contains_administrative_territorial_enti'] OFF=['brazilian_federative_republic', 'contains_administrative_territorial_enti'] PASS
+[90.2s]   [kb-relation] followed_by: 'what is papal legations followed by?' -> ON=['states_of_the_church', 'followed_by'] OFF=['papal_legations', 'followed_by'] PASS
+[92.6s]   [kb-relation] work_location: 'where does sandollar productions work?' -> ON=['dolly_rebecca_parton', 'work_location'] OFF=['sandollar_productions', 'work_location'] PASS
+[95.3s]   [kb-relation] participant_of: 'what did australian commonwealth participate in?' -> ON=['commonwealth_australia', 'participant_of'] OFF=['australian_commonwealth', 'participant_of'] PASS
+[98.5s]   [kb-relation] place_of_birth: 'where was hal b wallis born?' -> ON=['hal_wallis', 'place_of_birth'] OFF=['hal_b_wallis', 'place_of_birth'] PASS
+[100.5s]   [kb-relation] country_of_origin: "what is office us series's country of origin?" -> ON=['the_office_usa', 'country_of_origin'] OFF=['office_us_series', 'country_of_origin'] PASS
+[102.4s]   [kb-relation] original_language_of_film_or_tv_show: 'what is the original language of film or tv show of office us series?' -> ON=['the_office_usa', 'original_language_of_film_or_tv_show'] OFF=['office_us_series', 'original_language_of_film_or_tv_show'] PASS
+[105.0s]   [kb-relation] educated_at: 'where was isac asimof educated?' -> ON=['asimov_isaac', 'educated_at'] OFF=['isac_asimof', 'educated_at'] PASS
+[107.8s]   [kb-relation] employer: 'who does isac asimof work for?' -> ON=['asimov_isaac', 'employer'] OFF=['isac_asimof', 'employer'] PASS
+[111.6s]   [kb-relation] family_name: "what is no show jones's family name?" -> ON=['george_jones', 'family_name'] OFF=['no_show_jones', 'family_name'] PASS
+[114.7s]   [kb-relation] position_held: "what is bill blythe iv's position held?" -> ON=['bill_clinten', 'position_held'] OFF=['bill_blythe_iv', 'position_held'] PASS
+[116.9s]   [kb-relation] parent_taxon: "what is trechus's parent taxon?" -> ON=['trechus_rivularis', 'parent_taxon'] OFF=['trechus', 'parent_taxon'] PASS
+[119.6s]   [relation-fronted] country: 'what country is jackson mississippi from?' -> ['jackson_ms', 'country'] PASS
+[122.1s]   [relation-fronted] sport: 'what sport is ec bahia in?' -> ['e_c_bahia', 'sport'] PASS
+[124.5s]   [copula] 'what is jackson mississippi?' -> ['jackson_ms', 'isa'] PASS
+[125.8s]   [copula] 'what is california riverside?' -> ['uc_riverside', 'isa'] PASS
+[127.3s]   [copula] 'what is irvine ca?' -> ['irvine_california', 'isa'] PASS
+[128.7s]   [copula] 'what is st alban s hall oxford?' -> ['alban_hall_oxford', 'isa'] PASS
+[130.1s]   [copula] 'what is glouchestershire?' -> ['gloucestershire_united_kingdom', 'isa'] PASS
+[132.4s]   [moat] 'chelsea' -> grounded=['chelsea'] alias_hop=None PASS(abstains)
+[139.9s]   [moat] 'purple elephant bicycle' -> grounded=['purple', 'elephant', 'bicycle'] alias_hop=None PASS(abstains)
+[144.3s]   [moat] 'zorblexia quintar' -> grounded=['zorblexia', 'quintar'] alias_hop=None PASS(abstains)
+[144.3s] PART A (mock-self routing, no brain build) done: kb 29/29 resolved, 29/29 load-bearing; relation-fronted 2/2; copula 5/5; moat 3/3 abstain

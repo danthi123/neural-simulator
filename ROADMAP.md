@@ -7,6 +7,36 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-09-01 (later, newest) — a nine-way parallel push: the brain-voice can say its real facts, the honesty filter closes a whole class of confident-wrong answers, and a hidden bug that silently switched the honesty check off is found
+
+A large parallel wave (nine independent efforts at once, kept inside the machine's memory limit) landed seven
+results across every frontier:
+
+- SPEAKING ITS REAL KNOWLEDGE. The brain's own from-scratch voice can now surface the actual fact it recalled
+  about a topic — on all six test seeds, 100% of the time (up from ~58%), and the no-making-things-up filter never
+  had to edit it. Honest limit: the voice's small vocabulary can only express about a quarter of the knowledge
+  base's facts, and it surfaces the right WORD inside a story rather than a clean factual sentence yet — so this is
+  the first real step of the "clean unlock," not the finish.
+
+- HONESTY, TWO WAYS. (1) The no-making-things-up filter now catches a common class it used to miss — e.g. calling a
+  rugby club a "football club" — closing the exact gap the earlier safety soak found. (2) A build to make the brain
+  FRAME its answers by how sure it is ("I recall…" vs "I'd guess…") is done, but it exposed a real hidden bug.
+
+- A HIDDEN PLUMBING BUG FOUND — the top next job. Whenever the brain answers from its long-term memory (rather than
+  the recent-conversation buffer), its confidence read silently comes back empty, so the honesty hedge quietly
+  switches off on exactly those turns. This is why confidence-tuned answers and the new honesty framing don't yet
+  work on the real out-of-the-box knowledge base. It's precisely located (the memory-tier wrapper doesn't carry the
+  answering tier's trace), and fixing it unblocks both at once.
+
+- KNOWLEDGE. Natural questions about the knowledge base now also work when you name something by a nickname/alias
+  (verified against a 30,000-alias table that already existed but had never been exercised).
+
+- INTERNAL WIRING. A surprise signal now flips a real remember-this / skip-this decision (not just a readout), and a
+  new curiosity → working-memory connection was grown and confirmed.
+
+Everything is committed to both backups; no default behavior was changed (the flips remain the owner's call). A
+workflow lesson was banked too: run parallel build-agents in isolated copies so their saves can't collide.
+
 ## 2026-09-01 (newest) — growing the brain's internal wiring is now cheap, and the second new connection already landed
 
 Point (3) from 2026-08-28 below ("migrating more faculties is now cheap") is now proven twice over. The generic
