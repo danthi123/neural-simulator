@@ -40,26 +40,31 @@ NOT co-drive or dispatch GPU work).** Owner operates it via the desktop panel (s
 say/logs/check). Hand-back to Claude: `tools/hermes_takeover.sh off` (or desktop `handback`).
 
 **↓ CURRENT ARC 2026-09-01 — `main` = `06d31ebd` (CLAUDE driving; Hermes handed back via `hermes_takeover.sh off`).**
-**⭐ THE NORTH-STAR CRITICAL PATH IS NAMED — biological SPIKE READ-POWER: recovering a target signal from spike
-firing.** The signal is provably present (a full-population decoder recovers it 6/6) but every BIOLOGICAL read tried —
-rate / first-spike latency / dispersion / matched-filter — recovers ~0. It is the SHARED wall behind BOTH (a) the
-brain's own spiking mouth AND (b) learn-through-use recall (what gap#4 dissolved into — the mouth read-SNR wall). Lever
-IN FLIGHT: an opponent/push-pull read (recover the sign a rectified channel discards — the fix-shape that already
-worked 6/6 for surprise→episodic) on branch `research/spike-read-power-opponent-read`. DO NOT let it go idle.
+**⭐ CRITICAL PATH — CORRECTED 2026-09-01 by BUILDING the lever (the gap-map was wrong; the build fixed the map):**
+read-power is NOT the monolithic wall. The mouth's apparent read-SNR plateau (0.34-0.37) was a STALE-CACHE ARTIFACT —
+~0.85 post-fix, largely closed. The learn-through-use recall read-off-a-shared-edge residual is a READ-ARCHITECTURE
+issue (population-collapse discards per-neuron discriminability), NOT estimator quality, with a GO'd path: the #129
+SEPARATE-TRACE wiring. So the TRUE critical path is (a) GENERATIVE-CORTEX SCALE for arbitrary prose (the real fluency
+wall — own-mouth frames only SVO, open prose = Qwen), and (b) the PRODUCTION-DEFAULT SPINE (flip hollow → load-bearing).
 
-**HONEST SCORECARD (grounded 2026-09-01 vs the 57-row ledger):** 0 faculties scaffold-retired; 1 production cross-edge
-(WM→comprehension); own-mouth frames only structured SVO (arbitrary prose still = the Qwen-0.5B scaffold); ~51
-faculties wired-DEFAULT-OFF and ALL chat-path flips are currently HOLLOW (flip-audit finding). The live product is
-~one integrated spiking family + a bench of ~40 unwired GO de-risks.
+**HONEST SCORECARD (grounded 2026-09-01 vs the 57-row ledger):** 0 faculties scaffold-retired; 1-2 production
+cross-edges; own-mouth frames only structured SVO (arbitrary prose still = the Qwen-0.5B scaffold); ~51 faculties
+wired-DEFAULT-OFF — the flip-audit found ALL chat-path flips hollow; the confidence content-exhaustion fix (now LANDED)
+is the FIRST that converts one to load-bearing. Live product = ~one integrated spiking family + ~40 unwired de-risks.
 
-**LANDED THIS ARC (both remotes):** #102 moat NPHead+entailment wired live (default-off); production-default flip-audit
-(no free flips — the confidence content-exhaustion fix converts it to a real one); #191 mouth rung-1 learned-head A/B
-GO 6/6; #110 batch sentence rendering 2-3× byte-identical; seed-44 recall hole root-caused (a phase-quantization
-READ-POWER instance) + decode-escalation fix. #66 latency wall stays CLOSED (codebook-cache, byte-identical verified).
+**LANDED THIS ARC (both remotes, 9):** #102 moat NPHead+entailment wired; production-default flip-audit (no free flips);
+#191 mouth rung-1 learned-head A/B GO 6/6; #110 batch sentence rendering 2-3×; seed-44 recall root-caused
+(phase-quantization) + decode-escalation fix; read-power characterization (estimator NO-GO, residual = read-architecture,
+mouth-read reframed); #94 confidence-forthcomingness proven LOAD-BEARING (mechanism-ready to flip); #177 declarative
+cross-edge functional gate + new reciprocal edge GO 6/6; brain-native spiking plausibility (QUALIFIED, default-off).
+#66 latency wall stays CLOSED (codebook-cache).
 
-**NEXT ACTIONS (ordered) — 2026-09-01 (owner: work ALL important frontiers concurrently + consistently; parallelism
-bound is dev-capacity not compute):**
-1. ⭐ CRITICAL PATH — spike read-power (`research/spike-read-power-opponent-read`, agent in flight). Keep it worked.
+**NEXT ACTIONS (ordered) — 2026-09-01 (owner: work ALL important frontiers concurrently; bound is dev-capacity not
+compute). IN FLIGHT (agents):**
+1. ⭐ GENERATIVE-CORTEX SCALE for arbitrary prose — the true fluency wall (`research/generative-cortex-scale-lever`).
+   PLUS: #129 SEPARATE-TRACE recall-read (`research/separate-trace-recall-read`); NL-PARSER↔REAL-KB routing
+   (`research/nl-parser-real-kb-relations`) → unblocks knowledge-in-chat on the REAL KB + the confidence flip; the
+   confidence-forthcomingness flip itself is mechanism-ready (owner UX call, gated on the real-KB NL routing).
 2. CONCURRENT FAN-OUT: cross-edges-declarative (one-brain) + brain-native-plausibility (retire host PPMI) running;
    seed-44 decode-escalation + elaboration-past-buffer-tier (unblocks the confidence flip) finishing. Integrate each
    branch (adversarial-verify → merge → board), then refill from the shipped-state-checked backlog.
