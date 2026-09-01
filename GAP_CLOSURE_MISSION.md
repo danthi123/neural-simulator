@@ -13,7 +13,55 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-30 (READ FIRST; LATEST anchor — supersedes every header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-01 (READ FIRST; LATEST anchor — supersedes the 2026-08-30 Hermes header below)
+
+**CLAUDE IS DRIVING.** Hermes handed back (`tools/hermes_takeover.sh off`; HERMES_ACTIVE cleared) — the
+2026-08-30 "Hermes is live / Claude is read-only QA" header below is SUPERSEDED. North-star unchanged: a
+genuinely-conversing single spiking-substrate brain → TRUE CONSCIOUSNESS via complete faithful emulation.
+Twin frontiers: (1) generative-cortex FLUENCY scale · (2) production-default SPINE (flip hollow faculties
+load-bearing / retire scaffolds).
+
+**⭐ THIS ARC (2026-09-01) — 6 landings on `main` (HEAD 0bfdc786), all pushed BOTH remotes:**
+1. **FLUENCY WALL REFRAMED — decisive (`c71cc7c9`):** the broad-domain generative-cortex plateau is
+   TOKEN-STARVATION, not a capacity/architecture wall — deep-context NLL keeps descending with more training
+   tokens (6/6, still descending at 4.5 tok/param, beats fair trigram with growing margin). GO-TOKEN-LEVER. The
+   Wall #7 / R4 "~4-orders params" framing over-states it at a fair operating point; forward path = training-token
+   SCALE on the biologizable WKV cortex, NOT a bigger architecture. (finding `2026-09-01-generative-cortex-token-supply-lever...`)
+2. **FIRST PRODUCTION SCAFFOLD RETIRED (`3bf9599b`):** the plausibility decision in the DEFAULT chat GENERATE
+   path is now the brain's SPIKES (learned `cortex_A→dlpfc_B` synapses), the host `P>=tau` matrix retired — 6/6
+   GO, agreement 1.00, lesion-load-bearing, 0 host calls, moat-safe, `_SPIKING_PLAUSIBILITY_DEFAULT_ON=True`.
+   Ledger scaffold-retired sub-count moves 0→1 in the generate row (other residual shortcuts remain).
+3. **NL-parser KB-relation routing (`8047b73a`):** natural questions about the shipped 15k-KB's underscored
+   multi-word relations ("where was X born?", "what party is X a member of?") now reach recall — closes the
+   #94/#66 NL-parser vocab gap; comprehension-only, moat-preserving, resolution 29/29 + lesion 29/29 + recall 29/29.
+4. **Reciprocal cross-edge (`f48c6aaa`):** `source_provenance.prov_generated → self_schema.author` (completes
+   R4's pair) — one-brain integration + honesty deliverable, 6/6 GO.
+5. **Gate fix (`7e2edc08`):** `PATH_RE (?:json|jsonl)` truncated every `.jsonl` citation to `.json` → false
+   MISSING; swapped to `(?:jsonl|json)` in 4 sites.
+6. **Moat-soak (`0bfdc786`):** the `BRAIN_OPEN_ENDED` bundle flip is SAFER than the flip-plan framed — the moat
+   children (NP_ENTAILMENT / GEN_TIME_HONESTY) are byte-identical across arms on the DANGEROUS
+   (Qwen-known/brain-unknown) class because `open_ended_chat.py` returns `_base_post_filter` (which abstains)
+   before either child is consulted; children matter only for KNOWN topics. n=2 smoke; fuller KNOWN-class battery
+   pending.
+
+**IN FLIGHT (async — a DECISIVE run; do not lose):** S7(a) TinyStories token-supply 6-seed sweep on pool40 →
+does deep-NLL reach the fluency band [3.0, 3.69] by ~20 tok/param on simple-style text (bracketing Chinchilla),
+or plateau above it? Result → `research/findings/raw/_gen_cortex_s7a_tinystories_token_supply.json` (a waiter is
+set). If it REACHES the band → the token-lever provably reaches fluency on matched text; residual = corpus
+BREADTH. Branch `research/gen-cortex-s7a-token-to-fluency` (draft finding `2026-09-01-gen-cortex-s7a-...`).
+
+**TEED UP FOR OWNER (UX-gated):** (a) `BRAIN_OPEN_ENDED` bundle flip #112 — moat-soak found it safer than framed;
+needs a fuller KNOWN-class fabrication battery, then owner yes/no; (b) confidence-forthcomingness flip #94 — the
+NL-parser vocab gap is now closed, owner-UX call remains.
+
+**⛔ OPS LESSON (this arc — apply going forward):** compute agents launched WITHOUT `isolation:worktree` run in
+the MAIN checkout and their `git checkout -b`/commit RACE (the S7a + moat-soak agents did; my NL-parser commit
+briefly stacked on the S7a branch — recovered cleanly, nothing lost). FUTURE compute agents MUST use
+`isolation:worktree`, or must not `git checkout` in the shared tree.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-08-30 (⚠️ SUPERSEDED by the 2026-09-01 anchor above — historical Hermes-active state)
 
 **🟢 HERMES IS LIVE + AUTONOMOUS (2026-08-30 post-reboot go-live).** HERMES_ACTIVE is set — HERMES (local Qwen3.8-27B
 + DFlash2) is the sole active driver: Qwen resident (~15GB VRAM), gateway + 15-min sim-heartbeat cron running,
