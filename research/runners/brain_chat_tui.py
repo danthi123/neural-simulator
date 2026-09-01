@@ -295,23 +295,26 @@ def _generate_channel_enabled():
 # the brain's own co-occurrence matrix (the declared host residual of the generate-channel GO). This flag routes
 # that gate through a SPIKING monosynaptic associative read (SpikingAssociativePlausibilityOrgan): the co-occurrence
 # graph is installed as synapses and relatedness is decided by whether spikes propagate to the readout assembly.
-# Default = `_SPIKING_PLAUSIBILITY_DEFAULT_ON`. It is **OFF** by default: the 6-seed de-risk
-# (research/runners/_brain_native_plausibility_derisk.py) validated the CONVERSION — the gate is provenance-clean
-# (0 host P>=tau calls), lesion-load-bearing, moat-safe, byte-identical-off, agreement with host ~0.88, and it
-# MATCHES the host replay-vs-random advantage ON AVERAGE (mean parity ~1.0, beats host on 4/6 tiny seeds) — but it
-# does NOT hold UNIFORMLY: 2/6 seeds underperform host (parity 0.54 / 0.78, small-graph operating-point variance).
-# A default-ON production change requires all-6-seed dominance, which this does not yet clear, so it ships as an
-# opt-in (BRAIN_SPIKING_PLAUSIBILITY=1) until the robustness rung (online-Hebbian / ensemble read) closes the
-# 2-seed gap. =1 builds the organ; unset/0/false/off/no -> the host `_related` gate (byte-identical).
-_SPIKING_PLAUSIBILITY_DEFAULT_ON = False
+# Default = `_SPIKING_PLAUSIBILITY_DEFAULT_ON`, now **ON** (2026-09-01 robustness rung landed). The QUALIFIED
+# single-assembly read (research/runners/_brain_native_plausibility_derisk.py) matched host ON AVERAGE but had 2/6
+# tiny-graph seeds underperform (parity 0.54/0.78) + suppressed generation, so it shipped OFF. The ENSEMBLE read
+# (K=8 redundant readout populations averaged + density=0 internal recurrence + gain=12 in the non-saturating
+# regime; PRODUCTION_READ_CONFIG in spiking_plausibility_organ.py) lifts agreement with host `P>=tau` to 1.0 on
+# ALL 6 seeds -> the spiking gate reproduces the host relation EXACTLY: the 6-seed de-risk
+# (research/runners/_plausibility_ensemble_graded_derisk.py) is provenance-clean (0 host P>=tau calls),
+# lesion-load-bearing (shuffle/ablate collapse it), moat-safe, byte-identical-off, parity >= host AND generation >=
+# host on EVERY seed. The host `P>=tau` shortcut is RETIRED to the =0 oracle. Because agreement is 1.0 the ON output
+# equals the pure-host output (zero regression); the load-bearing proof that the BRAIN computes it is the synapse
+# lesion + the 0 host-call provenance. =1/unset build the organ; BRAIN_SPIKING_PLAUSIBILITY=0 -> the host `_related`
+# gate (byte-identical: the organ is never built).
+_SPIKING_PLAUSIBILITY_DEFAULT_ON = True
 
 
 def _spiking_plausibility_enabled():
     """Whether the #3E plausibility gate is computed by the brain (the spiking associative read) rather than the
-    host `P>=tau` matrix comparison. Default OFF (opt-in via BRAIN_SPIKING_PLAUSIBILITY=1): the conversion is
-    validated + provenance-clean + moat-safe + byte-identical-off, but the spiking advantage does not yet dominate
-    host on ALL 6 seeds, so it is not the production default. Unset/0/false/off/no -> the host `_related` gate
-    (byte-identical — the plausibility organ is never built)."""
+    host `P>=tau` matrix comparison. Default ON (the ensemble read reaches host parity + generation on ALL 6 seeds,
+    agreement 1.0; provenance-clean, lesion-load-bearing, moat-safe, byte-identical-off). BRAIN_SPIKING_PLAUSIBILITY=0
+    -> the host `_related` gate (byte-identical — the plausibility organ is never built)."""
     v = os.environ.get("BRAIN_SPIKING_PLAUSIBILITY")
     if v is None:
         return _SPIKING_PLAUSIBILITY_DEFAULT_ON
@@ -509,8 +512,8 @@ class ChatBrain:
         # `_related(w1,w2) = P[w1,w2] >= tau` matrix comparison to a SPIKING monosynaptic associative read of the
         # co-occurrence graph (installed as synapses; relatedness = whether spikes reach the readout assembly).
         # Built LAZILY on the first open-ended generation turn (per-ChatBrain), so a non-generating session never
-        # imports it. Default-OFF (opt-in BRAIN_SPIKING_PLAUSIBILITY=1); unset/0 -> the host `_related` gate
-        # (byte-identical). Opt-in until the spiking advantage dominates host on all 6 seeds (see the de-risk finding).
+        # imports it. Default-ON (the ensemble read reaches host parity + generation on all 6 seeds — see the
+        # 2026-09-01 ensemble finding); BRAIN_SPIKING_PLAUSIBILITY=0 -> the host `_related` gate (byte-identical).
         self._spiking_plausibility_organ = None
         # the brain's stored facts (string-only roles) + content-token sets for the VERIFY re-parse
         self._refresh_facts()
