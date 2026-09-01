@@ -37,13 +37,26 @@ names its exact next action for board #112: run a real-traffic moat-safety soak 
 vs without the `BRAIN_OPEN_ENDED_NP_ENTAILMENT` / `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` children), present
 the delta, and flip only on an explicit yes. This is that soak. **No production default was changed.**
 
-**Note on how this landed.** An earlier, incomplete n=2 smoke of this exact runner was auto-committed to
-`main` mid-session (`0bfdc786c`, then referenced in `GAP_CLOSURE_MISSION.md`'s 2026-09-01 anchor as
-"landing 6" — see that file's own "OPS LESSON" about two agents racing in the unworktreed main checkout).
-Its headline ("the bundle flip is SAFER than the flip-plan framed") is correct for the dangerous class but
-was drawn from only 2 known-topic turns, both of which happened to be uninformative (see "Instrument
-residual" below) — this finding completes the picture with the fuller battery and corrects the framing
-where the fuller data disagrees (NP-entailment's real-traffic contribution, below).
+**Note on how this landed, and a correction.** This exact task ran twice, concurrently, in the same
+unworktreed main checkout (see `GAP_CLOSURE_MISSION.md`'s own "OPS LESSON" about the S7a/moat-soak
+branch race). An n=2 smoke landed first (`0bfdc786c`), then a full n=32 battery landed as this same
+finding file, commit `922e0c1d0` ("the bundle flip is fabrication-SAFE... the free reply never asserts a
+false held-out fact"), with its own board sync (`f1f517482`). Both runs used the identical deterministic
+pipeline (fixed seed, fixed store, fixed Qwen internal seed) and produced a BYTE-IDENTICAL
+`_open_ended_bundle_moat_soak_full.json` to the one this revision cites — so this is not a re-run with
+different data, it is a closer reading of the SAME data. **The correction:** `922e0c1d0`'s "moat-safe...
+never asserts a false held-out fact" claim rests entirely on `held_out_violation_rate = 0.0`, and reads
+that 0.0 as "no fabrication reaches the user." Reading the actual transcripts (not just the rate) finds a
+concrete counter-example: `castleford_f_c` — Qwen calls it a "professional **football** club" when the
+store's only sport fact is `rugby_leauge` — is a confident, specific, wrong fact that survives BOTH the
+parent-only arm and the +NP-entailment arm completely unedited (see "Five concrete before/after examples"
+below). The 0.0 rate is real but uninformative here: the held-out scorer is built from the SAME
+`gate_sentence` the live gate runs, so it necessarily shares that gate's blind spot (copula/participial
+sentences, exactly the shape "is a professional football club" takes) — it cannot detect what the
+mechanism it is built from cannot parse. `922e0c1d0`'s structural claims (the dangerous/unknown classes are
+byte-identical across arms, and the base filter alone drives their fabrication 1.0 → 0.0) are correct and
+reproduced here unchanged; only the known-class "moat-safe" reading is corrected, with the counter-example
+and the NP-entailment / gen-time-honesty differentiated analysis below that motivated it.
 
 ## Headline
 
