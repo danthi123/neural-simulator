@@ -1,0 +1,1636 @@
+{
+  "probe": "read_fidelity_learned_opponent_read_derisk",
+  "verdict": "NO-GO/PARTIAL. Replaces iterations 4/5's DIAGONAL mean-difference template with a covariance-aware LEARNED direction (shrinkage Fisher LDA, shrink=0.3; the covariance-whitened matched filter -- a matched filter preceded by decorrelating inhibition), rectified into the SAME Dale's-law opponent (push-pull) E/I pair + LIF readout iteration 5 used, on the SAME trained cross-edge and SAME captured rasters iterations 1-5 used (no retraining confound). PRIMARY gate = lda on delta_held_base (cross-edge-attributable): 0/6 seeds PASS (z>=Z_FLOOR=2.0 AND lesion-attributable AND shuffle anti-cheat collapses). Per-method intact delta_held_base z (mean/peak): meandiff=0.121/1.007, lda=0.330/0.663, logistic=0.530/1.573. Direction holdout-accuracy (per-neuron gen/perc, mean over seeds): meandiff=0.680, lda=0.702, logistic=0.755 (chance=0.5). Anti-cheat: K_SHUF=20-draw neuron-identity permutation null collapses on 48/48 combo-seed pairs.",
+  "GO": false,
+  "n_seeds": 6,
+  "n_seeds_pass_primary": 0,
+  "n_seeds_shuffle_ok": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "shuffle_anticheat_collapses_on_every_combo",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f020bbc1ee0>",
+      "note": "the neuron-identity permutation null must individually clear Z_FLOOR on <= 0.15 of its own draws, on EVERY combo, before the learned readout's verdict can be trusted -- same instrument-validity bar as iterations 2-5"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f020bbc1ee0>",
+      "note": "the reused cross-edge trained normally (sanity on the shared substrate)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_random_assignment",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f020bbc1ee0>",
+      "note": "the per-seed block pair must actually vary (inherited from the parent runner)"
+    }
+  ],
+  "seed_trap_build_twice": {
+    "identical": true,
+    "n_neurons": 1408,
+    "hash_build1": "df4c33e6261f5d4a",
+    "hash_build2": "df4c33e6261f5d4a"
+  },
+  "z_summary_intact_delta_held_base": {
+    "meandiff": {
+      "per_seed": [
+        -1.2933153045031747,
+        -0.23928570046899433,
+        0.1859056125420565,
+        0.2038924304054991,
+        1.0073402340942041,
+        0.8623488952598277
+      ],
+      "mean": 0.12114769455490308,
+      "peak": 1.0073402340942041
+    },
+    "lda": {
+      "per_seed": [
+        0.08004807448857222,
+        0.6632098820279788,
+        -0.18945353483182897,
+        0.34195559789663216,
+        0.4707915581089744,
+        0.6134296094634227
+      ],
+      "mean": 0.3299968645256252,
+      "peak": 0.6632098820279788
+    },
+    "logistic": {
+      "per_seed": [
+        -0.6541940212790942,
+        0.8755084765648422,
+        0.19655429501948296,
+        1.5734482408213373,
+        0.8544638664658916,
+        0.3324576143560823
+      ],
+      "mean": 0.5297064119914237,
+      "peak": 1.5734482408213373
+    }
+  },
+  "direction_holdout_acc_summary": {
+    "meandiff": {
+      "per_seed": [
+        0.5666666666666667,
+        0.6919047619047618,
+        1.0,
+        0.518095238095238,
+        0.6757142857142858,
+        0.6295238095238096
+      ],
+      "mean": 0.6803174603174602
+    },
+    "lda": {
+      "per_seed": [
+        0.6519047619047619,
+        0.6833333333333333,
+        0.830952380952381,
+        0.5804761904761906,
+        0.7119047619047619,
+        0.7509523809523809
+      ],
+      "mean": 0.7015873015873016
+    },
+    "logistic": {
+      "per_seed": [
+        0.7309523809523808,
+        0.8014285714285714,
+        0.9752380952380953,
+        0.560952380952381,
+        0.7995238095238095,
+        0.6642857142857144
+      ],
+      "mean": 0.7553968253968254
+    }
+  },
+  "config": {
+    "n_bins": 10,
+    "z_floor": 2.0,
+    "shuf_collapse_max_rate": 0.15,
+    "k_folds": 5,
+    "r_repeats": 5,
+    "k_shuf": 20,
+    "tau_mem_steps": 5.0,
+    "v_reset": 0.0,
+    "calib_target_frac": 0.5,
+    "v_th_floor": 1e-06,
+    "weight_conds": [
+      "intact",
+      "lesion"
+    ],
+    "feat_kinds": [
+      "raw_held",
+      "delta_held_base"
+    ],
+    "lda_shrink": 0.3,
+    "lda_shrink_sweep": [
+      0.1,
+      0.3,
+      1.0
+    ],
+    "logit_epochs": 400,
+    "logit_lr": 0.5,
+    "logit_l2": 1.0,
+    "recall_steps": 100,
+    "n_reads": 8,
+    "pre_steps": 60,
+    "episode_drive_pa": 2500.0,
+    "f2_lesion_ratio": 0.34,
+    "cross_edge_hebbian_lr": 0.15,
+    "n_episodes": 150,
+    "hebbian_max_weight": 20.0,
+    "cue_pa": 2000.0,
+    "ctx_drive_pa": 2500.0,
+    "rng_formula": "seed*32452843+613, +combo_index*6151 per combo (this module's own distinct offset family; does not collide with the six sibling offsets in the read-fidelity file family)"
+  },
+  "mechanism": "Reuses ReadFidelityPool (build/train/lesion + `_drive2`) VERBATIM from iteration-1, `_capture_reads` VERBATIM from iteration-2, `_binned_features`/`_avg_binned`/`_stratified_folds`/`_seed_trap_check` VERBATIM from iteration-3, and `_expand_template_to_steps`/`_lif_batch_spike_counts`/`_calibrate_v_th`/`_arm_verdict` VERBATIM from iteration-4. Changes ONLY the template-fitting METHOD: iterations 4/5's DIAGONAL mean-difference `(mu_gen-mu_perc)/pooled_per_bin_std` (which ignores cross-bin covariance) becomes a covariance-aware LEARNED direction -- primary/gating: shrinkage Fisher LDA `w=(Sigma_pooled+shrink*mean_diag*I)^{-1}(mu_gen-mu_perc)` (the covariance-whitened matched filter); diagnostic: L2-logistic fit by a local delta/Widrow-Hoff rule with weight-decay (the estimator family that gets iteration-3's linear decoder 6/6). Each signed direction is rectified into the SAME Dale's-law opponent (push-pull) E/I pair iteration-5 used (template_E=clip(w,0,None), template_I=clip(-w,0,None)) driving ONE LIF readout via net excitatory-minus-inhibitory current, on the TEST fold's own raw spikes, signed by structural pool membership -- SAME read, SAME CV, SAME null, SAME gate.",
+  "biology": "The opponent (push-pull) sign realization is unchanged from iteration-5 (Hirsch, Alonso, Reid & Martinez 1998, J Neurosci 18(22):9517-9528, PMID 9801388: cat V1 simple-cell push-pull -- excitation minus inhibition, never a sign-flipping synapse). This run's addition is the covariance-WHITENED matched filter: a matched filter preceded by DECORRELATING inhibition, a decades-established cortical/cerebellar circuit motif -- recurrent/feedforward inhibition decorrelates and whitens population codes (Cayco-Gajic, Clopath & Silver 2017, Nat Commun 8:1116, 'Sparse synaptic connectivity is required for decorrelation and pattern separation'; King, Zylberberg & DeWeese 2013, J Neurosci 33(13):5475-5485, decorrelation by inhibition in auditory cortex; Pehlevan & Chklovskii 2015 NeurIPS, a Hebbian/anti-Hebbian network computes a whitening transform). The shrinkage term is a homeostatic regularizer preventing the small-sample near-singular covariance from amplifying noise -- the 'down-weight noisy channels' the opponent NO-GO's rank-1 residual asked for, realized as covariance shrinkage. The logistic diagnostic direction is fit by a local error-corrective delta/Widrow-Hoff-Rescorla-Wagner rule with homeostatic weight-decay (synaptic scaling).",
+  "scaffold_residuals": [
+    "the covariance Sigma and the direction w are fit by a HOST linear solve / gradient descent, not by an actual spiking decorrelating microcircuit -- the whitening is biologically MOTIVATED (inhibitory decorrelation) but host-COMPUTED here; a spiking anti-Hebbian whitening layer is the on-substrate realization if this read direction proves to be the missing power",
+    "the opponent read still COLLAPSES the test population into ONE signed pop-contrast per step (fixed +1/-1 by structural pool membership) then weights it by the 10-bin direction -- it does NOT give each neuron an individually-learned (matched-filter) synaptic weight; if the LEARNED DIRECTION separates held-out neurons well (D1) but the LIF read still fails, the residual is THIS read architecture (population collapse), and the next lever is a per-neuron matched-filter opponent read",
+    "each opponent channel is individually rectified but the readout membrane sums their NET drive with unconstrained current subtraction (current-based LIF, not conductance-based E/I) -- unchanged from iteration 4/5",
+    "LDA_SHRINK/LOGIT_* are host-chosen regularizer knobs (a sensitivity sweep over shrink is reported so a NO-GO is not a single-lam artifact); TAU_MEM_STEPS/CALIB_TARGET_FRAC/K_FOLDS/R_REPEATS/K_SHUF unchanged from iteration 4/5",
+    "the readout is trained/tested on NEURON IDENTITY folds, not independent TRIALS (this pool family has no independent trials) -- unchanged, inherited constraint",
+    "same host-curated training schedule / topology as the parent crossedge runner (declared there, unchanged)"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "elapsed_s": 120.0,
+      "cue_concept": 1,
+      "assert_concept": 5,
+      "final_weight_trained_block": 3.9776554107666016,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.305,
+          "real_margin_std": 0.2057000243072421,
+          "real_margin_all": [
+            0.375,
+            0.35,
+            0.025,
+            0.575,
+            0.2
+          ],
+          "null_margin_mean": 0.1875,
+          "null_margin_std": 0.1838012370383891,
+          "z": 0.639277525512294,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": -0.05499999999999999,
+          "real_margin_std": 0.3456877203488721,
+          "real_margin_all": [
+            0.4,
+            -0.15,
+            -0.3,
+            0.2,
+            -0.425
+          ],
+          "null_margin_mean": -0.0775,
+          "null_margin_std": 0.28108108962960926,
+          "z": 0.08004807448857222,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.275,
+          "real_margin_std": 0.3072051431861127,
+          "real_margin_all": [
+            0.475,
+            0.0,
+            0.0,
+            0.2,
+            0.7
+          ],
+          "null_margin_mean": 0.2225,
+          "null_margin_std": 0.16817519061039324,
+          "z": 0.3121744640779109,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.305,
+          "real_margin_std": 0.368018341934203,
+          "real_margin_all": [
+            0.3,
+            0.325,
+            0.9,
+            -0.025,
+            0.025
+          ],
+          "null_margin_mean": -0.08250000000000002,
+          "null_margin_std": 0.19703392708123296,
+          "z": 1.9666663794415562,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": -0.29500000000000004,
+          "real_margin_std": 0.2769250801209598,
+          "real_margin_all": [
+            -0.125,
+            0.05,
+            -0.65,
+            -0.475,
+            -0.275
+          ],
+          "null_margin_mean": 0.042499999999999996,
+          "null_margin_std": 0.26095724594371067,
+          "z": -1.2933153045031747,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.15999999999999998,
+          "real_margin_std": 0.3243262246565948,
+          "real_margin_all": [
+            0.6,
+            0.075,
+            0.25,
+            0.175,
+            -0.3
+          ],
+          "null_margin_mean": -0.046250000000000006,
+          "null_margin_std": 0.23845376358619516,
+          "z": 0.8649475558621061,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": -0.24499999999999997,
+          "real_margin_std": 0.15350081433008753,
+          "real_margin_all": [
+            -0.35,
+            -0.075,
+            -0.275,
+            -0.1,
+            -0.425
+          ],
+          "null_margin_mean": -0.010000000000000005,
+          "null_margin_std": 0.35922064763068745,
+          "z": -0.6541940212790942,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": -0.04500000000000002,
+          "real_margin_std": 0.297069015550259,
+          "real_margin_all": [
+            0.125,
+            -0.4,
+            -0.25,
+            -0.05,
+            0.35
+          ],
+          "null_margin_mean": -0.028749999999999977,
+          "null_margin_std": 0.3102709978474674,
+          "z": -0.05237357056487992,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 0.6684999272143051,
+          "real": 0.12000000000000002,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": 0.08004807448857222,
+          "real": -0.05499999999999999,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": -0.7640258571590218,
+          "real": -0.13999999999999999,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 0.5666666666666667,
+          "acc_std": 0.051727526148572484
+        },
+        "lda": {
+          "acc_mean": 0.6519047619047619,
+          "acc_std": 0.03698991711607323
+        },
+        "logistic": {
+          "acc_mean": 0.7309523809523808,
+          "acc_std": 0.06811355065119513
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 6.545454545454546,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 0.09836065573770482,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.542372881355932,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 0.8163265306122448,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 110.9,
+      "cue_concept": 6,
+      "assert_concept": 7,
+      "final_weight_trained_block": 6.112188816070557,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.305,
+          "real_margin_std": 0.12298373876248843,
+          "real_margin_all": [
+            0.1,
+            0.4,
+            0.4,
+            0.3,
+            0.325
+          ],
+          "null_margin_mean": 0.16,
+          "null_margin_std": 0.16689896092515,
+          "z": 0.868789111665164,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.08,
+          "real_margin_std": 0.21894634045811318,
+          "real_margin_all": [
+            0.4,
+            -0.125,
+            0.1,
+            0.15,
+            -0.125
+          ],
+          "null_margin_mean": -0.06124999999999999,
+          "null_margin_std": 0.21297933554319548,
+          "z": 0.6632098820279788,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.44000000000000006,
+          "real_margin_std": 0.260768096208106,
+          "real_margin_all": [
+            0.4,
+            0.6,
+            0.8,
+            0.2,
+            0.2
+          ],
+          "null_margin_mean": 0.26875,
+          "null_margin_std": 0.22344123800700996,
+          "z": 0.766420744565636,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.315,
+          "real_margin_std": 0.26255951706232245,
+          "real_margin_all": [
+            0.175,
+            0.225,
+            0.0,
+            0.575,
+            0.6
+          ],
+          "null_margin_mean": -0.05125,
+          "null_margin_std": 0.2806799779107872,
+          "z": 1.3048668548649054,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": -0.004999999999999996,
+          "real_margin_std": 0.17712989583918354,
+          "real_margin_all": [
+            0.275,
+            0.05,
+            -0.15,
+            -0.15,
+            -0.05
+          ],
+          "null_margin_mean": 0.053750000000000006,
+          "null_margin_std": 0.2455224022365373,
+          "z": -0.23928570046899433,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.355,
+          "real_margin_std": 0.16714514650446777,
+          "real_margin_all": [
+            0.6,
+            0.175,
+            0.4,
+            0.375,
+            0.225
+          ],
+          "null_margin_mean": 0.019999999999999997,
+          "null_margin_std": 0.29598186288672274,
+          "z": 1.1318261083051908,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.06500000000000002,
+          "real_margin_std": 0.08944271909999157,
+          "real_margin_all": [
+            0.025,
+            0.025,
+            0.225,
+            0.025,
+            0.025
+          ],
+          "null_margin_mean": -0.12374999999999996,
+          "null_margin_std": 0.2155890034789637,
+          "z": 0.8755084765648422,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.5249999999999999,
+          "real_margin_std": 0.15103807466993213,
+          "real_margin_all": [
+            0.75,
+            0.525,
+            0.575,
+            0.375,
+            0.4
+          ],
+          "null_margin_mean": 0.04,
+          "null_margin_std": 0.22542357790099113,
+          "z": 2.1515051997489723,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 0.6335862436268187,
+          "real": 0.09,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": 0.6632098820279788,
+          "real": 0.08,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": -0.03905667329424714,
+          "real": 0.005000000000000002,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 0.6919047619047618,
+          "acc_std": 0.04931733515190441
+        },
+        "lda": {
+          "acc_mean": 0.6833333333333333,
+          "acc_std": 0.03691628084440823
+        },
+        "logistic": {
+          "acc_mean": 0.8014285714285714,
+          "acc_std": 0.02122121900491157
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -2.9374999999999996,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.44262295081967235,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 72.00000000000006,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -7.076923076923074,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 115.3,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.177545547485352,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.034999999999999996,
+          "real_margin_std": 0.07826237921249264,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.175,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.24000000000000007,
+          "null_margin_std": 0.24700841664756457,
+          "z": -0.8299312338514248,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.034999999999999996,
+          "real_margin_std": 0.16163229875244614,
+          "real_margin_all": [
+            -0.2,
+            0.175,
+            0.2,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.08875,
+          "null_margin_std": 0.2837107264729155,
+          "z": -0.18945353483182897,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.12000000000000002,
+          "real_margin_std": 0.1788854381999832,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.4,
+            0.2,
+            0.0
+          ],
+          "null_margin_mean": 0.24000000000000005,
+          "null_margin_std": 0.2326053807586891,
+          "z": -0.5158952024609059,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.12,
+          "real_margin_std": 0.12796483892069727,
+          "real_margin_all": [
+            0.175,
+            0.275,
+            0.175,
+            -0.025,
+            0.0
+          ],
+          "null_margin_mean": 0.0325,
+          "null_margin_std": 0.26083116136083534,
+          "z": 0.33546605222890524,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": -0.034999999999999996,
+          "real_margin_std": 0.07826237921249264,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            -0.175,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": -0.0925,
+          "null_margin_std": 0.30929674050046263,
+          "z": 0.1859056125420565,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.21000000000000002,
+          "real_margin_std": 0.10694624818103718,
+          "real_margin_all": [
+            0.2,
+            0.075,
+            0.2,
+            0.2,
+            0.375
+          ],
+          "null_margin_mean": 0.036250000000000004,
+          "null_margin_std": 0.19842720393927316,
+          "z": 0.8756359841323704,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": -0.03,
+          "real_margin_std": 0.08177713616898064,
+          "real_margin_all": [
+            0.0,
+            -0.175,
+            0.0,
+            0.025,
+            0.0
+          ],
+          "null_margin_mean": -0.08,
+          "null_margin_std": 0.25438263760679397,
+          "z": 0.19655429501948296,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.13,
+          "real_margin_std": 0.15751984002023364,
+          "real_margin_all": [
+            -0.05,
+            0.2,
+            -0.025,
+            0.225,
+            0.3
+          ],
+          "null_margin_mean": -0.03625,
+          "null_margin_std": 0.2663687343356554,
+          "z": 0.6241348122730718,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 0.3004678597562812,
+          "real": 0.045000000000000005,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": -0.18945353483182897,
+          "real": 0.034999999999999996,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": 0.27132312131914166,
+          "real": 0.085,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 1.0,
+          "acc_std": 0.0
+        },
+        "lda": {
+          "acc_mean": 0.830952380952381,
+          "acc_std": 0.018070158058105006
+        },
+        "logistic": {
+          "acc_mean": 0.9752380952380953,
+          "acc_std": 0.01583646585553893
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -2.4285714285714284,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -2.4285714285714293,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 7.000000000000002,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 5.333333333333334,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    },
+    {
+      "seed": 100,
+      "elapsed_s": 126.2,
+      "cue_concept": 3,
+      "assert_concept": 0,
+      "final_weight_trained_block": 5.6903815269470215,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.12000000000000002,
+          "real_margin_std": 0.1788854381999832,
+          "real_margin_all": [
+            0.4,
+            0.0,
+            0.2,
+            0.0,
+            0.0
+          ],
+          "null_margin_mean": 0.18500000000000003,
+          "null_margin_std": 0.16311119875071342,
+          "z": -0.3985011482831476,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.06999999999999999,
+          "real_margin_std": 0.10368220676663861,
+          "real_margin_all": [
+            0.0,
+            0.025,
+            0.225,
+            -0.025,
+            0.125
+          ],
+          "null_margin_mean": -0.023750000000000014,
+          "null_margin_std": 0.274158401197863,
+          "z": 0.34195559789663216,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.21500000000000002,
+          "real_margin_std": 0.12574776339959293,
+          "real_margin_all": [
+            0.025,
+            0.375,
+            0.25,
+            0.2,
+            0.225
+          ],
+          "null_margin_mean": 0.2425,
+          "null_margin_std": 0.1799305421544658,
+          "z": -0.15283675395360014,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.29000000000000004,
+          "real_margin_std": 0.6487006243252739,
+          "real_margin_all": [
+            0.0,
+            1.05,
+            0.8,
+            -0.575,
+            0.175
+          ],
+          "null_margin_mean": 0.05875000000000001,
+          "null_margin_std": 0.3840808405860193,
+          "z": 0.6020867889352812,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.16,
+          "real_margin_std": 0.22402566817219852,
+          "real_margin_all": [
+            0.2,
+            -0.225,
+            0.2,
+            0.275,
+            0.35
+          ],
+          "null_margin_mean": 0.11499999999999999,
+          "null_margin_std": 0.2207046132634963,
+          "z": 0.2038924304054991,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.29500000000000004,
+          "real_margin_std": 0.30279943857279523,
+          "real_margin_all": [
+            0.625,
+            0.0,
+            0.025,
+            0.225,
+            0.6
+          ],
+          "null_margin_mean": 0.03125,
+          "null_margin_std": 0.34334605452501527,
+          "z": 0.7681754210482239,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.39,
+          "real_margin_std": 0.29025850547399984,
+          "real_margin_all": [
+            0.775,
+            0.625,
+            0.125,
+            0.225,
+            0.2
+          ],
+          "null_margin_mean": -0.12375,
+          "null_margin_std": 0.32651217032205865,
+          "z": 1.5734482408213373,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.05500000000000001,
+          "real_margin_std": 0.2960152023123137,
+          "real_margin_all": [
+            -0.4,
+            0.075,
+            0.2,
+            0.4,
+            0.0
+          ],
+          "null_margin_mean": 0.026250000000000006,
+          "null_margin_std": 0.20750317055282239,
+          "z": 0.13855209982288608,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 0.8393362819107396,
+          "real": 0.24000000000000005,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": 0.34195559789663216,
+          "real": 0.06999999999999999,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": 1.3942972221635799,
+          "real": 0.375,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 0.518095238095238,
+          "acc_std": 0.05085660780884948
+        },
+        "lda": {
+          "acc_mean": 0.5804761904761906,
+          "acc_std": 0.03686710828732555
+        },
+        "logistic": {
+          "acc_mean": 0.560952380952381,
+          "acc_std": 0.04598629392574426
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -3.1428571428571437,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.7916666666666665,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -0.8437500000000002,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 0.858974358974359,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    },
+    {
+      "seed": 101,
+      "elapsed_s": 122.1,
+      "cue_concept": 4,
+      "assert_concept": 0,
+      "final_weight_trained_block": 6.75588846206665,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.32,
+          "real_margin_std": 0.17888543819998318,
+          "real_margin_all": [
+            0.4,
+            0.4,
+            0.4,
+            0.0,
+            0.4
+          ],
+          "null_margin_mean": 0.20249999999999999,
+          "null_margin_std": 0.1996543065031735,
+          "z": 0.588517232900921,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.11499999999999999,
+          "real_margin_std": 0.10093314619093174,
+          "real_margin_all": [
+            -0.025,
+            0.225,
+            0.175,
+            0.05,
+            0.15
+          ],
+          "null_margin_mean": 0.012500000000000006,
+          "null_margin_std": 0.2177184323604083,
+          "z": 0.4707915581089744,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.31999999999999995,
+          "real_margin_std": 0.22803508501982758,
+          "real_margin_all": [
+            0.4,
+            0.6,
+            0.4,
+            0.2,
+            0.0
+          ],
+          "null_margin_mean": 0.2900000000000001,
+          "null_margin_std": 0.2381949665825522,
+          "z": 0.12594724578112626,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.1,
+          "real_margin_std": 0.22008521077073764,
+          "real_margin_all": [
+            0.2,
+            -0.2,
+            0.15,
+            0.375,
+            -0.025
+          ],
+          "null_margin_mean": -0.008749999999999997,
+          "null_margin_std": 0.3399182370728832,
+          "z": 0.31992987765667447,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.31500000000000006,
+          "real_margin_std": 0.0945383520059452,
+          "real_margin_all": [
+            0.225,
+            0.325,
+            0.45,
+            0.225,
+            0.35
+          ],
+          "null_margin_mean": 0.05500000000000001,
+          "null_margin_std": 0.25810544560824666,
+          "z": 1.0073402340942041,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.1,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": -0.029999999999999992,
+          "real_margin_std": 0.1643167672515498,
+          "real_margin_all": [
+            -0.175,
+            -0.175,
+            0.0,
+            0.225,
+            -0.025
+          ],
+          "null_margin_mean": -0.013749999999999998,
+          "null_margin_std": 0.23048504346954468,
+          "z": -0.07050349018480759,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.19499999999999998,
+          "real_margin_std": 0.14832396974191325,
+          "real_margin_all": [
+            0.025,
+            0.425,
+            0.125,
+            0.225,
+            0.175
+          ],
+          "null_margin_mean": -0.01750000000000001,
+          "null_margin_std": 0.24869395692402,
+          "z": 0.8544638664658916,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": -0.03,
+          "real_margin_std": 0.216794833886788,
+          "real_margin_all": [
+            0.025,
+            0.225,
+            -0.375,
+            0.0,
+            -0.025
+          ],
+          "null_margin_mean": 0.02499999999999999,
+          "null_margin_std": 0.2429262396175778,
+          "z": -0.22640617204046273,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 0.4950717374073349,
+          "real": 0.11000000000000001,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": 0.4707915581089744,
+          "real": 0.11499999999999999,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": 0.1515422758792381,
+          "real": -0.010000000000000004,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 0.6757142857142858,
+          "acc_std": 0.02822809587672176
+        },
+        "lda": {
+          "acc_mean": 0.7119047619047619,
+          "acc_std": 0.032331895612891376
+        },
+        "logistic": {
+          "acc_mean": 0.7995238095238095,
+          "acc_std": 0.031993480061411124
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 0.13043478260869554,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.734723475976807e-16,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 1.0952380952380951,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 1.153846153846154,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    },
+    {
+      "seed": 102,
+      "elapsed_s": 123.8,
+      "cue_concept": 0,
+      "assert_concept": 4,
+      "final_weight_trained_block": 7.735973358154297,
+      "final_weight_other_blocks": 0.05000000819563866,
+      "emergence_grew_from_near_zero": true,
+      "emergence_other_blocks_stayed_near_seed": true,
+      "n_gen": 32,
+      "n_perc": 32,
+      "combos": {
+        "lda__intact__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.16,
+          "real_margin_std": 0.16733200530681513,
+          "real_margin_all": [
+            0.4,
+            0.0,
+            0.2,
+            0.2,
+            0.0
+          ],
+          "null_margin_mean": 0.2,
+          "null_margin_std": 0.2247805947796066,
+          "z": -0.17795130420052185,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.09,
+          "real_margin_std": 0.12323757543866237,
+          "real_margin_all": [
+            0.0,
+            0.225,
+            0.0,
+            0.0,
+            0.225
+          ],
+          "null_margin_mean": -0.07875,
+          "null_margin_std": 0.2750926877292547,
+          "z": 0.6134296094634227,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__raw_held": {
+          "feat_kind": "raw_held",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.41,
+          "real_margin_std": 0.013693063937629134,
+          "real_margin_all": [
+            0.4,
+            0.4,
+            0.425,
+            0.4,
+            0.425
+          ],
+          "null_margin_mean": 0.29000000000000004,
+          "null_margin_std": 0.2712543960351999,
+          "z": 0.44238914374839433,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "lda__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "lda",
+          "shrink": 0.3,
+          "real_margin_mean": 0.04,
+          "real_margin_std": 0.08944271909999159,
+          "real_margin_all": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.2
+          ],
+          "null_margin_mean": -0.085,
+          "null_margin_std": 0.24634165406263678,
+          "z": 0.507425349868831,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.0,
+          "shuffle_collapses": true
+        },
+        "meandiff__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": 0.25,
+          "real_margin_std": 0.257390753524675,
+          "real_margin_all": [
+            -0.025,
+            0.4,
+            0.525,
+            0.375,
+            -0.025
+          ],
+          "null_margin_mean": 0.027499999999999997,
+          "null_margin_std": 0.25801621736056174,
+          "z": 0.8623488952598277,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "meandiff__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "meandiff",
+          "shrink": null,
+          "real_margin_mean": -0.004999999999999993,
+          "real_margin_std": 0.36116132129562273,
+          "real_margin_all": [
+            -0.025,
+            0.225,
+            -0.625,
+            0.2,
+            0.2
+          ],
+          "null_margin_mean": -0.042499999999999996,
+          "null_margin_std": 0.3591015836339643,
+          "z": 0.10442727548153648,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__intact__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": 0.11000000000000001,
+          "real_margin_std": 0.18758331482304072,
+          "real_margin_all": [
+            -0.025,
+            -0.025,
+            0.0,
+            0.2,
+            0.4
+          ],
+          "null_margin_mean": 0.022499999999999992,
+          "null_margin_std": 0.26319144522971344,
+          "z": 0.3324576143560823,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        },
+        "logistic__lesion__delta_held_base": {
+          "feat_kind": "delta_held_base",
+          "method": "logistic",
+          "shrink": null,
+          "real_margin_mean": -0.059999999999999984,
+          "real_margin_std": 0.1833712082089225,
+          "real_margin_all": [
+            -0.175,
+            -0.175,
+            0.225,
+            -0.2,
+            0.025
+          ],
+          "null_margin_mean": -0.15625,
+          "null_margin_std": 0.25953843139007576,
+          "z": 0.37085066548522116,
+          "n_repeats": 5,
+          "n_shuf": 20,
+          "frac_null_clears_floor": 0.05,
+          "shuffle_collapses": true
+        }
+      },
+      "lam_sensitivity_lda_intact_delta": {
+        "lam_0.1": {
+          "z": 1.090286539711446,
+          "real": 0.335,
+          "shuffle_collapses": true
+        },
+        "lam_0.3": {
+          "z": 0.6134296094634227,
+          "real": 0.09,
+          "shuffle_collapses": true
+        },
+        "lam_1.0": {
+          "z": 0.7816744776120597,
+          "real": 0.2,
+          "shuffle_collapses": true
+        }
+      },
+      "direction_holdout_acc": {
+        "meandiff": {
+          "acc_mean": 0.6295238095238096,
+          "acc_std": 0.04478722688010478
+        },
+        "lda": {
+          "acc_mean": 0.7509523809523809,
+          "acc_std": 0.026581496641814948
+        },
+        "logistic": {
+          "acc_mean": 0.6642857142857144,
+          "acc_std": 0.03573015520438872
+        }
+      },
+      "PRIMARY_lda_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 0.5555555555555556,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "SECONDARY_lda_raw_held_not_gating": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": -1.5624999999999998,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_meandiff_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": true,
+        "frac_attributable": 1.02,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "DIAG_logistic_delta_held_base": {
+        "floor_ok": false,
+        "lesion_ok": false,
+        "frac_attributable": 1.5454545454545452,
+        "shuffle_collapses_intact": true,
+        "PASS": false
+      },
+      "n_combos_shuffle_collapse": 8,
+      "n_combos": 8,
+      "PASS": false
+    }
+  ]
+}
