@@ -1,0 +1,104 @@
+{
+  "probe": "vision_lindiscrim_opsweep",
+  "board": "135 (#75a)",
+  "overall_verdict": "VISION-OPSWEEP-NULL-NO-LEVER-FOUND",
+  "grid": {
+    "norms": [
+      "z"
+    ],
+    "gains": [
+      1.0,
+      2.0
+    ],
+    "ridges": [
+      0.5
+    ],
+    "n_cells": 2
+  },
+  "explore_seeds": [
+    42
+  ],
+  "decisive_seeds": [
+    42,
+    43
+  ],
+  "holdout_seeds_from_exploration": [
+    43
+  ],
+  "exploration_ranked": [
+    {
+      "s2_norm": "z",
+      "s2_gain": 2.0,
+      "ridge": 0.5,
+      "learned_spkwta_held_mean": 0.4896,
+      "rate_lin_ceiling_held_mean": 0.5104,
+      "a_v1_direct_held_mean": 0.4167,
+      "learned_minus_v1_mean": 0.0729,
+      "n_capability_go": 0,
+      "n_seeds": 1
+    },
+    {
+      "s2_norm": "z",
+      "s2_gain": 1.0,
+      "ridge": 0.5,
+      "learned_spkwta_held_mean": 0.4271,
+      "rate_lin_ceiling_held_mean": 0.5104,
+      "a_v1_direct_held_mean": 0.4167,
+      "learned_minus_v1_mean": 0.0104,
+      "n_capability_go": 0,
+      "n_seeds": 1
+    }
+  ],
+  "chosen_op_point": {
+    "s2_norm": "z",
+    "s2_gain": 2.0,
+    "ridge": 0.5
+  },
+  "decisive": {
+    "chosen": {
+      "learned_spkwta_held_mean": 0.4323,
+      "rate_lin_ceiling_held_mean": 0.4791,
+      "a_v1_direct_held_mean": 0.448,
+      "n_capability_go": 0,
+      "n_learning_load_bearing": 2,
+      "n_seeds": 2,
+      "per_seed_capability_go": [
+        false,
+        false
+      ],
+      "per_seed_learned_spkwta_held": [
+        0.4896,
+        0.375
+      ],
+      "holdout_from_exploration_learned_mean": 0.375
+    },
+    "baseline_75_z_2p0_0p5": {
+      "learned_spkwta_held_mean": 0.4323,
+      "rate_lin_ceiling_held_mean": 0.4791,
+      "a_v1_direct_held_mean": 0.448,
+      "n_capability_go": 0,
+      "n_seeds": 2,
+      "per_seed_capability_go": [
+        false,
+        false
+      ],
+      "per_seed_learned_spkwta_held": [
+        0.4896,
+        0.375
+      ],
+      "holdout_from_exploration_learned_mean": 0.375,
+      "published_reference_75": {
+        "LEARNED_spkwta_held": 0.4375,
+        "RATE_lin_ceiling_held": 0.4653,
+        "A_v1_direct_held": 0.4184
+      },
+      "reproduces_published_75": true
+    }
+  },
+  "verdicts": {
+    "task_go_capability_5of6": false,
+    "lifts_baseline_by_ge_0p02": false,
+    "chosen_op_point_is_baseline": true
+  },
+  "elapsed_seconds": 17.9
+}
