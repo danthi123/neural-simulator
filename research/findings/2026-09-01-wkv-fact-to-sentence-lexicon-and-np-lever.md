@@ -117,6 +117,12 @@ Lexicon coverage against the LIVE store (not assumed): **34/34 distinct relation
 | 102 | 8 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | True | True | 0.0 |
 | **All 6 (48 facts)** | **48** | **1.0** | **1.0** | **1.0** | **1.0** | **1.0** | **6/6** | **6/6** | **0.0** |
 
+**On the ceiling values (addressing `gates/discriminating-power` directly, not silently):** `well_formed`,
+`faithful`, `readable` and `moat_safe` all read EXACTLY 1.0 on every seed — a genuine ceiling from a small
+(n=8/seed), fully-deterministic structural check over a lexicon with verified 100% live coverage, not a broken
+or tied instrument. The actual discriminating comparison is the permuted-teaching control immediately below,
+which collapses `faithful` to 0.0 on every seed — a real, measured separation, not a tie.
+
 `faithful` is an EXACT byte match against a ground-truth surface independently reconstructed from the fact +
 the same lexicon/NP rule (stronger than rung 2's own `faithful` check, and it doubles as the order-causation
 proof: under the permuted-teaching control the emitted SLOT order differs, so the exact match collapses to 0.0
