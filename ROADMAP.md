@@ -141,7 +141,27 @@ self-test. Left default-OFF; logged; a follow-up fix task is queued. The wander'
 each for its own already-declared reason (staged verify not landed / matches an explicitly excluded category).
 Finding: `2026-08-27-production-default-flips-session-verification-no-flips-landed`.
 
-## 2026-08-27 (latest) — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
+## 2026-09-01 (latest) — the FIRST host scaffold in the default chat GENERATE path is retired: the "does this guess make sense" check now runs on spikes
+
+When the brain volunteers a NEW guess on an open prompt, a "does this pairing make sense?" check decides which
+guesses pass. Until now that check was a host formula — a table lookup comparing two words' co-occurrence
+against a threshold, the last hand-coded shortcut in the default generate path. It is now computed by the brain
+itself: the word-association graph lives as SYNAPSES, and "are these two related?" is answered by driving one
+word's neuron population and reading whether the other's population FIRES above the brain's own threshold. An
+earlier version of this spiking read (landed QUALIFIED, default-off, same day) was close but wobbled on two of
+six random seeds and volunteered too few guesses there. Three fixes to how the population is read — a redundant
+readout population (not a 12-neuron patch), a clean feed-forward path with no internal cross-talk, and an
+excitability kept in its sensitive (non-saturating) range — make the spiking answer match the old formula
+EXACTLY on ALL SIX seeds: same guesses, same count, now decided by neurons crossing learned synapses. It is ON
+by default (turning it off reverts byte-for-byte to the old behaviour, so the flip carries zero risk), it is
+provenance-clean (the host formula is never called), and lesioning the learned synapses collapses it — so the
+brain, not a formula, is doing the work. This is the first genuine host-scaffold RETIREMENT in the live generate
+path (earlier default-on flips each still leaned on some host trigger/label/template). The one remaining
+shortcut here is that the synapse strengths are still SET from the counts rather than LEARNED through use — the
+named next rung. Finding:
+`2026-09-01-plausibility-ensemble-read-host-parity-generation-all6-default-on-GO`.
+
+## 2026-08-27 — the one-brain merge's "did merging break anything" check now passes with all seven first-wave regions merged AT ONCE, not just one at a time
 
 A follow-up to the "reads back cleanly" check above closed its last honest gap. That earlier check proved each
 of the seven merged regions reads back correctly ALONE against the shared pool; a stricter version — all seven

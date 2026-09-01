@@ -56,7 +56,10 @@ is the FIRST that converts one to load-bearing. Live product = ~one integrated s
 #191 mouth rung-1 learned-head A/B GO 6/6; #110 batch sentence rendering 2-3×; seed-44 recall root-caused
 (phase-quantization) + decode-escalation fix; read-power characterization (estimator NO-GO, residual = read-architecture,
 mouth-read reframed); #94 confidence-forthcomingness proven LOAD-BEARING (mechanism-ready to flip); #177 declarative
-cross-edge functional gate + new reciprocal edge GO 6/6; brain-native spiking plausibility (QUALIFIED, default-off).
+cross-edge functional gate + new reciprocal edge GO 6/6; brain-native spiking plausibility RETIRED-HOST-SCAFFOLD
+default-ON (ENSEMBLE read K=8 + density-0 + non-saturating gain: host P>=tau plausibility gate now computed by
+spikes across learned synapses, GO 6/6 — parity min 1.00, agreement 1.00, generation >= host, provenance-clean,
+lesion-load-bearing, moat-safe, byte-identical-off; the QUALIFIED default-off read is superseded).
 #66 latency wall stays CLOSED (codebook-cache).
 
 **NEXT ACTIONS (ordered) — 2026-09-01 (owner: work ALL important frontiers concurrently; bound is dev-capacity not
