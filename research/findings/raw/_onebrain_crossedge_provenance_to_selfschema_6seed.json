@@ -1,0 +1,649 @@
+{
+  "probe": "onebrain_crossedge_provenance_to_selfschema",
+  "verdict": "GO \u2014 the RECIPROCAL cross-edge source_provenance.prov_generated -> self_schema.author (completing R4's author->prov_generated pair in its other direction), added PURELY BY DECLARATION (a CrossEdge + train_fn + read_fn through the generic onebrain_crossedge_gate.run_gate \u2014 no bespoke F-gate): 6/6 seeds GROW from the substrate's own standard Hebbian rule, are LOAD-BEARING (recalling a genuinely-generated memory biases the self-schema's authorship read; the bias VANISHES on lesion), and are BYTE-IDENTICAL-OFF. numpy CPU; NO sim/ edit; additive.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_seeds_go",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f20f355f600>",
+      "note": "emergence + interaction + byte-off all PASS on every seed"
+    },
+    {
+      "kind": "require",
+      "name": "lesion_removes_bias",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f20f355f600>",
+      "note": "the author-rate bias must VANISH under lesion or it is a confound, not the reciprocal edge"
+    },
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f20f355f600>",
+      "note": "the no-edge pool's base connectivity is byte-identical (integration added ONLY the edge)"
+    }
+  ],
+  "gate_spec": {
+    "name": "RECIP_provenance_to_selfschema",
+    "correct_edges": [
+      "provgen_to_author"
+    ],
+    "conditions": [
+      "perceived",
+      "generated"
+    ],
+    "control": "perceived",
+    "credit_signal": "rate_hebbian",
+    "cross_edges": [
+      {
+        "key": "provgen_to_author",
+        "src": "prov_generated",
+        "tgt": "author"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "GO": true,
+      "elapsed_s": 16.9,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.204288959503174
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0009166666666666666,
+          "generated": 0.02300000000000001
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.022083333333333344,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78233,
+        "n_without": 76313,
+        "n_with_base": 76313,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.9235
+        },
+        {
+          "ep": 10,
+          "w": 1.6085
+        },
+        {
+          "ep": 15,
+          "w": 2.1489
+        },
+        {
+          "ep": 20,
+          "w": 2.6093
+        },
+        {
+          "ep": 25,
+          "w": 2.9962
+        },
+        {
+          "ep": 30,
+          "w": 3.292
+        },
+        {
+          "ep": 35,
+          "w": 3.5391
+        },
+        {
+          "ep": 40,
+          "w": 3.7428
+        },
+        {
+          "ep": 45,
+          "w": 3.8995
+        },
+        {
+          "ep": 50,
+          "w": 4.0254
+        },
+        {
+          "ep": 55,
+          "w": 4.1257
+        },
+        {
+          "ep": 60,
+          "w": 4.2043
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "elapsed_s": 16.9,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.670041561126709
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0016666666666666672,
+          "generated": 0.025416666666666664
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.023749999999999997,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78416,
+        "n_without": 76496,
+        "n_with_base": 76496,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.9997
+        },
+        {
+          "ep": 10,
+          "w": 1.7754
+        },
+        {
+          "ep": 15,
+          "w": 2.3931
+        },
+        {
+          "ep": 20,
+          "w": 2.8951
+        },
+        {
+          "ep": 25,
+          "w": 3.2853
+        },
+        {
+          "ep": 30,
+          "w": 3.6124
+        },
+        {
+          "ep": 35,
+          "w": 3.8819
+        },
+        {
+          "ep": 40,
+          "w": 4.1209
+        },
+        {
+          "ep": 45,
+          "w": 4.305
+        },
+        {
+          "ep": 50,
+          "w": 4.4523
+        },
+        {
+          "ep": 55,
+          "w": 4.5681
+        },
+        {
+          "ep": 60,
+          "w": 4.67
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "elapsed_s": 17.5,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.439690113067627
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.001,
+          "generated": 0.02308333333333333
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.02208333333333333,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78297,
+        "n_without": 76377,
+        "n_with_base": 76377,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.969
+        },
+        {
+          "ep": 10,
+          "w": 1.731
+        },
+        {
+          "ep": 15,
+          "w": 2.3289
+        },
+        {
+          "ep": 20,
+          "w": 2.8071
+        },
+        {
+          "ep": 25,
+          "w": 3.1867
+        },
+        {
+          "ep": 30,
+          "w": 3.5103
+        },
+        {
+          "ep": 35,
+          "w": 3.75
+        },
+        {
+          "ep": 40,
+          "w": 3.9492
+        },
+        {
+          "ep": 45,
+          "w": 4.1134
+        },
+        {
+          "ep": 50,
+          "w": 4.2457
+        },
+        {
+          "ep": 55,
+          "w": 4.3525
+        },
+        {
+          "ep": 60,
+          "w": 4.4397
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "elapsed_s": 16.2,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.0210280418396
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0005416666666666666,
+          "generated": 0.021708333333333336
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.02116666666666667,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78498,
+        "n_without": 76578,
+        "n_with_base": 76578,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.8513
+        },
+        {
+          "ep": 10,
+          "w": 1.4789
+        },
+        {
+          "ep": 15,
+          "w": 2.0029
+        },
+        {
+          "ep": 20,
+          "w": 2.4416
+        },
+        {
+          "ep": 25,
+          "w": 2.7991
+        },
+        {
+          "ep": 30,
+          "w": 3.0959
+        },
+        {
+          "ep": 35,
+          "w": 3.3336
+        },
+        {
+          "ep": 40,
+          "w": 3.5218
+        },
+        {
+          "ep": 45,
+          "w": 3.674
+        },
+        {
+          "ep": 50,
+          "w": 3.8093
+        },
+        {
+          "ep": 55,
+          "w": 3.9284
+        },
+        {
+          "ep": 60,
+          "w": 4.021
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "elapsed_s": 15.9,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.4341816902160645
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0012916666666666664,
+          "generated": 0.023333333333333334
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.022041666666666668,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78285,
+        "n_without": 76365,
+        "n_with_base": 76365,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.955
+        },
+        {
+          "ep": 10,
+          "w": 1.697
+        },
+        {
+          "ep": 15,
+          "w": 2.2776
+        },
+        {
+          "ep": 20,
+          "w": 2.7352
+        },
+        {
+          "ep": 25,
+          "w": 3.1245
+        },
+        {
+          "ep": 30,
+          "w": 3.4407
+        },
+        {
+          "ep": 35,
+          "w": 3.7004
+        },
+        {
+          "ep": 40,
+          "w": 3.9254
+        },
+        {
+          "ep": 45,
+          "w": 4.0975
+        },
+        {
+          "ep": 50,
+          "w": 4.2318
+        },
+        {
+          "ep": 55,
+          "w": 4.3437
+        },
+        {
+          "ep": 60,
+          "w": 4.4342
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "elapsed_s": 18.4,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 4.340327739715576
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0015833333333333342,
+          "generated": 0.024791666666666663
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.02320833333333333,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78421,
+        "n_without": 76501,
+        "n_with_base": 76501,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 1.1154
+        },
+        {
+          "ep": 10,
+          "w": 1.9447
+        },
+        {
+          "ep": 15,
+          "w": 2.5349
+        },
+        {
+          "ep": 20,
+          "w": 2.9992
+        },
+        {
+          "ep": 25,
+          "w": 3.3354
+        },
+        {
+          "ep": 30,
+          "w": 3.5804
+        },
+        {
+          "ep": 35,
+          "w": 3.7807
+        },
+        {
+          "ep": 40,
+          "w": 3.9441
+        },
+        {
+          "ep": 45,
+          "w": 4.0747
+        },
+        {
+          "ep": 50,
+          "w": 4.1806
+        },
+        {
+          "ep": 55,
+          "w": 4.2679
+        },
+        {
+          "ep": 60,
+          "w": 4.3403
+        }
+      ]
+    }
+  ]
+}
