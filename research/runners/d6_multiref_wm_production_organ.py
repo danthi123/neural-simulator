@@ -37,10 +37,28 @@ bumps die over the span, so a >=2-referent read-back collapses (the de-risk's k>
 host referent PARSE and the write MARKER are byte-identical with/without the lesion, so the discrimination is caused
 by the spiking hold, not the host bookkeeping.
 
+COMPETITIVE FREE-SLOT-WINS ALLOCATION (2026-09-01, additive, default-OFF `BRAIN_MULTIREF_COMPETITIVE`): closes the
+"register assignment is a role-by-position host MARKER" residual below for the REGISTER dimension (WHICH bank holds a
+referent). Before each write, `MultiSlotHold.probe_occupancy()` reads every register's CURRENT band-max firing rate
+(a genuine zero-input `cp_firing_states` read, external input asserted zero -- the same read-out-instrument class the
+organ's own `read()`/hold-query already uses); the referent is routed to `argmin(occupancy)` -- the register the
+substrate itself currently shows as free/least-active -- not to the loop index `r`. An already-occupied register
+(elevated sustained rate from an earlier write this call) is measurably avoided by the SAME instrument, so >=2
+referents introduced together land in DISTINCT registers by the brain's OWN occupancy read, regardless of which is
+mentioned first. `BRAIN_MULTIREF_COMPETITION_LESION=1` ablates ONLY the selection (every referent is routed to
+register 0 regardless of the probe), reproducing the already-validated SUPERPOSED-collide regime
+(`_multi_slot_binding_derisk.eval_superposed_single`) as a genuine within-register collision -- distinct from
+`BRAIN_MULTIREF_LESION` (recur=0, kills the HOLD itself), isolating which piece is load-bearing. See
+`research/runners/_d6_wm_competitive_slot_binding_verify.py`. HONEST RESIDUAL, UNCHANGED BY THIS: which TOKENS count
+as a referent (extraction) and the referent<->local-slot BIND remain host, as below; and because this substrate has
+no background OU noise (`ou_std_current_pA=0`), a probe over an all-baseline bank ties and breaks to the lowest free
+index -- a real (not formulaic) tie, but a deterministic one absent prior occupancy.
+
 HONEST RESIDUALS (declared; match the de-risk's named residuals + the task's named open rung):
   * The learned SPIKING WRITE-GATE is the open rung: the register assignment is today a role-by-position host MARKER
-    (referent 0 -> reg0, ...). `739a8867` established even a host position-ORACLE fails to induce role at 6 seeds ->
-    the residual is CREDIT ASSIGNMENT (gap#4). The learned, emergent, spiking multi-register role-gate is un-done.
+    (referent 0 -> reg0, ...) UNLESS `BRAIN_MULTIREF_COMPETITIVE=1` (above), which substitutes a genuine occupancy
+    READ for the position marker. `739a8867` established even a host position-ORACLE fails to induce role at 6 seeds
+    -> the residual is CREDIT ASSIGNMENT (gap#4). The learned, emergent, spiking multi-register role-gate is un-done.
   * The referent EXTRACTION (which tokens are the discourse referents) is a host parse, bounded by a small referent
     lexicon + a coordinated-NP pattern — the same vocab-ceiling class the comprehension organ declares.
   * The BIND (referent -> local slot) is the host-numpy RUNG6c binder; the register READ is a host argmax over the
@@ -105,6 +123,31 @@ def multiref_enabled() -> bool:
 def multiref_lesioned() -> bool:
     """`BRAIN_MULTIREF_LESION` in {1,true,yes,on} -> build the buffer with recur=0 (kill the slow-NMDA hold)."""
     v = os.environ.get("BRAIN_MULTIREF_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def multiref_competitive_enabled() -> bool:
+    """Default-OFF (additive; 2026-09-01). `BRAIN_MULTIREF_COMPETITIVE` in {1,true,yes,on} switches register
+    ALLOCATION from the role-by-position host MARKER (referent i -> register i) to the EMERGENT free-slot-wins
+    competitive read (`MultiSlotHold.probe_occupancy()` -> argmin): the brain's own current occupancy, not
+    sentence position, decides which register binds a new referent. Off -> byte-identical to the pre-existing
+    role-by-position path (the untouched default)."""
+    v = os.environ.get("BRAIN_MULTIREF_COMPETITIVE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def multiref_competition_lesioned() -> bool:
+    """`BRAIN_MULTIREF_COMPETITION_LESION` in {1,true,yes,on} -> ablate ONLY the competitive SELECTION (every
+    referent is routed to register 0 regardless of the occupancy probe), so >=2 referents collide within one
+    register's local competition -- the already-validated SUPERPOSED-collide regime, reproduced here as a
+    genuine collision rather than assumed. Distinct from `multiref_lesioned()` (recur=0, kills the HOLD's
+    recurrence): this lesions the ALLOCATION decision, isolating which piece is load-bearing. No effect unless
+    `multiref_competitive_enabled()` is also True."""
+    v = os.environ.get("BRAIN_MULTIREF_COMPETITION_LESION")
     if v is None:
         return False
     return v.strip().lower() in ("1", "true", "yes", "on")
@@ -189,14 +232,25 @@ class MultiReferentWMOrgan:
         self._ref_of_slot[s] = ref
         return s
 
-    def load(self, referents, lesion: bool = False):
-        """LOAD the ordered `referents` into registers 0..len-1 of the spiking buffer (role-by-position marker), holding
-        each across a short intervening span, then READ every register BACK off the held bumps. Returns the register ->
-        referent mapping RECOVERED FROM THE SPIKING BUFFER (== the input iff the hold carried it; degrades under lesion).
-        `hold_alive` is the min per-register bump amplitude read under external input ASSERTED zero."""
+    def load(self, referents, lesion: bool = False, competitive: bool | None = None,
+             competition_lesion: bool | None = None):
+        """LOAD the ordered `referents` into registers of the spiking buffer, holding each across a short intervening
+        span, then READ every register BACK off the held bumps. Returns the register -> referent mapping RECOVERED
+        FROM THE SPIKING BUFFER (== the input iff the hold carried it; degrades under lesion). `hold_alive` is the
+        min per-register bump amplitude read under external input ASSERTED zero.
+
+        `competitive` (default: read `BRAIN_MULTIREF_COMPETITIVE`): False/None -> the pre-existing role-by-position
+        MARKER (referent i -> register i). True -> EMERGENT free-slot-wins allocation: before each write, probe
+        every register's CURRENT occupancy (a genuine `cp_firing_states` read, zero input) and route the referent to
+        `argmin(occupancy)` -- the register the substrate itself shows as free, not the loop index. `competition_lesion`
+        (default: `BRAIN_MULTIREF_COMPETITION_LESION`) ablates ONLY that selection (always targets register 0),
+        independent of the HOLD lesion above."""
         self.ensure_built()
         refs = list(referents)[:min(R_MAX, _BINDER_K)]
         buf = self._lesion_buf() if lesion else self.buf
+        competitive = multiref_competitive_enabled() if competitive is None else bool(competitive)
+        competition_lesion = (multiref_competition_lesioned() if competition_lesion is None
+                               else bool(competition_lesion))
         # ONE-BRAIN MERGE: keep this buffer's whole-bridge reset+step protocol from leaving a footprint on a
         # co-resident organ's slice (only the buffer's own slice evolves; every other slice is restored at exit).
         import contextlib
@@ -205,20 +259,32 @@ class MultiReferentWMOrgan:
         with guard:
             buf.reset()
             locals_ = [self._local_slot(r) for r in refs]
-            # role-by-position WRITE MARKER: referent r -> register r; interleave a HOLD after each write (the
-            # intervening span) so the earlier registers must SUSTAIN while later ones load (the durability stress).
-            for r, loc in enumerate(locals_):
-                buf.write(r, loc)
-                buf.hold()
+            if competitive:
+                # EMERGENT free-slot-wins allocation: each write is routed by a genuine occupancy READ, not by
+                # the referent's position in `refs`. An already-written register measurably out-competes a free
+                # one on the SAME instrument `read()` uses, so later referents avoid it without any host bookkeeping.
+                registers = []
+                for loc in locals_:
+                    reg = 0 if competition_lesion else int(np.argmin(buf.probe_occupancy()))
+                    registers.append(reg)
+                    buf.write(reg, loc)
+                    buf.hold()
+            else:
+                # role-by-position WRITE MARKER: referent r -> register r; interleave a HOLD after each write (the
+                # intervening span) so the earlier registers must SUSTAIN while later ones load (the durability stress).
+                registers = list(range(len(locals_)))
+                for r, loc in enumerate(locals_):
+                    buf.write(r, loc)
+                    buf.hold()
             # an extra held span (the "... it chased her" gap) with input asserted zero
             buf.hold()
             buf.hold()
             recovered = {}
             alive = []
-            for r in range(len(refs)):
-                loc, amp = buf.read(r)
+            for i, reg in enumerate(registers):
+                loc, amp = buf.read(reg)
                 alive.append(float(amp))
-                recovered[r] = self._ref_of_slot.get(loc, None)
+                recovered[i] = self._ref_of_slot.get(loc, None)
         # ONE-BRAIN CROSS-EDGE (opt-in): record the primary held referent's POSITIONAL candidate pool as THIS
         # session's own focus (`self._own_focus`), which the caller (webapp/server.py) later reads via
         # `current_focus()` and passes EXPLICITLY into the comprehension organ's `wm_focus` argument -- so a held
@@ -244,6 +310,10 @@ class MultiReferentWMOrgan:
             "hold_alive_min": float(min(alive)) if alive else 0.0,
             "zero_input_ok": bool(buf._zero_input_span),
             "all_recovered": bool(len(refs) >= 1 and all(recovered.get(r) == refs[r] for r in range(len(refs)))),
+            "registers": registers,                          # which register EACH input-order referent landed in
+            "distinct_registers": bool(len(set(registers)) == len(registers)),   # no two referents shared a bank
+            "competitive": bool(competitive),
+            "competition_lesioned": bool(competitive and competition_lesion),
         }
 
     def judge(self, text: str, lesion: bool = False) -> dict | None:

@@ -179,6 +179,19 @@ class MultiSlotHold:
         local = int(np.argmax(band)) if alive > 1e-6 else -1
         return local, alive
 
+    def probe_occupancy(self, steps=None):
+        """A genuine zero-input read of EVERY register's current band-max activity in ONE pass (the SAME
+        read-out instrument class as `read()`, generalised across all R registers) -- added 2026-09-01 to let a
+        CALLER route a new write to the register the SUBSTRATE ITSELF currently shows as free/least-active,
+        instead of a host-assigned position. External input is ASSERTED zero across the probe span (a HOLD
+        read, not a re-drive); a register that has never been written sits at genuine baseline (this substrate
+        has no background OU noise -- `ou_std_current_pA=0` in `build_persistent_slot` -- so an untouched
+        register reads EXACTLY 0.0 and a written+held one reads its live sustained rate: a real occupancy
+        signal, not a formula). Purely additive -- `read`/`write`/`hold` are unchanged."""
+        steps = self.hold_steps if steps is None else steps
+        rates = self._run(np.zeros(self.n), steps, assert_zero=True)
+        return np.array([rates[r * self.n_slot:(r + 1) * self.n_slot].max() for r in range(self.R)])
+
 
 # ====================================================================================================================
 # Stream: a k-role agreement clause with disjoint NOVEL held-out filler tuples
