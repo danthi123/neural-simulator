@@ -282,6 +282,78 @@ class SpikingQwenFaculty:
         VERIFY re-parses the prose, the content mismatches the GATED (true) fact -> reject."""
         return self._generate(self.CONSTRAIN_TEMPLATE.format(a=a, v=v, p=wrong_p), seed=seed)
 
+    # =============================================================================================
+    # BATCHED render (2026-09-01, `research/batch-sentence-rendering` -- board frontier "batch the sentence
+    # rendering"). ADDITIVE: `_generate` / `render_svo` / `render_svo_regen` above are UNTOUCHED byte-for-byte;
+    # nothing here is on their call path. `render_paragraph` (rich_answer_composer.py) is launch-bound when a
+    # turn gathers >1 fact: each gathered SVO triggers its OWN `_generate` -> `model.generate()` call, so an
+    # N-sentence reply pays N sequential Python/CUDA-launch + attention-recompute-from-scratch overheads even
+    # though the N prompts are independent and share no state. `_generate_batch` instead left-pads the N
+    # CONSTRAIN prompts into ONE tensor and calls `model.generate()` ONCE (torch's native batched decoding),
+    # so the N forward passes at each decode step run as one batched matmul instead of N separate launches.
+
+    # HONEST RESIDUAL (measured, not assumed -- see the byte-identical-equivalence test and the paired finding
+    # doc): the installed spiking ops (`spiking_rmsnorm_forward` / `spiking_silu_forward` /
+    # `spiking_softmax_forward` in `_grounded_lang_p1b_stepB1_forward_derisk.py`) add graded-read pool-SEM noise
+    # via `torch.randn(tensor.shape, generator=SPK.gen)` -- the SAME `SPK.gen` reseeded to the SAME
+    # `1000 + seed` before every render either way, but the SHAPE of that draw is the whole (possibly padded)
+    # BATCH tensor here vs a lone (batch=1) tensor in `_generate`. The RNG stream is therefore consumed in a
+    # different order/layout batched vs sequential, so the exact FLOAT noise a given sentence's forward pass
+    # sees is not guaranteed identical between the two paths -- only the TEXT this reads out is what the
+    # equivalence test checks (greedy argmax over a logit distribution the ~1e-2-scale pool noise rarely moves
+    # across a token boundary at this faculty's operating point). Reported honestly either way in the finding.
+    def _generate_batch(self, user_msgs: list, seed=None):
+        """Batched greedy generation: ONE `model.generate()` call over all of `user_msgs` (left-padded), instead
+        of one call per message. Mirrors `_generate`'s per-item return shape as a list, plus the WALL-CLOCK
+        seconds for the WHOLE batch (not per item -- the point being measured is the one-launch cost).
+        Returns `([(first_line, full_text), ...], batch_seconds)`, in the SAME order as `user_msgs`."""
+        torch = self._torch
+        B1 = self._B1
+        sd = self.seed if seed is None else int(seed)
+        prompts = [self.tok.apply_chat_template([{"role": "user", "content": m}], tokenize=False,
+                                                  add_generation_prompt=True) for m in user_msgs]
+        # left-pad: generation must start at the SAME column for every row so `out[:, in_len:]` slices the
+        # newly-generated tokens uniformly; restore the tokenizer's own padding_side afterward (this faculty's
+        # tokenizer is process-shared -- never leave it mutated as an observable side effect of calling this).
+        prev_side = self.tok.padding_side
+        if self.tok.pad_token is None:
+            self.tok.pad_token = self.tok.eos_token
+        self.tok.padding_side = "left"
+        try:
+            ids = self.tok(prompts, return_tensors="pt", padding=True).to(self.device)
+        finally:
+            self.tok.padding_side = prev_side
+        torch.manual_seed(sd)
+        if B1.SPK.gen is not None:
+            B1.SPK.gen.manual_seed(1000 + sd)
+        t0 = time.time()
+        with torch.no_grad():
+            out = self.model.generate(**ids, max_new_tokens=self.max_new_tokens,
+                                       do_sample=False, pad_token_id=self.tok.eos_token_id)
+        in_len = ids.input_ids.shape[1]
+        results = []
+        for i in range(len(user_msgs)):
+            new = out[i, in_len:]
+            txt = self.tok.decode(new, skip_special_tokens=True)
+            first_line = txt.strip().split("\n")[0].strip()
+            results.append((first_line, txt.strip()))
+        return results, round(time.time() - t0, 2)
+
+    def render_svo_batch(self, triples, seed=None):
+        """CONSTRAIN, batched: render every (a, v, p) in `triples` in ONE `model.generate()` launch. Returns
+        `([(first_line, full_text), ...], batch_seconds)`, same order as `triples`. `render_svo` (single-item,
+        unchanged) is what every existing caller still uses; this is additive, called only from the new
+        default-OFF batched path in `RichAnswerComposer.render_paragraph`."""
+        msgs = [self.CONSTRAIN_TEMPLATE.format(a=a, v=v, p=p) for (a, v, p) in triples]
+        return self._generate_batch(msgs, seed=seed)
+
+    def render_svo_regen_batch(self, triples, seed=None):
+        """REGEN (the tighter re-prompt), batched: the batched analogue of `render_svo_regen`, so a SECOND
+        batched launch can retry every first-pass VERIFY-reject together instead of falling back to N separate
+        single-item `render_svo_regen` calls. Same return shape as `render_svo_batch`."""
+        msgs = [self.REGEN_TEMPLATE.format(a=a, v=v, p=p) for (a, v, p) in triples]
+        return self._generate_batch(msgs, seed=seed)
+
 
 # =================================================================================================
 # The GATE -> CONSTRAIN(spiking render) -> VERIFY loop (one query), with the REAL faculty.

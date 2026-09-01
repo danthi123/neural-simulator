@@ -414,6 +414,23 @@ class QwenRenderer:
         surface, _surface_full, _gen_s = self._fac.render_svo_regen(a, v, p)
         return surface, None
 
+    def render_svo_batch(self, triples):
+        """BATCHED CONSTRAIN (2026-09-01, `research/batch-sentence-rendering`): render every (a, v, p) in
+        `triples` via ONE `model.generate()` launch (`SpikingQwenFaculty.render_svo_batch`) instead of one
+        launch per triple. Returns `[(surface, None), ...]` -- same per-item shape as `render_svo` (the asserted
+        SVO is recovered by the caller's re-parse of the prose either way), same order as `triples`. Additive:
+        `render_svo` / `render_svo_regen` above are untouched; a caller that never calls this (the default,
+        `hasattr(renderer, "render_svo_batch")` gated) never triggers it."""
+        results, secs = self._fac.render_svo_batch(list(triples))
+        return [(surface, None) for (surface, _full) in results], secs
+
+    def render_svo_regen_batch(self, triples):
+        """BATCHED REGEN (2026-09-01): the batched analogue of `render_svo_regen`, so a caller can retry every
+        first-pass VERIFY-reject together in ONE second launch instead of falling back to N separate
+        single-item regen calls. Same shape/contract as `render_svo_batch`."""
+        results, secs = self._fac.render_svo_regen_batch(list(triples))
+        return [(surface, None) for (surface, _full) in results], secs
+
 
 # ============================================================================================================
 # The chat brain: wraps a loaded conversational agent + the router + the renderer + the gate/constrain/verify.

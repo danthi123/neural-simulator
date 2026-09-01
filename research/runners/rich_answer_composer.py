@@ -80,6 +80,27 @@ def _elaborate_from_ltm_enabled():
     return bool(v) and v.strip().lower() in ("1", "true", "on", "yes")
 
 
+def _batch_render_enabled():
+    """ADDITIVE, DEFAULT-OFF (`BRAIN_RICH_BATCH_RENDER`). When truthy, `RichAnswerComposer.render_paragraph`
+    batches the common-case fluent render of every gathered SVO that needs the faculty into ONE
+    `renderer.render_svo_batch()` launch instead of N sequential `renderer.render_svo()` launches (the
+    `RichAnswerComposer` gathers up to `max_sentences` facts per turn -- the RICH-answer path is exactly the
+    launch-bound per-sentence loop `feedback_prioritize_orchestration_overhead` names: many tiny sequential
+    generate() calls). See `RichAnswerComposer._render_paragraph_batched`.
+
+    OFF (default) -> `render_paragraph` never even checks `hasattr(renderer, "render_svo_batch")` gets past the
+    `and` short-circuit before this call, so the pre-existing per-SVO sequential loop runs BYTE-IDENTICAL to
+    before this flag existed. ON -> only takes effect when the active renderer actually exposes
+    `render_svo_batch` (currently `QwenRenderer`; `StubRenderer` and every other pre-existing renderer lack it,
+    so this flag is a byte-identical no-op for them regardless of its value) AND the turn gathered >1 fact
+    (batching a single sentence has nothing to batch). Every candidate the batch call produces is still
+    VERIFY-gated exactly as the sequential path gates it, and anything that fails first-pass VERIFY (or the
+    batch call raising) falls back to the EXISTING single-item render (regen retry included) -- this flag can
+    only change WHICH LAUNCHES produce the same VERIFY-gated candidates, never weaken the moat."""
+    v = os.environ.get("BRAIN_RICH_BATCH_RENDER")
+    return bool(v) and v.strip().lower() in ("1", "true", "on", "yes")
+
+
 def _is_followup(question):
     """True when the utterance is a bare 'tell me more' / 'why?' style follow-up (no new content) -- so the
     composer ELABORATES on the held topic rather than re-gating a fresh question."""
@@ -650,11 +671,112 @@ class RichAnswerComposer:
         # SUPERSET of the old per-sentence check, so a single grounded sentence still passes byte-identically;
         # the escape flag BRAIN_CLAIM_MOAT=0 + a single-fact turn both revert to the single-triple _verify.
         gated = [list(f) for f in facts]
+        # BATCHED SENTENCE RENDERING (2026-09-01, `research/batch-sentence-rendering`, board frontier row,
+        # default-OFF `BRAIN_RICH_BATCH_RENDER`). Flag off (the default), fewer than 2 facts, raw/no-renderer
+        # mode, or a renderer that doesn't expose `render_svo_batch` (e.g. StubRenderer / any pre-existing
+        # renderer) -> falls straight through to the loop below, BYTE-IDENTICAL to before this flag existed.
+        if (_batch_render_enabled() and len(facts) > 1 and not self.chat.raw_mode
+                and self.chat.renderer is not None and hasattr(self.chat.renderer, "render_svo_batch")):
+            return self._render_paragraph_batched(facts, gated)
         kept, dropped, sentences = [], [], []
         for svo in facts:
             sent, verified = self._render_one_verified(svo, gated=gated)
             if verified and sent:
                 sentences.append(sent)
+                kept.append(svo)
+            else:
+                dropped.append(svo)
+        paragraph = " ".join(sentences)
+        return paragraph, kept, dropped
+
+    def _render_paragraph_batched(self, facts, gated):
+        """BATCHED render, up to THREE GPU launches TOTAL for the whole turn (not per fact) -- vs up to 2*N
+        sequential launches (render_svo + render_svo_regen per fact) the pre-existing per-item loop could pay
+        in the worst case:
+          (1) the SAME per-item spiking-recall-surface check `_render_one_verified` does (cheap, host-side, no
+              GPU launch) runs first for every fact;
+          (2) everything that falls through is rendered in ONE `renderer.render_svo_batch()` launch (the
+              CONSTRAIN first pass);
+          (3) anything stage (2) didn't VERIFY is retried in ONE SECOND batched launch
+              (`renderer.render_svo_regen_batch()`, the tighter REGEN prompt) -- mirrors the sequential path's
+              own single regen retry, just batched across every failure at once instead of one call per
+              failure. Only present when the renderer exposes it (additive; a renderer with just
+              `render_svo_batch` skips straight to stage (4) for anything unresolved).
+          (4, safety net -- ONLY for facts a batched stage never actually got a real candidate for) falls back
+              to the pre-existing single-item `_render_one_verified`. NOT triggered for a fact that DID get a
+              real candidate from both batched stages and still failed VERIFY: `render_svo`/`render_svo_regen`
+              are deterministic (greedy, fixed seed) -- the single-item calls would reproduce the IDENTICAL
+              text and fail VERIFY identically, so retrying them would be pure wasted GPU time for a foregone
+              conclusion. Such a fact is DROPPED here, exactly as `_render_one_verified` itself would
+              eventually conclude (it does not retry a third time either). This stage DOES fire when a batched
+              call itself raised (a real batching-mechanism failure, not a content rejection) or the renderer
+              lacks `render_svo_regen_batch` (no batched regen was ever attempted for that fact) -- both
+              genuine "the single-item path might behave differently" cases, so it stays strictly at least as
+              safe/thorough as the sequential path, never less.
+        Preserves the facts' gathered order for the returned `kept`/`dropped`/paragraph, exactly as the
+        sequential loop does."""
+        order = list(facts)
+        surface_by_idx = {}
+        need_render_idx, need_render_svo = [], []
+        for i, svo in enumerate(order):
+            a, v, p = svo
+            spk = self.chat.spiking_recall_surface(a, v, p)
+            if spk is not None:
+                surface_by_idx[i] = spk
+            else:
+                need_render_idx.append(i)
+                need_render_svo.append(tuple(svo))
+        if need_render_svo:
+            try:
+                batched, _secs = self.chat.renderer.render_svo_batch(need_render_svo)
+                batch_call_ok = True
+            except Exception:
+                batched = None
+                batch_call_ok = False
+            regen_idx, regen_svo = [], []
+            for j, i in enumerate(need_render_idx):
+                svo = order[i]
+                surface, asserted = batched[j] if batched is not None else (None, None)
+                if surface and self._verify_rendered(surface, asserted, svo, gated):
+                    surface_by_idx[i] = surface
+                else:
+                    regen_idx.append(i)
+                    regen_svo.append(tuple(svo))
+            # STAGE 3: one batched regen retry for every first-pass failure at once (additive -- only when the
+            # renderer exposes it).
+            has_batched_regen = hasattr(self.chat.renderer, "render_svo_regen_batch")
+            regen_call_ok = True
+            if regen_svo and has_batched_regen:
+                try:
+                    regen_batched, _secs2 = self.chat.renderer.render_svo_regen_batch(regen_svo)
+                except Exception:
+                    regen_batched = None
+                    regen_call_ok = False
+                still_failed = []
+                for j, i in enumerate(regen_idx):
+                    svo = order[i]
+                    surface, asserted = regen_batched[j] if regen_batched is not None else (None, None)
+                    if surface and self._verify_rendered(surface, asserted, svo, gated):
+                        surface_by_idx[i] = surface
+                    else:
+                        still_failed.append(i)
+                regen_idx = still_failed
+            # STAGE 4 (safety net): only for facts where a batched stage never actually ran/produced a real
+            # candidate for THIS fact -- see the docstring for why a fact that DID get a real (batched or
+            # regen-batched) candidate and still failed VERIFY is dropped here instead of retried.
+            need_full_fallback = (not batch_call_ok) or (not has_batched_regen) or (not regen_call_ok)
+            for i in regen_idx:
+                if need_full_fallback:
+                    svo = order[i]
+                    sent, verified = self._render_one_verified(svo, gated=gated)
+                    if verified and sent:
+                        surface_by_idx[i] = sent
+                # else: genuinely tried both batched stages and failed VERIFY both times -> DROP, no retry.
+        kept, dropped, sentences = [], [], []
+        for i, svo in enumerate(order):
+            surface = surface_by_idx.get(i)
+            if surface:
+                sentences.append(surface)
                 kept.append(svo)
             else:
                 dropped.append(svo)

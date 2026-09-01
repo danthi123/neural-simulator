@@ -1,0 +1,31 @@
+{
+ "run_id": "1788280299-2361910",
+ "runner": "research/runners/_batch_sentence_rendering_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8ffc0845dfefd728/research/runners/_batch_sentence_rendering_derisk.py",
+  "--reps",
+  "9",
+  "--max-sentences",
+  "8",
+  "--out",
+  "research/findings/raw/_batch_sentence_rendering/n8.json"
+ ],
+ "git_sha": "da110df6d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T12:31:39",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_batch_sentence_rendering/n8.json"
+}
