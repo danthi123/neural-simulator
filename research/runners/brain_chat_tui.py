@@ -290,6 +290,34 @@ def _generate_channel_enabled():
     return v.strip().lower() not in ("0", "false", "off", "no", "")
 
 
+# BRAIN-NATIVE PLAUSIBILITY (2026-09-01 burn-down): the #3E plausibility GATE — the decision "is `a` plausibly
+# related to `ac`" that selects which recombinations pass — was a HOST float comparison `P[w1,w2] >= tau` over
+# the brain's own co-occurrence matrix (the declared host residual of the generate-channel GO). This flag routes
+# that gate through a SPIKING monosynaptic associative read (SpikingAssociativePlausibilityOrgan): the co-occurrence
+# graph is installed as synapses and relatedness is decided by whether spikes propagate to the readout assembly.
+# Default = `_SPIKING_PLAUSIBILITY_DEFAULT_ON`. It is **OFF** by default: the 6-seed de-risk
+# (research/runners/_brain_native_plausibility_derisk.py) validated the CONVERSION — the gate is provenance-clean
+# (0 host P>=tau calls), lesion-load-bearing, moat-safe, byte-identical-off, agreement with host ~0.88, and it
+# MATCHES the host replay-vs-random advantage ON AVERAGE (mean parity ~1.0, beats host on 4/6 tiny seeds) — but it
+# does NOT hold UNIFORMLY: 2/6 seeds underperform host (parity 0.54 / 0.78, small-graph operating-point variance).
+# A default-ON production change requires all-6-seed dominance, which this does not yet clear, so it ships as an
+# opt-in (BRAIN_SPIKING_PLAUSIBILITY=1) until the robustness rung (online-Hebbian / ensemble read) closes the
+# 2-seed gap. =1 builds the organ; unset/0/false/off/no -> the host `_related` gate (byte-identical).
+_SPIKING_PLAUSIBILITY_DEFAULT_ON = False
+
+
+def _spiking_plausibility_enabled():
+    """Whether the #3E plausibility gate is computed by the brain (the spiking associative read) rather than the
+    host `P>=tau` matrix comparison. Default OFF (opt-in via BRAIN_SPIKING_PLAUSIBILITY=1): the conversion is
+    validated + provenance-clean + moat-safe + byte-identical-off, but the spiking advantage does not yet dominate
+    host on ALL 6 seeds, so it is not the production default. Unset/0/false/off/no -> the host `_related` gate
+    (byte-identical — the plausibility organ is never built)."""
+    v = os.environ.get("BRAIN_SPIKING_PLAUSIBILITY")
+    if v is None:
+        return _SPIKING_PLAUSIBILITY_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
 # ============================================================================================================
 # Self-reference + a free-text question -> a (kind, cue) the brain answers against its stored SVO facts.
 # (The keyword->fact matcher is faithful: it routes a question to the stored fact whose WORDS the question
@@ -477,6 +505,13 @@ class ChatBrain:
         # untouched. Default-ON; BRAIN_SPIKING_DRAW=0 leaves `_gen_spiking=False` -> the host oracle draw
         # (byte-identical). See research/runners/vocab_agnostic_spiking_generation_production_organ.py.
         self._spiking_draw_organ = None
+        # BRAIN-NATIVE PLAUSIBILITY organ (2026-09-01 burn-down): converts the #3E plausibility GATE from the host
+        # `_related(w1,w2) = P[w1,w2] >= tau` matrix comparison to a SPIKING monosynaptic associative read of the
+        # co-occurrence graph (installed as synapses; relatedness = whether spikes reach the readout assembly).
+        # Built LAZILY on the first open-ended generation turn (per-ChatBrain), so a non-generating session never
+        # imports it. Default-OFF (opt-in BRAIN_SPIKING_PLAUSIBILITY=1); unset/0 -> the host `_related` gate
+        # (byte-identical). Opt-in until the spiking advantage dominates host on all 6 seeds (see the de-risk finding).
+        self._spiking_plausibility_organ = None
         # the brain's stored facts (string-only roles) + content-token sets for the VERIFY re-parse
         self._refresh_facts()
 
@@ -668,6 +703,18 @@ class ChatBrain:
         prop = self._build_generation_proposer()
         if prop is None:
             return None
+        # BRAIN-NATIVE PLAUSIBILITY (opt-in, BRAIN_SPIKING_PLAUSIBILITY=1): route the #3E plausibility GATE through the
+        # SPIKING monosynaptic associative read instead of the host `_related(w1,w2) = P[w1,w2] >= tau` comparison. install() embodies
+        # the co-occurrence graph as synapses (weight ∝ co-occurrence count) and swaps prop._related for a spiking read
+        # (drive w1's assembly; w2 is "related" iff its readout assembly fires above the brain's own threshold). The
+        # UNCHANGED `_plausible` (= _related(a,ac) and _related(ac,p)) then decides via SPIKES. BRAIN_SPIKING_PLAUSIBILITY=0
+        # -> the organ is never built and prop keeps the host `_related` (byte-identical). Built lazily + cached per proposer.
+        if _spiking_plausibility_enabled():
+            if (self._spiking_plausibility_organ is None
+                    or getattr(prop, "_spiking_plausibility_organ", None) is not self._spiking_plausibility_organ):
+                from research.runners.spiking_plausibility_organ import build_for_proposer
+                self._spiking_plausibility_organ = build_for_proposer(prop, seed=self._gen_seed)
+                self._spiking_plausibility_organ.install(prop)
         # Route the #3E generative DRAW through the VOCAB-AGNOSTIC spiking soft-WTA (default-ON, B1 burn-down): the b2
         # taxonomy sampler KeyErrors on runtime vocab, so install() induces role pools from the brain's OWN stored-fact
         # concepts and pre-injects a taxonomy-free VocabAgnosticSpikingSampler onto `prop` (flips use_spiking_sampler=True).
