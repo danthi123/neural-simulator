@@ -59,25 +59,36 @@ _FOLLOWUP_PHRASES = ("tell me more", "go on", "say more", "what else", "anything
                      "why", "how so", "keep going")
 
 
+#  * KNOWLEDGE-IN-CHAT (owner priority #66): the elaboration read ONLY the buffer, so an answer whose concept
+#    lives in long-term memory (the routed `ShardedPhasorStore`) got a bare direct fact + same-relation chain hops
+#    and NO breadth -- the brain could not elaborate from its full routed knowledge about that concept.
+#  * CONFIDENCE->FORTHCOMINGNESS (board #94): the reach-cap in `webapp/confidence_forthcoming_chat.py` asks the
+#    composer for FLOOR+1 facts then truncates the extra on a LOW-confidence read. On the true production floor
+#    (`NEUTRAL_SENTENCES=4`) the buffer-only elaboration structurally cannot exceed 4, so the reach never produces
+#    an extra fact and a confident vs an uncertain turn keep identical sentences (the "hollow flip" the owner's
+#    rule prohibits). Reading the concept's routed LTM facts gives the reach content to trim.
+# De-risked cross-backend 6-seed GO (2026-08-28-ltm-shard-elaboration-cupy-6seed-GO-unblocks-confidence-
+# forthcomingness.md); the coupling it unblocks (confidence-forthcomingness) reached a genuine real-out-of-the-
+# box-traffic vary+lesion GO on the shipped wikidata_core_15k LTM once the margin-scale calibration residual was
+# fixed (research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md) -- FLIPPED
+# default-ON the same session, both faculties together per the owner's 2026-09-01 auto-flip directive (this
+# flag is confidence-forthcomingness's own dependency: without it, the reach never has LTM content to trim).
+_ELABORATE_FROM_LTM_DEFAULT_ON = True
+
+
 def _elaborate_from_ltm_enabled():
-    """ADDITIVE, DEFAULT-OFF, owner-gated (`BRAIN_ELABORATE_FROM_LTM_SHARD`). When truthy, the composer's
-    ELABORATION (and the chain corner-turn -- both flow through `_facts_about`/`_facts_mentioning`) may ALSO draw
-    grounded candidate facts from the ROUTED cortical LTM shard behind a `TieredFactStore`, not just the
-    conversational BUFFER tier. WHY (two convergent blockers this unblocks):
-      * KNOWLEDGE-IN-CHAT (owner priority #66): the elaboration read ONLY the buffer, so an answer whose concept
-        lives in long-term memory (the routed `ShardedPhasorStore`) got a bare direct fact + same-relation chain
-        hops and NO breadth -- the brain could not elaborate from its full routed knowledge about that concept.
-      * CONFIDENCE->FORTHCOMINGNESS (board #94): the reach-cap in `webapp/confidence_forthcoming_chat.py` asks the
-        composer for FLOOR+1 facts then truncates the extra on a LOW-confidence read. On the true production floor
-        (`NEUTRAL_SENTENCES=4`) the buffer-only elaboration structurally cannot exceed 4, so the reach never
-        produces an extra fact and a confident vs an uncertain turn keep identical sentences (the "hollow flip"
-        the owner's rule prohibits). Reading the concept's routed LTM facts gives the reach content to trim.
-    OFF (default) -> every LTM draw is a guarded no-op -> BYTE-IDENTICAL to the buffer-only path. The no-confab
-    MOAT is preserved by construction: an LTM candidate is drawn straight from the shard's `kb` (a fact the brain
-    genuinely HOLDS), and the per-sentence VERIFY in `render_paragraph` still gates every rendered sentence; an
-    unknown concept has no direct fact (the gate abstains before elaboration ever runs) and no LTM facts either."""
+    """DEFAULT-ON (2026-09-01; see the block above `_ELABORATE_FROM_LTM_DEFAULT_ON` for why). When enabled, the
+    composer's ELABORATION (and the chain corner-turn -- both flow through `_facts_about`/`_facts_mentioning`)
+    may ALSO draw grounded candidate facts from the ROUTED cortical LTM shard behind a `TieredFactStore`, not
+    just the conversational BUFFER tier. `BRAIN_ELABORATE_FROM_LTM_SHARD=0` (or false/no/off) reverts to the
+    buffer-only path, BYTE-IDENTICAL to the pre-flip default. The no-confab MOAT is preserved by construction: an
+    LTM candidate is drawn straight from the shard's `kb` (a fact the brain genuinely HOLDS), and the
+    per-sentence VERIFY in `render_paragraph` still gates every rendered sentence; an unknown concept has no
+    direct fact (the gate abstains before elaboration ever runs) and no LTM facts either."""
     v = os.environ.get("BRAIN_ELABORATE_FROM_LTM_SHARD")
-    return bool(v) and v.strip().lower() in ("1", "true", "on", "yes")
+    if _ELABORATE_FROM_LTM_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def _batch_render_enabled():

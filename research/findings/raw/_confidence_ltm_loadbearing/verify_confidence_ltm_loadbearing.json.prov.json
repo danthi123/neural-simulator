@@ -1,10 +1,10 @@
 {
- "run_id": "1788280397-2364638",
+ "run_id": "1788302951-2742548",
  "runner": "research/findings/raw/_confidence_ltm_loadbearing/verify_confidence_ltm_loadbearing.py",
  "argv": [
-  "research/findings/raw/_confidence_ltm_loadbearing/verify_confidence_ltm_loadbearing.py"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a157461979a114ad1/research/findings/raw/_confidence_ltm_loadbearing/verify_confidence_ltm_loadbearing.py"
  ],
- "git_sha": "da110df6d",
+ "git_sha": "fe0e7dd1c",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-01T12:33:17",
+ "started": "2026-09-01T18:49:11",
  "env": {
   "SIM_BACKEND": "numpy"
  },

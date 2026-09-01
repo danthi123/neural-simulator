@@ -1,0 +1,549 @@
+{
+  "probe": "confidence_forthcomingness_margin_norm_recalibration",
+  "question": "who does asimov isaac work for?",
+  "expected_svo": [
+    "asimov_isaac",
+    "employer",
+    "university_of_boston"
+  ],
+  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "noise_sigma": 0.12,
+  "flags": "BRAIN_ELABORATE_FROM_LTM_SHARD=1 + BRAIN_CONFIDENCE_FORTHCOMING=1 + BRAIN_LTM_SHIP_DEFAULT=1 + BRAIN_KB_RELATION_QUESTIONS default-ON + BRAIN_CLAIM_MOAT=0 escape (residual 1, unrelated), true floor",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "elapsed_s": 1060.0222518444061,
+  "measurement_all_GO": true,
+  "vary_lesion_all_GO": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.31610018152850244,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    },
+    {
+      "seed": 43,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.3001818508045096,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    },
+    {
+      "seed": 44,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.35916846587039314,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    },
+    {
+      "seed": 100,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.3647557826491254,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    },
+    {
+      "seed": 101,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.37503344554041024,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    },
+    {
+      "seed": 102,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.3132311574906426,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.49655255804306914,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    }
+  ]
+}

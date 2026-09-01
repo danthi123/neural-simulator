@@ -117,6 +117,15 @@ READ_SEED = 4242         # fixed so a given evidence -> a DETERMINISTIC confiden
 ROLE_CONF_LO = 0.30      # a mean role-decode confidence at/below this -> evidence 0 (in the measured degraded region)
 ROLE_CONF_HI = 0.50      # a mean role-decode confidence at/above this -> evidence 1 (at the measured confident floor)
 
+# CALIBRATION-AT-SCALE (2026-09-01, board #94): this band is NOT re-tuned per codebook size. The 15k-entity
+# `wikidata_core_15k` LTM's genuine correct-recall `margin_norm` (peak-normalized, `RFPhasorComposer.
+# _cleanup_all_score_stats`) measured 0.393..0.552 (mean 0.473, n=80, `research/findings/raw/
+# _metacog_scale_recalib/measure_15k_ltm_margins.json`) -- already inside THIS SAME band, because `margin_norm`
+# is a peak-relative ratio, not a raw cosine magnitude (which shrinks with a bigger candidate vocabulary). The
+# actual scale bug was `mean_role_confidence` reading the WRONG (raw, unnormalized) field for an LTM-sourced
+# trace, fixed in `mean_role_confidence`'s own docstring above -- see
+# research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md.
+
 NORM_EPS = 1e-9          # divisive-normalization stabilizer for the nmda_norm confidence read
 
 
@@ -234,14 +243,33 @@ def mean_role_confidence(activity: dict | None) -> float | None:
     dominates -- unlike the legacy `confidence` field, it actually varies with how uncertain the recall was.
     Falls back to the legacy `confidence` field for any chip/composer that does not populate `margin` (a safe,
     unchanged fallback -- e.g. `decoded_extra` host-composed chips, or a composer variant without the field).
-    None (no decoded roles / no parse) -> None (out of scope)."""
+    None (no decoded roles / no parse) -> None (out of scope).
+
+    CALIBRATION-AT-SCALE FIX (2026-09-01, board #94's #184 follow-up): `margin_norm` -- when a role chip carries
+    it -- is now preferred OVER the plain `margin` field. `RFPhasorComposer._cleanup_all_score_stats` (the LTM
+    tier's own trace source, via `ShardedPhasorStore`) ALSO emits a field literally named `margin`, but it is the
+    RAW, UNNORMALIZED `top_raw - runner_raw` cosine difference -- a DIFFERENT formula colliding under the SAME
+    key `OneBrainComposer` uses for its peak-normalized ratio. Measured directly (80 real correct recalls, the
+    shipped `wikidata_core_15k` LTM): the raw field sits in [0.155, 0.275], entirely below the metacog band's own
+    LOW floor (`ROLE_CONF_LO=0.30`) regardless of true recall quality -- `evidence_from_role_conf` saturates at 0
+    and `confident` can never read True on this store. `margin_norm` (added ADDITIVELY to
+    `_cleanup_all_score_stats`, the IDENTICAL `(peak-runner)/peak` formula `OneBrainComposer._margin` already
+    uses) sits in [0.393, 0.552] on the SAME 80 recalls -- squarely inside the EXISTING 0.30/0.50 band with NO
+    band change needed, because it is now comparing like-with-like across composer types instead of a raw
+    cosine-similarity magnitude (which shrinks with codebook size -- more candidate words inflate the runner-up's
+    extreme value) against a magnitude-agnostic ratio the buffer composer was calibrated against.
+    `OneBrainComposer`'s own role chips never populate `margin_norm`, so this preference change is BYTE-IDENTICAL
+    for the tiny-demo buffer path (falls through to `margin`, unchanged) -- it only changes what is read for an
+    LTM-sourced (`RFPhasorComposer`/`ShardedPhasorStore`) trace. See
+    research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md."""
     if not activity:
         return None
     roles = activity.get("roles") or []
     vals = []
     for r in roles:
+        mn = r.get("margin_norm")
         m = r.get("margin")
-        v = m if m is not None else r.get("confidence")
+        v = mn if mn is not None else (m if m is not None else r.get("confidence"))
         if v is not None:
             vals.append(float(v))
     if not vals:
