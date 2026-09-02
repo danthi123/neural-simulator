@@ -112,6 +112,23 @@ _CONDUCT = ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab"
             "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
             "cp_conductance_g_gabab_slow", "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise")
 
+# THE READ-ISOLATION FIX (2026-09-02, C2 bug class / read-isolation audit, item H-1 -- see
+# research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md). `_hard_reset` below
+# restores v/u to true rest and zeroes conductances/firing_states/hebb-trace, but ORIGINALLY never touched 4
+# further per-neuron arrays `_run_one_simulation_step` mutates: `cp_refractory_timers`/`cp_prev_firing_states`
+# (HARD firing gates -- a neuron mid-refractory from whichever read/episode ran immediately before stays gated
+# even though v/u were reset) and `cp_neuron_activity_ema`/`cp_neuron_firing_thresholds` (the homeostatic EMA +
+# adaptive threshold, update participation-gated so it silently drifts on whichever neurons the prior read/
+# episode drove). Port A (reuse, don't hand-roll): `self.pool` IS a `MergedPool`
+# (`onebrain_merge_framework.py::MergedPool._PER_NEURON_STATE`, L246-250) which ALREADY lists all 4 of these
+# arrays (plus the ones already handled below) as the framework's own tested read-isolation primitive -- the
+# ORIGINAL omission here was exactly a hand-rolled array list that had fallen out of sync with that primitive.
+# `_ALREADY_RESET` names the subset this runner's `_hard_reset` already restores explicitly; every OTHER name in
+# `MergedPool._PER_NEURON_STATE` is snapshotted once at true rest (`R4Pool.__init__`, after the post-build
+# settle) and restored on every `_hard_reset` call below.
+_ALREADY_RESET = frozenset(("cp_membrane_potential_v", "cp_recovery_variable_u",
+                             "cp_firing_states", "cp_external_input_current") + _CONDUCT)
+
 
 def _dense(pre, post, w, gate):
     pre = np.asarray(pre, np.int64); post = np.asarray(post, np.int64)
@@ -235,6 +252,16 @@ class R4Pool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (see _ALREADY_RESET comment above): snapshot the SAME true-rest baseline for
+        # every `MergedPool._PER_NEURON_STATE` array not already covered by the reset below (in practice:
+        # cp_prev_firing_states, cp_refractory_timers, cp_refractory, cp_neuron_firing_thresholds,
+        # cp_neuron_activity_ema) -- reused from the framework's own list, not hand-typed.
+        self._rest_extra = {}
+        for nm in self.pool._PER_NEURON_STATE:
+            if nm in _ALREADY_RESET:
+                continue
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
     # ---- primitives ----
     def _hard_reset(self):
@@ -249,6 +276,12 @@ class R4Pool:
             b.cp_firing_states[:] = False
         if getattr(b, "cp_hebb_coactivity_trace", None) is not None:
             b.cp_hebb_coactivity_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore every other _PER_NEURON_STATE array to the TRUE rest snapshot taken in
+        # __init__, so residue from whichever read/episode ran immediately before this call (refractory gating,
+        # prev-firing state, homeostatic EMA/threshold) cannot leak into the next read.
+        for nm, val in self._rest_extra.items():
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
 
     def _drive(self, pairs, steps, learn=False, read=None):
@@ -562,12 +595,67 @@ def _agg(runs):
     return {k: f"{frac(k)}/{len(runs)}" for k in keys}
 
 
+def _selftest_repeat_read_identity(seed=42, verbose=True):
+    """READ-ISOLATION FIX -- fails-in-its-failing-direction guard (2026-09-02).
+
+    On a fresh, UNTRAINED pool (cross-edge still at its near-zero seed W0, no mechanism has grown -- a
+    "zeroed-mechanism" pool), two back-to-back IDENTICAL reads through `_hard_reset` must be bitwise identical:
+    no RNG runs inside `_drive`/`_run_one_simulation_step`, so any difference between two runs of the same drive
+    can only be residual per-neuron state leaking from whatever ran immediately before.
+
+    Runs the SAME probe twice: once with the fix's extra-array restore programmatically disabled (reproducing
+    the ORIGINAL bug -- this must DIVERGE, proving the assertion has teeth and would have caught the original
+    defect), then with it enabled (the actual fix -- this must be bitwise IDENTICAL). Asserts both directions."""
+    r4 = R4Pool(seed)
+    ix = r4.ix
+    ep_idx = ix["episode"][r4.ambig_pattern]
+    read = {"gen": ix["prov_generated"], "perc": ix["prov_perceived"]}
+
+    def _one_read():
+        r4._hard_reset()
+        return r4._drive([(ep_idx, EPISODE_DRIVE_PA)], RECALL_STEPS, read=dict(read))
+
+    # induce asymmetric residue ahead of the two probed reads: an author-held read drives a DIFFERENT set of
+    # pools (refractory/homeostatic state ends up shaped differently) than the ambiguous-item probe below.
+    r4._hard_reset()
+    r4._drive([(ix["author"], AUTHOR_PA)], RECALL_STEPS)
+
+    saved_extra = r4._rest_extra
+    r4._rest_extra = {}                    # simulate the ORIGINAL (pre-fix) _hard_reset
+    read_broken_1 = _one_read()
+    read_broken_2 = _one_read()
+    broken_diverges = (read_broken_1 != read_broken_2)
+
+    r4._rest_extra = saved_extra           # the actual fix
+    read_fixed_1 = _one_read()
+    read_fixed_2 = _one_read()
+    fixed_identical = (read_fixed_1 == read_fixed_2)
+
+    if verbose:
+        print(f"[selftest] fix-disabled diverges={broken_diverges}: {read_broken_1} vs {read_broken_2}")
+        print(f"[selftest] fix-enabled  identical={fixed_identical}: {read_fixed_1} vs {read_fixed_2}")
+    assert broken_diverges, ("SELFTEST HAS NO TEETH: two identical reads were bitwise identical even with the "
+                              "extra-array restore disabled -- this probe would not have caught the original bug")
+    assert fixed_identical, (f"READ-ISOLATION FIX BROKEN: repeat reads not bitwise identical with the fix "
+                              f"enabled: {read_fixed_1} vs {read_fixed_2}")
+    if verbose:
+        print("[selftest] PASS -- repeat-read bitwise identity holds under the fix, and the probe has teeth "
+              "(diverges when the fix is disabled)")
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true", help="1 seed indicator")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--selftest", action="store_true",
+                     help="read-isolation fix guard only: repeat-read bitwise identity (fails in its failing "
+                          "direction) -- runs no F-gate, exits 0/1")
     args = ap.parse_args()
+    if args.selftest:
+        ok = _selftest_repeat_read_identity()
+        return 0 if ok else 1
     seeds = [42] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
 
     runs = []

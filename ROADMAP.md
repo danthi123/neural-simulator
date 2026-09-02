@@ -24,6 +24,12 @@ active lanes, resources, blockers, and exact next actions.
   turned a result we'd written up as a genuine "biological limit" back into a fixable measurement artifact. Fixes +
   re-tests are queued, the on-by-default over-claim first. This is exactly the kind of "a wall was really an
   instrument error" catch the project treats as a first-class result.
+- **The fixes landed, and the honest tally is in:** the on-by-default over-claim (curiosity steering working memory)
+  was corrected pass→fail and **switched OFF** by default; a SECOND ability we'd marked a pass (a self-image→belief-source
+  link) also flipped pass→fail once the measurement was fixed; the two "wall" results the fix was meant to reopen only
+  PARTIALLY reopened (the measurement bug was real but so was some of the wall) — reported honestly rather than forced
+  to a pass. Also this cycle: **the brain's full ~79,000-fact body of knowledge is now the default** it talks from
+  (was a 15k core) — all its blockers cleared, reversible via a flag.
 
 ## 2026-09-02 (earlier) — a safety-net for merging organs, and confidence-to-wording confirmed at full memory scale
 - **A merge safety-checker now exists (the gating layer every future one-brain step needs):** a reusable tool

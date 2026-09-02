@@ -1,0 +1,732 @@
+{
+  "probe": "onebrain_integration_r4_selfschema_provenance",
+  "verdict": "NO-GO/PARTIAL \u2014 R4 learned cross-edge self_schema authorship -> source_provenance monitoring ('is this my own thought' self-monitoring): 2/6 seeds pass ALL of F1(faculty-still-works) + F2(vary-then-lesion) + F3(no-runaway) + F4(moat) + emergence(LEARNED, near-zero start) + lesion-recovers-migration. Per-arm: {'F1.PASS': '6/6', 'F2.PASS': '2/6', 'F3.PASS': '6/6', 'F4.PASS': '6/6', 'emergence.PASS': '6/6', 'lesion_recovers_migration.PASS': '6/6'}. The cross-edge GROWS from near-zero (0.05) by the substrate's OWN standard (same-step) Hebbian rule to ~1.8 (LEARNED, not hand-set) via episodes co-driving self_schema's author pool with source_provenance's ctx_generated line. Holding self_schema's author pool 'self' during a fresh, genuinely-ambiguous (dual-context-encoded) provenance item's recall shifts the signed margin toward GENERATED, and the shift VANISHES on lesion (load-bearing). One-sided by design (the authorship axis is a genuine binary tag, not two independently-drivable pools); the moat holds (no decision from silence; a clear item is not flipped by a wrong hold). numpy CPU; NO sim/ edit.",
+  "GO": false,
+  "n_go": 2,
+  "n_seeds": 6,
+  "per_arm": {
+    "F1.PASS": "6/6",
+    "F2.PASS": "2/6",
+    "F3.PASS": "6/6",
+    "F4.PASS": "6/6",
+    "emergence.PASS": "6/6",
+    "lesion_recovers_migration.PASS": "6/6"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "f2_lesion_removes_shift",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fe9e974fce0>",
+      "note": "the F2 shift must VANISH under lesion or it is a confound, not the cross-edge (the crux control)"
+    },
+    {
+      "kind": "require",
+      "name": "migration_byte_identity",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fe9e974fce0>",
+      "note": "lesion the cross-edge -> both organs' own reads == the plain merged pool"
+    },
+    {
+      "kind": "require",
+      "name": "emergence_grew_from_near_zero",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fe9e974fce0>",
+      "note": "the edge grows from ~0.05 by Hebbian co-activity, not hand-set"
+    },
+    {
+      "kind": "require",
+      "name": "moat_no_winner_from_silence",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7fe9e974fce0>",
+      "note": "author-held + no content drive stays sub-decision (F4 moat)"
+    }
+  ],
+  "config": {
+    "W0": 0.05,
+    "hebbian_max_weight": 6.0,
+    "n_episodes": 40,
+    "author_pa": 650.0,
+    "ctx_drive_pa": 2500.0,
+    "episode_drive_pa": 2500.0,
+    "recall_steps": 100,
+    "n_reads": 3,
+    "f2_intact_floor": 0.01,
+    "f2_lesion_ratio": 0.34,
+    "f4a_frac": 0.5,
+    "f4b_retain": 0.5
+  },
+  "mechanism": "ONE shared merge pool [self_schema + source_provenance] (merge_organs wire=True); a SINGLE plastic cross-edge author->prov_generated seeded ~0.05, the SOLE plastic synapse (whitelist inversion: cp_plasticity_rate_gain=0 everywhere then GATE=1), GROWN by the substrate's standard (same-step, symmetric) Hebbian rule over episodes co-driving self_schema's author pool with source_provenance's (fixed, non-plastic) ctx_generated line. A fresh content pattern is dual-context encoded (balanced) to create a genuinely AMBIGUOUS provenance item for the F2 read.",
+  "scaffold_residuals": [
+    "host-chosen cross-edge TOPOLOGY (author -> prov_generated only, one-sided by the axis's own binary-tag structure -- declared, not smoothed over)",
+    "host-curated training schedule (co-driving author + ctx_generated directly, not via an organic dialogue turn) -- same class of scaffold-residual as R1's host-curated referent/role pairing schedule",
+    "two-factor Hebbian (unchanged from R1; no reward/dopamine gating here)",
+    "the ambiguous item is a balanced-dual-context construction, a substrate stand-in for a genuinely uncertain real memory"
+  ],
+  "runs": [
+    {
+      "seed": 42,
+      "PASS": false,
+      "elapsed_s": 15.9,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.5580336451530457
+          },
+          {
+            "ep": 10,
+            "w": 0.9275729656219482
+          },
+          {
+            "ep": 15,
+            "w": 1.202953815460205
+          },
+          {
+            "ep": 20,
+            "w": 1.4078460931777954
+          },
+          {
+            "ep": 25,
+            "w": 1.5619813203811646
+          },
+          {
+            "ep": 30,
+            "w": 1.6781104803085327
+          },
+          {
+            "ep": 35,
+            "w": 1.7661285400390625
+          },
+          {
+            "ep": 40,
+            "w": 1.8331509828567505
+          }
+        ],
+        "final_weight": 1.8331509828567505,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.7463976876412893,
+        "battery_ok": true,
+        "author_self_rate": 0.09343434343434344,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04671717171717172,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.0025000000000000022,
+        "margin_held_intact": 0.005625000000000005,
+        "margin_base_lesion": -0.0025000000000000022,
+        "margin_held_lesion": -0.0025000000000000022,
+        "delta_intact": 0.008125000000000007,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.090625,
+          "prov_perceived": 0.093125,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": false,
+        "PASS": false
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.090625,
+          "prov_perceived": 0.093125,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 1.8331509828567505,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.508033636957407,
+        "last_window_dw": 0.06702244281768799,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.0125,
+        "decision_scale": 0.0821875,
+        "silence_frac_of_decision": 0.15209125475285173,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.0821875,
+        "clear_wrong_hold": -0.07125000000000001,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 43,
+      "PASS": false,
+      "elapsed_s": 14.0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.7400993704795837
+          },
+          {
+            "ep": 10,
+            "w": 1.247804045677185
+          },
+          {
+            "ep": 15,
+            "w": 1.625353455543518
+          },
+          {
+            "ep": 20,
+            "w": 1.90701425075531
+          },
+          {
+            "ep": 25,
+            "w": 2.119140148162842
+          },
+          {
+            "ep": 30,
+            "w": 2.279921531677246
+          },
+          {
+            "ep": 35,
+            "w": 2.402379035949707
+          },
+          {
+            "ep": 40,
+            "w": 2.49599289894104
+          }
+        ],
+        "final_weight": 2.49599289894104,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.716621247157526,
+        "battery_ok": true,
+        "author_self_rate": 0.09747474747474748,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04873737373737374,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.015312499999999993,
+        "margin_held_intact": -0.005625000000000005,
+        "margin_base_lesion": -0.015312499999999993,
+        "margin_held_lesion": -0.015312499999999993,
+        "delta_intact": 0.009687499999999988,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.080625,
+          "prov_perceived": 0.0959375,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": false,
+        "PASS": false
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.080625,
+          "prov_perceived": 0.0959375,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 2.49599289894104,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6900993622839451,
+        "last_window_dw": 0.09361386299133301,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.021875,
+        "decision_scale": 0.0965625,
+        "silence_frac_of_decision": 0.22653721682847897,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.0965625,
+        "clear_wrong_hold": -0.079375,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 44,
+      "PASS": true,
+      "elapsed_s": 14.7,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.8085984587669373
+          },
+          {
+            "ep": 10,
+            "w": 1.3425923585891724
+          },
+          {
+            "ep": 15,
+            "w": 1.7248432636260986
+          },
+          {
+            "ep": 20,
+            "w": 2.0006773471832275
+          },
+          {
+            "ep": 25,
+            "w": 2.2006146907806396
+          },
+          {
+            "ep": 30,
+            "w": 2.3468737602233887
+          },
+          {
+            "ep": 35,
+            "w": 2.455489158630371
+          },
+          {
+            "ep": 40,
+            "w": 2.537959575653076
+          }
+        ],
+        "final_weight": 2.537959575653076,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6721311416644271,
+        "battery_ok": true,
+        "author_self_rate": 0.09343434343434344,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04671717171717172,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.011874999999999997,
+        "margin_held_intact": 0.0003125000000000072,
+        "margin_base_lesion": -0.011874999999999997,
+        "margin_held_lesion": -0.011874999999999997,
+        "delta_intact": 0.012187500000000004,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.08375,
+          "prov_perceived": 0.095625,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.08375,
+          "prov_perceived": 0.095625,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 2.537959575653076,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.7585984505712986,
+        "last_window_dw": 0.08247041702270508,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.0209375,
+        "decision_scale": 0.08906249999999999,
+        "silence_frac_of_decision": 0.23508771929824565,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.08906249999999999,
+        "clear_wrong_hold": -0.0678125,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 100,
+      "PASS": false,
+      "elapsed_s": 14.9,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.7205621004104614
+          },
+          {
+            "ep": 10,
+            "w": 1.2136046886444092
+          },
+          {
+            "ep": 15,
+            "w": 1.5854980945587158
+          },
+          {
+            "ep": 20,
+            "w": 1.872950792312622
+          },
+          {
+            "ep": 25,
+            "w": 2.091686964035034
+          },
+          {
+            "ep": 30,
+            "w": 2.258155584335327
+          },
+          {
+            "ep": 35,
+            "w": 2.3977162837982178
+          },
+          {
+            "ep": 40,
+            "w": 2.50630259513855
+          }
+        ],
+        "final_weight": 2.50630259513855,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6415584362260078,
+        "battery_ok": true,
+        "author_self_rate": 0.09646464646464646,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04823232323232323,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.008124999999999993,
+        "margin_held_intact": 0.0006250000000000006,
+        "margin_base_lesion": -0.008124999999999993,
+        "margin_held_lesion": -0.008124999999999993,
+        "delta_intact": 0.008749999999999994,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.0909375,
+          "prov_perceived": 0.0990625,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": false,
+        "PASS": false
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.0909375,
+          "prov_perceived": 0.0990625,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 2.50630259513855,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6705620922148228,
+        "last_window_dw": 0.10858631134033203,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.024375,
+        "decision_scale": 0.0971875,
+        "silence_frac_of_decision": 0.2508038585209003,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.0971875,
+        "clear_wrong_hold": -0.06843749999999998,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 101,
+      "PASS": false,
+      "elapsed_s": 13.8,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.6567615270614624
+          },
+          {
+            "ep": 10,
+            "w": 1.1003799438476562
+          },
+          {
+            "ep": 15,
+            "w": 1.4309537410736084
+          },
+          {
+            "ep": 20,
+            "w": 1.6848703622817993
+          },
+          {
+            "ep": 25,
+            "w": 1.8764002323150635
+          },
+          {
+            "ep": 30,
+            "w": 2.0234999656677246
+          },
+          {
+            "ep": 35,
+            "w": 2.134883165359497
+          },
+          {
+            "ep": 40,
+            "w": 2.221797466278076
+          }
+        ],
+        "final_weight": 2.221797466278076,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.613231547169616,
+        "battery_ok": true,
+        "author_self_rate": 0.09444444444444444,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04722222222222222,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.0006250000000000006,
+        "margin_held_intact": 0.007499999999999993,
+        "margin_base_lesion": -0.0006250000000000006,
+        "margin_held_lesion": -0.0006250000000000006,
+        "delta_intact": 0.008124999999999993,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.093125,
+          "prov_perceived": 0.09375,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": false,
+        "PASS": false
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.093125,
+          "prov_perceived": 0.09375,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 2.221797466278076,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.6067615188658237,
+        "last_window_dw": 0.0869143009185791,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.0196875,
+        "decision_scale": 0.099375,
+        "silence_frac_of_decision": 0.1981132075471698,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.099375,
+        "clear_wrong_hold": -0.07875,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    },
+    {
+      "seed": 102,
+      "PASS": true,
+      "elapsed_s": 15.0,
+      "emergence": {
+        "trajectory": [
+          {
+            "ep": 0,
+            "w": 0.05000000819563866
+          },
+          {
+            "ep": 5,
+            "w": 0.811362087726593
+          },
+          {
+            "ep": 10,
+            "w": 1.3781108856201172
+          },
+          {
+            "ep": 15,
+            "w": 1.8032327890396118
+          },
+          {
+            "ep": 20,
+            "w": 2.1196415424346924
+          },
+          {
+            "ep": 25,
+            "w": 2.357778787612915
+          },
+          {
+            "ep": 30,
+            "w": 2.5371434688568115
+          },
+          {
+            "ep": 35,
+            "w": 2.678723096847534
+          },
+          {
+            "ep": 40,
+            "w": 2.79067325592041
+          }
+        ],
+        "final_weight": 2.79067325592041,
+        "grew_from_near_zero": true,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "F1": {
+        "battery_acc": 1.0,
+        "battery_min_d": 0.6136363591735537,
+        "battery_ok": true,
+        "author_self_rate": 0.09343434343434344,
+        "author_heard_rate": 0.0,
+        "author_threshold": 0.04671717171717172,
+        "author_ok": true,
+        "PASS": true
+      },
+      "F2": {
+        "frac_attributable": 1.0,
+        "margin_base_intact": -0.0071874999999999994,
+        "margin_held_intact": 0.006249999999999992,
+        "margin_base_lesion": -0.0071874999999999994,
+        "margin_held_lesion": -0.0071874999999999994,
+        "delta_intact": 0.013437499999999991,
+        "delta_lesion": 0.0,
+        "rates_base_intact": {
+          "prov_generated": 0.0909375,
+          "prov_perceived": 0.098125,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "shift_toward_generated": true,
+        "PASS": true
+      },
+      "F3": {
+        "rates": {
+          "prov_generated": 0.0909375,
+          "prov_perceived": 0.098125,
+          "author": 0.0,
+          "ctx_generated": 0.0
+        },
+        "in_band": true,
+        "grown": 2.79067325592041,
+        "bounded_by_hmax": true,
+        "first_window_dw": 0.7613620795309544,
+        "last_window_dw": 0.11195015907287598,
+        "decelerating": true,
+        "pool_alive": true,
+        "PASS": true
+      },
+      "F4": {
+        "silence_margin": 0.026875,
+        "decision_scale": 0.094375,
+        "silence_frac_of_decision": 0.2847682119205298,
+        "f4a_no_winner_from_silence": true,
+        "clear_nohold": -0.094375,
+        "clear_wrong_hold": -0.0678125,
+        "f4b_clear_not_flipped": true,
+        "PASS": true
+      },
+      "lesion_recovers_migration": {
+        "base_connectivity_structurally_identical": true,
+        "sp_battery_maxerr": 0.0,
+        "self_schema_maxerr": 0.0,
+        "PASS": true
+      }
+    }
+  ]
+}
