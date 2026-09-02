@@ -62,7 +62,13 @@ model-tiering + engine-first are the levers Claude controls and should be applie
    `neural-simulator` skill carries the full deep-research discipline; this item is the dispatch-time trigger for
    it. (Earned 2026-08-27, owner-flagged: an integration-phase DESIGN agent was dispatched without this;
    `before_you_build` then surfaced a 2026-08-11 `status:GO` cross-region synaptic pathway the design would
-   otherwise have re-derived from scratch.)
+   otherwise have re-derived from scratch.) **FLIP tasks specifically: verify the actual CODE default (grep the
+   `_DEFAULT_ON` constant / the `os.environ.get(..., "0"|"1")` default), NOT just the ledger's `on_by_default`
+   row — the ledger is a SUMMARY that can lag the code (drift #12). Earned 2026-09-01: a stale `on_by_default: NO`
+   on a faculty that had ALREADY been flipped default-ON hours earlier scoped a redundant ~196k-token flip-soak
+   agent; the agent verify-first-caught it, but the code-grep would have caught it before dispatch for ~0 tokens.
+   Corollary: when you flip a faculty, sync its ledger `on_by_default` row SAME-CYCLE, or the next scoping read is
+   misled.**
 5. **Verification: controller-harvests, not agent-waits?** Will this agent need a smoke / sweep / 6-seed / live-handler
    verify? Then do NOT spec it to "run the verification, THEN commit" — that pattern STRANDS (recurred ~7× through
    2026-08-28 despite explicit anti-strand prose in the prompt: the agent backgrounds the run + STOPS with an empty
