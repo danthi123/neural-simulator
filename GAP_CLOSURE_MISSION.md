@@ -62,7 +62,8 @@ load-bearing / retire scaffolds).
    never propagated it) and is now fixed additively, gated by `tests/test_tiered_fact_store.py` (7/7, confirmed
    to fail pre-fix). Unblocked TWO faculties, re-tested on real traffic: **board #140 (source-monitoring drives
    honesty framing) is now GO 12/12** through the real handler (mechanism-level 6-seed vary+lesion sweep +
-   handler demo, moat-safe) — still default-OFF, owner-UX-gated. **Board #94's plumbing bug is confirmed
+   handler demo, moat-safe) — was default-OFF at the time this item was written, FLIPPED default-ON later the
+   same day (item 9 below). **Board #94's plumbing bug is confirmed
    closed** (0 empty-confidence-read warnings on the real 15k-KB re-test, was firing every turn before;
    `confident` now reads a genuine `False`, not `null`) — but the ORIGINAL vary+lesion headline criterion is
    STILL not met on this exact fixture, now for a newly-isolated DIFFERENT reason: the real 15k-entity shared
@@ -79,6 +80,20 @@ load-bearing / retire scaffolds).
    `on_by_default: YES`. See `research/findings/2026-09-01-confidence-forthcomingness-default-on-flip-GO.md`
    (partial-retracts `2026-09-01-confidence-metacog-margin-norm-calibration-at-scale-discriminates-not-byte-id-off.md`
    per `docs/RETRACTED.md`).
+9. **#129/#140 SOURCE-PROVENANCE HONESTY FLIPPED DEFAULT-ON, branch `research/autoflip-brain-source-provenance-honesty`
+   (merged `fe0e7dd1c`, flip commit `e73bea486`):** `BRAIN_SOURCE_PROVENANCE_HONESTY` (`_DEFAULT_ON=True`,
+   `research/runners/source_provenance_production_organ.py`) and its board #140 sibling
+   `BRAIN_SOURCE_MONITORING_FRAMES_HONESTY` (`_SOURCE_MONITORING_FRAMES_HONESTY_DEFAULT_ON=True`,
+   `webapp/source_monitoring_honesty_chat.py`) are BOTH now default-ON — GO=True, 20/20 gated preconditions
+   (6-seed {42,43,44,100,101,102} mechanism sweep + a through-the-real-`webapp.server.brain_chat`-handler
+   demonstration across prod-default/lesioned/explicit-off/pre-flip-emulated arms, on both the direct-recall
+   PERCEIVED and chain-route GENERATED turn types). Byte-identical-off confirmed both ways; known-fact recall
+   and abstain-on-never-taught unchanged (moat-safe). Finding
+   `2026-09-01-source-provenance-honesty-129-default-on-flip-GO.md`, artifact
+   `research/findings/raw/_source_provenance_honesty_flip/flip_verify.json`. **DOC-SYNC LANDED THIS SESSION**
+   (this item + `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s `source-provenance-honesty` row, previously left
+   stale at `on_by_default: NO` for ~a day after the code flip — the ledger row now carries `on_by_default: YES`
+   + a `default_anchor` block pinning both named constants; Vikunja #129/#140 marked done).
 
 **⭐ 2026-09-01 PARALLEL WAVE (9-way fan-out) LANDED 7 findings — all merged + pushed both (see ROADMAP.md +
 roadmap §ONE-BRAIN):** WKV-mouth FACT-GROUNDING (#112 clean-unlock first step, the voice surfaces the recalled
