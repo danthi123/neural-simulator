@@ -102,7 +102,17 @@ import os
 # (6-seed GO on this module's own self-test + 4 real-handler pytest tests: no-regression, default-off
 # byte-identical, qualify+lesion-collapse, session-isolation). `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6=0` still
 # forces it off for a controlled A/B or a regression bisect.
-_XEDGE_CD6_DEFAULT_ON = True
+#
+# ⛔ 2026-09-02 CORRECTED TO DEFAULT-OFF (integrity). The read-isolation audit (IG-1) + the read-isolation fix
+# (research/findings/2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md)
+# found the banked "GO 6/6" was INFLATED by an unrestored `_hard_reset` (missing the 4-array C2 leak AND the
+# NMDA-recurrent/synapse-pulse `_SEQ_EXTRA_STATE` leak). With reads isolated to bitwise identity, the honestly
+# re-measured verdict is NO-GO 3/6 (confirmed on the runner pool AND this production wrapper's own self-test).
+# A NO-GO faculty must not ship default-ON claiming to work -> default flipped to False pending a real mechanism
+# fix (the read is now fixed; the residual 3/6 is a genuine mechanism weakness, a NO-DEFER next-lever). The
+# original GO + production-wire findings are retracted (docs/RETRACTED.md). `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6=1`
+# still forces it on for A/B / the mechanism re-work.
+_XEDGE_CD6_DEFAULT_ON = False
 
 
 def xedge_curiosity_d6_enabled() -> bool:
