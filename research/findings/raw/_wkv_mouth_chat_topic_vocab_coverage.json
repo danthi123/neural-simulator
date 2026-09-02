@@ -1,0 +1,2153 @@
+{
+  "runner": "_wkv_mouth_chat_topic_vocab_coverage_derisk",
+  "seed": 42,
+  "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed42.npz",
+  "checkpoint_vocab_size": 1000,
+  "tokenization": "word-level, closed vocabulary (V=1000 incl. <unk> sentinel), no subword/BPE fallback",
+  "learned_head_enabled": true,
+  "groups": {
+    "conversational_register": {
+      "aggregate": {
+        "n_utterances": 14,
+        "token_oov_rate": 0.13043,
+        "content_word_oov_rate": 0.25,
+        "n_content_tokens_total": 60,
+        "n_oov_content_total": 15,
+        "fully_in_vocab_content_pct": 42.86,
+        "fully_in_vocab_content_frac": "6/14",
+        "gate_pass_pct": 78.57,
+        "gate_pass_frac": "11/14",
+        "top_missing_content_words": [
+          [
+            "afraid",
+            1
+          ],
+          [
+            "ago",
+            1
+          ],
+          [
+            "brain",
+            1
+          ],
+          [
+            "capital",
+            1
+          ],
+          [
+            "die",
+            1
+          ],
+          [
+            "east",
+            1
+          ],
+          [
+            "france",
+            1
+          ],
+          [
+            "happens",
+            1
+          ],
+          [
+            "interesting",
+            1
+          ],
+          [
+            "lately",
+            1
+          ],
+          [
+            "mentioned",
+            1
+          ],
+          [
+            "person",
+            1
+          ],
+          [
+            "simulated",
+            1
+          ],
+          [
+            "toward",
+            1
+          ],
+          [
+            "what's",
+            1
+          ]
+        ]
+      },
+      "rows": [
+        {
+          "text": "Hi there! How are you doing today?",
+          "n_tokens": 7,
+          "n_content_tokens": 2,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "greeting / small talk"
+        },
+        {
+          "text": "What have you been up to lately?",
+          "n_tokens": 7,
+          "n_content_tokens": 1,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "lately"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "open small talk"
+        },
+        {
+          "text": "Let's talk about the animals you know. Tell me about the dog.",
+          "n_tokens": 12,
+          "n_content_tokens": 9,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "in-domain entry"
+        },
+        {
+          "text": "Interesting -- why did the dog go east?",
+          "n_tokens": 7,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "east",
+            "interesting"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "in-domain follow-up + reasoning"
+        },
+        {
+          "text": "Do you like the dog? How do you feel about it?",
+          "n_tokens": 11,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "emotion / opinion"
+        },
+        {
+          "text": "What does a big thing run toward?",
+          "n_tokens": 7,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "toward"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "novel in-domain -> forward-model / curiosity"
+        },
+        {
+          "text": "You mentioned a cat a moment ago -- what was it doing?",
+          "n_tokens": 11,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "ago",
+            "mentioned"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "referential follow-up -> episodic memory"
+        },
+        {
+          "text": "What's the capital of France?",
+          "n_tokens": 5,
+          "n_content_tokens": 3,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "capital",
+            "france",
+            "what's"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "out-of-domain fact -> should honestly abstain"
+        },
+        {
+          "text": "If I have three apples and eat one, how many are left?",
+          "n_tokens": 12,
+          "n_content_tokens": 8,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "out-of-domain reasoning / arithmetic"
+        },
+        {
+          "text": "Have you ever felt afraid?",
+          "n_tokens": 5,
+          "n_content_tokens": 3,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "afraid"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "experiential / self"
+        },
+        {
+          "text": "Tell me something funny.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "humor"
+        },
+        {
+          "text": "What do you think happens after we die?",
+          "n_tokens": 8,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "die",
+            "happens"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "abstract / open-ended opinion"
+        },
+        {
+          "text": "Do you understand that you are a simulated brain, not a person?",
+          "n_tokens": 12,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "brain",
+            "person",
+            "simulated"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "meta / self-awareness -> honest read-out"
+        },
+        {
+          "text": "This was really nice. Goodbye for now.",
+          "n_tokens": 7,
+          "n_content_tokens": 3,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "social closing"
+        }
+      ]
+    },
+    "everyday_real_world_topics": {
+      "aggregate": {
+        "n_utterances": 10,
+        "token_oov_rate": 0.25,
+        "content_word_oov_rate": 0.25,
+        "n_content_tokens_total": 40,
+        "n_oov_content_total": 10,
+        "fully_in_vocab_content_pct": 0.0,
+        "fully_in_vocab_content_frac": "0/10",
+        "gate_pass_pct": 0.0,
+        "gate_pass_frac": "0/10",
+        "top_missing_content_words": [
+          [
+            "beethoven",
+            1
+          ],
+          [
+            "coffee",
+            1
+          ],
+          [
+            "everest",
+            1
+          ],
+          [
+            "gravity",
+            1
+          ],
+          [
+            "jupiter",
+            1
+          ],
+          [
+            "paris",
+            1
+          ],
+          [
+            "photosynthesis",
+            1
+          ],
+          [
+            "python",
+            1
+          ],
+          [
+            "shakespeare",
+            1
+          ],
+          [
+            "tokyo",
+            1
+          ]
+        ]
+      },
+      "rows": [
+        {
+          "text": "Tell me about paris.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "paris"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "paris"
+        },
+        {
+          "text": "Tell me about python.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "python"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "python"
+        },
+        {
+          "text": "Tell me about shakespeare.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "shakespeare"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "shakespeare"
+        },
+        {
+          "text": "Tell me about coffee.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "coffee"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "coffee"
+        },
+        {
+          "text": "Tell me about jupiter.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "jupiter"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "jupiter"
+        },
+        {
+          "text": "Tell me about beethoven.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "beethoven"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "beethoven"
+        },
+        {
+          "text": "Tell me about tokyo.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "tokyo"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "tokyo"
+        },
+        {
+          "text": "Tell me about everest.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "everest"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "everest"
+        },
+        {
+          "text": "Tell me about photosynthesis.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "photosynthesis"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "photosynthesis"
+        },
+        {
+          "text": "Tell me about gravity.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "gravity"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "gravity"
+        }
+      ]
+    },
+    "wikidata_known_agents": {
+      "aggregate": {
+        "n_utterances": 100,
+        "token_oov_rate": 0.41593,
+        "content_word_oov_rate": 0.42596,
+        "n_content_tokens_total": 547,
+        "n_oov_content_total": 233,
+        "fully_in_vocab_content_pct": 1.0,
+        "fully_in_vocab_content_frac": "1/100",
+        "gate_pass_pct": 2.0,
+        "gate_pass_frac": "2/100",
+        "top_missing_content_words": [
+          [
+            "f",
+            6
+          ],
+          [
+            "c",
+            5
+          ],
+          [
+            "college",
+            5
+          ],
+          [
+            "city",
+            4
+          ],
+          [
+            "football",
+            4
+          ],
+          [
+            "history",
+            4
+          ],
+          [
+            "records",
+            4
+          ],
+          [
+            "fc",
+            3
+          ],
+          [
+            "state",
+            3
+          ],
+          [
+            "art",
+            2
+          ],
+          [
+            "club",
+            2
+          ],
+          [
+            "de",
+            2
+          ],
+          [
+            "england",
+            2
+          ],
+          [
+            "france",
+            2
+          ],
+          [
+            "group",
+            2
+          ],
+          [
+            "imperial",
+            2
+          ],
+          [
+            "kansas",
+            2
+          ],
+          [
+            "national",
+            2
+          ],
+          [
+            "olympic",
+            2
+          ],
+          [
+            "osaka",
+            2
+          ],
+          [
+            "prefecture",
+            2
+          ],
+          [
+            "team",
+            2
+          ],
+          [
+            "university",
+            2
+          ],
+          [
+            "ac",
+            1
+          ],
+          [
+            "achna",
+            1
+          ],
+          [
+            "america",
+            1
+          ],
+          [
+            "angora",
+            1
+          ],
+          [
+            "aomori",
+            1
+          ],
+          [
+            "aradippou",
+            1
+          ],
+          [
+            "arbeiter",
+            1
+          ]
+        ]
+      },
+      "rows": [
+        {
+          "text": "Tell me about Ac Le Havre.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "ac",
+            "havre",
+            "le"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ac_le_havre"
+        },
+        {
+          "text": "Tell me about Angora Turkey.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "angora"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "angora_turkey"
+        },
+        {
+          "text": "Tell me about Aomori Prefecture.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "aomori",
+            "prefecture"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "aomori_prefecture"
+        },
+        {
+          "text": "Tell me about Ariola America Records.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "america",
+            "ariola",
+            "records"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ariola_america_records"
+        },
+        {
+          "text": "Tell me about Art of Kansas.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "art",
+            "kansas"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "art_of_kansas"
+        },
+        {
+          "text": "Tell me about Art Students League.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "art",
+            "league",
+            "students"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "art_students_league"
+        },
+        {
+          "text": "Tell me about Baltimore Colts 1947 50.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "baltimore",
+            "colts"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "baltimore_colts_1947_50"
+        },
+        {
+          "text": "Tell me about Barnet F C.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "barnet",
+            "c",
+            "f"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "barnet_f_c"
+        },
+        {
+          "text": "Tell me about Bihar Topics.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "bihar",
+            "topics"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "bihar_topics"
+        },
+        {
+          "text": "Tell me about Brisbane Citytrain Network.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "brisbane",
+            "citytrain",
+            "network"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "brisbane_citytrain_network"
+        },
+        {
+          "text": "Tell me about Bsc Young Boys Bern.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 4,
+          "n_oov_content": 4,
+          "oov_content_words": [
+            "bern",
+            "boys",
+            "bsc",
+            "young"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "bsc_young_boys_bern"
+        },
+        {
+          "text": "Tell me about Burkina Fatso.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "burkina",
+            "fatso"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "burkina_fatso"
+        },
+        {
+          "text": "Tell me about Cameroonian National Football Team.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 4,
+          "n_oov_content": 4,
+          "oov_content_words": [
+            "cameroonian",
+            "football",
+            "national",
+            "team"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "cameroonian_national_football_team"
+        },
+        {
+          "text": "Tell me about Canker Worm.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "canker",
+            "worm"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "canker_worm"
+        },
+        {
+          "text": "Tell me about Castleford F C.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "c",
+            "castleford",
+            "f"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "castleford_f_c"
+        },
+        {
+          "text": "Tell me about Cerezo Osaka.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "cerezo",
+            "osaka"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "cerezo_osaka"
+        },
+        {
+          "text": "Tell me about Charleston Battery.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "battery",
+            "charleston"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "charleston_battery"
+        },
+        {
+          "text": "Tell me about Chelsea Kensington.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "chelsea",
+            "kensington"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "chelsea_kensington"
+        },
+        {
+          "text": "Tell me about Chionodes.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "chionodes"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "chionodes"
+        },
+        {
+          "text": "Tell me about City of Brussels.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "brussels",
+            "city"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "city_of_brussels"
+        },
+        {
+          "text": "Tell me about City of Japan.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "city",
+            "japan"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "city_of_japan"
+        },
+        {
+          "text": "Tell me about City of Knoxville Tennessee.",
+          "n_tokens": 7,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "city",
+            "knoxville",
+            "tennessee"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "city_of_knoxville_tennessee"
+        },
+        {
+          "text": "Tell me about College for Interdisciplinary Studies.",
+          "n_tokens": 7,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "college",
+            "interdisciplinary",
+            "studies"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "college_for_interdisciplinary_studies"
+        },
+        {
+          "text": "Tell me about Cruzeiro Ec.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "cruzeiro",
+            "ec"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "cruzeiro_ec"
+        },
+        {
+          "text": "Tell me about Deportivo la Coruna.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "coruna",
+            "deportivo",
+            "la"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "deportivo_la_coruna"
+        },
+        {
+          "text": "Tell me about Deutsche Arbeiter Partei.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "arbeiter",
+            "deutsche",
+            "partei"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "deutsche_arbeiter_partei"
+        },
+        {
+          "text": "Tell me about Districts of Yemen.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "districts",
+            "yemen"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "districts_of_yemen"
+        },
+        {
+          "text": "Tell me about Elektra Entertainment Group.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "elektra",
+            "entertainment",
+            "group"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "elektra_entertainment_group"
+        },
+        {
+          "text": "Tell me about Epitaph Records.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "epitaph",
+            "records"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "epitaph_records"
+        },
+        {
+          "text": "Tell me about Ethnikos Achna Fc.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "achna",
+            "ethnikos",
+            "fc"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ethnikos_achna_fc"
+        },
+        {
+          "text": "Tell me about Etymology of Kazakhstan.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "etymology",
+            "kazakhstan"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "etymology_of_kazakhstan"
+        },
+        {
+          "text": "Tell me about Fc Avangard Kharkov.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "avangard",
+            "fc",
+            "kharkov"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "fc_avangard_kharkov"
+        },
+        {
+          "text": "Tell me about Futebol Clube Do Porto.",
+          "n_tokens": 7,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "clube",
+            "futebol",
+            "porto"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "futebol_clube_do_porto"
+        },
+        {
+          "text": "Tell me about Geography of Gothenburg.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "geography",
+            "gothenburg"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "geography_of_gothenburg"
+        },
+        {
+          "text": "Tell me about Gray S Inn.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 3,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "gray",
+            "inn"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "gray_s_inn"
+        },
+        {
+          "text": "Tell me about Greenbay Packers.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "greenbay",
+            "packers"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "greenbay_packers"
+        },
+        {
+          "text": "Tell me about Guadalajara Jalisco.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "guadalajara",
+            "jalisco"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "guadalajara_jalisco"
+        },
+        {
+          "text": "Tell me about Halifax Courier.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "courier",
+            "halifax"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "halifax_courier"
+        },
+        {
+          "text": "Tell me about Harper Paperbacks.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "harper",
+            "paperbacks"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "harper_paperbacks"
+        },
+        {
+          "text": "Tell me about Hartford Usa.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "hartford",
+            "usa"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "hartford_usa"
+        },
+        {
+          "text": "Tell me about Harvard College.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "college",
+            "harvard"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "harvard_college"
+        },
+        {
+          "text": "Tell me about Harvest Records.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "harvest",
+            "records"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "harvest_records"
+        },
+        {
+          "text": "Tell me about Helsinki Jokerit.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "helsinki",
+            "jokerit"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "helsinki_jokerit"
+        },
+        {
+          "text": "Tell me about History of Chelyabinsk.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "chelyabinsk",
+            "history"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "history_of_chelyabinsk"
+        },
+        {
+          "text": "Tell me about History of Durham.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "durham",
+            "history"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "history_of_durham"
+        },
+        {
+          "text": "Tell me about History of Mulhouse.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "history",
+            "mulhouse"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "history_of_mulhouse"
+        },
+        {
+          "text": "Tell me about History of Nantes.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "history",
+            "nantes"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "history_of_nantes"
+        },
+        {
+          "text": "Tell me about Imperial College.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "college",
+            "imperial"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "imperial_college"
+        },
+        {
+          "text": "Tell me about Imperial Roman.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "imperial",
+            "roman"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "imperial_roman"
+        },
+        {
+          "text": "Tell me about Indianapolis Pacers.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "indianapolis",
+            "pacers"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "indianapolis_pacers"
+        },
+        {
+          "text": "Tell me about Kansas City Mo.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "city",
+            "kansas",
+            "mo"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "kansas_city_mo"
+        },
+        {
+          "text": "Tell me about Kashiwa Reisoru.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "kashiwa",
+            "reisoru"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "kashiwa_reisoru"
+        },
+        {
+          "text": "Tell me about Kastamone.",
+          "n_tokens": 4,
+          "n_content_tokens": 4,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "kastamone"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "kastamone"
+        },
+        {
+          "text": "Tell me about Kettering Town F C.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "c",
+            "f",
+            "kettering"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "kettering_town_f_c"
+        },
+        {
+          "text": "Tell me about Kilmarnock Fc.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "fc",
+            "kilmarnock"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "kilmarnock_fc"
+        },
+        {
+          "text": "Tell me about Komunistick Strana Eskoslovenska.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "eskoslovenska",
+            "komunistick",
+            "strana"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "komunistick_strana_eskoslovenska"
+        },
+        {
+          "text": "Tell me about L Quipe de France.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 4,
+          "n_oov_content": 4,
+          "oov_content_words": [
+            "de",
+            "france",
+            "l",
+            "quipe"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "l_quipe_de_france"
+        },
+        {
+          "text": "Tell me about Lake District.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "district"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "lake_district"
+        },
+        {
+          "text": "Tell me about Lake Fly.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 0,
+          "n_oov_content": 0,
+          "oov_content_words": [],
+          "fully_in_vocab_content": true,
+          "gate_pass": true,
+          "subtype": "lake_fly"
+        },
+        {
+          "text": "Tell me about Lambeth London England.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "england",
+            "lambeth",
+            "london"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "lambeth_london_england"
+        },
+        {
+          "text": "Tell me about Livingstone F C.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "c",
+            "f",
+            "livingstone"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "livingstone_f_c"
+        },
+        {
+          "text": "Tell me about Lorand Eotvos University.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "eotvos",
+            "lorand",
+            "university"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "lorand_eotvos_university"
+        },
+        {
+          "text": "Tell me about Millennium Olympic Games.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "millennium",
+            "olympic"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "millennium_olympic_games"
+        },
+        {
+          "text": "Tell me about Ministere Des Transports.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "des",
+            "ministere",
+            "transports"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ministere_des_transports"
+        },
+        {
+          "text": "Tell me about Mount Carmel School Patna.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "carmel",
+            "mount",
+            "patna"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "mount_carmel_school_patna"
+        },
+        {
+          "text": "Tell me about New England Pats.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "england",
+            "pats"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "new_england_pats"
+        },
+        {
+          "text": "Tell me about Nfl Hall of Fame.",
+          "n_tokens": 7,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "fame",
+            "hall",
+            "nfl"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "nfl_hall_of_fame"
+        },
+        {
+          "text": "Tell me about Norman F Coleman.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "coleman",
+            "f",
+            "norman"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "norman_f_coleman"
+        },
+        {
+          "text": "Tell me about Omonia Aradippou.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "aradippou",
+            "omonia"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "omonia_aradippou"
+        },
+        {
+          "text": "Tell me about Osaka Prefecture.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "osaka",
+            "prefecture"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "osaka_prefecture"
+        },
+        {
+          "text": "Tell me about Padova Province.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "padova",
+            "province"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "padova_province"
+        },
+        {
+          "text": "Tell me about Pakistani Nation State.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "nation",
+            "pakistani",
+            "state"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "pakistani_nation_state"
+        },
+        {
+          "text": "Tell me about Park Barn Estate.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "estate"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": true,
+          "subtype": "park_barn_estate"
+        },
+        {
+          "text": "Tell me about Pernambuco State.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "pernambuco",
+            "state"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "pernambuco_state"
+        },
+        {
+          "text": "Tell me about Pop Grunge.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "grunge",
+            "pop"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "pop_grunge"
+        },
+        {
+          "text": "Tell me about Portland Ore.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "ore",
+            "portland"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "portland_ore"
+        },
+        {
+          "text": "Tell me about Portugal Portal.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "portal",
+            "portugal"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "portugal_portal"
+        },
+        {
+          "text": "Tell me about Portuguese Municipalities.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "municipalities",
+            "portuguese"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "portuguese_municipalities"
+        },
+        {
+          "text": "Tell me about Ranga Reddy.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "ranga",
+            "reddy"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ranga_reddy"
+        },
+        {
+          "text": "Tell me about Red Imps.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "imps"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "red_imps"
+        },
+        {
+          "text": "Tell me about Reino Hulandes.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "hulandes",
+            "reino"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "reino_hulandes"
+        },
+        {
+          "text": "Tell me about S C Olhanense.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 3,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "c",
+            "olhanense"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "s_c_olhanense"
+        },
+        {
+          "text": "Tell me about Saint Aventinus.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "aventinus",
+            "saint"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "saint_aventinus"
+        },
+        {
+          "text": "Tell me about Saints Football Club.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "club",
+            "football",
+            "saints"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "saints_football_club"
+        },
+        {
+          "text": "Tell me about Santa Fe Argentina.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "argentina",
+            "fe",
+            "santa"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "santa_fe_argentina"
+        },
+        {
+          "text": "Tell me about Southern Methodist University.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "methodist",
+            "southern",
+            "university"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "southern_methodist_university"
+        },
+        {
+          "text": "Tell me about Spvgg F Rth.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "f",
+            "rth",
+            "spvgg"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "spvgg_f_rth"
+        },
+        {
+          "text": "Tell me about Star of Romania.",
+          "n_tokens": 6,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 1,
+          "n_oov_content": 1,
+          "oov_content_words": [
+            "romania"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "star_of_romania"
+        },
+        {
+          "text": "Tell me about State Highways in California.",
+          "n_tokens": 7,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "california",
+            "highways",
+            "state"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "state_highways_in_california"
+        },
+        {
+          "text": "Tell me about Steven Spilberg.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "spilberg",
+            "steven"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "steven_spilberg"
+        },
+        {
+          "text": "Tell me about Tour de France 2013.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "de",
+            "france",
+            "tour"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "tour_de_france_2013"
+        },
+        {
+          "text": "Tell me about Tulane Law.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "law",
+            "tulane"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "tulane_law"
+        },
+        {
+          "text": "Tell me about Ukraine National Football Team.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 4,
+          "n_oov_content": 4,
+          "oov_content_words": [
+            "football",
+            "national",
+            "team",
+            "ukraine"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "ukraine_national_football_team"
+        },
+        {
+          "text": "Tell me about Universal Records Group.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "group",
+            "records",
+            "universal"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "universal_records_group"
+        },
+        {
+          "text": "Tell me about Wake Forest College.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "college",
+            "wake"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "wake_forest_college"
+        },
+        {
+          "text": "Tell me about Warrington Rlfc.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "rlfc",
+            "warrington"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "warrington_rlfc"
+        },
+        {
+          "text": "Tell me about Welling United.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "united",
+            "welling"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "welling_united"
+        },
+        {
+          "text": "Tell me about Winchester College.",
+          "n_tokens": 5,
+          "n_content_tokens": 5,
+          "n_oov_tokens": 2,
+          "n_oov_content": 2,
+          "oov_content_words": [
+            "college",
+            "winchester"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "winchester_college"
+        },
+        {
+          "text": "Tell me about Winnipeg Football Club.",
+          "n_tokens": 6,
+          "n_content_tokens": 6,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "club",
+            "football",
+            "winnipeg"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "winnipeg_football_club"
+        },
+        {
+          "text": "Tell me about Xvth Olympic Winter Games.",
+          "n_tokens": 7,
+          "n_content_tokens": 7,
+          "n_oov_tokens": 3,
+          "n_oov_content": 3,
+          "oov_content_words": [
+            "olympic",
+            "winter",
+            "xvth"
+          ],
+          "fully_in_vocab_content": false,
+          "gate_pass": false,
+          "subtype": "xvth_olympic_winter_games"
+        }
+      ]
+    }
+  },
+  "overall": {
+    "n_utterances": 124,
+    "token_oov_rate": 0.36111,
+    "content_word_oov_rate": 0.39876,
+    "n_content_tokens_total": 647,
+    "n_oov_content_total": 258,
+    "fully_in_vocab_content_pct": 5.65,
+    "fully_in_vocab_content_frac": "7/124",
+    "gate_pass_pct": 10.48,
+    "gate_pass_frac": "13/124",
+    "top_missing_content_words": [
+      [
+        "f",
+        6
+      ],
+      [
+        "c",
+        5
+      ],
+      [
+        "college",
+        5
+      ],
+      [
+        "city",
+        4
+      ],
+      [
+        "football",
+        4
+      ],
+      [
+        "history",
+        4
+      ],
+      [
+        "records",
+        4
+      ],
+      [
+        "fc",
+        3
+      ],
+      [
+        "france",
+        3
+      ],
+      [
+        "state",
+        3
+      ],
+      [
+        "art",
+        2
+      ],
+      [
+        "club",
+        2
+      ],
+      [
+        "de",
+        2
+      ],
+      [
+        "england",
+        2
+      ],
+      [
+        "group",
+        2
+      ],
+      [
+        "imperial",
+        2
+      ],
+      [
+        "kansas",
+        2
+      ],
+      [
+        "national",
+        2
+      ],
+      [
+        "olympic",
+        2
+      ],
+      [
+        "osaka",
+        2
+      ],
+      [
+        "prefecture",
+        2
+      ],
+      [
+        "team",
+        2
+      ],
+      [
+        "university",
+        2
+      ],
+      [
+        "ac",
+        1
+      ],
+      [
+        "achna",
+        1
+      ],
+      [
+        "afraid",
+        1
+      ],
+      [
+        "ago",
+        1
+      ],
+      [
+        "america",
+        1
+      ],
+      [
+        "angora",
+        1
+      ],
+      [
+        "aomori",
+        1
+      ]
+    ]
+  }
+}
