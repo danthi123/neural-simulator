@@ -4718,6 +4718,66 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 _OE_DR.note_turn(msg, chat.agent, _oe_dstate, actions=getattr(chat, "actions_set", None))
         except Exception:
             pass  # never let the discourse fold crash an open-ended turn
+        # ── R1 RUNG-3 (2026-09-02): the open-ended turn now ALSO runs the DEEPER query-branch per-turn SESSION-STATE
+        #    FOLDS a normal turn runs INSIDE its query-answer branches further down the pipeline (server.py ~5038/5098/
+        #    4907/5213), which the open-ended EARLY RETURN still bypassed after rung-2. These are the E2 worldview
+        #    affective forward-model UPDATE (`_SESSION_WORLDVIEW`), the D6 multi-referent WM MAINTAIN load+hold
+        #    (`_SESSION_MULTIREF`), the Gate-B prospective-memory intention LATCH / held-monitor ADVANCE (`_SESSION_PMEM`),
+        #    and the Mongillo activity-silent WM MAINTAIN focus/distractor write (`_SESSION_SILENT_WM`). As in rung-2,
+        #    each reuses the SAME faculty function, gate + `cache_key` the normal pipeline uses, runs for its STATE-WRITE
+        #    side effect ONLY, and DISCARDS any returned surprise-notice / reminder-prefix / read-out LEAD (the free-talk
+        #    surface + `_oe_resp` stay byte-identical). Each fold lifts ONLY the NON-query WRITE branch: the specialist
+        #    QUERY short-circuits each of these owns -- the worldview expectation-query, the D6 hold-query read-out, the
+        #    pmem formation ACKNOWLEDGEMENT surface, the silent-WM temporal-recall read-out -- are ROUTING, deferred to
+        #    rung-4 (specialist-query routing). Every call is independently flag-guarded + try/excepted, so with every
+        #    faculty off this is byte-identical, additive otherwise; all inside the already-existing BRAIN_OPEN_ENDED
+        #    guard, so the default path imports/executes NONE of it. DISCLOSED RESIDUAL (rungs 4-5): the specialist-query
+        #    ROUTING above + the FORM-override/default-ON flip remain; these are duplicated CALL SITES, not yet a single
+        #    shared pipeline both paths invoke.
+        try:                                               # E2 worldview affective forward-model: UPDATE the held expectation
+            import research.runners.worldmodel_production_organ as _OE_WM
+            from research.runners.affect_production_organ import appraise_text as _oe_wm_appraise
+            if _OE_WM.worldmodel_enabled() and not _OE_WM.is_expectation_query(msg):  # the expectation-query read-out is a specialist route (rung-4)
+                _oe_wm_state = _SESSION_WORLDVIEW.setdefault(cache_key, {"context_sign": 1, "expected_sign": None})
+                _oe_obs_val = float(_oe_wm_appraise(msg).get("valence", 0.0))
+                _oe_obs_sign = 1 if _oe_obs_val > 0.02 else (-1 if _oe_obs_val < -0.02 else 0)
+                if _oe_obs_sign != 0:                      # mirror the normal else-branch STATE update (persistence prior)
+                    _oe_exp = _get_worldmodel_organ().expectation(_oe_obs_sign, lesion=_OE_WM.worldmodel_lesioned())
+                    _oe_wm_state["context_sign"] = int(_oe_obs_sign)
+                    _oe_wm_state["expected_sign"] = int(_oe_exp["pred_sign"])
+        except Exception:
+            pass  # never let the worldview fold crash an open-ended turn
+        try:                                               # D6 multi-referent WM: MAINTAIN (load+hold >=2 referents)
+            import research.runners.d6_multiref_wm_production_organ as _OE_D6
+            if _OE_D6.multiref_enabled() and not _OE_D6.is_hold_query(msg):  # the hold-query read-out is a specialist route (rung-4)
+                _get_multiref_organ(cache_key).judge(msg, lesion=_OE_D6.multiref_lesioned())
+        except Exception:
+            pass  # never let the multiref maintain-fold crash an open-ended turn
+        try:                                               # Gate-B prospective memory: latch a formation / advance a held monitor
+            import research.runners.prospective_memory_production_organ as _OE_PM
+            if _OE_PM.pmem_enabled():
+                _oe_pm_formation = _OE_PM.parse_intention(msg)
+                if _oe_pm_formation is not None:           # FORMATION: latch the deferred intention (the ack surface is rung-4 routing)
+                    _get_pmem_organ(cache_key).form_intention(
+                        _oe_pm_formation["action"], _oe_pm_formation["cue_clause"], _oe_pm_formation["cue_keywords"],
+                        lesion=_OE_PM.pmem_lesioned(), hebbian_lesion=_OE_PM.pmem_hebbian_lesioned())
+                else:                                      # MONITOR: advance a held intention's hold (the fire prefix is discarded)
+                    _oe_porg = _SESSION_PMEM.get(cache_key)
+                    if _oe_porg is not None and getattr(_oe_porg, "held", False):
+                        _oe_porg.read_turn(msg)
+        except Exception:
+            pass  # never let the prospective-memory fold crash an open-ended turn
+        try:                                               # Mongillo activity-silent WM: MAINTAIN (write-only focus / distractor)
+            import research.runners.activity_silent_wm_production_organ as _OE_SW
+            if _silent_wm_flag_on() and not _OE_SW.is_silent_recall_query(msg):  # the temporal-recall read-out is a specialist route (rung-4)
+                _oe_sworg = _get_silent_wm_organ(cache_key)
+                _oe_sw_refs = _OE_SW._extract_refs(msg)    # reuse the D6 host referent lexicon (declared residual)
+                if _oe_sw_refs:
+                    _oe_sworg.write_referent(_oe_sw_refs[0])  # hold the (first) named referent silently as the focus
+                else:
+                    _oe_sworg.note_distractor()            # no new referent -> the silent delay grows (a distractor turn)
+        except Exception:
+            pass  # never let the silent-WM fold crash an open-ended turn
         return _safe_json_response(_oe_resp, "open_ended")
 
     # ── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19) ────────────────────────────────────────────────────
