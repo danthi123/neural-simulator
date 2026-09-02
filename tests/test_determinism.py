@@ -503,6 +503,174 @@ class TestGap5StoreByteReproducible:
         )
 
 
+class TestDeterministicMatvecAtScale:
+    """Past the one-brain merge ceiling (total-N ~= 4968), the deterministic transpose-matvec path must
+    make two same-seed builds read BYTE-IDENTICALLY. On the cupy backend the default cuSPARSE csrmv is
+    run-to-run non-reproducible (atomic FP accumulation); a long spiking read amplifies that per-step
+    jitter into a spike divergence past ~4968. add.reduceat (no atomics) removes it. On numpy this is a
+    build-invariance regression guard (numpy is already order-stable). Covers the MAIN
+    _run_one_simulation_step E/I conductance matvec AT SCALE; the GPU-only megakernel-v1 fast path is
+    covered by TestMegakernelV1DeterministicMatvec. (2026-09-02 deterministic-matvec-all-paths arc.)"""
+
+    def test_main_step_build_twice_byte_identical_past_4968_under_flag(self):
+        import numpy as np
+        import sim.bridge as bridge_module
+        from sim.backend import get_backend, to_host
+        from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
+        from sim.bridge import SimulationBridge
+
+        N, STEPS = 5200, 40   # N > 4968
+
+        def _h(a):
+            return hashlib.sha256(np.ascontiguousarray(np.asarray(to_host(a))).tobytes()).hexdigest()
+
+        calls = {"n": 0}
+        orig = bridge_module._deterministic_ei_transpose_spmv
+
+        def spy(*a, **k):
+            calls["n"] += 1
+            return orig(*a, **k)
+
+        def build():
+            cfg = CoreSimConfig()
+            cfg.num_neurons = N
+            cfg.connections_per_neuron = 48
+            cfg.seed = 4242
+            cfg.dt_ms = 1.0
+            cfg.deterministic_transpose_matvec = True
+            cfg.enable_inhibitory_neurons = True
+            for f in ("enable_hebbian_learning", "enable_short_term_plasticity", "enable_homeostasis",
+                      "enable_stdp", "enable_structural_plasticity", "enable_reward_modulation",
+                      "enable_ou_process"):
+                setattr(cfg, f, False)
+            br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(enable_profiling=False),
+                                  viz_config=VisualizationConfig(), runtime_state=RuntimeState())
+            br._initialize_simulation_data()
+            xp, _ = get_backend()
+            for _ in range(STEPS):
+                br.cp_external_input_current[:] = xp.float32(210.0)
+                br._run_one_simulation_step()
+            out = (_h(br.cp_firing_states), _h(br.cp_conductance_g_e), _h(br.cp_membrane_potential_v))
+            br.clear_simulation_state_and_gpu_memory()
+            return out
+
+        bridge_module._deterministic_ei_transpose_spmv = spy
+        try:
+            a = build()
+            b = build()
+        finally:
+            bridge_module._deterministic_ei_transpose_spmv = orig
+        assert calls["n"] > 0, "deterministic E/I transpose SpMV never called — the test is vacuous"
+        assert a == b, (
+            f"two same-seed builds at N={N} (>4968) diverge under deterministic_transpose_matvec "
+            f"({a} != {b}); the deterministic conductance matvec has regressed to a non-order-stable "
+            "reduction."
+        )
+
+
+class TestMegakernelV1DeterministicMatvec:
+    """The opt-in GPU read-only megakernel-v1 fast path (_run_one_step_megakernel) was the LAST
+    conductance matvec not honoring cfg.deterministic_transpose_matvec: its flag branch only .tocsr()-ed
+    the transpose, then ran the cuSPARSE two-column csrmv, whose atomic FP accumulation is run-to-run
+    non-reproducible. 2026-09-02 routes it through the same _deterministic_ei_transpose_spmv /
+    _deterministic_csr_matvec the main step uses (megakernel-v2's in-kernel sequential double-accum was
+    already order-stable). GPU-only (numpy csrmv is already deterministic)."""
+
+    def _skip_if_numpy(self):
+        from sim.backend import is_gpu_backend
+        if not is_gpu_backend():
+            pytest.skip("cuSPARSE csrmv non-determinism is a GPU/cupy concern; numpy is already deterministic")
+
+    def test_cusparse_two_column_transpose_spmv_nondeterministic_but_helper_stable(self):
+        """The primitive the megakernel-v1 flag branch depended on: cuSPARSE `W.T @ fired_2col` (the E/I
+        two-column csrmv) varies call-to-call at merge scale, while _deterministic_ei_transpose_spmv is
+        byte-stable. The load-bearing assertion is the HELPER's stability (a regression to atomics fails
+        it); the cuSPARSE instability is reported, not gated, since a future driver could stabilize it."""
+        self._skip_if_numpy()
+        import numpy as np
+        import scipy.sparse as sp
+        from sim.backend import get_backend, to_host, get_sparse_module
+        from sim.bridge import _deterministic_ei_transpose_spmv
+        cp_x, _ = get_backend()
+        sparse = get_sparse_module()
+        N = 6000  # > 4968
+        rng = np.random.default_rng(4242)
+        Wh = sp.random(N, N, density=48.0 / N, format="csr", dtype=np.float32, random_state=rng,
+                       data_rvs=lambda s: rng.uniform(0.01, 8.0, s).astype(np.float32))
+        W = sparse.csr_matrix((cp_x.asarray(Wh.data), cp_x.asarray(Wh.indices), cp_x.asarray(Wh.indptr)),
+                              shape=Wh.shape)
+        cp_x.random.seed(0)
+        prev = (cp_x.random.rand(N) > 0.9).astype(cp_x.float32)
+        exc = prev * (cp_x.arange(N) % 5 != 0)
+        inh = prev * (cp_x.arange(N) % 5 == 0)
+
+        def _h(a):
+            return hashlib.sha256(np.ascontiguousarray(np.asarray(to_host(a))).tobytes()).hexdigest()
+
+        det = set()
+        for _ in range(8):
+            ge, gi = _deterministic_ei_transpose_spmv(W, exc, inh)
+            det.add((_h(ge), _h(gi)))
+        assert len(det) == 1, (
+            f"_deterministic_ei_transpose_spmv is NOT byte-stable ({len(det)} distinct over 8 calls) — "
+            "it has regressed to a non-deterministic (atomic) reduction."
+        )
+        fired_2col = cp_x.stack([exc, inh], axis=1)
+        cusparse = {_h(W.T @ fired_2col) for _ in range(8)}
+        print(f"cuSPARSE 2-col csrmv distinct hashes over 8 calls at N={N}: {len(cusparse)} "
+              "(the non-determinism the megakernel-v1 fix removes)")
+
+    @pytest.mark.slow
+    def test_megakernel_v1_read_byte_reproducible_under_flag(self):
+        """End-to-end: the megakernel-v1 read at N>4968 is byte-identical across two same-seed runs under
+        the flag. GPU + read-only regime required (slow; run via gpu_queue). Fails if the megakernel-v1
+        flag branch regresses to the cuSPARSE path (conductance diverges run-to-run — measured before the
+        fix: g_e hash b85c8ca7 vs 14169b46 at N=5200/40 steps/seed 4242)."""
+        self._skip_if_numpy()
+        import numpy as np
+        from sim.backend import get_backend, to_host
+        from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
+        from sim.bridge import SimulationBridge
+        N, STEPS = 5200, 60
+
+        def _h(a):
+            return hashlib.sha256(np.ascontiguousarray(np.asarray(to_host(a))).tobytes()).hexdigest()
+
+        def run():
+            cfg = CoreSimConfig()
+            cfg.num_neurons = N
+            cfg.connections_per_neuron = 48
+            cfg.seed = 4242
+            cfg.dt_ms = 1.0
+            cfg.deterministic_transpose_matvec = True
+            cfg.enable_step_megakernel = True
+            cfg.enable_step_megakernel_v2 = False
+            cfg.read_only_fast_step = True
+            cfg.fast_spike_reset = True
+            cfg.enable_inhibitory_neurons = True
+            for f in ("enable_hebbian_learning", "enable_short_term_plasticity", "enable_homeostasis",
+                      "enable_stdp", "enable_structural_plasticity", "enable_reward_modulation",
+                      "enable_ou_process"):
+                setattr(cfg, f, False)
+            br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(enable_profiling=False),
+                                  viz_config=VisualizationConfig(), runtime_state=RuntimeState())
+            br._initialize_simulation_data()
+            assert br._step_megakernel_can_dispatch(), "megakernel-v1 did not dispatch — config regressed"
+            xp, _ = get_backend()
+            for _ in range(STEPS):
+                br.cp_external_input_current[:] = xp.float32(300.0)
+                br._run_one_step_megakernel()
+            out = (_h(br.cp_firing_states), _h(br.cp_conductance_g_e), _h(br.cp_membrane_potential_v))
+            br.clear_simulation_state_and_gpu_memory()
+            return out
+
+        a, b = run(), run()
+        assert a == b, (
+            f"megakernel-v1 read at N={N} (>4968) is NOT byte-reproducible under the flag ({a} != {b}); "
+            "the fast-path transpose matvec regressed to the non-deterministic cuSPARSE csrmv."
+        )
+
+
 if __name__ == "__main__":
     test_seed = TestSeedTracking()
     test_seed.test_explicit_seed_tracked()

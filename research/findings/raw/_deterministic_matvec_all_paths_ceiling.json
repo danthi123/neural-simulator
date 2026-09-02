@@ -1,0 +1,48 @@
+{
+  "arc": "2026-09-02 deterministic-matvec-all-conductance-paths (onebrain-integration Phase 2)",
+  "backend": "cupy (NVIDIA 3090) + numpy cross-check",
+  "hardware_stack": "cupyx/cuSPARSE csrmv; measured on the live shared 3090",
+  "edit": "sim/bridge.py _run_one_step_megakernel (megakernel-v1 GPU read-only fast path): route the E/I-split and non-inhibitory transpose SpMV through _deterministic_ei_transpose_spmv / _deterministic_csr_matvec (add.reduceat, no atomics) under cfg.deterministic_transpose_matvec, mirroring the already-hardened main step. Additive/guarded; byte-identical when the flag is OFF.",
+  "context": "The main _run_one_simulation_step conductance matvecs (main E/I, main non-EI, graded, slow-NMDA-recurrent, coincidence, graded-plateau, GABA_B) were ALREADY routed through the deterministic helper under the flag (commits fa0168a20 2026-08-25 + 06ce99c76 2026-08-27). Megakernel-v2 (default-on) accumulates each post-neuron's incoming edges sequentially in CSR order in double => already order-stable. The GPU-only opt-in megakernel-v1 fast path was the LAST conductance matvec still on cuSPARSE csrmv under the flag (only .tocsr()-ed). This edit closes it.",
+  "microdemo_matvec_level_cupy": {
+    "description": "Distinct SHA256 hashes over 8 repeated identical calls of each transpose SpMV on one fixed random CSR (fan-in 48). >1 == run-to-run non-deterministic.",
+    "N_4096_below_ceiling": {"cusparse_1col": 1, "cusparse_2col": 8, "reduceat_1col": 1, "reduceat_EI": 1, "nnz": 196608},
+    "N_6000_above_ceiling": {"cusparse_1col": 1, "cusparse_2col": 8, "reduceat_1col": 1, "reduceat_EI": 1, "nnz": 288000},
+    "reading": "The cuSPARSE TWO-COLUMN transpose csrmv (W.T @ fired_2col -- exactly the megakernel-v1 E/I path) is non-deterministic run-to-run (8/8 distinct) at BOTH N; the reduceat helper this edit routes to is byte-stable (1/1). The 1-column csrmv happened to be stable at this fan-in (density-dependent; the 2026-08-25 gap#5 finding measured 1-col non-determinism at density 0.9)."
+  },
+  "megakernel_v1_end_to_end_cupy": {
+    "config": "N=5200 (>4968), IZH read-only megakernel-v1 (enable_step_megakernel=True, v2=False, read_only_fast_step=True, fast_spike_reset=True), inhibitory on, all plasticity off, seed 4242, dt 1.0",
+    "before_flag_off_preedit_path": {
+      "steps": 40,
+      "run1_g_e_sha256": "b85c8ca759741df3a3e2bf2d25eac08fe8fec03ba2b6ea180d5d7924e667dcd5",
+      "run2_g_e_sha256": "14169b462a53cbfdb03f5028aecaa1540eeacb7b03c22ecf236cfcbc981e5448",
+      "g_e_differs_run_to_run": true,
+      "v_differs": false,
+      "firing_differs_at_40_steps": false,
+      "reading": "The pre-edit path injects run-to-run FP jitter into continuous conductance state (g_e diverges); at 40 steps/N=5200 it had not yet amplified into a spike (firing) flip -- consistent with the 'long spiking read amplifies past ~4968 into a 1-spike divergence' mechanism."
+    },
+    "after_flag_on_postedit": {
+      "steps": 40,
+      "run1_sha256": {"firing": "81e4645fd8ad9968f1e56c1ba0914289606c6d7747f99645e5c5edad3a844fce", "g_e": "42172fb97fda5bd3791995a0733b95ca931448a0f04b8a91a38c315ca64c53f8", "v": "fbd36b9f9c5b0211a6f0068bb6a341fdc27895cf7d55534838929e779a7e489b"},
+      "run2_sha256": {"firing": "81e4645fd8ad9968f1e56c1ba0914289606c6d7747f99645e5c5edad3a844fce", "g_e": "42172fb97fda5bd3791995a0733b95ca931448a0f04b8a91a38c315ca64c53f8", "v": "fbd36b9f9c5b0211a6f0068bb6a341fdc27895cf7d55534838929e779a7e489b"},
+      "byte_identical_run_to_run": true,
+      "megakernel_v1_dispatched": true
+    }
+  },
+  "numpy_no_regression": {
+    "config": "N=6000 (>4968), main _run_one_simulation_step, inhibitory on, seed 4242, 60 steps",
+    "det_on_build1_sha256": {"firing": "8666fc9dcf968d9612c7b703eca3f5b25712e31fbea81cce8e2a6afadd0ef71b", "g_e": "8aba9ddea6ebd6084ea4648fd5f1c83bd93a9a6d7e5b044b3c53ae8c4156b6ca", "v": "da367870c4e1b8410d288338144b227cbb6dbb80603eaf6cc2d7d31d2e9fad16"},
+    "det_on_build2_sha256": {"firing": "8666fc9dcf968d9612c7b703eca3f5b25712e31fbea81cce8e2a6afadd0ef71b", "g_e": "8aba9ddea6ebd6084ea4648fd5f1c83bd93a9a6d7e5b044b3c53ae8c4156b6ca", "v": "da367870c4e1b8410d288338144b227cbb6dbb80603eaf6cc2d7d31d2e9fad16"},
+    "build_twice_byte_identical_under_flag": true,
+    "deterministic_helper_calls": 120,
+    "det_off_vs_on": {"firing_sha256_identical": true, "v_sha256_identical": true, "g_e_max_rel_diff": 4.377e-08},
+    "reading": "On numpy the matvec is order-stable regardless of the flag, so the divergence cannot be reproduced there (this is why the 2026-08-27 numpy merge batch could not see it); the flag-ON deterministic path agrees with flag-OFF within f32 rounding and flips no spike. Confirms the edit changes nothing observable on numpy and at small N."
+  },
+  "tests": {
+    "file": "tests/test_determinism.py",
+    "added": ["TestDeterministicMatvecAtScale::test_main_step_build_twice_byte_identical_past_4968_under_flag (numpy-runnable, non-vacuous via helper-call spy)", "TestMegakernelV1DeterministicMatvec::test_cusparse_two_column_transpose_spmv_nondeterministic_but_helper_stable (GPU)", "TestMegakernelV1DeterministicMatvec::test_megakernel_v1_read_byte_reproducible_under_flag (GPU, slow -> queued on gpu_queue)"],
+    "also_repaired": "tests/test_deterministic_sparse_matvec.py::test_split_primitive_executes_two_one_dimensional_spmvs -- a PRE-EXISTING red (stale FakeCSR mock, AttributeError on .indptr since the primitive switched to reduceat 2026-08-25); repaired to exercise the real helper (tocsr-once + two 1-D SpMVs + correctness).",
+    "suite_result_numpy": "tests/test_determinism.py 10 passed, 4 skipped (GPU-guarded); focused matvec set 8 passed, 2 skipped",
+    "gpu_confirm_queued": "gpu_queue add: pytest TestMegakernelV1DeterministicMatvec on cupy -> research/findings/raw/_deterministic_matvec_gpu_confirm.txt"
+  }
+}
