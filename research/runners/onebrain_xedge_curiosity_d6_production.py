@@ -50,7 +50,8 @@ probe):
     the qualifier text never appears regardless of the live crave state (a REPLY-TEXT-level lesion check, not
     only a numeric one).
   * DECLARED RESIDUAL #1, PARTIALLY CLOSED (2026-09-01 SEMANTIC-DROP rung, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_
-    SEMANTIC_DROP`, default OFF pending its own 6-seed verification). The w0 slot the cross-edge biases IS d6's
+    SEMANTIC_DROP`, default ON since its own 2026-09-01 6-seed re-verify landed -- corrected, this line previously
+    said "default OFF pending its own 6-seed verification", stale). The w0 slot the cross-edge biases IS d6's
     OWN direct-drive region (the framework's raw `w0` pool); this rung binds the cross-edge's OWN measured,
     lesion-controlled weight (`semantic_drop_current`, below) onto a REAL hyperpolarizing pull on THIS SESSION's
     physical register 0 (`d6org.buf`, the SAME register), applied inside `MultiReferentWMOrgan.load()` before its
@@ -71,8 +72,10 @@ probe):
     fabricates a fact — it only appends an honest functional self-report, and only when the live crave state AND
     the frozen cross-edge's own measured, lesion-attributable suppression both hold.
 
-GUARDED, DEFAULT-OFF UNTIL VALIDATED, BYTE-IDENTICAL-OFF. `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6` gates the whole
-thing. Unset/0/false/no/off => every organ builds standalone exactly as today (byte-identical); curiosity's and
+GUARDED, DEFAULT-ON since the 2026-09-01 production-wire GO (corrected -- this paragraph previously said
+"DEFAULT-OFF UNTIL VALIDATED", stale since validation landed), BYTE-IDENTICAL-OFF. `BRAIN_ONEBRAIN_XEDGE_
+CURIOSITY_D6` gates the whole thing. Explicit 0/false/no/off => every organ builds standalone exactly as today
+(byte-identical); curiosity's and
 d6's OWN production singletons are UNTOUCHED by this module — the new wiring runs an INDEPENDENT `AskToW0Pool`
 instance on its own shared merge pool, so there is ZERO risk to the already-live curiosity follow-up / D6
 maintain-and-read pipeline even when this flag is on. A build failure DEGRADES to "no qualifier, no diagnostic"
@@ -123,10 +126,11 @@ def xedge_curiosity_d6_semantic_drop_enabled() -> bool:
     gates the appended qualifier), the frozen cross-edge's OWN measured weight is translated into a REAL
     hyperpolarizing pull directly on THIS SESSION's physical `w0` register (see `semantic_drop_current` below),
     so the referent held there is genuinely dropped from `recovered` by the D6 substrate's own post-drive read --
-    not merely flagged in the reply text. Default OFF (unlike the base cross-edge, this rung has not yet been
-    6-seed verified at the time this flag was added) -- unset/{0,false,no,off} -> byte-identical to the
-    pre-existing qualifier-only behaviour (no current is ever injected, `load()`'s new parameter is never
-    supplied a non-None value)."""
+    not merely flagged in the reply text. Default ON since the 2026-09-01 auto-flip (`_CD6_SEMANTIC_DROP_DEFAULT_
+    ON`, above; corrected -- this docstring previously said "Default OFF ... this rung has not yet been 6-seed
+    verified", written before the re-verify landed and stale since) -- `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_
+    SEMANTIC_DROP=0` is the byte-identical escape to the pre-existing qualifier-only behaviour (no current is
+    ever injected, `load()`'s new parameter is never supplied a non-None value)."""
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP")
     if v is None:
         return _CD6_SEMANTIC_DROP_DEFAULT_ON

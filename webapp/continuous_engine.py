@@ -15,9 +15,11 @@ monologue surfaces ("while you were away, my mood drifted from X toward neutral"
 relaxation is a host homeostat (declared). Next rungs (own tasks): self-initiated WANDER on the tick (surface a
 concept), idle BTSP CONSOLIDATION, generative attractor-wandering.
 
-Default-OFF behind `BRAIN_CONTINUOUS`; when off the tick loop is inert (byte-identical to today). Host code here is
-the CLOCK + the relaxation formula + the log — legitimate world/body-timer infrastructure (it computes no
-cognition; every mood read reuses the existing spiking affect ladder). No sim/ edit.
+Default-ON since the 2026-08-21 mission-defining flip (`_CONTINUOUS_DEFAULT_ON = True`, below), behind
+`BRAIN_CONTINUOUS`; `BRAIN_CONTINUOUS=0` is the byte-identical escape (the tick loop is inert, exactly the
+pre-flip behavior this comment used to describe as the default). Host code here is the CLOCK + the relaxation
+formula + the log — legitimate world/body-timer infrastructure (it computes no cognition; every mood read reuses
+the existing spiking affect ladder). No sim/ edit.
 """
 from __future__ import annotations
 

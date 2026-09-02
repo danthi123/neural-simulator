@@ -32,7 +32,9 @@ intact self author_rate 0.092 -> 'self'; heard 0.000 -> 'heard'; lesioned-self 0
 MOAT-SAFE + ADDITIVE: this organ NEVER produces an answer, flips an abstain, or changes a recalled fact — it only
 prepends an honest own-guess MARKER onto an already-produced HYPOTHESIS turn's reply (a turn the host already
 flagged as a guess), when the author pool reads 'self'. On a recalled turn it is out of scope (never invoked).
-DEFAULT-OFF: `BRAIN_SELF_SCHEMA` unset -> the byte-identical oracle (the organ is never built, no substrate step).
+DEFAULT-ON since the wave-1/2 flip (`_SELF_SCHEMA_DEFAULT_ON = True`, below; corrected -- this line previously
+said "DEFAULT-OFF", stale): `BRAIN_SELF_SCHEMA` unset -> the organ runs; `BRAIN_SELF_SCHEMA=0` is the
+byte-identical escape to the pre-flip oracle (the organ is never built, no substrate step).
 
 LESION-LOAD-BEARING: `BRAIN_SELF_SCHEMA_LESION=1` reads with the author access severed (`schema_access=False`);
 the pool goes silent, the read collapses to 'heard', and the own-guess marker VANISHES -> the reply reverts to

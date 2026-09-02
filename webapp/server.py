@@ -3744,10 +3744,11 @@ def _build_chat_brain(brain: str, renderer: str):
 
     # --- load the brain (mirrors brain_chat_tui.load_brain precedence) ---
     if brain in ("", "tiny-demo", "tiny", "demo"):
-        # BRAIN_COMPOSER_KIND (default 'rf' = the numpy fast-path recall): set 'onebrain' for the GENUINELY-SPIKING
-        # recall (resonate-and-fire per query, runtime new-word LEARN via vocab_headroom). The onebrain build is
-        # ~180s (speed secondary); it is the brain-based-only recall the mission requires. Env-gated so the flip to
-        # spiking-by-default is one setting, and it can be verified via the real endpoint before becoming the default.
+        # BRAIN_COMPOSER_KIND (default 'onebrain' = the GENUINELY-SPIKING recall, per _COMPOSER_KIND_DEFAULT above;
+        # corrected — this comment previously said "default 'rf'", stale since the flip): set 'rf' for the numpy
+        # fast-path escape instead (resonate-and-fire per query, runtime new-word LEARN via vocab_headroom is the
+        # onebrain path). The onebrain build is ~180s (speed secondary); it is the brain-based-only recall the
+        # mission requires. Env-gated so BRAIN_COMPOSER_KIND=rf reverts to the pre-flip numpy fast path.
         _ck = os.environ.get("BRAIN_COMPOSER_KIND", _COMPOSER_KIND_DEFAULT)
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
                                               enable_neural_render=False, composer_kind=_ck)
@@ -5381,8 +5382,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 # the SAME atom PART 2 fires over a build curriculum, now fired ONCE per REAL chat turn so the edge
                 # GROWS from W0=0.05 through the conversation itself. The credit VALUE + teach DIRECTION are read
                 # off the brain's OWN confident spiking resolution (no host label). Behind BRAIN_ONEBRAIN_XEDGE +
-                # BRAIN_ONEBRAIN_XEDGE_LEARN (both default-OFF) -> byte-identical no-op when off / no referent held
-                # / content inconclusive. Never crashes a turn.
+                # BRAIN_ONEBRAIN_XEDGE_LEARN (both default-ON since the 2026-08-28 flip, commit fe1911f2f --
+                # corrected, this comment previously said "both default-OFF") -> byte-identical no-op when
+                # EXPLICITLY set to 0 / no referent held / content inconclusive. Never crashes a turn.
                 if cj["comprehended"] or known:
                     try:
                         from research.runners.onebrain_xedge_production import credit_live_turn_from_comprehension
@@ -5869,7 +5871,9 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             resp["hypothesis"] = True
             resp["hypothesis_svo"] = list(r.get("hypothesis_svo") or [])
             resp["fluent_hypothesis"] = bool(r.get("fluent_hypothesis"))
-            # ── BEGIN faculty: DR-3 self-schema AUTHORSHIP (self-vs-heard) — additive, DEFAULT-OFF (BRAIN_SELF_SCHEMA) ──
+            # ── BEGIN faculty: DR-3 self-schema AUTHORSHIP (self-vs-heard) — additive, DEFAULT-ON since the wave-1/2
+            #    flip (BRAIN_SELF_SCHEMA; corrected — previously said "DEFAULT-OFF", stale since _SELF_SCHEMA_
+            #    DEFAULT_ON=True landed) ──
             # BACK the host 'guess, not something I was taught' flag with a genuinely-SPIKING neural authorship read:
             # a generated HYPOTHESIS is a VOLUNTEERED proposition (self-authored), so the DR-3 self_schema `author`
             # sub-block is driven 'self' and fires; its readback decides whether to PREPEND an honest own-guess MARKER.
@@ -5877,8 +5881,10 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             # access is severed (schema_access=False), the pool goes silent, the read collapses to 'heard', and the
             # marker VANISHES -> the reply reverts to the host default (while the recalled/content fields stay
             # byte-identical). Reuse-by-import of the 6-seed GO de-risk (authorship acc 1.000; self-lesion collapses
-            # author to chance 6/6). DEFAULT-OFF: BRAIN_SELF_SCHEMA unset -> no `authorship` key, no marker ->
-            # byte-identical. Guarded so it never crashes a turn. See research/runners/self_schema_production_organ.py.
+            # author to chance 6/6). DEFAULT-ON (corrected — previously said "DEFAULT-OFF: BRAIN_SELF_SCHEMA unset ->
+            # no `authorship` key", stale): BRAIN_SELF_SCHEMA unset -> _SELF_SCHEMA_DEFAULT_ON=True -> the organ runs;
+            # BRAIN_SELF_SCHEMA=0 is the byte-identical escape (no `authorship` key, no marker). Guarded so it never
+            # crashes a turn. See research/runners/self_schema_production_organ.py.
             try:
                 import research.runners.self_schema_production_organ as _SS
                 if _SS.self_schema_enabled():

@@ -35,11 +35,11 @@ WHAT IS LOAD-BEARING vs DECLARED RESIDUAL (honest, from the de-risk probe + R3-v
     SEMANTIC discourse role->pool binding. So which real referent maps to the agent- vs patient-candidate pool is
     host-directed (the live focus is a POSITIONAL proxy). Closing that semantic binding is a later rung.
 
-GUARDED, DEFAULT-OFF, BYTE-IDENTICAL-OFF. `BRAIN_ONEBRAIN_XEDGE` gates the whole thing (default OFF — the flip to
-default-ON is a separate owner-gated step). Unset/0/false/no/off => every organ builds standalone exactly as
-today (byte-identical). A build failure DEGRADES to standalone (never crashes brain load). `BRAIN_ONEBRAIN_XEDGE_
-LESION=1` zeroes the cross-edge (the load-bearing lesion control) while keeping everything else, for the live
-vary->lesion check.
+GUARDED, DEFAULT-ON since 2026-08-28 (commit fe1911f2f; corrected -- this paragraph previously said "default OFF
+— the flip to default-ON is a separate owner-gated step", stale). `BRAIN_ONEBRAIN_XEDGE` gates the whole thing;
+explicit 0/false/no/off => every organ builds standalone exactly as today (byte-identical-off). A build failure
+DEGRADES to standalone (never crashes brain load). `BRAIN_ONEBRAIN_XEDGE_LESION=1` zeroes the cross-edge (the
+load-bearing lesion control) while keeping everything else, for the live vary->lesion check.
 
 Run (offline grow + record + self-verify):
   SIM_BACKEND=numpy python -m research.runners.onebrain_xedge_production --grow --seeds 42 \
@@ -62,7 +62,8 @@ _XEDGE_LEARN_DEFAULT_ON = True   # same flip: PART-2 per-turn live-learning cros
 def xedge_enabled() -> bool:
     """`BRAIN_ONEBRAIN_XEDGE` in {1,true,yes,on} -> the frozen d6-WM->comprehension cross-edge is live (the two
     organs share ONE spiking pool with the pre-grown, frozen cross-synapse). Unset/{0,false,no,off} -> every
-    organ builds standalone exactly as today (byte-identical). Default per `_XEDGE_DEFAULT_ON` (OFF)."""
+    organ builds standalone exactly as today (byte-identical). Default per `_XEDGE_DEFAULT_ON` (ON, since the
+    2026-08-28 flip; corrected -- previously documented as OFF here)."""
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE")
     if v is None:
         return _XEDGE_DEFAULT_ON
@@ -83,8 +84,10 @@ def xedge_learn_enabled() -> bool:
     """`BRAIN_ONEBRAIN_XEDGE_LEARN` in {1,true,yes,on} -> PART 2 LIVE-LEARNING: the cross-edge starts near-zero
     (W0=0.05) and GROWS from an IN-BRAIN, self-supervised credit signal (comprehension's OWN confident sel
     resolution drives teach_*, three-factor DA-gated, bounded by stdp_w_max) over a multi-turn sequence -- NOT a
-    frozen pre-grown host-schedule weight. Default OFF (unset) -> the PART-1 FROZEN host-schedule edge. Only takes
-    effect when `BRAIN_ONEBRAIN_XEDGE` is also on."""
+    frozen pre-grown host-schedule weight. Default ON since the 2026-08-28 flip (`_XEDGE_LEARN_DEFAULT_ON`, above;
+    corrected -- previously documented as "Default OFF (unset) -> the PART-1 FROZEN host-schedule edge", stale);
+    `BRAIN_ONEBRAIN_XEDGE_LEARN=0` is the byte-identical escape to the PART-1 FROZEN host-schedule edge. Only
+    takes effect when `BRAIN_ONEBRAIN_XEDGE` is also on."""
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_LEARN")
     if v is None:
         return _XEDGE_LEARN_DEFAULT_ON
