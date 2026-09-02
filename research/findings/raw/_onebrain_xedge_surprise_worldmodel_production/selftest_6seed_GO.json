@@ -1,0 +1,443 @@
+{
+  "probe": "onebrain_xedge_surprise_worldmodel_production_selftest",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "n_go": 6,
+  "n_seeds": 6,
+  "results": [
+    {
+      "seed": 42,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.0128,
+          0.1338,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798,
+          0.2798
+        ],
+        "n_gated": 2,
+        "w_grew": 0.2669428801164031,
+        "pred_margin": 282.29166666666663
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625,
+          1.0625
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 425.34722222222223
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128,
+          0.0128
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 425.34722222222223
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.01,
+          0.1422,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195,
+          0.3195
+        ],
+        "n_gated": 2,
+        "w_grew": 0.309474041685462,
+        "pred_margin": 305.9027777777778
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696,
+          1.5696
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 464.58333333333337
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 464.58333333333337
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.0986,
+          0.1811,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296,
+          0.3296
+        ],
+        "n_gated": 2,
+        "w_grew": 0.23105235397815704,
+        "pred_margin": 279.51388888888886
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422,
+          1.422
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 396.52777777777777
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986,
+          0.0986
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 396.52777777777777
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.0149,
+          0.0963,
+          0.2304,
+          0.3471,
+          0.3471,
+          0.3471,
+          0.3471,
+          0.3471,
+          0.3471,
+          0.3471,
+          0.3471
+        ],
+        "n_gated": 3,
+        "w_grew": 0.33220113907009363,
+        "pred_margin": 280.55555555555554
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529,
+          1.1529
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 422.56944444444446
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149,
+          0.0149
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 422.56944444444446
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.0589,
+          0.1749,
+          0.316,
+          0.4312,
+          0.4312,
+          0.4312,
+          0.4312,
+          0.4312,
+          0.4312,
+          0.4312,
+          0.4312
+        ],
+        "n_gated": 3,
+        "w_grew": 0.3723589740693569,
+        "pred_margin": 222.22222222222226
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883,
+          1.0883
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 392.36111111111114
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589,
+          0.0589
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 392.36111111111114
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "n_turns": 10,
+      "surprising": {
+        "mode": "surprising",
+        "lesion": false,
+        "w_traj": [
+          0.0306,
+          0.0991,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407,
+          0.2407
+        ],
+        "n_gated": 2,
+        "w_grew": 0.21005022898316383,
+        "pred_margin": 334.0277777777778
+      },
+      "expected": {
+        "mode": "expected",
+        "lesion": false,
+        "w_traj": [
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468,
+          1.3468
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 433.68055555555554
+      },
+      "lesioned": {
+        "mode": "surprising",
+        "lesion": true,
+        "w_traj": [
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306,
+          0.0306
+        ],
+        "n_gated": 0,
+        "w_grew": 0.0,
+        "pred_margin": 433.68055555555554
+      },
+      "grew": true,
+      "expected_no_update": true,
+      "lesion_no_update": true,
+      "frac_attributable_vs_lesion": 1.0,
+      "frac_attributable_vs_expected": 1.0,
+      "n_hollow": 0,
+      "GO": true
+    }
+  ],
+  "note": "the REAL production hook crossedge_gated_update, driven against the process-shared WorldModelProductionOrgan (worldmodel_production_organ.get_organ), gated by its OWN dedicated per-state-calibrated surprise read (_gate_threshold_for, the de-risk's own GATE_FRAC recipe): a repeated SURPRISING sequence grows the observed-pool state->pred transition; the SAME gating code on an EXPECTED sequence does not; lesioning obs->surprise (the shared D2 circuit) collapses the update on the surprising sequence too."
+}
