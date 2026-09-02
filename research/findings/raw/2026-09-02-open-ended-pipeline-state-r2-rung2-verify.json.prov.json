@@ -1,0 +1,26 @@
+{
+ "run_id": "1788331240-3177622",
+ "runner": "research/runners/_open_ended_pipeline_state_r2_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3a3d715683a71ec7/research/runners/_open_ended_pipeline_state_r2_verify.py",
+  "report"
+ ],
+ "git_sha": "29938c547",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T02:40:40",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/2026-09-02-open-ended-pipeline-state-r2-rung2-verify.json"
+}
