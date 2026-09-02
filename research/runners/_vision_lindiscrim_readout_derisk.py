@@ -84,6 +84,13 @@ Smoke:
   SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
       --seeds 42 --epochs 200 --n-s2 96 --n-glimpses 4 \
       --out research/findings/raw/lanes/perception/vlin_smoke.json
+
+BCM S2-TEMPLATE-LEARNING smoke (2026-09-01, this de-risk; --s2-learn none is the byte-identical default;
+--s2-bcm-competitive-frac is REQUIRED for non-degenerate learning -- see _bcm_learn_s2_templates):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --s2-learn bcm --s2-bcm-gain 2 --s2-bcm-theta-alpha 0.02 --s2-bcm-pre-floor 0.02 \
+      --s2-bcm-epochs 5 --s2-bcm-competitive-frac 0.25 \
+      --out research/findings/raw/lanes/perception/vlin_bcm_smoke.json
 """
 from __future__ import annotations
 
@@ -222,6 +229,126 @@ def _kwta_over_templates(drive, frac):
         return drive
     thr = np.sort(drive, axis=2)[:, :, n_S2 - k][:, :, None]  # kth-largest template per (image, location)
     return np.where(drive >= thr, drive, 0.0).astype(np.float32)
+
+
+def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epochs, renorm,
+                             competitive_frac, seed):
+    """Activity-dependent BCM (Bienenstock, Cooper & Munro 1982) learning of the S2 template bank --
+    the decisive next mechanism named by the 2026-09-01 finding (research/findings/2026-09-01-vision-
+    readout-side-exhausted-satdiv-plus-ridge-plateau-points-to-S2-template-learning.md): satdiv, ridge
+    re-tune, and k-WTA-at-S2 all IMPROVE the readout but PLATEAU short of the capability bar, because the
+    residual is the INFORMATION a frozen RANDOM S2 bank carries -- not how its responses are normalized
+    or thresholded. That finding names BCM as the mechanism, already validated on this substrate
+    (sim/config.py `hebbian_bcm`; research/findings/2026-08-26-b1-v1-selforg-onbridge-BCM-sliding-
+    threshold.md broke the identical common-mode boundary 62x on V1 orientation self-org).
+
+    PORTED, not re-derived: the equations below are the SAME ones sim/bridge.py's on-bridge
+    `hebbian_bcm` branch implements (~L9849-9891) --
+        y_i     = ReLU(w_i . x)                 postsynaptic drive of template i to presynaptic pattern x
+                                                  (the SAME 'drive' _c2_rate_code/_c2_spike_code compute
+                                                  downstream at eval time -- W0 is a drop-in replacement)
+        theta_i <- (1-theta_alpha)*theta_i + theta_alpha*y_i^2      sliding metaplastic threshold EMA
+        dw_ij   = gain * x_j * y_i * (y_i - theta_i), only where x_j > pre_floor (presynaptic gate)
+    y_i > theta_i potentiates the co-active input; y_i < theta_i depresses it -- the input-specific
+    depression a plain Hebbian/coactivity rule lacks, and exactly what breaks the S2 common mode (the
+    same signature the 2026-08-26 finding broke for V1 ON/OFF).
+
+    WHY A STANDALONE FUNCTION, NOT A LITERAL IMPORT: the substrate's version is inlined against the CuPy
+    SPARSE CONNECTIVITY MATRIX's COO row/col-indexed synapses, inside a full spiking-network simulation
+    STEP (per-timestep, tied to `self.cp_connections`, `self.cp_hebb_coactivity_trace`, bridge state).
+    This runner's S2 template bank is a dense (n_S2, D) cosine-match matrix with no bridge/connectivity
+    object, no per-timestep simulation loop, and no spiking pre/post traces to hook the substrate's
+    branch into -- there is nothing importable to call. The equations are therefore applied directly to
+    the (n_S2, D) matrix instead, online, one presented patch at a time (theta is a running average
+    across presentations, so -- exactly as on-bridge -- this MUST be sequential, not a closed-form/batch
+    solve). `epochs` passes over a seeded-shuffled order of ALL (image, location) training patches (not
+    just the 6 raw images/class -- each image contributes n_loc patches, so the effective presentation
+    count is far larger than 6/class, though still drawn from only 6 underlying images/class per position
+    -- see the runner's --s2-bcm-epochs help and the finding's honest thin-data risk).
+
+    THE ONE ADAPTATION BEYOND A LITERAL PORT -- RENORMALIZATION: if `renorm`, each template row is
+    rescaled to unit L2 norm after every update, matching `_init_templates`'s random baseline (ALSO
+    unit-norm). This is the direct analog of the substrate's own stabilization: on-bridge, weights are
+    hard-clipped to [w_min,w_max] (Dale's-law-rectified excitatory bounds); here, every downstream
+    consumer (_apply_s2_norm, _kwta_over_templates, the LIF gain calibration) treats S2 templates as
+    UNIT-NORM cosine-matching directions, so keeping them unit-norm after each step is what keeps
+    'drive' on the SAME cosine-similarity scale the frozen-random baseline produces -- theta_M's own
+    superlinear growth still does the actual BCM selectivity/stabilization; renorm only prevents an
+    unbounded MAGNITUDE confound (bigger templates -> bigger drive -> an artificially easier ridge read)
+    from being mistaken for genuinely LEARNED template information (honest risk #3 in the finding: a
+    thin-data template bank overfitting is a confound distinct from readout overfitting). `renorm=0` is
+    offered for comparison and is expected to risk exactly that confound.
+
+    THE COMPANION PROCESS THIS POPULATION-LEVEL PORT NEEDS THAT A SINGLE ON-BRIDGE V1 CELL DID NOT
+    (`competitive_frac`, found necessary during THIS de-risk's own exploration, not pre-registered):
+    the on-bridge BCM finding trains ONE weight vector per V1 CELL, each with its own distinct
+    retinotopic receptive field, so different cells see different local input and naturally symmetry-
+    break into different preferred orientations from independent random starts. This runner's n_S2
+    templates instead all share the SAME pool of training patches (a feature BANK, not a retinotopic
+    array) -- and an early sweep (this de-risk, seed 42, gain in {0.5,...,10}) found that plain BCM run
+    that way collapses the WHOLE bank toward one dominant shared direction (theta_std -> 0.0000 across
+    ALL 96 templates, RATE-ceiling WORSE than the frozen-random baseline): with no interaction between
+    the units being trained, every template's independent BCM dynamics gets pulled toward the same
+    principal direction of the shared input statistics -- the "wall-reframe" companion process missing
+    here is COMPETITION AMONG THE LEARNERS, not competition at read-time (--s2-kwta-frac, which acts on
+    an already-fixed bank's responses). `competitive_frac` in (0,1) restricts the WEIGHT UPDATE at each
+    presentation to only the top-`competitive_frac` fraction of templates by their CURRENT drive y (a
+    Foldiak 1991 / Kohonen 1982-style winner-relative competitive-learning gate composed with BCM's own
+    signed LTP/LTD): only the best-matching templates for THIS patch get to specialise on it, so
+    different patches recruit different winners over training and diversity is preserved instead of
+    collapsing. theta still updates for EVERY template every presentation (a postsynaptic activity
+    statistic the cell tracks regardless of whether it won -- matches the substrate's own semantics,
+    where `cp_bcm_theta` updates unconditionally while the weight branch is separately gated). 0.0 (or
+    >=1.0) disables competition (the original single-cell-only port, kept for comparison / the ablation
+    that motivated adding this).
+
+    Returns W (n_S2, D) learned templates (float32), theta (n_S2,) final per-template thresholds, and a
+    diagnostics dict (theta stats, mean-square drive, drift from init) -- reported so a plateau or a
+    too-noisy-to-learn-from estimate (honest risks #1/#2) is VISIBLE, not silently absorbed."""
+    W = W0.copy().astype(np.float64)
+    n_S2, D = W.shape
+    theta = np.zeros(n_S2, dtype=np.float64)
+    rng = np.random.default_rng(seed)
+    N = patches_flat.shape[0]
+    X = patches_flat.astype(np.float64)
+    y_sq_sum = np.zeros(n_S2, dtype=np.float64)
+    n_seen = 0
+    k_win = None
+    if competitive_frac and 0.0 < competitive_frac < 1.0:
+        k_win = max(1, int(round(competitive_frac * n_S2)))
+    for _ep in range(max(1, int(epochs))):
+        order = rng.permutation(N)
+        for idx in order:
+            x = X[idx]
+            y = np.clip(W @ x, 0.0, None)
+            theta = (1.0 - theta_alpha) * theta + theta_alpha * (y * y)
+            gate = x > pre_floor
+            if not gate.any():
+                continue
+            winner = None
+            if k_win is not None and k_win < n_S2:
+                thr = np.partition(y, n_S2 - k_win)[n_S2 - k_win]  # kth-largest drive this presentation
+                winner = y >= thr
+            dw = (gain * y * (y - theta))[:, None] * (x * gate)[None, :]
+            if winner is not None:
+                dw = dw * winner[:, None]
+            W = W + dw
+            if renorm:
+                norms = np.linalg.norm(W, axis=1, keepdims=True)
+                W = W / np.where(norms < 1e-9, 1.0, norms)
+            y_sq_sum += y * y
+            n_seen += 1
+    diag = {
+        "n_presentations": int(n_seen),
+        "competitive_frac": float(competitive_frac),
+        "theta_final_mean": float(theta.mean()),
+        "theta_final_std": float(theta.std()),
+        "frac_theta_near_zero": float(np.mean(theta < 1e-8)),  # never-driven-above-floor units (dead)
+        "mean_sq_drive_mean": float((y_sq_sum / max(1, n_seen)).mean()),
+        "mean_sq_drive_std": float((y_sq_sum / max(1, n_seen)).std()),
+        "template_drift_from_init_mean": float(np.mean(np.linalg.norm(W - W0.astype(np.float64), axis=1))),
+    }
+    return W.astype(np.float32), theta.astype(np.float32), diag
 
 
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
@@ -368,9 +495,20 @@ def run_seed(seed, a, code):
     H_held = _centroid_decode(_hist_oracle(tr_c1, a.n_orientations), tr_cls,
                               _hist_oracle(he_c1, a.n_orientations), he_cls)
 
-    # ---- FIXED random S2 template bank (learning is at the READOUT, not the templates) ----
+    # ---- S2 template bank: FIXED random (default) or BCM-LEARNED from the training patches ----
     dim = a.n_orientations * a.s2_p * a.s2_p
     W0 = _init_templates(dim, a.n_s2, seed * 29 + 13)
+    bcm_diag = None
+    if getattr(a, "s2_learn", "none") == "bcm":
+        # SAME random init as the frozen-random baseline above (like-for-like: only whether learning
+        # happens afterward differs) -- presynaptic patches are the FIXED spiking C1 front end's
+        # training-split patches, L2-normalised exactly as _c2_rate_code/_c2_spike_code do at eval time.
+        tr_patches = _l2n(_extract_patches(tr_c1, a.s2_p), axis=2).reshape(-1, dim)
+        W0, _bcm_theta, bcm_diag = _bcm_learn_s2_templates(
+            tr_patches, W0, gain=a.s2_bcm_gain, theta_alpha=a.s2_bcm_theta_alpha,
+            pre_floor=a.s2_bcm_pre_floor, epochs=a.s2_bcm_epochs,
+            renorm=bool(a.s2_bcm_renorm), competitive_frac=a.s2_bcm_competitive_frac,
+            seed=seed * 733 + 5)
 
     # ---- C2 spike code (SAME features config C reads), averaged over G glimpses (temporal integration) ----
     r_tr = _c2_spike_code(tr_c1, W0, a, code, seed * 991 + 100, a.n_glimpses)
@@ -430,7 +568,7 @@ def run_seed(seed, a, code):
     )
     architecture_load_bearing = bool(learn_spkwta_held - H_held >= a.beat_margin)
 
-    return {
+    row = {
         "seed": seed, "code": code,
         "chance_object": round(chance, 4), "chance_position": round(chance_pos, 4),
         "decode": {
@@ -464,6 +602,9 @@ def run_seed(seed, a, code):
             "architecture_load_bearing": architecture_load_bearing,
         },
     }
+    if bcm_diag is not None:
+        row["bcm"] = bcm_diag  # only present when --s2-learn bcm; keeps the default path byte-identical
+    return row
 
 
 def _summarize(rows, a, code, t0):
@@ -565,6 +706,49 @@ def main():
     p.add_argument("--n-s2", type=int, default=96,
                    help="fixed random S2 template-bank size (round-robin over classes irrelevant here; "
                         "the READOUT is learned over the full bank)")
+    p.add_argument("--s2-learn", choices=["none", "bcm"], default="none",
+                   help="2026-09-01 decisive next mechanism (satdiv/ridge/k-WTA all plateau; the finding's "
+                        "NO-DEFER handoff: the residual is the frozen random S2 bank's INFORMATION content, "
+                        "not its normalization/threshold). 'bcm' LEARNS the S2 templates from the S1/C1 "
+                        "training patches by the Bienenstock-Cooper-Munro (1982) sliding-threshold rule, "
+                        "ALREADY validated on this substrate (sim/config.py hebbian_bcm; the 2026-08-26 "
+                        "finding broke the identical common-mode boundary 62x on V1 orientation self-org) "
+                        "-- see _bcm_learn_s2_templates(). 'none' (default) keeps the frozen random bank -> "
+                        "byte-identical to every prior run of this file.")
+    p.add_argument("--s2-bcm-gain", type=float, default=200.0,
+                   help="'bcm' mode only: BCM gain (multiplies phi=x*y*(y-theta_M)); same role as "
+                        "sim/config.py's hebbian_bcm (default order-of-magnitude carried from the "
+                        "validated on-bridge V1 self-org op point, _b1_v1_selforg_bcm_derisk.py --bcm-gain).")
+    p.add_argument("--s2-bcm-theta-alpha", type=float, default=0.02,
+                   help="'bcm' mode only: EMA rate of the sliding threshold theta_M=<y^2>. sim/config.py's "
+                        "hebbian_bcm_theta_alpha default (0.001) is calibrated for thousands of SIMULATION "
+                        "STEPS per stimulus on-bridge; this runner presents one patch per update (far fewer "
+                        "total presentations), so theta needs a faster EMA to converge -- an op-point tune "
+                        "of the SAME formula, not a re-derivation of the rule.")
+    p.add_argument("--s2-bcm-pre-floor", type=float, default=0.02,
+                   help="'bcm' mode only: presynaptic-activity gate -- only x_j>floor synapses change "
+                        "(sim/config.py hebbian_bcm_pre_floor, same default; patch features here are also "
+                        "L2-normalised nonnegative activations, so the same floor scale applies).")
+    p.add_argument("--s2-bcm-epochs", type=int, default=5,
+                   help="'bcm' mode only: passes over the (seeded-shuffled) training patches. 6 examples/ "
+                        "class is thin for a stable per-unit sliding threshold (honest risk); multiple "
+                        "passes over the same patches is this runner's mitigation -- report if the theta "
+                        "estimate is still too noisy rather than forcing a number (see 'bcm' diagnostics "
+                        "in the per-seed output: theta_final_std, frac_theta_near_zero).")
+    p.add_argument("--s2-bcm-renorm", type=int, choices=[0, 1], default=1,
+                   help="'bcm' mode only: 1 (default) renormalizes each learned template row to unit L2 "
+                        "norm after every update -- keeps 'drive' on the frozen-random baseline's cosine-"
+                        "similarity scale instead of confounding learning with magnitude growth (see "
+                        "_bcm_learn_s2_templates docstring). 0 disables, for comparison.")
+    p.add_argument("--s2-bcm-competitive-frac", type=float, default=0.25,
+                   help="'bcm' mode only: restrict the WEIGHT UPDATE at each presentation to the top-"
+                        "this-fraction of templates by current drive (Foldiak 1991/Kohonen 1982 "
+                        "competitive-learning gate composed with BCM). Found NECESSARY during this "
+                        "de-risk's own exploration: without it, all n_S2 templates share one training-"
+                        "patch pool with no interaction, and plain per-unit BCM collapses the WHOLE bank "
+                        "toward one shared direction (measured: theta_std -> 0, RATE-ceiling WORSE than "
+                        "random). 0.0 (or >=1.0) disables competition -- the ORIGINAL single-cell-only "
+                        "port, kept for the ablation.")
     # signed linear readout (ridge-regularised least squares = the Maass reservoir readout)
     p.add_argument("--ridge", type=float, default=0.5,
                    help="ridge lambda (homeostatic regulariser = synaptic scaling): large -> centroid "
@@ -643,6 +827,13 @@ def main():
                   f"lblshuf {di['label_shuffle_null']:.2f} "
                   f"| GO={v['capability_go']} lb={v['learning_load_bearing']} beat={v['beats_config_c_nogo']}",
                   flush=True)
+            if "bcm" in r:
+                bd = r["bcm"]
+                print(f"      [bcm seed {r['seed']}] n_pres={bd['n_presentations']} "
+                      f"theta_mean={bd['theta_final_mean']:.4f} theta_std={bd['theta_final_std']:.4f} "
+                      f"frac_theta~0={bd['frac_theta_near_zero']:.2f} "
+                      f"msq_drive={bd['mean_sq_drive_mean']:.4f}+-{bd['mean_sq_drive_std']:.4f} "
+                      f"drift={bd['template_drift_from_init_mean']:.3f}", flush=True)
         result[code] = {"summary": _summarize(rows, a, code, t0), "per_seed": rows}
 
     top = {
