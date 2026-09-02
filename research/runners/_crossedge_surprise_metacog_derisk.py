@@ -53,6 +53,28 @@ THE MECHANISM (emergence-compliant; NO sim/ edit; brain-based; ONE brain):
     extra un-learned read passes perturb un-reset homeostatic state, adding noise without adding selectivity.
     Banked as a tested method, not a recommendation — do not re-port this class of fix onto an OPEN-LOOP error
     signal without first checking for a closed loop as C1 has.
+  * THE REAL DEFECT, FOUND AND FIXED (2026-09-02): the *-second-negative finding above hypothesized the residual
+    was "the random patient_asserted block's own non-learned connectivity leaking into the metacog read" — a
+    STRUCTURAL cross-region synapse. Direct instrumentation (enumerating every synapse between {cue,
+    patient_expected, patient_asserted, surprise} and {member0, member1} on the built bridge) found ZERO such
+    synapses outside the ONE declared cross-edge — that hypothesis does not hold; there is no structural leak.
+    The REAL defect is in the READ HARNESS itself: `_hard_reset()` restored membrane potential / recovery
+    variable / conductances / firing state / Hebbian-coactivity trace, but NOT `cp_refractory_timers` /
+    `cp_prev_firing_states` (the HARD firing gates — a neuron mid-refractory from the immediately-prior
+    read/episode stays gated even after v/u are reset) or `cp_neuron_activity_ema` / `cp_neuron_firing_thresholds`
+    (the homeostatic EMA/threshold, participation-gated so it silently drifts on whichever neurons the prior
+    read/episode drove). Proof: with the cross-edge fully zeroed (lesioned) and NO training ever run, calling
+    `read_confidence('low')` twice in a row on an UNCHANGED pool returned DIFFERENT g0/g1 — a `_hard_reset()`
+    that does not reset is not a reset. Reversing the interaction gate's fixed low-then-high read order changed
+    the leaked bias (order-dependent, not block-identity-dependent) — the exact "lesioned delta != 0" failure
+    mode both the cupy NO-GO and the gated-port numpy control exhibited. `_EXTRA_RESET_ARRAYS` (below) restores
+    all 4 to the SAME true-rest snapshot `rest_v`/`rest_u` already use; with the fix, the untrained+lesioned
+    delta collapses to EXACTLY 0.0 (not just small) and is order-invariant, both seed 42, both verified by direct
+    instrumentation before this fix was written into `_hard_reset()`. THE FIX TARGETS THE READ'S ISOLATION, not
+    the plasticity rule or the pool's wiring: `_hard_reset()` is the runner's own harness code (not `sim/`), the
+    pool's base connectivity is untouched (byte-off unaffected), and the fix is a correction to what the
+    existing docstring already claimed the primitive did ("so each read/train starts from the same substrate
+    resting state") rather than a new mechanism.
   * ANTI-CHEAT (reused by import): `_assign_blocks` draws THIS seed's (cue_c, assert_cp) block pair from a
     seed-keyed RNG independent of every other seeded draw -- the edge must grow on WHICHEVER block was randomly
     assigned this seed's "surprise" role, not a memorized identity; the OTHER (never-mismatched) surprise blocks'
@@ -161,6 +183,18 @@ _CONDUCT = ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab"
             "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
             "cp_conductance_g_gabab_slow", "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise")
 
+# THE READ-ISOLATION FIX (2026-09-02) — every per-neuron array `_run_one_simulation_step` mutates that the
+# ORIGINAL `_hard_reset` omitted, discovered by snapshotting EVERY `cp_*` bridge attribute immediately before
+# and after one `read_confidence()` call on an otherwise-untouched pool: these 4 were the entire diff.
+#   * cp_refractory_timers / cp_prev_firing_states — HARD firing gates (int32 countdown / bool), independent of
+#     membrane potential; a neuron mid-refractory at the end of one read/episode stays gated at the START of the
+#     next even though v/u were reset.
+#   * cp_neuron_activity_ema / cp_neuron_firing_thresholds — the homeostatic per-neuron EMA + adaptive threshold
+#     (`sim/bridge.py` fused_homeostasis_update); update is participation-gated (fired-or-driven neurons only),
+#     so it silently drifts on whichever neurons the immediately-prior read/episode drove, never on the rest.
+_EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
+                       "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
+
 
 def _member_idx(bridge, k):
     """Absolute neuron indices of the metacog first-order class-assembly member[k] (a sub-slice of the pool's
@@ -259,6 +293,18 @@ class SurpriseMetacogPool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (2026-09-02 — see module docstring "THE REAL DEFECT"): snapshot the SAME
+        # true-rest baseline for every OTHER per-neuron array `_run_one_simulation_step` mutates that the
+        # ORIGINAL `_hard_reset` never restored: refractory timers + prev-firing-state (HARD firing gates — a
+        # neuron mid-refractory from the immediately-prior read/episode cannot fire even though its membrane
+        # potential was reset) and the homeostatic activity EMA / adaptive threshold (participation-gated, so it
+        # silently accumulates on whichever neurons fired/were driven last). Diagnosed by direct instrumentation
+        # (`tools.lab`-style before/after snapshot diff of every `cp_*` array across one `read_confidence` call):
+        # these 4 arrays were the ONLY state that differed pre- vs post-read on an otherwise-identical substrate.
+        self._rest_extra = {}
+        for nm in _EXTRA_RESET_ARRAYS:
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
     # ---- primitives (encode-decision house style) ----
     def _hard_reset(self):
@@ -273,6 +319,16 @@ class SurpriseMetacogPool:
             b.cp_firing_states[:] = False
         if getattr(b, "cp_hebb_coactivity_trace", None) is not None:
             b.cp_hebb_coactivity_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore every array in `_EXTRA_RESET_ARRAYS` to the TRUE rest snapshot taken
+        # in __init__. Without this, whichever condition/episode ran immediately before a read leaks its
+        # residual refractory/homeostatic state into the next one — an ORDER-dependent bias (verified: reversing
+        # the low/high read order changes the leaked bias; the SAME reversal collapses to delta==0.0 once this
+        # fix is applied), NOT a block-identity effect — that the interaction gate's fixed low-then-high read
+        # order turns into a spurious non-zero LESIONED delta, masking the learned edge's own contribution.
+        for nm in _EXTRA_RESET_ARRAYS:
+            val = self._rest_extra.get(nm)
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
 
     def _drive(self, pairs, steps, learn=False, read_nmda=False, pre_pairs=None, pre_steps=0):
