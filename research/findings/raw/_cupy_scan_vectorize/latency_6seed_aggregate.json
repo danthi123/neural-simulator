@@ -1,0 +1,71 @@
+{
+ "run": "vectorized cupy 6-seed 100k knowledge latency verify (VECTORIZED_WINCODE_GATHER, --enable-decode-escalation)",
+ "backend": "cupy",
+ "device": "gpu",
+ "note": "aggregate computed by controller from per-seed jsons after the s102 seed hung at ~4h and the run was killed; 5 clean seeds + one duplicate-measurement seed",
+ "per_seed": [
+  {
+   "seed": 42,
+   "lat_med_ms": 1301.28,
+   "lat_p95_ms": 3046.24,
+   "recall": 0.9933,
+   "status": "UNDEFINED"
+  },
+  {
+   "seed": 43,
+   "lat_med_ms": 1189.03,
+   "lat_p95_ms": 1917.92,
+   "recall": 1.0,
+   "status": "UNDEFINED"
+  },
+  {
+   "seed": 44,
+   "lat_med_ms": 836.88,
+   "lat_p95_ms": 885.72,
+   "recall": 1.0,
+   "status": "UNDEFINED"
+  },
+  {
+   "seed": 100,
+   "lat_med_ms": 960.14,
+   "lat_p95_ms": 1060.28,
+   "recall": 1.0,
+   "status": "GO"
+  },
+  {
+   "seed": 101,
+   "lat_med_ms": 1905.73,
+   "lat_p95_ms": 3020.37,
+   "recall": 1.0,
+   "status": "UNDEFINED"
+  }
+ ],
+ "median_lat_med_ms": 1189.0,
+ "max_lat_med_ms": 1905.7,
+ "min_lat_med_ms": 836.9,
+ "n_under_1000ms": 2,
+ "n_within_tolerance_1300ms": 3,
+ "n_seeds": 5,
+ "baseline_ms": 1303,
+ "owner_tolerance_ms": [
+  1100,
+  1300
+ ],
+ "decision": "ACCEPT (speed<faithfulness; median within tolerance; correctness recall~1.0). vectorization is a real byte-identical improvement over baseline; not <1s uniformly.",
+ "preconditions": [
+  {
+   "name": "byte_identity_proven",
+   "ok": true,
+   "detail": "vectorization byte-identical, proven separately (byteident.txt)"
+  },
+  {
+   "name": "correctness_recall_intact",
+   "ok": true,
+   "detail": "recall ~1.0 all seeds"
+  },
+  {
+   "name": "backend_cupy",
+   "ok": true
+  }
+ ]
+}
