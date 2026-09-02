@@ -1,0 +1,30 @@
+{
+ "run_id": "1788353306-3540190",
+ "runner": "research/runners/_crossedge_surprise_worldmodel_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_crossedge_surprise_worldmodel_derisk.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_crossedge_surprise_worldmodel_6seed.json"
+ ],
+ "git_sha": "b670b02c3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T08:48:26",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 35519.1,
+ "corpus_check_query": "DG CA3 cue-specific pattern completion preserve subordinate engram post-consolidation",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_crossedge_surprise_worldmodel_6seed.json"
+}
