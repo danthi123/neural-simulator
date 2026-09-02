@@ -1,0 +1,186 @@
+{
+  "runner": "research/findings/raw/_read_isolation_audit_29/*.py (ad-hoc diagnostic scripts, not a registered research.runners module)",
+  "seeds": [42],
+  "backend": "numpy",
+  "device": "cpu",
+  "config": {"SIM_BACKEND": "numpy", "OMP_NUM_THREADS": "1 (some early comprehension_production_organ.py runs used 2; re-confirmed identical at 1, ruling out BLAS-threading nondeterminism as the residual's cause)"},
+  "command_envelope": "for each diag_*.py in this directory: OMP_NUM_THREADS=1 SIM_BACKEND=numpy /home/dant123/Projects/sim/.venv/bin/python research/findings/raw/_read_isolation_audit_29/<script>.py (run from the research/readfix-29runner-audit worktree; see per-runner dynamic_diagnostic fields below for which script produced which number)",
+  "audit": "read-isolation C2 bug class — ~29-runner follow-up (board #150, closes the research/FAILURE_LOG.md 2026-09-02 row)",
+  "method": "mechanism-zeroed two-read diagnostic (same as audit_14runners.json): build the runner's own Pool/Organ/bridge once, call its own scored read function on the SAME input twice in a row (repeat-read) and with an intervening DIFFERENT input (order-dependence). A fully-isolated read gives bitwise-identical repeat/order results; divergence = leak. Verdict-affecting = leak magnitude compared against the runner's own banked GO/NO-GO floor margin.",
+  "scope_note": "The ~29-file grep (research/FAILURE_LOG.md 2026-09-02 row, `research/runners/*_hard_reset`-shape) actually enumerates to 31 files once precisely re-run; 5 are pmem/prospective_memory (Wave-3, excluded per this task's scope) leaving 26 in-scope + the 5 already fixed this session are separately excluded from the ORIGINAL ~29 count. See enumeration.n_target below.",
+  "enumeration": {
+    "grep_used": "grep -rl 'def _hard_reset\\|def _reset_dynamics\\|def _snapshot_dynamics' research/runners/*.py, then subtracted the 17 files already audited/fixed by the original 14-runner audit + its follow-ups (H-2 fswta_drive, r3v3, provenance_to_selfschema)",
+    "n_total_hand_rolled_reset_mentions": 51,
+    "n_excluded_already_audited_or_fixed": 17,
+    "n_excluded_pmem_wave3": 5,
+    "n_target": 29,
+    "note": "target count matches the FAILURE_LOG row's '~29' figure to within the grep's own approximation"
+  },
+  "runners": [
+    {
+      "file": "research/runners/comprehension_production_organ.py",
+      "class": "ComprehensionProductionOrgan",
+      "production_status": "LIVE — Gate-B, wired into every conversational turn (`/api/brain-chat` D4 comprehension monitor)",
+      "own_hard_reset": true,
+      "c2_arrays_missing_before_fix": ["cp_refractory_timers (was zeroing a dead-typo `cp_refractory`)", "cp_prev_firing_states", "cp_neuron_activity_ema", "cp_neuron_firing_thresholds"],
+      "also_missing": ["cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise"],
+      "dynamic_diagnostic": {
+        "repeat_read_before_fix": {"r1": 0.3375, "r2": 0.2958333333333334, "delta": 0.0417},
+        "order_dependence_before_fix": {"r3": 0.28055555555555556, "r4": 0.33194444444444443, "delta": 0.0514},
+        "repeat_read_after_fix": {"r1": 0.33055555555555555, "r2": 0.33819444444444446, "delta": 0.007638888888888917},
+        "order_dependence_after_fix": {"r3": 0.3416666666666667, "r4": 0.3458333333333333, "delta": 0.002083333333333326},
+        "reduction": "delta dropped ~82% (repeat) and ~96% (order) once the named C2/NMDA-recurrent arrays are restored"
+      },
+      "per_array_diff_isolation": "before-vs-after a full read_margin() call, EVERY cp_* per-neuron array (incl. OU current) is bitwise identical once _hard_reset runs again — the C2 fix genuinely restores complete per-neuron dynamical state. enable_ou_process is False for this bridge (confirmed directly), OMP_NUM_THREADS=1 rules out BLAS nondeterminism.",
+      "residual_root_cause_DIFFERENT_bug": "cp_connections.data DOES change between reads (max abs diff 13.8 after 1 read, growing to 56.1 after 30 successive reads, approaching the hebbian_max_weight=60.0 clamp) even though prov_learn/content_learn-style plasticity gates are irrelevant here — root-caused to a SEPARATE, more severe framework bug: RegionPathway(plastic=False)/BrainRegion(plastic_internal=False) declarations are NOT enforced by the runtime Hebbian rule; only synapses with an explicitly-NAMED plasticity_gate held at 0 are protected (cp_plasticity_rate_gain defaults to 1.0 for any ungated synapse). Confirmed: this bridge's cp_plasticity_rate_gain has exactly 23040 zeros (4 named cue gates x 5760) and 1710 ones (the UNGATED sel_agent/sel_patient internal-recurrent + sel<->sel_FS synapses) — 1710 is EXACTLY the count of synapses observed to drift. See the FAILURE_LOG entry filed alongside this audit; NOT fixed here (out of scope, touches sim/bridge.py's core Hebbian kernel, high blast radius).",
+      "bucket": "PARTIAL-FIX + 🔴 ADJACENT bug flagged",
+      "verdict_affecting": "The C2 leak alone (0.0417 delta) is ~12% of the read scale and plausibly could bias a near-threshold well/ill classification — fixed. The bigger drift bug (weights walking toward the plasticity clamp over ~10-20 turns) is a LIVE production concern for a faculty whose calibrated threshold is set ONCE at build time; flagged as the highest-priority follow-up from this whole audit.",
+      "fix_applied": true,
+      "selftest": "research.runners.comprehension_production_organ.selftest_read_isolation() / --selftest (disables OU explicitly to isolate the deterministic C2 leak from the file's own honest OU-off baseline; PASS is the fixed C2 leak == 0, not the whole-file including the adjacent drift bug — see PASS field mismatch note in the function docstring)"
+    },
+    {
+      "file": "research/runners/sc_orienting_production_organ.py",
+      "class": "SpikingSCOrientingOrgan",
+      "production_status": "ADDITIVE, default-OFF (BRAIN_SPIKING_SC_ORIENT), embodied nav consumer only — not chat-coupled",
+      "own_hard_reset": true,
+      "c2_arrays_missing_before_fix": ["cp_prev_firing_states", "cp_neuron_activity_ema", "cp_neuron_firing_thresholds"],
+      "c2_arrays_already_present": ["cp_refractory_timers"],
+      "dynamic_diagnostic": {
+        "repeat_read_with_ou_on_before_and_after_fix": {"r1_N": 15, "r2_N": 16, "sc_total": [185.0, 184.0], "identical": false, "note": "IDENTICAL before and after the fix — the fix did not change this number"},
+        "repeat_read_with_ou_disabled_pre_fix": {"identical": true},
+        "repeat_read_with_ou_disabled_post_fix": {"identical": true}
+      },
+      "root_cause": "enable_hebbian_learning=False (confirmed) for this bridge -> immune to the weight-drift bug found in comprehension_production_organ.py. cfg.ou_std_current_pA=6.0 IS deliberately nonzero ('Low background OU so the retinotopic input forms a clean bump' — the de-risk's own operating point) and enable_ou_process is never disabled -> the ENTIRE observed repeat-read variance (with OU on) is genuine, BY-DESIGN OU noise, reproduced identically whether or not the C2 port is applied. With OU explicitly disabled, both PRE-FIX and POST-FIX code give bitwise-identical repeat reads -> the C2 arrays were ALREADY structurally inert here (30-step forced-drive warm + 5-step settle washes out the ≤2-step refractory/prev-firing residue, matching the original audit's R1/R2 clean pattern).",
+      "bucket": "clean (C2-attributable leak was already inert; visible jitter is OU noise, out of scope per H-3 precedent)",
+      "verdict_affecting": false,
+      "margin_vs_leak": "cortex_N wins by 15-18 spikes vs 0 for every other cardinal every single trial (both before and after fix) — the N1 6-seed nav A/B GO margin (SC/host 0.883, 12% better) is vastly larger than any observed jitter",
+      "fix_applied": true,
+      "fix_note": "hardening only, verified inert (byte-identical with OU off, both pre- and post-fix)"
+    },
+    {
+      "file": "research/runners/_navsc_merged_opcheck.py",
+      "class": "module-level _hard_reset(bridge) + run_check()",
+      "production_status": "STEP-0 co-residence scoping PROBE (gates an expensive 6-seed A/B; not itself a banked verdict)",
+      "own_hard_reset": true,
+      "c2_arrays_missing": ["cp_neuron_activity_ema", "cp_neuron_firing_thresholds", "cp_prev_firing_states"],
+      "c2_arrays_already_present": ["cp_refractory_timers"],
+      "dynamic_diagnostic": {
+        "repeat_read": {"peak": [130.76923076923077, 130.76923076923077], "cc": [{"N": 300, "E": 50, "S": 0, "W": 0}, {"N": 300, "E": 50, "S": 0, "W": 0}], "rus": [75.96153846153845, 75.96153846153845], "identical": true},
+        "order_dependence": {"identical": true}
+      },
+      "root_cause": "n_steps=160 with warm=30 forced-drive steps before any counted spike (the merged nav+conv bridge's own per-region enable_homeostasis=True operating-point fix notwithstanding) fully washes out the missing arrays' residue — matches the R1/R2 clean pattern from the original 14-runner audit.",
+      "bucket": "clean (verified dynamically, bitwise-identical both repeat-read and order-dependence)",
+      "verdict_affecting": false,
+      "fix_applied": false,
+      "fix_note": "no fix needed; confirmed clean by direct build+probe (this file builds the full merged nav+conv bridge, ~3.5 min CPU — the only target file expensive enough to warrant background execution)"
+    },
+    {
+      "file": "research/runners/_laneC_source_provenance_opponent_derisk.py",
+      "class": "ProvenanceBrain",
+      "production_status": "Board #129 source-monitoring GO (banked); reused verbatim by other runners (see importers below)",
+      "own_hard_reset": true,
+      "c2_arrays_missing_before_fix": ["cp_neuron_activity_ema", "cp_neuron_firing_thresholds (config-inert, enable_homeostasis=False)", "cp_synapse_pulse_timers", "cp_synapse_pulse_progress (undrained delay ring buffer)"],
+      "c2_arrays_already_present": ["cp_refractory_timers", "cp_prev_firing_states"],
+      "dynamic_diagnostic": {
+        "repeat_read_before_and_after_fix": {"rate_perceived": [0.0984375, 0.099375], "rate_generated": [0.0053125, 0.005], "identical": false, "note": "IDENTICAL before and after the pulse-timer/homeostatic-array port — the port did not change this number"},
+        "order_dependence": {"identical": false, "same_magnitude_before_and_after": true}
+      },
+      "computed_margin": {"d_r1": 0.898, "d_r2": 0.904, "delta_d": 0.006, "D_FLOOR": 0.50, "headroom": "~0.4 above floor"},
+      "residual_root_cause": "SAME framework-level bug found in comprehension_production_organ.py: cp_connections.data drifts between reads (max abs diff ~13.3 after 1 read, ~9.6 more after a 2nd) despite prov_learn/content_learn gates held at 0.0 for recall — the drift lives on UNGATED internal-recurrent pathways (opponent inhibition / prov<->inh) that declare plastic=False but have no named plasticity_gate, so cp_plasticity_rate_gain defaults to 1.0 (unprotected) under this bridge's enable_hebbian_learning=True.",
+      "bucket": "🟡 leak present (both C2-class and the adjacent drift bug), margin >> both",
+      "verdict_affecting": false,
+      "margin_vs_leak": "delta_d ~0.006 vs D_FLOOR=0.50 with the seed's own d~0.9 (~0.4 headroom) — 60x+ below the floor clearance",
+      "fix_applied": true,
+      "fix_note": "hygiene port (pulse-timer drain + homeostatic-pair restore); confirmed NOT the dominant driver, documented honestly rather than claimed as a full fix"
+    },
+    {
+      "file": "research/runners/_replay_dg_pattern_separation_gate.py",
+      "class": "module-level _reset_dynamics(bridge)",
+      "production_status": "Banked NO-GO (2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO.md); a prior read-boundary pop_state investigation (board #91) already found the read-isolation angle does NOT flip this verdict",
+      "own_hard_reset": true,
+      "c2_arrays_missing_before_fix": ["cp_refractory_timers"],
+      "c2_arrays_already_present": ["cp_prev_firing_states", "cp_synapse_pulse_timers/progress (already drained)", "cp_hebb_coactivity_trace"],
+      "c2_arrays_config_inert": ["cp_neuron_activity_ema", "cp_neuron_firing_thresholds (enable_homeostasis=False, confirmed in build_bridge)"],
+      "dynamic_diagnostic": {
+        "probe_repeat_before_fix": {"identical": true, "margin_delta": 0.0},
+        "probe_order_dependence_before_fix": {"identical": true, "margin_delta": 0.0},
+        "probe_repeat_after_fix": {"identical": true, "margin_delta": 0.0},
+        "probe_order_dependence_after_fix": {"identical": true, "margin_delta": 0.0}
+      },
+      "bucket": "clean (verified dynamically both before AND after the hygiene port; byte-identical throughout)",
+      "verdict_affecting": false,
+      "fix_applied": true,
+      "fix_note": "pure hygiene (cp_refractory_timers zeroing added); verified NOT to change the already-clean repeat-read/order-dependence result"
+    }
+  ],
+  "inherits_by_import_no_own_override": {
+    "note": "26 files were confirmed via AST scan (research/findings/raw/_read_isolation_audit_29/scan_hard_reset.py, run against research/runners/*.py) to define NO own _hard_reset/_reset_dynamics/_snapshot_dynamics method — they import a Pool/Organ class from an already-audited-or-self-contained-correct base file and use its reset unmodified. NOT dynamically re-verified individually (time-budget); classified by inheritance chain + the base file's own status. A static AST scan cannot detect an override done via monkeypatching or metaclass injection; none of these files showed such a pattern on inspection.",
+    "self_contained_already_correct_PER_NEURON_STATE": [
+      {"file": "research/runners/_onebrain_composer_merge_derisk.py", "reason": "declares its OWN complete _PER_NEURON_STATE (13 arrays incl. all 4 C2 + cp_refractory) at module scope, verified by direct read"},
+      {"file": "research/runners/_one_brain_merge_configsuperset_production_derisk.py", "reason": "same complete _PER_NEURON_STATE tuple, verified by direct read"},
+      {"file": "research/runners/onebrain_merge_production.py", "reason": "MergedSubstrate/MergedSubstrate2 class attribute, same complete tuple, verified by direct read"}
+    ],
+    "framework_itself_not_a_runner": [
+      {"file": "research/runners/onebrain_merge_framework.py", "reason": "THE correct reference primitive (_PER_NEURON_STATE, read_isolation(), sequence_isolation()) — not itself an audit target, excluded from the ~29 count"}
+    ],
+    "imports_from_already_fixed_base": [
+      {"file": "research/runners/_onebrain_declarative_crossedge_r4_repro.py", "class": "DeclarativeR4Pool(R4Pool)", "base_status": "R4Pool from _onebrain_integration_r4_selfschema_provenance.py — fixed (H-1, commit a667923a5/fa4e10271)"},
+      {"file": "research/runners/_onebrain_surprise_episodic_129construction_derisk.py", "class": "SurpriseEpisodic129Pool(SurpriseEpisodicPool)", "base_status": "SurpriseEpisodicPool from _onebrain_integration_surprise_episodic_crossedge.py — fixed (FW-2)"},
+      {"file": "research/runners/_read_fidelity_nonrate_latency_derisk.py", "class": "ReadFidelityPool(SurpriseEpisodicPool)", "base_status": "same fixed base as above"},
+      {"file": "research/runners/_read_fidelity_nonrate_latency_dispersion_derisk.py", "reason": "imports ReadFidelityPool from the sibling file above (inherits the fix transitively)"},
+      {"file": "research/runners/_read_fidelity_separate_trace_recall_read_derisk.py", "class": "uses ProvenanceBrain directly", "base_status": "_laneC_source_provenance_opponent_derisk.py — hygiene-ported this session (see runners[] above); shares that file's honest residual (adjacent drift bug), margin >> leak there too per the same computation"},
+      {"file": "research/runners/_replay_dg_pattern_separation_bridge.py", "reason": "imports _reset_dynamics from _replay_dg_pattern_separation_gate.py (hygiene-ported + confirmed clean above) + _replay_cortical_consolidation_gate.py (no own reset, imports _zero_current/_all_to_all/_path_weights only)"},
+      {"file": "research/runners/_replay_dg_pattern_separation_readfix_popreset.py", "reason": "imports base._reset_dynamics from the same clean file; this file's OWN prior investigation (board #91) already found the read-boundary angle does not flip the banked NO-GO"},
+      {"file": "research/runners/onebrain_xedge_curiosity_d6_production.py", "class": "wraps AskToW0Pool", "base_status": "_onebrain_crossedge_curiosity_to_d6wm.py — fixed (IG-1, commit ffa229876/3e8995bf0)"},
+      {"file": "research/runners/onebrain_xedge_selfschema_production.py", "class": "wraps R4Pool", "base_status": "fixed (H-1), same as DeclarativeR4Pool above"}
+    ],
+    "imports_from_original_audit_clean_bucket": [
+      {"file": "research/runners/_onebrain_declarative_crossedge_generic_gate.py", "classes": "DeclR1Pool(R1Pool), ReciprocalPool(R1Pool)", "base_status": "R1Pool from _onebrain_integration_r1_wm_comprehension.py — original audit CLEAN bucket (LOAD_STEPS=30 forced-spike warmup washout)"},
+      {"file": "research/runners/_onebrain_declarative_crossedge_r1_repro.py", "class": "DeclarativeR1Pool(R1Pool)", "base_status": "same clean base as above"}
+    ],
+    "thin_production_organ_wrappers_no_own_reset": [
+      {"file": "research/runners/surprise_production_organ.py", "reason": "wraps the fixed _spiking_expectation_rpe_derisk.py Pool directly, no own reset code"},
+      {"file": "research/runners/worldmodel_production_organ.py", "reason": "wraps the clean _affective_world_model_derisk.py Pool directly, no own reset code"},
+      {"file": "research/runners/_surprise_organ_homeostat_derisk.py", "reason": "imports SurpriseProductionOrgan (fixed base) + _gnw_bus_heterogeneous_organ_derisk (no own _hard_reset found)"},
+      {"file": "research/runners/_crossedge_arousal_surprise_derisk.py", "reason": "imports from the fixed _spiking_expectation_rpe_derisk.py, no own reset"},
+      {"file": "research/runners/_crossedge_surprise_worldmodel_derisk.py", "reason": "imports from the clean _affective_world_model_derisk.py, no own reset"},
+      {"file": "research/runners/_one_brain_merge_2organ_derisk.py", "reason": "imports from the fixed _spiking_expectation_rpe_derisk.py, no own reset"},
+      {"file": "research/runners/_one_brain_merge_Norgan_derisk.py", "reason": "imports from _one_brain_merge_2organ_derisk.py (no own reset) + the fixed base"},
+      {"file": "research/runners/_onebrain_composer_transducer_derisk.py", "reason": "imports from the self-contained-correct _onebrain_composer_merge_derisk.py + the fixed _spiking_expectation_rpe_derisk.py"},
+      {"file": "research/runners/_onebrain_twopool_merge_organread_verify.py", "reason": "uses onebrain_merge_framework.MergedPool directly + production organs (surprise/worldmodel — both fixed/clean bases) + metacog_production_organ.py/pragmatic_production_organ.py (both confirmed to define no own _hard_reset)"},
+      {"file": "research/runners/onebrain_xedge_production.py", "reason": "wraps the R3-v3 pair (fixed) + d6/comprehension via the framework MergedPool directly"},
+      {"file": "research/runners/onebrain_xedge_surprise_worldmodel_production.py", "reason": "no own reset found; wraps the surprise+worldmodel pair (fixed/clean bases)"}
+    ]
+  },
+  "excluded_out_of_scope": {
+    "pmem_wave3_do_not_touch": [
+      "research/runners/_pmem_hebbian_binding_derisk.py",
+      "research/runners/_pmem_intention_latch_derisk.py",
+      "research/runners/_pmem_perpool_homeostat_derisk.py",
+      "research/runners/_pmem_sfa_nmda_amplifier_derisk.py",
+      "research/runners/prospective_memory_production_organ.py"
+    ]
+  },
+  "summary_counts": {
+    "own_hard_reset_files_dynamically_diagnosed": 5,
+    "leak_confirmed_and_fixed_reduces_divergence_82pct": 1,
+    "leak_confirmed_hygiene_ported_not_dominant_driver": 1,
+    "confirmed_clean_before_and_after_hygiene_port": 1,
+    "confirmed_clean_no_fix_needed": 1,
+    "confirmed_clean_ou_noise_only_hardening_applied": 1,
+    "inherits_no_own_override_confirmed_by_ast_scan": 26,
+    "verdict_flip_candidates": 0,
+    "adjacent_bug_discovered_separate_from_c2_class": 1
+  },
+  "adjacent_bug_discovered": {
+    "title": "RegionPathway(plastic=False) / BrainRegion(plastic_internal=False) is NOT enforced by the runtime Hebbian learning rule",
+    "mechanism": "sim/bridge.py's Hebbian update only respects a per-synapse cp_plasticity_rate_gain multiplier, which is set to 0.0 ONLY for synapses assigned to a NAMED plasticity_gate via set_plasticity_gate(). A pathway declared plastic=False (or a region declared plastic_internal=False) with NO plasticity_gate name defaults its synapses' cp_plasticity_rate_gain to 1.0 — i.e. FULLY PLASTIC — whenever the bridge's enable_hebbian_learning is globally True. cp_plastic_mask exists as a per-synapse array but is never READ by the Hebbian update kernel (grep-confirmed: only referenced during CSR-rebuild remap bookkeeping).",
+    "evidence": [
+      "comprehension_production_organ.py: cp_plasticity_rate_gain has exactly 23040 zeros (4 named cue gates x 5760 synapses) and 1710 ones; 1710 synapses were independently observed to change weight between two successive frozen reads (max abs diff 13.8), an EXACT match — the 1710 ungated synapses are the internal sel_agent/sel_patient recurrent + sel<->sel_FS pathways, all declared plastic=False/plastic_internal=False in the BrainRegion/RegionPathway spec.",
+      "over 30 successive read_margin() calls on one process-shared organ (simulating 30 conversational turns — exactly how get_organ() is used in production), max weight drift from the initial build grows from 13.8 to 56.1, approaching the hebbian_max_weight=60.0 clamp, while the well/ill margin drifts from ~0.33 to ~0.35 (a ~6% relative increase) — the calibrated abstain threshold (set ONCE at build time from a small battery) is measurably going stale purely from being READ, with no legitimate training signal.",
+      "the identical pattern reproduces in _laneC_source_provenance_opponent_derisk.py (max abs diff 13.3 then 9.6 across 2 successive frozen recalls) despite prov_learn/content_learn gates held at 0.0 — its opponent-inhibition pathways are similarly ungated."
+    ],
+    "severity": "HIGH — comprehension_production_organ.py is Gate-B, LIVE and wired into every conversational turn (`/api/brain-chat`). A long-running server process holds ONE process-shared organ instance (get_organ()) that is read repeatedly with no legitimate retraining signal; this drift is silent (no error, no log) and directly degrades the calibrated well/ill threshold over the process's lifetime.",
+    "not_fixed_here": "Root cause lives in sim/bridge.py's core Hebbian update kernel (not a research/runners/ file), affects potentially many runners beyond the 2 discovered here, and needs its own careful before/after verification given the blast radius (CLAUDE.md sim/ edit discipline). Flagged via research/FAILURE_LOG.md + a spawned background task, NOT attempted in this audit (would blow this task's scope and time budget)."
+  }
+}

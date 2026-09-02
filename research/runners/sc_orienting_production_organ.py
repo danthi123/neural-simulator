@@ -213,6 +213,17 @@ class SpikingSCOrientingOrgan:
         # capture the clean post-init resting state so each orient starts identically (no bump carryover
         # between presentations — the order-independence the read-out needs; mirrors the de-risk).
         snap0 = dict(v=b.cp_membrane_potential_v.copy(), u=b.cp_recovery_variable_u.copy())
+        # THE READ-ISOLATION FIX (2026-09-02, board #150's ~29-runner follow-up audit): `_hard_reset` already
+        # restored `cp_refractory_timers` but never `cp_prev_firing_states` (a HARD firing gate independent of
+        # membrane potential) or the homeostatic pair (`cp_neuron_activity_ema` / `cp_neuron_firing_thresholds` —
+        # this organ's CoreSimConfig defaults `enable_homeostasis=True` and is never overridden, so these are
+        # NOT config-inert here, unlike several sibling runners). A repeat-read diagnostic (same (agent,goal)
+        # presented twice in a row) found a small but real leak (cortex_N count 15 vs 16 spikes, sc_total_spikes
+        # 185 vs 184 — ~0.5-1% relative); the fix snapshots the true post-settle rest value for the two arrays
+        # that need one and zeroes the two hard-gate arrays whose true-rest value is unambiguous.
+        for nm in ("cp_neuron_activity_ema", "cp_neuron_firing_thresholds"):
+            arr = getattr(b, nm, None)
+            snap0[nm] = arr.copy() if arr is not None else None
         return b, cfg, xp, idx_ctx, idx_sc, snap0
 
     def ensure_built(self):
@@ -239,6 +250,16 @@ class SpikingSCOrientingOrgan:
         bridge.cp_conductance_g_i[:] = 0.0
         bridge.cp_firing_states[:] = False
         bridge.cp_refractory_timers[:] = 0
+        # THE READ-ISOLATION FIX: the other 2 C2 hard-gate/homeostatic arrays (see `_build_one`'s snapshot
+        # comment above). `cp_prev_firing_states` has an unambiguous False true-rest value; the homeostatic
+        # pair is restored only from the actual snapshot (never guessed).
+        if getattr(bridge, "cp_prev_firing_states", None) is not None:
+            bridge.cp_prev_firing_states[:] = False
+        for nm in ("cp_neuron_activity_ema", "cp_neuron_firing_thresholds"):
+            arr = getattr(bridge, nm, None)
+            snap_val = snap0.get(nm)
+            if arr is not None and snap_val is not None:
+                arr[:] = snap_val
         bridge.cp_external_input_current[:] = 0.0
 
     def _orient_on(self, bridge, xp, idx_ctx, idx_sc, snap0, agent, goal):

@@ -86,6 +86,18 @@ def _reset_dynamics(bridge) -> None:
     (Not draining the buffer silently contaminated every second read -- a
     memory's engram vanished because the prior memory's spikes were still in
     flight.)
+
+    THE READ-ISOLATION FIX (2026-09-02, board #150's ~29-runner follow-up audit — see
+    `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`): this reset already
+    covered `cp_prev_firing_states` and drained the pulse-timer ring buffer, but never zeroed
+    `cp_refractory_timers` (a HARD firing gate independent of membrane potential) — `enable_homeostasis=False`
+    in `build_bridge` makes the other 2 C2 arrays (`cp_neuron_activity_ema` / `cp_neuron_firing_thresholds`)
+    config-inert here, so they are not added. VERIFIED CLEAN both before and after this hygiene port: a
+    repeat-probe / order-dependence diagnostic (`_probe` on the same target twice, and with an intervening
+    different-target probe) is BITWISE IDENTICAL on this file's `smoke_config()` — the `replay_settle_steps`
+    window already washes out the missing refractory residue before any scored step. This port is defense-in-
+    depth only; it does not change (and cannot change, per that diagnostic) the file's own banked NO-GO verdict
+    (`2026-08-03-replay-cortical-consolidation-v2-calibration-NO-GO.md`).
     """
     if getattr(bridge, "cp_izh_c_reset", None) is not None:
         bridge.cp_membrane_potential_v[:] = bridge.cp_izh_c_reset
@@ -96,6 +108,7 @@ def _reset_dynamics(bridge) -> None:
     for name in (
         "cp_firing_states",
         "cp_prev_firing_states",
+        "cp_refractory_timers",
         "cp_conductance_g_e",
         "cp_conductance_g_i",
         "cp_conductance_g_nmda",
