@@ -17,6 +17,11 @@ lost to a transient service error and can be re-run):
   self-consuming note reflecting that — and this is proven genuine, not cosmetic: an automated test confirms the
   note appears only when the internal curiosity→working-memory connection is intact and disappears entirely when
   that connection is silenced (plus it's off-by-default-identical and isolated per conversation). On by default.
+  **Deepened later the same day (on by default):** curiosity no longer just *flags* the crowded-out item — it now
+  genuinely **drops it from what the brain is holding in mind**, by pulling down that item's own working-memory
+  register so the brain's own activity releases it (not a bookkeeping trick). 6/6 seeds, and the drop vanishes when
+  the connection is cut. This work was finished by a helper that a mid-task app restart cut off before it could
+  save; the result was recovered intact from its workspace and independently re-checked before going live.
 - **A seventh ability also went live**: the brain reading *how strongly someone else* feels, on a seven-step
   scale, instead of just positive/negative — so "Maria is lonely" and "Maria is heartbroken" now draw different
   empathic wording where before they drew the identical response. Verified genuine (matches the felt intensity on

@@ -114,7 +114,7 @@ def xedge_curiosity_d6_enabled() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
-_CD6_SEMANTIC_DROP_DEFAULT_ON = False   # gated behind an env flag until 6-seed verified (this rung's own build)
+_CD6_SEMANTIC_DROP_DEFAULT_ON = True   # 2026-09-01 AUTO-FLIP (controller-applied at harvest after re-verify): 6/6 GO reproduced on merged main (research/findings/raw/_cd6_semantic_drop_REVERIFY_6seed.json, n_go=6, all lesion_attributable + clears_floor, frac_attr~1.0); byte-identical/off, moat-safe. BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP=0 opts out.
 
 
 def xedge_curiosity_d6_semantic_drop_enabled() -> bool:

@@ -1,0 +1,32 @@
+{
+ "run_id": "1788313813-2910891",
+ "runner": "research/runners/onebrain_xedge_curiosity_d6_production.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/onebrain_xedge_curiosity_d6_production.py",
+  "--grow",
+  "--semantic-drop",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_cd6_semantic_drop_REVERIFY_6seed.json"
+ ],
+ "git_sha": "b7e42cde7",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T21:50:13",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1822.8,
+ "corpus_check_query": "vision identity readout past linear-discriminability boundary divisive normalization",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_cd6_semantic_drop_REVERIFY_6seed.json"
+}
