@@ -1432,15 +1432,35 @@ class _SourceProvReadOrgan:
                 # with the other organs); flip it (and the hebbian hyperparams the encode needs) True ONLY for
                 # the build-time encode, then restore. The flag is read live per step, so this is exact.
                 cc = self.brain._bridge.core_config
+                # RULE-SHAPE keys (2026-09-02, one-brain Wave 1 — a GENUINE seam distinct from the per-synapse
+                # gain-0 freeze above: not WHICH edges may learn, but the FUNCTIONAL FORM of the Hebbian update
+                # while the prov/content edges ARE open). A co-resident pool whose OTHER organs set these
+                # GLOBALLY to a non-default value (e.g. the single-pool's `_POOL1_CONFIG`: hebbian_rate_window=
+                # True, hebbian_coactivity_decay=0.85, hebbian_coactivity_thresh=0.20, hebbian_mean_subtract=1.0
+                # — a covariance-style rule surprise/world-model need) silently changes source_provenance's own
+                # encode from a plain correlational Hebbian update to a rate-windowed, mean-subtracted one, which
+                # collapsed its opponent-comparator discrimination to chance (acc 1.0->0.5, min_d_true 0.89->0.0,
+                # 8/8 items misread "perceived" — bisected empirically, confirmed the sole cause; the other 3
+                # already-covered hyperparams + enable_gabab/enable_nmda/hebbian_max_weight=45/per_region_
+                # homeostasis_isolation were each individually AND jointly ruled out). Fix: read the CANONICAL
+                # default (a fresh, unconfigured `CoreSimConfig()` — not a hardcoded copy that could drift) for
+                # the SAME 4 keys the de-risk's own standalone build implicitly relies on (it never sets them),
+                # save+set+restore them exactly like the 6 keys already handled below.
+                from sim.config import CoreSimConfig as _FreshCfg
+                _default = _FreshCfg()
+                _rule_shape_keys = ("hebbian_rate_window", "hebbian_coactivity_decay",
+                                    "hebbian_coactivity_thresh", "hebbian_mean_subtract")
                 saved = {k: getattr(cc, k) for k in (
                     "enable_hebbian_learning", "hebbian_learning_rate", "hebbian_max_weight",
-                    "hebbian_min_weight", "hebbian_weight_decay", "hebbian_symmetric")}
+                    "hebbian_min_weight", "hebbian_weight_decay", "hebbian_symmetric") + _rule_shape_keys}
                 cc.enable_hebbian_learning = True
                 cc.hebbian_learning_rate = float(HEBB_LR)
                 cc.hebbian_max_weight = float(HEBB_WMAX)
                 cc.hebbian_min_weight = 0.0
                 cc.hebbian_weight_decay = 0.0
                 cc.hebbian_symmetric = True
+                for _k in _rule_shape_keys:
+                    setattr(cc, _k, getattr(_default, _k))
                 # UNIVERSAL GAIN-0 FREEZE of every NON-prov edge during the encode (the finding's named seam): the
                 # global enable_hebbian_learning toggle makes the whole bridge's plastic edges eligible, and a
                 # co-resident organ's installed weights (e.g. comprehension's cue validities) then couple weakly

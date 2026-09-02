@@ -1,0 +1,474 @@
+{
+  "mode": "onebrain_wave1_organread",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_all_neurons": 3418,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "surprise_sep": 103.42857142857143
+      },
+      "gate_c_answer_preserved": true,
+      "shipped_read_byte_identical": false,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.1347222222222222,
+          "worst_key": "margin_2",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "source_provenance": {
+          "maxdelta": 0.1643630311499582,
+          "worst_key": "d_true_7",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 26321,
+      "legacy_diverges": true,
+      "legacy_delta": 24.55974578857422,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "n_all_neurons": 3418,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "surprise_sep": 103.28571428571429
+      },
+      "gate_c_answer_preserved": true,
+      "shipped_read_byte_identical": false,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.14305555555555555,
+          "worst_key": "margin_2",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "source_provenance": {
+          "maxdelta": 0.17599619292174973,
+          "worst_key": "d_true_5",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 26442,
+      "legacy_diverges": true,
+      "legacy_delta": 24.628597259521484,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "n_all_neurons": 3418,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": true,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "surprise_sep": 54.92307692307691
+      },
+      "gate_c_answer_preserved": true,
+      "shipped_read_byte_identical": false,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.14652777777777776,
+          "worst_key": "margin_2",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        },
+        "source_provenance": {
+          "maxdelta": 0.24610801196749643,
+          "worst_key": "d_true_0",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 26448,
+      "legacy_diverges": true,
+      "legacy_delta": 24.57798957824707,
+      "GO": true
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 3,
+    "n_gate_a": 3,
+    "n_gate_b": 3,
+    "n_gate_c": 3,
+    "n_shipped_read_byte_identical": 0,
+    "n_gain0_freeze": 3,
+    "n_legacy_diverges": 3,
+    "n_go": 3
+  },
+  "per_organ": {
+    "surprise": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 3,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "worldmodel": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 3,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "metacog": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 3,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "pragmatic": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 3,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "comprehension": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.14652777777777776
+    },
+    "source_provenance": {
+      "n_coresidence_byte_identical": 3,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 3,
+      "n_alive": 3,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.24610801196749643
+    }
+  },
+  "all_go": true,
+  "label": "one-brain Wave-1 organ-read (comprehension + source_provenance folded onto the single pool, N~3418)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(a) organ-read byte-identity \u2014 every organ's read co-residence-invariant, every seed",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(b) faculty-alive \u2014 every organ produces its live verdict on the wave1 pool, every seed",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(c) answer-preservation \u2014 every organ's rendered answer == its shipped/standalone baseline, every seed",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "gain-0 freeze holds metacog/pragmatic/comprehension/source_provenance internal edges bit-frozen across the train+read lifecycle, every seed",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy discriminator diverges (byte-identity NOT vacuous), every seed",
+      "ok": true,
+      "detail": "measured=3 expect=3",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "cross-region interaction (the one-brain INTEGRATION goal)",
+      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION (DESIGN \u00a74)"
+    },
+    {
+      "process": "live-chat production wiring (get_organ() dispatch)",
+      "why": "deliberately deferred to a separate, later commit \u2014 mirrors the base-4 single pool's own sequencing (organ-read GO landed before its production wiring commit)"
+    }
+  ],
+  "chance": null
+}
