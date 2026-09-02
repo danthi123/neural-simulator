@@ -179,6 +179,35 @@ def rescorla_wagner_valence(Co, prim_idx, prim_sgn, is_primary, min_events):
     return s_c, reinforced
 
 
+def graded_dopamine_valence(Co, prim_idx, prim_sgn, is_primary, min_events, k_scale=4.0):
+    """The NAMED NEXT MECHANISM from the 2026-08-13 BOUNDARY finding (research/findings/2026-08-13-affect-
+    opponent-weights-self-organized-BOUNDARY.md): a graded reinforcement-STRENGTH third factor, driven by the
+    MAGNITUDE of the accumulated reinforcement (Bayer & Glimcher 2005, Neuron -- dopamine neurons encode a
+    quantitative, graded reward-prediction error, not a saturating sign) instead of the Rescorla-Wagner ASYMPTOTE
+    RATIO (n_pos-n_neg)/(n_pos+n_neg), which is bounded in [-1,1] independent of how many times a concept was
+    ever reinforced (an already-tried, ALSO-ratio-shaped log-odds lever was ruled out in that finding -- "no
+    help"; this is a genuinely different, non-normalized quantity).
+
+    s_c = tanh((n_pos - n_neg) / k_scale)  -- a concept co-occurring with primaries TWICE as often as another
+    (same sign) gets a proportionally LARGER (not merely equal, ratio-saturated) acquired valence, until the
+    tanh's own soft ceiling (dose-dependent, not count-normalized). k_scale sets the dose at which the response
+    starts to compress; the boundary finding's own default n_each=5 draws yield typical |n_pos-n_neg| in the
+    single digits, so k_scale~4 keeps most reinforced concepts on the near-linear part of tanh (graded, not
+    binary) while still saturating extreme outliers. Warriner-FREE (Co/prim_idx/prim_sgn only); reinforced mask
+    IDENTICAL to rescorla_wagner_valence's so this is a pure like-for-like substitution of the VALUE, not the
+    ELIGIBILITY criterion.
+    """
+    n = Co.shape[0]
+    sub = Co[:, prim_idx]
+    n_pos = (sub * (prim_sgn > 0)).sum(axis=1)
+    n_neg = (sub * (prim_sgn < 0)).sum(axis=1)
+    tot = n_pos + n_neg
+    reinforced = (tot >= min_events) & (~is_primary)
+    s_c = np.zeros(n, float)
+    s_c[reinforced] = np.tanh((n_pos[reinforced] - n_neg[reinforced]) / float(k_scale))
+    return s_c, reinforced
+
+
 # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════
 # corpus build (once; seed-independent) -> codes, DC-removed read-codes, relatedness, Warriner s_true, primary Co.
 # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -249,7 +278,8 @@ def primary_count_ablation(A, min_events=2, held_frac=0.5, counts=(4, 5, 6, 8, 1
 # ONE SEED: draw the innate primaries, condition s_c, DERIVE the composed opponent, run the affect-deepen bars.
 # ══════════════════════════════════════════════════════════════════════════════════════════════════════════════
 def run_seed(seed, A, n_each, min_events, held_frac=0.5, n_perm=200, max_held_probe=48,
-             do_rungb=True, do_spiking_shuffle=True, l2_ref=W_L2_REF, verbose=False):
+             do_rungb=True, do_spiking_shuffle=True, l2_ref=W_L2_REF, verbose=False,
+             graded_strength=False, k_scale=4.0):
     rng = np.random.default_rng(seed)
     vocab, codes, codes_read = A["vocab"], A["codes"], A["codes_read"]
     relatedness, s_true, Co = A["relatedness"], A["s_true"], A["Co"]
@@ -269,7 +299,12 @@ def run_seed(seed, A, n_each, min_events, held_frac=0.5, n_perm=200, max_held_pr
     is_primary = np.array([w in set(primaries) for w in vocab])
 
     # --- SELF-ORGANIZED conditioning valence s_c (Warriner-free), then TRAIN/HELD leave-out split ---
-    s_c, reinforced = rescorla_wagner_valence(Co, prim_idx, prim_sgn, is_primary, min_events)
+    # --graded-strength swaps the RW-ratio asymptote for the graded dopamine-magnitude third factor (the
+    # BOUNDARY finding's named next mechanism); default OFF reproduces the exact prior byte-for-byte behavior.
+    if graded_strength:
+        s_c, reinforced = graded_dopamine_valence(Co, prim_idx, prim_sgn, is_primary, min_events, k_scale=k_scale)
+    else:
+        s_c, reinforced = rescorla_wagner_valence(Co, prim_idx, prim_sgn, is_primary, min_events)
     ridx = np.where(reinforced)[0]
     rng.shuffle(ridx)
     n_held = int(round(held_frac * len(ridx)))
@@ -504,6 +539,13 @@ def main():
     ap.add_argument("--no-rungb", action="store_true", help="skip the discrete-emotion rung (rung-a + controls only)")
     ap.add_argument("--ablation", action="store_true", help="also run the innate-primary-count linear-fidelity "
                     "ablation (evidence on whether the graded-magnitude residual is genome-draw variance or a wall)")
+    ap.add_argument("--graded-strength", action="store_true", help="2026-08-13 BOUNDARY finding's named next "
+                    "mechanism: replace the Rescorla-Wagner RATIO asymptote with a graded dopamine-magnitude "
+                    "third factor (Bayer & Glimcher 2005) for s_c -- tests whether it recovers the C-A2 "
+                    "salience-strength / C-B rung-b bars the ratio's saturation could not. Default OFF = "
+                    "byte-identical to the committed BOUNDARY run.")
+    ap.add_argument("--k-scale", type=float, default=4.0, help="--graded-strength dose-scale: "
+                    "s_c=tanh((n_pos-n_neg)/k_scale); smaller = saturates sooner, larger = more linear/graded")
     ap.add_argument("--out", default=str(Path(_REPO) / "research" / "findings" / "raw" /
                                           "_affect_composed_selforganized_opponent.json"))
     a = ap.parse_args()
@@ -528,7 +570,7 @@ def main():
         print(f"  [adjust] n_each -> {a.n_each} (pool availability)", flush=True)
 
     rows = [run_seed(s, A, a.n_each, a.min_events, a.seed_frac, a.n_perm, do_rungb=do_rungb, l2_ref=a.w_l2_ref,
-                     verbose=True) for s in a.seeds]
+                     verbose=True, graded_strength=a.graded_strength, k_scale=a.k_scale) for s in a.seeds]
     go, checks, means = aggregate(rows, do_rungb=do_rungb)
     n = len(a.seeds)
 
@@ -632,7 +674,8 @@ def main():
         "config": {"seeds": a.seeds, "smoke": a.smoke, "max_stories": a.max_stories, "n_hub": a.n_hub,
                    "window": a.window, "min_count": a.min_count, "n_each": a.n_each, "min_events": a.min_events,
                    "seed_frac": a.seed_frac, "n_perm": a.n_perm, "rung_b": do_rungb, "n_vocab": len(A["vocab"]),
-                   "appetitive_pool": A["app"], "aversive_pool": A["avr"], "backend": os.environ.get("SIM_BACKEND")},
+                   "appetitive_pool": A["app"], "aversive_pool": A["avr"], "backend": os.environ.get("SIM_BACKEND"),
+                   "graded_strength": a.graded_strength, "k_scale": a.k_scale},
         "mechanism": "opponent V+/V- weight = self-organized three-factor Hebbian map w=sum_{c in train} code_read_c "
                      "* s_c (s_c = Rescorla-Wagner asymptote of co-occurrence with ~2*n_each INNATE primary "
                      "reinforcers), rectified split W+=g*max(w,0)/W-=g*max(-w,0), injected as the code_in->vplus/vminus "
