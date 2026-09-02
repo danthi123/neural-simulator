@@ -4681,6 +4681,55 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 _OE_EP.get_episodic_organ(cache_key, 42, _oe_ep_topics).note_topic(_oe["facts"][0][0])
         except Exception:
             pass  # never let the episodic write crash an open-ended turn -- degrade to the un-noted turn
+        # ── R1 RUNG-2 (2026-09-02): the open-ended turn now ALSO runs the shared pipeline's per-turn SESSION-STATE
+        #    WRITERS, closing the rest of the "open-ended bypasses the shared pipeline's session-state writes" debt
+        #    (board #199). A NORMAL turn runs affect-drives (#84 felt body-state EMA), affective-ToM, DA-mode, and
+        #    common-ground (the per-referent audience-design ledger) as OBSERVE-THEN-DRIVE faculties in the pipeline
+        #    BELOW this block (server.py ~4687/4713/4737/4761), plus the discourse register's per-turn fold (~5217).
+        #    The open-ended EARLY RETURN skipped ALL of them, so an open-ended turn left the felt body-state, the
+        #    common-ground ledger, and the discourse register FROZEN (a later turn saw no trace of it -- e.g. a
+        #    re-mention never reduced, the felt mood never moved). This runs the SAME faculty functions, with the
+        #    SAME flag-gates + cache_key, for their STATE-WRITE side effect ONLY -- their returned tone/reference
+        #    LEADS are intentionally DISCARDED here, so the open-ended free-talk surface + `_oe_resp` stay
+        #    byte-identical (rung-2 moves the STATE writes, not the generation FORM -- that is a later rung). Each
+        #    call is independently flag-guarded + try/excepted (the standing "never let a faculty crash a turn"
+        #    convention), so with every faculty off this is byte-identical, and additive otherwise. NOTE the Gate-B
+        #    `_SESSION_MOOD` EMA (`_update_session_mood`, ~4539) + the D5 episodic write (rung-1, just above) already
+        #    run for an open-ended turn -- this adds the remaining named per-turn writers. DISCLOSED RESIDUAL (rungs
+        #    3-5): the DEEPER query-branch state folds (worldview/multiref/prospective-memory/silent-WM ~4880-5173)
+        #    and routing an open-ended turn's SPECIALIST query classes to their branches remain skipped, and these
+        #    are duplicated CALL SITES, not yet a single shared pipeline both the normal + open-ended paths invoke.
+        try:
+            if _affect_drives_on():                        # #84 felt body-state EMA -> chat._affect_drives_workspace
+                from webapp import affect_drives_chat as _OE_ADC
+                _OE_ADC.observe_turn(chat, msg)
+        except Exception:
+            pass  # never let the affect-drives state write crash an open-ended turn
+        try:
+            if _affective_tom_on():                        # W5 other-agent affect region (default-OFF anchor)
+                from research.runners import affective_tom_production_organ as _OE_ATM
+                _OE_ATM.observe_turn(chat, msg)
+        except Exception:
+            pass  # never let the ToM state write crash an open-ended turn
+        try:
+            if _da_drives_on():                            # #79 self-produced DA-mode read -> chat._last_da_drives
+                from webapp import da_mode_drives_chat as _OE_DAD
+                _OE_DAD.observe_turn(chat, msg)
+        except Exception:
+            pass  # never let the DA-mode state write crash an open-ended turn
+        try:
+            if _common_ground_drives_on():                 # per-referent common-ground ledger (cache_key-keyed)
+                from webapp import common_ground_drives_chat as _OE_CGD
+                _OE_CGD.observe_turn(chat, msg, cache_key=cache_key)
+        except Exception:
+            pass  # never let the common-ground state write crash an open-ended turn
+        try:                                               # D3 discourse register per-turn fold (part i ONLY -- the
+            import research.runners.d3_discourse_event_register_production_organ as _OE_DR  # who-was-before query
+            if _OE_DR.discourse_register_enabled() and getattr(getattr(chat, "agent", None), "_event_register", None) is not None:  # short-circuit (part ii) stays on the normal path
+                _oe_dstate = _SESSION_DISCOURSE.setdefault(cache_key, _OE_DR.new_state())
+                _OE_DR.note_turn(msg, chat.agent, _oe_dstate, actions=getattr(chat, "actions_set", None))
+        except Exception:
+            pass  # never let the discourse fold crash an open-ended turn
         return _safe_json_response(_oe_resp, "open_ended")
 
     # ── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19) ────────────────────────────────────────────────────
