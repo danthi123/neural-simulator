@@ -1,0 +1,27 @@
+{
+ "run_id": "1787796746-1074619",
+ "runner": "research/runners/lm_train_run.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/lm_train_run.py",
+  "start",
+  "--root",
+  "bridges/lmtrain/run3",
+  "--compile",
+  "1",
+  "--compile-mode",
+  "max-autotune"
+ ],
+ "git_sha": "7017cd1b2",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "started": "2026-08-26T22:12:26",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 96440.7,
+ "corpus_check_query": "gap5 readout discreteness: sustained/latched multi-assembly activity dilutes forward_frac (duty 0.34-0.77) despite forward-ordered store",
+ "corpus_check_fresh": false,
+ "artifact": "research/findings/raw/lanes/perception/vision_nonlin2layer_opsearch.json"
+}

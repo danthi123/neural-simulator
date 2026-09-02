@@ -1,0 +1,247 @@
+{
+  "probe": "vision_lindiscrim_readout",
+  "primary_code": "count",
+  "overall_verdict": "LINDISCRIM-READOUT-PARTIAL-beat2/3-lb3/3",
+  "config": {
+    "seeds": [
+      42,
+      43,
+      100
+    ],
+    "code": "count",
+    "c1_code": "count",
+    "n_classes": 4,
+    "n_slots": 3,
+    "n_pos_total": 8,
+    "pos_span": 8.0,
+    "n_ex": 6,
+    "image_size": 56,
+    "slot_offset": 10.0,
+    "stroke_len": 7.0,
+    "stroke_tk": 1.8,
+    "pixel_noise": 0.03,
+    "n_orientations": 8,
+    "n_frequencies": 2,
+    "n_pos": 24,
+    "rf_radius": 3,
+    "orient_norm": "z",
+    "c1_gate": 0.15,
+    "c1_win": 6,
+    "c1_stride": 3,
+    "s2_p": 3,
+    "n_s2": 96,
+    "ridge": 0.25,
+    "n_glimpses": 2,
+    "class_pop": 24,
+    "read_gain": 2.5,
+    "read_bias": 1.0,
+    "T_read": 48,
+    "s1_mode": "spiking",
+    "s2_norm": "satdiv",
+    "s2_norm_alpha": 0.5,
+    "s2_norm_sigma0": 0.001,
+    "s2_satdiv_n": 2.0,
+    "s2_satdiv_sigma": 8.0,
+    "s2_satdiv_scale": 771.1,
+    "T1": 64,
+    "T2": 48,
+    "tau": 8.0,
+    "v_thresh": 1.0,
+    "t_ref": 2,
+    "noise": 0.06,
+    "s1_gain": 1.2,
+    "s2_gain": 2.0,
+    "kwta_frac": 0.15,
+    "decode_margin": 0.15,
+    "beat_margin": 0.1,
+    "pos_decode_margin": 0.15,
+    "nogo_floor": 0.34,
+    "out": "research/findings/raw/lanes/perception/vlin_satdiv_ridge0.25_explore.json"
+  },
+  "by_code": {
+    "count": {
+      "summary": {
+        "probe": "vision_lindiscrim_readout",
+        "code": "count",
+        "overall_verdict": "LINDISCRIM-READOUT-PARTIAL-beat2/3-lb3/3",
+        "seeds": [
+          42,
+          43,
+          100
+        ],
+        "n_seeds": 3,
+        "chance_object": 0.25,
+        "config_c_nogo_floor": 0.34,
+        "task_go_5of6_beat_and_lb": false,
+        "per_seed_capability_go": [
+          false,
+          false,
+          false
+        ],
+        "per_seed_learning_load_bearing": [
+          true,
+          true,
+          true
+        ],
+        "per_seed_beats_nogo": [
+          true,
+          true,
+          false
+        ],
+        "decode_means": {
+          "A_v1_direct_held": 0.4236,
+          "H_flat_pool_held": 0.309,
+          "LEARNED_spkwta_train": 0.9931,
+          "LEARNED_spkwta_held": 0.4479,
+          "LEARNED_linscore_held": 0.4514,
+          "RANDOM_spkwta_held": 0.2361,
+          "RATE_lin_ceiling_held": 0.6077,
+          "centroid_spk_held_NOGO_repro": 0.4688,
+          "scramble_centroid_held": 0.2188
+        },
+        "reframe_means": {
+          "learned_spkwta_held": 0.4479,
+          "random_spkwta_held": 0.2361,
+          "learned_minus_random_spkwta": 0.2118,
+          "rate_lin_ceiling_held": 0.6077,
+          "centroid_spk_NOGO_repro": 0.4688,
+          "spkport_cost": 0.0035,
+          "quantization_gap_rate_minus_spk": 0.1563
+        },
+        "dissociation_means": {
+          "object_decode_heldsplit": 0.368,
+          "position_decode_heldsplit": 0.2986,
+          "label_shuffle_null": 0.2535
+        },
+        "verdict_fracs": {
+          "capability_go": 0.0,
+          "beats_config_c_nogo": 0.6667,
+          "beats_config_c_nogo_raw": 1.0,
+          "learning_load_bearing": 1.0,
+          "architecture_load_bearing": 0.6667
+        },
+        "headroom": {
+          "learned_minus_random_spkwta": 0.2118,
+          "learned_minus_nogo_floor": 0.1079,
+          "learned_minus_v1_held": 0.0243,
+          "learned_minus_flat_held": 0.1389,
+          "rate_ceiling_minus_learned_spk": 0.1598
+        },
+        "elapsed_seconds": 9.4
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4167,
+            "H_flat_pool_held": 0.3542,
+            "LEARNED_spkwta_train": 1.0,
+            "LEARNED_spkwta_held": 0.4688,
+            "LEARNED_linscore_held": 0.4792,
+            "RANDOM_spkwta_held": 0.1979,
+            "RATE_lin_ceiling_held": 0.7188,
+            "centroid_spk_held_NOGO_repro": 0.4688,
+            "scramble_centroid_held": 0.1771
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2708,
+            "spkport_cost_linscore_minus_spkwta": 0.0104,
+            "quantization_gap_rate_minus_spk": 0.2396,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.375,
+            "position_decode_heldsplit": 0.2917,
+            "label_shuffle_null": 0.25,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "capability_go": false,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true
+          }
+        },
+        {
+          "seed": 43,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.4792,
+            "H_flat_pool_held": 0.3646,
+            "LEARNED_spkwta_train": 0.9896,
+            "LEARNED_spkwta_held": 0.4583,
+            "LEARNED_linscore_held": 0.4583,
+            "RANDOM_spkwta_held": 0.3021,
+            "RATE_lin_ceiling_held": 0.5625,
+            "centroid_spk_held_NOGO_repro": 0.4688,
+            "scramble_centroid_held": 0.2188
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.1562,
+            "spkport_cost_linscore_minus_spkwta": 0.0,
+            "quantization_gap_rate_minus_spk": 0.1042,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.4583,
+            "position_decode_heldsplit": 0.3125,
+            "label_shuffle_null": 0.3333,
+            "position_pooled_out": true
+          },
+          "verdicts": {
+            "capability_go": false,
+            "beats_config_c_nogo": true,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": false
+          }
+        },
+        {
+          "seed": 100,
+          "code": "count",
+          "chance_object": 0.25,
+          "chance_position": 0.25,
+          "decode": {
+            "A_v1_direct_held": 0.375,
+            "H_flat_pool_held": 0.2083,
+            "LEARNED_spkwta_train": 0.9896,
+            "LEARNED_spkwta_held": 0.4167,
+            "LEARNED_linscore_held": 0.4167,
+            "RANDOM_spkwta_held": 0.2083,
+            "RATE_lin_ceiling_held": 0.5417,
+            "centroid_spk_held_NOGO_repro": 0.4688,
+            "scramble_centroid_held": 0.2604
+          },
+          "reframe": {
+            "learned_minus_random_spkwta": 0.2083,
+            "spkport_cost_linscore_minus_spkwta": 0.0,
+            "quantization_gap_rate_minus_spk": 0.125,
+            "learning_load_bearing": true
+          },
+          "dissociation": {
+            "object_decode_heldsplit": 0.2708,
+            "position_decode_heldsplit": 0.2917,
+            "label_shuffle_null": 0.1771,
+            "position_pooled_out": false
+          },
+          "verdicts": {
+            "capability_go": false,
+            "beats_config_c_nogo": false,
+            "beats_config_c_nogo_raw": true,
+            "learning_load_bearing": true,
+            "architecture_load_bearing": true
+          }
+        }
+      ]
+    }
+  },
+  "mechanism": "FIXED config-B spiking front end (LIF S1->C1, fixed random S2 bank) -> C2 per-template MAX over locations spike code, AVERAGED over G independent LIF glimpses (temporal evidence integration). Readout: a LEARNED SIGNED linear discriminant (supervised three-factor delta = multinomial logistic) SPIKE-PORTED as a POPULATION of LIF class somata driven by EXCITATORY (w+ . r) MINUS FEEDFORWARD-INHIBITORY (w- . r, an interneuron carrying the common mode) drive; spiking WTA over class populations = the fully-spiking prediction. RANDOM arm = identical port, V untrained. Sources: Fremaux & Gerstner 2016; Maass et al. 2002; Brunel et al. 2004; Pouget et al. 2000; Carandini & Heeger 2012.",
+  "reframe_test": "The config-C NO-GO (0.34) and R-STDP dead-end used readouts that CANNOT subtract the common mode (centroid / non-negative block-sum). A SIGNED linear discriminant with FF-inhibition + temporal integration is predicted to clear the floor AND make learning load-bearing (learned >> random). learning_load_bearing = (learned - random spiking-WTA held) >= beat_margin, per seed. GO (task) = clears NO-GO floor AND beats random at >=5/6.",
+  "elapsed_seconds": 9.4
+}
