@@ -7,6 +7,33 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-09-02 — checked the owner's approval to go live with the much bigger knowledge base: not yet, a real gap was found
+
+The owner approved switching the brain's default long-term knowledge store from the curated 15,000-fact core up
+to the much bigger ~79,000-fact body of knowledge, accepting the slower (~1.1-1.3 second) answer time that comes
+with the bigger vocabulary. Before flipping the switch, this was checked end to end, and the honest answer is
+**not yet** — a real, previously-uncharacterized correctness gap turned up:
+
+- The bigger knowledge base has a rare but real "misread" defect: at this much larger vocabulary, the brain's
+  neural read-out of which word a memory actually holds can occasionally tip to the WRONG word by a hair's
+  margin (found via one specific fact, but the same mechanism could affect others at an unmeasured rate). The
+  root cause is understood and a fix has been designed and shown to work on the case that was found, but the fix
+  itself has not been given its own full 6-seed confirmation.
+- Separately, and just as important: even a fully-confirmed fix would not actually reach the real chat feature
+  today, because the code path the live chat actually uses to load either knowledge base does not yet pass the
+  fix's own on/off switch through. Turning the switch on somewhere else would not change anything a real
+  conversation experiences.
+- Two other honesty-related abilities (saying more when confident, and being upfront about where an answer came
+  from) went live default-on this same week, but were only checked against the smaller 15,000-fact base — not
+  yet re-checked at the bigger scale.
+
+So the default stays the smaller, cleanly-verified 15,000-fact knowledge base. Nothing was flipped. The concrete
+next steps — finish the fix's 6-seed check, wire its switch into the real chat code path, then re-check the two
+honesty abilities at the bigger scale — are recorded on the board (#109/#127/#150) and in the engineering ledger,
+so the next attempt does not have to re-discover any of this. A related but separate open decision (giving the
+brain nicknames/aliases so it understands more everyday phrasings of a question, board #143) is untouched by this
+— it was already an explicit open call for the owner, not resolved either way here.
+
 ## 2026-09-01 (even newer) — a sixth and seventh ability go live from a three-way parallel wave
 
 A parallel wave of three independent efforts landed two more results (the third, a vision-normalization lever, was

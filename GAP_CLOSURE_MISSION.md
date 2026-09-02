@@ -13,7 +13,44 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-01 (READ FIRST; LATEST anchor — supersedes the 2026-08-30 Hermes header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02 (READ FIRST; LATEST anchor — supersedes the 2026-09-01 header below)
+
+**Board #108 cluster (#108/#150/#127/#109/#143) — owner-approved 100k-knowledge-base live-default flip: verify-first
+pass RE-CONFIRMS the recall-hole residual and NO-GOes the flip this cycle.** The owner approved swapping
+`webapp/server.py`'s `_default_ltm_bundle_dir()` from `wikidata_core_15k` (15,000 facts, vocab 7,032) to
+`wikidata_100k` (78,857 facts, vocab 23,914), accepting the ~1.1-1.3s/recall latency. Verification (branch
+`research/flip-108-knowledge-breadth-live`) found the flip is NOT safe today:
+1. A genuine, seed-INDEPENDENT recall-hole class exists at this vocab scale (RF phase-readout quantization —
+   `research/FAILURE_LOG.md` row 93, finding `2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-decode-escalation-fix.md`).
+   Root-caused + an additive fix (`RFPhasorComposer.enable_decode_escalation`) built, but its own 6-seed
+   no-regression reconfirmation was left IN FLIGHT on 2026-09-01 (merge `bd4e58bd0`) and no completed aggregate
+   or queued job for it exists anywhere in the tree/queues as of this session — it stalled, not landed.
+2. **NEWLY FOUND this session:** even a fully-confirmed fix would not reach the live default turn — NEITHER
+   `webapp/server.py::_load_or_build_ltm_store` (the actual `BrainChatRequest.brain='tiny-demo'` default path)
+   NOR `_build_chat_brain`'s developed-brain call to `load_developed_brain(...)` passes
+   `enable_codebook_cache=`/`enable_decode_escalation=` — both live paths always run at today's (no cache, no
+   escalation) configuration regardless of any runner-level soak. Logged `research/FAILURE_LOG.md` (2026-09-02 row).
+3. Two faculties flipped default-ON THIS SAME WEEK (confidence-forthcomingness #94, source-provenance-honesty
+   #129) were validated only against the 15k core, not the 100k bundle — an unverified interaction if the base
+   bundle changed under them.
+
+**NOT flipped.** `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s `tiered-knowledge-ltm` row gains a `scale_note`
+(on_by_default stays YES for the 15k core, unchanged). Vikunja #109/#127/#150/#143 updated with the current
+accurate status (their descriptions were stale, describing 2026-08-21/27 states). `ROADMAP.md` gains a
+2026-09-02 plain-language entry. **Next rung, in order:** (a) land the queued 6-seed cupy
+`enable_decode_escalation` no-regression soak (exact command: `tools/gpu_queue.sh add 'SIM_BACKEND=cupy
+.venv/bin/python -u -m research.runners._knowledge_scale_100k_cacheon_6seed --enable-decode-escalation --bundle
+/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k --json
+research/findings/raw/_knowledge_scale_100k_cacheon_escal_6seed_cupy.json'`); (b) wire
+`enable_codebook_cache=True, enable_decode_escalation=True` into both `_load_or_build_ltm_store` and the
+developed-brain `load_developed_brain(...)` call site in `webapp/server.py`; (c) re-verify #94/#129 at 100k
+scale; (d) re-attempt this flip. Separately, board #143's alias-grounded bundle
+(`wikidata_core_15k_grounded_v1`, 45,804 facts/vocab 37,837, median 1.13s) is a DIFFERENT bundle/decision
+(NL-comprehension aliases, not fact-count scale) — untouched, still the owner's original open call.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-01 (superseded by the 2026-09-02 header above)
 
 **CLAUDE IS DRIVING.** Hermes handed back (`tools/hermes_takeover.sh off`; HERMES_ACTIVE cleared) — the
 2026-08-30 "Hermes is live / Claude is read-only QA" header below is SUPERSEDED. North-star unchanged: a
