@@ -179,6 +179,27 @@ class MultiSlotHold:
         local = int(np.argmax(band)) if alive > 1e-6 else -1
         return local, alive
 
+    def apply_register_drive(self, reg, pa, steps):
+        """Inject an EXTRA external current directly onto register `reg`'s OWN band of `n_slot` pools for
+        `steps` steps -- a register-SELECTIVE competing drive that does NOT touch the shared FS pool (so a
+        co-held register is unaffected; verified empirically across seeds 42/43/44/100/101/102: a -1500pA/
+        200-step pull on one register's own band collapses THAT register's subsequent zero-input `read()` to
+        `(-1, 0.0)` on every one of the 6 seeds while a co-held, undriven register's own read is untouched).
+        Added 2026-09-01 for the curiosity->d6.w0 cross-edge's SEMANTIC-DROP rung
+        (`onebrain_xedge_curiosity_d6_production.py`): a validated, substrate-derived crave-suppression signal
+        is translated into a REAL hyperpolarizing pull on the targeted register's own neurons, and the caller's
+        own subsequent `read()` (the SAME zero-input instrument this file already uses everywhere) then decides,
+        off the ACTUAL post-drive spiking state, whether that register's held content survived -- not a numeric
+        comparison on a diagnostic shift value. A positive `pa` is a competing excitatory drive (empirically
+        noisy/non-monotonic on this substrate, per the rung's own de-risk probe); a negative `pa` at
+        clear-strength magnitude (this file's own `clear_gain`/`clear_steps`, already trusted by `write()`'s
+        overwrite-clear protocol) is the validated, reliable direction. Purely additive: `write`/`hold`/`read`
+        are unchanged, and a caller that never invokes this method sees byte-identical behaviour."""
+        cur = np.zeros(self.n)
+        for gp in range(reg * self.n_slot, (reg + 1) * self.n_slot):
+            cur[self.idx[gp]] = pa
+        self._run(cur, steps)
+
     def probe_occupancy(self, steps=None):
         """A genuine zero-input read of EVERY register's current band-max activity in ONE pass (the SAME
         read-out instrument class as `read()`, generalised across all R registers) -- added 2026-09-01 to let a
