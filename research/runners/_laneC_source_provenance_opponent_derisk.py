@@ -93,7 +93,7 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-from sim.backend import to_host  # noqa: E402
+from sim.backend import to_host, from_host  # noqa: E402
 from tools.lab import attributable_to  # noqa: E402
 from tools.verdict import Verdict, UNDEFINED  # noqa: E402
 
@@ -338,7 +338,12 @@ class ProvenanceBrain:
         trials so each encode and recall is state-independent (deterministic substrate)."""
         b = self._bridge
         for name, arr in self._rest_state.items():
-            getattr(b, name)[...] = arr
+            # _rest_state is snapshotted as host (numpy) arrays (see _snapshot_dynamics /
+            # __init__ at lines ~314/318). On cupy the bridge attrs are device arrays, and
+            # `cp_array[...] = numpy_array` raises "non-scalar numpy.ndarray cannot be used
+            # for fill". from_host() moves the RHS onto the active backend (no-op on numpy →
+            # byte-identical; H2D on cupy → correct), matching the merge-framework idiom.
+            getattr(b, name)[...] = from_host(arr)
 
     def firing_thresholds(self):
         return np.asarray(to_host(self._bridge.cp_neuron_firing_thresholds), dtype=np.float64).copy()
