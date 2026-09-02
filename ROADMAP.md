@@ -7,7 +7,25 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-02 (latest) — a safety-net for merging organs, and confidence-to-wording confirmed at full memory scale
+## 2026-09-02 (latest) — organs start influencing each other on one substrate, and a measurement bug that hid real results is found
+- **The first real "organs on one shared brain" merge landed:** two more thinking-organs (language comprehension +
+  the source-of-a-belief tracker) now run co-located on the single shared neural pool proven safe earlier, reading
+  exactly as they did standalone. Building it also caught a genuine new bug where one organ's learning settings were
+  silently corrupting another's — now fixed. (Still off by default; wiring into live chat is the next rung.)
+- **One organ-to-organ link works, and a broken one was traced to its real cause:** "a surprise updates the
+  world-model" is wired into live chat (off by default) and confirmed to genuinely do the work. "A surprise lowers
+  the confidence-monitor" had failed twice — the third attempt found the real cause was NOT the learning rule but a
+  **measurement bug**: a reset step between test reads was leaving stale nerve-activity behind, which biased the test
+  toward "failure". Fixing the reset made the ability pass cleanly on all six setups.
+- **That measurement bug turned out to be widespread — so we audited for it:** an automated sweep of 14 similar
+  tests found the same reset-gap in all of them, but it only changed the answer in five. Most important: it found one
+  ability we'd switched **on by default** ("let curiosity steer working memory") whose success was partly the bug —
+  once the reset is fixed it drops from pass to a near-miss, so that on-by-default decision needs revisiting. It also
+  turned a result we'd written up as a genuine "biological limit" back into a fixable measurement artifact. Fixes +
+  re-tests are queued, the on-by-default over-claim first. This is exactly the kind of "a wall was really an
+  instrument error" catch the project treats as a first-class result.
+
+## 2026-09-02 (earlier) — a safety-net for merging organs, and confidence-to-wording confirmed at full memory scale
 - **A merge safety-checker now exists (the gating layer every future one-brain step needs):** a reusable tool
   that re-runs any organ-merge or ability-switch against the recorded correct answers and flags if ANY of the
   brain's 38 abilities silently changed its decision — the thing that catches an organ "dying quietly" when it is
