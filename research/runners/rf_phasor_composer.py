@@ -68,7 +68,7 @@ class RFPhasorComposer:
                  enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
                  sparse_index_c=8, sparse_index_conf_floor=0.5,
                  enable_codebook_cache=False,
-                 enable_decode_escalation=False, decode_escalate_margin=0.02,
+                 enable_decode_escalation=False, decode_escalate_margin=0.008,
                  decode_escalate_period=2000):
         self.seed = int(seed)
         self.D = int(D)
@@ -268,6 +268,19 @@ class RFPhasorComposer:
         # near-tie readout triggers longer evidence integration before committing (speed-accuracy trade-off /
         # drift-diffusion decision-time). Latency stays at the fast common case (period unchanged) because the
         # finer re-resonate touches only the rare near-tie candidates, not every query.
+        #
+        # (#108 R1 gating TIGHTEN, 2026-09-02) `decode_escalate_margin` default 0.02 -> 0.008. The trigger must
+        # only catch a near-tie the FINER readout can actually flip; the finding's measured seed-44 mean-cos
+        # margin swing under readout refinement is coarse +0.0022 -> closed-form -0.0055 (a span of ~0.0077), so a
+        # candidate decisive by MORE than ~0.0077 of mean-cos cannot be rescued by a finer period and never needed
+        # the re-read. 0.008 sits just above that measured span AND 3.6x above the 0.0022 seed-44 coarse margin
+        # (ample headroom to keep catching seed-44 + its unprobed thin-margin siblings), so it loses NO recovery
+        # the 0.02 gate made while narrowing the trigger. **0.02 remains reachable as an explicit escape**
+        # (pass `decode_escalate_margin=0.02`) for A/B or rollback. NOTE (numpy diagnosis, artifact
+        # `_escalation_gating_tighten_smoke.json`): the 0.02 gate already fires on only ~4% of recall queries and
+        # every observed flip is at the ~0.0022 seed-44 margin, so this tighten is correctness-HARDENING; it is NOT
+        # by itself the #108 latency lever (the ~+300ms cupy median regression is a per-query cost independent of
+        # the trigger margin -- the faithful 6-seed cupy re-verify is the gate on that).
         self.enable_decode_escalation = bool(enable_decode_escalation)
         self.decode_escalate_margin = float(decode_escalate_margin)
         self.decode_escalate_period = int(decode_escalate_period)

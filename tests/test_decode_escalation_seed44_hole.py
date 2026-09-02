@@ -42,6 +42,18 @@ def test_escalation_default_is_off():
     assert c.enable_decode_escalation is False       # default OFF -> the extra branch never runs
 
 
+def test_escalation_tightened_trigger_margin_default():
+    """(#108 R1 gating tighten, 2026-09-02) the near-tie trigger default is 0.008 (was 0.02): >= the ~0.0077
+    measured readout-refinement mean-cos span (finding 2026-09-01: seed-44 coarse +0.0022 -> closed-form -0.0055),
+    so no near-tie a finer readout could flip is missed, while 3.6x the 0.0022 seed-44 coarse margin. The old 0.02
+    stays reachable as an explicit ESCAPE (A/B / rollback). period is unchanged (2000)."""
+    c = RFPhasorComposer(seed=42, D=64, vocab=["a", "b"])
+    assert c.decode_escalate_margin == 0.008          # tightened default (was 0.02)
+    assert c.decode_escalate_period == 2000           # unchanged
+    esc = RFPhasorComposer(seed=42, D=64, vocab=["a", "b"], decode_escalate_margin=0.02)
+    assert esc.decode_escalate_margin == 0.02         # the old loose gate is still reachable (escape)
+
+
 @pytest.mark.parametrize("seed", [42, 43, 44])
 def test_escalation_on_is_byte_identical_to_off_when_no_hole(seed):
     """With the small clean codebook there is no thin-margin hole, so escalation ON -- even with the margin turned

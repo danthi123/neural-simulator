@@ -368,7 +368,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                          communicable_mode=False, communicable_draw="spiking",
                          ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128,
                          ltm_composer_kwargs=None, enable_codebook_cache=False,
-                         enable_decode_escalation=False):
+                         enable_decode_escalation=False, decode_escalate_margin=None):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -477,6 +477,10 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                     ltm_kwargs["enable_codebook_cache"] = True
                 if enable_decode_escalation:
                     ltm_kwargs["enable_decode_escalation"] = True
+                    # (#108 R1) optional ESCAPE/rollback override of the tightened default (0.008); None keeps the
+                    # composer default. Reachable so an A/B or a rollback to the old 0.02 gate is a one-arg change.
+                    if decode_escalate_margin is not None:
+                        ltm_kwargs["decode_escalate_margin"] = float(decode_escalate_margin)
                 ltm = ShardedPhasorStore.load(str(ltm_bundle), extra_kwargs=ltm_kwargs or None)
         # BUILD PATH: a facts bundle -> build (+ resonate) the sharded LTM.
         if ltm is None:
@@ -488,6 +492,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                     cb_kwargs["enable_codebook_cache"] = True
                 if enable_decode_escalation:
                     cb_kwargs["enable_decode_escalation"] = True
+                    if decode_escalate_margin is not None:   # (#108 R1) escape override, see fast path above
+                        cb_kwargs["decode_escalate_margin"] = float(decode_escalate_margin)
                 ltm = build_ltm_from_facts(ltm_facts, n_shards=ns,
                                            seed=int(ltm_seed) if ltm_seed is not None else seed, D=int(ltm_D),
                                            composer_kwargs=cb_kwargs)

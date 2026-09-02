@@ -197,6 +197,9 @@ def main():
     ap.add_argument("--enable-decode-escalation", action="store_true",
                    help="ON: pass enable_decode_escalation=True to the LTM store (#66 seed-44 recall-hole fix -- "
                         "confidence-gated finer-period re-examination of near-tie match candidates)")
+    ap.add_argument("--decode-escalate-margin", type=float, default=None,
+                   help="(#108 R1) override the tightened default near-tie trigger margin (0.008); None keeps the "
+                        "composer default. Pass 0.02 to A/B the old loose gate or roll back.")
     a = ap.parse_args()
 
     t_start = time.time()
@@ -240,7 +243,8 @@ def main():
         t0 = time.time()
         agent, load_manifest = load_developed_brain(brain_dir, ltm_bundle=a.bundle, use_multiturn=False,
                                              seed=a.seed, enable_codebook_cache=a.enable_codebook_cache,
-                                             enable_decode_escalation=a.enable_decode_escalation)
+                                             enable_decode_escalation=a.enable_decode_escalation,
+                                             decode_escalate_margin=a.decode_escalate_margin)
         out["ltm_load_s"] = round(time.time() - t0, 2)
         inner = _inner_agent(agent)
         out["tiered_installed"] = type(inner.composer).__name__ == "TieredFactStore"
