@@ -496,6 +496,28 @@ class MergedPool:
     def surprise_idx_map(self):
         return self.idx("surprise")
 
+    # The shipped WORLD-MODEL organ calls `shared.worldmodel_idx_map()` + reads `shared.meta_worldmodel`; the
+    # surprise organ reads `shared.meta_surprise`. Provide all three by dispatch (identical pattern to
+    # `surprise_idx_map` above) so `SurpriseProductionOrgan` / `WorldModelProductionOrgan` run UNMODIFIED against
+    # this pool -- the ORGAN-READ half of pool #1's fold (2026-09-02 twopool merge organ-read rung; the substrate-
+    # init half was already registered). `meta_surprise`/`meta_worldmodel` mirror the shipped `MergedSubstrate`'s
+    # attributes exactly: they ARE the descriptor spec_fn's returned meta (build_expectation_circuit's metaS /
+    # build_world_model_circuit's metaW -- the SAME builders the shipped class calls, one definition, no drift).
+    # PURELY ADDITIVE: exercised only when a surprise/world-model organ is constructed with `shared=<this pool>`
+    # (which no existing verify does), so every prior batch run is byte-identical.
+    def worldmodel_idx_map(self):
+        return self.idx("worldmodel")
+
+    @property
+    def meta_surprise(self):
+        self.ensure_built()
+        return self.meta["surprise"]
+
+    @property
+    def meta_worldmodel(self):
+        self.ensure_built()
+        return self.meta["worldmodel"]
+
     # The shipped POOL-#2 organs call `shared.metacog_idx()` / `shared.pragmatic_item_dev()` (named methods,
     # exactly like `surprise_idx_map` above) -- provide them by dispatch so `MetacogProductionOrgan` /
     # `PragmaticProductionOrgan` run UNMODIFIED against this pool (2026-08-27 fold of pool #2 into the registry).
