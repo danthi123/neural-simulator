@@ -21,6 +21,23 @@ import numpy as np
 from research.runners._d3_group_composition_derisk import make_group_task, discrete_attractor_rnn
 from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge, onbridge_divnorm_drive
 
+# THE READ-ISOLATION FIX (2026-09-02, C2 bug class -- ported verbatim from
+# `_crossedge_surprise_metacog_derisk.py::_EXTRA_RESET_ARRAYS`, per the read-isolation audit
+# `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`, H-2). `fswta_drive()`
+# below is a SHARED PRIMITIVE called REPEATEDLY on the SAME bridge across an autoregressive rollout (this
+# module's own `spiking_rollout_eval`, and every D3/event/reslm/mouth/joint-attention/wkv importer that does
+# `from research.runners._d3_spiking_attractor_derisk import ... fswta_drive`). Its reset previously restored only
+# v/u/firing_states -- NOT these 4 per-neuron arrays `_run_one_simulation_step` also mutates:
+#   * cp_refractory_timers / cp_prev_firing_states -- HARD firing gates (int32 countdown / bool), independent of
+#     membrane potential; a neuron mid-refractory at the end of one `fswta_drive` call stays gated at the START
+#     of the next even though v/u were hard-reset to the constant rest value.
+#   * cp_neuron_activity_ema / cp_neuron_firing_thresholds -- the homeostatic per-neuron EMA + adaptive threshold;
+#     participation-gated, so it silently drifts on whichever pool won the immediately-prior call (inert here
+#     since `build_fswta_score_bridge` sets `enable_homeostasis=False`, but restored anyway per the audit's
+#     safety guarantee: a no-op where inert, hardening where not -- e.g. if a caller ever flips homeostasis on).
+_EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
+                       "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
+
 
 def build_fswta_score_bridge(seed, K, n_word=12, n_fs=24, exc_to_fs=2.0, fs_to_exc=9.0):
     """K Izhikevich attractor pools + a shared INHIBITORY FS pool with LATERAL INHIBITION (each pool excites FS; FS
@@ -49,6 +66,12 @@ def build_fswta_score_bridge(seed, K, n_word=12, n_fs=24, exc_to_fs=2.0, fs_to_e
     sb = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(), gpu_config=GPUConfig())
     sb.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
     sb._initialize_simulation_data(called_from_playback_init=False)
+    # THE READ-ISOLATION FIX: snapshot the TRUE-REST value of each `_EXTRA_RESET_ARRAYS` array right after build,
+    # before any `fswta_drive` call has run -- `fswta_drive` restores every call to THIS snapshot (see there).
+    from sim.backend import to_host
+    sb._rest_extra = {nm: (np.asarray(to_host(getattr(sb, nm, None))).copy()
+                           if getattr(sb, nm, None) is not None else None)
+                      for nm in _EXTRA_RESET_ARRAYS}
     return sb
 
 
@@ -64,6 +87,16 @@ def fswta_drive(sb, K, scores, input_gain=1200.0, settle=25):
     sb.cp_recovery_variable_u[:] = 0.0
     if getattr(sb, "cp_firing_states", None) is not None:
         sb.cp_firing_states[:] = False
+    # THE READ-ISOLATION FIX: restore every array in `_EXTRA_RESET_ARRAYS` to the true-rest snapshot taken at
+    # build. Without this, refractory/prev-firing/homeostatic residue from whichever call ran immediately before
+    # (a prior rollout step, or a prior K-way score query) leaks into this call's settle window -- an
+    # ORDER-dependent bias across the K attractor pools, not a per-query-independent read.
+    _rest_extra = getattr(sb, "_rest_extra", None)
+    if _rest_extra is not None:
+        for nm in _EXTRA_RESET_ARRAYS:
+            val = _rest_extra.get(nm)
+            if val is not None:
+                getattr(sb, nm)[:] = from_host(val)
     s = np.maximum(np.asarray(scores, dtype=float), 0.0)
     cur = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
     for k in range(K):
@@ -77,6 +110,53 @@ def fswta_drive(sb, K, scores, input_gain=1200.0, settle=25):
             acc[k] += fir[_ridx[k]].mean()
     sb.cp_external_input_current[:] = 0.0
     return None, acc
+
+
+def selftest_read_isolation(K=3, n_word=6, n_fs=8, seed=7, settle=12, input_gain=1200.0):
+    """READ-ISOLATION REGRESSION GUARD (2026-09-02, C2 bug class). `fswta_drive` has NO learned mechanism to zero
+    -- the K pools are driven directly by whatever score vector is passed -- so the "zeroed-mechanism" pool here is
+    the fswta bridge itself, freshly built (no training, no lesion state beyond its own per-neuron arrays).
+
+    TWO checks:
+    (1) Two IDENTICAL-input consecutive `fswta_drive` calls must return bitwise-identical `acc`. (Verified inert
+        for THIS primitive at realistic settle/gain: `cp_refractory_timers` decrements unconditionally every step
+        regardless of drive, so a leaked <=`refractory_period_steps` residual clears before the earliest possible
+        first spike under sustained drive -- confirmed by direct instrumentation across settle in {2..20} and gain
+        in {50..2000}, no divergence found. Kept as the literal regression guard the audit specified; passes both
+        pre- and post-fix in this primitive's regime, which is itself the honest hardening-not-a-flip result.)
+    (2) The DECISIVE check: dirty the bridge with one real `fswta_drive` call, then call `fswta_drive` AGAIN with
+        `settle=0` (runs the reset-and-restore block but ZERO simulation steps) and assert every
+        `_EXTRA_RESET_ARRAYS` array is bitwise-identical to the build-time true-rest snapshot. This DOES fail in
+        its failing direction: reverting the `_EXTRA_RESET_ARRAYS` restore in `fswta_drive` (the pre-fix code)
+        leaves `cp_refractory_timers`/`cp_prev_firing_states` at call-1's residual value instead of rest --
+        directly verified by disabling the restore block and re-running this check, which raised AssertionError
+        on both arrays (`cp_neuron_activity_ema`/`cp_neuron_firing_thresholds` are inert here regardless, since
+        `build_fswta_score_bridge` sets `enable_homeostasis=False` -- restoring them is defense-in-depth)."""
+    from sim.backend import to_host
+    sb = build_fswta_score_bridge(seed=seed, K=K, n_word=n_word, n_fs=n_fs)
+    rest = sb._rest_extra
+    scores = np.linspace(0.1, 0.9, K)   # asymmetric -> unequal per-pool firing -> unequal residual state if leaked
+
+    # (1) repeat-identical-read bitwise identity
+    _, acc1 = fswta_drive(sb, K, scores, input_gain=input_gain, settle=settle)
+    _, acc2 = fswta_drive(sb, K, scores, input_gain=input_gain, settle=settle)
+    assert np.array_equal(acc1, acc2), (
+        f"READ-ISOLATION REGRESSION: fswta_drive acc NOT bitwise-identical across 2 identical-input repeat reads "
+        f"({acc1} vs {acc2}) -- the _EXTRA_RESET_ARRAYS restore in fswta_drive is missing or broken.")
+
+    # (2) decisive: dirty the state, then a reset-only (settle=0) call must land exactly on true rest
+    _, acc_dirty = fswta_drive(sb, K, scores, input_gain=input_gain, settle=max(settle, 8))
+    _, acc_reset_only = fswta_drive(sb, K, scores, input_gain=input_gain, settle=0)
+    assert acc_reset_only.sum() == 0.0, "settle=0 should record zero firing -- fswta_drive's settle loop changed"
+    for nm in _EXTRA_RESET_ARRAYS:
+        cur = np.asarray(to_host(getattr(sb, nm)))
+        assert np.array_equal(cur, rest[nm]), (
+            f"READ-ISOLATION REGRESSION: {nm} did NOT reset to the true-rest snapshot after a dirtying call -- "
+            f"got {cur}, expected {rest[nm]}. The _EXTRA_RESET_ARRAYS restore in fswta_drive is missing or broken.")
+    print(f"  [selftest] read-isolation OK: (1) 2 identical-input fswta_drive calls (K={K}) bitwise-identical on "
+          f"acc; (2) a reset-only call after dirtying lands exactly on the true-rest snapshot for all "
+          f"{len(_EXTRA_RESET_ARRAYS)} extra-reset arrays", flush=True)
+    return True
 
 
 def spiking_rollout_eval(task, W, split, sb, K, input_gain=1200.0, settle=15, n_eval=60, seed=42, drive_fn=None):
@@ -137,7 +217,13 @@ def main():
     ap.add_argument("--fs-inh", type=float, default=9.0, help="FS->exc inhibition weight (stronger -> cleaner one-of-K winner)")
     ap.add_argument("--fs-settle", type=int, default=25, help="FS-WTA settle steps (longer -> the competition fully resolves)")
     ap.add_argument("--json", default=None)
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the read-isolation repeat-read bitwise-identity regression guard and exit")
     a = ap.parse_args()
+    if a.selftest:
+        selftest_read_isolation()
+        print("[selftest] PASS", flush=True)
+        return
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
     print(f"[D3 SPIKING attractor] {a.group} | re-discretization ON SPIKES (Izh attractor-pool WTA + FS lateral inhibition = CA3/NEF cleanup)", flush=True)
     rows = []
