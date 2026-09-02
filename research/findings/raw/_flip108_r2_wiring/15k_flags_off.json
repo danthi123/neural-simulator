@@ -1,0 +1,133 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "seed": 42,
+  "sparse_index_architecture_check": {
+    "RFPhasorComposer_accepts_enable_sparse_index": true,
+    "error_if_rejected": null,
+    "conclusion": "enable_sparse_index CAN reach the LTM shard composer"
+  },
+  "bundle_manifest": {
+    "n_shards": 75,
+    "seed": 42,
+    "D": 128,
+    "n_facts": 15000,
+    "vocab_size": 7032,
+    "composer_kwargs": {}
+  },
+  "ltm_load_s": 0.09,
+  "tiered_installed": true,
+  "ltm_class": "ShardedPhasorStore",
+  "ltm_shard_class": "RFPhasorComposer",
+  "ltm_total_facts": 15002,
+  "ltm_only_facts": 15000,
+  "oracle_build_s": 0.02,
+  "oracle_n_agents": 60,
+  "oracle_n_facts": 177,
+  "oracle_byte_identity": {
+    "checked": 354,
+    "n_mismatches": 0,
+    "mismatches": []
+  },
+  "oracle_check_s": 451.47,
+  "scale_battery_flag_unset": {
+    "recall_checked": 150,
+    "recall_ok": 150,
+    "recall_rate": 1.0,
+    "moat_checked": 40,
+    "moat_confab": 0,
+    "latency_ms_median": 1998.93,
+    "latency_ms_p95": 3664.6,
+    "latency_ms_mean": 2043.53,
+    "n_latency_samples": 190
+  },
+  "inertness_check": {
+    "flag_unset": {
+      "recall_checked": 20,
+      "recall_ok": 20,
+      "recall_rate": 1.0,
+      "moat_checked": 10,
+      "moat_confab": 0,
+      "latency_ms_median": 1115.15,
+      "latency_ms_p95": 1972.99,
+      "latency_ms_mean": 1188.04,
+      "n_latency_samples": 30
+    },
+    "flag_set_1": {
+      "recall_checked": 20,
+      "recall_ok": 20,
+      "recall_rate": 1.0,
+      "moat_checked": 10,
+      "moat_confab": 0,
+      "latency_ms_median": 1760.31,
+      "latency_ms_p95": 3098.29,
+      "latency_ms_mean": 1912.14,
+      "n_latency_samples": 30
+    },
+    "answers_identical": true
+  },
+  "bars": {
+    "recall_bar_pass": true,
+    "moat_bar_pass": true,
+    "latency_bar_pass": false
+  },
+  "label": "100k end-to-end knowledge-scale production verify (board #66/#150/#109)",
+  "status": "UNDEFINED",
+  "go": false,
+  "undefined_reasons": [
+    "unmet: LATENCY: warm routed-recall median < 1000 ms (-998.93 vs floor 0)"
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "production load path installs a TieredFactStore over the real 100k bundle",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "LTM-only total_facts == the real bundle's n_facts (excludes the buffer tier's own facts)",
+      "ok": true,
+      "detail": "measured=15000 expect=15000",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "RECALL parity: 0 mismatches vs the tractable flat oracle (held agent set)",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "RECALL at full 100k scale (oracle-free, ground-truth dict) >= 0.99",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7f1ad7b96480>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "MOAT: 0 confabulations on unknown/cross cues",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "LATENCY: warm routed-recall median < 1000 ms",
+      "ok": false,
+      "detail": "-998.93 vs floor 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BRAIN_SPARSE_INDEX_RETRIEVAL flag has NO effect on this path (architecturally inert, as predicted)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null,
+  "elapsed_s": 1070.54
+}
