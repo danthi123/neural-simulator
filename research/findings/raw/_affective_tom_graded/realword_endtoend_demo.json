@@ -1,0 +1,61 @@
+{
+  "seed": 42,
+  "rows": [
+    {
+      "message": "Maria is lonely",
+      "bistable_tone_sign": -1,
+      "bistable_lead": "That sounds really hard for Maria -- ",
+      "dr2_valence": -0.25245,
+      "graded_mood": -0.0492,
+      "graded_tone_level": -2,
+      "graded_lead": "That sounds really hard for Maria -- "
+    },
+    {
+      "message": "Maria feels lost",
+      "bistable_tone_sign": -1,
+      "bistable_lead": "That sounds really hard for Maria -- ",
+      "dr2_valence": -0.299175,
+      "graded_mood": -0.060167,
+      "graded_tone_level": -2,
+      "graded_lead": "That sounds really hard for Maria -- "
+    },
+    {
+      "message": "Maria is heartbroken",
+      "bistable_tone_sign": -1,
+      "bistable_lead": "That sounds really hard for Maria -- ",
+      "dr2_valence": -0.825,
+      "graded_mood": -0.075033,
+      "graded_tone_level": -3,
+      "graded_lead": "That sounds devastating for Maria -- "
+    },
+    {
+      "message": "Maria was hurt",
+      "bistable_tone_sign": -1,
+      "bistable_lead": "That sounds really hard for Maria -- ",
+      "dr2_valence": -0.828075,
+      "graded_mood": -0.075167,
+      "graded_tone_level": -3,
+      "graded_lead": "That sounds devastating for Maria -- "
+    },
+    {
+      "message": "Maria is cheerful",
+      "bistable_tone_sign": 1,
+      "bistable_lead": "That's wonderful for Maria -- ",
+      "dr2_valence": 0.725,
+      "graded_mood": 0.066433,
+      "graded_tone_level": 3,
+      "graded_lead": "That's absolutely thrilling for Maria -- "
+    },
+    {
+      "message": "Maria is proud",
+      "bistable_tone_sign": 1,
+      "bistable_lead": "That's wonderful for Maria -- ",
+      "dr2_valence": 0.957475,
+      "graded_mood": 0.077067,
+      "graded_tone_level": 3,
+      "graded_lead": "That's absolutely thrilling for Maria -- "
+    }
+  ],
+  "bistable_collapses_lonely_vs_heartbroken": true,
+  "graded_differentiates_lonely_vs_heartbroken": true
+}

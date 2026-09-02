@@ -126,6 +126,17 @@ def affective_tom_lesioned() -> bool:
     return os.environ.get("BRAIN_AFFECTIVE_TOM_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def affective_tom_graded_enabled() -> bool:
+    """The GRADED-CIRCUMPLEX upgrade flag (NEW, 2026-09-01, additive, default-OFF). When truthy
+    (`BRAIN_AFFECTIVE_TOM_GRADED` in 1/true/on/yes), the OTHER-model read swaps from the bistable valence-SIGN
+    (`AffectStateBrain` / `read_tone`, 3-state {-1,0,+1}) to the GRADED valence x arousal circumplex -- the SAME
+    #81 Koulakov bistable-LADDER the SELF read already uses (`research.runners._affective_tom_graded_derisk`).
+    Default OFF (unset/false): `observe_turn` stays on the shipped 6/6-seed-GO bistable path unchanged -- this
+    flag being off means the graded module is never even imported, so production (`_AFFECTIVE_TOM_DEFAULT_ON=True`)
+    is byte-identical to before this upgrade existed."""
+    return os.environ.get("BRAIN_AFFECTIVE_TOM_GRADED", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # THE OTHER-AGENT TRIGGER DETECTOR (a host language-comprehension boundary; the ToM-specific neural work is the
 # OTHER-tagged affect read below, NOT this parse). Two classes: (A) a third party's affectively-charged situation
@@ -290,14 +301,29 @@ def observe_turn(chat, message: str, appraisal: Optional[dict] = None, *,
             return info
         valence_sign = 1 if valence > 0.0 else -1
         lesion = affective_tom_lesioned()
-        read = get_organ(seed=seed).read_other_tone(valence_sign, lesion=lesion)
-        tone_sign = int(read["tone_sign"])
-        lead = empathic_lead(tone_sign, agent)
-        info.update({"acted": True, "lead": lead, "tone_sign": tone_sign,
-                     "differential": read["differential"], "pos_rate": read["pos_rate"],
-                     "neg_rate": read["neg_rate"], "valence_sign": valence_sign, "lesioned": bool(lesion),
-                     "reason": ("lesion_collapsed" if lesion else
-                                ("neutral" if tone_sign == 0 else "empathic"))})
+        if affective_tom_graded_enabled():
+            # THE GRADED-CIRCUMPLEX UPGRADE (additive, default-OFF): the OTHER-model read consumes the FULL
+            # appraised (valence, arousal) MAGNITUDE through the SAME #81 graded ladder the SELF read uses, instead
+            # of collapsing it to a bistable sign. Reuse-by-import; no change to the bistable path above/below.
+            from research.runners._affective_tom_graded_derisk import get_graded_organ, empathic_lead_graded
+            arousal = float(appraisal.get("arousal", 0.0))
+            read = get_graded_organ(seed=seed).read_other_state(valence, arousal, lesion=lesion)
+            tone_level = int(read["tone_level"])
+            lead = empathic_lead_graded(tone_level, agent)
+            info.update({"acted": True, "lead": lead, "tone_level": tone_level, "mood": read["mood"],
+                         "felt_arousal": read["felt_arousal"], "valence_sign": valence_sign,
+                         "lesioned": bool(lesion), "graded": True,
+                         "reason": ("lesion_collapsed" if lesion else
+                                    ("neutral" if tone_level == 0 else "empathic"))})
+        else:
+            read = get_organ(seed=seed).read_other_tone(valence_sign, lesion=lesion)
+            tone_sign = int(read["tone_sign"])
+            lead = empathic_lead(tone_sign, agent)
+            info.update({"acted": True, "lead": lead, "tone_sign": tone_sign,
+                         "differential": read["differential"], "pos_rate": read["pos_rate"],
+                         "neg_rate": read["neg_rate"], "valence_sign": valence_sign, "lesioned": bool(lesion),
+                         "reason": ("lesion_collapsed" if lesion else
+                                    ("neutral" if tone_sign == 0 else "empathic"))})
     except Exception as e:   # never let the empathy read crash / change a turn
         info = {"acted": False, "lead": "", "agent": None, "tone_sign": 0,
                 "reason": f"error:{type(e).__name__}: {e}", "seed": int(seed)}
