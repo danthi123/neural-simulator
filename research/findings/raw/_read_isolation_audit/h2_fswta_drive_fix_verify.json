@@ -1,0 +1,525 @@
+{
+ "runner": "research/runners/_d3_spiking_attractor_derisk.py",
+ "mechanism": "read-isolation-fix-d3-spiking-attractor-fswta-drive",
+ "cli_params_used": {
+  "fs_inh": 9.0,
+  "fs_settle": 25,
+  "note": "the runner's own argparse DEFAULTS -- no --fs-inh/--fs-settle override"
+ },
+ "cmd": [
+  "python -m research.runners._d3_spiking_attractor_derisk --group S3 --seeds 42,43,44 --json ...",
+  "python -m research.runners._d3_spiking_attractor_derisk --group A5 --seeds 100,101,102 --json ...  # BEFORE = git HEAD (research/runners/_d3_spiking_attractor_derisk.py pre-fix), AFTER = this fix"
+ ],
+ "backend": "numpy",
+ "seeds": {
+  "S3": [
+   42,
+   43,
+   44
+  ],
+  "A5": [
+   100,
+   101,
+   102
+  ]
+ },
+ "note_seed100_a5": "seed 100's original combined --seeds 100,101,102 run (both BEFORE and AFTER arms) was killed by an external session-wide process-termination event (other unrelated agents' background jobs were killed at the identical wall-clock moment) AFTER printing seed 100's line but BEFORE json.dump() ran. seed 100's row is reconstructed verbatim from that stdout line (identical text in both arms) rather than a runner-written json; seeds 101/102 completed cleanly from a re-launched --seeds 101,102 invocation with its own json.dump().",
+ "predicted_effect_in_task": "SHARED PRIMITIVE hardening; no verdict change expected -- THIS PREDICTION WAS WRONG FOR A5 (see below); it held for S3 only.",
+ "actual_effect": "A5 group verdict (the runner's OWN printed GO/PARTIAL formula, at its OWN default CLI params) FLIPS PARTIAL/NEGATIVE (BEFORE, best_deeper=0.899667) -> GO (AFTER, best_deeper=0.955333). S3 unchanged (already GO, at ceiling). The effect is isolated to exactly FSWTA_deeper_track/FSWTA_host_agree (the two metrics computed via fswta_drive, the function this fix touches) -- SPK_deeper_track/SPK_host_agree_deeper (computed via onbridge_divnorm_drive, an untouched sibling function) and rate_step_delta/rate_deeper_track (the host-computed rate transition) are BITWISE IDENTICAL before vs after in every one of the 6 seeds, which pins the cause to fswta_drive specifically.",
+ "why_the_effect_is_real_not_the_earlier_synthetic_null": "Direct small-scale instrumentation (2-3 sequential fswta_drive calls, synthetic score vectors) found no divergence and is reported separately as a REGRESSION-GUARD selftest (repeat-read bitwise identity), which remains true and useful. The PRODUCTION usage in spiking_rollout_eval chains MANY (up to 8) sequential fswta_drive calls with DIFFERENT DATA-DRIVEN score vectors per autoregressive rollout step, across 60 eval sequences per seed -- giving the leaked refractory/prev-firing residue far more opportunity to compound across a long chain of DIFFERENT inputs than a 2-call synthetic probe. This matches the audit's own general finding: order/content-dependent leak bias needs a real usage-length chain to manifest.",
+ "per_seed": [
+  {
+   "group": "S3",
+   "seed": 42,
+   "before_SPK_same_track": 1.0,
+   "after_SPK_same_track": 1.0,
+   "before_SPK_deeper_track": 1.0,
+   "after_SPK_deeper_track": 1.0,
+   "before_SPK_host_agree_deeper": 1.0,
+   "after_SPK_host_agree_deeper": 1.0,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 1.0,
+   "after_rate_deeper_track": 1.0,
+   "before_FSWTA_deeper_track": 1.0,
+   "after_FSWTA_deeper_track": 1.0,
+   "before_FSWTA_host_agree": 1.0,
+   "after_FSWTA_host_agree": 1.0
+  },
+  {
+   "group": "S3",
+   "seed": 43,
+   "before_SPK_same_track": 1.0,
+   "after_SPK_same_track": 1.0,
+   "before_SPK_deeper_track": 1.0,
+   "after_SPK_deeper_track": 1.0,
+   "before_SPK_host_agree_deeper": 1.0,
+   "after_SPK_host_agree_deeper": 1.0,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 1.0,
+   "after_rate_deeper_track": 1.0,
+   "before_FSWTA_deeper_track": 1.0,
+   "after_FSWTA_deeper_track": 1.0,
+   "before_FSWTA_host_agree": 1.0,
+   "after_FSWTA_host_agree": 1.0
+  },
+  {
+   "group": "S3",
+   "seed": 44,
+   "before_SPK_same_track": 1.0,
+   "after_SPK_same_track": 1.0,
+   "before_SPK_deeper_track": 1.0,
+   "after_SPK_deeper_track": 1.0,
+   "before_SPK_host_agree_deeper": 1.0,
+   "after_SPK_host_agree_deeper": 1.0,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 1.0,
+   "after_rate_deeper_track": 1.0,
+   "before_FSWTA_deeper_track": 1.0,
+   "after_FSWTA_deeper_track": 1.0,
+   "before_FSWTA_host_agree": 1.0,
+   "after_FSWTA_host_agree": 1.0
+  },
+  {
+   "group": "A5",
+   "seed": 100,
+   "before_SPK_deeper_track": 0.767,
+   "after_SPK_deeper_track": 0.767,
+   "before_SPK_host_agree_deeper": 0.962,
+   "after_SPK_host_agree_deeper": 0.962,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 0.985,
+   "after_rate_deeper_track": 0.985,
+   "before_FSWTA_deeper_track": 0.983,
+   "after_FSWTA_deeper_track": 0.983,
+   "before_FSWTA_host_agree": 0.998,
+   "after_FSWTA_host_agree": 0.998
+  },
+  {
+   "group": "A5",
+   "seed": 101,
+   "before_SPK_same_track": 0.867,
+   "after_SPK_same_track": 0.867,
+   "before_SPK_deeper_track": 0.667,
+   "after_SPK_deeper_track": 0.667,
+   "before_SPK_host_agree_deeper": 0.943,
+   "after_SPK_host_agree_deeper": 0.943,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 0.98,
+   "after_rate_deeper_track": 0.98,
+   "before_FSWTA_deeper_track": 0.833,
+   "after_FSWTA_deeper_track": 0.95,
+   "before_FSWTA_host_agree": 0.978,
+   "after_FSWTA_host_agree": 0.998
+  },
+  {
+   "group": "A5",
+   "seed": 102,
+   "before_SPK_same_track": 0.967,
+   "after_SPK_same_track": 0.967,
+   "before_SPK_deeper_track": 0.783,
+   "after_SPK_deeper_track": 0.783,
+   "before_SPK_host_agree_deeper": 0.962,
+   "after_SPK_host_agree_deeper": 0.962,
+   "before_rate_step_delta": 1.0,
+   "after_rate_step_delta": 1.0,
+   "before_rate_deeper_track": 0.982,
+   "after_rate_deeper_track": 0.982,
+   "before_FSWTA_deeper_track": 0.883,
+   "after_FSWTA_deeper_track": 0.933,
+   "before_FSWTA_host_agree": 0.981,
+   "after_FSWTA_host_agree": 0.99
+  }
+ ],
+ "group_aggregates": {
+  "S3": {
+   "before": {
+    "spk_deeper_mean": 1.0,
+    "spk_agree_mean": 1.0,
+    "fswta_deeper_mean": 1.0,
+    "fswta_agree_mean": 1.0,
+    "best_deeper": 1.0,
+    "best_agree": 1.0,
+    "go": true
+   },
+   "after": {
+    "spk_deeper_mean": 1.0,
+    "spk_agree_mean": 1.0,
+    "fswta_deeper_mean": 1.0,
+    "fswta_agree_mean": 1.0,
+    "best_deeper": 1.0,
+    "best_agree": 1.0,
+    "go": true
+   }
+  },
+  "A5": {
+   "before": {
+    "spk_deeper_mean": 0.739,
+    "spk_agree_mean": 0.9556666666666667,
+    "fswta_deeper_mean": 0.8996666666666666,
+    "fswta_agree_mean": 0.9856666666666666,
+    "best_deeper": 0.8996666666666666,
+    "best_agree": 0.9856666666666666,
+    "go": false
+   },
+   "after": {
+    "spk_deeper_mean": 0.739,
+    "spk_agree_mean": 0.9556666666666667,
+    "fswta_deeper_mean": 0.9553333333333333,
+    "fswta_agree_mean": 0.9953333333333333,
+    "best_deeper": 0.9553333333333333,
+    "best_agree": 0.9953333333333333,
+    "go": true
+   }
+  }
+ },
+ "selftest": {
+  "pass": true,
+  "fails_in_failing_direction": true,
+  "after_fix_error": null,
+  "before_fix_error": "READ-ISOLATION REGRESSION (expected pre-fix): ['cp_refractory_timers', 'cp_prev_firing_states'] did not reset to true rest"
+ },
+ "verdict": {
+  "label": "read-isolation fix (H-2, fswta_drive shared primitive) -- REAL A5 verdict flip at default CLI params, numpy 6-seed",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "backend == numpy",
+    "ok": true,
+    "detail": "measured=numpy expect=numpy",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "selftest_read_isolation passed (AFTER-fix code)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "selftest fails in its failing direction (pre-fix regression reproduced)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 SPK_same_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 SPK_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 SPK_host_agree_deeper unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 rate_step_delta unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 rate_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 FSWTA_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 42 FSWTA_host_agree unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 SPK_same_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 SPK_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 SPK_host_agree_deeper unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 rate_step_delta unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 rate_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 FSWTA_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 43 FSWTA_host_agree unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 SPK_same_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 SPK_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 SPK_host_agree_deeper unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 rate_step_delta unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 rate_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 FSWTA_deeper_track unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 seed 44 FSWTA_host_agree unchanged (ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 100 SPK_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 100 SPK_host_agree_deeper unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 100 rate_step_delta unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 100 rate_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 101 SPK_same_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 101 SPK_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 101 SPK_host_agree_deeper unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 101 rate_step_delta unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 101 rate_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "reaches",
+    "name": "A5 seed 101 FSWTA_deeper_track moved by the fix",
+    "ok": true,
+    "detail": "before=0.833 after=0.95 moved=True",
+    "note": ""
+   },
+   {
+    "kind": "reaches",
+    "name": "A5 seed 101 FSWTA_host_agree moved by the fix",
+    "ok": true,
+    "detail": "before=0.978 after=0.998 moved=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 102 SPK_same_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 102 SPK_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 102 SPK_host_agree_deeper unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 102 rate_step_delta unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 seed 102 rate_deeper_track unchanged (untouched-primitive control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "reaches",
+    "name": "A5 seed 102 FSWTA_deeper_track moved by the fix",
+    "ok": true,
+    "detail": "before=0.883 after=0.933 moved=True",
+    "note": ""
+   },
+   {
+    "kind": "reaches",
+    "name": "A5 seed 102 FSWTA_host_agree moved by the fix",
+    "ok": true,
+    "detail": "before=0.981 after=0.99 moved=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "S3 group verdict unchanged (GO both, ceiling control)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "A5 AFTER-fix best_deeper crosses the runner's own 0.90 GO floor",
+    "ok": true,
+    "detail": "0.955333 vs floor 0.9",
+    "note": ""
+   },
+   {
+    "kind": "floor",
+    "name": "A5 AFTER-fix best_agree crosses the runner's own 0.95 GO floor",
+    "ok": true,
+    "detail": "0.995333 vs floor 0.95",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 BEFORE-fix best_deeper is BELOW the 0.90 floor (documents the pre-fix PARTIAL/NEGATIVE)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "A5 group verdict FLIPS PARTIAL/NEGATIVE -> GO (the real, unpredicted result)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ }
+}
