@@ -5137,6 +5137,30 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             obs_sign = 1 if obs_val > 0.02 else (-1 if obs_val < -0.02 else 0)
             if obs_sign != 0:
                 worg = _get_worldmodel_organ()
+                # ── BEGIN faculty: one-brain cross-edge C1 — D2 surprise -> E2 world-model ERROR-GATED ONLINE
+                #    UPDATE (design rank #1, `2026-09-02-onebrain-crossregion-integration-DESIGN-ranked-crossedges.
+                #    md`; de-risk 6/6-seed GO, `research/findings/raw/_crossedge_surprise_worldmodel_6seed.json`).
+                #    DEFAULT-OFF (BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL). Closes E2's own declared residual
+                #    ("TEACHER-DRIVEN ... not self-organized from conversation"): the world-model's OWN D2
+                #    prediction-error unit (a SECOND, dedicated spiking surprise read at a per-state-calibrated
+                #    threshold — NOT a reuse of sj["surprised"] below, which is calibrated for the notice decision;
+                #    see the production module's own docstring) gates ONE Hebbian co-fire step of the ALREADY-LIVE
+                #    organ's own state->pred transition toward the observed valence. Unset/0/false/no/off => this block is a
+                #    no-op and the organ stays byte-identical to today's frozen-after-build behaviour. The LESION
+                #    (BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL_LESION=1) must be applied BEFORE read_surprise below
+                #    (see research/runners/onebrain_xedge_surprise_worldmodel_production.py's own ordering note).
+                #    See that module for the full mechanism + declared residuals.
+                _c1_on, _c1_update = False, None
+                try:
+                    from research.runners.onebrain_xedge_surprise_worldmodel_production import (
+                        xedge_surprise_worldmodel_enabled, ensure_worldmodel_crossedge_lesion, crossedge_gated_update)
+                    _c1_on = xedge_surprise_worldmodel_enabled()
+                    if _c1_on:
+                        ensure_worldmodel_crossedge_lesion(worg)
+                        _c1_update = crossedge_gated_update
+                except Exception:
+                    _c1_on = False   # degrade silently — no crossedge diagnostic, rest of the turn unaffected
+                # ── END faculty: one-brain cross-edge C1 (lesion pre-step only; the update fires after the read) ──
                 held = wm_state.get("expected_sign")
                 if held is not None and obs_sign != held:
                     sj = worg.read_surprise(int(wm_state.get("context_sign", 1)), obs_sign, lesion=wm_lesion)
@@ -5144,6 +5168,16 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     worldmodel_info["kind"] = "violation"
                     if sj["surprised"]:
                         worldmodel_prefix = _WM.worldmodel_surprise_notice(int(held))
+                    # ── the C1 gated update fires HERE — its OWN dedicated per-state-calibrated surprise read
+                    #    (a second spiking read; see the production module's own docstring for why this is NOT a
+                    #    reuse of sj["surprised"] above) gates ONE co-fire step of the organ's own transition.
+                    if _c1_on and _c1_update is not None:
+                        try:
+                            worldmodel_info["surprise_worldmodel_crossedge"] = _c1_update(
+                                worg, int(wm_state.get("context_sign", 1)), obs_sign)
+                        except Exception as _xswme:
+                            worldmodel_info["surprise_worldmodel_crossedge"] = {
+                                "on": True, "error": f"{type(_xswme).__name__}: {_xswme}"}
                 # update the held expectation for the NEXT turn from THIS turn's observed context (persistence).
                 exp = worg.expectation(obs_sign, lesion=wm_lesion)
                 wm_state["context_sign"] = int(obs_sign)

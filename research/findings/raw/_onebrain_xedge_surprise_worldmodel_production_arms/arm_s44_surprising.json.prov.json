@@ -1,0 +1,34 @@
+{
+ "run_id": "1788357882-3605472",
+ "runner": "research/runners/onebrain_xedge_surprise_worldmodel_production.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3e65099d3abdf8cc/research/runners/onebrain_xedge_surprise_worldmodel_production.py",
+  "--arm",
+  "surprising",
+  "--seed",
+  "44",
+  "--n-turns",
+  "10",
+  "--out",
+  "research/findings/raw/_onebrain_xedge_surprise_worldmodel_production_arms/arm_s44_surprising.json"
+ ],
+ "git_sha": "7db41b234",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T10:04:42",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "SIM_RUN_ID": "1788357777-3603398"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_xedge_surprise_worldmodel_production_arms/arm_s44_surprising.json"
+}
