@@ -3591,18 +3591,30 @@ def _default_ltm_bundle_dir():
         roots.append(env_root)
     roots.append(str(REPO_ROOT.parent / "sim-data"))
     roots.append(str(Path.home() / "Projects" / "sim-data"))
+    # #108 FLIP 2026-09-02: the FULL wikidata_100k body-of-knowledge (78,857 facts) is now the default LTM,
+    # with the curated wikidata_core_15k as the robustness fallback. Both #108 blockers cleared: recall 1.0 +
+    # oracle byte-identity 0/498 mismatches at 100k (research/findings/raw/_knowledge_scale_100k_cacheon_s*.json);
+    # confidence-forthcomingness GO 6/6 at 100k (2026-09-02-confidence-forthcomingness-100k-6seed-GO.md, b670b02c3);
+    # latency ACCEPTED at ~1189ms median within the owner's 1.1-1.3s tolerance, speed<faithfulness
+    # (2026-09-02-cupy-scan-vectorize-latency-result-ACCEPT.md). `BRAIN_LTM_BUNDLE=wikidata_core_15k` forces the
+    # old core for an A/B; `BRAIN_LTM_SHIP_DEFAULT=0` is the byte-identical no-LTM escape.
+    env_bundle = os.environ.get("BRAIN_LTM_BUNDLE", "").strip()
+    bundle_order = [env_bundle] if (env_bundle and env_bundle.lower() not in ("off", "0", "none")) \
+        else ["wikidata_100k", "wikidata_core_15k"]
     seen = set()
     for r in roots:
         if r in seen:
             continue
         seen.add(r)
-        d = str(Path(r) / "knowledge_bundles" / "wikidata_core_15k")
-        if os.path.isdir(d):
-            return d
+        for bundle in bundle_order:
+            d = str(Path(r) / "knowledge_bundles" / bundle)
+            if os.path.isdir(d):
+                return d
     return None
 
 
-# 2026-08-26 FLIPPED DEFAULT-ON (board #133): the curated 15k core ships as the default cortical LTM.
+# 2026-08-26 FLIPPED DEFAULT-ON (board #133): a curated cortical LTM ships as the default (was 15k core; #108
+# flipped the default bundle to the full wikidata_100k on 2026-09-02 — see _default_ltm_bundle_dir above).
 # BRAIN_LTM_SHIP_DEFAULT=0 (and/or BRAIN_LTM_BUNDLE=off) is the byte-identical escape to the pre-flip no-LTM path.
 _LTM_SHIP_DEFAULT_ON = True
 
