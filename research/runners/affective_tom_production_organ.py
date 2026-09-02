@@ -131,10 +131,13 @@ def affective_tom_graded_enabled() -> bool:
     (`BRAIN_AFFECTIVE_TOM_GRADED` in 1/true/on/yes), the OTHER-model read swaps from the bistable valence-SIGN
     (`AffectStateBrain` / `read_tone`, 3-state {-1,0,+1}) to the GRADED valence x arousal circumplex -- the SAME
     #81 Koulakov bistable-LADDER the SELF read already uses (`research.runners._affective_tom_graded_derisk`).
-    Default OFF (unset/false): `observe_turn` stays on the shipped 6/6-seed-GO bistable path unchanged -- this
-    flag being off means the graded module is never even imported, so production (`_AFFECTIVE_TOM_DEFAULT_ON=True`)
-    is byte-identical to before this upgrade existed."""
-    return os.environ.get("BRAIN_AFFECTIVE_TOM_GRADED", "0").strip().lower() in ("1", "true", "on", "yes")
+    2026-09-01 AUTO-FLIPPED default-ON (`BRAIN_AFFECTIVE_TOM_GRADED` unset -> ON; set =0 to opt out) per the
+    auto-flip policy: organ 6/6 GO + full-brain HANDLER soak 6/6 GO (ordinary_identical + triggered_content_identical
+    + lesion_collapsed all True, research/findings/raw/_affective_tom_graded/flip_soak_summary_6seed.json). Off/lesion
+    stays byte-identical to the shipped bistable path (the graded module is not even imported when off), so the base
+    `_AFFECTIVE_TOM_DEFAULT_ON=True` faculty is unchanged; when on, the OTHER-model read swaps to the 7-tier graded
+    empathic lead."""
+    return os.environ.get("BRAIN_AFFECTIVE_TOM_GRADED", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────

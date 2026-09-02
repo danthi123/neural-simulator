@@ -1,0 +1,1264 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 6,
+  "go": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "backend": "numpy",
+  "results": {
+    "42": {
+      "seed": 42,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 428.2
+    },
+    "43": {
+      "seed": 43,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 286.0
+    },
+    "44": {
+      "seed": 44,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 266.3
+    },
+    "100": {
+      "seed": 100,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 267.5
+    },
+    "101": {
+      "seed": 101,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 267.6
+    },
+    "102": {
+      "seed": 102,
+      "backend": "numpy",
+      "GO": true,
+      "ordinary_identical": true,
+      "triggered_content_identical": true,
+      "lesion_collapsed": true,
+      "bistable_mild_lead": "That sounds really hard for Maria -- ",
+      "bistable_strong_lead": "That sounds really hard for Maria -- ",
+      "bistable_collapses_magnitude": true,
+      "graded_mild_lead": "That sounds really hard for Maria -- ",
+      "graded_strong_lead": "That sounds devastating for Maria -- ",
+      "graded_differentiates_magnitude": true,
+      "per_turn": [
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "what is the capital of france?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        },
+        {
+          "msg": "Maria is lonely",
+          "kind": "trigger_mild_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -2
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds really hard for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "Maria is heartbroken",
+          "kind": "trigger_strong_bad",
+          "bistable": {
+            "answer": "That sounds really hard for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds really hard for Maria -- ",
+            "tom_level_or_sign": -1
+          },
+          "graded": {
+            "answer": "That sounds devastating for Maria -- I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "That sounds devastating for Maria -- ",
+            "tom_level_or_sign": -3
+          },
+          "lesion": {
+            "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about maria yet: what can you tell me about maria?",
+            "abstained": true,
+            "recalled_svo": null,
+            "verified": false,
+            "has_tom_key": true,
+            "tom_lead": "",
+            "tom_level_or_sign": 0
+          },
+          "content_same": true,
+          "graded_lead": "That sounds devastating for Maria -- ",
+          "lesion_lead": "",
+          "lesion_collapsed": true
+        },
+        {
+          "msg": "what does the dog chase?",
+          "kind": "ordinary",
+          "bistable": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "graded": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "lesion": {
+            "answer": "As for it \u2014 the dog chases the cat",
+            "abstained": false,
+            "recalled_svo": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "verified": true,
+            "has_tom_key": false,
+            "tom_lead": "",
+            "tom_level_or_sign": null
+          },
+          "ordinary_identical": true
+        }
+      ],
+      "elapsed_s": 269.3
+    }
+  }
+}

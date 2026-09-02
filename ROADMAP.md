@@ -7,7 +7,7 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-01 (even newer) — a sixth ability goes live from a three-way parallel wave, and a seventh is proven and staged
+## 2026-09-01 (even newer) — a sixth and seventh ability go live from a three-way parallel wave
 
 A parallel wave of three independent efforts landed two more results (the third, a vision-normalization lever, was
 lost to a transient service error and can be re-run):
@@ -17,12 +17,12 @@ lost to a transient service error and can be re-run):
   self-consuming note reflecting that — and this is proven genuine, not cosmetic: an automated test confirms the
   note appears only when the internal curiosity→working-memory connection is intact and disappears entirely when
   that connection is silenced (plus it's off-by-default-identical and isolated per conversation). On by default.
-- **A seventh is proven and staged (not yet on)**: the brain reading *how strongly someone else* feels, on a
-  seven-step scale, instead of just positive/negative — so "Maria is lonely" and "Maria is heartbroken" now draw
-  different empathic wording where before they drew the identical response. Verified genuine (matches the felt
-  intensity on six seeds; collapses to nothing when lesioned), reusing the same graded-feeling machinery the
-  brain's own emotion read already uses. It's merged off-by-default and will flip on after one full-brain
-  end-to-end safety check (which needs a heavier run than its sandbox could do).
+- **A seventh ability also went live**: the brain reading *how strongly someone else* feels, on a seven-step
+  scale, instead of just positive/negative — so "Maria is lonely" and "Maria is heartbroken" now draw different
+  empathic wording where before they drew the identical response. Verified genuine (matches the felt intensity on
+  six seeds; collapses to nothing when lesioned), reusing the same graded-feeling machinery the brain's own
+  emotion read already uses. The full-brain end-to-end safety check passed six-for-six (identical when off, the
+  effect fully collapsing when the circuit is silenced), so it's now on by default.
 
 ## 2026-09-01 (newest) — the owner turns on auto-promotion, and five validated abilities go live the same session
 
