@@ -1,0 +1,491 @@
+{
+  "gate": "replay_dg_pattern_separation_readfix_cuerelative_writebias",
+  "board": "91",
+  "mechanism": "persistent per-granule cue-relative z-scored DG excitability bias (gain=2000.0, n_ref=8), installed as a step-wrapper BEFORE consolidation so the WRITE (dg->answer coincidence) and every READ (m0/m1/novel/probe) see the SAME corrected DG code (contrast: the read-only variant fixes the isolated-reactivation diagnostic and the novel-cue anti-cheat but not behavioral both_win, because the write still encodes the uncorrected/collapsed activity)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "gain": 2000.0,
+  "n_ref": 8,
+  "tune_seeds": [
+    42,
+    43,
+    100
+  ],
+  "heldout_seeds": [
+    44,
+    101,
+    102
+  ],
+  "status": "UNDEFINED",
+  "verdict": {
+    "label": "memory-separator READ+WRITE fix: persistent per-granule cue-relative DG excitability bias, installed before consolidation",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: no regression: no seed where m0 won OFF and lost ON (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "baseline is the #90/#91 residual: OFF arm both_win fails on >=1 seed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no regression: no seed where m0 won OFF and lost ON",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "dg->answer WRITE family (BCM / competitive-heterosynaptic) and the #78/#91 pop-controller reset",
+        "why": "this variant isolates a NEW lever (persistent per-granule cue-relative bias spanning write+read) from the banked WRITE family and the banked pop_state reset; base._consolidate's WRITE RULE itself is unmodified -- only the DG activity it writes FROM is corrected"
+      }
+    ],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "baseline is the #90/#91 residual: OFF arm both_win fails on >=1 seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no regression: no seed where m0 won OFF and lost ON",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    }
+  ],
+  "both_win_attributable_to_bias": null,
+  "checks": {
+    "both_win_on_ge5of6": false,
+    "off_arm_reproduces_defect": true,
+    "m0_no_regression_on": false,
+    "novel_no_spurious_completion_on": false
+  },
+  "pooled": {
+    "both_win_on_count": 0,
+    "both_win_off_count": 0,
+    "both_win_on_heldout_count": 0,
+    "n_heldout": 3,
+    "m1_reactivates_own_on_count": 1,
+    "m0_wins_on_count": 4,
+    "m0_wins_off_count": 4,
+    "novel_no_spurious_completion_on_count": 0,
+    "mean_bias_std": 1999.9934895833333
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "dg_jaccard_eng0_eng1": 0.5645161290322581,
+      "bias_stats": {
+        "mean": 2.441406286379788e-05,
+        "std": 1999.993408203125,
+        "min": -4923.0849609375,
+        "max": 1570.67919921875
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5645161290322581,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5645161290322581,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5645161290322581,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.0984375,
+          "wrong_rate": 0.2109375,
+          "selectivity": -0.36363636246097336,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 198
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.2109375,
+          "wrong_rate": 0.1,
+          "selectivity": 0.35678391845054414,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 199
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 1.0,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 1.0,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 1.0,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.240625,
+          "wrong_rate": 0.24375,
+          "selectivity": -0.006451612889906325,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 333
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.24375,
+          "wrong_rate": 0.240625,
+          "selectivity": 0.006451612889906325,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 313
+        },
+        "both_win": false
+      }
+    },
+    {
+      "seed": 43,
+      "dg_jaccard_eng0_eng1": 0.4666666666666667,
+      "bias_stats": {
+        "mean": 0.0,
+        "std": 1999.993896484375,
+        "min": -4492.55712890625,
+        "max": 1645.8641357421875
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.4666666666666667,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.4666666666666667,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.4666666666666667,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.2578125,
+          "wrong_rate": 0.059375,
+          "selectivity": 0.6256157615744132,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 203
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.0703125,
+          "wrong_rate": 0.240625,
+          "selectivity": -0.5477386917057651,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 199
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 0.8771929824561403,
+        "m0_to_eng1": 0.8771929824561403,
+        "m1_to_eng0": 0.8771929824561403,
+        "m1_to_eng1": 0.8771929824561403,
+        "novel_to_eng0": 0.8771929824561403,
+        "novel_to_eng1": 0.8771929824561403,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.18125,
+          "wrong_rate": 0.08125,
+          "selectivity": 0.3809523795011337,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 168
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.0828125,
+          "wrong_rate": 0.1703125,
+          "selectivity": -0.34567901098003356,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 162
+        },
+        "both_win": false
+      }
+    },
+    {
+      "seed": 44,
+      "dg_jaccard_eng0_eng1": 0.5333333333333333,
+      "bias_stats": {
+        "mean": -4.882812390860636e-06,
+        "std": 1999.9931640625,
+        "min": -5112.0625,
+        "max": 1732.5400390625
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5333333333333333,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5333333333333333,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5333333333333333,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.1109375,
+          "wrong_rate": 0.11875,
+          "selectivity": -0.03401360529409043,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 147
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.1109375,
+          "wrong_rate": 0.1078125,
+          "selectivity": 0.014285714220408113,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 140
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 0.7657657657657657,
+        "m0_to_eng1": 0.7657657657657657,
+        "m1_to_eng0": 0.7657657657657657,
+        "m1_to_eng1": 0.7657657657657657,
+        "novel_to_eng0": 0.7657657657657657,
+        "novel_to_eng1": 0.7657657657657657,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.109375,
+          "wrong_rate": 0.06875,
+          "selectivity": 0.2280701741582025,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 124
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.078125,
+          "wrong_rate": 0.103125,
+          "selectivity": -0.1379310337217598,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 131
+        },
+        "both_win": false
+      }
+    },
+    {
+      "seed": 100,
+      "dg_jaccard_eng0_eng1": 0.5606060606060606,
+      "bias_stats": {
+        "mean": 5.737304672948085e-05,
+        "std": 1999.993408203125,
+        "min": -5099.01513671875,
+        "max": 1582.7410888671875
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5606060606060606,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5606060606060606,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5606060606060606,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.11875,
+          "wrong_rate": 0.10625,
+          "selectivity": 0.05555555530864197,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 144
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.1125,
+          "wrong_rate": 0.1171875,
+          "selectivity": -0.020408163176454244,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 147
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 0.8434782608695652,
+        "m0_to_eng1": 0.8434782608695652,
+        "m1_to_eng0": 0.8434782608695652,
+        "m1_to_eng1": 0.8434782608695652,
+        "novel_to_eng0": 0.8434782608695652,
+        "novel_to_eng1": 0.8434782608695652,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.1421875,
+          "wrong_rate": 0.103125,
+          "selectivity": 0.15923566814069537,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 160
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.1109375,
+          "wrong_rate": 0.1484375,
+          "selectivity": -0.14457831269560167,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 169
+        },
+        "both_win": false
+      }
+    },
+    {
+      "seed": 101,
+      "dg_jaccard_eng0_eng1": 0.48148148148148145,
+      "bias_stats": {
+        "mean": -3.417968764551915e-05,
+        "std": 1999.9932861328125,
+        "min": -5322.70751953125,
+        "max": 1447.03173828125
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.48148148148148145,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.48148148148148145,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.48148148148148145,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.2421875,
+          "wrong_rate": 0.190625,
+          "selectivity": 0.11913357373196577,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 288
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.1953125,
+          "wrong_rate": 0.2375,
+          "selectivity": -0.0974729239625174,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 288
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 1.0,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 1.0,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 1.0,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.1640625,
+          "wrong_rate": 0.2171875,
+          "selectivity": -0.13934426192958885,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 255
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.215625,
+          "wrong_rate": 0.1703125,
+          "selectivity": 0.11740890657837368,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 259
+        },
+        "both_win": false
+      }
+    },
+    {
+      "seed": 102,
+      "dg_jaccard_eng0_eng1": 0.6,
+      "bias_stats": {
+        "mean": -1.9531249563442543e-05,
+        "std": 1999.9937744140625,
+        "min": -4564.447265625,
+        "max": 1704.321533203125
+      },
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.6,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.6,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.6,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.259375,
+          "wrong_rate": 0.2171875,
+          "selectivity": 0.08852458997817794,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 306
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.2140625,
+          "wrong_rate": 0.24375,
+          "selectivity": -0.06484641624060852,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 293
+        },
+        "both_win": false
+      },
+      "on": {
+        "m0_to_eng0": 0.7876106194690266,
+        "m0_to_eng1": 0.7946428571428571,
+        "m1_to_eng0": 0.7964601769911505,
+        "m1_to_eng1": 0.8035714285714286,
+        "novel_to_eng0": 0.7964601769911505,
+        "novel_to_eng1": 0.8035714285714286,
+        "m0_reactivates_own": false,
+        "m1_reactivates_own": true,
+        "novel_no_spurious_completion": false,
+        "p0": {
+          "target": "m0",
+          "correct_rate": 0.121875,
+          "wrong_rate": 0.046875,
+          "selectivity": 0.4444444418106996,
+          "target_assembly_wins": true,
+          "total_answer_spikes": 116
+        },
+        "p1": {
+          "target": "m1",
+          "correct_rate": 0.0484375,
+          "wrong_rate": 0.128125,
+          "selectivity": -0.45132743107212786,
+          "target_assembly_wins": false,
+          "total_answer_spikes": 122
+        },
+        "both_win": false
+      }
+    }
+  ],
+  "elapsed_seconds": 6.284916400909424
+}
