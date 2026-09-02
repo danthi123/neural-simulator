@@ -409,8 +409,15 @@ class ComprehensionProductionOrgan:
             # seed's `wm_resolved` was then None -- the real cause of the flip NO-GO, NOT margin fragility). On numpy
             # `comp.xp is np`, so `xp.asarray(np.asarray(...))` is the identical host array -> byte-identical.
             xp = comp.xp
-            self._rest[id(comp)] = (xp.asarray(np.asarray(snap["cp_membrane_potential_v"])).copy(),
-                                    xp.asarray(np.asarray(snap["cp_recovery_variable_u"])).copy())
+            # BACKEND-MATCH v2 (cupy fix, 2026-09-02): the bare np.asarray(snap[...]) assumed the pool always
+            # snapshots to HOST, but the onebrain_merge_framework (Wave-1/2/3 pools) snapshots on-DEVICE, so
+            # snap[...] can be a CUPY array -> np.asarray raises "Implicit conversion to a NumPy array is not
+            # allowed" and the shared organ-read verify fails on cupy. Convert cupy->host via .get() first
+            # (identity for the numpy/host-snapshot path), then xp.asarray to the comp bridge's own backend.
+            def _host(a):
+                return a.get() if hasattr(a, "get") else np.asarray(a)
+            self._rest[id(comp)] = (xp.asarray(_host(snap["cp_membrane_potential_v"])).copy(),
+                                    xp.asarray(_host(snap["cp_recovery_variable_u"])).copy())
             return
         b = comp.bridge
         b.cp_external_input_current[:] = 0.0
