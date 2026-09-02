@@ -267,10 +267,16 @@ def main():
         Vd.require("three_factor_removed_control_inert", 1 if all(
             r["emergence"]["removed_formed_nothing"] for r in runs) else 0, expect=lambda x: x >= 1,
             note="withholding the teacher drive entirely -> every candidate edge stays at W0")
-        Vd.require("three_factor_shuffled_control_degrades", 1 if all(
-            r["emergence"]["selectivity_shuffled"] < SEL_SHUFFLE_RATIO * max(r["emergence"]["selectivity_intact"], 1e-9)
-            for r in runs) else 0, expect=lambda x: x >= 1,
-            note="decorrelating the teacher drive from correctness collapses selectivity")
+        # NOT a Vd precondition (2026-09-02 read-isolation refix): "shuffled control degrades" is an OUTCOME
+        # axis of R3a_three_factor_PASS (see `_r3_emergence`'s `r3a_pass` clause), already ANDed directly into
+        # `go` above -- not an independent instrument-validity check. Registering it as a Vd.require() precondition
+        # (as this runner did until now) collides with `gates/verdict_preconditions` rule 3 ("a failed precondition
+        # forces UNDEFINED, never a negative") the FIRST time it legitimately fails: the 2026-09-02 read-isolation
+        # re-verify found this exact axis flips 3/6 seeds NO-GO, and the artifact correctly says NO-GO (not
+        # UNDEFINED) because `go` already encodes it directly via `emg["R3a_three_factor_PASS"]`. The raw numbers
+        # (`emergence.selectivity_shuffled`/`selectivity_intact`/`R3a_three_factor_PASS`) remain fully in the
+        # artifact; only the redundant/miscategorized Vd registration is removed. r3v2's sibling registration
+        # (same latent issue, never yet triggered) is fixed identically for consistency.
         Vd.require("dopamine_lesion_control_inert", 1 if all(
             r["emergence"]["da_lesioned_formed_nothing"] for r in runs) else 0, expect=lambda x: x >= 1,
             note="THE CRUX (unchanged from R3/R3-v2): zeroing the sel/teach->snc coincidence synapses collapses "

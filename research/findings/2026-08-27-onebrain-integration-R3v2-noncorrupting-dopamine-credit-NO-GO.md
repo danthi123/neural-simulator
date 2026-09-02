@@ -10,6 +10,15 @@ runner: research/runners/_onebrain_integration_r3v2_noncorrupting_dopamine_credi
 supersedes_diagnosis_of: research/findings/2026-08-27-onebrain-integration-R3-spiking-dopamine-credit-PARTIAL.md
 ---
 
+**ADDENDUM (2026-09-02, no verdict change)** — the 2026-09-02 read-isolation audit flagged this runner's
+`_hard_reset()` for the same C2 bug class the metacog fix closed (`cp_refractory_timers`/`cp_prev_firing_states`
+never restored) and asked whether fixing it flips this NO-GO. It does not: a fresh 6-seed re-verify with the
+fix applied reproduces NO-GO 0/6, best seed (100) still missing `F2_INTACT_FLOOR=0.008` (now by 0.00170, a
+small non-monotonic shift from the pre-fix 0.00198). Full detail, per-seed table, and the sibling `R3v3`
+re-verify (which DOES flip — GO 6/6 → NO-GO 3/6) are in
+`research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md`. Artifact:
+`research/findings/raw/_onebrain_integration_r3v2_noncorrupting_readfix_numpy6seed.json`.
+
 # One-brain INTEGRATION R3-v2 — the migration-byte-identity precondition now HOLDS (R3's `da_credit` corruption diagnosis was WRONG; the real cause was two freeze-ordering bugs, now fixed); the full functional gate is DEFINED — NO-GO on F2, an honest small-effect negative, not an UNDEFINED precondition failure
 
 **One-line:** R3's PARTIAL finding blamed `da_credit`'s fixed coincidence synapses for corrupting the shared

@@ -101,6 +101,28 @@ from research.runners._onebrain_integration_r3_spiking_dopamine_credit import (
 )
 
 
+# THE READ-ISOLATION FIX (2026-09-02, C2 bug class -- research/findings/2026-09-02-read-isolation-audit-C2-bug-
+# class-across-14-runners.md). Port A: reuse the framework's ALREADY-CORRECT per-neuron state list
+# (`onebrain_merge_framework.MergedPool._PER_NEURON_STATE`) instead of hand-rolling a new one, per the audit's
+# fix recipe. `R3v2Pool._hard_reset` below already restores v/u/the 10 `_CONDUCT` conductances/firing_states/
+# external_input_current (byte-identical to before this fix -- restoring the SAME true-rest snapshot to those
+# arrays a second time is a no-op) but NEVER touched `cp_refractory_timers`/`cp_prev_firing_states` (core
+# Izhikevich hard-refractory-gate bookkeeping, updated unconditionally every step regardless of config --
+# confirmed a LIVE leak vector here by the audit's dynamic probe: 31-33/1752 entries nonzero after one
+# `amb_read()` call on an otherwise-untouched, mechanism-lesioned pool) or `cp_neuron_activity_ema`/
+# `cp_neuron_firing_thresholds` (the homeostatic EMA+threshold -- provably INERT for this pool's config, since
+# every merged organ here sets `enable_homeostasis=False`, but restored anyway as defense-in-depth, matching the
+# landed C2 template's own `_EXTRA_RESET_ARRAYS`). `R3v3Pool` (`_onebrain_integration_r3v3_functional_drive.py`)
+# subclasses `R3v2Pool` and never overrides `__init__`/`_hard_reset` -- so this ONE fix covers both generations.
+from research.runners.onebrain_merge_framework import MergedPool as _MergedPoolForPerNeuronState
+_ALREADY_RESET_BY_R3V2_HARD_RESET = {
+    "cp_membrane_potential_v", "cp_recovery_variable_u", "cp_conductance_g_e", "cp_conductance_g_i",
+    "cp_conductance_g_gabab", "cp_conductance_g_nmda", "cp_firing_states", "cp_external_input_current",
+}
+_EXTRA_RESET_ARRAYS = tuple(nm for nm in _MergedPoolForPerNeuronState._PER_NEURON_STATE
+                            if nm not in _ALREADY_RESET_BY_R3V2_HARD_RESET)
+
+
 def _freeze_whitelist(bridge, gate_name):
     """The whitelist-freeze primitive shared by R3Pool's own pool AND `_migration_invariant`'s baseline pool
     (R3-v2's fix #2): zero EVERY synapse's plasticity-rate gain, then re-open ONLY `gate_name`'s synapses (the
@@ -168,8 +190,15 @@ class R3v2Pool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (2026-09-02, C2 bug class -- see module-level comment above `_freeze_whitelist`):
+        # snapshot the TRUE REST value of every array `_EXTRA_RESET_ARRAYS` names, at the SAME point rest_v/rest_u
+        # are captured (after this same 40-step no-drive settle, before any read/train touches the pool).
+        self._rest_extra = {}
+        for nm in _EXTRA_RESET_ARRAYS:
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
-    # ---- primitives (byte-identical to R3) ----
+    # ---- primitives (byte-identical to R3, PLUS the read-isolation fix below) ----
     def _hard_reset(self):
         b, xp = self.b, self.xp
         b.cp_membrane_potential_v[:] = xp.asarray(self.rest_v)
@@ -184,6 +213,13 @@ class R3v2Pool:
             b.cp_last_spike_time[:] = -1000.0
         if getattr(b, "cp_eligibility_trace", None) is not None:
             b.cp_eligibility_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore every array in `_EXTRA_RESET_ARRAYS` to the TRUE rest snapshot taken in
+        # __init__. Without this, cp_refractory_timers/cp_prev_firing_states residue from whichever read/episode
+        # ran immediately before this reset leaks into the next one (an ORDER-dependent bias) -- the C2 bug class.
+        for nm in _EXTRA_RESET_ARRAYS:
+            val = self._rest_extra.get(nm)
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
         if b.neuromodulator_manager is not None:
             b.neuromodulator_manager.set_concentration("dopamine", 0.0)
@@ -313,6 +349,44 @@ def _migration_invariant(seed, r3, comp_battery_reads):
             "PASS": bool(connectivity_identical and decisions_preserved and maxerr < 0.5 * thr)}
 
 
+def _selftest_read_isolation(seed=42, n_repeats=3):
+    """FAILS-IN-FAILING-DIRECTION guard for the read-isolation fix (2026-09-02 audit's own requirement: a fix
+    like this must be able to fail, or it proves nothing). Builds a MECHANISM-ZEROED pool (mode='removed' --
+    the teacher drive is withheld from every episode, so `train()` never grows a single candidate edge; this is
+    the "untrained/lesioned" control the task asks for), then repeats a hard_reset -> drive -> hard_reset cycle
+    (the exact `_episode`/`amb_read` pattern that perturbs cp_refractory_timers/cp_prev_firing_states) and checks
+    every array in `_EXTRA_RESET_ARRAYS` is BITWISE identical to the true-rest snapshot after each reset -- not
+    merely that two READS agree (DYNAMIC A of the audit showed the leaked residue does NOT always propagate into
+    amb_read's scalar OUTPUT on this topology even though the ARRAYS themselves visibly leak, so an output-level
+    check alone could pass while the underlying bug is still live -- this checks the arrays directly, which is
+    the only way the guard can fail when the fix is absent). Run standalone:
+      SIM_BACKEND=numpy python -m research.runners._onebrain_integration_r3v2_noncorrupting_dopamine_credit --selftest
+    Verified to fail-in-its-failing-direction by temporarily reverting `_hard_reset`'s restore loop (commenting
+    the `for nm in _EXTRA_RESET_ARRAYS` block out) and re-running: raises on cp_refractory_timers by the 2nd
+    repeat, every time -- see the build report for the exact transcript."""
+    pool = R3v2Pool(seed, mode="removed")
+    ix = pool.ix
+    for rep in range(n_repeats):
+        pool._hard_reset()
+        # perturb refractory timers + prev-firing-state directly: a real drive through the exact _episode/
+        # amb_read pattern (LOAD then a cue volley) -- enough current to make some neurons spike and enter
+        # refractory, matching the audit's own dynamic probe.
+        pool._drive([(ix[pool.p_agent], LOAD_PA)], LOAD_STEPS)
+        pool._drive([(ix["cue_animacy_pos"], AMBIG_PA), (ix["cue_animacy_neg"], AMBIG_PA)], READ_STEPS)
+        pool._hard_reset()
+        for nm, rest_val in pool._rest_extra.items():
+            if rest_val is None:
+                continue
+            cur = np.asarray(to_host(getattr(pool.b, nm)))
+            if not np.array_equal(cur, rest_val):
+                ndiff = int(np.sum(cur != rest_val))
+                raise AssertionError(
+                    f"READ-ISOLATION SELFTEST FAILED (rep {rep}): {nm} not bitwise-identical to true rest after "
+                    f"_hard_reset() -- {ndiff}/{rest_val.size} entries differ. The fix's restore loop is missing "
+                    f"or broken.")
+    return True
+
+
 def run_seed(seed):
     t0 = time.time()
     p_agent, p_patient, p_ctrl = _role_assignment(seed)
@@ -368,7 +442,14 @@ def main():
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--selftest", action="store_true",
+                    help="run only the read-isolation fails-in-failing-direction guard, then exit")
     args = ap.parse_args()
+    if args.selftest:
+        _selftest_read_isolation()
+        print("[R3-v2] READ-ISOLATION SELFTEST: PASS -- repeat hard_reset() cycles are bitwise-identical to true "
+              "rest on every _EXTRA_RESET_ARRAYS entry.", flush=True)
+        return 0
     seeds = [42] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
 
     runs = []
@@ -425,10 +506,12 @@ def main():
         Vd.require("three_factor_removed_control_inert", 1 if all(
             r["emergence"]["removed_formed_nothing"] for r in runs) else 0, expect=lambda x: x >= 1,
             note="withholding the teacher drive entirely -> every candidate edge stays at W0")
-        Vd.require("three_factor_shuffled_control_degrades", 1 if all(
-            r["emergence"]["selectivity_shuffled"] < SEL_SHUFFLE_RATIO * max(r["emergence"]["selectivity_intact"], 1e-9)
-            for r in runs) else 0, expect=lambda x: x >= 1,
-            note="decorrelating the teacher drive from correctness collapses selectivity")
+        # NOT a Vd precondition (2026-09-02 read-isolation refix): "shuffled control degrades" is an OUTCOME axis
+        # of R3a_three_factor_PASS (see `_r3_emergence`'s `r3a_pass` clause), already ANDed directly into `go`
+        # above -- not an independent instrument-validity check. Registering it as a Vd.require() precondition
+        # collides with `gates/verdict_preconditions` rule 3 the moment it legitimately fails (it does on r3v3's
+        # sibling re-verify, 3/6 seeds); the raw numbers remain in `emergence.selectivity_shuffled`/`_intact`/
+        # `R3a_three_factor_PASS` regardless. Fixed identically in `_onebrain_integration_r3v3_functional_drive.py`.
         Vd.require("dopamine_lesion_control_inert", 1 if all(
             r["emergence"]["da_lesioned_formed_nothing"] for r in runs) else 0, expect=lambda x: x >= 1,
             note="THE CRUX (unchanged from R3): zeroing the sel/teach->snc coincidence synapses (same "
