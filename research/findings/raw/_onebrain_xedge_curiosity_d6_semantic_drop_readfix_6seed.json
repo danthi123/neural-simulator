@@ -1,0 +1,563 @@
+{
+  "probe": "onebrain_xedge_curiosity_d6_production_frozen",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "n_go": 3,
+  "n_seeds": 6,
+  "results": [
+    {
+      "seed": 42,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.09199999999999996,
+        "w0_rate_read": 0.07949999999999996,
+        "shift_w0": -0.012499999999999997,
+        "cross_weight": 2.5781030654907227
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.09199999999999996,
+        "w0_rate_read": 0.09199999999999996,
+        "shift_w0": 0.0,
+        "cross_weight": 2.5781030654907227
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.09199999999999996,
+        "w0_rate_read": 0.09199999999999996,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.09199999999999996,
+        "w0_rate_read": 0.09199999999999996,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": true,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.0875,
+        "w0_rate_read": 0.08399999999999995,
+        "shift_w0": -0.0035000000000000447,
+        "cross_weight": 1.5891060829162598
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.0875,
+        "w0_rate_read": 0.0875,
+        "shift_w0": 0.0,
+        "cross_weight": 1.5891060829162598
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.0875,
+        "w0_rate_read": 0.0875,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.0875,
+        "w0_rate_read": 0.0875,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": false,
+      "GO": false
+    },
+    {
+      "seed": 44,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.09049999999999997,
+        "w0_rate_read": 0.07499999999999993,
+        "shift_w0": -0.015500000000000042,
+        "cross_weight": 2.8880248069763184
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.09049999999999997,
+        "w0_rate_read": 0.09049999999999997,
+        "shift_w0": 0.0,
+        "cross_weight": 2.8880248069763184
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.09049999999999997,
+        "w0_rate_read": 0.09049999999999997,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.09049999999999997,
+        "w0_rate_read": 0.09049999999999997,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08699999999999998,
+        "w0_rate_read": 0.07799999999999992,
+        "shift_w0": -0.009000000000000064,
+        "cross_weight": 2.1866281032562256
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08699999999999998,
+        "w0_rate_read": 0.08699999999999998,
+        "shift_w0": 0.0,
+        "cross_weight": 2.1866281032562256
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08699999999999998,
+        "w0_rate_read": 0.08699999999999998,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08699999999999998,
+        "w0_rate_read": 0.08699999999999998,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": true,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08700000000000001,
+        "w0_rate_read": 0.08149999999999995,
+        "shift_w0": -0.00550000000000006,
+        "cross_weight": 1.6223785877227783
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08700000000000001,
+        "w0_rate_read": 0.08700000000000001,
+        "shift_w0": 0.0,
+        "cross_weight": 1.6223785877227783
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08700000000000001,
+        "w0_rate_read": 0.08700000000000001,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08700000000000001,
+        "w0_rate_read": 0.08700000000000001,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": false,
+      "GO": false
+    },
+    {
+      "seed": 102,
+      "cross_weight": 0.0,
+      "held_true_intact": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08549999999999999,
+        "w0_rate_read": 0.08349999999999996,
+        "shift_w0": -0.0020000000000000295,
+        "cross_weight": 1.6614383459091187
+      },
+      "held_false_intact": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08549999999999999,
+        "w0_rate_read": 0.08549999999999999,
+        "shift_w0": 0.0,
+        "cross_weight": 1.6614383459091187
+      },
+      "held_true_lesion": {
+        "on": true,
+        "ask_held": true,
+        "w0_rate_familiar": 0.08549999999999999,
+        "w0_rate_read": 0.08549999999999999,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "held_false_lesion": {
+        "on": true,
+        "ask_held": false,
+        "w0_rate_familiar": 0.08549999999999999,
+        "w0_rate_read": 0.08549999999999999,
+        "shift_w0": 0.0,
+        "cross_weight": 0.0
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "registered_intact_floor": 0.008,
+      "clears_registered_floor": false,
+      "GO": false
+    }
+  ],
+  "semantic_drop": {
+    "n_go": 6,
+    "n_seeds": 6,
+    "results": [
+      {
+        "seed": 42,
+        "GO": true,
+        "cross_weight_intact": 2.5781030654907227,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      },
+      {
+        "seed": 43,
+        "GO": true,
+        "cross_weight_intact": 1.5891060829162598,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      },
+      {
+        "seed": 44,
+        "GO": true,
+        "cross_weight_intact": 2.8880248069763184,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      },
+      {
+        "seed": 100,
+        "GO": true,
+        "cross_weight_intact": 2.1866281032562256,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      },
+      {
+        "seed": 101,
+        "GO": true,
+        "cross_weight_intact": 1.6223785877227783,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      },
+      {
+        "seed": 102,
+        "GO": true,
+        "cross_weight_intact": 1.6614383459091187,
+        "cross_weight_lesioned": 0.0,
+        "baseline_no_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "intact_crave_drop": {
+          "named": [
+            "cat"
+          ],
+          "n": 1,
+          "drop_current": [
+            -1500.0,
+            200
+          ],
+          "readout": "I'm holding one referent in working memory: cat."
+        },
+        "lesioned_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "flag_off_crave": {
+          "named": [
+            "dog",
+            "cat"
+          ],
+          "n": 2,
+          "drop_current": null,
+          "readout": "I'm holding 2 referents in working memory at once: dog and cat."
+        },
+        "no_crave_unchanged": true,
+        "dog_dropped_intact": true,
+        "dog_recovered_lesioned": true,
+        "byte_identical_flagoff": true
+      }
+    ]
+  },
+  "note": "frozen pre-grown curiosity.ask -> d6.w0 cross-edge wired into a dedicated production pool; the DRIVE is lesion-attributable through crossedge_w0_shift (the SAME function the live /api/brain-chat D6 hold-query block calls): holding a live recent crave state shifts the frozen pool's own w0 rate NEGATIVE (suppression, matching the runner-level 6-seed GO's own measured sign), within the runner's own noise floor of ~0 shift when ask_held=False (no signal, no bias), and the shift collapses under BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1. --semantic-drop additionally verifies the 2026-09-01 SEMANTIC-DROP rung: the crave-suppression signal now GENUINELY drops the register-0-bound referent from MultiReferentWMOrgan's own recovered set via a real hyperpolarizing pull on that register (MultiSlotHold.apply_register_drive), not an appended string; lesion-attributable and byte-identical when the rung's own flag is off."
+}

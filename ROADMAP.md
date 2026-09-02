@@ -272,7 +272,9 @@ experience, recalling a genuinely self-generated memory measurably shifts the au
 disappears if the connection is cut), and turning the connection off leaves everything else in the brain exactly
 as before. This is a small but real step toward the brain's sense of "did I say this, or was it said to me" being
 grounded in its own memory system, not just a label supplied from outside. Finding:
-`2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO`.
+`2026-09-01-onebrain-crossedge-provenance-to-selfschema-reciprocal-GO` (⛔ PARTIAL — this finding's own pool had
+an unaudited read-isolation bug; the GO SURVIVES re-verification with a narrower margin than originally reported,
+see `2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md`).
 
 Also 2026-09-01 — the brain's own-voice fluency "wall" turns out to be a DATA problem, not a design wall.
 The from-scratch language cortex (the brain-native generator meant to replace the language-model scaffold)

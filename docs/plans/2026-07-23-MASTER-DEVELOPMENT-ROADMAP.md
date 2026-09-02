@@ -1062,13 +1062,18 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
   `CrossEdge` row + `train_fn` + `read_fn`, not a bespoke ~40KB runner. Proof edge: comprehension role -> d6 WM
   (reciprocal of R1), 6/6 GO.
 - **Second edge, different organ pair, same cycle:** `source_provenance.prov_generated -> self_schema.author`
-  — the RECIPROCAL of R4's `author -> prov_generated` (`2026-09-01-onebrain-crossedge-provenance-to-selfschema-
-  reciprocal-GO.md`, `research/runners/_onebrain_crossedge_provenance_to_selfschema.py`). 6/6 GO: grows
-  0.05->4.0-4.7 via the substrate's own Hebbian rule, load-bearing (+0.021 to +0.024 self_schema author-rate
-  shift, recalling a genuinely-generated vs. genuinely-perceived memory, 100% lesion-attributable), byte-
-  identical-off. Honest calibration note in the finding: the FIRST control choice (a dual-context ambiguous
-  pattern, mirroring R4's own protocol) under-reported the effect ~4-5x because source_provenance's opponent
-  trace is graded, not binary — fixed by using a genuinely-perceived exemplar as the true zero baseline.
+  — the RECIPROCAL of R4's `author -> prov_generated` (⛔ PARTIAL correction, `2026-09-01-onebrain-crossedge-
+  provenance-to-selfschema-reciprocal-GO.md`'s specific weight/margin figures below are superseded by
+  `2026-09-02-onebrain-crossedge-provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md` —
+  this pool had its own previously-unaudited C2 read-isolation bug; the GO 6/6 SURVIVES,
+  `research/runners/_onebrain_crossedge_provenance_to_selfschema.py`). 6/6 GO: grows 0.05->2.7-3.1 (was
+  reported 4.0-4.7 pre-fix) via the substrate's own Hebbian rule, load-bearing (+0.0118 to +0.0137 self_schema
+  author-rate shift, was reported +0.021 to +0.024 pre-fix — recalling a genuinely-generated vs.
+  genuinely-perceived memory, 100% lesion-attributable), byte-identical-off. Headroom over the registered floor
+  is 1.18x-1.37x (was reported 2.1-2.4x pre-fix). Honest calibration note in the finding: the FIRST control
+  choice (a dual-context ambiguous pattern, mirroring R4's own protocol) under-reported the effect ~4-5x because
+  source_provenance's opponent trace is graded, not binary — fixed by using a genuinely-perceived exemplar as
+  the true zero baseline.
   **NEXT (queued, not yet built):** another reciprocal pair on the same connectome (surprise->source_provenance
   is still one direction only), or promote this edge to a production wire-in (runner-level GO only, matching
   R4's own current state before ITS later default-OFF production flip, `BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA`).

@@ -51,3 +51,14 @@ working (one still pending its production/GPU-backend check); description append
 note (Ref: research/findings/2026-09-02-c2-metacog-read-isolation-fix-GO.md). Kept OPEN + `de-risked` label
 (not yet wired/production-default). Checked #82 (DG readout/write) — unrelated task, only referenced by analogy
 in #202's text ("matches board #82 'fix the READ'"), no update needed there.
+
+--- 2026-09-02 ~17:30 · REAL SYNC (Vikunja reachable) ---
+Reconciled after the read-isolation record-follow-through (semantic-drop-GO + provenance->selfschema
+reciprocal-GO re-verified against the fixed AskToW0Pool / a newly-fixed independent bug in ProvToAuthorPool).
+Task #197 ("The brain's own curiosity now nudges what it holds in mind") REOPENED (was done=True) and labeled
+`blocked` (11): its own mechanism still passes 6/6 when re-verified apples-to-apples, but the SIBLING base
+cross-edge it depends on was separately turned off (commit afcb3ba7b, an unrelated prior correction), so this
+rung cannot actually run on a live turn right now — description updated in plain language (Ref: finding
+2026-09-02-onebrain-crossedge-curiosity-d6wm-semantic-drop-read-isolation-reverify-GO-survives.md). No task
+found for the provenance->selfschema reciprocal edge (it was never wired into production, per its own finding's
+§6, so it never had a board row) — nothing to reconcile there.
