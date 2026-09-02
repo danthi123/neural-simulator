@@ -15,6 +15,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02b (READ FIRST; LATEST anchor — supersedes the 2026-09-02 header below)
 
+**↓ CURRENT ARC 2026-09-02b — `main` = `53ccc475` (CLAUDE driving; owner PRESENT, hands-on infra maintenance this session).** Post-infra-maintenance resync COMPLETE: gitea/origin synced (both at `53ccc475`); the deferred code-vs-ledger drift is CLOSED — PI-gate coverage rows for the 2 flagship xedge faculties (`896738a1b`) + the A1/A2 flip-reconcile rows (d6-wm-competitive-slot-allocation on_by_default:YES, wkv-mouth-learned-head PARTIAL) + the #108 R2 scale_note (`53ccc475`); `research/flip-108-wire-escalation-reverify` pushed to both remotes (`af3a4c12`); anti-stall RUN-STATE heartbeat re-armed (continuation). Board reconciled: #196/#191 DONE, #199 opened (R1 free-talk pipeline integration).
+**FRONTIER (owner steer: STEP UP faculty-integration speed via parallel waves) = (a) #199 R1 open-ended→full-pipeline integration rungs 2-5; (b) harvest #108 R1 (escalation soak) + R3 (100k honesty re-verify) off `gpu_queue.sh` when they run → then re-attempt the 100k knowledge flip only if BOTH GREEN.** The four-day-queue GPU job + 10 queued (incl #108 R1/R3) are in flight; ONE brain-GPU proc (pid 3126622).
+
 **Board #108 cluster: R2 (server wiring) CLOSED, R3 (100k honesty re-verify) QUEUED, R1 (escalation soak)
 UNCHANGED-still-in-flight.** Branch `research/flip-108-wire-escalation-reverify` @`3e3ad90dd` (pushed to
 `origin`; `gitea` unreachable at push time — its private-network IP did not respond, report as lagging, not a
