@@ -1647,9 +1647,13 @@ class _CausalReadOrgan:
         b._blocks = blocks
         b._blk = blk
         snap = pool.snap or {}
-        b._rest_v = (np.asarray(snap["cp_membrane_potential_v"]).copy()
+        # NB: snapshot arrays are on-DEVICE (the pool snaps on whichever backend it built on), so np.asarray(snap[...])
+        # raises "Implicit conversion to a NumPy array is not allowed" on cupy. A plain .copy() is backend-preserving
+        # and matches the sibling assignment at bridge._rest_v/_rest_u (~L401) and this line's own else-branch — device
+        # on cupy, numpy on numpy (byte-identical to the prior numpy behaviour).
+        b._rest_v = (snap["cp_membrane_potential_v"].copy()
                      if "cp_membrane_potential_v" in snap else b.cp_membrane_potential_v.copy())
-        b._rest_u = (np.asarray(snap["cp_recovery_variable_u"]).copy()
+        b._rest_u = (snap["cp_recovery_variable_u"].copy()
                      if "cp_recovery_variable_u" in snap else b.cp_recovery_variable_u.copy())
         self.bridge = b
         self.meta = dict(n_events=n_events, blk=blk)
