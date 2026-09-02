@@ -7,7 +7,26 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-02 (latest) — the brain's core thinking-organs take real steps toward being literally one brain
+## 2026-09-02 (latest) — a safety-net for merging organs, and confidence-to-wording confirmed at full memory scale
+- **A merge safety-checker now exists (the gating layer every future one-brain step needs):** a reusable tool
+  that re-runs any organ-merge or ability-switch against the recorded correct answers and flags if ANY of the
+  brain's 38 abilities silently changed its decision — the thing that catches an organ "dying quietly" when it is
+  moved onto a shared substrate. Building it immediately caught a real live bug: a supposed "control" comparison
+  had quietly become a no-op weeks earlier (the setting it toggled had since been switched on by default), so it
+  was proving nothing — now fixed and guarded so it cannot recur. A companion follow-on then sharpened 20 of the
+  checker's 22 weak per-ability probes so they genuinely exercise the ability they claim to guard (2 honestly left
+  weak, with the reason recorded).
+- **Confidence-to-wording confirmed at FULL knowledge scale:** the ability where the brain says more when it is
+  sure and hedges when it is not was re-checked against the full ~79,000-fact memory (not the small demo) — all
+  six setups passed, and silencing the link flips the behavior (it stops hedging), confirming the link is what
+  does the work. This clears one of the two blockers on switching the large-memory mode on by default.
+- **A conversation-speed finding:** making the brain take a careful second look at a close call is confirmed
+  harmless to correctness, but was found NOT to be the cause of a recent slowdown — that traces to a
+  graphics-card-specific inefficiency in a hot inner loop, which is now being fixed directly (the remaining
+  blocker on the large-memory mode). If that fix does not land the speed under target, the fallback is to accept
+  the ~1.3s response time, which is inside the owner's stated tolerance.
+
+## 2026-09-02 (earlier) — the brain's core thinking-organs take real steps toward being literally one brain
 A cluster of work pushed on the deepest structural goal — making the separate "thinking organs" (the
 surprise-detector, the world-model, the confidence-monitor, the phrasing-sense) into genuinely ONE brain rather
 than several that happen to sit side by side:
