@@ -1,0 +1,84 @@
+{
+ "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "n_seeds_total_answer_mismatches": 0,
+ "n_seeds_total_scanidx_mismatches": 0,
+ "n_seeds_total_answers_compared": 76,
+ "n_seeds_total_scanidx_compared": 152,
+ "per_seed": {
+  "42": {
+   "seed": 42,
+   "n_probes": 15,
+   "n_moat": 10,
+   "n_extra": 0,
+   "n_answers_compared": 25,
+   "n_answer_mismatches": 0,
+   "n_scanidx_compared": 50,
+   "n_scanidx_mismatches": 0,
+   "seed44_near_tie_cue_answer": null,
+   "t_pass_original_s": 44.865,
+   "t_pass_current_s": 35.225,
+   "identical": true
+  },
+  "43": {
+   "seed": 43,
+   "n_probes": 15,
+   "n_moat": 10,
+   "n_extra": 0,
+   "n_answers_compared": 25,
+   "n_answer_mismatches": 0,
+   "n_scanidx_compared": 50,
+   "n_scanidx_mismatches": 0,
+   "seed44_near_tie_cue_answer": null,
+   "t_pass_original_s": 22.933,
+   "t_pass_current_s": 21.636,
+   "identical": true
+  },
+  "44": {
+   "seed": 44,
+   "n_probes": 15,
+   "n_moat": 10,
+   "n_extra": 1,
+   "n_answers_compared": 26,
+   "n_answer_mismatches": 0,
+   "n_scanidx_compared": 52,
+   "n_scanidx_mismatches": 0,
+   "seed44_near_tie_cue_answer": "culture_of_west_virginia",
+   "t_pass_original_s": 25.769,
+   "t_pass_current_s": 25.911,
+   "identical": true
+  }
+ },
+ "all_identical": true,
+ "elapsed_s": 181.2,
+ "GO": true,
+ "verdict": "byte-identical",
+ "backend": "numpy",
+ "device": "cpu",
+ "preconditions": [
+  {
+   "name": "both_arms_same_bundle_and_seed",
+   "ok": true,
+   "detail": "original + vectorized run the identical wikidata_100k bundle at the identical seed"
+  },
+  {
+   "name": "real_bundle_not_demo",
+   "ok": true,
+   "detail": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k"
+  },
+  {
+   "name": "backend_recorded",
+   "ok": true,
+   "detail": "numpy (correctness proof; cupy latency is a separate queued verify)"
+  },
+  {
+   "name": "answers_and_scanidx_compared_nonzero",
+   "ok": true,
+   "detail": "76 answers + 152 scan-index comparisons across seeds 42/43/44"
+  }
+ ]
+}

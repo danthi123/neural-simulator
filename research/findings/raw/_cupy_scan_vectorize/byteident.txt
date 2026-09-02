@@ -1,0 +1,38 @@
+Byte-identity proof: VECTORIZED_WINCODE_GATHER vs pre-fix per-candidate loop+stack
+bundle=/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k
+SIM_BACKEND env=numpy | actual resolved backend=numpy
+
+=== seed 42 ===
+    bundle: n_facts=78857 vocab=23914 n_shards=395
+    probes=15 moat=10 extra=0
+    PASS original: 25 answers in 44.87s, 50 scan calls
+    PASS current : 25 answers in 35.22s, 50 scan calls
+    answer mismatches: 0/25
+    scan-index mismatches: 0/50
+    VERDICT seed 42: IDENTICAL
+
+=== seed 43 ===
+    bundle: n_facts=78857 vocab=23914 n_shards=395
+    probes=15 moat=10 extra=0
+    PASS original: 25 answers in 22.93s, 50 scan calls
+    PASS current : 25 answers in 21.64s, 50 scan calls
+    answer mismatches: 0/25
+    scan-index mismatches: 0/50
+    VERDICT seed 43: IDENTICAL
+
+=== seed 44 ===
+    bundle: n_facts=78857 vocab=23914 n_shards=395
+    probes=15 moat=10 extra=1
+    PASS original: 26 answers in 25.77s, 52 scan calls
+    PASS current : 26 answers in 25.91s, 52 scan calls
+    answer mismatches: 0/26
+    scan-index mismatches: 0/52
+    seed-44 explicit near-tie cue result: [('extra', 'berkeley_county_virginia', 'located_in_the_administrative_territoria', 'culture_of_west_virginia')]
+    VERDICT seed 44: IDENTICAL
+
+=== SUMMARY (181.2s) ===
+  seed 42: IDENTICAL
+  seed 43: IDENTICAL
+  seed 44: IDENTICAL
+
+OVERALL: ALL SEEDS IDENTICAL (byte-identity PROVEN)

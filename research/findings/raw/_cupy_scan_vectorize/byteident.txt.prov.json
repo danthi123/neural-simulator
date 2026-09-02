@@ -1,0 +1,35 @@
+{
+ "run_id": "1788353530-3544308",
+ "runner": "research/runners/_cupy_scan_vectorize_byteident.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a2fe5ac2de6a3bcde/research/runners/_cupy_scan_vectorize_byteident.py",
+  "--bundle",
+  "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "--seeds",
+  "42,43,44",
+  "--n-probes",
+  "15",
+  "--n-moat",
+  "10",
+  "--out",
+  "research/findings/raw/_cupy_scan_vectorize/byteident.txt"
+ ],
+ "git_sha": "b670b02c3",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T08:52:10",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_cupy_scan_vectorize/byteident.txt"
+}
