@@ -187,6 +187,23 @@ _CONDUCT = ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab"
             "cp_conductance_g_nmda_rise", "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
             "cp_conductance_g_gabab_slow", "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise")
 
+# THE READ-ISOLATION FIX (2026-09-02, Port A -- routes to the SAME 4 arrays the framework's own
+# `MergedPool._PER_NEURON_STATE` (`onebrain_merge_framework.py:246-250`) already lists, ported verbatim from the
+# C2 fix `research/runners/_crossedge_surprise_metacog_derisk.py` `_EXTRA_RESET_ARRAYS`/`_rest_extra`, which
+# diagnosed this exact bug class: `_hard_reset` restores membrane/recovery/conductances/firing/Hebbian-trace but
+# NOT these 4, so residual state from whichever condition/episode ran immediately before a read leaks into the
+# next -- ORDER-dependent, not a genuine substrate difference. Audit:
+# `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md` (FW-2: this runner's F2
+# lesion control fails 5/6 seeds with the leak's magnitude the SAME ORDER as the `delta_lesion` it corrupts).
+#   * cp_refractory_timers / cp_prev_firing_states -- HARD firing gates (int32 countdown / bool), independent of
+#     membrane potential; a neuron mid-refractory at the end of one read/episode stays gated at the START of the
+#     next even though v/u were reset.
+#   * cp_neuron_activity_ema / cp_neuron_firing_thresholds -- the homeostatic per-neuron EMA + adaptive threshold
+#     (`sim/bridge.py` fused_homeostasis_update); update is participation-gated (fired-or-driven neurons only),
+#     so it silently drifts on whichever neurons the immediately-prior read/episode drove, never on the rest.
+_EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
+                       "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
+
 
 def _assign_blocks(seed, n_trained):
     """ANTI-CHEAT: RANDOM per-seed assignment of which two trained concepts play cue (c) / false-assertion (c').
@@ -295,6 +312,15 @@ class SurpriseEpisodicPool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (2026-09-02 -- see module-level `_EXTRA_RESET_ARRAYS` comment): snapshot the
+        # SAME true-rest baseline for every OTHER per-neuron array `_run_one_simulation_step` mutates that this
+        # runner's ORIGINAL `_hard_reset` never restored (refractory timers, prev-firing-state, the homeostatic
+        # activity EMA / adaptive threshold). Taken ONCE here, immediately after the true-rest settle, restored
+        # on EVERY `_hard_reset` call below.
+        self._rest_extra = {}
+        for nm in _EXTRA_RESET_ARRAYS:
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
     # ---- primitives (byte-identical shape to R4Pool) ----
     def _hard_reset(self):
@@ -309,6 +335,15 @@ class SurpriseEpisodicPool:
             b.cp_firing_states[:] = False
         if getattr(b, "cp_hebb_coactivity_trace", None) is not None:
             b.cp_hebb_coactivity_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore every array in `_EXTRA_RESET_ARRAYS` to the TRUE rest snapshot taken in
+        # __init__. Without this, whichever condition/episode ran immediately before a read leaks its residual
+        # refractory/homeostatic state into the next one -- an ORDER-dependent bias (the diagnosed direct cause
+        # of F2's own lesion control failing 5/6 seeds: `delta_lesion` was picking up this leak, not a genuine
+        # cross-edge-independent residual), not a block-identity effect.
+        for nm in _EXTRA_RESET_ARRAYS:
+            val = self._rest_extra.get(nm)
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
 
     def _drive(self, pairs, steps, learn=False, read=None, pre_pairs=None, pre_steps=0):
@@ -456,6 +491,28 @@ class SurpriseEpisodicPool:
         if band is not None:
             out["rates"] = {r: rates[r] / N_READS for r in rates}
         return out
+
+
+def _selftest_read_isolation(seed=42):
+    """FAILS-IN-THE-FAILING-DIRECTION guard for the 2026-09-02 read-isolation fix (Port A: `_EXTRA_RESET_ARRAYS`
+    restored in `_hard_reset`). On a ZEROED-MECHANISM pool -- untrained (no `.train()` call) AND the cross-edge
+    lesioned (zeroed) -- NOTHING should differ between two back-to-back identical reads of the same fresh
+    ambiguous item, so two consecutive `amb_read(hold_surprise=False)` calls must be BITWISE identical.
+
+    Verified against the PRE-fix code during this port (temporarily reverting `_EXTRA_RESET_ARRAYS`'s restore in
+    `_hard_reset`): this assertion FAILS then -- the first call's internal N_READS=8 hard-resets leak residual
+    refractory/homeostatic state into the second call's reads, exactly the order-dependent bias the C2 finding's
+    own instrumentation table documents (`research/findings/2026-09-02-c2-metacog-read-isolation-fix-GO.md`).
+    With the fix, both calls start from the identical restored true-rest snapshot every time -> byte-identical."""
+    sep = SurpriseEpisodicPool(seed)
+    data = np.asarray(to_host(sep.b.cp_connections.data)).copy()
+    data[sep.masks["surprise->provgen"]] = 0.0     # lesion: the cross-edge is the only thing that could differ
+    sep.b.cp_connections.data = sep.xp.asarray(data, dtype=sep.b.cp_connections.data.dtype)
+    r1 = sep.amb_read(False)
+    r2 = sep.amb_read(False)
+    ok = bool(r1["margin"] == r2["margin"])
+    return {"seed": int(seed), "margin_1": r1["margin"], "margin_2": r2["margin"],
+            "diff": abs(r1["margin"] - r2["margin"]), "PASS": ok}
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -614,6 +671,13 @@ def _migration_invariant(seed, sep, sp_battery_lesioned, surprise_reads_lesioned
         b0._run_one_simulation_step()
     rest_v0 = np.asarray(to_host(b0.cp_membrane_potential_v)).copy()
     rest_u0 = np.asarray(to_host(b0.cp_recovery_variable_u)).copy()
+    # THE READ-ISOLATION FIX, ported to this SECOND bespoke reset too (this closure inlines the same pre-fix
+    # `_hard_reset` shape on a separate bridge `b0`; left unfixed it would compare a leak-free `sep`-side lesioned
+    # read against a still-leaky `b0`-side read here, an avoidable inconsistency -- same _EXTRA_RESET_ARRAYS).
+    rest_extra0 = {}
+    for _nm in _EXTRA_RESET_ARRAYS:
+        _arr = getattr(b0, _nm, None)
+        rest_extra0[_nm] = np.asarray(to_host(_arr)).copy() if _arr is not None else None
 
     def read_surprise0(cue_c, assert_c, xp):
         b0.cp_membrane_potential_v[:] = xp.asarray(rest_v0)
@@ -624,6 +688,10 @@ def _migration_invariant(seed, sep, sp_battery_lesioned, surprise_reads_lesioned
                 a[:] = 0
         if getattr(b0, "cp_firing_states", None) is not None:
             b0.cp_firing_states[:] = False
+        for _nm in _EXTRA_RESET_ARRAYS:
+            _val = rest_extra0.get(_nm)
+            if _val is not None:
+                getattr(b0, _nm)[:] = xp.asarray(_val)
         b0.cp_external_input_current[:] = 0.0
         precur = xp.zeros(b0.core_config.num_neurons, dtype=xp.float32)
         precur[xp.asarray(idx0["cue"][cue_c * blk:(cue_c + 1) * blk])] = xp.float32(CUE_PA)
@@ -689,8 +757,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true", help="1 seed indicator")
+    ap.add_argument("--selftest", action="store_true",
+                    help="read-isolation fails-in-failing-direction guard only (no F-gate run)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
+
+    if args.selftest:
+        r = _selftest_read_isolation()
+        print(f"[selftest read_isolation] seed={r['seed']} margin_1={r['margin_1']!r} margin_2={r['margin_2']!r} "
+              f"diff={r['diff']!r} {'PASS' if r['PASS'] else 'FAIL'}", flush=True)
+        assert r["PASS"], (
+            "READ-ISOLATION REGRESSION: two identical consecutive reads on a zeroed-mechanism pool are not "
+            "bitwise identical -- _EXTRA_RESET_ARRAYS is missing or not restored in _hard_reset")
+        return 0
+
     seeds = [42] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
 
     runs = []
