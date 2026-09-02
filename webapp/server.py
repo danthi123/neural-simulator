@@ -3269,6 +3269,33 @@ def _bg_select_flag_on() -> bool:
     return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
+# ─── COMMON GROUND DRIVES THE RESPONSE (2026-08-26): the 6-seed-GO common-ground ledger (a per-referent bistable
+# NMDA-attractor store latched by grounding acts + held by recurrence; research/runners/
+# _learned_common_ground_ledger_derisk.py) made LOAD-BEARING on the live turn's REFERRING EXPRESSION — a referent
+# ALREADY in this conversation's common ground (mentioned earlier, its ledger slot latched + self-sustained) reads
+# GROUNDED off the substrate -> audience design wins REDUCE -> the reply LEADS with a reduced/pronominal reference
+# ("As for it — <answer>"); a first-mention referent reads UNGROUNDED -> the novelty prior wins INTRODUCE -> NO reduced
+# lead (the reply names it in full). The production-integration anchor. When `_CG_DRIVES_DEFAULT_ON` is False the block
+# is gated on the env flag alone (`BRAIN_CG_DRIVES=1` opts in for review); the response carries NO `common_ground_drives`
+# key and NO reduced-reference lead -> byte-identical. LESION (`BRAIN_CG_DRIVES_LESION=1`): build the ledger recurrence
+# at weight 0 -> it cannot HOLD -> even a re-mentioned referent reads ungrounded -> audience design goes static (always
+# INTRODUCE) -> the reduced lead VANISHES (the load-bearing proof). See webapp/common_ground_drives_chat.py.
+_CG_DRIVES_DEFAULT_ON = True   # 2026-09-01 AUTO-FLIP: PART-A 6/6 GO + PART-B end-to-end no_regression=True (load-bearing, moat-safe, byte-identical-off)
+
+
+def _common_ground_drives_on() -> bool:
+    """The master switch = the anchor combined with the env override. Default-OFF anchor: enabled only on an explicit
+    truthy `BRAIN_CG_DRIVES` opt-in. Default-ON anchor (a later flip): enabled UNLESS `BRAIN_CG_DRIVES` is an explicit
+    off. Kept lightweight so the disabled path builds no ledger + does no substrate work."""
+    try:
+        from webapp import common_ground_drives_chat as _CGD
+    except Exception:
+        return False
+    if _CG_DRIVES_DEFAULT_ON:
+        return not _CGD.cg_drives_off()
+    return _CGD.cg_drives_enabled()
+
+
 def _get_selfinit_organ(cache_key):
     """The PER-SESSION self-initiation organ (lazy build on the first idle turn). NOT a process singleton: it holds its
     own mouth + selection substrate for THIS conversation; cleared on reset. See
@@ -4638,6 +4665,30 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             da_drives_info = {"on": True, "error": f"{type(_dde).__name__}: {_dde}", "lead": ""}
             da_drives_suffix = ""
 
+    # ── COMMON GROUND DRIVES THE RESPONSE (2026-08-26) ──────────────────────────────────────────────────────────
+    # Read this turn's referent's common-ground state off the persistent spiking ledger (a per-referent bistable NMDA
+    # store latched by earlier grounding acts + held by recurrence; the 6-seed-GO de-risk, reuse-by-import, NO sim/
+    # edit) and turn the audience-design verdict into a REDUCED-REFERENCE LEAD (`cg_drives_lead`, prepended to the
+    # answer surface — a grounded referent gets pronominalized, a first mention named in full) + a `cg_drives_info`
+    # trace (topic, slot, decision, in_common_ground, the substrate read rates, the lead). The moat/recall/abstain
+    # verdict runs FIRST and unchanged — this DECORATES an already-matched surface, never a fact; the content fields
+    # (abstained/recalled_svo/verified) are byte-identical with it on or off. The ledger runs its substrate steps
+    # inside a numpy global-RNG save/restore (in the organ), so the other response fields stay byte-identical.
+    # Default-OFF (anchor); `BRAIN_CG_DRIVES` unset -> the block is fully skipped (no key, no lead -> byte-identical
+    # oracle). LESION (`BRAIN_CG_DRIVES_LESION=1`): build the ledger recurrence at 0 -> it cannot HOLD -> a re-mentioned
+    # referent reads ungrounded -> the decision goes static (always INTRODUCE) -> the reduced lead VANISHES (the
+    # load-bearing proof). See webapp/common_ground_drives_chat.py.
+    cg_drives_info = None
+    cg_drives_lead = ""
+    if _common_ground_drives_on():
+        try:
+            from webapp import common_ground_drives_chat as _CGD
+            cg_drives_info = _CGD.observe_turn(chat, msg, cache_key=cache_key)
+            cg_drives_lead = str(cg_drives_info.get("lead", "") or "")
+        except Exception as _cge:  # never let the common-ground coupling crash a turn — degrade to the un-led answer
+            cg_drives_info = {"on": True, "error": f"{type(_cge).__name__}: {_cge}", "lead": ""}
+            cg_drives_lead = ""
+
     # ── DA-GATED ENCODING (board WAVE-0, Gap-4 write-side coupling) ──────────────────────────────────────────
     # The brain's OWN self-produced tonic DA (the DA-mode read just above — chat._last_da_drives["da_level"]) scales
     # the WRITE MAGNITUDE of a taught fact AT STORE TIME (Lisman-Grace hippocampal-VTA loop; Kandel D.16 — dopamine
@@ -4937,6 +4988,52 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             if _D6.is_hold_query(msg):                       # READ-OUT: 'who/what are we talking about / keeping in mind'
                 jq = d6org.judge(msg, lesion=d6les)
                 if jq is not None and jq.get("is_hold_query") and "readout" in jq:
+                    # ── BEGIN faculty: onebrain curiosity->d6 LEARNED CROSS-EDGE (2026-09-01), additive,
+                    #    default per BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6 (`_XEDGE_CD6_DEFAULT_ON`). Mirrors the
+                    #    PART-1/R4 frozen-cross-edge wire-in pattern, but — unlike those two (additive
+                    #    DIAGNOSTIC field only) — this one drives the ACTUAL reply text (2026-08-19 "faculties
+                    #    must drive, not observe": a neural verdict stashed as metadata + a flip is a hollow
+                    #    checkbox). THIS SESSION's own RECENT curiosity-crave state (`d6org.
+                    #    _xedge_curiosity_recent_crave`, set+CONSUMED via `_curiosity_followup` below on this
+                    #    session's own last abstain -- 2026-08-27 session-isolation pattern: an instance
+                    #    attribute on THIS session's own per-session MultiReferentWMOrgan, never on the shared
+                    #    process pool, so a fresh session's d6org never inherits another session's crave) drives
+                    #    the frozen `ask->w0` cross-edge's OWN validated instrument
+                    #    (`crossedge_w0_shift`, reused verbatim from the 6-seed runner-level GO,
+                    #    research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md). When the
+                    #    measured shift clears the runner's own registered floor (a genuine, lesion-attributable
+                    #    suppression), an honest, SELF-CONSUMING functional qualifier is appended to the
+                    #    hold-query readout -- never changing WHICH referents are reported held, never
+                    #    fabricating a fact. LOAD-BEARING AT THE REPLY-TEXT LEVEL: the qualifier's presence
+                    #    depends on BOTH the live crave state AND the cross-edge weight; it never appears when
+                    #    `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1` zeroes that edge, regardless of crave.
+                    #    DEFAULT-OFF unless flipped: unset -> no extra key, no text change, no attribute ever
+                    #    written (see `_curiosity_followup`'s own guard) -> byte-identical. Guarded so a build
+                    #    failure never crashes a turn. See
+                    #    research/runners/onebrain_xedge_curiosity_d6_production.py.
+                    try:
+                        from research.runners.onebrain_xedge_curiosity_d6_production import (
+                            xedge_curiosity_d6_enabled, get_xedge_curiosity_d6_pool, crossedge_w0_shift)
+                        if xedge_curiosity_d6_enabled():
+                            from research.runners._onebrain_crossedge_curiosity_to_d6wm import (
+                                INTACT_FLOOR as _CD6_FLOOR)
+                            _cd6_pool = get_xedge_curiosity_d6_pool(42)
+                            _cd6_ask_held = bool(getattr(d6org, "_xedge_curiosity_recent_crave", False))
+                            _cd6_read = crossedge_w0_shift(_cd6_pool, _cd6_ask_held)
+                            if _cd6_read is not None:
+                                jq["curiosity_crossedge"] = _cd6_read
+                                if _cd6_ask_held:
+                                    # CONSUME the crave -- a self-report qualifier fires once per crave episode,
+                                    # not on every subsequent hold-query indefinitely (mirrors prospective
+                                    # memory's own "fires once" intention consumption).
+                                    d6org._xedge_curiosity_recent_crave = False
+                                    if "error" not in _cd6_read and _cd6_read.get("shift_w0", 0.0) <= -_CD6_FLOOR:
+                                        jq["readout"] = jq["readout"] + (
+                                            " Though a recent flash of curiosity is competing for my "
+                                            "attention right now.")
+                    except Exception as _cd6e:   # never let the cross-edge read crash a turn
+                        jq["curiosity_crossedge"] = {"on": True, "error": f"{type(_cd6e).__name__}: {_cd6e}"}
+                    # ── END faculty: onebrain curiosity->d6 LEARNED CROSS-EDGE ──
                     return JSONResponse({
                         "answer": jq["readout"], "abstained": False, "recalled_svo": None, "verified": True,
                         "renderer": rname, "brain": req.brain, "source": source, "rich": False, "activity": None,
@@ -5493,6 +5590,18 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                     info["curiosity_da"] = _da_trace
             except Exception as _dce:   # additive trace only; never let it change the organ's own decision on error
                 info["curiosity_da"] = {"on": True, "error": f"{type(_dce).__name__}: {_dce}"}
+            # ── onebrain curiosity->d6 LEARNED CROSS-EDGE (2026-09-01): persist THIS turn's OWN live crave
+            # verdict onto THIS SESSION's own d6org instance (never the shared process pool -- 2026-08-27
+            # session-isolation pattern), so a LATER hold-query turn in the SAME session can drive the frozen
+            # ask->w0 cross-edge from it. Written ONLY when the wire-in is enabled (byte-identical footprint
+            # when off: no attribute is ever set, matching every other default-OFF gate in this codebase) and
+            # only when d6 is in scope for this session (`d6org` may be None: multiref disabled this session).
+            try:
+                from research.runners.onebrain_xedge_curiosity_d6_production import xedge_curiosity_d6_enabled
+                if xedge_curiosity_d6_enabled() and d6org is not None:
+                    d6org._xedge_curiosity_recent_crave = bool(curious)
+            except Exception:
+                pass   # never let this bookkeeping crash a turn -> the next hold-query just sees no crave
             if curious:
                 return _CU.followup_question(topic), info
             return "", info
@@ -5779,6 +5888,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             resp["answer"] = swap_drives_lead + resp["answer"]
         if swap_drives_info is not None:
             resp["swap_drives"] = swap_drives_info
+        # COMMON GROUND DRIVES THE RESPONSE (2026-08-26): prepend the reduced-reference lead (a grounded referent is
+        # pronominalized) + attach the additive `common_ground_drives` trace. Empty lead / no key when disabled or on a
+        # first mention -> byte-identical. The content fields above are unchanged (the ledger frames HOW the reply
+        # refers, never a fact); the lead VANISHES under the neural ledger-recurrence lesion (the load-bearing proof).
+        if cg_drives_lead:
+            resp["answer"] = cg_drives_lead + resp["answer"]
+        if cg_drives_info is not None:
+            resp["common_ground_drives"] = cg_drives_info
         # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86): prepend the idle-wander lead OUTERMOST (what the
         # brain was just thinking about, announced first) + attach the additive `wander_drives` trace. Empty lead /
         # no key when disabled or no recent wander -> byte-identical.
@@ -6070,6 +6187,14 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
         _resp["answer"] = swap_drives_lead + _resp["answer"]
     if swap_drives_info is not None:
         _resp["swap_drives"] = swap_drives_info
+    # COMMON GROUND DRIVES THE RESPONSE (2026-08-26, single-fact path): prepend the reduced-reference lead (a grounded
+    # referent is pronominalized) + attach the additive `common_ground_drives` trace. Empty lead / no key when disabled
+    # or on a first mention -> byte-identical. The content fields are unchanged (the ledger frames HOW the reply refers,
+    # never a fact); the lead VANISHES under the neural ledger-recurrence lesion (the load-bearing proof).
+    if cg_drives_lead:
+        _resp["answer"] = cg_drives_lead + _resp["answer"]
+    if cg_drives_info is not None:
+        _resp["common_ground_drives"] = cg_drives_info
     # THE WANDERED THOUGHT DRIVES THE RESPONSE (board #86, single-fact path): prepend the idle-wander lead
     # OUTERMOST + attach the additive `wander_drives` trace. Empty lead / no key when disabled or no recent
     # wander -> byte-identical.

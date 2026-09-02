@@ -1687,6 +1687,237 @@ def test_brain_chat_xedge_surprise_episodic_on_reads_live_crossedge_and_lesion_c
 
 
 # ─────────────────────────────────────────────────────────────────────────
+# onebrain curiosity->d6 LEARNED CROSS-EDGE production wire-in (2026-09-01)
+# (BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6, default per _XEDGE_CD6_DEFAULT_ON) — unlike PART-1/R4 (additive diagnostic
+# field only), this wire-in drives the ACTUAL D6 hold-query reply text (2026-08-19 "faculties must drive, not
+# observe"): a live per-session curiosity crave carried from the session's own last abstain can append an honest
+# qualifier to "who are we talking about", gated by the frozen cross-edge's own lesion-attributable measurement.
+# ─────────────────────────────────────────────────────────────────────────
+
+def _maintain_two_referents(client, sess):
+    """Turn 1: a MAINTAIN turn loading 'dog' and 'cat' into this session's D6 buffer (does not touch the reply
+    path this wire-in changes)."""
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "the dog and the cat are here"})
+    assert res.status_code == 200, res.text
+    return res.json()
+
+
+def _hold_query(client, sess):
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "who are we talking about"})
+    assert res.status_code == 200, res.text
+    return res.json()
+
+
+def test_brain_chat_xedge_curiosity_d6_no_regression_on_ordinary_turns(client, monkeypatch):
+    """The wire-in's ONLY visible surface is inside the D6 hold-query branch (a text append + a diagnostic key);
+    every OTHER turn type (a MAINTAIN turn, and an ORDINARY abstain turn that exercises the wire-in's own
+    session-state WRITE in `_curiosity_followup` but never reads it back) must be UNCHANGED flag-off vs flag-on.
+    A REAL end-to-end HTTP round trip.
+
+    Two DELIBERATE narrowings, each diagnosed via a standalone repro before being written this way (not
+    guessed): (1) the `multiref` sub-dict is compared for EXACT equality (this project's own no-confab-adjacent
+    d6 read is a clean, deterministic zero-input firing-rate read with zero dependence on this wire-in's flag —
+    confirmed identical byte-for-byte across an off/on pair); (2) the `curiosity` sub-dict is compared only on
+    its DECISION-relevant, config-derived fields (`curious`, `novelty`, `threshold`), not `want_hz`/`curiosity_da`
+    -- a standalone repro showed `want_hz` reads a genuinely different value (129.17 vs 126.39 Hz) calling
+    `curiosity_production_organ.judge()` TWICE on the SAME already-built, already-calibrated process-singleton
+    bridge, with NO env change at all involved in that repro. This is the SAME already-documented noise-floor
+    residual class `onebrain_xedge_selfschema_production.py`'s own docstring names for its own instrument
+    ("two consecutive amb_read calls...are not bit-identical... the SAME class of residual" -- a state-restore
+    that does not zero every trace) -- pre-existing, orthogonal to this wire-in, not a regression it introduces.
+    The `answer` text (RichAnswerComposer's open-ended generative elaboration) is likewise never compared raw
+    across two separately-built sessions here, matching this project's OWN existing no-regression tests (they
+    mock `RichAnswerComposer.answer` to a fixed function, or use the byte-identical simple recall path)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    def _run(sess, flag_on):
+        # Explicit "0"/"1" (never delenv): the wire-in defaults ON (`_XEDGE_CD6_DEFAULT_ON`), so an unset env
+        # would silently mean "on" for BOTH arms of this off-vs-on comparison.
+        monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", "1" if flag_on else "0")
+        d_maintain = _maintain_two_referents(client, sess)
+        res = client.post("/api/brain-chat", json={
+            "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+        assert res.status_code == 200, res.text
+        d_abstain = res.json()
+        client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+        cu = d_abstain.get("curiosity") or {}
+        cu_decision = {k: cu.get(k) for k in ("curious", "novelty", "threshold")}
+        return d_maintain.get("multiref"), cu_decision
+
+    mr_off, cu_off = _run("pytest-xedge-cd6-noreg-off", False)
+    mr_on, cu_on = _run("pytest-xedge-cd6-noreg-on", True)
+    assert mr_off == mr_on
+    assert cu_off == cu_on
+    assert cu_off.get("curious") is True, "expected the wombat turn to genuinely crave"
+
+
+def test_brain_chat_xedge_curiosity_d6_explicitly_disabled_is_byte_identical(client, monkeypatch):
+    """Wire-in explicitly OFF (`BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6=0` -- the wire-in defaults ON, so this is the
+    controlled-A/B escape hatch, not the ambient default): even after a genuine crave-triggering abstain, the
+    hold-query reply carries NO qualifier suffix and NO `curiosity_crossedge` key -- the guard
+    `if xedge_curiosity_d6_enabled():` is never entered."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", "0")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-xedge-cd6-off"
+    _maintain_two_referents(client, sess)
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200, res.text
+    assert res.json().get("curiosity", {}).get("curious") is True, "expected a genuine crave to fire"
+
+    d = _hold_query(client, sess)
+    assert d["answer"] == "I'm holding 2 referents in working memory at once: dog and cat."
+    assert "curiosity_crossedge" not in (d.get("multiref") or {})
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_xedge_curiosity_d6_ambient_default_is_on(client, monkeypatch):
+    """The wire-in's actual PRODUCTION default (`_XEDGE_CD6_DEFAULT_ON`) is ON -- with the env var left
+    completely UNSET (the real owner default, not a test-forced "1"), a session that just craved gets the
+    qualifier on its next hold-query."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", raising=False)
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_curiosity_d6_production as _xcd6
+    assert _xcd6.xedge_curiosity_d6_enabled() is True, "the production default must be ON"
+
+    sess = "pytest-xedge-cd6-ambient-default"
+    _maintain_two_referents(client, sess)
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200 and res.json().get("curiosity", {}).get("curious") is True
+    d = _hold_query(client, sess)
+    assert d["answer"].endswith(
+        "Though a recent flash of curiosity is competing for my attention right now.")
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_xedge_curiosity_d6_on_qualifies_reply_and_lesion_collapses_it(client, monkeypatch):
+    """Wire-in ON: a session that just craved (a genuine D3 abstain) gets an honest qualifier APPENDED to its
+    NEXT hold-query reply, driven by the frozen ask->w0 cross-edge's own validated instrument
+    (`crossedge_w0_shift`, the SAME function the runner-level 6-seed GO's `AskToW0Pool.read_w0` underlies,
+    research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md). A session that never craved (an
+    ordinary known-fact recall instead of an abstain) gets NO qualifier. Under
+    `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1`, even a session that DID just crave gets NO qualifier -- the
+    reply-text-level lesion check."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", "1")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_curiosity_d6_production as _xcd6
+    _xcd6._POOL = None   # force a fresh (un-lesioned) pool regardless of prior test order
+    _QUALIFIER = " Though a recent flash of curiosity is competing for my attention right now."
+
+    # ── crave -> the NEXT hold-query carries the qualifier, driven by a real, lesion-attributable shift ──
+    sess = "pytest-xedge-cd6-on-crave"
+    _maintain_two_referents(client, sess)
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200 and res.json().get("curiosity", {}).get("curious") is True
+    d = _hold_query(client, sess)
+    assert d["answer"] == "I'm holding 2 referents in working memory at once: dog and cat." + _QUALIFIER
+    xe = (d.get("multiref") or {}).get("curiosity_crossedge")
+    assert xe is not None and xe.get("on") is True and "error" not in xe
+    assert xe["ask_held"] is True
+    shift_intact = xe["shift_w0"]
+    assert shift_intact <= -0.008   # the runner-level 6-seed GO's own registered INTACT_FLOOR, signed negative
+
+    # the qualifier is CONSUMED -- a second consecutive hold-query in the SAME session (no new crave in between)
+    # must NOT repeat it (fires once per crave episode, mirrors prospective-memory's own "fires once").
+    d_again = _hold_query(client, sess)
+    assert not d_again["answer"].endswith(_QUALIFIER)
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+    # ── no crave (an ordinary known-fact recall, never an abstain) -> no qualifier, ever ──
+    sess2 = "pytest-xedge-cd6-on-nocrave"
+    _maintain_two_referents(client, sess2)
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess2, "brain": "tiny-demo", "renderer": "stub", "message": "what does the dog chase"})
+    assert res2.status_code == 200
+    assert res2.json().get("curiosity") is None, "a known-fact recall must not itself craves"
+    d2 = _hold_query(client, sess2)
+    assert d2["answer"] == "I'm holding 2 referents in working memory at once: dog and cat."
+    assert (d2.get("multiref") or {}).get("curiosity_crossedge", {}).get("ask_held") is False
+    client.post("/api/brain-chat/reset", json={"session": sess2, "brain": "tiny-demo", "renderer": "stub"})
+
+    # ── LESION, through the SAME real handler: a genuine crave still gets NO qualifier ──
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", "1")
+    _xcd6._POOL = None
+    sess3 = "pytest-xedge-cd6-on-lesion"
+    _maintain_two_referents(client, sess3)
+    res3 = client.post("/api/brain-chat", json={
+        "session": sess3, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res3.status_code == 200 and res3.json().get("curiosity", {}).get("curious") is True
+    d3 = _hold_query(client, sess3)
+    assert d3["answer"] == "I'm holding 2 referents in working memory at once: dog and cat."
+    xe3 = (d3.get("multiref") or {}).get("curiosity_crossedge")
+    assert xe3 is not None and xe3.get("ask_held") is True and "error" not in xe3
+    assert abs(xe3["shift_w0"]) < 0.34 * abs(shift_intact)   # the runner-level GO's own noise-floor ratio
+    client.post("/api/brain-chat/reset", json={"session": sess3, "brain": "tiny-demo", "renderer": "stub"})
+    _xcd6._POOL = None
+
+
+def test_brain_chat_xedge_curiosity_d6_session_isolated(client, monkeypatch):
+    """A fresh session that never craved must NOT see another session's crave state (2026-08-27 cross-session
+    leak-fix pattern, reused): the crave bit lives on THIS session's own per-session `MultiReferentWMOrgan`
+    instance, never on the shared frozen cross-edge pool."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", "1")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_curiosity_d6_production as _xcd6
+    _xcd6._POOL = None
+
+    sess_a = "pytest-xedge-cd6-iso-a"
+    _maintain_two_referents(client, sess_a)
+    resa = client.post("/api/brain-chat", json={
+        "session": sess_a, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert resa.status_code == 200 and resa.json().get("curiosity", {}).get("curious") is True
+
+    # a DIFFERENT, brand-new session -- never craved -- asks its OWN hold-query with its OWN 2 referents.
+    sess_b = "pytest-xedge-cd6-iso-b"
+    _maintain_two_referents(client, sess_b)
+    d_b = _hold_query(client, sess_b)
+    assert d_b["answer"] == "I'm holding 2 referents in working memory at once: dog and cat."
+    assert (d_b.get("multiref") or {}).get("curiosity_crossedge", {}).get("ask_held") is False
+
+    client.post("/api/brain-chat/reset", json={"session": sess_a, "brain": "tiny-demo", "renderer": "stub"})
+    client.post("/api/brain-chat/reset", json={"session": sess_b, "brain": "tiny-demo", "renderer": "stub"})
+    _xcd6._POOL = None
+
+
+# ─────────────────────────────────────────────────────────────────────────
 # Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
 # ─────────────────────────────────────────────────────────────────────────
 

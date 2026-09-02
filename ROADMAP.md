@@ -7,7 +7,52 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-01 (even later, newest) — the hidden plumbing bug from the entry below is fixed, and it unblocks two finished builds
+## 2026-09-01 (even newer) — a sixth ability goes live from a three-way parallel wave, and a seventh is proven and staged
+
+A parallel wave of three independent efforts landed two more results (the third, a vision-normalization lever, was
+lost to a transient service error and can be re-run):
+
+- **A sixth ability went live**: the brain's own curiosity now nudges what it holds in mind. When you ask it to
+  keep something in working memory and its own recent curiosity is aroused, the reply now carries an honest,
+  self-consuming note reflecting that — and this is proven genuine, not cosmetic: an automated test confirms the
+  note appears only when the internal curiosity→working-memory connection is intact and disappears entirely when
+  that connection is silenced (plus it's off-by-default-identical and isolated per conversation). On by default.
+- **A seventh is proven and staged (not yet on)**: the brain reading *how strongly someone else* feels, on a
+  seven-step scale, instead of just positive/negative — so "Maria is lonely" and "Maria is heartbroken" now draw
+  different empathic wording where before they drew the identical response. Verified genuine (matches the felt
+  intensity on six seeds; collapses to nothing when lesioned), reusing the same graded-feeling machinery the
+  brain's own emotion read already uses. It's merged off-by-default and will flip on after one full-brain
+  end-to-end safety check (which needs a heavier run than its sandbox could do).
+
+## 2026-09-01 (newest) — the owner turns on auto-promotion, and five validated abilities go live the same session
+
+The owner set a standing rule: when an ability is proven genuine, load-bearing, and safe to leave on, the workflow
+now turns it on by default automatically instead of waiting to ask. Under that rule, four abilities went live this
+session, each re-checked clean before the switch:
+
+- **The honesty framing that says where an answer came from** — on by default.
+- **The provenance honesty wording** (flagging when the brain is repeating something it was told rather than
+  something it worked out) — on by default.
+- **The brain's own voice now speaks its knowledge in whole, coherent sentences** — not just the right single
+  word — built by the brain's own clause-assembler; wired into the from-scratch voice and turned on there.
+- **"Say more when it's sure, less when it's unsure"** — on by default. The one thing that had held this back (a
+  reading that its confidence didn't cleanly separate at the larger knowledge scale) turned out to be a stale,
+  never-regenerated measurement file; a fresh six-seed re-run showed it separates cleanly and is safe to leave on.
+  (This is the build the entry below called "only partly there" — it's now done.)
+
+A fifth ability also went live: the brain tailoring how it says things to what the listener already knows (shorter
+references for things already mentioned — "As for it, …" once a topic is in the shared ground, the full name on
+first mention). It's verified genuinely load-bearing — the reply changes as expected on every test turn, and that
+change fully disappears when the circuit is switched off, across six seeds — and its wiring, which had never
+actually been merged to the main line before, is now merged. The final full-conversation safety check (the same
+verdict holds end-to-end through the real chat handler, with no change at all when the ability is off) passed, so
+it is now on by default.
+
+A workflow fix also landed: the background "are we using all the hardware?" monitor was crying wolf every cycle,
+reporting the graphics card as idle while it was in fact busy working through a queue of long jobs; it now counts
+a busy job queue as busy.
+
+## 2026-09-01 (even later) — the hidden plumbing bug from the entry below is fixed, and it unblocks two finished builds
 
 The bug the previous entry found — the brain's confidence read silently coming back empty whenever it answers
 from long-term memory — is now fixed. The memory-tier wrapper now carries the answering tier's own confidence
