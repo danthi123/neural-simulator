@@ -21,3 +21,8 @@ OWED when Vikunja is back (run the `vikunja` skill):
  - mark DONE: #171 (two-pool merge organ-read GO, landed 01e93c9a); #199 rung-2 landed (open-ended pipeline session-state writes, 843cbc23) — keep #199 OPEN for rungs 3-5.
  - add next-rung tasks (de-risked label): single-pool merge flip (WIRED default-OFF, soak queued); cross-region integration DESIGN (ranked cross-edges); cross-edge #1 surprise->world-model (SMOKE-GO, 6-seed queued); cross-edge #2 surprise->metacog (SMOKE-GO, 6-seed queued); cross-edge #3 arousal->surprise (in flight).
  - the render_hypothesis pre-existing-test-failure chip (task_b5489c96).
+
+--- 2026-09-02 ~08:05 · DEFERRED STAMP (Vikunja STILL DOWN — owner infra maintenance, vikunja.dant123.com + git.dant123.com both time out) ---
+NOT A REAL SYNC (mechanical gate only). OWED when Vikunja returns (adds to the list above):
+ - add DONE/reference task: Phase-1 one-brain verification INFRA landed (merge 013884a72) — the generalized flip-verify harness + the cross-faculty regression battery (38 faculties) + the OFF-arm-staleness gate (CLASS OS, caught+fixed a 7th live instance). Plain title e.g. "The brain-merge safety-checker now exists" under Big picture; it unblocks gating for every future organ-merge/flip.
+ - add follow-on (de-risked/in-progress): lift the 22 thin regression-battery probes to driving ones (agent in flight); Wave 1 merge (comprehension + source_provenance onto the single pool) — waits on the single-pool 6-seed soak.
