@@ -1,6 +1,6 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-08-27
 mechanism: onebrain-integration-r3v3-functional-drive
 lane: one-brain/integration/emergence-bar
@@ -8,7 +8,16 @@ artifacts:
   - research/findings/raw/_onebrain_integration_r3v3_functional_drive_6seed.json
 runner: research/runners/_onebrain_integration_r3v3_functional_drive.py
 supersedes_diagnosis_of: research/findings/2026-08-27-onebrain-integration-R3v2-noncorrupting-dopamine-credit-NO-GO.md
+superseded_by: research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md
 ---
+
+⛔ **PARTIAL RETRACTION (2026-09-02)** — the `n_go: 6/6` / `R3a_three_factor_PASS: 6/6` verdict below does NOT
+survive a read-isolation fix (the same C2 bug class the metacog runner hit): re-verified 6-seed AFTER-fix
+result is **NO-GO 3/6** (R3a's shuffled-credit control now exceeds `SEL_SHUFFLE_RATIO=0.35` on 3/6 seeds). The
+F2 functional-drive numbers, the dopamine-lesion crux, `no_corruption_intact`, and `read_isolation_verified`
+below are UNAFFECTED and still stand. See
+`research/findings/2026-09-02-r3v2-r3v3-read-isolation-refix-r3v3-GO-flips-to-NOGO.md` (current) and
+`docs/RETRACTED.md`.
 
 # One-brain INTEGRATION R3-v3 — the DA-credit-gated cross-edge now DRIVES the F2 read (was ~1e-4 to 1e-3,
 lesion-attributable but negligible); two genuine mechanism/measurement fixes, no floor re-scale — GO 6/6

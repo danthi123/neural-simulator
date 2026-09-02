@@ -1,4 +1,12 @@
-2026-09-02T10:30:00Z
+2026-09-02T13:45:00Z
+
+## 2026-09-02 ~13:45 · REAL SYNC (read-isolation audit fixes + #108 flip)
+Board reconciled this cycle: #108 marked DONE (the full ~79k-fact knowledge is now the default the brain talks
+from — flip 673b49c5f, all blockers cleared, reversible via BRAIN_LTM_BUNDLE). #202 description updated to reflect
+both cross-edges now working (surprise→world-model + surprise→metacog GO via the read-isolation fix) and the
+read-isolation audit's corrections. Audit fixes landed: IG-1 curiosity→d6-WM inflated GO → NO-GO 3/6, production
+default turned OFF (afcb3ba7b); r4 selfschema→provenance GO → NO-GO (default-OFF, record-only); expectation-rpe +
+surprise→episodic false walls partially reopened (honest partials); r3v2 hardening. Findings all on main.
 
 ## 2026-09-02 ~10:30 · REAL SYNC (Vikunja back up after the owner's infra maintenance)
 Board actually reconciled this cycle: created #200 (single-pool full-soak GO milestone), #201 (#94
