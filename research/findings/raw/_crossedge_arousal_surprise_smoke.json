@@ -1,0 +1,177 @@
+{
+  "probe": "crossedge_arousal_surprise_derisk",
+  "verdict": "SMOKE-GO (indicator) -- CROSS-EDGE #3 AROUSAL->D2-SURPRISE (LC-NE prediction-gain, Aston-Jones & Cohen 2005): a FIXED diffuse spiking neuromodulatory projection from a felt-arousal source population onto the D2 surprise pool. 2/2 seeds: HIGH arousal raises the fixed CONTRADICT surprise Hz vs LOW/silent arousal (a); the shift VANISHES when the arousal->surprise synapses are lesioned while the source still fires (b), attributable to the projection (c); and the surprise reads are byte-identical to the shipped plain organ with the edge off (d). The gain WEIGHT is FIXED (biologically-fixed ascending modulation), NOT learned -- no emergence claim. numpy CPU; NO sim/ edit; DE-RISK only, NO production wire-in. PARTIAL pending the 6-seed cupy soak.",
+  "GO": false,
+  "n_go": 2,
+  "n_seeds": 2,
+  "seeds": [
+    42,
+    43
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_seeds_shift",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f7b41d53ce0>",
+      "note": "HIGH arousal raises the fixed contradict surprise Hz above the floor on every seed"
+    },
+    {
+      "kind": "require",
+      "name": "lesion_flattens",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f7b41d53ce0>",
+      "note": "zeroing the arousal->surprise synapses collapses the shift (< lesion_ratio * intact)"
+    },
+    {
+      "kind": "require",
+      "name": "attributable",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f7b41d53ce0>",
+      "note": "frac_attributable > 0.66 -- the shift is the projection, not the host drive on the source"
+    },
+    {
+      "kind": "require",
+      "name": "silent_state_byte_identical",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f7b41d53ce0>",
+      "note": "edge OFF (source silent) reads byte-identical to the shipped organ + only-edge-added"
+    }
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "mechanism": "arousal->surprise prediction-gain; fixed diffuse neuromodulatory projection; NOT a host multiplier; weight fixed (not learned)",
+  "grounding": "Aston-Jones & Cohen 2005 Annu Rev Neurosci 28:403 (LC-NE adaptive gain); affect-lc-arousal-population-GO (the felt-arousal source); surprise-organ-homeostat-GO (the companion set-point the NE-vigilance negative lacked)",
+  "runs": [
+    {
+      "seed": 42,
+      "GO": true,
+      "elapsed_s": 69.9,
+      "threshold_hz": 2.730758101851852,
+      "shift": {
+        "contra_lo": 5.454282407407407,
+        "contra_hi": 5.794270833333334,
+        "delta_intact": 0.3399884259259265,
+        "floor": 0.02,
+        "ok": true
+      },
+      "verdict_flip": {
+        "low_arousal_surprised": true,
+        "high_arousal_surprised": true,
+        "flipped": false
+      },
+      "borderline_flip": {
+        "assert_pa_weak": 325.0,
+        "surprise_lo": 2.502893518518518,
+        "surprise_hi": 2.900752314814815,
+        "threshold": 2.730758101851852,
+        "flipped": true,
+        "note": "a faint/uncertain assertion near threshold; high arousal pushes the SAME input over -> a different surprise verdict by arousal state (adaptive gain)"
+      },
+      "specificity": {
+        "confirm_lo": 0.21219135802469133,
+        "confirm_hi": 0.24836033950617284,
+        "delta_confirm": 0.03616898148148151,
+        "contra_over_confirm_shift_ratio": 9.400000000000007,
+        "note": "gain-like (sharpening) iff the contradict shift >> the confirm shift; a comparable confirm shift = an additive threshold bias, not a slope change"
+      },
+      "lesion": {
+        "contra_lo": 5.516975308641975,
+        "contra_hi": 5.5169753086419755,
+        "delta_lesion": 8.881784197001252e-16,
+        "ratio": 0.34,
+        "ok": true
+      },
+      "attributable": {
+        "frac": 0.9999999999999973,
+        "ok": true
+      },
+      "byte_off": {
+        "silent_state_byte_dev_hz": 0.0,
+        "silent_state_byte_ok": true,
+        "base_connectivity_identical": true,
+        "only_edge_added": true,
+        "reused_bridge_silent_inert_dev_hz": 0.012056327160493652,
+        "reused_bridge_note": "small residual = un-reset adaptive-threshold drift over the intervening reads (the NE-vigilance instrument artifact), NOT the edge; (d1) proves the edge inert when arousal silent, cleanly -- reported, not gated",
+        "ok": true
+      },
+      "config": {
+        "arousal_n": 24,
+        "w_arousal": 0.3,
+        "arousal_high_pa": 600.0,
+        "arousal_low_pa": 0.0,
+        "n_arousal_synapses": 6912
+      },
+      "baseline": {
+        "confirm_hz": 0.19531249999999997,
+        "contradict_hz": 5.439814814814815,
+        "novel_hz": 5.266203703703704
+      }
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "elapsed_s": 69.3,
+      "threshold_hz": 2.564380787037037,
+      "shift": {
+        "contra_lo": 5.249324845679013,
+        "contra_hi": 5.52662037037037,
+        "delta_intact": 0.27729552469135754,
+        "floor": 0.02,
+        "ok": true
+      },
+      "verdict_flip": {
+        "low_arousal_surprised": true,
+        "high_arousal_surprised": true,
+        "flipped": false
+      },
+      "borderline_flip": {
+        "assert_pa_weak": 325.0,
+        "surprise_lo": 2.3823302469135808,
+        "surprise_hi": 2.671682098765432,
+        "threshold": 2.564380787037037,
+        "flipped": true,
+        "note": "a faint/uncertain assertion near threshold; high arousal pushes the SAME input over -> a different surprise verdict by arousal state (adaptive gain)"
+      },
+      "specificity": {
+        "confirm_lo": 0.10127314814814815,
+        "confirm_hi": 0.12538580246913583,
+        "delta_confirm": 0.024112654320987678,
+        "contra_over_confirm_shift_ratio": 11.499999999999968,
+        "note": "gain-like (sharpening) iff the contradict shift >> the confirm shift; a comparable confirm shift = an additive threshold bias, not a slope change"
+      },
+      "lesion": {
+        "contra_lo": 5.287905092592593,
+        "contra_hi": 5.302372685185185,
+        "delta_lesion": 0.01446759259259256,
+        "ratio": 0.34,
+        "ok": true
+      },
+      "attributable": {
+        "frac": 0.9478260869565218,
+        "ok": true
+      },
+      "byte_off": {
+        "silent_state_byte_dev_hz": 0.0,
+        "silent_state_byte_ok": true,
+        "base_connectivity_identical": true,
+        "only_edge_added": true,
+        "reused_bridge_silent_inert_dev_hz": 0.007233796296295836,
+        "reused_bridge_note": "small residual = un-reset adaptive-threshold drift over the intervening reads (the NE-vigilance instrument artifact), NOT the edge; (d1) proves the edge inert when arousal silent, cleanly -- reported, not gated",
+        "ok": true
+      },
+      "config": {
+        "arousal_n": 24,
+        "w_arousal": 0.3,
+        "arousal_high_pa": 600.0,
+        "arousal_low_pa": 0.0,
+        "n_arousal_synapses": 6912
+      },
+      "baseline": {
+        "confirm_hz": 0.09403935185185186,
+        "contradict_hz": 5.237268518518519,
+        "novel_hz": 5.034722222222222
+      }
+    }
+  ]
+}
