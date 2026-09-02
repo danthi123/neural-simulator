@@ -375,8 +375,14 @@ def get_organ(seed: int = 42) -> MetacogProductionOrgan:
     MergedSubstrate2 it co-inhabits with the pragmatic organ (ONE spiking bridge); OFF -> its own bridge as today."""
     global _ORGAN
     if _ORGAN is None:
-        from research.runners.onebrain_merge_production2 import merge2_enabled, get_merged_substrate2
-        shared = get_merged_substrate2(seed) if merge2_enabled() else None
+        # ONE-BRAIN SINGLE-POOL merge (opt-in, `BRAIN_ONEBRAIN_SINGLE_POOL`, default-OFF) WINS when on: all 4 core
+        # organs co-inhabit ONE merge_organs pool. OFF -> the current pool-#2 pairwise path, byte-identical.
+        from research.runners.onebrain_single_pool_production import single_pool_enabled, get_single_pool
+        if single_pool_enabled():
+            shared = get_single_pool(seed)
+        else:
+            from research.runners.onebrain_merge_production2 import merge2_enabled, get_merged_substrate2
+            shared = get_merged_substrate2(seed) if merge2_enabled() else None
         _ORGAN = MetacogProductionOrgan(seed=seed, shared=shared)
     return _ORGAN
 
