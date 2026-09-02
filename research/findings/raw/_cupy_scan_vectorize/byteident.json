@@ -1,0 +1,95 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "backend": "numpy",
+  "n_seeds_total_answer_mismatches": 0,
+  "n_seeds_total_scanidx_mismatches": 0,
+  "n_seeds_total_answers_compared": 76,
+  "n_seeds_total_scanidx_compared": 152,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_probes": 15,
+      "n_moat": 10,
+      "n_extra": 0,
+      "n_answers_compared": 25,
+      "n_answer_mismatches": 0,
+      "n_scanidx_compared": 50,
+      "n_scanidx_mismatches": 0,
+      "seed44_near_tie_cue_answer": null,
+      "t_pass_original_s": 21.93,
+      "t_pass_current_s": 23.221,
+      "identical": true
+    },
+    "43": {
+      "seed": 43,
+      "n_probes": 15,
+      "n_moat": 10,
+      "n_extra": 0,
+      "n_answers_compared": 25,
+      "n_answer_mismatches": 0,
+      "n_scanidx_compared": 50,
+      "n_scanidx_mismatches": 0,
+      "seed44_near_tie_cue_answer": null,
+      "t_pass_original_s": 22.786,
+      "t_pass_current_s": 20.853,
+      "identical": true
+    },
+    "44": {
+      "seed": 44,
+      "n_probes": 15,
+      "n_moat": 10,
+      "n_extra": 1,
+      "n_answers_compared": 26,
+      "n_answer_mismatches": 0,
+      "n_scanidx_compared": 52,
+      "n_scanidx_mismatches": 0,
+      "seed44_near_tie_cue_answer": "culture_of_west_virginia",
+      "t_pass_original_s": 37.959,
+      "t_pass_current_s": 46.17,
+      "identical": true
+    }
+  },
+  "all_identical": true,
+  "elapsed_s": 176.1,
+  "label": "cupy-scan-vectorize byte-identity (vectorized vs pre-fix _escalate_role_match gather)",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ran on numpy (not cupy -- GPU may be busy with another brain-loading proc)",
+      "ok": true,
+      "detail": "measured=numpy expect=numpy",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "decoded answers identical (vectorized vs original) across all probed cues",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "selected fact indices identical (_scan_first_match) across all probed cues",
+      "ok": true,
+      "detail": "measured=0 expect=0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "seed-44 near-tie escalation branch actually exercised (not present-but-inert)",
+      "ok": true,
+      "detail": "measured=culture_of_west_virginia expect=culture_of_west_virginia",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "chance": null
+}

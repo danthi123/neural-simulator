@@ -248,6 +248,13 @@ class RFPhasorComposer:
         self._cb_frac = None       # (V,D) fractional-cycle codebook (V*D floats; read-only, shared)
         self._cb_z = None          # (V,D) phasor codebook (V*D complex128; read-only, shared)
         self._cb_cache_V = -1      # len(words) the cached codebook was built for; -1 = unbuilt
+        # word -> its row index in `self._cb_frac`/`self._cb_z` (built in the SAME pass as those matrices in
+        # `_ensure_codebook_cache`, so it can never drift out of alignment; invalidated on the same V change).
+        # Lets `_escalate_role_match` gather winner-concept rows with ONE vectorized fancy-index into the cached
+        # codebook instead of a per-candidate Python-loop dict-lookup + np.stack (the cupy-backend hotspot fixed
+        # 2026-09-02, board #108 -- research/findings/2026-09-02-escalation-gating-tighten-latency-correctness-
+        # safe-not-the-lever.md pinpointed this exact loop as the cupy-specific ~1303ms->target<1000ms driver).
+        self._concept_row = None   # {word: row_idx}, aligned to self._cb_frac / self.words
         # (#66 seed-44 recall hole, 2026-09-01, DEFAULT-OFF = byte-identical). Confidence-gated finer-period
         # re-examination of a MATCH candidate ("effortful second look"). ROOT CAUSE it closes: the RF phase
         # readout `((period - spike_step) % period)/period` quantizes the recovered phase to 1/period (= 0.005 at
@@ -817,7 +824,13 @@ class RFPhasorComposer:
         parent rebuilds each call, so decode is byte-identical by construction (independent of seed). This
         is the O(V) codebook-rebuild hot loop the 2026-08-30 finding identified (~40% of per-query time at
         V~24k, scaling with V not the shard's ~200 facts). `enable_codebook_cache=False` (default) leaves
-        this method uncallable by the cleanup paths -> the current rebuild-every-query path is preserved."""
+        this method uncallable by the `_cleanup` cleanup path -> that path's rebuild-every-query behavior is
+        preserved; `_escalate_role_match` (below) calls this UNCONDITIONALLY (independent of the
+        `enable_codebook_cache` flag) so its winner-code gather always has the cache to index into.
+
+        `self._concept_row` (word -> row index) is built in the SAME pass, over the SAME `self.words` order,
+        so `self._concept_row[w] == i` iff `self._cb_frac[i] == self.concepts[w]` by construction -- it cannot
+        drift out of alignment with the codebook, and both invalidate together on a vocab-length change."""
         V = len(self.words)
         if self._cb_cache_V == V and self._cb_frac is not None:
             return
@@ -825,6 +838,7 @@ class RFPhasorComposer:
         self._cb_frac = np.stack([np.asarray(self.concepts[w], dtype=float) for w in self.words])
         # phasor codebook (V, D) (the batched-cleanup convention)
         self._cb_z = np.exp(2j * np.pi * self._cb_frac)
+        self._concept_row = {w: i for i, w in enumerate(self.words)}
         self._cb_cache_V = V
 
     def _cleanup(self, rec_phases, words=None):
@@ -963,7 +977,16 @@ class RFPhasorComposer:
         rec_arr = np.asarray(rec)
         val_code = self.concepts[val]
         s_val = np.cos(2.0 * np.pi * (rec_arr[cand] - val_code[None, :])).mean(axis=1)      # (m,) cued-value score
-        win_codes = np.stack([self.concepts[words[i]] for i in cand])                        # (m, D) coarse winners
+        # (2026-09-02, board #108 cupy latency) gather the m coarse-winner concept rows with ONE vectorized
+        # fancy-index into the cached (V,D) codebook instead of a per-candidate Python-loop dict-lookup +
+        # np.stack of individual backend arrays (the cupy-specific per-element host<->device-sync hotspot
+        # pinpointed by research/findings/2026-09-02-escalation-gating-tighten-latency-correctness-safe-not-
+        # the-lever.md). `_ensure_codebook_cache` builds/refreshes `self._cb_frac`/`self._concept_row` once
+        # per vocab state (idempotent no-op otherwise); `row_idx` is a plain host int array (dict lookups are
+        # host-side, no device traffic), so the only backend op below is the single indexed gather.
+        self._ensure_codebook_cache()
+        row_idx = np.fromiter((self._concept_row[words[i]] for i in cand), dtype=np.int64, count=len(cand))
+        win_codes = self._cb_frac[row_idx]                                                   # VECTORIZED_WINCODE_GATHER
         s_win = np.cos(2.0 * np.pi * (rec_arr[cand] - win_codes)).mean(axis=1)               # (m,) winner score
         near = cand[(s_win - s_val) <= self.decode_escalate_margin]                          # near-tie candidates only
         for i in near:
