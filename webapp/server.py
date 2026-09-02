@@ -4581,14 +4581,17 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             "rich": False, "mode": "open_ended", "activity": None, "affect": affect_info,
             # the open-ended trace: the raw free reply, the VERIFY-filtered reply, topic/known, retrieved facts,
             # the assembled state, and the generation latency. The moat lives in `filtered` vs `raw`. `generator`
-            # (2026-08-28, crutch-burndown) names which FORM generator wrote `raw` -- "qwen" (default) or
-            # "wkv_mouth" (BRAIN_OPEN_ENDED_WKV_MOUTH, in-vocab prompts only); byte-identical omission risk avoided
-            # via .get() defaults so this key is additive even against an older `_oe` dict shape.
+            # (2026-08-28, crutch-burndown) names which FORM generator wrote `raw` -- "qwen" (default), "wkv_mouth"
+            # (BRAIN_OPEN_ENDED_WKV_MOUTH, in-vocab prompts only), or "spiking_clause" (2026-09-02, board #112
+            # residual -- BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK, a known topic the WKV mouth did not handle,
+            # answered by the SAME brain-based fact->sentence render instead of Qwen); byte-identical omission
+            # risk avoided via .get() defaults so this key is additive even against an older `_oe` dict shape.
             "open_ended": {
                 "raw": _oe["raw"], "filtered": _oe["filtered"], "topic": _oe["topic"],
                 "known": _oe["known"], "facts": _oe["facts"], "n_sentences": _oe["n_sentences"],
                 "state": _oe["state"], "gen_seconds": _oe["gen_seconds"],
                 "generator": _oe.get("generator", "qwen"), "wkv_mouth_used": _oe.get("wkv_mouth_used", False),
+                "fact_clause_used": _oe.get("fact_clause_used", False),
             },
         }
         return _safe_json_response(_oe_resp, "open_ended")

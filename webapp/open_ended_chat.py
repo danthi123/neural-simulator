@@ -88,15 +88,26 @@ that concrete and all are GO on `main`:
     OFF); falls straight through to the pre-existing free-gen/fact-boost path when no covered relation is
     found. ZERO PRODUCTION RISK today: gated two levels deep behind `BRAIN_OPEN_ENDED` (default OFF). See
     research/findings/2026-09-01-wkv-mouth-fact-sentence-wirein.md for the measured coverage + before/after.
+  * `fact_clause_fallback_enabled` (2026-09-02, `BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK`, default-OFF) — the
+    board #112 residual the rung-3 wire-in above explicitly named and left untouched: `render_fact_sentence`
+    ALSO tried on a known topic the WKV mouth did NOT already handle (off, out-of-vocab, or an exception) —
+    i.e. the real-traffic MAJORITY of known topics, which route to Qwen. Closes diagnosis (c) of
+    `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md`: the retrieved facts
+    ARE assembled into Qwen's prompt, but a pretrained Qwen does not reliably obey the "use ONLY KNOWLEDGE"
+    instruction and supplements/overrides with its own confident, sometimes-wrong parametric detail, which the
+    existing post-hoc string filters often cannot even parse to catch (copula/participial/pronoun prose). This
+    flag ADDS the brain's own fact directly, moat-safe by construction, instead of relying on catching Qwen's
+    fabrication after the fact. See research/findings/2026-09-02-open-ended-qwen-routed-fact-clause-fallback.md.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
 familiarity/novelty/curiosity grounded in whether the store knows the topic -> `build_prompt` -> generate the reply
-(FORM: `BRAIN_OPEN_ENDED_WKV_MOUTH` + an in-vocab prompt -> the WKV mouth's few-spike spiking decode; else the
-one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` + a live `chat` + a known topic —
-the sentence-by-sentence generation-TIME consensus veto) -> `post_filter` (HONESTY safety net: base persona-strip/
-hedge/abstain + the known-topic contradiction filter, always applied either way, REGARDLESS of which generator
-wrote the reply) -> return the filtered reply.
+(FORM: `BRAIN_OPEN_ENDED_WKV_MOUTH` + an in-vocab prompt -> the WKV mouth's few-spike spiking decode; else —
+`BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK` + a known topic -> the SAME brain-based fact->sentence render, reached
+regardless of vocab; else the one-shot `OpenEndedGenerator.generate`, or — `BRAIN_OPEN_ENDED_GEN_TIME_HONESTY` +
+a live `chat` + a known topic — the sentence-by-sentence generation-TIME consensus veto) -> `post_filter`
+(HONESTY safety net: base persona-strip/hedge/abstain + the known-topic contradiction filter, always applied
+either way, REGARDLESS of which generator wrote the reply) -> return the filtered reply.
 
 MEMORY / COST DISCIPLINE (the two hard lessons this session).
   (1) ONE Qwen. `OpenEndedGenerator.__init__` would load a SECOND Qwen-0.5B. Instead we REUSE the server's already
@@ -328,8 +339,80 @@ def wkv_fact_sentence_enabled() -> bool:
     in. It causes the post-filter to over-cautiously fall back to the honest-abstain string on an otherwise-
     correct rendered clause for that narrow sub-class (1/48 sampled cases here) -- never a leak, always the
     safe degrade (verified 1.0 on every seed). Fixing that filter's number check is a separate, un-built next
-    step, out of this wire-in's own scope."""
+    step, out of this wire-in's own scope. **This is exactly the residual `fact_clause_fallback_enabled` (below,
+    2026-09-02) closes** -- the SAME `render_fact_sentence` mechanism, reached on a known topic regardless of
+    whether it also happens to pass this checkpoint's free-gen `in_vocab_scope` gate."""
     return os.environ.get("BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE", "1").strip().lower() in ("1", "true", "on", "yes")
+
+
+def fact_clause_fallback_enabled() -> bool:
+    """`BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK` truthy -> the SAME mechanism `wkv_fact_sentence_enabled` wires into
+    the WKV mouth (`webapp.wkv_mouth_generator.render_fact_sentence`) is ALSO tried on a KNOWN topic that the WKV
+    mouth did NOT already handle (it is off, or the prompt failed `in_vocab_scope`, or it raised) -- i.e. the
+    real-traffic MAJORITY of known topics, which route to Qwen. Closes the residual `wkv_fact_sentence_enabled`'s
+    own docstring named but explicitly left untouched: `research/findings/2026-09-01-open-ended-bundle-moat-
+    safety-soak-fabrication-delta.md` measured that on real Qwen-routed known-topic turns, the retrieved facts
+    ARE assembled into the prompt (`build_prompt`'s KNOWLEDGE block, "Use ONLY the facts under KNOWLEDGE") but a
+    pretrained Qwen does not reliably obey that instruction -- it supplements with confident, specific, WRONG
+    parametric detail (`castleford_f_c`: "a professional **football** club" when the store's only sport fact is
+    `rugby_leauge`) or sometimes ignores the facts entirely ("I don't have any information on..." despite 2 real
+    stored facts) -- diagnosis (c) from that soak: retrieved AND injected, but overridden, not (a) never
+    retrieved or (b) never injected. The existing post-hoc moat (`post_filter`, `NP_ENTAILMENT`, `GEN_TIME_
+    HONESTY`) can only SUBTRACT a sentence it catches as wrong; on real Qwen prose (copula/participial/pronoun-
+    heavy) it often cannot even parse the wrong clause to catch it (the soak's own measured example: `NP_
+    ENTAILMENT` changed ZERO of 12 real known-topic replies). This flag instead ADDS the brain's own fact,
+    unconditionally correct by construction (`render_fact_sentence` builds the surface ONLY from the fact's own
+    subject/object NP + the fixed closed-class `RELATION_LEXICON` predicate/determiner -- no token Qwen or any
+    other model chose can appear), so the reply is GROUNDED (attributable to the retrieved fact) rather than
+    merely not-yet-caught-as-wrong.
+
+    `render_fact_sentence` has NO dependency on the WKV checkpoint's V=1000 free-gen word-overlap vocabulary --
+    that gate (`in_vocab_scope`) only scopes the checkpoint's OWN next-word spiking decode (`_free_gen`); the
+    clause render is driven entirely by the closed-class `RELATION_LEXICON`/`slug_to_np` lookup + the already-
+    6-seed-GO `SpikingClauseProducer`, a structurally different mechanism. That is WHY it generalizes here: a
+    2026-09-01 scan (see the wire-in finding) found `RELATION_LEXICON` already covers 34/34 live relation types
+    in the shipped `wikidata_core_15k` store, so this reaches essentially every real known topic with >=1 fact,
+    not just the ~3% that also happen to pass the checkpoint's free-gen vocabulary gate.
+
+    Reached only when `known` (facts were retrieved) AND the WKV mouth did NOT already produce `raw` for this
+    turn (`not wkv_used` -- when it DID, `wkv_fact_sentence_enabled`'s own gate on the identical mechanism already
+    ran first; this flag never re-renders on top of that). A hit means the rendered clause becomes `raw` and
+    NEITHER Qwen NOR the generation-time consensus veto runs for this turn (a guaranteed-correct single fact
+    replaces a free-form paragraph that might fabricate around it) -- `generator` reports `"spiking_clause"`
+    and the new `fact_clause_used` trace key is `True`. A miss (no lexicon-covered relation in `facts`, or the
+    clause producer did not genuinely spike) falls straight through to the PRE-EXISTING generation-time-honesty/
+    Qwen path below, completely unchanged -- this flag can only ADD a generator choice, never remove one, and
+    any exception here degrades safely to that same pre-existing path rather than crashing the turn. The
+    pre-existing string `post_filter` (persona-strip + the known-topic contradiction filter) still runs
+    afterward on whatever this path emits, unconditionally, exactly as for every other generator.
+
+    DEFAULT-ON as of 2026-09-02 (this task's own 6-seed verify GO, auto-flipped per the SAME 2026-09-01 owner
+    policy that flipped `wkv_fact_sentence_enabled`: validated-GO + load-bearing + moat-safe + byte-identical-
+    off + no-regression -- see `research/findings/raw/_open_ended_qwen_fact_clause_fallback_verify.json`, GO on
+    all 6 seeds, 48/48 real known+out-of-vocab+covered-relation cases sampled from the live store: raw
+    readable=faithful=moat_safe=1.0 on every seed; the fake-Qwen stub fires on ZERO cases when the fallback
+    handled the turn (a genuine bypass, not a decoration) and on EVERY case with the flag off (byte-identical
+    routing, poison-pill-confirmed); unknown-topic honesty and routing are both unaffected (known=False
+    short-circuits this branch regardless of flag state). Unset now reads as ON; set the flag to 0 to force the
+    pre-existing generation-time-honesty/Qwen path even on a covered-relation known topic.
+
+    HONEST TRADE-OFF, stated plainly (not hidden by the flip): because `RELATION_LEXICON` already covers 34/34
+    live relation types in the shipped `wikidata_core_15k` store (see the wire-in finding's own coverage check),
+    this reaches the large majority of real known-topic Qwen-routed turns, not a narrow slice -- a known topic
+    with any covered fact now gets ONE short, terse, guaranteed-correct clause instead of Qwen's richer
+    (but potentially fabricating) multi-sentence paragraph. This project's own standing priority (facts MUST
+    drive the answer; an honest boundary is a deliverable, not a caveat) favors this trade explicitly, but it IS
+    a real reduction in conversational richness on the turns it fires, disclosed here rather than left implicit.
+    ZERO PRODUCTION RISK today regardless: gated behind `BRAIN_OPEN_ENDED` (default OFF) -- with that top-level
+    channel off, this flag is never even read. Setting the flag to 0/false/off/no reduces `if wkv_used or
+    fact_clause_used` to exactly `if wkv_used` -- the pre-existing branch, BYTE-IDENTICAL (verified directly, not
+    inferred, by this task's own 6-seed verify: a poison-pill on `render_fact_sentence` never trips, and a
+    fake-Qwen stub fires on every case), and `render_fact_sentence` is never imported by this branch (it may
+    still be imported by the SEPARATE,
+    pre-existing `wkv_fact_sentence_enabled` branch inside the WKV-mouth block, unaffected by this flag). See
+    research/findings/2026-09-02-open-ended-qwen-routed-fact-clause-fallback.md for the 6-seed verify through
+    the real `answer_turn` and the auto-flip decision."""
+    return os.environ.get("BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK", "1").strip().lower() in ("1", "true", "on", "yes")
 
 
 # ── topic extraction (host comprehension of the world input — the declared scaffold boundary) ────────────────────
@@ -467,8 +550,12 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
 
     Returns a dict with the final `answer` (the filtered reply) plus a trace (`raw`, `filtered`, `topic`, `known`,
     `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`, `generator` —
-    `"wkv_mouth"` or `"qwen"` — and `wkv_mouth_used`). `known` is True iff the store held facts about the topic —
-    the caller maps it to `abstained = not known` / `verified = known` (an unknown topic is an honest abstain)."""
+    `"wkv_mouth"`, `"spiking_clause"`, or `"qwen"` — `wkv_mouth_used`, and `fact_clause_used`). `known` is True
+    iff the store held facts about the topic — the caller maps it to `abstained = not known` / `verified = known`
+    (an unknown topic is an honest abstain). `fact_clause_used` (see `fact_clause_fallback_enabled`) is True when
+    a known topic the WKV mouth did NOT handle was instead answered by the SAME brain-based fact->sentence render
+    the WKV mouth's own `sentence_facts` path uses — closing the much larger Qwen-routed known-topic grounding
+    regression `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured."""
     by_agent = build_index(ltm_bundle, brain_bundle)
     topic = extract_topic(msg)
     facts = retrieve(by_agent, topic)
@@ -515,10 +602,32 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         except Exception:
             wkv_used = False               # never let a WKV failure crash the turn -- degrade to the Qwen path
 
+    # ── FACT-CLAUSE FALLBACK (board #112 residual, default-OFF) ──────────────────────────────────────────────
+    # `BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK` truthy AND the topic is KNOWN AND the WKV mouth did NOT already
+    # produce `raw` above -> try the SAME brain-based fact->sentence render (`render_fact_sentence`) on the
+    # already-retrieved `facts`, independent of `in_vocab_scope` (that gate only scopes the checkpoint's OWN
+    # free-gen word decode; the clause render uses its own closed-class lexicon + the already-6-seed-GO
+    # SpikingClauseProducer). This is what reaches the real-traffic MAJORITY of known topics that route to
+    # Qwen -- see `fact_clause_fallback_enabled`'s docstring for the diagnosis this closes. Flag off, `known`
+    # False, `wkv_used` True, no lexicon-covered relation, or any exception: `fact_clause_used` stays False and
+    # control falls straight through to the UNCHANGED branch below -- this can only ADD a generator choice.
+    fact_clause_used = False
+    if not wkv_used and known and fact_clause_fallback_enabled():
+        try:
+            from webapp import wkv_mouth_generator as _WKVFC
+            t0fc = time.time()
+            sentence = _WKVFC.render_fact_sentence(facts, seed=seed)
+            if sentence is not None:
+                raw, secs = sentence, round(time.time() - t0fc, 3)
+                fact_clause_used = True
+                generator_name = "spiking_clause"
+        except Exception:
+            fact_clause_used = False        # never let this path crash a turn -- degrade below, unchanged
+
     gen_time_used = False
     gen_time_trace = None
-    if wkv_used:
-        pass                                # raw/secs already set by the WKV mouth above
+    if wkv_used or fact_clause_used:
+        pass                                # raw/secs already set above
     elif known and chat is not None and gen_time_honesty_enabled():
         try:
             from research.runners._open_ended_gen_time_consensus_veto_derisk import (
@@ -551,6 +660,7 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
         "gen_time_trace": gen_time_trace,
         "generator": generator_name,
         "wkv_mouth_used": wkv_used,
+        "fact_clause_used": fact_clause_used,
         "state": {"valence": float(valence), "arousal": float(arousal), "familiarity": fam,
                   "novelty": novelty, "curiosity": curiosity},
     }
