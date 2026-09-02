@@ -117,6 +117,22 @@ READ_SEED = 4242         # fixed so a given evidence -> a DETERMINISTIC confiden
 ROLE_CONF_LO = 0.30      # a mean role-decode confidence at/below this -> evidence 0 (in the measured degraded region)
 ROLE_CONF_HI = 0.50      # a mean role-decode confidence at/above this -> evidence 1 (at the measured confident floor)
 
+# SCALE-INVARIANT decisiveness anchors (2026-09-02, board #94/#108 R3 -- the 100k recalibration). The read
+# `mean_role_confidence` prefers for an LTM-sourced trace is now the composer's `margin_snr` (the winner's
+# z-score above the candidate BULK, `RFPhasorComposer._cleanup_all_score_stats`), NOT the scale-VARIANT
+# `margin_norm`. WHY (measured, research/findings/raw/_confidence_100k_recalib/): `margin_norm = (top-runner)/top`
+# keys on the single runner-up = max over V-1 candidates, an order statistic that inflates as ~sqrt(2 ln V), so
+# an EQUALLY-decisive clean recall reads margin_norm 0.497 at the 15k core but only 0.395 at the 100k bundle --
+# below the confident floor, so `confident` could never read True at 100k (the #108 NO-GO). The winner-vs-BULK
+# z-score is INVARIANT to codebook size (the SAME recall: winner_z 7.24 at 15k == 7.03 at 100k; the non-winner
+# mean~0 / std~1/sqrt(D) are stable estimators of the noise floor). SNR_LO/SNR_HI map winner_z LINEARLY onto the
+# SAME ROLE_CONF_LO/HI band, anchored to a 15k reference CLEAN vs DEGRADED recall so the shipped 15k operating
+# point is reproduced at BOTH arms (clean z=7.237 <-> margin_norm 0.4966; degraded z=5.329 <-> margin_norm 0.3161,
+# arms_15k_seed42.json) -- and the SAME anchors then self-consistently lift the 100k clean recall back above the
+# confident floor. These are UNIVERSAL (one operating point for ALL vocab scales), NOT a per-bundle constant.
+SNR_LO = 5.158           # 15k DEGRADED-recall reference winner_z -> maps to ROLE_CONF_LO
+SNR_HI = 7.273           # 15k CLEAN-recall reference winner_z   -> maps to ROLE_CONF_HI
+
 # CALIBRATION-AT-SCALE (2026-09-01, board #94): this band is NOT re-tuned per codebook size. The 15k-entity
 # `wikidata_core_15k` LTM's genuine correct-recall `margin_norm` (peak-normalized, `RFPhasorComposer.
 # _cleanup_all_score_stats`) measured 0.393..0.552 (mean 0.473, n=80, `research/findings/raw/
@@ -261,15 +277,39 @@ def mean_role_confidence(activity: dict | None) -> float | None:
     `OneBrainComposer`'s own role chips never populate `margin_norm`, so this preference change is BYTE-IDENTICAL
     for the tiny-demo buffer path (falls through to `margin`, unchanged) -- it only changes what is read for an
     LTM-sourced (`RFPhasorComposer`/`ShardedPhasorStore`) trace. See
-    research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md."""
+    research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md.
+
+    SCALE-INVARIANCE FIX (2026-09-02, board #94/#108 R3): `margin_norm` was INTENDED to be scale-invariant but is
+    NOT -- its runner-up term is the max over V-1 candidates, an order statistic that inflates as ~sqrt(2 ln V),
+    so an equally-decisive clean recall reads margin_norm 0.497 at the 15k core but 0.395 at the 100k bundle (below
+    the confident floor -> the #108 100k NO-GO). So `margin_snr` -- the winner's z-score above the candidate BULK
+    (`(top-mean_nonwin)/std_nonwin`, added to `_cleanup_all_score_stats`), which IS scale-invariant (winner_z 7.24
+    at 15k == 7.03 at 100k for the identical recall) -- is now preferred OVER `margin_norm` when a chip carries it,
+    mapped linearly onto the ROLE_CONF band via the 15k reference anchors SNR_LO/SNR_HI (reproduces the shipped 15k
+    operating point at both the clean and degraded reference arms). `OneBrainComposer` buffer chips never populate
+    `margin_snr` either, so the tiny-demo path is still byte-identical. See
+    research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-*.md."""
     if not activity:
         return None
     roles = activity.get("roles") or []
     vals = []
     for r in roles:
+        snr = r.get("margin_snr")
         mn = r.get("margin_norm")
         m = r.get("margin")
-        v = mn if mn is not None else (m if m is not None else r.get("confidence"))
+        if snr is not None:
+            # SCALE-INVARIANT read (2026-09-02, board #94/#108 R3): map the winner-vs-bulk z-score linearly onto
+            # the ROLE_CONF band via the 15k reference anchors (SNR_LO/SNR_HI). This reproduces the shipped 15k
+            # operating point (winner_z there maps back to the old margin_norm at both the clean and degraded
+            # reference arms, mean within ~4e-4 -> no 15k regression) while being invariant to codebook size, so
+            # a clean 100k recall no longer falls below the confident floor. `margin_snr` is emitted only by the
+            # LTM tier's `RFPhasorComposer` trace; `OneBrainComposer`'s own buffer chips never populate it, so the
+            # tiny-demo buffer path falls through to `margin_norm`/`margin` UNCHANGED (byte-identical).
+            v = ROLE_CONF_LO + ((float(snr) - SNR_LO) / (SNR_HI - SNR_LO)) * (ROLE_CONF_HI - ROLE_CONF_LO)
+            if v < 0.0:
+                v = 0.0
+        else:
+            v = mn if mn is not None else (m if m is not None else r.get("confidence"))
         if v is not None:
             vals.append(float(v))
     if not vals:

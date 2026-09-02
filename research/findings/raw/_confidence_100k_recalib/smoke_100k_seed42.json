@@ -1,0 +1,111 @@
+{
+  "probe": "confidence_forthcomingness_margin_norm_recalibration_100k",
+  "board": "108 cluster R3 (confidence-forthcomingness #94 re-verified against wikidata_100k)",
+  "question": "who does asimov isaac work for?",
+  "expected_svo": [
+    "asimov_isaac",
+    "employer",
+    "university_of_boston"
+  ],
+  "ltm_bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "noise_sigma": 0.12,
+  "ltm_load_flags": "enable_codebook_cache=True, enable_decode_escalation=True (matches webapp/server.py's new post-R2 production default at any bundle scale)",
+  "flags": "BRAIN_ELABORATE_FROM_LTM_SHARD=1 + BRAIN_CONFIDENCE_FORTHCOMING=1 + BRAIN_LTM_SHIP_DEFAULT=1 + BRAIN_KB_RELATION_QUESTIONS default-ON + BRAIN_CLAIM_MOAT=0 escape (residual 1, unrelated), true floor",
+  "backend": "numpy",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "elapsed_s": 729.5486903190613,
+  "measurement_all_GO": true,
+  "vary_lesion_all_GO": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "clean": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 5,
+        "confident": true,
+        "reason": "high_confidence",
+        "mean_role_conf": 0.47693182725897426,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": true,
+          "granted": true,
+          "kept_sentences": 5,
+          "elaborations_dropped": 0,
+          "reason": "high_confidence"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "degraded": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.342974556912615,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "lesion": {
+        "recalled_svo": [
+          "asimov_isaac",
+          "employer",
+          "university_of_boston"
+        ],
+        "abstained": false,
+        "n_sentences": 4,
+        "confident": false,
+        "reason": "low_confidence_capped",
+        "mean_role_conf": 0.47693182725897426,
+        "cf": {
+          "on": true,
+          "floor_sentences": 4,
+          "requested_sentences": 5,
+          "confident": false,
+          "granted": false,
+          "kept_sentences": 4,
+          "elaborations_dropped": 1,
+          "reason": "low_confidence_capped"
+        },
+        "moat_ok": true,
+        "recall_correct": true
+      },
+      "checks": {
+        "kb_relation_route_recalls_correct_fact": true,
+        "degraded_turn_still_a_real_match_not_an_abstain": true,
+        "moat_clean_every_arm": true,
+        "clean_confident_true": true,
+        "degraded_confident_false": true,
+        "vary_n_sentences": true,
+        "lesion_collapses_confident": true,
+        "lesion_collapses_n_sentences": true
+      },
+      "measurement_GO": true,
+      "vary_lesion_GO": true
+    }
+  ]
+}

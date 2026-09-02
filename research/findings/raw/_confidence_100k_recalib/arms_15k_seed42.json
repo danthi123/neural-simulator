@@ -1,0 +1,104 @@
+{
+  "bundle": "15k",
+  "seed": 42,
+  "noise_sigma": 0.12,
+  "elapsed_s": 169.65178418159485,
+  "arms": {
+    "clean": {
+      "mean_margin_norm": 0.49655255804306914,
+      "mean_winner_z": 7.237103053619613,
+      "mean_role_conf_reported": 0.49655255804306914,
+      "confident": true,
+      "n_sentences": 5,
+      "recall_correct": true,
+      "abstained": false,
+      "per_role": {
+        "university_of_boston": {
+          "winner": "university_of_boston",
+          "top": 0.4696326566395878,
+          "runner": 0.23167832287378326,
+          "margin_norm": 0.5066818286483366,
+          "winner_z": 7.516665312785117
+        },
+        "asimov_isaac": {
+          "winner": "asimov_isaac",
+          "top": 0.42453011279465913,
+          "runner": 0.2331489326529987,
+          "margin_norm": 0.4508070780444789,
+          "winner_z": 6.797975995299029
+        },
+        "employer": {
+          "winner": "employer",
+          "top": 0.4582328238150307,
+          "runner": 0.21437562623431972,
+          "margin_norm": 0.5321687674363919,
+          "winner_z": 7.396667852774695
+        }
+      }
+    },
+    "degraded": {
+      "mean_margin_norm": 0.31610018152850244,
+      "mean_winner_z": 5.328780879167977,
+      "mean_role_conf_reported": 0.31610018152850244,
+      "confident": false,
+      "n_sentences": 4,
+      "recall_correct": true,
+      "abstained": false,
+      "per_role": {
+        "university_of_boston": {
+          "winner": "university_of_boston",
+          "top": 0.3648969780820318,
+          "runner": 0.22466713917590886,
+          "margin_norm": 0.3842998077399762,
+          "winner_z": 5.814059255969056
+        },
+        "asimov_isaac": {
+          "winner": "asimov_isaac",
+          "top": 0.29769140139413286,
+          "runner": 0.233272818726513,
+          "margin_norm": 0.21639382981686495,
+          "winner_z": 4.751076814953577
+        },
+        "employer": {
+          "winner": "employer",
+          "top": 0.3348192493305634,
+          "runner": 0.21843376530949954,
+          "margin_norm": 0.34760690702866615,
+          "winner_z": 5.421206566581298
+        }
+      }
+    },
+    "lesion": {
+      "mean_margin_norm": 0.49655255804306914,
+      "mean_winner_z": 7.237103053619613,
+      "mean_role_conf_reported": 0.49655255804306914,
+      "confident": false,
+      "n_sentences": 4,
+      "recall_correct": true,
+      "abstained": false,
+      "per_role": {
+        "university_of_boston": {
+          "winner": "university_of_boston",
+          "top": 0.4696326566395878,
+          "runner": 0.23167832287378326,
+          "margin_norm": 0.5066818286483366,
+          "winner_z": 7.516665312785117
+        },
+        "asimov_isaac": {
+          "winner": "asimov_isaac",
+          "top": 0.42453011279465913,
+          "runner": 0.2331489326529987,
+          "margin_norm": 0.4508070780444789,
+          "winner_z": 6.797975995299029
+        },
+        "employer": {
+          "winner": "employer",
+          "top": 0.4582328238150307,
+          "runner": 0.21437562623431972,
+          "margin_norm": 0.5321687674363919,
+          "winner_z": 7.396667852774695
+        }
+      }
+    }
+  }
+}

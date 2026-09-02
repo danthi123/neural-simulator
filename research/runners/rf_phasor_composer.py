@@ -1004,6 +1004,28 @@ class RFPhasorComposer:
             top_r = max(top_raw, 0.0)
             runner_r = max(runner_raw, 0.0)
             margin_norm = float((top_r - runner_r) / (top_r + 1e-9)) if top_r > 0.0 else 0.0
+            # `margin_snr` (ADDED 2026-09-02, board #94/#108 R3 -- SCALE-INVARIANT decisiveness): the winner's
+            # z-score above the NON-WINNER candidate BULK, `(top_raw - mean_nonwin) / std_nonwin`. WHY: `margin`
+            # and `margin_norm` both key on the single RUNNER-UP, which is the max over the V-1 non-winner
+            # candidates -- an ORDER STATISTIC that inflates as ~sqrt(2 ln V) with codebook size (extreme-value
+            # of the noise floor), so `margin_norm` drifts DOWN at a larger vocab even for an equally-decisive
+            # recall (measured: the identical clean `asimov_isaac employer university_of_boston` recall reads
+            # margin_norm 0.497 at the 15k core vs 0.395 at the 100k bundle -- a false loss of confidence). The
+            # winner-vs-BULK z-score is scale-INVARIANT because the non-winner mean (~0) and std (~1/sqrt(D),
+            # D fixed) are STABLE estimators of the codebook noise floor, unaffected by adding more candidates:
+            # the SAME recall reads winner_z 7.24 (15k) == 7.03 (100k). ADDITIVE ONLY -- `margin`/`margin_norm`/
+            # `confidence` are byte-identical (existing readers: self_schema_honesty.py, the tests). Consumed by
+            # metacog_production_organ.mean_role_confidence (preferred over margin_norm for an LTM-sourced trace).
+            # See research/findings/raw/_confidence_100k_recalib/ (diagnose_margin_scale, arms_15k) +
+            # research/findings/2026-09-02-confidence-forthcoming-100k-recalibration-*.md.
+            row = sims[i]
+            n_nonwin = max(1, len(words) - 1)
+            nonwin_sum = float(row.sum()) - top_raw
+            nonwin_sumsq = float(np.dot(row, row)) - top_raw * top_raw
+            nonwin_mean = nonwin_sum / n_nonwin
+            nonwin_var = max(0.0, nonwin_sumsq / n_nonwin - nonwin_mean * nonwin_mean)
+            nonwin_std = float(np.sqrt(nonwin_var))
+            margin_snr = float((top_raw - nonwin_mean) / (nonwin_std + 1e-9)) if nonwin_std > 0.0 else 0.0
             out.append({
                 "word": words[top],
                 "confidence": confidence,
@@ -1013,6 +1035,7 @@ class RFPhasorComposer:
                 "runner_score_raw": runner_raw,
                 "margin": float(top_raw - runner_raw),
                 "margin_norm": margin_norm,
+                "margin_snr": margin_snr,
                 "conflict": float(runner_conf / (confidence + runner_conf + 1e-9)),
             })
         return out
