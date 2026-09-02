@@ -122,6 +122,27 @@ def test_mean_role_confidence_prefers_margin_norm_over_raw_margin():
     assert mean_role_confidence(activity_legacy) == pytest.approx(0.55)
 
 
+def test_mean_role_confidence_prefers_scale_invariant_margin_snr():
+    """2026-09-02 (board #94/#108 R3): `margin_snr` -- the composer's scale-INVARIANT winner-vs-bulk z-score --
+    is preferred OVER `margin_norm` when a chip carries it, mapped linearly through the 15k reference anchors
+    SNR_LO/SNR_HI onto the ROLE_CONF band, so a clean recall reads the same confidence at any vocab scale (the
+    100k recalibration: margin_norm keys on the runner-up, which inflates as sqrt(2 ln V) with codebook size, and
+    dragged the 100k clean read below the confident floor). The clean-recall anchor SNR_HI maps to ROLE_CONF_HI
+    and the degraded-recall anchor SNR_LO maps to ROLE_CONF_LO; a chip WITHOUT margin_snr still falls through to
+    margin_norm (backward compatible -- the OneBrainComposer buffer path is byte-identical)."""
+    from research.runners.metacog_production_organ import (
+        mean_role_confidence, SNR_LO, SNR_HI, ROLE_CONF_LO, ROLE_CONF_HI)
+
+    # snr present -> preferred over margin_norm; the two 15k anchors map exactly to the band edges.
+    hi = {"roles": [{"role": "patient", "margin_snr": SNR_HI, "margin_norm": 0.99, "margin": 0.99}]}
+    lo = {"roles": [{"role": "patient", "margin_snr": SNR_LO, "margin_norm": 0.99, "margin": 0.99}]}
+    assert mean_role_confidence(hi) == pytest.approx(ROLE_CONF_HI)
+    assert mean_role_confidence(lo) == pytest.approx(ROLE_CONF_LO)
+
+    # a chip WITHOUT margin_snr still falls through to margin_norm (backward compatible).
+    assert mean_role_confidence({"roles": [{"margin_norm": 0.55, "margin": 0.05}]}) == pytest.approx(0.55)
+
+
 def test_rf_source_monitor_echo_checks_candidate_without_source_fact():
     comp = RFPhasorComposer(
         seed=42,
