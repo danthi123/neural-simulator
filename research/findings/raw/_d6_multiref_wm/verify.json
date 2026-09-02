@@ -26,17 +26,17 @@
   "intact": {
     "2": {
       "all_recovered_rate": 1.0,
-      "hold_alive_min": 0.06342592592592593,
+      "hold_alive_min": 0.06481481481481483,
       "zero_input_ok": true
     },
     "3": {
       "all_recovered_rate": 1.0,
-      "hold_alive_min": 0.0638888888888889,
+      "hold_alive_min": 0.06620370370370371,
       "zero_input_ok": true
     },
     "4": {
       "all_recovered_rate": 1.0,
-      "hold_alive_min": 0.05879629629629631,
+      "hold_alive_min": 0.05740740740740741,
       "zero_input_ok": true
     }
   },
@@ -110,13 +110,13 @@
         "0": "dog",
         "1": "cat"
       },
-      "hold_alive_min": 0.08611111111111111,
+      "hold_alive_min": 0.09722222222222225,
       "zero_input_ok": true,
       "all_recovered": true,
       "is_hold_query": true,
       "readout": "I'm holding 2 referents in working memory at once: dog and cat."
     }
   },
-  "elapsed_seconds": 6.1,
+  "elapsed_seconds": 9.1,
   "NOTE": "reuse-by-import of the 6-seed GO _multi_slot_binding_derisk.MultiSlotHold (R banks of D3 slow-NMDA, ONE shared FS) + the RUNG6c HebbianBinder; NO sim/ edit. The spiking HOLD is load-bearing (lesion recur=0 collapses the >=2 read-back); the referent PARSE + role-by-position WRITE MARKER + argmax READ are declared host residuals (the learned spiking write-gate is the open rung, gap#4)."
 }

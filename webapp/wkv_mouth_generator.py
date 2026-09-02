@@ -79,22 +79,39 @@ _CKPT_TEMPLATE = os.environ.get(
 )
 _WORD_RE = re.compile(r"[a-zA-Z']+")
 
-# ── opt-in e-prop LEARNED read-out head (honest residual #1, see the module docstring). Default OFF: the native
-# checkpoint head.weight is used, byte-identical to before this flag existed. `_wkv_mouth_readout_eprop_batched_
-# substrate_derisk.py --save-w-hat <path>` is the ONLY producer of this file's shape/basis; see `_apply_learned_
-# head` for the compatibility check performed before it is ever substituted in.
+# ── e-prop LEARNED read-out head (honest residual #1, see the module docstring). FLIPPED DEFAULT-ON 2026-09-02
+# (board #191, see `learned_head_enabled` below for the GO evidence); `BRAIN_WKV_MOUTH_LEARNED_HEAD=0` reverts
+# to the native checkpoint head.weight, byte-identical to before this flag existed. `_wkv_mouth_readout_eprop_
+# batched_substrate_derisk.py --save-w-hat <path>` is the ONLY producer of this file's shape/basis; see
+# `_apply_learned_head` for the compatibility check performed before it is ever substituted in.
 _LEARNED_HEAD_ENV = "BRAIN_WKV_MOUTH_LEARNED_HEAD"
 _LEARNED_HEAD_PATH_TEMPLATE = os.environ.get(
     "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH",
     # Default points at the 6/6-GO persisted heads (ratio 0.9273, min 0.8906; finding
-    # 2026-08-28-mouth-better-head-persist-6seed-GO-plus-wander-production-partial). Still behind the
-    # default-OFF BRAIN_WKV_MOUTH_LEARNED_HEAD flag; override with BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH.
+    # 2026-08-28-mouth-better-head-persist-6seed-GO-plus-wander-production-partial). Now default-ON
+    # (BRAIN_WKV_MOUTH_LEARNED_HEAD, 2026-09-02); override the path with BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH.
     str(_REPO_ROOT / "research/findings/raw/_persist_eprop_head_scope/wkv_eprop_learned_head_0p94_s{seed}.npz"),
 )
 
 
+# 2026-09-02 FLIPPED DEFAULT-ON (board #191, 6-seed A/B GO reproduced fresh against this exact code:
+# research/findings/raw/_wkv_learned_vs_native_head_ab_6seed.json / research/findings/2026-09-01-wkv-mouth-
+# learned-head-6seed-ab-through-fixed-default-path-GO.md): the fixed default per-seed learned-head path
+# resolves and APPLIES cleanly on every one of the 6 non-negotiable seeds (no silent fail-safe fallback), and
+# generates a lower (better) mean self-NLL than the native head on all 6 seeds (45/48 individual prompt wins).
+# ZERO PRODUCTION RISK today: this module is only ever imported when `BRAIN_OPEN_ENDED` is truthy (still
+# default-OFF, see webapp/open_ended_chat.py) -- with that top gate off, this flag never executes.
+_LEARNED_HEAD_DEFAULT_ON = True
+
+
 def learned_head_enabled() -> bool:
-    return os.environ.get(_LEARNED_HEAD_ENV, "0").strip().lower() in ("1", "true", "on", "yes")
+    """DEFAULT-ON (flipped 2026-09-02, `_LEARNED_HEAD_DEFAULT_ON`). `BRAIN_WKV_MOUTH_LEARNED_HEAD` in
+    {0,false,no,off,""} -> an explicit OFF, reverting to the checkpoint's NATIVE head, byte-identical to before
+    this flag existed. Only ever reached when `BRAIN_OPEN_ENDED` (still default-OFF) is also truthy."""
+    v = os.environ.get(_LEARNED_HEAD_ENV)
+    if _LEARNED_HEAD_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
 def _learned_head_path(seed: int) -> str:

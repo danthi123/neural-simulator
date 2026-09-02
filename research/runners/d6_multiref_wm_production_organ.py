@@ -37,7 +37,8 @@ bumps die over the span, so a >=2-referent read-back collapses (the de-risk's k>
 host referent PARSE and the write MARKER are byte-identical with/without the lesion, so the discrimination is caused
 by the spiking hold, not the host bookkeeping.
 
-COMPETITIVE FREE-SLOT-WINS ALLOCATION (2026-09-01, additive, default-OFF `BRAIN_MULTIREF_COMPETITIVE`): closes the
+COMPETITIVE FREE-SLOT-WINS ALLOCATION (2026-09-01, additive; FLIPPED DEFAULT-ON 2026-09-02, board #196,
+`BRAIN_MULTIREF_COMPETITIVE`): closes the
 "register assignment is a role-by-position host MARKER" residual below for the REGISTER dimension (WHICH bank holds a
 referent). Before each write, `MultiSlotHold.probe_occupancy()` reads every register's CURRENT band-max firing rate
 (a genuine zero-input `cp_firing_states` read, external input asserted zero -- the same read-out-instrument class the
@@ -55,10 +56,12 @@ no background OU noise (`ou_std_current_pA=0`), a probe over an all-baseline ban
 index -- a real (not formulaic) tie, but a deterministic one absent prior occupancy.
 
 HONEST RESIDUALS (declared; match the de-risk's named residuals + the task's named open rung):
-  * The learned SPIKING WRITE-GATE is the open rung: the register assignment is today a role-by-position host MARKER
-    (referent 0 -> reg0, ...) UNLESS `BRAIN_MULTIREF_COMPETITIVE=1` (above), which substitutes a genuine occupancy
-    READ for the position marker. `739a8867` established even a host position-ORACLE fails to induce role at 6 seeds
-    -> the residual is CREDIT ASSIGNMENT (gap#4). The learned, emergent, spiking multi-register role-gate is un-done.
+  * The learned SPIKING WRITE-GATE is the open rung: register allocation is now (default-ON, 2026-09-02) a
+    genuine occupancy READ (`argmin(probe_occupancy())`), not a LEARNED gate -- the substrate is READ, not
+    trained to choose. `BRAIN_MULTIREF_COMPETITIVE=0` reverts to the pre-existing role-by-position host MARKER
+    (referent 0 -> reg0, ...). `739a8867` established even a host position-ORACLE fails to induce role at 6
+    seeds -> the residual is CREDIT ASSIGNMENT (gap#4). The learned, emergent, spiking multi-register role-gate
+    (a trained selection policy, as opposed to this rung's substrate-READ selection) is un-done.
   * The referent EXTRACTION (which tokens are the discourse referents) is a host parse, bounded by a small referent
     lexicon + a coordinated-NP pattern — the same vocab-ceiling class the comprehension organ declares.
   * The BIND (referent -> local slot) is the host-numpy RUNG6c binder; the register READ is a host argmax over the
@@ -128,16 +131,27 @@ def multiref_lesioned() -> bool:
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
+# 2026-09-02 FLIPPED DEFAULT-ON (board #196, 6-seed GO verified fresh against this exact code:
+# research/findings/raw/_d6_wm_competitive_slot_binding/verify_6seed.json / research/findings/2026-09-01-d6-wm-
+# competitive-slot-binding-6seed-GO.md): >=2 referents introduced together land in DISTINCT registers via a
+# genuine MultiSlotHold.probe_occupancy() argmin read, invariant to mention order; a referent introduced after
+# an already-held anchor correctly avoids the anchor's occupied register too; the selection-only lesion
+# (BRAIN_MULTIREF_COMPETITION_LESION=1) collapses the separation into the already-validated superposed-collide
+# regime on every seed (load-bearing); `BRAIN_MULTIREF_COMPETITIVE=0` reverts BYTE-IDENTICALLY to the
+# pre-existing role-by-position path (verified 6/6 seeds).
+_MULTIREF_COMPETITIVE_DEFAULT_ON = True
+
+
 def multiref_competitive_enabled() -> bool:
-    """Default-OFF (additive; 2026-09-01). `BRAIN_MULTIREF_COMPETITIVE` in {1,true,yes,on} switches register
-    ALLOCATION from the role-by-position host MARKER (referent i -> register i) to the EMERGENT free-slot-wins
-    competitive read (`MultiSlotHold.probe_occupancy()` -> argmin): the brain's own current occupancy, not
-    sentence position, decides which register binds a new referent. Off -> byte-identical to the pre-existing
-    role-by-position path (the untouched default)."""
+    """DEFAULT-ON (flipped 2026-09-02, `_MULTIREF_COMPETITIVE_DEFAULT_ON`). `BRAIN_MULTIREF_COMPETITIVE` in
+    {0,false,no,off,""} -> an explicit OFF, reverting to the pre-existing role-by-position host MARKER
+    (referent i -> register i), byte-identical to before this flag existed. On (the default): register
+    ALLOCATION is the EMERGENT free-slot-wins competitive read (`MultiSlotHold.probe_occupancy()` -> argmin) --
+    the brain's own current occupancy, not sentence position, decides which register binds a new referent."""
     v = os.environ.get("BRAIN_MULTIREF_COMPETITIVE")
-    if v is None:
-        return False
-    return v.strip().lower() in ("1", "true", "yes", "on")
+    if _MULTIREF_COMPETITIVE_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "yes", "on")
 
 
 def multiref_competition_lesioned() -> bool:

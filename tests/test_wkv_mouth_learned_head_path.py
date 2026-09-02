@@ -18,8 +18,14 @@ instead of silently degrading a production flag to a no-op:
      one file silently held only the last-processed seed's head under all 6 seeds' names);
   3. end-to-end through the module's own public/semi-public surface (`_get_readout` / `learned_head_status`),
      enabling the flag actually APPLIES the learned head (`applied=True`, `reason=None`) on every seed, and
-     leaves the NATIVE head untouched (byte-identical-off) when the flag is off -- i.e. `generate()`'s
+     leaves the NATIVE head untouched (byte-identical-off) when the flag is EXPLICITLY "0" -- i.e. `generate()`'s
      PRODUCTION path genuinely swaps in the learned head end-to-end, not just "the path string looks right".
+
+2026-09-02 UPDATE (board #191 flip): `BRAIN_WKV_MOUTH_LEARNED_HEAD` is now DEFAULT-ON (6-seed A/B GO,
+`research/findings/2026-09-01-wkv-mouth-learned-head-6seed-ab-through-fixed-default-path-GO.md`, 45/48 prompt
+wins, reproduced fresh against this exact code before the flip). Explicit "0" is the byte-identical escape to
+the pre-flip native-head behavior; this module is only ever reached when `BRAIN_OPEN_ENDED` (still default-OFF)
+is also truthy, so the flip is zero production risk today.
 
 Full quality A/B (self-NLL vs native, 6 seeds, through `generate()` itself) lives in
 `research/runners/_wkv_learned_vs_native_head_ab_6seed.py` / `research/findings/2026-09-01-wkv-mouth-learned-
@@ -133,14 +139,27 @@ class TestLearnedHeadAppliesEndToEndThroughTheProductionLoader:
 
 
 class TestNativeHeadUnaffectedWhenFlagIsOff:
-    """Byte-identical-off: with the flag unset/0, `generate()`'s read path must never touch the learned-head
-    loader at all (no status recorded), preserving the pre-existing default-OFF behavior exactly."""
+    """Byte-identical-off: with the flag EXPLICITLY "0", `generate()`'s read path must never touch the
+    learned-head loader at all (no status recorded), preserving the pre-existing default-OFF behavior exactly.
+
+    2026-09-02 FLIPPED DEFAULT-ON (board #191, 6-seed A/B GO): explicit "0" is now the byte-identical escape;
+    see `test_unset_now_defaults_to_on` below for the flip itself (unset behaves like an explicit "1")."""
 
     @pytest.mark.parametrize("seed", SEEDS)
     def test_no_learned_head_status_when_flag_off(self, wkv_mouth_generator, monkeypatch, seed):
-        monkeypatch.delenv("BRAIN_WKV_MOUTH_LEARNED_HEAD", raising=False)
+        monkeypatch.setenv("BRAIN_WKV_MOUTH_LEARNED_HEAD", "0")
         wkv_mouth_generator._get_readout(seed)
         assert wkv_mouth_generator.learned_head_status(seed) is None, (
-            f"seed={seed}: a learned-head status was recorded even though the flag is off -- "
-            f"the default-OFF path is no longer byte-identical to before this flag existed."
+            f"seed={seed}: a learned-head status was recorded even though the flag is explicitly off -- "
+            f"the default-OFF escape is no longer byte-identical to before this flag existed."
         )
+
+    @pytest.mark.parametrize("seed", SEEDS)
+    def test_unset_now_defaults_to_on(self, wkv_mouth_generator, monkeypatch, seed):
+        """Pins the 2026-09-02 default-flip itself: leaving `BRAIN_WKV_MOUTH_LEARNED_HEAD` UNSET now applies
+        the learned head, exactly like an explicit "1"."""
+        monkeypatch.delenv("BRAIN_WKV_MOUTH_LEARNED_HEAD", raising=False)
+        wkv_mouth_generator._get_readout(seed)
+        status = wkv_mouth_generator.learned_head_status(seed)
+        assert status is not None, f"seed={seed}: unset should now apply the learned head by default"
+        assert status["applied"] is True and status["reason"] is None

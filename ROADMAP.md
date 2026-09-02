@@ -7,6 +7,29 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-09-02 (latest) — two more validated-but-off abilities are re-checked and switched on
+
+Two abilities that had already passed their initial multi-seed check, but were left switched off pending a
+policy decision, were re-verified fresh against the actual current code (not just trusted from the earlier
+write-up) and then switched on:
+
+- **Went live**: when a conversation introduces two or more new things to keep track of at once (say, "the dog
+  and the cat"), which internal memory slot holds which one is now decided by the brain checking which of its
+  own slots is currently least active, instead of always assigning them in the order they were mentioned. Two
+  things introduced together land in different slots regardless of which is named first, and a brand-new item
+  correctly avoids a slot that is already holding something from earlier in the conversation — something the
+  old "always by mention order" rule could never do because it never checked what was already held. Silencing
+  just this checking step (leaving the memory-holding itself untouched) reproduces the old mix-up behavior
+  exactly, confirming the checking step is what does the work. Six-of-six random setups passed, both before and
+  after the switch, with the old order-based behavior still available as a fallback if explicitly requested.
+- **Went live (prepares a not-yet-active feature, so it changes nothing today)**: the from-scratch experimental
+  voice model has an alternate "how to turn a thought into a word" component that was trained by the brain's
+  own local learning rule rather than copied from the host computer. A fresh six-setup test confirms it loads
+  correctly every time and produces noticeably more confident, coherent wording than the original component on
+  every one of the six setups. This alternate component is now the one used by default — but it only matters
+  once a whole separate experimental chat mode (still switched off) is itself turned on, so today's live
+  conversations are completely unaffected.
+
 ## 2026-09-01 (yet newer) — an auto-promotion sweep of two pending abilities: one goes live, one is held back honestly
 
 Two abilities that had already passed their initial validation, but were waiting on a policy decision about
