@@ -38,16 +38,23 @@ subsystem) · **FP-determinism** (the N≈4968 ceiling above) · structural (d3 
 The single-pool 6-seed cupy soak + the 3 Group-C cupy `run_gate` verifies are QUEUED on the GPU. Each Group-C edge stays
 PARTIAL until its 6/6 cupy GO; a NO-GO is a real finding. Controller harvests.
 
-### Phase 1 — INFRASTRUCTURE (READY NOW, CPU, no GPU, no dependency — the highest-value immediate build)
-1. **Reusable flip-verify harness** `onebrain_flip_verify_harness.py` — generalize `_xedge_flip_production_verify.py`'s
-   ARM A (byte-identical-off) / ARM B (visible-on-real-traffic through the REAL `webapp.server.brain_chat`, lesion-attributable,
-   `n_hollow=0`) / ARM C (no-regression). De-risk: reproduce the banked d6→comprehension verdict byte-for-byte.
-2. **The shipped-faculty REGRESSION BATTERY** — *this instrument does not exist*: ARM C today checks only ONE faculty's
-   fixed items. Build a cross-faculty battery that asserts a flip does not break the OTHER ~29 default-on faculties. This is
-   the single most load-bearing missing instrument — every merge + flip below depends on it.
-3. **Fix the OFF-arm-staleness bug + its gate** (the 2026-08-27 audit's deferred `tools/gates/` check): OFF arms must set
-   `="0"` explicitly, never `os.environ.pop()` (which silently becomes ON-vs-ON once a default flips). Closing it here
-   protects every later step.
+### Phase 1 — INFRASTRUCTURE (BUILT + DE-RISKED 2026-09-02, CPU/numpy — see finding 2026-09-02-onebrain-flip-verify-harness-and-regression-battery-BUILT-derisk-GO)
+1. **Reusable flip-verify harness** `research/runners/onebrain_flip_verify_harness.py` — DONE. Generalizes
+   `_xedge_flip_production_verify.py`'s ARM A (byte-identical-off) / ARM B (visible-on-real-traffic through the REAL
+   `webapp.server.brain_chat`, lesion-attributable, `n_hollow=0`) / ARM C (no-regression) into one `EdgeSpec`-parameterized
+   entry. DE-RISK GO: the generalized aggregate reproduces the banked d6→comprehension verdict BYTE-FOR-BYTE on all 3 banked
+   cupy artifacts (GO and NO-GO) vs the reference `_aggregate` (`--derisk`, no brain builds needed).
+2. **The shipped-faculty REGRESSION BATTERY** `research/runners/onebrain_regression_battery.py` — DONE. Cross-faculty
+   no-regression instrument: given a flag flipped ON-vs-OFF, runs a representative deterministic probe per default-on faculty
+   through the real `brain_chat` (fresh per-arm builds at one seed) and asserts each still DECIDES identically (categorical
+   decision variables only; continuous noise excluded). 38 faculties registered (16 exercised by the default probe set, 22
+   thin/trigger-gated — the honest residual). Verified: synthetic identical→all-pass, deliberately-broken probe→caught
+   (only the target faculty regressed); real no-op flip→all exercised pass. The harness ARM C now calls it.
+3. **OFF-arm-staleness gate** `tools/gates/flip_offarm_staleness.py` (CLASS OS, BLOCKS) — DONE (the 2026-08-27 audit's
+   deferred check). Flags a non-`*_LESION* `BRAIN_ flag popped as an OFF arm while its reader default resolves ON; selftest
+   fails-in-the-failing-direction. Building it immediately caught a 7th live instance (`_wkv_mouth_open_ended_wiring_verify.py`,
+   stale since the 2026-08-30 `BRAIN_OPEN_ENDED_WKV_MOUTH` flip), now fixed. The same explicit-`="0"` discipline is baked into
+   the harness + battery OFF arms.
 
 ### Phase 2 — THE FP-DETERMINISM `sim/` EDIT (the crux; unblocks scale)
 Generalize deterministic matvec to all conductance paths (additive/guarded, `tests/test_determinism.py`-pinned). Gate:
@@ -79,6 +86,9 @@ to spiking cross-edges: E1 affect→tone (#84), E2 confidence→forthcomingness 
   couplings. Only then does a row read `scaffold_retired=YES`.
 
 ## The immediately-actionable next builds (GPU-free, ready now)
-1. **Phase-1 harness + shipped-faculty battery + OFF-arm gate** — the highest-value ready build; unblocks all gating below.
-2. **Phase-2 FP-determinism `sim/` edit** — the scale crux.
-Both are CPU/design-buildable while the GPU finishes the queued verdicts.
+1. ~~**Phase-1 harness + shipped-faculty battery + OFF-arm gate**~~ — DONE 2026-09-02 (all three built + de-risked; the gating
+   layer every merge/flip below depends on now exists). Follow-on (mechanical): lift the 22 thin battery probes to driving
+   ones (a mismatch turn for surprise, a scalar turn for pragmatic, a 2-turn intention for prospective-memory, a visual
+   percept for vision-identity, a between-turn tick for self-initiation).
+2. **Phase-2 FP-determinism `sim/` edit** — the scale crux (now the highest-value ready build). CPU/design-buildable while the
+   GPU finishes the queued verdicts.

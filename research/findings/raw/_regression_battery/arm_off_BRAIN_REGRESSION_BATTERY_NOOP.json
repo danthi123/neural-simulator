@@ -1,0 +1,692 @@
+{
+  "well": {
+    "answer": "the wolf bites the apple \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "wolf",
+      "bite",
+      "apple"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wolf",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wolf"
+        },
+        {
+          "word": "bite",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "bite"
+        },
+        {
+          "word": "apple",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "apple"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 157,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 40192,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49941110187135
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999902140674,
+      "rate_perceived": 0.1021875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/agent-ab2f6c6f6610be364/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "bites",
+        "apple"
+      ],
+      "recall_action": "bites",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.75,
+      "ema_engagement": 0.44999999999999996,
+      "afferent_pA": 629.9999999999999,
+      "da_level": 0.7155259371121526,
+      "snc_firing": 0.11083333333333327,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.4310518742243052,
+      "da_level": 0.7155259371121526,
+      "lesioned": false
+    }
+  },
+  "unknown": {
+    "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about capital yet: what can you tell me about capital? \u2014 worth going further here.",
+    "abstained": true,
+    "recalled_svo": null,
+    "derived": false,
+    "derived_from": null,
+    "verified": false,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "role": "agent",
+          "word": "capital",
+          "confidence": null,
+          "margin": null,
+          "cue": true,
+          "asserted": "capital"
+        },
+        {
+          "role": "action",
+          "word": "france",
+          "confidence": null,
+          "margin": null,
+          "cue": true,
+          "asserted": "france"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 5,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 45856,
+        "frac_fired": 0.00023988136775994416,
+        "mean_magnitude": 0.7253335931464091
+      },
+      "composer": "onebrain"
+    },
+    "provenance": null,
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": null,
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": {
+      "on": true,
+      "lesioned": false,
+      "novelty": 0.95,
+      "want_hz": 129.16666666666666,
+      "threshold": 65.88541666666666,
+      "curious": true,
+      "calib": {
+        "want_novel_hz": 126.56249999999999,
+        "want_familiar_hz": 5.208333333333332,
+        "threshold_hz": 65.88541666666666,
+        "novel_signal": 0.95,
+        "familiar_signal": 0.0,
+        "read_reps": 4
+      },
+      "topic": "capital",
+      "curiosity_da": {
+        "on": true,
+        "lesioned": false,
+        "da_level": 0.7009469833303944,
+        "da_tonic": 0.5,
+        "k_da": 1.5,
+        "da_crave_gain": 1.3014204749955915,
+        "base_threshold": 65.88541666666666,
+        "eff_threshold": 50.62577232534307,
+        "want_hz": 129.16666666666666,
+        "want_eff_hz": 168.10014468693058,
+        "curious": true
+      }
+    },
+    "multiref": null,
+    "noncontradiction": null,
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.7,
+      "ema_engagement": 0.42,
+      "afferent_pA": 588.0,
+      "da_level": 0.7009469833303944,
+      "snc_firing": 0.10833333333333332,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.4018939666607888,
+      "da_level": 0.7009469833303944,
+      "lesioned": false
+    }
+  },
+  "hold": {
+    "answer": "the fox wolfs the walked \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "fox",
+      "wolf",
+      "walked"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "fox",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "fox"
+        },
+        {
+          "word": "wolf",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "wolf"
+        },
+        {
+          "word": "walked",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "walked"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 238,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 60928,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49941129850819
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.9999999908045978,
+      "rate_perceived": 0.10875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/agent-ab2f6c6f6610be364/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "composer": "onebrain",
+      "n_referents": 2,
+      "input_order": [
+        "fox",
+        "wolf"
+      ],
+      "recovered": {
+        "0": "fox",
+        "1": "wolf"
+      },
+      "hold_alive_min": 0.09166666666666667,
+      "zero_input_ok": true,
+      "all_recovered": true,
+      "is_hold_query": false,
+      "kind": "maintain"
+    },
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "fox",
+        "wolf",
+        "walked"
+      ],
+      "recall_action": "wolf",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 1,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 1,
+      "lesioned": false,
+      "turn_engagement": 0.75,
+      "ema_engagement": 0.44999999999999996,
+      "afferent_pA": 629.9999999999999,
+      "da_level": 0.7155259371121526,
+      "snc_firing": 0.11083333333333327,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.4310518742243052,
+      "da_level": 0.7155259371121526,
+      "lesioned": false
+    }
+  },
+  "held": {
+    "answer": "The wolf watches owl. \u2014 worth going further here.",
+    "abstained": false,
+    "recalled_svo": [
+      "wolf",
+      "watch",
+      "owl"
+    ],
+    "derived": false,
+    "derived_from": null,
+    "verified": true,
+    "renderer": "template-stub (GPU-free)",
+    "brain": "tiny-demo",
+    "source": "tiny-demo +LTM",
+    "rich": false,
+    "activity": {
+      "roles": [
+        {
+          "word": "wolf",
+          "confidence": null,
+          "role": "agent",
+          "cue": true,
+          "asserted": "wolf"
+        },
+        {
+          "word": "watche",
+          "confidence": null,
+          "role": "action",
+          "cue": true,
+          "asserted": "watche"
+        },
+        {
+          "word": "owl",
+          "confidence": null,
+          "role": "patient",
+          "cue": true,
+          "asserted": "owl"
+        }
+      ],
+      "matched_fact_index": null,
+      "n_facts_scanned": 157,
+      "abstained": true,
+      "rf": {
+        "n_readout_neurons": 40192,
+        "frac_fired": 1.0,
+        "mean_magnitude": 104.49941110187135
+      },
+      "composer": "rf"
+    },
+    "provenance": {
+      "known": true,
+      "label": "perceived",
+      "d": 0.999999991280654,
+      "rate_perceived": 0.1146875,
+      "rate_generated": 0.0,
+      "encoded_as": "perceived",
+      "agrees_with_encoded": true
+    },
+    "affect": {
+      "on": true,
+      "lesioned": false,
+      "composer": "onebrain",
+      "differential": 0.0,
+      "valence_sign": "0",
+      "tone_level": 0,
+      "tone_token": "",
+      "forthcomingness": {
+        "max_sentences": 4,
+        "max_elaborations": 2
+      },
+      "manner_template": "",
+      "appraisal_valence": 0.0,
+      "appraisal_arousal": 0.0,
+      "appraisal_hits": [],
+      "pos_rate": 0.0,
+      "neg_rate": 0.0
+    },
+    "comprehension": {
+      "on": true,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/dant123/Projects/sim/.claude/worktrees/agent-ab2f6c6f6610be364/data/corpus/tinystories.txt'"
+    },
+    "surprise": null,
+    "metacog": null,
+    "worldmodel": null,
+    "curiosity": null,
+    "multiref": null,
+    "noncontradiction": {
+      "on": true,
+      "lesioned": false,
+      "in_scope": true,
+      "svo": [
+        "wolf",
+        "watches",
+        "owl"
+      ],
+      "recall_action": "watches",
+      "asserted_polarity": "AFFIRM",
+      "recalled_yn": "unknown",
+      "stored_polarity": null,
+      "reject": false
+    },
+    "reconsolidation": null,
+    "pragmatic": null,
+    "episodic": null,
+    "affect_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "ema_valence": 0.0,
+      "ema_arousal": 0.0,
+      "body_h": 0.5,
+      "body_a": 0.0,
+      "mood": -0.003375000000000003,
+      "felt_arousal": 0.0,
+      "level": 0,
+      "high_arousal": false,
+      "lead": "",
+      "reason": "neutral_hold",
+      "seed": 42,
+      "vplus_rate": 0.03679166666666667,
+      "vminus_rate": 0.04016666666666667
+    },
+    "swap_drives": {
+      "acted": false,
+      "turn": 2,
+      "topic": null,
+      "swapped": false,
+      "held_topic_before": null,
+      "held_topic": null,
+      "evicted_topic": null,
+      "reason": "no_topic_hold",
+      "seed": 42,
+      "lesioned": false,
+      "on": true,
+      "lead": "",
+      "new_topic": null,
+      "reason_lead": "no_topic_hold"
+    },
+    "common_ground_drives": {
+      "on": true,
+      "topic": null,
+      "decision": null,
+      "reason": "no_grounded_topic",
+      "lead": "",
+      "lesioned": false,
+      "reason_lead": "no_referent"
+    },
+    "da_drives": {
+      "acted": true,
+      "turn": 2,
+      "lesioned": false,
+      "turn_engagement": 0.55,
+      "ema_engagement": 0.51,
+      "afferent_pA": 714.0,
+      "da_level": 0.7905688460684012,
+      "snc_firing": 0.12499999999999997,
+      "mode": "focus",
+      "lead": " \u2014 worth going further here.",
+      "reason": "engaged",
+      "seed": 42,
+      "on": true
+    },
+    "da_encoding": {
+      "on": true,
+      "g": 1.5811376921368023,
+      "da_level": 0.7905688460684012,
+      "lesioned": false
+    }
+  }
+}

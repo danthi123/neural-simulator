@@ -1,0 +1,23 @@
+{
+ "run_id": "1788349515-3482113",
+ "runner": "_regen_demo.py",
+ "argv": [
+  "_regen_demo.py"
+ ],
+ "git_sha": "07af84ead",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T07:45:15",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_regression_battery/battery_demo.json"
+}

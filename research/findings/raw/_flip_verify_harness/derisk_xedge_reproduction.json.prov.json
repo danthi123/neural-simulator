@@ -1,0 +1,24 @@
+{
+ "run_id": "1788348206-3463221",
+ "runner": "research/runners/onebrain_flip_verify_harness.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ab2f6c6f6610be364/research/runners/onebrain_flip_verify_harness.py",
+  "--derisk"
+ ],
+ "git_sha": "07af84ead",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T07:23:26",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_flip_verify_harness/derisk_xedge_reproduction.json"
+}

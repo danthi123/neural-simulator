@@ -81,7 +81,11 @@ def main():
     tmp.write_text(orig_src)
 
     # -- (a) FLAG OFF: byte-identical content, WKV module never imported -----------------------------------------
-    os.environ.pop("BRAIN_OPEN_ENDED_WKV_MOUTH", None)
+    # 2026-09-02 off-arm-staleness fix (flip_offarm_staleness gate): `wkv_mouth_enabled()` FLIPPED default-ON
+    # 2026-08-30 (open_ended_chat.py:236 reads `.get(..., "1")`), so `os.environ.pop` no longer means OFF -- it
+    # now reads ON and this "FLAG OFF" arm would silently import/reach the WKV path. Force it explicitly, matching
+    # the reference `_spiking_mouth_recall_soak.py::_set_flag` fix (NOT re-run end-to-end, per that audit's pattern).
+    os.environ["BRAIN_OPEN_ENDED_WKV_MOUTH"] = "0"
     orig = _load_module("_wkv_verify_open_ended_chat_ORIGINAL", str(tmp))
     patched_off = _load_module("_wkv_verify_open_ended_chat_PATCHED_off", str(_REPO / "webapp" / "open_ended_chat.py"))
     orig.OpenEndedGenerator.generate = _stub_qwen_generate
