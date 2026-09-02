@@ -1,0 +1,43 @@
+{
+ "run_id": "1788315496-2938783",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--ridge",
+  "0.5",
+  "--n-glimpses",
+  "2",
+  "--n-s2",
+  "96",
+  "--s2-kwta-frac",
+  "0.25",
+  "--out",
+  "research/findings/raw/lanes/perception/vlin_kwta0.25_6seed.json"
+ ],
+ "git_sha": "bbe8ab27f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T22:18:16",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 756.9,
+ "corpus_check_query": "activity-dependent S2 template learning Hebbian sparse coding vision",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/perception/vlin_kwta0.25_6seed.json"
+}

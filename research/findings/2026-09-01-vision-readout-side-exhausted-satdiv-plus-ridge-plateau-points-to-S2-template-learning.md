@@ -68,5 +68,31 @@ flagged as its missing piece.
   `ad0648672`. This finding adds no production wiring and flips no default — it is a lane characterization + a
   NO-DEFER pointer to the next mechanism (S2 template learning), not a capability landing.
 
-**Next queued rung:** scope + de-risk activity-dependent S2 template learning (Hebbian/BCM or sparse-coding),
-with a competitive k-WTA-at-S2 as the cheaper first step.
+## Update (same day): the cheaper first step (k-WTA-at-S2) is the best lever yet but STILL plateaus — confirming the templates must be LEARNED, not just sparsified
+
+The competitive sparse-coding first rung — **k-WTA across the S2 template bank** (Foldiak 1991 / a hard-threshold
+LCA approximation, Rozell et al. 2008; zero all but the top-`frac` of templates per patch-location, attacking the
+diagnosed common-mode directly) — was built (`--s2-kwta-frac`, byte-identical-off, commit `bbe8ab27`) and is the
+**best readout/sparse-coding lever in the whole arc**: on the 3 explore seeds it produced the first non-zero
+`capability_go` count (1/3 at frac 0.25, vs 0/6 for satdiv/ridge/granule). But the **full-6-seed confirm holds the
+same plateau**:
+
+**Artifact:** research/findings/raw/lanes/perception/vlin_kwta0.25_6seed.json (+ vlin_kwta0.30_6seed.json).
+
+| lever (full 6 seeds) | verdict |
+|---|---|
+| k-WTA frac 0.25 | PARTIAL — beats NOGO floor **3/6**, load-bearing **6/6** |
+| k-WTA frac 0.30 | PARTIAL — beat 2/6, lb 6/6 |
+
+beat-3/6 + lb-6/6 is a genuine step past satdiv/ridge (beat-2/6) — but it is **not** the ≥5/6 capability GO, and
+the explore-set lead did NOT strengthen on the held seeds (the exact satdiv-style regression flagged as a risk).
+**Conclusion tightened:** *rescaling* (satdiv) and *sparsifying* (k-WTA) the frozen random S2 bank both help and
+both plateau — so the residual is confirmed to be the **information the frozen random templates carry**, not how
+their responses are normalized or thresholded. The decisive next mechanism is therefore **BCM sliding-threshold
+Hebbian LEARNING of the S2 templates** (Bienenstock, Cooper & Munro 1982) — already validated on this exact
+substrate (the 2026-08-26 on-bridge BCM finding broke the identical V1 common-mode boundary 62×; `sim/config.py`
+`hebbian_bcm`). k-WTA + BCM compose (sparsify + learn), so the k-WTA lever stays as a component. **Now de-risking
+BCM S2-template learning directly** (honest risk: 6 examples/class is thin for a stable per-unit sliding
+threshold — that is the live confound to design against).
+
+**Next queued rung:** de-risk BCM sliding-threshold learning of the S2 templates (compose with the k-WTA lever).
