@@ -1,0 +1,25 @@
+{
+ "run_id": "1788389240-4022800",
+ "runner": "research/findings/raw/_read_isolation_audit_29/diag_navsc.py",
+ "argv": [
+  "research/findings/raw/_read_isolation_audit_29/diag_navsc.py"
+ ],
+ "git_sha": "61e58a52d",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T18:47:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_read_isolation_audit_29/diag_sc_orienting.py"
+}

@@ -319,9 +319,25 @@ class ProvenanceBrain:
         self._rest_state = rest
 
     # -- helpers --------------------------------------------------------------------------------------------------
+    # THE READ-ISOLATION FIX (2026-09-02, board #150's ~29-runner follow-up audit — see
+    # `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`): the ORIGINAL
+    # `_DYN_ATTRS` already covered `cp_prev_firing_states` / `cp_refractory_timers` (2 of the C2 set) but never
+    # `cp_neuron_activity_ema` / `cp_neuron_firing_thresholds` (config-inert here — `enable_homeostasis=False` in
+    # the standalone build, so restoring them is a no-op defense-in-depth) NOR the synaptic delay ring buffer
+    # (`cp_synapse_pulse_timers` / `cp_synapse_pulse_progress` — an in-flight spike from one encode/recall trial
+    # can otherwise leak into the next, the exact mechanism `_replay_dg_pattern_separation_gate.py`'s
+    # `_reset_dynamics` docstring names). HONEST RESIDUAL: a repeat-recall diagnostic on this file's OWN GO
+    # margin (d~0.9 vs D_FLOOR=0.50, ~0.4 headroom) found a real but TINY leak (delta ~0.006 in d) that this port
+    # does not fully eliminate — the dominant residual is a SEPARATE, more severe bug found while diagnosing this
+    # (internal recurrent cp_connections weights drift under `enable_hebbian_learning=True` despite
+    # `plastic=False`/`plastic_internal=False`, because `RegionPathway(plastic=False)` never actually zeroes
+    # `cp_plasticity_rate_gain` for UNGATED pathways — see the FAILURE_LOG entry filed alongside this audit).
+    # Neither residual moves this file's own banked verdict (margin >> both).
     _DYN_ATTRS = ("cp_membrane_potential_v", "cp_recovery_variable_u", "cp_conductance_g_e",
                   "cp_conductance_g_i", "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
                   "cp_firing_states", "cp_prev_firing_states", "cp_refractory_timers",
+                  "cp_neuron_activity_ema", "cp_neuron_firing_thresholds",
+                  "cp_synapse_pulse_timers", "cp_synapse_pulse_progress",
                   "cp_hebb_coactivity_trace", "cp_external_input_current")
 
     def _snapshot_dynamics(self, attrs=None):

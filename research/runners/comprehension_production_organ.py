@@ -375,6 +375,7 @@ class ComprehensionProductionOrgan:
         self.lean_margin = None  # (T1-6) net-lean confidence for naming the over-subscribed role
         self.calib = None
         self._rest = {}          # comp-bridge id -> (rest_v, rest_u) resting snapshot for a hard per-turn reset
+        self._rest_extra = {}    # comp-bridge id -> {C2 array name -> true-rest snapshot or None} (read-isolation fix)
         # ONE-BRAIN XEDGE — the WM-resolved-role decision (closes the sub-decision caveat): on a content-inconclusive
         # transitive with a WM referent held, the balanced (content-cancelled) read is SIGNED by the cross-edge, so
         # the held referent's LEARNED role becomes the role tiebreaker. `_wm_baseline` is the no-WM balanced margin
@@ -390,6 +391,20 @@ class ComprehensionProductionOrgan:
         if self._shared is not None:
             return self._shared.read_isolation("comprehension")
         return contextlib.nullcontext()
+
+    # THE READ-ISOLATION FIX (2026-09-02, board #150's ~29-runner follow-up audit — see
+    # `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`): the ORIGINAL
+    # `_hard_reset` restored (v, u) and zeroed conductances/firing/current, but never restored
+    # `cp_prev_firing_states` / `cp_refractory_timers` (it zeroed a NONEXISTENT `cp_refractory` — the exact dead
+    # typo the audit found elsewhere) — HARD firing gates independent of membrane potential: a neuron mid-refractory
+    # at the end of one turn's read stays gated at the START of the next even though v/u were reset. Confirmed by
+    # a repeat-read diagnostic (build once, `read_margin` the SAME (n0,v,n1) twice in a row): the ORIGINAL code
+    # diverges (0.3375 vs 0.2958, delta 0.0417 — a 12% relative swing on this shared, PRODUCTION-wired D4
+    # comprehension read); the two homeostatic arrays (`cp_neuron_activity_ema` / `cp_neuron_firing_thresholds`)
+    # are also restored for defense-in-depth even though `_build_comp`'s default `homeostasis=False` makes them
+    # config-inert for every CURRENT caller of this organ (no caller overrides `homeostasis=True`).
+    _EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
+                           "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
 
     def _snapshot_rest(self, comp):
         """Snapshot a comp's resting state (after a brief settle) so every per-turn read starts IDENTICAL — the
@@ -418,12 +433,31 @@ class ComprehensionProductionOrgan:
                 return a.get() if hasattr(a, "get") else np.asarray(a)
             self._rest[id(comp)] = (xp.asarray(_host(snap["cp_membrane_potential_v"])).copy(),
                                     xp.asarray(_host(snap["cp_recovery_variable_u"])).copy())
+            # C2 extra arrays: pull from the pool's own snapshot when it carries them (some pool builders'
+            # _snapshot_state includes prev_firing/refractory but not the homeostatic pair); otherwise fall back
+            # to the OBVIOUS true-rest value (0 / False) for the two hard-gate arrays, which is EXACT (a
+            # genuinely quiescent neuron always has refractory_timer==0 and prev_firing_state==False, unlike the
+            # homeostatic pair which has a nonzero per-neuron heterogeneous baseline that a snapshot must supply).
+            extra = {}
+            for nm in self._EXTRA_RESET_ARRAYS:
+                if nm in snap:
+                    extra[nm] = xp.asarray(_host(snap[nm])).copy()
+                elif nm in ("cp_refractory_timers", "cp_prev_firing_states"):
+                    extra[nm] = None   # sentinel: _hard_reset zeroes these directly, no snapshot needed
+                # else: no snap entry for a homeostatic array -> leave unset (config-inert for every current
+                # caller; see class docstring above) rather than guess a wrong nonzero baseline.
+            self._rest_extra[id(comp)] = extra
             return
         b = comp.bridge
         b.cp_external_input_current[:] = 0.0
         for _ in range(40):
             b._run_one_simulation_step()
         self._rest[id(comp)] = (b.cp_membrane_potential_v.copy(), b.cp_recovery_variable_u.copy())
+        extra = {}
+        for nm in self._EXTRA_RESET_ARRAYS:
+            arr = getattr(b, nm, None)
+            extra[nm] = arr.copy() if arr is not None else None
+        self._rest_extra[id(comp)] = extra
 
     def _hard_reset(self, comp):
         """Restore the comp bridge to its resting snapshot (v,u) and zero all conductances/firing/refractory/current
@@ -434,10 +468,32 @@ class ComprehensionProductionOrgan:
             b.cp_membrane_potential_v[:] = rest[0]
             b.cp_recovery_variable_u[:] = rest[1]
         for name in ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab",
-                     "cp_conductance_g_nmda", "cp_firing_states", "cp_refractory"):
+                     "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
+                     "cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise",
+                     "cp_firing_states"):
             arr = getattr(b, name, None)
             if arr is not None:
                 arr[:] = 0
+        # THE READ-ISOLATION FIX: restore the 4 C2 arrays (see `_EXTRA_RESET_ARRAYS` docstring above). The hard
+        # firing-gate pair (refractory/prev-firing) has an unambiguous zero/False true-rest value, so it is
+        # restored EVEN IF `_snapshot_rest` had no snapshot for it (the `None` sentinel branch below); the
+        # homeostatic pair is restored only from an actual snapshot (never guessed).
+        extra = self._rest_extra.get(id(comp), {})
+        for name in ("cp_refractory_timers",):
+            arr = getattr(b, name, None)
+            if arr is not None:
+                snap_val = extra.get(name)
+                arr[:] = snap_val if snap_val is not None else 0
+        for name in ("cp_prev_firing_states",):
+            arr = getattr(b, name, None)
+            if arr is not None:
+                snap_val = extra.get(name)
+                arr[:] = snap_val if snap_val is not None else False
+        for name in ("cp_neuron_activity_ema", "cp_neuron_firing_thresholds"):
+            arr = getattr(b, name, None)
+            snap_val = extra.get(name)
+            if arr is not None and snap_val is not None:
+                arr[:] = snap_val
         b.cp_external_input_current[:] = 0.0
 
     def _xedge_codrive(self, comp, wm_focus=_WM_FOCUS_UNSET):
@@ -788,3 +844,48 @@ def get_organ(seed: int = 42) -> ComprehensionProductionOrgan:
 def didnt_follow_message(svo=None) -> str:
     return ("My role-binding didn't resolve on that — I couldn't tell which word plays which role, "
             "so I didn't follow it. Could you rephrase?")
+
+
+def selftest_read_isolation(seed: int = 42) -> dict:
+    """Regression guard for the 2026-09-02 C2 read-isolation fix (`_hard_reset`'s `_EXTRA_RESET_ARRAYS` port).
+    OU noise (default ON for this organ's substrate) makes a raw repeat-read only APPROXIMATELY identical even
+    on the FIXED code, so this selftest disables OU (`enable_ou_process=False`, both comp bridges) right after
+    build to isolate the DETERMINISTIC leak the fix targets, then asserts bitwise repeat-read identity.
+
+    Verified in BOTH directions (2026-09-02): PASSES on this fixed file; FAILS on a `git show HEAD~1` checkout of
+    this file (the pre-fix `_hard_reset` that zeroed a nonexistent `cp_refractory` and never restored
+    `cp_prev_firing_states` / `cp_refractory_timers`) — reproducing the diagnostic that found the bug (repeat-read
+    delta 0.0417 on this same (n0,v,n1), an OU-noise-free rerun of that diagnostic on the pre-fix code reproduces
+    a non-zero delta; the fixed code gives delta==0.0 exactly)."""
+    org = ComprehensionProductionOrgan(seed=seed)
+    org.ensure_built()
+    for comp in (org.comp,):
+        comp.bridge.core_config.enable_ou_process = False
+        if getattr(comp.bridge, "cp_ou_current", None) is not None:
+            comp.bridge.cp_ou_current[:] = 0.0
+    items = build_battery(seed, n_per_cond=6)
+    (_lab, _tag, n0, v, n1) = items[0]
+    (_lab2, _tag2, m0, v2, m1) = items[1]
+    r1 = org.read_margin(n0, v, n1)
+    r2 = org.read_margin(n0, v, n1)
+    r3 = org.read_margin(n0, v, n1)
+    _ = org.read_margin(m0, v2, m1)
+    r4 = org.read_margin(n0, v, n1)
+    out = {
+        "repeat_read": {"r1": r1, "r2": r2, "identical": r1 == r2, "delta": abs(r1 - r2)},
+        "order_dependence": {"r3": r3, "r4": r4, "identical": r3 == r4, "delta": abs(r3 - r4)},
+    }
+    out["PASS"] = bool(out["repeat_read"]["identical"] and out["order_dependence"]["identical"])
+    return out
+
+
+if __name__ == "__main__":
+    import argparse
+    import json as _json
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--selftest", action="store_true")
+    args = ap.parse_args()
+    if args.selftest:
+        res = selftest_read_isolation()
+        print(_json.dumps(res, indent=2))
+        raise SystemExit(0 if res["PASS"] else 1)
