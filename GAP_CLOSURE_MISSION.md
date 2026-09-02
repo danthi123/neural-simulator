@@ -13,7 +13,47 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02 (READ FIRST; LATEST anchor — supersedes the 2026-09-01 header below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02b (READ FIRST; LATEST anchor — supersedes the 2026-09-02 header below)
+
+**Board #108 cluster: R2 (server wiring) CLOSED, R3 (100k honesty re-verify) QUEUED, R1 (escalation soak)
+UNCHANGED-still-in-flight.** Branch `research/flip-108-wire-escalation-reverify` @`3e3ad90dd` (pushed to
+`origin`; `gitea` unreachable at push time — its private-network IP did not respond, report as lagging, not a
+push failure — retry `bash tools/push_both.sh research/flip-108-wire-escalation-reverify` next session).
+
+**R2 CLOSED.** `webapp/server.py::_load_or_build_ltm_store` (the tiny-demo default path) and
+`_build_chat_brain`'s `load_developed_brain(...)` call site both now thread `enable_codebook_cache=`/
+`enable_decode_escalation=` via new `_ltm_codebook_cache_on()`/`_ltm_decode_escalation_on()` helpers — default
+ON at ANY bundle scale (`BRAIN_LTM_CODEBOOK_CACHE=0`/`BRAIN_LTM_DECODE_ESCALATION=0` escape). Byte-identical-off
+on the shipping 15k core confirmed two ways: `_knowledge_scale_100k_production_verify.py --bundle
+wikidata_core_15k` (flags OFF) reproduces the historical shape (0/298 oracle mismatches, recall 1.0, moat
+0/40); a direct in-process `_load_or_build_ltm_store` OFF-vs-new-default comparison over 300 real cues (600
+checks) + 20 moat cues found 0 diffs (`research/findings/raw/_flip108_r2_wiring/
+verify_load_or_build_ltm_store_15k_byte_identical.json`). `tests/test_decode_escalation_seed44_hole.py` +
+`test_tiered_fact_store.py` (14/14) pass unmodified; `tests/test_webapp_server.py` re-run in progress as of
+this note (no import-level break observed before the note was written). FAILURE_LOG row 94 marked FIXED;
+`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s `tiered-knowledge-ltm` `scale_note` updated.
+
+**R3 QUEUED, not yet run.** 100k-bundle adaptations of the exact scripts that gated #94/#129's 15k flips
+(`research/findings/raw/_flip108_r3_100k_honesty_reverify/`) are queued on the shared `tools/gpu_queue.sh`
+(positions 15-16, behind R1's still-in-flight escalation soak at position 14 and the pre-existing four-day-queue
++ ltm-shard-elab jobs at positions 1-13) — `verify_margin_norm_recalibration_100k.py` (confidence-forthcomingness
+#94, 6-seed, escalation+cache ON matching the new production default) and
+`_source_provenance_honesty_flip_verify_100k.py` (source-provenance-honesty #129, via `BRAIN_LTM_BUNDLE=<100k>`
+on the real handler). Both jobs `cd` into this session's worktree (`research/flip-108-wire-escalation-reverify`
+@`3e3ad90dd`) — if that worktree no longer exists when the queue reaches them, re-checkout the branch (or merge
+to main) and repoint the `cd` before they run.
+
+**R1 UNCHANGED.** The 6-seed cupy `enable_decode_escalation` no-regression soak (row 93) is still queued,
+unrun as of this note — its own completion is the remaining gate before any 100k default-flip re-attempt,
+independent of R2/R3.
+
+**Flip readiness: NOT YET.** Do not flip `_default_ltm_bundle_dir()` to `wikidata_100k` until R1 lands GO AND
+R3's results are in (a regression at 100k on either honesty faculty is itself a real finding to report, not to
+paper over).
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02 (supersedes the 2026-09-01 header below)
 
 **Board #108 cluster (#108/#150/#127/#109/#143) — owner-approved 100k-knowledge-base live-default flip: verify-first
 pass RE-CONFIRMS the recall-hole residual and NO-GOes the flip this cycle.** The owner approved swapping

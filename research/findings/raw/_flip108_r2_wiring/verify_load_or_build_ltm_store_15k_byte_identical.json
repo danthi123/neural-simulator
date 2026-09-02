@@ -1,0 +1,19 @@
+{
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+  "n_facts": 15000,
+  "n_probe_cues": 300,
+  "n_probe_checks": 600,
+  "n_probe_diffs": 0,
+  "probe_diffs": [],
+  "n_moat_cues": 20,
+  "n_moat_diffs": 0,
+  "moat_off_confab": 0,
+  "moat_default_confab": 0,
+  "default_resolves_to": {
+    "enable_codebook_cache": true,
+    "enable_decode_escalation": true
+  },
+  "byte_identical_off_vs_default": true,
+  "moat_safe": true,
+  "elapsed_s": 1114.8
+}
