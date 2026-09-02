@@ -21,12 +21,25 @@ OFF-ARM DISCIPLINE (2026-08-27 staleness class, gated by tools/gates/flip_offarm
 the flag EXPLICITLY to "0" — never `os.environ.pop` — so it stays OFF even after the flag's own default flips ON.
 
 HONEST BOUNDARY. This is a REACHABILITY + DECISION-STABILITY instrument, not a proof of each faculty's correctness. A
-faculty whose decision fields are None/absent on the probe set (it needs a trigger this set does not supply — a
-mismatch turn for surprise, a scalar-quantity turn for pragmatic, a 2-turn intention for prospective memory, a visual
-percept for vision-identity, a between-turn tick for self-initiation) is reported as `not-exercised` (a THIN probe:
-counted, honest, not claimed as covered). Extending a thin probe to a driving one is a mechanical follow-on. The battery
-catches a flip that changes a faculty's DECIDED output on a turn the set already drives; it cannot catch a regression a
-probe never reaches.
+faculty whose decision fields are None/absent on the probe set (it needs a trigger this set does not supply) is
+reported as `not-exercised` (a THIN probe: counted, honest, not claimed as covered). The battery catches a flip that
+changes a faculty's DECIDED output on a turn the set already drives; it cannot catch a regression a probe never
+reaches.
+
+THIN-PROBE LIFT (2026-09-02, the mechanical follow-on this paragraph named). Of the original 38 rows, 16 were driving
+and 22 were thin. 20 of the 22 are now driving (comprehension-learned-animacy-cue/-verb-selects, affect-marker-
+spiking-wta, confidence-forthcomingness, prospective-memory [formation half only], pragmatic-implicature [field-path
+fix], surprise-monitor, metacog-monitor, worldmodel-forward, curiosity-followup, reconsolidation, episodic-memory,
+discourse-register, open-ended-generation, discourse-planner, gnw-multistep-deliberation, self-initiated-utterance,
+vision-identity-spiking-hmax, bg-action-selection, selective-attention-biased-competition) — each via either a new
+PROBE_TURNS entry (a genuine trigger this set never supplied: a contradicting assertion, an expectation query, a
+referential turn, a visual percept, a content-empty turn, a chase-form question, an idle/empty turn, a rich=True
+override, ...) or a field-path fix (several thin rows pointed at a response key that never existed — e.g.
+`pmem.armed`/`reconsolidation.revised` are not real keys; the real ones are `prospective.held`/
+`reconsolidation.action`). 2 rows (gnw-deliberation, value-driven-choice) stay thin=True — both need a genuine
+>=2-distinct-patient (agent,action) ambiguity that brain_chat-only conversational teaching CANNOT construct: the
+default-ON reconsolidation organ rewrites a contradicting assertion IN PLACE rather than leaving two candidates
+(verified live via the `contra` probe). See research/findings/2026-09-02-regression-battery-thin-probes-lifted.md.
 """
 from __future__ import annotations
 
@@ -38,15 +51,41 @@ import sys
 
 
 # ── the probe turns (deterministic; each populates several faculties' decision fields) ───────────────────────────
-# (label, message, session, reset). A shared-session pair (hold -> held) sets discourse/WM state for the held read.
+# (label, message, session, reset, percept, rich). A shared-session pair (hold -> held, or dr_a -> dr_b -> dr_c, or
+# bc_a -> bc_b) sets discourse/WM state for the later read in that SAME group — PROBE_TURNS declaration order IS
+# the execution order (the worker iterates it top-to-bottom), so a dependent group must stay declared consecutively
+# in its dependency order. `percept` (None -> omitted from the request) and `rich` (default False -> the single-fact
+# path) extend the original 4-tuple; every pre-existing row keeps `(None, False)` so it is byte-identical to before.
 PROBE_TURNS = [
-    ("well",     "the wolf bites the apple", "well", True),     # comprehensible transitive: recall/affect/da/provenance
-    ("question", "what does the wolf bite",  "q",    True),     # a question -> None comprehension
-    ("unknown",  "what is the capital of france", "u", True),   # the no-confab MOAT -> abstain
-    ("hold",     "the fox and the wolf walked in", "d", True),  # >=2 referents -> d6 multiref sets focus
-    ("held",     "the wolf watches the owl", "d", False),       # same session: multiref/swap/anaphora on the held read
-    ("scalar",   "some of the dogs ran",     "s",    True),     # a scalar-quantity turn -> pragmatic implicature
-    ("open",     "what might a dog chase",   "o",    True),     # open-ended -> generation channel
+    ("well",     "the wolf bites the apple", "well", True,  None,   False),  # comprehensible transitive: recall/affect/da/provenance
+    ("question", "what does the wolf bite",  "q",    True,  None,   False),  # a question -> None comprehension
+    ("unknown",  "what is the capital of france", "u", True, None,  False),  # the no-confab MOAT -> abstain
+    ("hold",     "the fox and the wolf walked in", "d", True, None, False),  # >=2 referents -> d6 multiref sets focus
+    ("held",     "the wolf watches the owl", "d", False, None, False),       # same session: multiref/swap/anaphora on the held read
+    ("scalar",   "some of the dogs ran",     "s",    True,  None,   False),  # a scalar-quantity turn -> pragmatic implicature
+    ("open",     "what might a dog chase",   "o",    True,  None,   False),  # open-ended -> generation channel (single-fact path)
+    # ── lifted 2026-09-02 (thin-probe follow-on to the Phase-1 battery): each turn below is a DRIVING trigger for a
+    # faculty that the original 7 turns above never reached (see FAILURE_LOG-style rationale in the finding). Every
+    # new turn uses its OWN fresh session so it cannot contaminate any other turn's per-session ChatBrain/state.
+    ("confirm",  "the dog chase the cat",    "surp", True,  None,   False),  # (dog,chase) already known, SAME patient -> surprise CONFIRM (not surprised) + a genuine metacog confidence read on a real recall
+    ("contra",   "the dog chase the fish",   "surp2", True, None,   False),  # (dog,chase) already known, DIFFERENT patient -> surprise CONTRADICT (surprised) + reconsolidation in-place rewrite
+    ("expect_q", "what do you expect",       "wm",   True,  None,   False),  # E2 world-model QUERYABLE-expectation short-circuit (is_expectation_query)
+    ("episodic", "did we discuss the dog",   "epi",  True,  None,   False),  # D5 referential-recall short-circuit (is_referential); honest not-in-memory on a fresh session
+    ("vision",   "what do you see",          "vis",  True,  "bird", False),  # vision-identity: a visual query WITH a percept (BrainChatRequest.percept)
+    ("bgdots",   "...",                      "bg",   True,  None,   False),  # a content-empty turn -> the BG SPEAK-vs-STAY-SILENT race is consulted
+    ("dr_a",     "dog chase cat",            "dr",   True,  None,   False),  # D3 discourse fold #1 (bare 3-token clause, no connective) -> the CURRENT event
+    ("dr_b",     "then bird chase worm",     "dr",   False, None,   False),  # D3 discourse fold #2 (connective-led) -> SHIFT: current->prev, new current
+    ("dr_c",     "who was doing it before",  "dr",   False, None,   False),  # D3 before-query -> reads the held PREV slot (needs dr_a+dr_b run first, same session)
+    ("chase",    "what does the dog chase all the way", "ch", True, None, False),  # gnw-multistep: an explicit chase-form question over the built-in dog->cat->fish chain
+    ("selfinit", "",                         "si",   True,  None,   False),  # the idle/empty-turn self-initiated-utterance short-circuit (is_selfinit_trigger)
+    ("animacy",  "the monkey carries the cup", "anim", True, None,  False),  # a hand-ANIMACY-table-OOV noun ('monkey', 19-noun table) covered only by the learned animacy cue; 'carry'/'cup' are hand-covered
+    ("verbsel",  "the dog cleans the cup",   "vsel", True,  None,   False),  # a hand-VERB_SELECTS-table-OOV verb ('clean', 8-verb table) covered only by the learned verb-selects cue; 'dog'/'cup' are hand-covered
+    ("emo",      "Wonderful! I am so happy and delighted, this is fantastic and amazing!", "emo", True, None, False),  # a strongly-affective turn -> a non-neutral mood LEVEL, so the affect-marker WTA actually has a marker to select (level==0 is an unconditional '' regardless of the flag)
+    ("bc_a",     "the cat and the ball walked in", "bc", True, None, False),  # 2 held referents of OPPOSING animacy (cat=animate, ball=inanimate) for the selective-attention race
+    ("bc_b",     "what does it eat",         "bc",   False, None,   False),  # a pronoun+verb-selectional query -> biased-competition content-bias resolves 'it' (needs bc_a run first, same session)
+    ("rich_well","the wolf bites the apple", "richw", True, None,   True),   # the SAME well-formed transitive, explicitly rich=True -> the multi-sentence path (discourse-planner + confidence-forthcoming both live only there)
+    ("rich_open","what might a dog chase",   "ropen", True, None,   True),   # the SAME open-ended prompt, explicitly rich=True -> the rich composer's own hypothesis-generation branch (resp['hypothesis'])
+    ("pmem_form","remind me to feed the dog when the bird sings", "pmem", True, None, False),  # an intention-FORMATION utterance -> the prospective-memory latch (tests formation only, not the later cue-fire half)
 ]
 _TURN_BY_LABEL = {t[0]: t for t in PROBE_TURNS}
 
@@ -82,43 +121,147 @@ FACULTY_PROBES = [
     ("moat-verify",             "unknown",  ["abstained", "answer"], False),
     ("in-loop-learning",        "well",     ["answer", "recalled_svo"], False),
     ("comprehension-monitor",   "well",     ["comprehension.on", "comprehension.comprehended"], False),
-    ("comprehension-learned-animacy-cue",  "well", ["comprehension.on"], True),
-    ("comprehension-learned-verb-selects", "well", ["comprehension.on"], True),
+    # LIFTED 2026-09-02: "well" ('the wolf bites the apple') never exercises the LEARNED cue extension -- every
+    # word in it is hand-table-covered, so the learned lexicon is never consulted. `animacy`/`verbsel` use a noun
+    # ('monkey') / verb ('clean') the ~19-noun / 8-verb HAND table misses but the learned lexicon covers (the exact
+    # examples the ledger's own lesion_note uses); with the (default-ON) learned cue enabled, `competent()` passes
+    # and `comprehension.on` is populated -- with it OFF, `judge()` returns None and the whole key is absent, so a
+    # flip of EITHER learned-cue flag is a presence/absence swing this field genuinely catches.
+    ("comprehension-learned-animacy-cue",  "animacy", ["comprehension.on"], False),
+    ("comprehension-learned-verb-selects", "verbsel", ["comprehension.on"], False),
     ("noncontradiction-gate",   "well",     ["noncontradiction.on", "noncontradiction.reject",
                                              "noncontradiction.recalled_yn", "noncontradiction.asserted_polarity"], False),
     ("affect-coloring",         "well",     ["affect.on", "affect.valence_sign", "affect.tone_token"], False),
     ("affect-drives-response",  "well",     ["affect_drives.on", "affect_drives.acted", "affect_drives.high_arousal",
                                              "affect_drives.reason"], False),
-    ("affect-marker-spiking-wta", "well",   ["affect.valence_sign"], True),
+    # LIFTED 2026-09-02: `expression_lead()` returns '' UNCONDITIONALLY at mood level 0 (checked BEFORE either
+    # selection path even runs), and "well" 's mood stays neutral (level 0) -- so the field could never discriminate
+    # the spiking marker-WTA from the host `_LEAD_WORD` dict lookup it replaces. `emo` is strongly-affective (crosses
+    # the ~0.045 L2 mood-level threshold in one turn) so a marker word is actually SELECTED; the WTA's own choice is
+    # `affect_drives.lead` (the marker string), not `affect.valence_sign` (a DIFFERENT, Gate-B-only ladder read the
+    # affect-coloring row already covers).
+    ("affect-marker-spiking-wta", "emo",     ["affect_drives.lead"], False),
     ("da-mode-drives-response", "well",     ["da_drives.on", "da_drives.acted", "da_drives.mode", "da_drives.reason"], False),
     ("da-gated-encoding",       "well",     ["da_encoding.on"], False),
     ("source-provenance-honesty", "well",   ["provenance.known", "provenance.label", "provenance.agrees_with_encoded",
                                              "provenance.encoded_as"], False),
     ("common-ground-drives",    "well",     ["common_ground_drives.on", "common_ground_drives.decision",
                                              "common_ground_drives.reason"], False),
-    ("confidence-forthcomingness", "well",  ["affect.forthcomingness.forthcoming"], True),
+    # LIFTED 2026-09-02: `resp["confidence_forthcoming"]` is only ATTACHED on the rich (multi-sentence) path -- the
+    # battery's probes historically hardcoded rich=False, so this key never appeared. `rich_well` is the SAME
+    # well-formed transitive with rich=True. The OLD field path was also wrong: `affect.forthcomingness` is the
+    # MOOD-set floor (max_sentences/max_elaborations, a different coupling, #81/#84), not this organ's own
+    # granted/reason trace.
+    ("confidence-forthcomingness", "rich_well", ["confidence_forthcoming.granted", "confidence_forthcoming.reason"], False),
     ("swap-drives-response",    "held",     ["swap_drives.on", "swap_drives.acted", "swap_drives.swapped",
                                              "swap_drives.reason"], False),
     ("anaphora-wm",             "held",     ["activity.roles"], False),
     ("wm-binding-advanced",     "held",     ["multiref.n_referents"], False),
-    ("prospective-memory",      "well",     ["pmem.armed"], True),
-    ("pragmatic-implicature",   "scalar",   ["pragmatic.implicature", "pragmatic.on"], True),
-    ("surprise-monitor",        "well",     ["surprise.surprised", "surprise.on"], True),
-    ("metacog-monitor",         "well",     ["metacog.confident", "metacog.on"], True),
-    ("worldmodel-forward",      "well",     ["worldmodel.pred_sign", "worldmodel.on"], True),
-    ("curiosity-followup",      "well",     ["curiosity.crave", "curiosity.on"], True),
-    ("reconsolidation",         "well",     ["reconsolidation.revised", "reconsolidation.on"], True),
-    ("episodic-memory",         "well",     ["episodic.stored", "episodic.on"], True),
-    ("discourse-register",      "held",     ["discourse.event"], True),
-    ("open-ended-generation",   "open",     ["hypothesis", "answer"], True),
-    ("discourse-planner",       "well",     ["rich", "n_sentences"], True),
+    # LIFTED 2026-09-02: "well" (a fresh TEACH -- 'wolf'/'bite'/'apple' are new vocabulary) never forms an intention.
+    # `pmem_form` ('remind me to feed the dog when the bird sings') matches the FORMATION regex -- a disjoint
+    # short-circuit that latches the intention and returns `resp["prospective"]` (not `resp["pmem"]`, the old path
+    # was also the wrong top-level key). This exercises FORMATION only, not the later cue-fire half (a 3rd turn);
+    # honest partial coverage, not a fake full-cycle claim.
+    ("prospective-memory",      "pmem_form", ["prospective.held"], False),
+    # LIFTED 2026-09-02: field-path fix only (the turn already drove it) -- `pragmatic_production_organ.interpret()`
+    # returns "implicature_margin"/"enriched_interpretation", never "implicature"; "on" DOES exist (`"pragmatic.on"`
+    # was actually fine, kept).
+    ("pragmatic-implicature",   "scalar",   ["pragmatic.on", "pragmatic.enriched_interpretation"], False),
+    # LIFTED 2026-09-02: "well" is a fresh TEACH -- `extract_assertion` finds no PRIOR `what_does(agent,action)` to
+    # compare against (nothing was stored before this turn), so `surprise_info` stays null structurally, regardless
+    # of the flag. `contra` asserts a DIFFERENT patient for an (agent,action) pair the tiny-demo brain already knows
+    # from BUILD time (dog,chase,cat) -> a genuine CONTRADICT (surprised=True). Field path unchanged ("on" is
+    # absent from `judge()`'s own dict and is simply skipped by `compare()`; "surprised" is real and populated).
+    ("surprise-monitor",        "contra",   ["surprise.surprised", "surprise.on"], False),
+    # LIFTED 2026-09-02: on "well" the rf trace shows `matched_fact_index: null` / every role `confidence: null`
+    # (a TEACH, not a recall -- nothing MATCHED, so `mean_role_confidence` has nothing to average, and #184's own
+    # guard logs a WARNING and returns None) -- metacog is out of scope BY CONSTRUCTION on a teach turn. `confirm`
+    # is a genuine RECALL of an already-known fact (dog,chase,cat): the rf composer actually MATCHES, roles carry
+    # real confidences, and the metacog read populates for real. Field path unchanged (already correct).
+    ("metacog-monitor",         "confirm",  ["metacog.confident", "metacog.on"], False),
+    # LIFTED 2026-09-02: E2's QUERYABLE-expectation short-circuit (`is_expectation_query`) needs an explicit "what
+    # do you expect / how is this going" turn -- "well" never matches it. Field path unchanged (`exp["pred_sign"]`
+    # / `exp["on"]` are both real keys on `WorldModelProductionOrgan.expectation()`'s return dict).
+    ("worldmodel-forward",      "expect_q", ["worldmodel.pred_sign", "worldmodel.on"], False),
+    # LIFTED 2026-09-02: curiosity only reads on an ABSTAIN (`_curiosity_followup(abstained)` -- out of scope on
+    # any non-abstain turn including "well"). `unknown` ('what is the capital of france') already abstains for the
+    # moat-verify row -- reusing it drives curiosity too. Field name was ALSO wrong: `judge()` returns "curious",
+    # never "crave".
+    ("curiosity-followup",      "unknown",  ["curiosity.curious", "curiosity.on"], False),
+    # LIFTED 2026-09-02: reconsolidation only fires INSIDE the surprise block on a genuine contradiction (shares
+    # `contra`'s trigger + the SAME spiking surprise read, zero extra cost). Field path was also wrong: the
+    # `reconsolidate()` return dict has no "revised"/"on" keys -- the real categorical decision is "action"
+    # (rewrite / restabilize / abstain / lesioned_nowrite).
+    ("reconsolidation",         "contra",   ["reconsolidation.action"], False),
+    # LIFTED 2026-09-02: Hook A (`is_referential`) needs a "did we discuss X" / "you mentioned X" -class turn --
+    # "well" never matches it. `episodic` is referential on a FRESH session, so `in_memory` reads False (an honest
+    # not-in-memory disclosure) -- still a real, non-null, DECISION-STABLE field. Field path was also wrong: the
+    # `recall()` dict key is "in_memory", never "stored"/"on".
+    ("episodic-memory",         "episodic", ["episodic.in_memory"], False),
+    # LIFTED 2026-09-02: "held" ('the wolf watches the owl') is not a before/now QUERY, so `maybe_answer` returns
+    # None and the whole `discourse_register` key never appears -- and the old field path ("discourse.event") was
+    # never a real key either (the response key is "discourse_register", not "discourse"). `dr_a` folds a bare
+    # (no-connective) clause -> the CURRENT event; `dr_b` folds a CONNECTIVE-led clause -> SHIFT (current->prev);
+    # `dr_c` is the actual before-query, reading the held PREV slot off cp_firing_states.
+    ("discourse-register",      "dr_c",     ["discourse_register.abstained", "discourse_register.agent"], False),
+    # LIFTED 2026-09-02: the hypothesis-generation branch (`resp["hypothesis"]`) lives INSIDE the rich composer's
+    # own answer path (`is_hyp = bool(r.get("hypothesis"))`), which every existing probe turn bypasses by hardcoding
+    # rich=False. `rich_open` is the SAME open-ended prompt with rich=True explicitly requested.
+    ("open-ended-generation",   "rich_open", ["hypothesis", "answer"], False),
+    # LIFTED 2026-09-02: `resp["n_sentences"]` / a genuine `resp["rich"]=True` are single-fact-path-False by
+    # construction (every existing probe hardcodes rich=False) -- `rich_well` requests rich=True on the SAME
+    # well-formed transitive.
+    ("discourse-planner",       "rich_well", ["rich", "n_sentences"], False),
+    # NOT LIFTED (2026-09-02, investigated, genuinely not constructible through this harness): gnw-deliberation's
+    # trigger needs >=2 DISTINCT stored patients for the SAME (agent,action) pair (a genuine multi-candidate
+    # conflict the substrate must arbitrate). The tiny-demo brain's fixed 5-fact KB has no such duplicate, and
+    # `contra` (above) empirically PROVES the live-teach route cannot construct one either: asserting a
+    # contradicting patient for an already-known (agent,action) does not create a SECOND candidate, it triggers the
+    # default-ON reconsolidation organ to REWRITE the stored patient IN PLACE (`reconsolidation.action=="rewrite"`,
+    # verified live) -- so at most one patient is ever stored per (agent,action) key through `/api/brain-chat`. The
+    # de-risk's own "dog->chase->{cat,ball}" ambiguity fixture is built by directly constructing a composer with two
+    # KB rows, bypassing conversational teaching entirely -- a construction this brain_chat-only battery cannot
+    # reach without either a second brain bundle with a genuine pre-existing duplicate (not verified to exist) or
+    # forcing BRAIN_RECONSOLIDATION=0 in the probe env (which would falsify the ADJACENT reconsolidation-monitor
+    # probe by disabling its own default-ON mechanism for every turn in the same arm build). Left thin=True.
     ("gnw-deliberation",        "well",     ["activity.composer"], True),
-    ("gnw-multistep-deliberation", "well",  ["activity.composer"], True),
-    ("self-initiated-utterance", "well",    ["self_initiated"], True),
-    ("vision-identity-spiking-hmax", "well", ["vision"], True),
+    # LIFTED 2026-09-02: the multi-step gate wraps `chat.gate` itself (no dedicated response key) -- an explicit
+    # chase-form question ("... all the way") over the tiny-demo's own dog->chase->cat / cat->eat->fish chain drives
+    # the re-entrant workspace to the CHAIN TERMINAL ('fish'), which surfaces through the ALREADY-tracked
+    # `recalled_svo` field (a single-hop turn would instead recall/abstain on 'cat'). "well" never asks a chase-form
+    # question, so this never engaged before.
+    ("gnw-multistep-deliberation", "chase", ["recalled_svo"], False),
+    # LIFTED 2026-09-02: the self-initiation short-circuit is a DISJOINT idle/empty-turn class
+    # (`is_selfinit_trigger`) -- "well" (real content) never matches it. `selfinit` is the empty-string message; the
+    # top-level `abstained` field (not spoke) is the simplest robust categorical read (the nested `self_initiated`
+    # dict carries continuous want-rate fields alongside it, so comparing the WHOLE dict risks a noise-driven
+    # false-regressed verdict this dedicated field avoids).
+    ("self-initiated-utterance", "selfinit", ["abstained"], False),
+    # LIFTED 2026-09-02: the block only fires when the turn CARRIES a percept AND matches a visual-query pattern --
+    # "well" has neither. `vision` supplies `percept="bird"` on a "what do you see" turn (BrainChatRequest.percept,
+    # the only production consumer that ever populates it today). Field path was also wrong: the response key is
+    # "vision_identity", never "vision".
+    ("vision-identity-spiking-hmax", "vision", ["vision_identity.recognized_category"], False),
+    # NOT LIFTED (2026-09-02, same root cause as gnw-deliberation above): value-driven-choice resolves the IDENTICAL
+    # >=2-distinct-patient (agent,action) ambiguity gnw-deliberation arbitrates (it installs its wrapper INSIDE the
+    # same conflict scope, "OUTSIDE the GNW deliberation gate... INSIDE the multistep gate"). The SAME `contra`
+    # evidence applies: reconsolidation's default in-place rewrite means brain_chat-only conversational teaching
+    # can never leave two candidate patients stored under one (agent,action) key for this organ to choose between.
+    # Left thin=True.
     ("value-driven-choice",     "well",     ["value_choice"], True),
-    ("bg-action-selection",     "well",     ["bg_select"], True),
-    ("selective-attention-biased-competition", "held", ["activity.roles"], True),
+    # LIFTED 2026-09-02: the selector is CONSULTED only on a content-empty turn (a normal message always favors
+    # SPEAK without even calling the organ) -- "well" is real content. `bgdots` ('...') is the doc's own worked
+    # example of a turn where STAY-SILENT is a genuine contender. The top-level `abstained` field is used instead
+    # of the old whole-dict `bg_select` path (the same noise-risk reasoning as self-initiated-utterance above).
+    ("bg-action-selection",     "bgdots",   ["abstained"], False),
+    # LIFTED 2026-09-02 (medium confidence -- verify via the self-test before trusting in production): the WTA race
+    # only engages on a BARE PRONOUN query over >=2 held referents of OPPOSING animacy; "held" ('the wolf watches
+    # the owl') restates referents directly (no pronoun) and 'wolf'/'owl' are BOTH animate (no opposing-animacy
+    # conflict for content_bias_target to resolve). `bc_a` holds one animate (cat) + one inanimate (ball) referent
+    # (mirrors the row's own lesion_note worked example exactly); `bc_b` ('what does it eat') is the pronoun+verb
+    # query whose content-bias should resolve 'it'->cat (cat is the brain's only known eater). `recalled_svo` is the
+    # visible effect of which referent 'it' resolved to.
+    ("selective-attention-biased-competition", "bc_b", ["recalled_svo"], False),
 ]
 
 
@@ -138,10 +281,13 @@ def _collect_worker(env_json, turn_labels, out_path):
     from webapp.server import brain_chat, BrainChatRequest
     responses = {}
     for label in turn_labels:
-        _, msg, session, reset = _TURN_BY_LABEL[label]
+        _, msg, session, reset, percept, rich = _TURN_BY_LABEL[label]
         try:
-            r = brain_chat(BrainChatRequest(session=session, message=msg, brain="tiny-demo",
-                                            renderer="stub", rich=False, reset=reset))
+            kwargs = dict(session=session, message=msg, brain="tiny-demo",
+                          renderer="stub", rich=bool(rich), reset=reset)
+            if percept is not None:
+                kwargs["percept"] = percept
+            r = brain_chat(BrainChatRequest(**kwargs))
             responses[label] = json.loads(r.body)
         except Exception as e:
             responses[label] = {"_error": "%s: %s" % (type(e).__name__, e)}
@@ -240,10 +386,15 @@ def demo(no_op_flag="BRAIN_REGRESSION_BATTERY_NOOP", probe_subset=None, skip_rea
     guaranteed-no-op that isolates the battery's real two-arm brain_chat plumbing + its all-pass reporting from any
     real faculty change. (In production the harness ARM C calls run_regression_battery with the REAL edge flag; a
     genuine answer-preserving flip like BRAIN_ONEBRAIN_MERGE also exercises it, at the cost that its RNG-trajectory
-    shift can flip a borderline decision — which, if it happens, is a real finding the battery correctly surfaces.)"""
+    shift can flip a borderline decision — which, if it happens, is a real finding the battery correctly surfaces.)
+
+    Default `probe_subset=None` -> the FULL PROBE_TURNS roster (matching `run_regression_battery`'s own default,
+    what the production flip-verify harness actually calls) — every default-ON faculty this file drives at all,
+    not just the original 4-turn fast subset. Slower (more turns -> more organs to build once each); pass an
+    explicit `probe_subset` for the old fast smoke (e.g. `["well", "unknown", "hold", "held"]`)."""
     out_dir = "research/findings/raw/_regression_battery"
     os.makedirs(out_dir, exist_ok=True)
-    labels = probe_subset or ["well", "unknown", "hold", "held"]
+    labels = probe_subset or [t[0] for t in PROBE_TURNS]
     report = {"no_op_flag": no_op_flag, "probe_turns": labels}
 
     if not skip_real:
