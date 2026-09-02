@@ -1,0 +1,294 @@
+{
+  "no_op_flag": "BRAIN_REGRESSION_BATTERY_NOOP",
+  "probe_turns": [
+    "well",
+    "unknown",
+    "hold",
+    "held"
+  ],
+  "real_no_op": {
+    "all_pass": true,
+    "n_faculties": 36,
+    "n_pass": 22,
+    "n_regressed": 0,
+    "n_not_exercised": 14,
+    "regressed": [],
+    "not_exercised": [
+      "confidence-forthcomingness",
+      "wm-binding-advanced",
+      "prospective-memory",
+      "surprise-monitor",
+      "metacog-monitor",
+      "worldmodel-forward",
+      "curiosity-followup",
+      "reconsolidation",
+      "episodic-memory",
+      "discourse-register",
+      "self-initiated-utterance",
+      "vision-identity-spiking-hmax",
+      "value-driven-choice",
+      "bg-action-selection"
+    ]
+  },
+  "real_no_op_per_faculty": [
+    {
+      "faculty": "content-selection",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "semantic-recall",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "one-brain-substrate",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "moat-verify",
+      "turn": "unknown",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "in-loop-learning",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-monitor",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-learned-animacy-cue",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-learned-verb-selects",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "noncontradiction-gate",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-coloring",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-drives-response",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-marker-spiking-wta",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "da-mode-drives-response",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "da-gated-encoding",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "source-provenance-honesty",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "common-ground-drives",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "confidence-forthcomingness",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "swap-drives-response",
+      "turn": "held",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "anaphora-wm",
+      "turn": "held",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "wm-binding-advanced",
+      "turn": "held",
+      "verdict": "not-exercised",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "prospective-memory",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "surprise-monitor",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "metacog-monitor",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "worldmodel-forward",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "curiosity-followup",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "reconsolidation",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "episodic-memory",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "discourse-register",
+      "turn": "held",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "discourse-planner",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "gnw-deliberation",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "gnw-multistep-deliberation",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "self-initiated-utterance",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "vision-identity-spiking-hmax",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "value-driven-choice",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "bg-action-selection",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "selective-attention-biased-competition",
+      "turn": "held",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    }
+  ],
+  "synthetic_identical_all_pass": true,
+  "synthetic_broken_target": "da-mode-drives-response",
+  "synthetic_broken_caught": true,
+  "synthetic_broken_regressed_list": [
+    "da-mode-drives-response"
+  ],
+  "regenerated_from_saved_arms": true
+}

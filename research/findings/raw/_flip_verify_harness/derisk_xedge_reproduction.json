@@ -1,0 +1,33 @@
+{
+  "DERISK_GO": true,
+  "n_artifacts": 3,
+  "cases": [
+    {
+      "artifact": "flip_verify_cupy_6seed.json",
+      "banked_GO": false,
+      "harness_GO": false,
+      "harness_reproduces_reference": true,
+      "reference_reproduces_banked": true,
+      "byte_identical": true,
+      "diff_keys": []
+    },
+    {
+      "artifact": "flip_verify_cupy_6seed_strengthened.json",
+      "banked_GO": false,
+      "harness_GO": false,
+      "harness_reproduces_reference": true,
+      "reference_reproduces_banked": true,
+      "byte_identical": true,
+      "diff_keys": []
+    },
+    {
+      "artifact": "flip_verify_cupy_6seed_indirection.json",
+      "banked_GO": true,
+      "harness_GO": true,
+      "harness_reproduces_reference": true,
+      "reference_reproduces_banked": true,
+      "byte_identical": true,
+      "diff_keys": []
+    }
+  ]
+}
