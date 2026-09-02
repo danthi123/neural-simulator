@@ -6,9 +6,14 @@ level->marker SELECTION step, not the #81 felt-state READ or the Gate-B appraisa
 the decisive one for THIS change).
 
 FOUR PROPERTIES, 6 seeds {42,43,44,100,101,102}:
-  (A) BYTE-IDENTICAL-OFF -- BRAIN_AFFECT_MARKER_SPIKING unset: `expression_lead()` ignores the new mood/felt_arousal
-      kwargs entirely and returns EXACTLY the pre-existing `_LEAD_WORD[level]` host-template surface; a full
-      `AffectDrivesWorkspace.observe()` turn is unaffected by whether the new module can even be imported.
+  (A) BYTE-IDENTICAL-OFF -- 2026-09-01 AUTO-FLIP: `BRAIN_AFFECT_MARKER_SPIKING` DEFAULT-ON
+      (`_AFFECT_MARKER_SPIKING_DEFAULT_ON`, webapp/affect_drives_chat.py); the OFF condition this part exercises
+      is now the EXPLICIT escape `BRAIN_AFFECT_MARKER_SPIKING=0`: `expression_lead()` ignores the new
+      mood/felt_arousal kwargs entirely and returns EXACTLY the pre-existing `_LEAD_WORD[level]` host-template
+      surface; a full `AffectDrivesWorkspace.observe()` turn under the SAME explicit-off escape is unaffected by
+      whether the new module can even be imported. (Pre-flip this part exercised the flag UNSET; unset now means
+      ON, so the escape is what "off" means post-flip -- see the module's own byte-identical-off convention,
+      e.g. `_CG_DRIVES_DEFAULT_ON`/`cg_drives_off()` in webapp/common_ground_drives_chat.py.)
   (B) LOAD-BEARING -- BRAIN_AFFECT_MARKER_SPIKING=1: sweep the induced mood across all 6 non-neutral registers;
       the spiking-selected marker matches the register the host table would have picked for that same mood (the
       circuit's topographic centers were placed at each register's existing mood-bin midpoint, see the module
@@ -78,17 +83,19 @@ def _lead_word(lead):
 
 
 def part_a_byte_identical_off(results):
-    """(A) BRAIN_AFFECT_MARKER_SPIKING unset -> expression_lead() is UNCHANGED by the new kwargs; a full workspace
-    turn is unaffected by whether _affect_marker_wta_derisk can even be imported."""
+    """(A) 2026-09-01 AUTO-FLIP: `BRAIN_AFFECT_MARKER_SPIKING` is now DEFAULT-ON, so the OFF condition this part
+    exercises is the EXPLICIT escape `BRAIN_AFFECT_MARKER_SPIKING=0` -> expression_lead() is UNCHANGED by the new
+    kwargs; a full workspace turn under the same explicit escape is unaffected by whether
+    _affect_marker_wta_derisk can even be imported."""
     from webapp.affect_drives_chat import expression_lead, _LEAD_WORD
 
     rows = []
     ok = True
-    with _env(BRAIN_AFFECT_MARKER_SPIKING=None):
+    with _env(BRAIN_AFFECT_MARKER_SPIKING="0"):
         for level in (-3, -2, -1, 1, 2, 3):
             for high in (False, True):
                 base = expression_lead(level, high)
-                # passing mood/felt_arousal must be INERT while the flag is off (the flag gate is checked first).
+                # passing mood/felt_arousal must be INERT while the flag is explicitly off (checked first).
                 augmented = expression_lead(level, high, mood=LEVEL_MOODS[level],
                                             felt_arousal=(AROUSAL_HIGH if high else AROUSAL_LOW), seed=42)
                 expect = (_LEAD_WORD[level] + ("! " if high else " — "))
@@ -99,22 +106,23 @@ def part_a_byte_identical_off(results):
         neutral = expression_lead(0, False, mood=0.0, felt_arousal=0.0, seed=42)
         ok = ok and (neutral == "")
 
-    # a full production-entry-point turn, flag unset: identical whether or not the new module is importable.
-    from webapp.affect_drives_chat import AffectDrivesWorkspace
-    workspace_rows = []
-    for seed in SEEDS:
-        ws = AffectDrivesWorkspace(seed=seed)
-        info = ws.observe(0.8, 0.6, 3, valence_override=0.9, arousal_override=0.7)
-        expect_word = ""
-        if info["level"] != 0:
-            expect_word = _LEAD_WORD.get(info["level"], "")
-        got_word = _lead_word(info["lead"])
-        row_ok = (got_word == expect_word)
-        ok = ok and row_ok
-        workspace_rows.append({"seed": seed, "level": info["level"], "lead": info["lead"], "ok": row_ok})
+        # a full production-entry-point turn, flag explicitly off: identical whether or not the new module is
+        # importable.
+        from webapp.affect_drives_chat import AffectDrivesWorkspace
+        workspace_rows = []
+        for seed in SEEDS:
+            ws = AffectDrivesWorkspace(seed=seed)
+            info = ws.observe(0.8, 0.6, 3, valence_override=0.9, arousal_override=0.7)
+            expect_word = ""
+            if info["level"] != 0:
+                expect_word = _LEAD_WORD.get(info["level"], "")
+            got_word = _lead_word(info["lead"])
+            row_ok = (got_word == expect_word)
+            ok = ok and row_ok
+            workspace_rows.append({"seed": seed, "level": info["level"], "lead": info["lead"], "ok": row_ok})
 
     results["part_a"] = {"function_level": rows, "workspace_level": workspace_rows, "all_ok": ok}
-    print(f"(A) byte-identical-off: {'PASS' if ok else 'FAIL'} ({len(rows)} function rows, "
+    print(f"(A) byte-identical-off (explicit escape): {'PASS' if ok else 'FAIL'} ({len(rows)} function rows, "
          f"{len(workspace_rows)} workspace rows)")
     return ok
 
