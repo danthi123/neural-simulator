@@ -155,6 +155,23 @@ def _apply_s2_norm(drive, a):
     subtracts the mean), by design (the finding's decomposition attributes the ceiling specifically to the
     DIVISIVE step, not the mean-subtraction). Default OFF (s2_norm stays 'z' unless explicitly requested) ->
     byte-identical to every prior run of this file.
+
+    'satdiv' (2026-09-01, this scoping pass) is a DIFFERENT FUNCTIONAL FORM, not another point on the
+    alpha/z affine-rescale family: the actual Carandini & Heeger (2012, Nat. Rev. Neurosci. 13:51-62)
+    semi-saturating divisive-normalization ratio R_i = drive_i^n / (sigma^n + sum_j drive_j^n), where the
+    sum is the LOCAL population's pooled suppressive drive (same per-location pool 'z'/'alpha' already use,
+    axis=2 = the n_S2 templates at that patch location). 'z' and 'alpha' are both AFFINE rescales by a
+    population mean/std -- they can leave an unbounded positive tail after clipping, which is exactly what
+    saturates the LIF once the divisor is small (the alpha=0.5 decisive run, research/findings/raw/lanes/
+    perception/vlin_alpha_readout_6seed.json, collapsed LEARNED_spkwta_held to ~0.257, at/below chance,
+    while its RATE ceiling rose to 0.50-0.62 -- the SAME failure signature as the 'none' arm: the affine
+    family cannot decouple "avoid saturation" from "keep headroom" because both properties are set by the
+    SAME single divisor). The ratio form is instead BOUNDED by construction (R_i in [0, drive_i^n/sigma^n)
+    when pool is small, asymptoting toward the pool-normalized fraction drive_i^n/pool as pool grows) --
+    an automatic-gain-control curve with a smooth semi-saturation knee (set by sigma), never the linear
+    unbounded rescale-then-clip of 'z'/'alpha'. This is the actual companion process behind the citation
+    both #75 and #135 already invoke for the FF-inhibition read (Carandini & Heeger) but had NOT yet
+    implemented in its own (ratio, not affine) form.
     """
     if a.s2_norm == "submean":
         return np.clip(drive - drive.mean(axis=2, keepdims=True), 0.0, None)
@@ -167,6 +184,13 @@ def _apply_s2_norm(drive, a):
         alpha = float(getattr(a, "s2_norm_alpha", 0.5))
         sigma0 = float(getattr(a, "s2_norm_sigma0", 1e-3))
         return np.clip(drive / (sigma0 + alpha * sd), 0.0, None)
+    elif a.s2_norm == "satdiv":
+        n = float(getattr(a, "s2_satdiv_n", 2.0))
+        sigma = float(getattr(a, "s2_satdiv_sigma", 0.5))
+        scale = float(getattr(a, "s2_satdiv_scale", 1.0))
+        dp = np.power(np.clip(drive, 0.0, None), n)
+        pool = dp.sum(axis=2, keepdims=True)  # local population's pooled suppressive drive (same axis as z/alpha)
+        return scale * dp / ((sigma ** n) + pool + 1e-12)
     return drive  # "none"
 
 
@@ -523,16 +547,27 @@ def main():
     p.add_argument("--T-read", type=int, default=48, help="readout LIF window (ms/steps)")
     # SPIKING (LIF) front end operating point (config B defaults)
     p.add_argument("--s1-mode", choices=["spiking", "rate"], default="spiking")
-    p.add_argument("--s2-norm", choices=["none", "submean", "z", "alpha"], default="z",
+    p.add_argument("--s2-norm", choices=["none", "submean", "z", "alpha", "satdiv"], default="z",
                    help="'alpha' is the 2026-09-01 board-#135 opsweep finding's named next lever: a graded "
                         "divisive interpolation drive/(sigma0+alpha*std) between 'none' (has rate headroom, "
-                        "saturates) and 'z' (avoids saturation, caps the ceiling) -- see --s2-norm-alpha")
+                        "saturates) and 'z' (avoids saturation, caps the ceiling) -- see --s2-norm-alpha. "
+                        "'satdiv' is a DIFFERENT functional form (not another alpha point): the actual "
+                        "Carandini & Heeger semi-saturating ratio drive^n/(sigma^n+pool) -- see --s2-satdiv-*")
     p.add_argument("--s2-norm-alpha", type=float, default=0.5,
                    help="'alpha' mode only: 0 -> close to 'none' (fixed rescale by sigma0), 1 -> close to "
                         "pure divisive std-normalization (no mean-subtraction, unlike 'z')")
     p.add_argument("--s2-norm-sigma0", type=float, default=1e-3,
                    help="'alpha' mode only: floor added to alpha*std before dividing (numerical safety + "
                         "sets the alpha=0 fixed rescale)")
+    p.add_argument("--s2-satdiv-n", type=float, default=2.0,
+                   help="'satdiv' mode only: the exponent n in drive^n/(sigma^n+pool) (Heeger 1992 fits "
+                        "V1 contrast responses with n~2-4)")
+    p.add_argument("--s2-satdiv-sigma", type=float, default=0.5,
+                   help="'satdiv' mode only: the semi-saturation constant sigma (sets the knee of the "
+                        "automatic-gain-control curve; the operating-point knob for this lever)")
+    p.add_argument("--s2-satdiv-scale", type=float, default=1.0,
+                   help="'satdiv' mode only: output rescale so the bounded ratio lands in the LIF's "
+                        "graded (non-saturating) drive range jointly with --s2-gain")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
