@@ -1,0 +1,21 @@
+{
+  "artifact": "bridges/wkv_ckpt/wkv_bpe8k.json",
+  "kind": "bpe_subword_tokenizer_merge_table",
+  "producer": "research/runners/_subword_mouth_tokenizer_coverage_derisk.py::_train_bpe_bounded (sim.bpe_tokenizer.BPETokenizer.train)",
+  "corpus": "data/corpus/wikitext103.txt",
+  "corpus_max_words": 1500000,
+  "top_k_words": 5000,
+  "freq_cap": 15,
+  "target_vocab_size": 8000,
+  "actual_vocab_size": 8001,
+  "train_seconds": 42.6,
+  "coverage_verified_on_probe": {
+    "probe": "_wkv_mouth_chat_topic_vocab_coverage_derisk._build_probe_corpus(seed=42, n=124)",
+    "hard_oov_word_rate": 0.0,
+    "fully_representable": "124/124",
+    "mean_pieces_per_content_word": 1.505
+  },
+  "sim_backend": "numpy",
+  "device": "cpu",
+  "note": "Deterministic BPE merge table (backend-irrelevant: pure-Python merge learning, no GPU, no model training). Recorded numpy/CPU for the device-and-cost audit. Reproduce: SIM_BACKEND=numpy python -m research.runners._subword_mouth_tokenizer_coverage_derisk (then _train_bpe_bounded on wikitext103, V=8000)."
+}

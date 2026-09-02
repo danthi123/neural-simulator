@@ -1,0 +1,41 @@
+{
+ "run_id": "1788347054-3444790",
+ "runner": "research/runners/_subword_mouth_tokenizer_coverage_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a2ca9ca55b0fad04a/research/runners/_subword_mouth_tokenizer_coverage_derisk.py",
+  "--seed",
+  "42",
+  "--n-wikidata",
+  "100",
+  "--vocab-sizes",
+  "4000",
+  "8000",
+  "16000",
+  "--corpus-max-words",
+  "1500000",
+  "--top-k-words",
+  "5000",
+  "--freq-cap",
+  "15",
+  "--out",
+  "research/findings/raw/_subword_mouth_tokenizer_coverage.json"
+ ],
+ "git_sha": "63d6e7119",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T07:04:14",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_subword_mouth_tokenizer_coverage.json"
+}
