@@ -141,47 +141,62 @@ def _run_trajectory(*, deterministic=True):
     return result
 
 
-def test_split_primitive_executes_two_one_dimensional_spmvs():
-    class FakeCSR:
-        def __init__(self):
-            self.operands = []
-
-        def __matmul__(self, operand):
-            operand = np.asarray(operand)
-            self.operands.append(operand)
-            return operand + len(self.operands)
+def test_split_primitive_executes_two_one_dimensional_spmvs(monkeypatch):
+    # `_deterministic_ei_transpose_spmv` must (a) materialize the transpose CSR exactly once and
+    # (b) run TWO SEPARATE ONE-DIMENSIONAL segmented SpMVs (E then I), never a single two-column
+    # csrmv (the two-column cuSPARSE multiply is the non-deterministic one this whole module
+    # exists to avoid). Since 2026-08-25 the primitive routes through the reduceat helper
+    # `_deterministic_csr_matvec` (not a bare `@`), so the mock exposes a REAL transpose CSR and we
+    # record the ndim each helper call reduces. (Repaired 2026-09-02: the prior FakeCSR mock still
+    # expected a `@` and had regressed to an AttributeError on `.indptr`.)
+    rng = np.random.default_rng(7)
+    n = 32
+    host_matrix = scipy_sparse.random(
+        n, n, density=0.25, format="csr", dtype=np.float32, random_state=rng,
+        data_rvs=lambda size: rng.uniform(0.1, 2.0, size).astype(np.float32),
+    )
+    real_transpose_csr = _backend_csr(host_matrix.T.tocsr())
 
     class FakeTranspose:
-        def __init__(self, csr):
-            self.csr = csr
+        def __init__(self):
             self.tocsr_calls = 0
 
         def tocsr(self):
             self.tocsr_calls += 1
-            return self.csr
+            return real_transpose_csr
 
     class FakeConnections:
         def __init__(self):
-            self.csr = FakeCSR()
-            self.transpose = FakeTranspose(self.csr)
+            self.transpose = FakeTranspose()
 
         @property
         def T(self):
             return self.transpose
 
     connections = FakeConnections()
-    excitatory = np.arange(8, dtype=np.float32)
-    inhibitory = np.arange(8, dtype=np.float32) + 10.0
+    xp, _ = get_backend()
+    excitatory = xp.asarray(np.arange(n, dtype=np.float32))
+    inhibitory = xp.asarray(np.arange(n, dtype=np.float32) + 10.0)
+
+    reduced_ndims = []
+    original = bridge_module._deterministic_csr_matvec
+
+    def recording(csr_mat, vec):
+        reduced_ndims.append(int(np.asarray(to_host(vec)).ndim))
+        return original(csr_mat, vec)
+
+    monkeypatch.setattr(bridge_module, "_deterministic_csr_matvec", recording)
 
     actual_e, actual_i = bridge_module._deterministic_ei_transpose_spmv(
         connections, excitatory, inhibitory
     )
 
     assert connections.transpose.tocsr_calls == 1
-    assert len(connections.csr.operands) == 2
-    assert all(operand.ndim == 1 for operand in connections.csr.operands)
-    assert np.array_equal(actual_e, excitatory + 1.0)
-    assert np.array_equal(actual_i, inhibitory + 2.0)
+    assert reduced_ndims == [1, 1]  # two ONE-dimensional segmented SpMVs, not a two-column csrmv
+    expected_e = host_matrix.T @ np.asarray(to_host(excitatory))
+    expected_i = host_matrix.T @ np.asarray(to_host(inhibitory))
+    assert np.allclose(to_host(actual_e), expected_e, rtol=2e-6, atol=2e-5)
+    assert np.allclose(to_host(actual_i), expected_i, rtol=2e-6, atol=2e-5)
 
 
 def test_repeated_split_spmvs_are_bit_exact():

@@ -8106,18 +8106,37 @@ class SimulationBridge:
                 is_inhibitory_neuron_output = self._cached_inhibitory_mask
                 exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output)
                 inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output
-                fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
-                _eff_cT = self.cp_connections.T
+                # DETERMINISM (2026-09-02): route the E/I-split transpose SpMV through the SAME
+                # explicit add.reduceat segmented reduction the main Python step uses (bridge.py
+                # ~8898). The PRIOR flag branch only `.tocsr()`-ed the transpose, then still ran the
+                # cuSPARSE two-column csrmv, whose ATOMIC FP accumulation is bit-NON-reproducible
+                # run-to-run and past total-N~=4968 amplifies into a 1-spike divergence -- so this
+                # GPU-only megakernel-v1 fast path was the LAST conductance matvec not honoring
+                # cfg.deterministic_transpose_matvec (2026-08-27 commit 06ce99c76 explicitly left it
+                # "GPU-only megakernel matvec unchanged"). Default off => the expression is the
+                # unchanged `.T @ fired_2col` (byte-identical to pre-edit). (megakernel-v2's in-kernel
+                # sequential double-accum is already order-stable, so it needs no flag branch.)
                 if getattr(cfg, "deterministic_transpose_matvec", False):
-                    _eff_cT = _eff_cT.tocsr()
-                g_increase_2col = _eff_cT @ fired_2col
-                g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
-                g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
+                    g_e_raw, g_i_raw = _deterministic_ei_transpose_spmv(
+                        self.cp_connections, exc_fired_prev, inhib_fired_prev)
+                    g_e_increase = g_e_raw * cfg.propagation_strength
+                    g_i_increase = g_i_raw * cfg.inhibitory_propagation_strength
+                else:
+                    fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
+                    _eff_cT = self.cp_connections.T
+                    g_increase_2col = _eff_cT @ fired_2col
+                    g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
+                    g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
             else:
                 _eff_cT1 = self.cp_connections.T
                 if getattr(cfg, "deterministic_transpose_matvec", False):
-                    _eff_cT1 = _eff_cT1.tocsr()
-                g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
+                    # add.reduceat segmented reduction (no atomics) => byte-reproducible at scale;
+                    # mirrors the main non-inhibitory path (bridge.py ~8922). Default off =>
+                    # unchanged `.T @ prev_fired_float` (byte-identical to pre-edit).
+                    g_e_increase = _deterministic_csr_matvec(
+                        _eff_cT1.tocsr(), prev_fired_float) * cfg.propagation_strength
+                else:
+                    g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
                 g_i_increase = self._step_megakernel_scratch_zeros()
         else:
             g_e_increase = self._step_megakernel_scratch_zeros()
