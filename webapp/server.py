@@ -3280,7 +3280,7 @@ def _bg_select_flag_on() -> bool:
 # key and NO reduced-reference lead -> byte-identical. LESION (`BRAIN_CG_DRIVES_LESION=1`): build the ledger recurrence
 # at weight 0 -> it cannot HOLD -> even a re-mentioned referent reads ungrounded -> audience design goes static (always
 # INTRODUCE) -> the reduced lead VANISHES (the load-bearing proof). See webapp/common_ground_drives_chat.py.
-_CG_DRIVES_DEFAULT_ON = False
+_CG_DRIVES_DEFAULT_ON = True   # 2026-09-01 AUTO-FLIP: PART-A 6/6 GO + PART-B end-to-end no_regression=True (load-bearing, moat-safe, byte-identical-off)
 
 
 def _common_ground_drives_on() -> bool:
