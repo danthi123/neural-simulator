@@ -1,0 +1,29 @@
+{
+ "run_id": "1788385495-3979992",
+ "runner": "research/runners/onebrain_xedge_selfschema_production.py",
+ "argv": [
+  "/home/dant123/Projects/sim-worktrees/readfix-record-followthrough/research/runners/onebrain_xedge_selfschema_production.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_xedge_selfschema_production_frozen_readfix_6seed.json"
+ ],
+ "git_sha": "1c9509099",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T17:44:55",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_xedge_selfschema_production_frozen_readfix_6seed.json"
+}

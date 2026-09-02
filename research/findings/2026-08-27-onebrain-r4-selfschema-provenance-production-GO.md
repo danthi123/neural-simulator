@@ -13,6 +13,18 @@ builds_on:
   - research/findings/2026-08-27-onebrain-xedge-production-frozen-GO.md
 ---
 
+## ⛔ CORRECTION (2026-09-02) — re-verified against the read-isolation-fixed R4Pool: the wiring's own GO 6/6 SURVIVES, but the disclosed "5/6 clear R4's floor" residual is now 2/6
+
+This wire-in builds its own `R4Pool` instance and trains it fresh, so it inherited the SAME read-isolation bug
+`fa4e10271` fixed in `_onebrain_integration_r4_selfschema_provenance.py` (the C2 bug class,
+`research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`). Full write-up:
+`research/findings/2026-09-02-onebrain-r4-selfschema-production-wirein-read-isolation-reverify-GO-survives-floor-residual-worsens.md`.
+The wiring's OWN headline verdict (lesion-attributability, `n_go=6/6`) is UNCHANGED — this was never a live
+production over-claim (`BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA` stays default-OFF). But the disclosed secondary residual
+below ("5/6 clear R4's own pre-registered absolute floor") is SUPERSEDED <!--derived--> (citing the correcting
+finding's own numbers, not an artifact this document cites): the true, isolated-read figure is 2/6 (only seeds
+44 and 102 clear `F2_INTACT_FLOOR=0.010`) — docs/RETRACTED.md carries a PARTIAL row for this specific figure.
+
 # R4 self_schema -> source_provenance LEARNED CROSS-EDGE — wired into the live chat brain as an additive,
 default-OFF diagnostic; lesion-attributable through the real handler (6/6), 5/6 clear R4's own pre-registered
 floor under the simpler production call order — GO on the wiring, one honest residual named not hidden
