@@ -26,15 +26,19 @@ NODES="${POOL_NODES:-pool40 pool41 pool42}"
 mkdir -p "$(dirname "$QUEUE")"; touch "$QUEUE" "$CLAIMED"
 
 node_is_idle() {
-  # Idle = no research runner AND load below a quarter of its cores. Bracket the pattern: an un-bracketed one
-  # matches the ssh command carrying it, which is the self-match that made an earlier check unable to ever fire.
+  # Has capacity = fewer than (cores - headroom) research runners AND load below its core count. The pool jobs are
+  # single-threaded numpy (OPENBLAS_NUM_THREADS=1), so a 12-core node can run ~11 at once — the old "procs==0 AND
+  # load<cores/4" gate treated each node as a SINGLE-job worker and wasted 11/12 cores (owner 2026-09-02: fill the
+  # pool). Cap is overridable via POOL_JOBS_PER_NODE. Bracket the pgrep pattern: an un-bracketed one matches the
+  # ssh command carrying it, the self-match that made an earlier check unable to ever fire.
   local out
   out=$(timeout 12 ssh -o BatchMode=yes -o ConnectTimeout=6 "$1" \
         "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc '[r]esearch\.runners' 2>/dev/null | head -1)" 2>/dev/null) || return 1
   set -- $out
-  local cores="${1:-0}" load="${2:-99}" procs="${3:-1}"
-  [ "${procs:-1}" -eq 0 ] || return 1
-  awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c/4)}'
+  local cores="${1:-0}" load="${2:-99}" procs="${3:-99}"
+  local cap="${POOL_JOBS_PER_NODE:-$(( cores > 2 ? cores - 1 : 1 ))}"   # single-threaded jobs: fill to cores-1
+  [ "${procs:-99}" -lt "$cap" ] || return 1
+  awk -v l="$load" -v c="$cores" 'BEGIN{exit !(l < c)}'
 }
 
 remote_launch_command() {
@@ -160,9 +164,11 @@ fi
 echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES"
 while true; do
   for NODE in $NODES; do
-    if node_is_idle "$NODE"; then
+    # FILL the node to capacity within this cycle (while, not if) — with the per-node cap raised for
+    # single-threaded numpy jobs (owner 2026-09-02), a single if-per-cycle would need ~cap cycles to fill.
+    while node_is_idle "$NODE"; do
       JOB=$(pop_job)
-      [ -z "$JOB" ] && continue
+      [ -z "$JOB" ] && break
       echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
       printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"
       # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
@@ -172,11 +178,11 @@ while true; do
       # the encoding keeps multiline pytest expressions from becoming fake status rows.
       REMOTE_COMMAND=$(remote_launch_command "$JOB") || {
         echo "[pool-dispatch] failed to encode job for $NODE" >&2
-        continue
+        break
       }
       ssh -f -n -o BatchMode=yes "$NODE" "$REMOTE_COMMAND" 2>/dev/null
-      sleep 5     # let the launch register before this node is polled again
-    fi
+      sleep 5     # let the launch register before this node's next capacity check
+    done
   done
   sleep "$POLL"
 done
