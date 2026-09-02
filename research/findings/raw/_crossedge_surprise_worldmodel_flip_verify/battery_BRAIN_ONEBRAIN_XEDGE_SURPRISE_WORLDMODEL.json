@@ -1,0 +1,315 @@
+{
+  "all_pass": true,
+  "n_faculties": 38,
+  "n_pass": 34,
+  "n_regressed": 0,
+  "n_not_exercised": 4,
+  "regressed": [],
+  "not_exercised": [
+    "swap-drives-response",
+    "anaphora-wm",
+    "wm-binding-advanced",
+    "value-driven-choice"
+  ],
+  "per_faculty": [
+    {
+      "faculty": "content-selection",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "semantic-recall",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "one-brain-substrate",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "moat-verify",
+      "turn": "unknown",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "in-loop-learning",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-monitor",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-learned-animacy-cue",
+      "turn": "animacy",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "comprehension-learned-verb-selects",
+      "turn": "verbsel",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "noncontradiction-gate",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-coloring",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-drives-response",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "affect-marker-spiking-wta",
+      "turn": "emo",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "da-mode-drives-response",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "da-gated-encoding",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "source-provenance-honesty",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "common-ground-drives",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "confidence-forthcomingness",
+      "turn": "rich_well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "swap-drives-response",
+      "turn": "held",
+      "verdict": "not-exercised",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "anaphora-wm",
+      "turn": "held",
+      "verdict": "not-exercised",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "wm-binding-advanced",
+      "turn": "held",
+      "verdict": "not-exercised",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "prospective-memory",
+      "turn": "pmem_form",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "pragmatic-implicature",
+      "turn": "scalar",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "surprise-monitor",
+      "turn": "contra",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "metacog-monitor",
+      "turn": "confirm",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "worldmodel-forward",
+      "turn": "expect_q",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "curiosity-followup",
+      "turn": "unknown",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "reconsolidation",
+      "turn": "contra",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "episodic-memory",
+      "turn": "episodic",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "discourse-register",
+      "turn": "dr_c",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "open-ended-generation",
+      "turn": "rich_open",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "discourse-planner",
+      "turn": "rich_well",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "gnw-deliberation",
+      "turn": "well",
+      "verdict": "pass",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "gnw-multistep-deliberation",
+      "turn": "chase",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "self-initiated-utterance",
+      "turn": "selfinit",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "vision-identity-spiking-hmax",
+      "turn": "vision",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "value-driven-choice",
+      "turn": "well",
+      "verdict": "not-exercised",
+      "thin_probe": true,
+      "diffs": []
+    },
+    {
+      "faculty": "bg-action-selection",
+      "turn": "bgdots",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    },
+    {
+      "faculty": "selective-attention-biased-competition",
+      "turn": "bc_b",
+      "verdict": "pass",
+      "thin_probe": false,
+      "diffs": []
+    }
+  ],
+  "flag": "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL",
+  "probe_turns": [
+    "well",
+    "question",
+    "unknown",
+    "hold",
+    "held",
+    "scalar",
+    "open",
+    "confirm",
+    "contra",
+    "expect_q",
+    "episodic",
+    "vision",
+    "bgdots",
+    "dr_a",
+    "dr_b",
+    "dr_c",
+    "chase",
+    "selfinit",
+    "animacy",
+    "verbsel",
+    "emo",
+    "bc_a",
+    "bc_b",
+    "rich_well",
+    "rich_open",
+    "pmem_form"
+  ],
+  "arms_built": {
+    "on": true,
+    "off": true
+  }
+}

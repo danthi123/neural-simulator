@@ -1,0 +1,30 @@
+{
+  "config": "A_baseline",
+  "env": {},
+  "well": {
+    "the wolf bites the apple": {
+      "answer": "the wolf bites the apple \u2014 worth going further here.",
+      "abstained": false,
+      "worldmodel_kind": null,
+      "predicted_next_sign": null,
+      "surprised": null,
+      "crossedge": null
+    },
+    "the dog chases the cat": {
+      "answer": "the dog chases the cat \u2014 worth going further here.",
+      "abstained": false,
+      "worldmodel_kind": null,
+      "predicted_next_sign": null,
+      "surprised": null,
+      "crossedge": null
+    }
+  },
+  "question": {
+    "answer": "Hm! I don't know about that. My curiosity is piqued \u2014 I haven't learned about wolf yet: what can you tell me about wolf? \u2014 worth going further here.",
+    "abstained": true,
+    "worldmodel_kind": "update",
+    "predicted_next_sign": -1,
+    "surprised": null,
+    "crossedge": null
+  }
+}
