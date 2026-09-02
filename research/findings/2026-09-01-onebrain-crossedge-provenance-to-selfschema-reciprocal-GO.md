@@ -16,6 +16,22 @@ builds_on:
 
 # The NEXT declarative cross-edge on the one-brain connectome: source_provenance's `prov_generated` opponent pool -> self_schema's `author` pool — the RECIPROCAL of R4's authorship->provenance edge, added as a data row + 2 callables, 6-seed GO (6/6)
 
+## ⛔ CORRECTION (2026-09-02) — this pool had its OWN, previously-unaudited read-isolation bug; GO 6/6 SURVIVES but with a substantially narrower margin than reported below
+
+<!--derived-->
+
+`ProvToAuthorPool._hard_reset()` (this file, unaudited by the original 14-runner read-isolation audit) was found
+to carry the SAME C2 bug class the audit named elsewhere — a 15th instance, structurally copied from the same
+hand-rolled `_hard_reset` house style, but NOT numerically dependent on R4's own (separately corrected) weight.
+Full write-up, fix, selftest, and before/after table: `research/findings/2026-09-02-onebrain-crossedge-
+provenance-to-selfschema-read-isolation-fix-GO-survives-narrower-margin.md`. **The GO 6/6 verdict SURVIVES** —
+every seed still clears `INTACT_FLOOR=0.010` — but §3's grown-weight range ("4.0-4.7 across seeds"), the
+`delta_intact` range ("+0.021 to +0.024"), and the "2.1-2.4x headroom" characterization below are all
+SUPERSEDED: the true (isolated) grown weight is 2.70-3.08, `delta_intact` is +0.0118 to +0.0137, and true
+headroom over the floor is only **1.18x-1.37x** (docs/RETRACTED.md carries a PARTIAL row for these specific
+figures). The lesion-attributability (`frac_attributable=1.0`, `delta_lesion` exactly 0.0), byte-identical-off,
+and the mechanism itself (a genuinely Hebbian-grown reciprocal edge) are all unaffected and survive unretracted.
+
 **One-line:** R4 (`_onebrain_integration_r4_selfschema_provenance.py`, GO 6/6) wired self_schema's `author` pool ->
 source_provenance's `prov_generated` pool one direction only: "when the brain currently judges a thought as
 SELF-authored, bias a co-temporal ambiguous source-memory read toward GENERATED." This closes the reciprocal

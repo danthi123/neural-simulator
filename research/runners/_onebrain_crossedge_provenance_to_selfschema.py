@@ -80,6 +80,22 @@ from research.runners._onebrain_integration_r4_selfschema_provenance import (
     AUTHOR_PA, CTX_DRIVE_PA, TRAIN_STEPS, _CONDUCT,
 )
 
+# THE READ-ISOLATION FIX (2026-09-02, C2 bug class — this file predates, and was NOT covered by, the 14-runner
+# audit in research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md; found instead
+# during the record-follow-through pass that re-verified this finding's own dependency on the audit's corrected
+# R4 result — a 15th instance of the same bug class, in the SAME hand-rolled `_hard_reset` shape the audit's own
+# H-1/IG-1 items named). `ProvToAuthorPool._hard_reset` below restores v/u to true rest and zeroes
+# conductances/firing_states/hebb-trace, but never touched `cp_refractory_timers`/`cp_prev_firing_states` (hard
+# firing gates independent of membrane potential) or `cp_neuron_activity_ema`/`cp_neuron_firing_thresholds` (the
+# homeostatic EMA + adaptive threshold) — the audited C2 class. Port A (reuse, don't hand-roll, exactly R4's own
+# fix in fa4e10271): `self.pool` IS a `MergedPool` (`onebrain_merge_framework.py::MergedPool._PER_NEURON_STATE`,
+# L246-250) which already lists all 4 of these arrays plus the ones already handled below. `_ALREADY_RESET` names
+# the subset this runner's `_hard_reset` already restores explicitly; every OTHER name in
+# `MergedPool._PER_NEURON_STATE` is snapshotted once at true rest (`ProvToAuthorPool.__init__`, after the
+# post-build settle) and restored on every `_hard_reset` call below.
+_ALREADY_RESET = frozenset(("cp_membrane_potential_v", "cp_recovery_variable_u",
+                             "cp_firing_states", "cp_external_input_current") + _CONDUCT)
+
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  THE DECLARATIVE EDGE — the reciprocal of R4's author->prov_generated: prov_generated->author.
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -168,6 +184,17 @@ class ProvToAuthorPool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (see the module-level comment above `_ALREADY_RESET`): snapshot the SAME
+        # true-rest baseline for every `MergedPool._PER_NEURON_STATE` array not already covered by the reset
+        # below (in practice: cp_prev_firing_states, cp_refractory_timers, cp_refractory,
+        # cp_neuron_firing_thresholds, cp_neuron_activity_ema) — reused from the framework's own list, not
+        # hand-typed.
+        self._rest_extra = {}
+        for nm in self.pool._PER_NEURON_STATE:
+            if nm in _ALREADY_RESET:
+                continue
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
     # ---- primitives (R1/R4 house style) ----
     def _hard_reset(self):
@@ -182,6 +209,12 @@ class ProvToAuthorPool:
             b.cp_firing_states[:] = False
         if getattr(b, "cp_hebb_coactivity_trace", None) is not None:
             b.cp_hebb_coactivity_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore every other _PER_NEURON_STATE array to the TRUE rest snapshot taken in
+        # __init__, so residue from whichever read/episode ran immediately before this call (refractory gating,
+        # prev-firing state, homeostatic EMA/threshold) cannot leak into the next read.
+        for nm, val in self._rest_extra.items():
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
 
     def _drive(self, pairs, steps, learn=False, read=None):
@@ -284,12 +317,67 @@ def run_seed(seed):
             "trajectory": gate["trajectory"]}
 
 
+def _selftest_read_isolation(seed=42, verbose=True):
+    """READ-ISOLATION FIX — fails-in-its-failing-direction guard (2026-09-02, mirrors R4's own
+    `_selftest_repeat_read_identity` in fa4e10271). On a fresh pool, two back-to-back IDENTICAL
+    `read_author("perceived")` calls must be bitwise identical — no RNG runs inside `_drive`/
+    `_run_one_simulation_step`, so any difference between two runs of the same drive can only be residual
+    per-neuron state leaking from whatever ran immediately before. Runs the SAME probe twice: once with the
+    fix's extra-array restore programmatically disabled (reproducing the ORIGINAL bug — this must DIVERGE,
+    proving the assertion has teeth), then with it enabled (the actual fix — this must be bitwise IDENTICAL)."""
+    pool = ProvToAuthorPool(seed)
+    ix = pool.ix
+
+    def _one_read():
+        return pool.read_author("perceived")
+
+    # induce asymmetric residue ahead of the two probed reads: drive 'author' + 'ctx_generated' directly (the
+    # SAME co-drive train() uses) so refractory/homeostatic state ends up shaped differently than the plain
+    # 'perceived' recall below.
+    pool._hard_reset()
+    pool._drive([(ix["author"], AUTHOR_PA), (ix["ctx_generated"], CTX_DRIVE_PA)], TRAIN_STEPS)
+
+    saved_extra = pool._rest_extra
+    pool._rest_extra = {}                  # simulate the ORIGINAL (pre-fix) _hard_reset
+    read_broken_1 = _one_read()
+    read_broken_2 = _one_read()
+    broken_diverges = (read_broken_1 != read_broken_2)
+
+    pool._rest_extra = saved_extra         # the actual fix
+    read_fixed_1 = _one_read()
+    read_fixed_2 = _one_read()
+    fixed_identical = (read_fixed_1 == read_fixed_2)
+
+    if verbose:
+        print(f"[selftest] fix-disabled diverges={broken_diverges}: {read_broken_1} vs {read_broken_2}", flush=True)
+        print(f"[selftest] fix-enabled  identical={fixed_identical}: {read_fixed_1} vs {read_fixed_2}", flush=True)
+    ok = broken_diverges and fixed_identical
+    if not broken_diverges and verbose:
+        print("[selftest] WARNING: SELFTEST HAS NO TEETH — two reads were bitwise identical even with the "
+              "extra-array restore disabled", flush=True)
+    if not fixed_identical and verbose:
+        print("[selftest] FAIL: READ-ISOLATION FIX BROKEN — repeat reads not bitwise identical with the fix "
+              "enabled", flush=True)
+    if ok and verbose:
+        print("[selftest] PASS — repeat-read bitwise identity holds under the fix, and the probe has teeth "
+              "(diverges when the fix is disabled)", flush=True)
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true", help="1 seed indicator")
+    ap.add_argument("--selftest", action="store_true",
+                     help="read-isolation fails-in-failing-direction guard only (no train/6-seed run)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
+
+    if args.selftest:
+        ok = _selftest_read_isolation()
+        print("SELFTEST " + ("PASS" if ok else "FAIL"), flush=True)
+        return 0 if ok else 1
+
     seeds = [42] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
 
     runs = []
@@ -318,8 +406,11 @@ def main():
     try:
         from tools.verdict import Verdict
         Vd = Verdict("onebrain_crossedge_provenance_to_selfschema")
-        Vd.require("all_seeds_go", n_go, expect=lambda x: x == len(runs),
-                   note="emergence + interaction + byte-off all PASS on every seed")
+        # NOTE (2026-09-02, matches the curiosity-d6wm read-isolation fix's own correction, ffa229876): the
+        # OUTCOME (n_go==len(runs)) must NOT be wrapped as a Vd.require() precondition alongside genuine validity
+        # checks — tools/gates/verdict_preconditions.py's own rule ("the OUTCOME is not a precondition") would
+        # collapse an honestly-measured NO-GO to UNDEFINED. The outcome is passed directly to Vd.decide() below;
+        # only the 2 genuine validity checks are registered as preconditions.
         Vd.require("lesion_removes_bias", 1 if all(
             abs(r["interaction"]["per_condition"]["generated"]["delta_lesion"]) <
             LESION_RATIO * max(abs(r["interaction"]["per_condition"]["generated"]["delta_intact"]), 1e-9)

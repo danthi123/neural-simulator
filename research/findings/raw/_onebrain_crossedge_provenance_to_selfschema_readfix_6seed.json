@@ -1,0 +1,642 @@
+{
+  "probe": "onebrain_crossedge_provenance_to_selfschema",
+  "verdict": "GO \u2014 the RECIPROCAL cross-edge source_provenance.prov_generated -> self_schema.author (completing R4's author->prov_generated pair in its other direction), added PURELY BY DECLARATION (a CrossEdge + train_fn + read_fn through the generic onebrain_crossedge_gate.run_gate \u2014 no bespoke F-gate): 6/6 seeds GROW from the substrate's own standard Hebbian rule, are LOAD-BEARING (recalling a genuinely-generated memory biases the self-schema's authorship read; the bias VANISHES on lesion), and are BYTE-IDENTICAL-OFF. numpy CPU; NO sim/ edit; additive.",
+  "GO": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "lesion_removes_bias",
+      "ok": true,
+      "detail": "measured=1 expect=<function main.<locals>.<lambda> at 0x7f38ea567ba0>",
+      "note": "the author-rate bias must VANISH under lesion or it is a confound, not the reciprocal edge"
+    },
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=6 expect=<function main.<locals>.<lambda> at 0x7f38ea567ba0>",
+      "note": "the no-edge pool's base connectivity is byte-identical (integration added ONLY the edge)"
+    }
+  ],
+  "gate_spec": {
+    "name": "RECIP_provenance_to_selfschema",
+    "correct_edges": [
+      "provgen_to_author"
+    ],
+    "conditions": [
+      "perceived",
+      "generated"
+    ],
+    "control": "perceived",
+    "credit_signal": "rate_hebbian",
+    "cross_edges": [
+      {
+        "key": "provgen_to_author",
+        "src": "prov_generated",
+        "tgt": "author"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "GO": true,
+      "elapsed_s": 12.2,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 2.7416090965270996
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.013000000000000006
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.013000000000000006,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78233,
+        "n_without": 76313,
+        "n_with_base": 76313,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.6066
+        },
+        {
+          "ep": 10,
+          "w": 1.0457
+        },
+        {
+          "ep": 15,
+          "w": 1.3797
+        },
+        {
+          "ep": 20,
+          "w": 1.6738
+        },
+        {
+          "ep": 25,
+          "w": 1.9258
+        },
+        {
+          "ep": 30,
+          "w": 2.1374
+        },
+        {
+          "ep": 35,
+          "w": 2.302
+        },
+        {
+          "ep": 40,
+          "w": 2.4297
+        },
+        {
+          "ep": 45,
+          "w": 2.5412
+        },
+        {
+          "ep": 50,
+          "w": 2.6271
+        },
+        {
+          "ep": 55,
+          "w": 2.6919
+        },
+        {
+          "ep": 60,
+          "w": 2.7416
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "elapsed_s": 13.1,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 2.777717351913452
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.011833333333333338
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.011833333333333338,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78416,
+        "n_without": 76496,
+        "n_with_base": 76496,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.6967
+        },
+        {
+          "ep": 10,
+          "w": 1.1091
+        },
+        {
+          "ep": 15,
+          "w": 1.4363
+        },
+        {
+          "ep": 20,
+          "w": 1.686
+        },
+        {
+          "ep": 25,
+          "w": 1.9106
+        },
+        {
+          "ep": 30,
+          "w": 2.1291
+        },
+        {
+          "ep": 35,
+          "w": 2.2968
+        },
+        {
+          "ep": 40,
+          "w": 2.434
+        },
+        {
+          "ep": 45,
+          "w": 2.554
+        },
+        {
+          "ep": 50,
+          "w": 2.6455
+        },
+        {
+          "ep": 55,
+          "w": 2.7197
+        },
+        {
+          "ep": 60,
+          "w": 2.7777
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "elapsed_s": 13.3,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 3.082380771636963
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.01366666666666667
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.01366666666666667,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78297,
+        "n_without": 76377,
+        "n_with_base": 76377,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.7834
+        },
+        {
+          "ep": 10,
+          "w": 1.303
+        },
+        {
+          "ep": 15,
+          "w": 1.708
+        },
+        {
+          "ep": 20,
+          "w": 2.0146
+        },
+        {
+          "ep": 25,
+          "w": 2.2567
+        },
+        {
+          "ep": 30,
+          "w": 2.4455
+        },
+        {
+          "ep": 35,
+          "w": 2.6057
+        },
+        {
+          "ep": 40,
+          "w": 2.7344
+        },
+        {
+          "ep": 45,
+          "w": 2.8344
+        },
+        {
+          "ep": 50,
+          "w": 2.9221
+        },
+        {
+          "ep": 55,
+          "w": 3.0037
+        },
+        {
+          "ep": 60,
+          "w": 3.0824
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "elapsed_s": 13.2,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 2.905726671218872
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.013500000000000002
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.013500000000000002,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78498,
+        "n_without": 76578,
+        "n_with_base": 76578,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.6812
+        },
+        {
+          "ep": 10,
+          "w": 1.1186
+        },
+        {
+          "ep": 15,
+          "w": 1.4725
+        },
+        {
+          "ep": 20,
+          "w": 1.7721
+        },
+        {
+          "ep": 25,
+          "w": 2.0217
+        },
+        {
+          "ep": 30,
+          "w": 2.2279
+        },
+        {
+          "ep": 35,
+          "w": 2.4051
+        },
+        {
+          "ep": 40,
+          "w": 2.5504
+        },
+        {
+          "ep": 45,
+          "w": 2.6723
+        },
+        {
+          "ep": 50,
+          "w": 2.7669
+        },
+        {
+          "ep": 55,
+          "w": 2.8396
+        },
+        {
+          "ep": 60,
+          "w": 2.9057
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "elapsed_s": 12.3,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 2.698699474334717
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.012666666666666666
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.012666666666666666,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78285,
+        "n_without": 76365,
+        "n_with_base": 76365,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.6496
+        },
+        {
+          "ep": 10,
+          "w": 1.0732
+        },
+        {
+          "ep": 15,
+          "w": 1.3959
+        },
+        {
+          "ep": 20,
+          "w": 1.6643
+        },
+        {
+          "ep": 25,
+          "w": 1.8879
+        },
+        {
+          "ep": 30,
+          "w": 2.0777
+        },
+        {
+          "ep": 35,
+          "w": 2.2355
+        },
+        {
+          "ep": 40,
+          "w": 2.3593
+        },
+        {
+          "ep": 45,
+          "w": 2.4621
+        },
+        {
+          "ep": 50,
+          "w": 2.5622
+        },
+        {
+          "ep": 55,
+          "w": 2.6395
+        },
+        {
+          "ep": 60,
+          "w": 2.6987
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "elapsed_s": 13.9,
+      "emergence": {
+        "grown": {
+          "provgen_to_author": 2.851290702819824
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "perceived": 0.0,
+          "generated": 0.013166666666666667
+        },
+        "reads_lesion": {
+          "perceived": 0.0,
+          "generated": 0.0
+        },
+        "per_condition": {
+          "generated": {
+            "delta_intact": 0.013166666666666667,
+            "delta_lesion": 0.0,
+            "expected_sign": 1,
+            "floor": 0.01,
+            "frac_attributable": 1.0,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 78421,
+        "n_without": 76501,
+        "n_with_base": 76501,
+        "PASS": true
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.7592
+        },
+        {
+          "ep": 10,
+          "w": 1.2651
+        },
+        {
+          "ep": 15,
+          "w": 1.6544
+        },
+        {
+          "ep": 20,
+          "w": 1.9392
+        },
+        {
+          "ep": 25,
+          "w": 2.1631
+        },
+        {
+          "ep": 30,
+          "w": 2.3348
+        },
+        {
+          "ep": 35,
+          "w": 2.4707
+        },
+        {
+          "ep": 40,
+          "w": 2.5752
+        },
+        {
+          "ep": 45,
+          "w": 2.6588
+        },
+        {
+          "ep": 50,
+          "w": 2.7418
+        },
+        {
+          "ep": 55,
+          "w": 2.8058
+        },
+        {
+          "ep": 60,
+          "w": 2.8513
+        }
+      ]
+    }
+  ]
+}

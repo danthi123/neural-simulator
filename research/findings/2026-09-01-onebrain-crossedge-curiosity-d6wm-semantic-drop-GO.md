@@ -17,6 +17,24 @@ builds_on:
 # own held set — a real hyperpolarizing pull on the session's physical w0 register, not an appended qualifier —
 # 6-seed GO (6/6), lesion-attributable, byte-identical-off, auto-flip default-ON
 
+## ⛔ CORRECTION (2026-09-02) — re-verified against the read-isolation-fixed pool: GO 6/6 SURVIVES; production status changed for an unrelated reason
+
+This finding's underlying pool (`AskToW0Pool`, reused unmodified) had a read-isolation bug (the C2 bug class,
+`research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`, item IG-1), fixed in
+`ffa229876`. Full re-verification: `research/findings/2026-09-02-onebrain-crossedge-curiosity-d6wm-semantic-
+drop-read-isolation-reverify-GO-survives.md`. **The GO 6/6 below is CONFIRMED, not inflated** — this rung's own
+mechanism (`scale = clip(pool.cross_weight, 0, 1)`) saturates to exactly `1.0` on every seed both before AND
+after the fix (all values stay > 1), so the leak-affected trained weight never changes the injected current.
+The `cross_weight` VALUES printed in §4's table below are the pre-fix figures and no longer match the substrate's
+true trained state (post-fix values run 1.59-2.89, not the 1.74-2.12 shown below) — cited for the record, not
+load-bearing to the verdict. **Separately, unrelated to this fix**: the BASE cross-edge this rung depends on was
+flipped `_XEDGE_CD6_DEFAULT_ON=False` by a later commit (`afcb3ba7b`, correcting THAT rung's own inflated GO), so
+this rung is currently unreachable on a live `/api/brain-chat` turn regardless of its own flag — "not inflated as
+a standalone claim" and "inert in production" are BOTH true, for two different reasons. The correcting finding
+also surfaces a genuinely NEW, unrelated confound (a later default flip to competitive slot allocation,
+`BRAIN_MULTIREF_COMPETITIVE=1`, breaks this rung's own mechanism at seed 44 under CURRENT defaults) — logged, not
+fixed, there.
+
 **One-line:** the production wire-in's own declared residual ("the qualifier never causes the READOUT to
 actually DROP the competed referent from the holding-N-referents list") is closed for register 0 (w0): when a
 session's recent curiosity crave clears the SAME validated suppression floor that already gates the appended

@@ -1,0 +1,331 @@
+{
+  "probe": "onebrain_xedge_selfschema_production_frozen",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "declarative": false,
+  "backend": "numpy",
+  "n_go": 6,
+  "n_seeds": 6,
+  "n_clears_r4_registered_floor": 2,
+  "results": [
+    {
+      "seed": 42,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0025000000000000022,
+        "margin_held": 0.005625000000000005,
+        "shift_toward_generated": 0.008125000000000007,
+        "cross_weight": {
+          "author->provgen": 1.8332
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0025000000000000022,
+        "margin_held": -0.0025000000000000022,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 1.8332
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0025000000000000022,
+        "margin_held": -0.0025000000000000022,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0025000000000000022,
+        "margin_held": -0.0025000000000000022,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": false,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.015312499999999993,
+        "margin_held": -0.005625000000000005,
+        "shift_toward_generated": 0.009687499999999988,
+        "cross_weight": {
+          "author->provgen": 2.496
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.015312499999999993,
+        "margin_held": -0.015312499999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 2.496
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.015312499999999993,
+        "margin_held": -0.015312499999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.015312499999999993,
+        "margin_held": -0.015312499999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": false,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.011874999999999997,
+        "margin_held": 0.0003125000000000072,
+        "shift_toward_generated": 0.012187500000000004,
+        "cross_weight": {
+          "author->provgen": 2.538
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.011874999999999997,
+        "margin_held": -0.011874999999999997,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 2.538
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.011874999999999997,
+        "margin_held": -0.011874999999999997,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.011874999999999997,
+        "margin_held": -0.011874999999999997,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": true,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.008124999999999993,
+        "margin_held": 0.0006250000000000006,
+        "shift_toward_generated": 0.008749999999999994,
+        "cross_weight": {
+          "author->provgen": 2.5063
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.008124999999999993,
+        "margin_held": -0.008124999999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 2.5063
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.008124999999999993,
+        "margin_held": -0.008124999999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.008124999999999993,
+        "margin_held": -0.008124999999999993,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": false,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0006250000000000006,
+        "margin_held": 0.007499999999999993,
+        "shift_toward_generated": 0.008124999999999993,
+        "cross_weight": {
+          "author->provgen": 2.2218
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0006250000000000006,
+        "margin_held": -0.0006250000000000006,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 2.2218
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0006250000000000006,
+        "margin_held": -0.0006250000000000006,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0006250000000000006,
+        "margin_held": -0.0006250000000000006,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": false,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "cross_weight": {
+        "author->provgen": 0.0
+      },
+      "held_true_intact": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0071874999999999994,
+        "margin_held": 0.006249999999999992,
+        "shift_toward_generated": 0.013437499999999991,
+        "cross_weight": {
+          "author->provgen": 2.7907
+        }
+      },
+      "held_false_intact": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0071874999999999994,
+        "margin_held": -0.0071874999999999994,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 2.7907
+        }
+      },
+      "held_true_lesion": {
+        "on": true,
+        "author_held": true,
+        "margin_baseline": -0.0071874999999999994,
+        "margin_held": -0.0071874999999999994,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "held_false_lesion": {
+        "on": true,
+        "author_held": false,
+        "margin_baseline": -0.0071874999999999994,
+        "margin_held": -0.0071874999999999994,
+        "shift_toward_generated": 0.0,
+        "cross_weight": {
+          "author->provgen": 0.0
+        }
+      },
+      "frac_attributable_to_cross_edge": 1.0,
+      "no_signal_no_bias_ok": true,
+      "lesion_attributable": true,
+      "r4_f2_intact_floor": 0.01,
+      "clears_r4_registered_floor": true,
+      "GO": true
+    }
+  ],
+  "note": "frozen pre-grown R4 self_schema-authorship -> source_provenance cross-edge wired into the live pool; the DRIVE is lesion-attributable through crossedge_provenance_shift (the SAME function the live /api/brain-chat is_hyp block calls): holding the LIVE authorship verdict shifts R4's fixed ambiguous item's signed provenance margin toward GENERATED, within R4's own noise floor of 0 shift when author_held=False (no signal, no bias), and the shift collapses under BRAIN_ONEBRAIN_XEDGE_SELFSCHEMA_LESION=1 on every seed (GO). HONEST RESIDUAL (2026-08-28, verify-go skeptic finding): this wrapper's simpler call sequence (train -> read, no F1/F4 pre-conditioning steps unlike R4's own run_seed) yields a slightly smaller intact shift than R4's own richer-preconditioned protocol on some seeds -- `clears_r4_registered_floor` reports how many seeds still clear R4's own pre-registered F2_INTACT_FLOOR=0.010 under this simpler sequence (may be < n_go; GO is graded on lesion-attributability, the wiring's own crux, not silently re-using R4's floor as if unchanged)."
+}
