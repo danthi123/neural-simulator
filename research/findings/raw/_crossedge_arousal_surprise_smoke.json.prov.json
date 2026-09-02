@@ -1,0 +1,29 @@
+{
+ "run_id": "1788341414-3324289",
+ "runner": "research/runners/_crossedge_arousal_surprise_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-abc376e7853401c39/research/runners/_crossedge_arousal_surprise_derisk.py",
+  "--smoke",
+  "--out",
+  "research/findings/raw/_crossedge_arousal_surprise_smoke.json"
+ ],
+ "git_sha": "b721e6668",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T05:30:14",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2381.6,
+ "corpus_check_query": "arousal to surprise prediction gain neuromodulation LC-NE adaptive gain cross-edge",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_crossedge_arousal_surprise_smoke.json"
+}
