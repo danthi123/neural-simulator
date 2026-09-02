@@ -1,4 +1,13 @@
-2026-09-02T01:53:17Z
+2026-09-02T10:30:00Z
+
+## 2026-09-02 ~10:30 · REAL SYNC (Vikunja back up after the owner's infra maintenance)
+Board actually reconciled this cycle: created #200 (single-pool full-soak GO milestone), #201 (#94
+confidence-forthcomingness at 100k GO), #202 (cross-edges: C1 GO+WIRED / C2 needs a better rule); updated
+#202's description to the C1-WIRED-flip-ready + C2-second-negative→read-fix status and applied the de-risked
+label. Landings covered: Phase-1 verification infra (013884a72), battery thin-probes (829120e80), #94 GO
+(b670b02c3), single-pool GO + C1 GO + C2 NO-GO harvest (7db41b234), cupy-scan vectorize (4eeefd6e1), C2
+2nd-negative (bfc4763f1), C1 WIRED flip-ready (39cf85d82). The pre-2026-09-02T10:30 deferred-stamp owed-lists
+below are now DISCHARGED (their #171/#199 items + the milestone tasks are reflected on the live board).
 
 ## 2026-09-02  open-ended-pipeline-integration-R1 (rung 1) -- RECONCILE ATTEMPTED, BLOCKED (honest, not a real sync)
 Landing: research/findings/2026-09-02-open-ended-episodic-writeback-R1-rung1.md (an open-ended turn now writes the
