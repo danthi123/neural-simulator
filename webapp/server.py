@@ -3613,6 +3613,37 @@ def _ltm_ship_default_on() -> bool:
 _COMPOSER_KIND_DEFAULT = "onebrain"
 _CONTINUOUS_DRIVES_DEFAULT = "1"
 
+# LTM-STORE DECODE LEVERS (board #108 cluster, 2026-09-02): the #66 seed-44 recall-hole arc
+# (research/FAILURE_LOG.md row 93, finding 2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-
+# decode-escalation-fix.md) root-caused a genuine, seed-INDEPENDENT RF phase-readout quantization miss at
+# knowledge-base scale and built two additive `RFPhasorComposer` levers to close it. Both DEFAULT ON at ANY
+# bundle scale (not gated to the 100k bundle specifically): `enable_codebook_cache` is a pure memoization of a
+# deterministic recomputation (byte-identical BY CONSTRUCTION -- rf_phasor_composer.py::_ensure_codebook_cache
+# rebuilds exactly what the uncached path would); `enable_decode_escalation` only ever RECOVERS a fact the
+# coarse readout mis-decoded (a confidence-gated finer-period re-examination of a near-tie candidate -- it can
+# only turn a wrong/None answer into the correct one, never the reverse, moat-safe by construction per
+# tests/test_decode_escalation_seed44_hole.py). Verified NO-OP on the shipped 15k core (0 oracle-parity
+# mismatches with the flags OFF *and* ON, on the SAME `_knowledge_scale_100k_production_verify.py --bundle
+# <15k core>` battery -- see research/findings/raw/_flip108_r2_wiring/). Row 94's "NEWLY FOUND" gap this
+# closes: neither live LTM-load path threaded these flags at all before this change. Escape:
+# BRAIN_LTM_CODEBOOK_CACHE=0 / BRAIN_LTM_DECODE_ESCALATION=0 restore the exact pre-2026-09-02 behavior.
+_LTM_CODEBOOK_CACHE_DEFAULT_ON = True
+_LTM_DECODE_ESCALATION_DEFAULT_ON = True
+
+
+def _ltm_codebook_cache_on() -> bool:
+    env = os.environ.get("BRAIN_LTM_CODEBOOK_CACHE")
+    if env is None:
+        return _LTM_CODEBOOK_CACHE_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
+
+def _ltm_decode_escalation_on() -> bool:
+    env = os.environ.get("BRAIN_LTM_DECODE_ESCALATION")
+    if env is None:
+        return _LTM_DECODE_ESCALATION_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
 
 def _resolve_ltm_bundle():
     """Resolve the cortical LTM bundle path (returns a dir string, or None for the byte-identical no-LTM path).
@@ -3632,14 +3663,24 @@ def _resolve_ltm_bundle():
     return None
 
 
-def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128):
+def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: int = 128,
+                              enable_codebook_cache: bool = None, enable_decode_escalation: bool = None):
     """Load (fast path) or build (fallback) a `ShardedPhasorStore` LTM from `ltm_bundle`, mirroring
     `developed_brain_io.load_developed_brain`'s OWN `ltm_bundle` handling EXACTLY (same fast-path-persisted-
     store-first, then build-from-facts.json precedence) -- factored out here so the default tiny-demo brain
     (reasoning-frontier, 2026-08-25) gets the IDENTICAL LTM-attach behavior the developed-brain path already
     has, without duplicating/diverging the load-vs-build decision. Returns None if the bundle has neither a
     loadable sharded-store manifest nor a facts.json to build from (a missing/empty bundle degrades quietly;
-    the caller treats None as "no LTM available")."""
+    the caller treats None as "no LTM available").
+
+    `enable_codebook_cache`/`enable_decode_escalation`: None (default) resolves via `_ltm_codebook_cache_on()`/
+    `_ltm_decode_escalation_on()` (board #108 cluster; ON by default at any bundle scale, BRAIN_LTM_CODEBOOK_CACHE=0/
+    BRAIN_LTM_DECODE_ESCALATION=0 escape) -- an explicit True/False here overrides that resolution (used by callers
+    that need a specific setting, e.g. a byte-identical-comparison harness)."""
+    if enable_codebook_cache is None:
+        enable_codebook_cache = _ltm_codebook_cache_on()
+    if enable_decode_escalation is None:
+        enable_decode_escalation = _ltm_decode_escalation_on()
     from research.runners.sharded_phasor_store import ShardedPhasorStore
     manifest_path = Path(ltm_bundle) / "manifest.json"
     if manifest_path.exists():
@@ -3648,14 +3689,24 @@ def _load_or_build_ltm_store(ltm_bundle: str, seed: int = 42, n_shards=None, D: 
         except Exception:
             mani = {}
         if isinstance(mani, dict) and "n_shards" in mani:
-            return ShardedPhasorStore.load(str(ltm_bundle))
+            extra_kwargs = {}
+            if enable_codebook_cache:
+                extra_kwargs["enable_codebook_cache"] = True
+            if enable_decode_escalation:
+                extra_kwargs["enable_decode_escalation"] = True
+            return ShardedPhasorStore.load(str(ltm_bundle), extra_kwargs=extra_kwargs or None)
     from research.runners.developed_brain_io import _load_facts_json
     from research.runners.tiered_fact_store import build_ltm_from_facts, auto_n_shards
     ltm_facts = _load_facts_json(ltm_bundle)
     if not ltm_facts:
         return None
     ns = int(n_shards) if n_shards is not None else auto_n_shards(len(ltm_facts))
-    return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D))
+    cb_kwargs = {}
+    if enable_codebook_cache:
+        cb_kwargs["enable_codebook_cache"] = True
+    if enable_decode_escalation:
+        cb_kwargs["enable_decode_escalation"] = True
+    return build_ltm_from_facts(ltm_facts, n_shards=ns, seed=int(seed), D=int(D), composer_kwargs=cb_kwargs or None)
 
 
 def _build_chat_brain(brain: str, renderer: str):
@@ -3739,7 +3790,9 @@ def _build_chat_brain(brain: str, renderer: str):
         _ltm_bundle = _resolve_ltm_bundle()
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
-                                               ltm_bundle=_ltm_bundle)
+                                               ltm_bundle=_ltm_bundle,
+                                               enable_codebook_cache=_ltm_codebook_cache_on(),
+                                               enable_decode_escalation=_ltm_decode_escalation_on())
         aliases = set(manifest.get("self_aliases") or []) | set(DEFAULT_SELF_ALIASES)
         source = f"developed-brain:{brain}" + (" +LTM" if _ltm_bundle else "")
     else:

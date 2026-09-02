@@ -1,0 +1,26 @@
+{
+ "run_id": "1788324421-3071306",
+ "runner": "research/findings/raw/_flip108_r2_wiring/verify_load_or_build_ltm_store_15k_byte_identical.py",
+ "argv": [
+  "research/findings/raw/_flip108_r2_wiring/verify_load_or_build_ltm_store_15k_byte_identical.py"
+ ],
+ "git_sha": "0bb705afa",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T00:47:01",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2300.7,
+ "corpus_check_query": "wire decode escalation codebook cache into server LTM load path 100k",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_flip108_r2_wiring/verify_load_or_build_ltm_store_15k_byte_identical.json"
+}
