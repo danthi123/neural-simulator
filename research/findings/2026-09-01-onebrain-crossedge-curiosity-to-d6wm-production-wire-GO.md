@@ -1,6 +1,6 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-09-01
 mechanism: onebrain-xedge-curiosity-d6-production-wire
 lane: one-brain/integration/production
@@ -16,7 +16,27 @@ builds_on:
 # The curiosity.ask -> d6.w0 cross-edge is wired into the LIVE `/api/brain-chat` and DRIVES the D6 hold-query reply
 # text itself (not a diagnostic field) — 6-seed GO on the production wrapper, real-handler confirmed, session-isolated
 
-**One-line:** the runner-level 6-seed GO (`2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md`) wired
+## ⛔ CORRECTION (2026-09-02, read-isolation fix) — the "6-seed GO on the production wrapper's own self-test" was PARTIALLY INFLATED; corrected verdict is NO-GO 3/6 on the REAL wrapper; the AUTO-FLIP decision (§7 below) is FLAGGED FOR OWNER REVIEW
+
+The parent runner-level finding (`2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md`, also ⛔-corrected) had
+an incomplete `AskToW0Pool._hard_reset()` that leaked residual per-neuron + NMDA-recurrent/synapse-pulse state
+across reads and training episodes. Because `XedgeCuriosityD6ProductionPool.read_w0` delegates verbatim to
+`AskToW0Pool.read_w0` (never reimplemented), the SAME leak inflated this file's own §3 self-test. Re-running
+this wrapper's OWN `--grow --seeds 42,43,44,100,101,102` self-test against the fixed `_hard_reset()` reproduces
+the runner-level correction's shift values to full precision and the SAME outcome: **n_go 6/6 -> 3/6** (seeds
+43/101/102 no longer clear `clears_registered_floor`). `delta_lesion`/lesioned shift is now exactly 0.0 on every
+seed (the read is now trustworthy). Artifact:
+`research/findings/raw/_onebrain_xedge_curiosity_d6_production_frozen_readfix_6seed.json`; full write-up:
+`research/findings/2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md`.
+
+**§7's AUTO-FLIP decision explicitly rested on "validated-GO"** — that premise is now false. This correction
+does **NOT** flip `_XEDGE_CD6_DEFAULT_ON` back to `False`; `docs/PRODUCTION_INTEGRATION_LEDGER.yaml` is
+unedited. Whether a 3/6 (not 6/6) cross-edge should remain the live text `/api/brain-chat`'s D6 hold-query
+returns is an owner UX call, flagged here for review, not decided by this correction. §1-6 below (the wiring
+mechanics, moat-safety, byte-identical-off, session-isolation) are UNCHANGED and survive — only the "validated-GO"
+premise behind §7's decision, and the specific 6-seed numbers in §3, are corrected.
+
+**One-line (ORIGINAL, now PARTIALLY SUPERSEDED — see the correction above):** the runner-level 6-seed GO (`2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md`) wired
 curiosity's `ask` crave pool -> d6's `w0` WM slot on a standalone research pool. This finding carries it into
 `webapp/server.py`'s real `/api/brain-chat` D6 hold-query branch (`research/runners/
 onebrain_xedge_curiosity_d6_production.py`, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6`), and — unlike this project's own
