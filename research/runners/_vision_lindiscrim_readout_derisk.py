@@ -194,6 +194,36 @@ def _apply_s2_norm(drive, a):
     return drive  # "none"
 
 
+def _kwta_over_templates(drive, frac):
+    """2026-09-01 (board #135/#75, S2-template-learning scoping): competitive sparse coding ACROSS the
+    S2 template bank -- the cheap first rung the satdiv/ridge-plateau finding's NO-DEFER handoff names
+    ("k-WTA already exists at S1 [`_kwta_per_band`, _vision_hmax_spiking_derisk.py] but was never applied
+    at S2/C2"). Per (image, patch-LOCATION), keep only the top `frac` fraction of the n_S2 templates'
+    responses and zero the rest -- lateral inhibition ACROSS the template population at a shared location
+    (Foldiak 1991's competitive step; a hard-threshold discretisation of Rozell, Johnson, Baraniuk &
+    Olshausen 2008's LCA sparse-coding dynamics, which use iterative soft-thresholding + local competition
+    among a population of leaky integrators to converge on a sparse code -- this is the one-shot top-k
+    approximation of that competition, cheap enough for an inline smoke).
+
+    WHY THIS TARGETS THE DIAGNOSED WALL DIRECTLY: the #72/#75 root cause is a fine DISTRIBUTED cosine
+    modulation (across-template std ~0.04) riding on a large COMMON MODE (~0.8) shared by most templates at
+    a given location -- exactly what a winner-take-all competitive step is built to remove (only the
+    locally-BEST-matching templates survive per location; the near-uniformly-elevated non-winners are
+    suppressed to 0, which directly shrinks the shared common mode the readout's ridge/z-norm has to fight).
+    Applied AFTER `_apply_s2_norm` (any norm mode, including satdiv) so this is a genuinely NEW axis, not a
+    restatement of the exhausted affine-normalization family: normalization sets the PER-TEMPLATE GAIN,
+    competition then decides WHICH templates are allowed to carry signal to the LIF / ridge readout at all.
+    drive: (N, n_loc, n_S2). frac<=0 or >=1 disables (byte-identical -- this lever defaults OFF)."""
+    if frac is None or frac >= 1.0 or frac <= 0.0:
+        return drive
+    n_S2 = drive.shape[2]
+    k = max(1, int(round(frac * n_S2)))
+    if k >= n_S2:
+        return drive
+    thr = np.sort(drive, axis=2)[:, :, n_S2 - k][:, :, None]  # kth-largest template per (image, location)
+    return np.where(drive >= thr, drive, 0.0).astype(np.float32)
+
+
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
     (winner-relative contrast) -> LIF S2 coincidence spikes -> C2 per-template MAX over locations
@@ -204,6 +234,7 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)                      # (N, n_loc, n_S2) cosine match
     drive = _apply_s2_norm(drive, a)
+    drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
     flat = drive.reshape(N * n_loc, -1)
     acc = None
     G = max(1, int(n_glimpses))
@@ -225,6 +256,7 @@ def _c2_rate_code(c1, W0, a):
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)
     drive = _apply_s2_norm(drive, a)
+    drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
     return drive.max(axis=1).astype(np.float32)                # (N, n_S2)
 
 
@@ -568,6 +600,12 @@ def main():
     p.add_argument("--s2-satdiv-scale", type=float, default=1.0,
                    help="'satdiv' mode only: output rescale so the bounded ratio lands in the LIF's "
                         "graded (non-saturating) drive range jointly with --s2-gain")
+    p.add_argument("--s2-kwta-frac", type=float, default=0.0,
+                   help="2026-09-01 S2-template-learning scoping, cheap first rung: per (image, location) "
+                        "k-WTA competitive sparse coding ACROSS the n_S2 template bank -- keep only the "
+                        "top frac fraction of templates' responses, zero the rest (Foldiak 1991 lateral "
+                        "inhibition / a hard-threshold LCA, Rozell et al. 2008). Applied AFTER --s2-norm. "
+                        "0.0 (default) disables -> byte-identical to every prior run of this file.")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
