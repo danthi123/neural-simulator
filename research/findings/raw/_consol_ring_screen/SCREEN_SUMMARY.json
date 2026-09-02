@@ -1,0 +1,160 @@
+{
+ "screen": "#91 continuous-ring bump-attractor memory-separator, dendritic-only first-pass, seed 42",
+ "backend": "numpy",
+ "n_configs": 116,
+ "note": "dendritic-only (no control arm) -> parameter-space map, not a per-config GO/NO-GO verdict; top-dw configs are the promising region for a full with-control re-run",
+ "dw_median": 0.00269,
+ "top8_by_dw": [
+  {
+   "cfg": 77,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 0.5,
+    "surround_inhib": 6.0,
+    "slot_drive": 700.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04887,
+   "w_pre": 0.05738,
+   "w_post": 0.10625,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 95,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 3.0,
+    "surround_inhib": 6.0,
+    "slot_drive": 1400.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04877,
+   "w_pre": 0.05728,
+   "w_post": 0.10605,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 91,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 3.0,
+    "surround_inhib": 3.0,
+    "slot_drive": 1400.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.0487,
+   "w_pre": 0.05734,
+   "w_post": 0.10604,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 87,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 1.5,
+    "surround_inhib": 6.0,
+    "slot_drive": 1400.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04864,
+   "w_pre": 0.05735,
+   "w_post": 0.106,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 73,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 0.5,
+    "surround_inhib": 3.0,
+    "slot_drive": 700.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04864,
+   "w_pre": 0.05735,
+   "w_post": 0.10599,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 93,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 3.0,
+    "surround_inhib": 6.0,
+    "slot_drive": 700.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04862,
+   "w_pre": 0.05728,
+   "w_post": 0.1059,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 1,
+   "op": {
+    "self_regen": 0.0,
+    "k_thresh": 2.0,
+    "lateral_exc": 0.5,
+    "surround_inhib": 3.0,
+    "slot_drive": 700.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04859,
+   "w_pre": 0.05741,
+   "w_post": 0.106,
+   "n_ring": 9,
+   "n_facts": 3
+  },
+  {
+   "cfg": 85,
+   "op": {
+    "self_regen": 0.1,
+    "k_thresh": 2.0,
+    "lateral_exc": 1.5,
+    "surround_inhib": 6.0,
+    "slot_drive": 700.0,
+    "ring_spacing": 2
+   },
+   "dw": 0.04858,
+   "w_pre": 0.05735,
+   "w_post": 0.10594,
+   "n_ring": 9,
+   "n_facts": 3
+  }
+ ],
+ "preconditions": [
+  {
+   "name": "all_216_configs_screened",
+   "ok": false,
+   "detail": "116 configs with dendritic dw"
+  },
+  {
+   "name": "dendritic_only_no_control",
+   "ok": true,
+   "detail": "screen maps space; verdict needs control-arm re-run"
+  }
+ ],
+ "seed": 42,
+ "seeds": [
+  42
+ ],
+ "runner": "research.runners._consol_dendritic_lineattractor_derisk",
+ "script": "controller aggregation of _consol_ring_screen/cfgN_s42.json/laNNN_seed42.json screen outputs",
+ "command": "for cfg in 0..215: python -m research.runners._consol_dendritic_lineattractor_derisk --config-index <cfg> --seed 42 --dendritic-only --cycles 40 (pool); then controller-aggregated",
+ "provenance": {
+  "source": "pool cluster screen + controller aggregation",
+  "n_configs_analyzed": 116
+ }
+}
