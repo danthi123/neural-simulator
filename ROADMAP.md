@@ -7,6 +7,30 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
+## 2026-09-01 (yet newer) — an auto-promotion sweep of two pending abilities: one goes live, one is held back honestly
+
+Two abilities that had already passed their initial validation, but were waiting on a policy decision about
+whether validated work should switch on automatically, were re-checked against that new policy — reproducing
+each guard fresh rather than trusting the earlier claim, since the earlier session had already caught one
+"already flipped" claim that turned out to be false and one "not safe" verdict that turned out to be a stale
+result:
+
+- **Went live**: which affective tone-word ("Wonderful", "Honestly", "Frankly", ...) leads a reply is now
+  chosen by a small competing-pools-of-neurons circuit reading the brain's own continuous mood, instead of a
+  fixed lookup table keyed on a coarse category. Re-checked on six different random setups: identical output
+  when explicitly turned off, the chosen word tracks the felt mood correctly when on, silencing the circuit's
+  input makes it honestly say nothing rather than fake the old table's answer, and scrambling which pool
+  answers to which mood changes the outcome (proving it is really reading the competition, not faking it from
+  a formula). All six checks passed both before and after the switch, so it is on by default from here on.
+- **Held back, honestly**: a proposed chat-latency speedup (rendering several sentences in one launch of the
+  small chat-voice model instead of one launch per sentence) was re-checked across six different random setups
+  instead of the one it had originally been measured on. The speedup itself is real and large (roughly 1.2x to
+  3.3x faster) and turning the feature off still reproduces the old behavior exactly — but on three of the six
+  setups, turning it ON produced a genuinely DIFFERENT reply than turning it off, including two cases where the
+  faster path returned an empty reply while the slower path had something to say. That is a real risk (a
+  content change from what was meant to be a pure speed optimization), so this one stays switched off pending
+  a fix to the specific noise-generation detail that causes the mismatch.
+
 ## 2026-09-01 (even newer) — a sixth and seventh ability go live from a three-way parallel wave
 
 A parallel wave of three independent efforts landed two more results (the third, a vision-normalization lever, was

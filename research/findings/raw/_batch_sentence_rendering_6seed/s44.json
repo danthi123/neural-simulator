@@ -1,0 +1,215 @@
+{
+  "probe": "batch_sentence_rendering_derisk",
+  "backend": "cuda(qwen)+numpy(chat)",
+  "seed": 44,
+  "T": 16,
+  "max_new_tokens": 24,
+  "reps": 7,
+  "warmup": true,
+  "max_sentences_cfg": 6,
+  "n_sentences": 6,
+  "topic": "spikes",
+  "facts": [
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "spikes",
+      "fire",
+      "neurons"
+    ],
+    [
+      "neurons",
+      "have",
+      "synapses"
+    ],
+    [
+      "synapses",
+      "store",
+      "weights"
+    ],
+    [
+      "weights",
+      "hold",
+      "memory"
+    ],
+    [
+      "memory",
+      "needs",
+      "sleep"
+    ]
+  ],
+  "baseline_median_s": 1.752824306488037,
+  "baseline_times_s": [
+    1.7824172973632812,
+    1.7189455032348633,
+    1.760455846786499,
+    1.752824306488037,
+    1.7804415225982666,
+    1.7381277084350586,
+    1.7490825653076172
+  ],
+  "batched_median_s": 1.4836652278900146,
+  "batched_times_s": [
+    1.444403886795044,
+    1.4403584003448486,
+    1.4836652278900146,
+    1.5150160789489746,
+    1.4856562614440918,
+    1.4527666568756104,
+    1.489112138748169
+  ],
+  "speedup_x": 1.181414967162643,
+  "paragraph_off": "Spikes fired neurons. Neurons have synapses. Synapses store weights. Memory needs sleep.",
+  "paragraph_on": "",
+  "kept_off": [
+    [
+      "spikes",
+      "fire",
+      "neurons"
+    ],
+    [
+      "neurons",
+      "have",
+      "synapses"
+    ],
+    [
+      "synapses",
+      "store",
+      "weights"
+    ],
+    [
+      "memory",
+      "needs",
+      "sleep"
+    ]
+  ],
+  "kept_on": [],
+  "dropped_off": [
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "weights",
+      "hold",
+      "memory"
+    ]
+  ],
+  "dropped_on": [
+    [
+      "brain",
+      "use",
+      "spikes"
+    ],
+    [
+      "spikes",
+      "fire",
+      "neurons"
+    ],
+    [
+      "neurons",
+      "have",
+      "synapses"
+    ],
+    [
+      "synapses",
+      "store",
+      "weights"
+    ],
+    [
+      "weights",
+      "hold",
+      "memory"
+    ],
+    [
+      "memory",
+      "needs",
+      "sleep"
+    ]
+  ],
+  "paragraph_identical": false,
+  "kept_identical": false,
+  "dropped_identical": false,
+  "equivalence_ok": false,
+  "off_never_calls_batched": true,
+  "off_poisoned_matches_baseline": true,
+  "single_fact_never_batches": true,
+  "verdict": {
+    "label": "batching the RICH-answer's per-sentence render loop into one model.generate() launch reduces wall-clock latency, byte-identical-when-OFF is PROVED (not just inferred), and batched-vs-sequential text equivalence is measured and reported honestly either way",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "flag OFF: the new batched code path is PROVABLY never reached (poison test)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag OFF + poisoned batched method: output still matches the untouched baseline",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "flag ON + a single-fact turn: still never batches (nothing to batch)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "BATCHED median latency is lower than the BASELINE sequential median",
+        "ok": true,
+        "detail": "measured=1.4836652278900146 expect=<function run.<locals>.<lambda> at 0x7f8e6ef037e0>",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "batched output is BYTE-IDENTICAL to the sequential output for this multi-sentence turn",
+        "why": "equivalence_ok=False (paragraph=False, kept=False, dropped=False) -- the installed spiking ops draw graded-read pool noise from a torch.randn() call SHAPED by the full (batch, seq, ...) tensor (see `_generate_batch`'s own docstring), so a batched forward's per-sequence noise realization is not bitwise-guaranteed identical to a lone forward's even at the identical reseed value. Reported honestly as measured, not asserted; the moat is unaffected either way (VERIFY still gates every candidate, batched or sequential, before it is kept)."
+      }
+    ],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "flag OFF: the new batched code path is PROVABLY never reached (poison test)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag OFF + poisoned batched method: output still matches the untouched baseline",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "flag ON + a single-fact turn: still never batches (nothing to batch)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BATCHED median latency is lower than the BASELINE sequential median",
+      "ok": true,
+      "detail": "measured=1.4836652278900146 expect=<function run.<locals>.<lambda> at 0x7f8e6ef037e0>",
+      "note": ""
+    }
+  ],
+  "GO": true
+}

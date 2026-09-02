@@ -1,0 +1,1130 @@
+{
+  "runner": "_affect_marker_wta_verify",
+  "backend": "numpy",
+  "ts": "2026-09-01T23:50:26",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "git_sha": "2a00c40bf455f871ddec95bf925a5e46c9cb8c56",
+  "part_a": {
+    "function_level": [
+      {
+        "level": -3,
+        "high": false,
+        "base": "Frankly \u2014 ",
+        "augmented": "Frankly \u2014 ",
+        "expect": "Frankly \u2014 ",
+        "ok": true
+      },
+      {
+        "level": -3,
+        "high": true,
+        "base": "Frankly! ",
+        "augmented": "Frankly! ",
+        "expect": "Frankly! ",
+        "ok": true
+      },
+      {
+        "level": -2,
+        "high": false,
+        "base": "Honestly \u2014 ",
+        "augmented": "Honestly \u2014 ",
+        "expect": "Honestly \u2014 ",
+        "ok": true
+      },
+      {
+        "level": -2,
+        "high": true,
+        "base": "Honestly! ",
+        "augmented": "Honestly! ",
+        "expect": "Honestly! ",
+        "ok": true
+      },
+      {
+        "level": -1,
+        "high": false,
+        "base": "Hm \u2014 ",
+        "augmented": "Hm \u2014 ",
+        "expect": "Hm \u2014 ",
+        "ok": true
+      },
+      {
+        "level": -1,
+        "high": true,
+        "base": "Hm! ",
+        "augmented": "Hm! ",
+        "expect": "Hm! ",
+        "ok": true
+      },
+      {
+        "level": 1,
+        "high": false,
+        "base": "Sure \u2014 ",
+        "augmented": "Sure \u2014 ",
+        "expect": "Sure \u2014 ",
+        "ok": true
+      },
+      {
+        "level": 1,
+        "high": true,
+        "base": "Sure! ",
+        "augmented": "Sure! ",
+        "expect": "Sure! ",
+        "ok": true
+      },
+      {
+        "level": 2,
+        "high": false,
+        "base": "Gladly \u2014 ",
+        "augmented": "Gladly \u2014 ",
+        "expect": "Gladly \u2014 ",
+        "ok": true
+      },
+      {
+        "level": 2,
+        "high": true,
+        "base": "Gladly! ",
+        "augmented": "Gladly! ",
+        "expect": "Gladly! ",
+        "ok": true
+      },
+      {
+        "level": 3,
+        "high": false,
+        "base": "Wonderful \u2014 ",
+        "augmented": "Wonderful \u2014 ",
+        "expect": "Wonderful \u2014 ",
+        "ok": true
+      },
+      {
+        "level": 3,
+        "high": true,
+        "base": "Wonderful! ",
+        "augmented": "Wonderful! ",
+        "expect": "Wonderful! ",
+        "ok": true
+      }
+    ],
+    "workspace_level": [
+      {
+        "seed": 42,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 3,
+        "lead": "Wonderful! ",
+        "ok": true
+      }
+    ],
+    "all_ok": true
+  },
+  "part_b": {
+    "rows": [
+      {
+        "seed": 42,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "Frankly! ",
+        "expect_word": "Frankly",
+        "got_word": "Frankly",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "Honestly! ",
+        "expect_word": "Honestly",
+        "got_word": "Honestly",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "Hm \u2014 ",
+        "expect_word": "Hm",
+        "got_word": "Hm",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "Sure \u2014 ",
+        "expect_word": "Sure",
+        "got_word": "Sure",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "Gladly! ",
+        "expect_word": "Gladly",
+        "got_word": "Gladly",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "Wonderful! ",
+        "expect_word": "Wonderful",
+        "got_word": "Wonderful",
+        "ok": true
+      }
+    ],
+    "per_seed_ok": {
+      "42": true,
+      "43": true,
+      "44": true,
+      "100": true,
+      "101": true,
+      "102": true
+    },
+    "diff_rows": [
+      {
+        "seed": 42,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      },
+      {
+        "seed": 43,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      },
+      {
+        "seed": 44,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      },
+      {
+        "seed": 100,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      },
+      {
+        "seed": 101,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      },
+      {
+        "seed": 102,
+        "pos_word": "Wonderful",
+        "neg_word": "Frankly",
+        "differ": "Frankly"
+      }
+    ],
+    "all_ok": true
+  },
+  "part_c": {
+    "rows": [
+      {
+        "seed": 42,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 42,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 43,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 44,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 100,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 101,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -3,
+        "mood": -0.085,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -2,
+        "mood": -0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": -1,
+        "mood": -0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 1,
+        "mood": 0.0275,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 2,
+        "mood": 0.0575,
+        "lead": "",
+        "ok": true
+      },
+      {
+        "seed": 102,
+        "level": 3,
+        "mood": 0.085,
+        "lead": "",
+        "ok": true
+      }
+    ],
+    "all_ok": true
+  },
+  "part_d": {
+    "rows": [
+      {
+        "seed": 42,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Gladly",
+        "differs": true
+      },
+      {
+        "seed": 42,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Wonderful",
+        "differs": true
+      },
+      {
+        "seed": 42,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Honestly",
+        "differs": true
+      },
+      {
+        "seed": 42,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Sure",
+        "differs": false
+      },
+      {
+        "seed": 42,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Frankly",
+        "differs": true
+      },
+      {
+        "seed": 42,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Hm",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Gladly",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Hm",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Frankly",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Wonderful",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Honestly",
+        "differs": true
+      },
+      {
+        "seed": 43,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Sure",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Honestly",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Gladly",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Sure",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Frankly",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Hm",
+        "differs": true
+      },
+      {
+        "seed": 44,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Wonderful",
+        "differs": false
+      },
+      {
+        "seed": 100,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Wonderful",
+        "differs": true
+      },
+      {
+        "seed": 100,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Honestly",
+        "differs": false
+      },
+      {
+        "seed": 100,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Sure",
+        "differs": true
+      },
+      {
+        "seed": 100,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Frankly",
+        "differs": true
+      },
+      {
+        "seed": 100,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Gladly",
+        "differs": false
+      },
+      {
+        "seed": 100,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Hm",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Gladly",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Sure",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Frankly",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Wonderful",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Hm",
+        "differs": true
+      },
+      {
+        "seed": 101,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Honestly",
+        "differs": true
+      },
+      {
+        "seed": 102,
+        "level": -3,
+        "intact": "Frankly",
+        "shuffled": "Frankly",
+        "differs": false
+      },
+      {
+        "seed": 102,
+        "level": -2,
+        "intact": "Honestly",
+        "shuffled": "Wonderful",
+        "differs": true
+      },
+      {
+        "seed": 102,
+        "level": -1,
+        "intact": "Hm",
+        "shuffled": "Sure",
+        "differs": true
+      },
+      {
+        "seed": 102,
+        "level": 1,
+        "intact": "Sure",
+        "shuffled": "Honestly",
+        "differs": true
+      },
+      {
+        "seed": 102,
+        "level": 2,
+        "intact": "Gladly",
+        "shuffled": "Gladly",
+        "differs": false
+      },
+      {
+        "seed": 102,
+        "level": 3,
+        "intact": "Wonderful",
+        "shuffled": "Hm",
+        "differs": true
+      }
+    ],
+    "n_differ": 30,
+    "n_total": 36,
+    "all_ok": true
+  },
+  "part_e_attribution": {
+    "rows": [
+      {
+        "seed": 42,
+        "intact_margin": 0.15972222222222224,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      },
+      {
+        "seed": 43,
+        "intact_margin": 0.16944444444444443,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      },
+      {
+        "seed": 44,
+        "intact_margin": 0.15972222222222224,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      },
+      {
+        "seed": 100,
+        "intact_margin": 0.16805555555555557,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      },
+      {
+        "seed": 101,
+        "intact_margin": 0.15972222222222224,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      },
+      {
+        "seed": 102,
+        "intact_margin": 0.17291666666666666,
+        "lesion_margin": 0.0,
+        "attributable_fraction": 1.0
+      }
+    ],
+    "all_ok": true
+  },
+  "verdict": {
+    "label": "board #86 affect marker spiking WTA -- de-risk (default-OFF)",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "byte-identical-off",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "load-bearing (mood sweep selects the matching register, 6 seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "lesion collapses to no-marker (documented fallback verified live)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "shuffle anti-cheat (reported marker tracks the mis-wired assembly)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "attribution (separation >=90% owned by the topographic drive, not latent wiring bias)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

@@ -143,12 +143,31 @@ def affect_drives_lesioned() -> bool:
     return os.environ.get("BRAIN_AFFECT_DRIVES_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+# Board #86 AUTO-FLIP (2026-09-01, GAP_CLOSURE_MISSION.md auto-flip policy: validated-GO + load-bearing +
+# moat-safe + byte-identical-off + no-regression -> default-ON, owner-gating removed). 6-seed re-verify
+# (research/runners/_affect_marker_wta_verify.py, seeds 42/43/44/100/101/102) reproduced GO fresh this cycle:
+# (A) byte-identical-OFF (now the explicit `BRAIN_AFFECT_MARKER_SPIKING=0` escape, see `marker_selection_
+# spiking_off()`), (B) load-bearing (mood sweep selects the matching register, 36/36 rows), (C) lesion collapses
+# to the honest no-marker fallback (36/36 rows), (D) shuffle anti-cheat (30/36 differ from intact, ~1/6 expected
+# fixed-point rate), (E) attribution (100% of the winner-vs-runner-up separation rides the felt-state->assembly
+# drive, 0% in the lesioned control). research/findings/2026-08-28-affect-marker-spiking-wta-derisk.md.
+_AFFECT_MARKER_SPIKING_DEFAULT_ON = True
+
+
+def marker_selection_spiking_off() -> bool:
+    """Explicit OFF (for the default-ON anchor above): `BRAIN_AFFECT_MARKER_SPIKING` in {0,false,no,off,''}."""
+    v = os.environ.get("BRAIN_AFFECT_MARKER_SPIKING")
+    return v is not None and v.strip().lower() in ("0", "false", "no", "off", "")
+
+
 def marker_selection_spiking_enabled() -> bool:
-    """Board #86 (2026-08-28). `BRAIN_AFFECT_MARKER_SPIKING` truthy -> the level/mood -> expression-MARKER
-    SELECTION step routes through the spiking lateral-inhibition WTA circuit
-    (`research.runners._affect_marker_wta_derisk`) instead of the host `_LEAD_WORD[level]` dict lookup.
-    DEFAULT-OFF (unset/falsy) -> the EXACT pre-existing host-template behavior, byte-identical -- this faculty's
-    default is an owner-review decision, not flipped autonomously by this change."""
+    """Board #86 (2026-08-28, DEFAULT-ON 2026-09-01 -- see `_AFFECT_MARKER_SPIKING_DEFAULT_ON` above).
+    `BRAIN_AFFECT_MARKER_SPIKING` truthy -> the level/mood -> expression-MARKER SELECTION step routes through the
+    spiking lateral-inhibition WTA circuit (`research.runners._affect_marker_wta_derisk`) instead of the host
+    `_LEAD_WORD[level]` dict lookup. `BRAIN_AFFECT_MARKER_SPIKING=0` (or false/no/off/'') is the BYTE-IDENTICAL
+    escape back to the exact pre-existing host-template behavior."""
+    if _AFFECT_MARKER_SPIKING_DEFAULT_ON:
+        return not marker_selection_spiking_off()
     return os.environ.get("BRAIN_AFFECT_MARKER_SPIKING", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
@@ -202,18 +221,17 @@ def expression_lead(level: int, high_arousal: bool, *,
     spiking circuit would even be invoked, so a neutral turn never pays for or depends on it).
 
     Non-neutral: two selection paths.
-      * DEFAULT (marker_selection_spiking_enabled() is False, i.e. `BRAIN_AFFECT_MARKER_SPIKING` unset) -- the
-        ORIGINAL host conditioned-articulation scaffold: `_LEAD_WORD[level]` + '! '/' — ' by `high_arousal`.
-        Exact pre-existing behavior, byte-identical.
-      * BRAIN_AFFECT_MARKER_SPIKING=1 (and `mood`/`felt_arousal` supplied) -- board #86: the level/word and the
-        emphasis are each SELECTED by a spiking lateral-inhibition WTA circuit
-        (`research.runners._affect_marker_wta_derisk.AffectMarkerWTA`) reading the CONTINUOUS felt mood/arousal
-        as a topographic population code, instead of a host dict lookup on the pre-binned `level`/`high_arousal`.
-        `BRAIN_AFFECT_MARKER_SPIKING_LESION=1` cuts the felt-state->assembly projection (documented fallback: ''
-        -- an honest no-lead turn, not a silent revert to the host table). Any internal failure (import/build
-        error) ALSO degrades to '' -- never raises, never silently falls back to the host template (mirrors the
-        `mouth_tone_marker` fail-safe convention elsewhere in this repo) -- so enabling the flag can only ever
-        REMOVE or CHANGE a lead, never crash a turn."""
+      * DEFAULT (2026-09-01 auto-flip; `marker_selection_spiking_enabled()` is True unless `BRAIN_AFFECT_
+        MARKER_SPIKING` is an explicit off) -- board #86: the level/word and the emphasis are each SELECTED by a
+        spiking lateral-inhibition WTA circuit (`research.runners._affect_marker_wta_derisk.AffectMarkerWTA`)
+        reading the CONTINUOUS felt mood/arousal as a topographic population code, instead of a host dict lookup
+        on the pre-binned `level`/`high_arousal`. `BRAIN_AFFECT_MARKER_SPIKING_LESION=1` cuts the felt-state->
+        assembly projection (documented fallback: '' -- an honest no-lead turn, not a silent revert to the host
+        table). Any internal failure (import/build error) ALSO degrades to '' -- never raises, never silently
+        falls back to the host template (mirrors the `mouth_tone_marker` fail-safe convention elsewhere in this
+        repo) -- so this path can only ever REMOVE or CHANGE a lead, never crash a turn.
+      * `BRAIN_AFFECT_MARKER_SPIKING=0` (or false/no/off/'') -- the BYTE-IDENTICAL escape to the ORIGINAL host
+        conditioned-articulation scaffold: `_LEAD_WORD[level]` + '! '/' — ' by `high_arousal`."""
     if int(level) == 0:
         return ""
     if marker_selection_spiking_enabled() and mood is not None:
