@@ -1,0 +1,154 @@
+{
+  "mode": "onebrain_merge_framework_smoke_composer",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    },
+    {
+      "seed": 43,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    },
+    {
+      "seed": 44,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    },
+    {
+      "seed": 100,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    },
+    {
+      "seed": 101,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    },
+    {
+      "seed": 102,
+      "byte_identical": true,
+      "max_init_delta": 0.0,
+      "worst_where": null,
+      "n_engine": 6064,
+      "n_shipped": 6064,
+      "organs": [
+        "cue",
+        "patient_expected",
+        "patient_asserted",
+        "surprise",
+        "state",
+        "pred_pos",
+        "pred_neg",
+        "obs_pos",
+        "obs_neg",
+        "surprise_pos",
+        "surprise_neg",
+        "composer",
+        "cleanup"
+      ]
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_go": true
+}

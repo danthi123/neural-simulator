@@ -33,7 +33,9 @@ from research.runners._spiking_expectation_rpe_derisk import (
     build_expectation_circuit, _install_block_diagonal, _idx, _host,
 )
 from research.runners._affective_world_model_derisk import build_world_model_circuit
-from research.runners.onebrain_merge_production import _SURPRISE_KW, _WORLDMODEL_KW
+from research.runners.onebrain_merge_production import (
+    _SURPRISE_KW, _WORLDMODEL_KW, _COMPOSER_D, _COMPOSER_KMAX, _CLEANUP_BLK, _CLEANUP_VOCAB,
+)
 # reuse-by-import: pool #2's (metacog + pragmatic) geometry constants -- the SAME ones the shipped
 # `MergedSubstrate2` / `MetacogProductionOrgan` import, so a descriptor's config/wiring can never drift from them.
 from research.runners._second_order_metacog_monitor_derisk import (
@@ -790,6 +792,59 @@ WORLDMODEL = OrganDescriptor(
     isolation="per_slice",
     idx_fn=lambda b: _name_idx(b, ("state", "pred_pos", "pred_neg", "obs_pos", "obs_neg",
                                    "surprise_pos", "surprise_neg")),
+)
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+#  POOL #1's "extra chat-wiring" — the RECALL COMPOSER region + its phase->spike TRANSDUCER CLEANUP region
+#  (2026-08-27/28 board #179: "2 of 4 backstage merge shortcuts are folded ... the other 2 need the pool #1
+#  organ's extra chat-wiring covered before their bespoke class can be retired"). `onebrain_merge_production.
+#  MergedSubstrate.ensure_built` appends these as two bare, IDLE `BrainRegion`s (no pathways, no plasticity,
+#  no organ_cls/read_fn -- they only exist so `Pool1BoundComposer.bind_to_pool1` has a reserved slice to mask
+#  RF ops onto) AFTER surprise + world-model, so surprise/world-model's slices stay index- and byte-identical
+#  whether or not the composer joins. Registering them here as ordinary `OrganDescriptor`s (a trivial spec_fn
+#  returning one region, everything else default-off, exactly the schema's own "a trivial organ needs only
+#  key/regions/spec_fn/config" comment) makes pool #1's FULL region layout (not just its two organs)
+#  declaratively expressible for the FIRST time -- the genuine remaining gap `2026-08-27-onebrain-merge-
+#  framework-pool2-fold.md` named ("fold pool #1's composer/parser production wiring into the framework ...
+#  before the family-wide MergedSubstrate* retirement claim can be made"). This step folds the REGION-RESERVATION
+#  half only (pure plumbing -- an idle placeholder region, no cross-synapse, no behavior); the COMPOSER'S BIND
+#  (`Pool1BoundComposer`/`Pool1BoundOneBrainComposer`/`_bind_parser_onto_pool` in onebrain_merge_production.py --
+#  index rebasing, weight transplant, permanent gain-0 freeze, isolation-wrapped stepping) is genuinely separate
+#  business logic, not a generic merge-engine concern, and stays exactly where it is; it already only needs a
+#  `.bridge`/`.ensure_built()`/an idx accessor from whatever pool it is bound to, which `MergedPool` already
+#  provides. Sized from the SAME constants (`_COMPOSER_D`/`_COMPOSER_KMAX`/`_CLEANUP_BLK`/`_CLEANUP_VOCAB`,
+#  reused-by-import, no copy to drift) `MergedSubstrate.__init__`'s defaults use, so the region is the SAME size
+#  by construction, not merely checked equal. Verified byte-identical (init arrays, both regions, 6 seeds) vs
+#  the shipped `MergedSubstrate(organs=(..., "composer", "cleanup"))` by `_smoke_composer` below.
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+def _composer_spec(seed):
+    from sim.regions import BrainRegion
+    cmp_n = max(7, 2 * int(_COMPOSER_KMAX)) * int(_COMPOSER_D)
+    region = BrainRegion(name="composer", n_neurons=cmp_n, exc_fraction=1.0, internal_density=0.0,
+                         exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
+    return [region], [], {"D": int(_COMPOSER_D), "cmp_n": cmp_n, "kmax": int(_COMPOSER_KMAX)}
+
+
+def _cleanup_spec(seed):
+    from sim.regions import BrainRegion
+    cleanup_n = int(_CLEANUP_VOCAB) * int(_CLEANUP_BLK)
+    region = BrainRegion(name="cleanup", n_neurons=cleanup_n, exc_fraction=1.0, internal_density=0.0,
+                         exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
+    return [region], [], {"cleanup_n": cleanup_n}
+
+
+COMPOSER = OrganDescriptor(
+    key="composer",
+    regions=("composer",),
+    spec_fn=_composer_spec,
+    idx_fn=lambda b: _name_idx(b, ("composer",)),
+)
+
+CLEANUP = OrganDescriptor(
+    key="cleanup",
+    regions=("cleanup",),
+    spec_fn=_cleanup_spec,
+    idx_fn=lambda b: _name_idx(b, ("cleanup",)),
 )
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -2187,7 +2242,7 @@ GROUP_A_ORGANREAD_DEFERRED = {}
 
 GROUP_A_KEYS = [d.key for d in GROUP_A]
 
-REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL, METACOG, PRAGMATIC, *GROUP_A)}
+REGISTRY = {d.key: d for d in (SURPRISE, WORLDMODEL, COMPOSER, CLEANUP, METACOG, PRAGMATIC, *GROUP_A)}
 
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -2215,6 +2270,42 @@ def _smoke(seed: int = 42) -> dict:
     shipped.ensure_built()
 
     all_regions = list(SURPRISE.regions) + list(WORLDMODEL.regions)
+    worst, worst_where = 0.0, None
+    for rname in all_regions:
+        ei = _region_slice(pool.bridge, rname)
+        si = _region_slice(shipped.bridge, rname)
+        if ei.size != si.size:
+            return {"seed": seed, "byte_identical": False, "reason": f"{rname} size {ei.size}!={si.size}"}
+        for a in _INIT_ARRAYS:
+            ea = _host(getattr(pool.bridge, a, None)); sa = _host(getattr(shipped.bridge, a, None))
+            if ea is None or sa is None:
+                continue
+            d = float(np.max(np.abs(ea[ei].astype(np.float64) - sa[si].astype(np.float64)))) if ei.size else 0.0
+            if d > worst:
+                worst, worst_where = d, (rname, a)
+    n_pool = int(pool.bridge.cp_membrane_potential_v.shape[0])
+    n_ship = int(shipped.bridge.cp_membrane_potential_v.shape[0])
+    ok = bool(worst == 0.0 and n_pool == n_ship)
+    return {"seed": seed, "byte_identical": ok, "max_init_delta": worst, "worst_where": worst_where,
+            "n_engine": n_pool, "n_shipped": n_ship, "organs": all_regions}
+
+
+def _smoke_composer(seed: int = 42) -> dict:
+    """Build the engine pool (surprise+world-model+COMPOSER+CLEANUP via the REGISTRY) and the shipped
+    `MergedSubstrate(organs=(..., "composer", "cleanup"))`, and compare every per-neuron INIT array over ALL
+    FOUR regions -- the same bar `_smoke` established for the two organs, extended to pool #1's "extra
+    chat-wiring" regions (board #179's remaining fold). Byte-identity (max delta 0.0) proves the composer's
+    RESERVED SLICE is reproduced exactly, not just its two organs -- the region-reservation half of the fold
+    `2026-08-27-onebrain-merge-framework-pool2-fold.md` left open. The composer/cleanup regions carry NO
+    pathways (idle placeholders), so `wire=False` (this smoke's bar) already exercises everything either
+    construction path does to them."""
+    from research.runners.onebrain_merge_production import MergedSubstrate
+
+    pool = merge_organs([SURPRISE, WORLDMODEL, COMPOSER, CLEANUP], seed=seed)
+    shipped = MergedSubstrate(seed=seed, organs=("surprise", "worldmodel", "composer", "cleanup"))
+    shipped.ensure_built()
+
+    all_regions = list(SURPRISE.regions) + list(WORLDMODEL.regions) + list(COMPOSER.regions) + list(CLEANUP.regions)
     worst, worst_where = 0.0, None
     for rname in all_regions:
         ei = _region_slice(pool.bridge, rname)
@@ -2332,6 +2423,8 @@ def _determinism2(seed: int = 42) -> dict:
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--smoke", action="store_true", help="pool #1 (surprise+worldmodel) round-trip vs shipped")
+    ap.add_argument("--smoke-composer", action="store_true",
+                    help="pool #1 + composer/cleanup regions (the 'extra chat-wiring', board #179) round-trip vs shipped")
     ap.add_argument("--smoke2", action="store_true", help="pool #2 (metacog+pragmatic) round-trip vs shipped")
     ap.add_argument("--determinism2", action="store_true",
                     help="pool #2 build-twice-at-one-seed hash determinism")
@@ -2366,6 +2459,24 @@ def main():
         print(f"  ALL-GO: {n_go}/{len(results)}")
         payload = {"mode": "onebrain_merge_framework_smoke2", "seeds": seeds, "per_seed": results,
                   "n_go": n_go, "n_seeds": len(results), "all_go": bool(n_go == len(results) and results)}
+        if args.out:
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(payload, indent=2))
+            print(f"  wrote {args.out}")
+    elif args.smoke_composer:
+        results = [_smoke_composer(s) for s in seeds]
+        print("=== onebrain_merge_framework SMOKE-COMPOSER (pool #1 + composer/cleanup round-trip vs shipped) ===")
+        for r in results:
+            print(f"  seed={r['seed']} engine_N={r.get('n_engine')} shipped_N={r.get('n_shipped')} "
+                  f"max_init_delta={r.get('max_init_delta')} worst={r.get('worst_where')}  -> "
+                  f"{'PASS' if r['byte_identical'] else 'FAIL'}")
+        n_go = sum(bool(r.get("byte_identical")) for r in results)
+        print(f"  ALL-GO: {n_go}/{len(results)}")
+        if len(seeds) == 1:
+            payload = results[0]
+        else:
+            payload = {"mode": "onebrain_merge_framework_smoke_composer", "seeds": seeds, "per_seed": results,
+                      "n_go": n_go, "n_seeds": len(results), "all_go": bool(n_go == len(results) and results)}
         if args.out:
             Path(args.out).parent.mkdir(parents=True, exist_ok=True)
             Path(args.out).write_text(json.dumps(payload, indent=2))
