@@ -1876,6 +1876,18 @@ async def _warm_chat_brain() -> None:
             except Exception as _ce:
                 print(f"[webapp] startup: comprehension monitor warm skipped ({type(_ce).__name__}: {_ce})",
                       flush=True)
+            # ONE-BRAIN SINGLE-POOL merge (opt-in, `BRAIN_ONEBRAIN_SINGLE_POOL`, default-OFF): when ON, the four
+            # core organs below (surprise/world-model/metacog/pragmatic) resolve their `shared=` to ONE
+            # merge_organs pool (retiring the two production pools for the turn) via their get_organ() singletons.
+            # This is an OBSERVABILITY log only (the substantive wiring lives in each organ's get_organ()); OFF ->
+            # the exact current two-pool path. De-risked by 2026-09-02-onebrain-twopool-merge-organ-read-GO.md.
+            try:
+                from research.runners.onebrain_single_pool_production import single_pool_enabled
+                if single_pool_enabled():
+                    print("[webapp] startup: ONE-BRAIN SINGLE-POOL merge ACTIVE — surprise + world-model + metacog "
+                          "+ pragmatic co-inhabit ONE merge_organs pool (BRAIN_ONEBRAIN_SINGLE_POOL=1)", flush=True)
+            except Exception as _spe:
+                print(f"[webapp] startup: single-pool flag check skipped ({type(_spe).__name__}: {_spe})", flush=True)
             # SURPRISE (Gate-B, D2): pre-build the co-resident spiking expectation-violation circuit so the first
             # assertion's mismatch read is fast. Best-effort + guarded (default-ON; BRAIN_SURPRISE=0 skips it).
             try:
