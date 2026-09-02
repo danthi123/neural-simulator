@@ -1,0 +1,1 @@
+2026-09-02 01:51:27 POOL-STALE: nodes hold pre-satdiv repo copy; new-code pool jobs fail. Resync pool checkouts before queueing new-runner jobs.
