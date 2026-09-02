@@ -30,14 +30,29 @@ THE MECHANISM (emergence-compliant; NO sim/ edit; brain-based; ONE brain):
     the divisively-normalized winner-vs-runner-up margin d=(g0-g1)/(g0+g1+eps) — the metacog confidence — DROPS.
     (Raising the alternative is the Yu-Dayan "unexpected uncertainty broadens the posterior" arm, realized as a
     spike-driven synapse; the net functional read is a LOWER confidence margin, exactly the design's claim.)
-  * The edge GROWS by the substrate's OWN standard rate-Hebbian rule over TRAINING episodes that co-drive a
-    CONTRADICT (mismatch) trial on the surprise circuit — cue block c (this seed's randomly-assigned recall probe)
-    + patient_asserted block c'!=c (the false assertion), which the FIXED surprise wiring turns into "surprise"
-    firing SPECIFICALLY in block c' — with a tonic teaching current directly into member[1] (MEMBER_TEACH_PA), so
-    member[1] reliably co-fires with the block-c' slice of `surprise` during training, Hebbian-binding that slice's
-    edges to member[1]. "Prediction-error lowers confidence" is realized as: the episodes where surprise fires are
-    the episodes the substrate learns to associate with the runner-up assembly gaining. Same host-supervised
-    co-drive class every cross-edge in this codebase uses (R1/R4/surprise->provenance/surprise->encode-decision).
+  * DEFAULT mechanism (`--ablation plain`, the ORIGINAL, still-live form): the edge GROWS by the substrate's OWN
+    standard rate-Hebbian rule, unconditionally, over TRAINING episodes that co-drive a CONTRADICT (mismatch)
+    trial on the surprise circuit — cue block c (this seed's randomly-assigned recall probe) + patient_asserted
+    block c'!=c (the false assertion), which the FIXED surprise wiring turns into "surprise" firing SPECIFICALLY
+    in block c' — with a tonic teaching current directly into member[1] (MEMBER_TEACH_PA), so member[1] reliably
+    co-fires with the block-c' slice of `surprise` during training, Hebbian-binding that slice's edges to
+    member[1]. Same host-supervised co-drive class every cross-edge in this codebase uses
+    (R1/R4/surprise->provenance/surprise->encode-decision).
+  * TESTED-AND-REJECTED ablation (`--ablation gated`, banked 2026-09-02, NOT the default): a THIRD-FACTOR-GATED
+    port of sibling C1's (`_crossedge_surprise_worldmodel_derisk`) mechanism, which passed 6/6 where this edge's
+    plain form went 3/6 NO-GO on the cupy verify. EACH episode first READS that trial's own D2-surprise firing
+    rate (`cp_firing_states[surprise]`, learning OFF); the Hebbian window opens only when the measured rate
+    clears a threshold calibrated from THIS SEED's own CONFIRM-vs-CONTRADICT firing gap (`_calibrate_conf_gate`,
+    GATE_FRAC=0.35 — identical boundary to C1's `_calibrate_gate`). HYPOTHESIS TESTED, NOT CONFIRMED: a
+    same-runner, same-backend (numpy), same-6-seed controlled A/B (see
+    `research/findings/2026-09-02-c2-metacog-error-gated-port-second-negative.md`) found this REGRESSES
+    robustness (plain 6/6 GO -> gated 3/6 GO), not fixes it. Diagnosis: unlike C1's transition (which directly
+    determines its own gate's future surprise input, closing a genuine feedback loop that makes the gate
+    self-limiting), this edge's D2-surprise circuit is FIXED/open-loop — training the cross-edge has zero effect
+    on `surprise`'s own firing, so the gate opens 80/80 episodes every seed (never discriminates) while the
+    extra un-learned read passes perturb un-reset homeostatic state, adding noise without adding selectivity.
+    Banked as a tested method, not a recommendation — do not re-port this class of fix onto an OPEN-LOOP error
+    signal without first checking for a closed loop as C1 has.
   * ANTI-CHEAT (reused by import): `_assign_blocks` draws THIS seed's (cue_c, assert_cp) block pair from a
     seed-keyed RNG independent of every other seeded draw -- the edge must grow on WHICHEVER block was randomly
     assigned this seed's "surprise" role, not a memorized identity; the OTHER (never-mismatched) surprise blocks'
@@ -128,6 +143,17 @@ N_EPISODES = 80
 CROSS_EDGE_LR = 0.08
 HMAX = 8.0               # hebbian_max_weight soft bound for the cross-edge (calibrated seed 7)
 
+# ── ERROR-GATED THIRD-FACTOR PORT (2026-09-02, ported from the sibling C1 edge
+#    `_crossedge_surprise_worldmodel_derisk._gated_update_step`/`_calibrate_gate`, which passed 6/6 where this
+#    edge's plain rate-Hebbian form went 3/6 NO-GO) — the Hebbian window is no longer unconditionally open every
+#    training episode; it OPENS only when THIS episode's own measured D2-surprise firing rate (a
+#    `cp_firing_states[surprise]` read, learning OFF, never a host compare) clears a build-time threshold
+#    calibrated from THIS SEED's own CONFIRM (expected, low-surprise) vs CONTRADICT (violated, high-surprise)
+#    trials on its randomly-assigned block pair — exactly C1's boundary (`GATE_FRAC` into the expected->violated
+#    gap). Pre(surprise firing) x post(member[1] co-fire) x gate(threshold-cleared) — a genuine three-factor
+#    update, not a repeated presumed-always-surprising co-drive.
+GATE_FRAC = 0.35         # identical to C1's GATE_FRAC — threshold = expected_hz + GATE_FRAC*(violated_hz-expected_hz)
+
 INTACT_FLOOR = 0.020     # the "high" confidence must drop below "low" by at least this (signed margin units)
 LESION_RATIO = 0.34      # R1/R4 convention: lesioned |delta| must be < this * intact |delta|
 
@@ -194,8 +220,12 @@ class SurpriseMetacogPool:
     EncodeGatePool` (the cleanest recent CrossEdgeGateSpec consumer) — subclass-free, direct build + primitives +
     train/read."""
 
-    def __init__(self, seed):
+    def __init__(self, seed, gated=True):
         self.seed = int(seed)
+        self.gated = bool(gated)   # A/B ablation: True = the 2026-09-02 error-gated port; False = the ORIGINAL
+                                    # committed unconditional rate-Hebbian train() (the pre-port mechanism), kept
+                                    # live in this SAME runner so the comparison is reproducible from one file
+                                    # instead of a throwaway duplicate.
         self.xp, _ = get_backend()
         self.pool = _build(seed, with_edge=True)
         self.b = self.bridge = self.pool.bridge
@@ -283,6 +313,40 @@ class SurpriseMetacogPool:
     def _wmean(self):
         return float(np.asarray(to_host(self.b.cp_connections.data))[self.masks[GATE]].mean())
 
+    # ---- ERROR-GATED THIRD-FACTOR PORT: the brain's OWN D2 error signal for a trial (learning OFF, a
+    #      cp_firing_states[surprise] rate read) — mirrors C1's `_read_surprise` verbatim in shape. ----
+    def _read_surprise_hz(self, surprise_pairs, steps=TRAIN_STEPS):
+        b, xp = self.b, self.xp
+        self._hard_reset()
+        b.core_config.enable_hebbian_learning = False
+        pre = xp.zeros(b.core_config.num_neurons, dtype=xp.float32)
+        for idx, pa in self._cue_pre_pairs():
+            pre[xp.asarray(idx)] = xp.float32(pa)
+        for _ in range(PRE_STEPS):
+            b.cp_external_input_current[:] = pre
+            b._run_one_simulation_step()
+        cur = xp.zeros(b.core_config.num_neurons, dtype=xp.float32)
+        for idx, pa in surprise_pairs:
+            cur[xp.asarray(idx)] = xp.float32(pa)
+        surp_idx = xp.asarray(self.ix["surprise"])
+        count = 0
+        for _ in range(steps):
+            b.cp_external_input_current[:] = cur
+            b._run_one_simulation_step()
+            count += int(to_host(b.cp_firing_states[surp_idx]).sum())
+        b.cp_external_input_current[:] = 0.0
+        dur_s = steps * self.b.core_config.dt_ms * 1e-3
+        return count / max(len(self.ix["surprise"]), 1) / dur_s
+
+    def _calibrate_conf_gate(self):
+        """Build-time gate threshold (host-declared boundary, exactly C1's `_calibrate_gate`): CONFIRM
+        (expected, low-surprise) vs CONTRADICT (violated, high-surprise) D2-surprise firing rate for THIS SEED's
+        randomly-assigned block pair; threshold sits GATE_FRAC into the expected->violated gap."""
+        exp_hz = self._read_surprise_hz(self._confirm_pairs())
+        vio_hz = self._read_surprise_hz(self._contradict_pairs())
+        thr = exp_hz + GATE_FRAC * max(vio_hz - exp_hz, 0.0)
+        return thr, exp_hz, vio_hz
+
     # ---- the surprise trials for THIS seed's random block pair (same shape as the sibling edges' own) ----
     def _cue_idx(self, concept):
         return self.ix["cue"][concept * self.blk:(concept + 1) * self.blk]
@@ -304,16 +368,48 @@ class SurpriseMetacogPool:
         sig = SIG_LO + float(np.clip(READ_EVIDENCE, 0.0, 1.0)) * (SIG_HI - SIG_LO)
         return [(self.ix["member0"], BASE_PA + sig), (self.ix["member1"], BASE_PA)]
 
-    # ---- emergence: grow the cross-edge from experience (CONTRADICT trial + a tonic member[1] co-drive — the
-    #      host-supervised "prediction-error raises the alternative" teaching signal, declared not hidden) ----
+    # ---- emergence: grow the cross-edge from experience via an ERROR-GATED three-factor update (ported from
+    #      sibling C1's `_gated_update_step`): each episode first READS this trial's own D2-surprise firing rate
+    #      (learning OFF); the Hebbian window OPENS for the CONTRADICT + tonic member[1] co-drive (the
+    #      host-supervised "prediction-error raises the alternative" teaching signal, declared not hidden) ONLY
+    #      when that measured surprise clears the calibrated threshold — pre(surprise) x post(member[1]) x
+    #      gate(threshold-cleared), not a repeated presumed-always-surprising co-drive. ----
     def train(self, n_episodes=N_EPISODES):
+        if not self.gated:
+            # ORIGINAL mechanism (pre-2026-09-02, banked for the A/B control): unconditional rate-Hebbian —
+            # every episode's Hebbian window is open, no per-trial surprise read/gate.
+            self.gate_calib = None
+            traj = [dict(ep=0, w=round(self._wmean(), 4))]
+            for ep in range(n_episodes):
+                self._hard_reset()
+                self._drive(self._contradict_pairs() + [(self.ix["member1"], MEMBER_TEACH_PA)], TRAIN_STEPS,
+                            learn=True, pre_pairs=self._cue_pre_pairs(), pre_steps=PRE_STEPS)
+                if (ep + 1) % 5 == 0 or ep == n_episodes - 1:
+                    traj.append(dict(ep=ep + 1, w=round(self._wmean(), 4)))
+            self.gate_opens = n_episodes
+            self.gate_surp_trace = []
+            self.b.core_config.enable_hebbian_learning = False
+            self.other_block_after_train = _other_block_drift(self)
+            return traj
+
+        thr, exp_hz, vio_hz = self._calibrate_conf_gate()
+        self.gate_calib = dict(expected_hz=round(exp_hz, 3), violated_hz=round(vio_hz, 3), threshold=round(thr, 3))
         traj = [dict(ep=0, w=round(self._wmean(), 4))]
+        gate_opens = 0
+        surp_trace = []
         for ep in range(n_episodes):
-            self._hard_reset()
-            self._drive(self._contradict_pairs() + [(self.ix["member1"], MEMBER_TEACH_PA)], TRAIN_STEPS,
-                        learn=True, pre_pairs=self._cue_pre_pairs(), pre_steps=PRE_STEPS)
+            surp_hz = self._read_surprise_hz(self._contradict_pairs())   # THIS episode's own D2 error signal
+            gate_open = bool(surp_hz >= thr)
+            surp_trace.append(round(surp_hz, 2))
+            if gate_open:
+                gate_opens += 1
+                self._hard_reset()
+                self._drive(self._contradict_pairs() + [(self.ix["member1"], MEMBER_TEACH_PA)], TRAIN_STEPS,
+                            learn=True, pre_pairs=self._cue_pre_pairs(), pre_steps=PRE_STEPS)
             if (ep + 1) % 5 == 0 or ep == n_episodes - 1:
                 traj.append(dict(ep=ep + 1, w=round(self._wmean(), 4)))
+        self.gate_opens = gate_opens
+        self.gate_surp_trace = surp_trace[:8]
         self.b.core_config.enable_hebbian_learning = False
         # ANTI-CHEAT snapshot taken HERE (post-train, PRE-lesion) — run_gate's interaction lesions the pool at its
         # end, so this must be captured before that or the check is vacuous.
@@ -362,7 +458,8 @@ GATE_SPEC = CrossEdgeGateSpec(
     condition_order=("low", "high"),      # 'low' (CONFIRM, surprise near-silent -> high confidence) is the control
     control="low",
     expected={"high": {"sign": -1, "floor": INTACT_FLOOR}},   # surprise LOWERS the confidence -> negative delta
-    lesion_ratio=LESION_RATIO, credit_signal="rate_hebbian",
+    lesion_ratio=LESION_RATIO, credit_signal="rate_hebbian",   # DEFAULT is plain; --ablation gated is a banked,
+                                                                # tested-and-rejected alternative (see module docstring)
 )
 
 
@@ -389,15 +486,15 @@ def _other_block_drift(pool: SurpriseMetacogPool) -> float:
     return other_max
 
 
-def run_seed(seed):
+def run_seed(seed, gated=True):
     t0 = time.time()
-    pool = SurpriseMetacogPool(seed)
+    pool = SurpriseMetacogPool(seed, gated=gated)
     other_block_w0 = _other_block_drift(pool)          # BEFORE training (should already be ~W0)
 
     gate = run_gate(pool, GATE_SPEC)                    # trains + emergence + interaction (lesions in place at end)
     other_block_after = pool.other_block_after_train
 
-    bridge_with = SurpriseMetacogPool(seed).b
+    bridge_with = SurpriseMetacogPool(seed, gated=gated).b
     bridge_without = _noedge_pool(seed).bridge
     byte_off = verify_byte_off(bridge_with, bridge_without, GATE_SPEC)
 
@@ -407,9 +504,11 @@ def run_seed(seed):
 
     go = bool(gate["emergence"]["PASS"] and gate["interaction"]["PASS"] and byte_off["PASS"]
               and other_block_after < 5.0 * W0)
-    return {"seed": int(seed), "GO": go, "elapsed_s": round(time.time() - t0, 1),
+    return {"seed": int(seed), "GO": go, "elapsed_s": round(time.time() - t0, 1), "gated": bool(gated),
             "emergence": gate["emergence"], "interaction": gate["interaction"], "byte_off": byte_off,
             "other_block_w0_before": round(other_block_w0, 4), "other_block_w0_after": round(other_block_after, 4),
+            "gate_calib": pool.gate_calib, "gate_opens": pool.gate_opens, "gate_n_episodes": N_EPISODES,
+            "gate_surp_trace": pool.gate_surp_trace,
             "confidence": {"low_intact": c_low_i, "high_intact": c_high_i,
                            "low_lesion": c_low_l, "high_lesion": c_high_l,
                            "drop_intact": c_high_i - c_low_i, "drop_lesion": c_high_l - c_low_l},
@@ -439,20 +538,29 @@ def main():
     ap.add_argument("--calibrate", action="store_true", help="print low/high confidence for --seed, no gate run")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--ablation", default="plain", choices=("gated", "plain"),
+                    help="'plain' (DEFAULT) = the ORIGINAL committed unconditional rate-Hebbian train() — kept as "
+                         "the default because the 2026-09-02 controlled numpy A/B (see the "
+                         "*-second-negative finding) found 'gated' REGRESSES robustness (6/6->3/6 on the same 6 "
+                         "seeds), so it is banked as a tested-and-rejected method, not preferred. "
+                         "'gated' = the 2026-09-02 error-gated three-factor port (ported from sibling C1) — opt-in "
+                         "for reproducing that comparison, NOT recommended for the next cupy verify.")
     args = ap.parse_args()
     if args.calibrate:
         calibrate(args.seed)
         return 0
     seeds = [42, 43] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
+    gated = (args.ablation == "gated")
 
     runs = []
     for s in seeds:
-        r = run_seed(s)
+        r = run_seed(s, gated=gated)
         runs.append(r)
         c = r["confidence"]
         print(f"[seed {s}] GO={r['GO']} | grown={r['emergence']['grown'][GATE]:.3f} "
               f"nocorr={r['emergence']['no_corruption']} other_block(before/after)="
               f"{r['other_block_w0_before']:.3f}/{r['other_block_w0_after']:.3f} | "
+              f"gate opens={r['gate_opens']}/{r['gate_n_episodes']} calib={r['gate_calib']} | "
               f"conf low={c['low_intact']:+.4f} high={c['high_intact']:+.4f} (drop={c['drop_intact']:+.4f}) | "
               f"lesion low={c['low_lesion']:+.4f} high={c['high_lesion']:+.4f} (drop={c['drop_lesion']:+.4f}) | "
               f"emg={r['emergence']['PASS']} int={r['interaction']['PASS']} byteoff={r['byte_off']['PASS']} "
@@ -465,19 +573,32 @@ def main():
     all_go = (n_go == len(runs)) and not args.smoke
     tag = "GO" if all_go else ("SMOKE-GO (1-2-seed indicator)" if args.smoke and n_go == len(runs) else
                                ("SMOKE-PARTIAL" if args.smoke else "NO-GO"))
-    verdict = (f"{tag} — a learned cross-edge D2-surprise -> E1-metacog confidence: {n_go}/{len(runs)} seeds GROW "
-               f"the edge from the substrate's own rate-Hebbian rule, are LOAD-BEARING (a genuinely high-surprise "
-               f"CONTRADICT trial LOWERS the metacog winner-vs-runner-up confidence margin relative to a "
-               f"low-surprise CONFIRM trial, via the learned edge alone), the drop VANISHES on lesion, and the "
-               f"pool is byte-identical-off. numpy CPU; NO sim/ edit; additive; no production wiring. PARTIAL "
-               f"pending the 6-seed cupy verify.")
+    if gated:
+        mech_desc = ("ERROR-GATED (the 2026-09-02 port from sibling C1's 6/6-GO third-factor gate): the edge "
+                     "GROWS ONLY on episodes where THIS trial's own measured D2-surprise firing clears a "
+                     "calibrated threshold")
+    else:
+        mech_desc = ("PLAIN rate-Hebbian (the original, DEFAULT mechanism — the error-gated ablation is a "
+                     "tested-and-rejected alternative, see --ablation gated): the edge grows unconditionally "
+                     "every training episode")
+    verdict = (f"{tag} — a learned cross-edge D2-surprise -> E1-metacog confidence, {mech_desc}: {n_go}/{len(runs)} "
+               f"seeds GROW the edge from the substrate's own rate-Hebbian rule and are LOAD-BEARING (a "
+               f"genuinely high-surprise CONTRADICT trial LOWERS the metacog winner-vs-runner-up confidence "
+               f"margin relative to a low-surprise CONFIRM trial, via the learned edge alone), the drop VANISHES "
+               f"on lesion, and the pool is byte-identical-off. numpy CPU; NO sim/ edit; additive; no production "
+               f"wiring. PARTIAL pending a 6-seed cupy verify.")
 
     preconditions = []
     try:
         from tools.verdict import Verdict
         Vd = Verdict("crossedge_surprise_metacog")
-        Vd.require("all_seeds_go", n_go, expect=lambda x: x == len(runs),
-                   note="emergence + interaction (drop + lesion-vanish) + byte-off all PASS on every seed")
+        # NOTE (2026-09-02 fix): "all_seeds_go" was NOT here in the version that produced the already-committed
+        # cupy artifact (_crossedge_surprise_metacog_6seed.json, 3 preconditions only) -- it was a later addition
+        # that conflated the OUTCOME (n_go == len(runs), i.e. the verdict itself) with a PRECONDITION (a validity
+        # check the run's interpretability depends on). tools.verdict.Verdict.decide() forces UNDEFINED whenever
+        # ANY registered precondition is unmet, so an outcome-as-precondition makes a genuine, honest NO-GO
+        # unwritable (gates/verdict_preconditions correctly BLOCKED on this). Removed; the 3 checks below are the
+        # real validity preconditions (did the read/build stay uncorrupted enough to trust the outcome at all).
         Vd.require("confidence_drops_intact", sum(r["confidence"]["drop_intact"] < 0 for r in runs),
                    expect=lambda x: x == len(runs),
                    note="the metacog confidence margin must actually DROP (high < low) with the edge intact on "
@@ -493,7 +614,7 @@ def main():
         preconditions = [{"kind": "meta", "name": "verdict_helper_unavailable", "ok": None, "detail": repr(_e)}]
 
     payload = {"probe": "crossedge_surprise_metacog_derisk", "verdict": verdict, "GO": all_go,
-               "n_go": n_go, "n_seeds": len(seeds), "seeds": seeds,
+               "n_go": n_go, "n_seeds": len(seeds), "seeds": seeds, "ablation": args.ablation,
                "backend": os.environ.get("SIM_BACKEND", "numpy"), "cost_acknowledged": True,
                "preconditions": preconditions,
                "gate_spec": {"name": GATE_SPEC.name, "correct_edges": GATE_SPEC.correct_edges,
