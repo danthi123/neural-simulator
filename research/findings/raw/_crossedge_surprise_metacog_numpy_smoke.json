@@ -1,0 +1,320 @@
+{
+  "probe": "crossedge_surprise_metacog_derisk",
+  "verdict": "SMOKE-GO (1-2-seed indicator) \u2014 a learned cross-edge D2-surprise -> E1-metacog confidence: 2/2 seeds GROW the edge from the substrate's own rate-Hebbian rule, are LOAD-BEARING (a genuinely high-surprise CONTRADICT trial LOWERS the metacog winner-vs-runner-up confidence margin relative to a low-surprise CONFIRM trial, via the learned edge alone), the drop VANISHES on lesion, and the pool is byte-identical-off. numpy CPU; NO sim/ edit; additive; no production wiring. PARTIAL pending the 6-seed cupy verify.",
+  "GO": false,
+  "n_go": 2,
+  "n_seeds": 2,
+  "seeds": [
+    42,
+    43
+  ],
+  "backend": "numpy",
+  "cost_acknowledged": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "all_seeds_go",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f61a05bd620>",
+      "note": "emergence + interaction (drop + lesion-vanish) + byte-off all PASS on every seed"
+    },
+    {
+      "kind": "require",
+      "name": "confidence_drops_intact",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f61a05bd620>",
+      "note": "the metacog confidence margin must actually DROP (high < low) with the edge intact on every seed \u2014 else the 'error lowers confidence' claim is vacuous"
+    },
+    {
+      "kind": "require",
+      "name": "byte_identical_off",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f61a05bd620>",
+      "note": "the no-edge pool's base connectivity is byte-identical (integration added ONLY the edge)"
+    },
+    {
+      "kind": "require",
+      "name": "anti_cheat_other_blocks_stay_near_w0",
+      "ok": true,
+      "detail": "measured=2 expect=<function main.<locals>.<lambda> at 0x7f61a05bd620>",
+      "note": "non-participating surprise blocks' edges into member[1] must stay near the W0=0.05 seed"
+    }
+  ],
+  "gate_spec": {
+    "name": "SURPRISE_to_METACOG_CONFIDENCE",
+    "correct_edges": [
+      "surprise_to_metacog_conf"
+    ],
+    "conditions": [
+      "low",
+      "high"
+    ],
+    "control": "low",
+    "expected": {
+      "high": {
+        "sign": -1,
+        "floor": 0.02
+      }
+    },
+    "credit_signal": "rate_hebbian",
+    "read_evidence": 0.9,
+    "member_teach_pa": 340.0,
+    "cross_edges": [
+      {
+        "key": "surprise_to_metacog_conf",
+        "src": "surprise",
+        "tgt": "workspace.member[1]"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "seed": 42,
+      "GO": true,
+      "elapsed_s": 54.8,
+      "emergence": {
+        "grown": {
+          "surprise_to_metacog_conf": 0.6152527332305908
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.09609329756431002,
+          "high": -0.009170639139233917
+        },
+        "reads_lesion": {
+          "low": 0.09609329756431002,
+          "high": 0.09103301750870955
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": -0.10526393670354395,
+            "delta_lesion": -0.005060280055600469,
+            "expected_sign": -1,
+            "floor": 0.02,
+            "frac_attributable": 0.9519276951435723,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 264804,
+        "n_without": 241764,
+        "n_with_base": 241764,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "confidence": {
+        "low_intact": 0.09609329756431002,
+        "high_intact": -0.009170639139233917,
+        "low_lesion": 0.09609329756431002,
+        "high_lesion": 0.09103301750870955,
+        "drop_intact": -0.10526393670354395,
+        "drop_lesion": -0.005060280055600469
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.256
+        },
+        {
+          "ep": 10,
+          "w": 0.3727
+        },
+        {
+          "ep": 15,
+          "w": 0.4577
+        },
+        {
+          "ep": 20,
+          "w": 0.511
+        },
+        {
+          "ep": 25,
+          "w": 0.5475
+        },
+        {
+          "ep": 30,
+          "w": 0.5674
+        },
+        {
+          "ep": 35,
+          "w": 0.5787
+        },
+        {
+          "ep": 40,
+          "w": 0.5877
+        },
+        {
+          "ep": 45,
+          "w": 0.5958
+        },
+        {
+          "ep": 50,
+          "w": 0.6012
+        },
+        {
+          "ep": 55,
+          "w": 0.6053
+        },
+        {
+          "ep": 60,
+          "w": 0.6082
+        },
+        {
+          "ep": 65,
+          "w": 0.6112
+        },
+        {
+          "ep": 70,
+          "w": 0.6132
+        },
+        {
+          "ep": 75,
+          "w": 0.6144
+        },
+        {
+          "ep": 80,
+          "w": 0.6153
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "elapsed_s": 51.8,
+      "emergence": {
+        "grown": {
+          "surprise_to_metacog_conf": 0.6593714952468872
+        },
+        "correct_pairs_grew": true,
+        "selectivity_checked": false,
+        "mapping_selective": null,
+        "frozen_weight_maxdrift": 0.0,
+        "no_corruption": true,
+        "PASS": true
+      },
+      "interaction": {
+        "reads_intact": {
+          "low": 0.10783879790881541,
+          "high": 0.0033413468823837917
+        },
+        "reads_lesion": {
+          "low": 0.10014461737428809,
+          "high": 0.09834391199875779
+        },
+        "per_condition": {
+          "high": {
+            "delta_intact": -0.10449745102643163,
+            "delta_lesion": -0.001800705375530301,
+            "expected_sign": -1,
+            "floor": 0.02,
+            "frac_attributable": 0.9827679492863914,
+            "ok": true
+          }
+        },
+        "PASS": true
+      },
+      "byte_off": {
+        "base_connectivity_byte_identical": true,
+        "n_with": 264920,
+        "n_without": 241880,
+        "n_with_base": 241880,
+        "PASS": true
+      },
+      "other_block_w0_before": 0.05,
+      "other_block_w0_after": 0.05,
+      "confidence": {
+        "low_intact": 0.10783879790881541,
+        "high_intact": 0.0033413468823837917,
+        "low_lesion": 0.10014461737428809,
+        "high_lesion": 0.09834391199875779,
+        "drop_intact": -0.10449745102643163,
+        "drop_lesion": -0.001800705375530301
+      },
+      "trajectory": [
+        {
+          "ep": 0,
+          "w": 0.05
+        },
+        {
+          "ep": 5,
+          "w": 0.2483
+        },
+        {
+          "ep": 10,
+          "w": 0.3635
+        },
+        {
+          "ep": 15,
+          "w": 0.4472
+        },
+        {
+          "ep": 20,
+          "w": 0.4985
+        },
+        {
+          "ep": 25,
+          "w": 0.5359
+        },
+        {
+          "ep": 30,
+          "w": 0.5623
+        },
+        {
+          "ep": 35,
+          "w": 0.5864
+        },
+        {
+          "ep": 40,
+          "w": 0.5991
+        },
+        {
+          "ep": 45,
+          "w": 0.6115
+        },
+        {
+          "ep": 50,
+          "w": 0.621
+        },
+        {
+          "ep": 55,
+          "w": 0.6277
+        },
+        {
+          "ep": 60,
+          "w": 0.6329
+        },
+        {
+          "ep": 65,
+          "w": 0.6393
+        },
+        {
+          "ep": 70,
+          "w": 0.648
+        },
+        {
+          "ep": 75,
+          "w": 0.6557
+        },
+        {
+          "ep": 80,
+          "w": 0.6594
+        }
+      ]
+    }
+  ]
+}
