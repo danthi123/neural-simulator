@@ -1,0 +1,25 @@
+{
+ "run_id": "1788325441-3089415",
+ "runner": "research/runners/_open_ended_episodic_writeback_r1_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aff58afb0c55fa191/research/runners/_open_ended_episodic_writeback_r1_verify.py",
+  "report"
+ ],
+ "git_sha": "0bb705afa",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T01:04:01",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1837.2,
+ "corpus_check_query": "integrate open-ended generation into shared full-faculty pipeline form-override",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/2026-09-02-open-ended-episodic-writeback-r1-rung1-verify.json"
+}

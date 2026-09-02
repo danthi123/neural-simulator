@@ -4647,6 +4647,27 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
                 "fact_clause_used": _oe.get("fact_clause_used", False),
             },
         }
+        # ── D5 EPISODIC STORE now also WRITES on an open-ended turn (R1 residual, 2026-09-02) ──────────────────
+        # A normal answered turn (the rich/single-fact paths below) BTSP-forms the answered topic's CA3 assembly
+        # (`_EP.get_episodic_organ(...).note_topic(...)`, see the two call sites gated on `_episodic_on`) so a
+        # LATER referential turn ("earlier you told me about X") can recall it. The open-ended EARLY RETURN above
+        # skipped this store write entirely -- an open-ended turn was UN-RECALLABLE later (the R1 completeness-
+        # audit finding: open-ended bypasses the shared pipeline's session-state writes). This mirrors the SAME
+        # gating + topic convention the other two sites use (facts[0][0] -> the agent of the first supporting
+        # fact), substituting the open-ended generator's OWN retrieved facts (`_oe["facts"]`) since this turn
+        # never reaches the composer's `chat.gate()`. Additive/guarded: writes ONLY the episodic store, never
+        # touches `_oe_resp` / the `answer` text -- the surface output stays byte-identical to before this change
+        # (this is the FIRST staged rung of R1; the remaining rungs move the OTHER skipped session-state writes
+        # + eventually the generation-FORM choice itself inside the shared pipeline -- see the R1 staged plan).
+        # No-op (byte-identical) when BRAIN_EPISODIC=0/unavailable, the topic was unknown (nothing to note), or
+        # the numpy backend (`_episodic_store_ok()` defers the write there exactly like the other two call sites).
+        try:
+            import research.runners.d5_episodic_production_organ as _OE_EP
+            if _OE_EP.episodic_enabled() and _oe.get("known") and _oe.get("facts") and _episodic_store_ok():
+                _oe_ep_topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
+                _OE_EP.get_episodic_organ(cache_key, 42, _oe_ep_topics).note_topic(_oe["facts"][0][0])
+        except Exception:
+            pass  # never let the episodic write crash an open-ended turn -- degrade to the un-noted turn
         return _safe_json_response(_oe_resp, "open_ended")
 
     # ── AFFECT DRIVES THE RESPONSE (board #84, 2026-08-19) ────────────────────────────────────────────────────

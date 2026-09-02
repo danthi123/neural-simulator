@@ -1,0 +1,104 @@
+{
+ "probe": "open_ended_episodic_writeback_r1_rung1",
+ "off_path": {
+  "byte_identical": true,
+  "response_before": "{\"abstained\": true, \"activity\": null, \"affect\": null, \"answer\": \"I don't know about that. My curiosity is piqued \\u2014 I haven't learned about dog yet: what can you tell me about dog? \\u2014 worth going further here.\", \"brain\": \"tiny-demo\", \"common_ground_drives\": {\"decision\": \"introduce\", \"evidence_rate\": 0.0, \"first_mention\": true, \"in_common_ground\": false, \"introduce_rate\": 0.04833333333333333, \"lead\": \"\", \"lesioned\": false, \"margin\": -0.04833333333333333, \"on\": true, \"reason_lead\": \"introduce\", \"reduce_rate\": 0.0, \"slot\": 0, \"topic\": \"dog\"}, \"comprehension\": null, \"curiosity\": {\"calib\": {\"familiar_signal\": 0.0, \"novel_signal\": 0.95, \"read_reps\": 4, \"threshold_hz\": 65.88541666666666, \"want_familiar_hz\": 5.208333333333332, \"want_novel_hz\": 126.56249999999999}, \"curiosity_da\": {\"base_threshold\": 65.88541666666666, \"curious\": true, \"da_crave_gain\": 1.3014204749955915, \"da_level\": 0.7009469833303944, \"da_tonic\": 0.5, \"eff_threshold\": 50.62577232534307, \"k_da\": 1.5, \"lesioned\": false, \"on\": true, \"want_eff_hz\": 168.10014468693058, \"want_hz\": 129.16666666666666}, \"curious\": true, \"lesioned\": false, \"novelty\": 0.95, \"on\": true, \"threshold\": 65.88541666666666, \"topic\": \"dog\", \"want_hz\": 129.16666666666666}, \"da_drives\": {\"acted\": true, \"afferent_pA\": 588.0, \"da_level\": 0.7009469833303944, \"ema_engagement\": 0.42, \"lead\": \" \\u2014 worth going further here.\", \"lesioned\": false, \"mode\": \"focus\", \"on\": true, \"reason\": \"engaged\", \"seed\": 42, \"snc_firing\": 0.10833333333333332, \"turn\": 1, \"turn_engagement\": 0.7}, \"da_encoding\": {\"da_level\": 0.7009469833303944, \"g\": null, \"lesioned\": false, \"on\": true}, \"derived\": false, \"derived_from\": null, \"episodic\": null, \"metacog\": null, \"multiref\": null, \"noncontradiction\": {\"error\": \"AttributeError: 'NoneType' object has no attribute 'is_it_true'\", \"on\": true}, \"pragmatic\": null, \"provenance\": null, \"recalled_svo\": null, \"reconsolidation\": null, \"renderer\": \"raw brain triples\", \"rich\": false, \"source\": \"mock\", \"surprise\": null, \"verified\": false, \"worldmodel\": null}",
+  "response_after": "{\"abstained\": true, \"activity\": null, \"affect\": null, \"answer\": \"I don't know about that. My curiosity is piqued \\u2014 I haven't learned about dog yet: what can you tell me about dog? \\u2014 worth going further here.\", \"brain\": \"tiny-demo\", \"common_ground_drives\": {\"decision\": \"introduce\", \"evidence_rate\": 0.0, \"first_mention\": true, \"in_common_ground\": false, \"introduce_rate\": 0.04833333333333333, \"lead\": \"\", \"lesioned\": false, \"margin\": -0.04833333333333333, \"on\": true, \"reason_lead\": \"introduce\", \"reduce_rate\": 0.0, \"slot\": 0, \"topic\": \"dog\"}, \"comprehension\": null, \"curiosity\": {\"calib\": {\"familiar_signal\": 0.0, \"novel_signal\": 0.95, \"read_reps\": 4, \"threshold_hz\": 65.88541666666666, \"want_familiar_hz\": 5.208333333333332, \"want_novel_hz\": 126.56249999999999}, \"curiosity_da\": {\"base_threshold\": 65.88541666666666, \"curious\": true, \"da_crave_gain\": 1.3014204749955915, \"da_level\": 0.7009469833303944, \"da_tonic\": 0.5, \"eff_threshold\": 50.62577232534307, \"k_da\": 1.5, \"lesioned\": false, \"on\": true, \"want_eff_hz\": 168.10014468693058, \"want_hz\": 129.16666666666666}, \"curious\": true, \"lesioned\": false, \"novelty\": 0.95, \"on\": true, \"threshold\": 65.88541666666666, \"topic\": \"dog\", \"want_hz\": 129.16666666666666}, \"da_drives\": {\"acted\": true, \"afferent_pA\": 588.0, \"da_level\": 0.7009469833303944, \"ema_engagement\": 0.42, \"lead\": \" \\u2014 worth going further here.\", \"lesioned\": false, \"mode\": \"focus\", \"on\": true, \"reason\": \"engaged\", \"seed\": 42, \"snc_firing\": 0.10833333333333332, \"turn\": 1, \"turn_engagement\": 0.7}, \"da_encoding\": {\"da_level\": 0.7009469833303944, \"g\": null, \"lesioned\": false, \"on\": true}, \"derived\": false, \"derived_from\": null, \"episodic\": null, \"metacog\": null, \"multiref\": null, \"noncontradiction\": {\"error\": \"AttributeError: 'NoneType' object has no attribute 'is_it_true'\", \"on\": true}, \"pragmatic\": null, \"provenance\": null, \"recalled_svo\": null, \"reconsolidation\": null, \"renderer\": \"raw brain triples\", \"rich\": false, \"source\": \"mock\", \"surprise\": null, \"verified\": false, \"worldmodel\": null}"
+ },
+ "on_path": {
+  "response_byte_identical": true,
+  "response_before": "{\"abstained\": false, \"activity\": null, \"affect\": null, \"answer\": \"Dogs chase cats around here.\", \"brain\": \"tiny-demo\", \"mode\": \"open_ended\", \"open_ended\": {\"fact_clause_used\": false, \"facts\": [[\"dog\", \"chase\", \"cat\"]], \"filtered\": \"Dogs chase cats around here.\", \"gen_seconds\": 0.0, \"generator\": \"qwen\", \"known\": true, \"n_sentences\": 1, \"raw\": \"Dogs chase cats around here.\", \"state\": {\"arousal\": 0.3, \"curiosity\": 0.53, \"familiarity\": 0.9, \"novelty\": 0.1, \"valence\": 0.0}, \"topic\": \"dog\", \"wkv_mouth_used\": false}, \"recalled_svo\": [\"dog\", \"chase\", \"cat\"], \"renderer\": \"raw brain triples\", \"rich\": false, \"source\": \"mock\", \"verified\": true}",
+  "response_after": "{\"abstained\": false, \"activity\": null, \"affect\": null, \"answer\": \"Dogs chase cats around here.\", \"brain\": \"tiny-demo\", \"mode\": \"open_ended\", \"open_ended\": {\"fact_clause_used\": false, \"facts\": [[\"dog\", \"chase\", \"cat\"]], \"filtered\": \"Dogs chase cats around here.\", \"gen_seconds\": 0.0, \"generator\": \"qwen\", \"known\": true, \"n_sentences\": 1, \"raw\": \"Dogs chase cats around here.\", \"state\": {\"arousal\": 0.3, \"curiosity\": 0.53, \"familiarity\": 0.9, \"novelty\": 0.1, \"valence\": 0.0}, \"topic\": \"dog\", \"wkv_mouth_used\": false}, \"recalled_svo\": [\"dog\", \"chase\", \"cat\"], \"renderer\": \"raw brain triples\", \"rich\": false, \"source\": \"mock\", \"verified\": true}",
+  "episodic_recall_before": {
+   "in_memory": false,
+   "reason": "no-store-yet"
+  },
+  "episodic_recall_after": {
+   "in_memory": true,
+   "reason": "spiking-dap-completion"
+  }
+ },
+ "verdict": {
+  "label": "R1 rung 1: an open-ended turn now WRITES the D5 episodic store; the OFF path is unperturbed",
+  "status": "GO",
+  "go": true,
+  "undefined_reasons": [],
+  "preconditions": [
+   {
+    "kind": "require",
+    "name": "OFF path (BRAIN_OPEN_ENDED unset): brain_reply's JSON response is byte-identical, patched vs original server.py, through the REAL single-fact pipeline (a mock chat, curiosity/common-ground/da-drives all fire)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "ON path (BRAIN_OPEN_ENDED=1): the open-ended JSON response surface is byte-identical, patched vs original (the new code only adds a side effect AFTER _oe_resp is built)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "ON path, ORIGINAL code: the D5 episodic organ shows in_memory=False after the turn (the pre-fix dead end -- the open-ended turn never wrote anything)",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "require",
+    "name": "ON path, PATCHED code: the D5 episodic organ shows in_memory=True after the SAME turn via a genuine spiking dendritic-completion recall (reason=spiking-dap-completion), not a host flag",
+    "ok": true,
+    "detail": "measured=True expect=True",
+    "note": ""
+   },
+   {
+    "kind": "control",
+    "name": "D5 episodic in_memory('dog') after the open-ended turn: PATCHED vs ORIGINAL",
+    "ok": true,
+    "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+    "note": "the write is attributable to this change, not something else already running"
+   }
+  ],
+  "disabled_processes": [],
+  "chance": null
+ },
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "OFF path (BRAIN_OPEN_ENDED unset): brain_reply's JSON response is byte-identical, patched vs original server.py, through the REAL single-fact pipeline (a mock chat, curiosity/common-ground/da-drives all fire)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "ON path (BRAIN_OPEN_ENDED=1): the open-ended JSON response surface is byte-identical, patched vs original (the new code only adds a side effect AFTER _oe_resp is built)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "ON path, ORIGINAL code: the D5 episodic organ shows in_memory=False after the turn (the pre-fix dead end -- the open-ended turn never wrote anything)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "ON path, PATCHED code: the D5 episodic organ shows in_memory=True after the SAME turn via a genuine spiking dendritic-completion recall (reason=spiking-dap-completion), not a host flag",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "control",
+   "name": "D5 episodic in_memory('dog') after the open-ended turn: PATCHED vs ORIGINAL",
+   "ok": true,
+   "detail": "treatment=1 control=0 |sep|=1 > 0.5",
+   "note": "the write is attributable to this change, not something else already running"
+  }
+ ],
+ "GO": true
+}
