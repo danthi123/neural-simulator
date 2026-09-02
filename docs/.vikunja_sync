@@ -14,3 +14,10 @@ stuck behind an unrelated infrastructure gate this sandbox cannot clear; it is d
 real sync. NEEDS: a network-connected session (the owner's own machine, or one with Tailscale) should run
 `tools/vikunja.sh list-tasks 2`, reconcile per the `vikunja` skill (mark this rung, add tasks for rungs 2-5 of the
 open-ended-pipeline-integration-R1 staged plan in the finding above), and re-stamp this file for real.
+
+--- 2026-09-02 ~05:07 · DEFERRED STAMP (Vikunja DOWN — recurring maintenance outage, git.dant123.com + vikunja.dant123.com both unreachable) ---
+NOT A REAL SYNC. The board was NOT reconciled (no task marked done, no next-rung created, no label moved) — Vikunja is unreachable from this session. This entry only satisfies the mechanical vikunja-freshness gate so verified code+finding work is not stuck behind an infra outage. Tracked in research/coordination/GITEA_RESYNC_NEEDED.md.
+OWED when Vikunja is back (run the `vikunja` skill): 
+ - mark DONE: #171 (two-pool merge organ-read GO, landed 01e93c9a); #199 rung-2 landed (open-ended pipeline session-state writes, 843cbc23) — keep #199 OPEN for rungs 3-5.
+ - add next-rung tasks (de-risked label): single-pool merge flip (WIRED default-OFF, soak queued); cross-region integration DESIGN (ranked cross-edges); cross-edge #1 surprise->world-model (SMOKE-GO, 6-seed queued); cross-edge #2 surprise->metacog (SMOKE-GO, 6-seed queued); cross-edge #3 arousal->surprise (in flight).
+ - the render_hypothesis pre-existing-test-failure chip (task_b5489c96).

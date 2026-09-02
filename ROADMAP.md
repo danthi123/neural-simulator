@@ -7,7 +7,29 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-02 (latest) — two more validated-but-off abilities are re-checked and switched on
+## 2026-09-02 (latest) — the brain's core thinking-organs take real steps toward being literally one brain
+A cluster of work pushed on the deepest structural goal — making the separate "thinking organs" (the
+surprise-detector, the world-model, the confidence-monitor, the phrasing-sense) into genuinely ONE brain rather
+than several that happen to sit side by side:
+- **Proven safe to merge onto one shared substrate (a milestone):** all four core organs were shown to run
+  correctly when placed on a SINGLE shared neural pool instead of separate ones — each reading exactly the same
+  as before (nothing about their behavior changed except that they now share one substrate). This is the "one
+  brain" foundation: co-location proven harmless. It even caught two silent bugs where a shared setting had
+  quietly killed one organ. The production path to actually run the live chat on one merged pool was then wired
+  up, switched OFF by default, waiting on a final larger-scale check.
+- **Free-talk mode no longer skips the brain's own updates:** the experimental open-ended chat mode used to take
+  a shortcut that bypassed the brain's memory, mood, and conversation-context updates. It now runs those the same
+  way a normal reply does, so talking in free-form actually updates the brain's state instead of leaving it
+  frozen. (Still switched off by default; more of this integration remains.)
+- **Designed and began proving the organs INFLUENCING each other:** the real payoff of one brain is the organs
+  talking to each other through learned connections, not just co-existing. Three such connections were designed,
+  each grounded in how real brain regions actually wire together, and the first two were proto-tested
+  successfully: a surprise updating the world-model (so a surprising turn genuinely changes what the brain expects
+  next), and a surprise lowering the brain's confidence (so a violated expectation makes it less sure). These are
+  early proto-tests of the mechanism (small-scale), not finished features — the full wiring and larger validation
+  are the next steps.
+
+## 2026-09-02 (earlier) — two more validated-but-off abilities are re-checked and switched on
 
 Two abilities that had already passed their initial multi-seed check, but were left switched off pending a
 policy decision, were re-verified fresh against the actual current code (not just trusted from the earlier
