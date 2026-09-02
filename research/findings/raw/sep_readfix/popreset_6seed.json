@@ -1,0 +1,333 @@
+{
+  "gate": "replay_dg_pattern_separation_readfix_popreset",
+  "board": "91",
+  "mechanism": "reset bridge._pop_state (ever/integ/drive/silent) at every read/probe boundary, not just on the controller's own 2-consecutive-silent-step heuristic (measured dead for this purpose -- DG never reaches true full-population silence in a probe window)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "status": "NO-GO",
+  "verdict": {
+    "label": "memory-separator READ fix: reset the population-set-point host state at the read boundary",
+    "status": "NO-GO",
+    "go": false,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "manipulation landed: pop_state reset applied on every seed",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "baseline is the #90/#78 residual: OFF arm reproduces m1->dominant-engram",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "no regression: m0 (dominant) still reads its own engram ON",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "dg->answer WRITE family (BCM / competitive-heterosynaptic)",
+        "why": "this file isolates the READ-side fix from the #90-banked WRITE family; base._consolidate is the unmodified #78 write"
+      }
+    ],
+    "chance": null
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "manipulation landed: pop_state reset applied on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "baseline is the #90/#78 residual: OFF arm reproduces m1->dominant-engram",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no regression: m0 (dominant) still reads its own engram ON",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "m1_reactivates_own_attributable_to_reset": null,
+  "checks": {
+    "m1_reactivates_own_engram_on_ge5of6": false,
+    "off_arm_reproduces_defect": true,
+    "m0_no_regression_on": true,
+    "m0_control_off": true,
+    "novel_no_spurious_completion_on": false,
+    "reset_landed_all_seeds": true
+  },
+  "pooled": {
+    "m1_reactivates_own_on_count": 0,
+    "m1_reactivates_dominant_off_count": 6,
+    "m0_reactivates_own_on_count": 6,
+    "m0_reactivates_own_off_count": 6,
+    "novel_no_spurious_completion_on_count": 0,
+    "reset_landed_count": 6,
+    "mean_pre_consolidation_novel_to_eng0": 0.43671101682574803,
+    "mean_post_consolidation_novel_to_eng0_on": 0.8995244402723364
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "dg_jaccard_eng0_eng1": 0.5645161290322581,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5645161290322581,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5645161290322581,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5645161290322581,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5645161290322581,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5645161290322581,
+        "novel_to_eng0": 0.9464285714285714,
+        "novel_to_eng1": 0.5384615384615384,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.5645161290322581,
+        "novel_to_eng0": 0.5194805194805194,
+        "novel_to_eng1": 0.44,
+        "n_eng0": 53,
+        "n_eng1": 44,
+        "n_novel": 64
+      },
+      "n_eng0": 53,
+      "n_eng1": 44,
+      "n_eng0_o": 53,
+      "n_eng1_o": 44
+    },
+    {
+      "seed": 43,
+      "dg_jaccard_eng0_eng1": 0.4666666666666667,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.4666666666666667,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.4666666666666667,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.4666666666666667,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.4666666666666667,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.4666666666666667,
+        "novel_to_eng0": 0.8478260869565217,
+        "novel_to_eng1": 0.532258064516129,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.4666666666666667,
+        "novel_to_eng0": 0.453125,
+        "novel_to_eng1": 0.4507042253521127,
+        "n_eng0": 39,
+        "n_eng1": 49,
+        "n_novel": 54
+      },
+      "n_eng0": 39,
+      "n_eng1": 49,
+      "n_eng0_o": 39,
+      "n_eng1_o": 49
+    },
+    {
+      "seed": 44,
+      "dg_jaccard_eng0_eng1": 0.5333333333333333,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5333333333333333,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5333333333333333,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5333333333333333,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5333333333333333,
+        "m1_to_eng0": 0.9259259259259259,
+        "m1_to_eng1": 0.5866666666666667,
+        "novel_to_eng0": 0.8620689655172413,
+        "novel_to_eng1": 0.5769230769230769,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.5333333333333333,
+        "novel_to_eng0": 0.3382352941176471,
+        "novel_to_eng1": 0.37662337662337664,
+        "n_eng0": 50,
+        "n_eng1": 65,
+        "n_novel": 41
+      },
+      "n_eng0": 50,
+      "n_eng1": 65,
+      "n_eng0_o": 50,
+      "n_eng1_o": 65
+    },
+    {
+      "seed": 100,
+      "dg_jaccard_eng0_eng1": 0.5606060606060606,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5606060606060606,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.5606060606060606,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.5606060606060606,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.5606060606060606,
+        "m1_to_eng0": 0.9791666666666666,
+        "m1_to_eng1": 0.5757575757575758,
+        "novel_to_eng0": 0.9591836734693877,
+        "novel_to_eng1": 0.5671641791044776,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.5606060606060606,
+        "novel_to_eng0": 0.4827586206896552,
+        "novel_to_eng1": 0.39705882352941174,
+        "n_eng0": 47,
+        "n_eng1": 56,
+        "n_novel": 39
+      },
+      "n_eng0": 47,
+      "n_eng1": 56,
+      "n_eng0_o": 47,
+      "n_eng1_o": 56
+    },
+    {
+      "seed": 101,
+      "dg_jaccard_eng0_eng1": 0.48148148148148145,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.48148148148148145,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.48148148148148145,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.48148148148148145,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.48148148148148145,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.48148148148148145,
+        "novel_to_eng0": 0.88,
+        "novel_to_eng1": 0.4827586206896552,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.48148148148148145,
+        "novel_to_eng0": 0.4,
+        "novel_to_eng1": 0.4074074074074074,
+        "n_eng0": 44,
+        "n_eng1": 36,
+        "n_novel": 40
+      },
+      "n_eng0": 44,
+      "n_eng1": 36,
+      "n_eng0_o": 44,
+      "n_eng1_o": 36
+    },
+    {
+      "seed": 102,
+      "dg_jaccard_eng0_eng1": 0.6,
+      "reset_landed": true,
+      "off": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.6,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.6,
+        "novel_to_eng0": 1.0,
+        "novel_to_eng1": 0.6,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "on": {
+        "m0_to_eng0": 1.0,
+        "m0_to_eng1": 0.6,
+        "m1_to_eng0": 1.0,
+        "m1_to_eng1": 0.6,
+        "novel_to_eng0": 0.9016393442622951,
+        "novel_to_eng1": 0.6417910447761194,
+        "m0_reactivates_own": true,
+        "m1_reactivates_own": false,
+        "novel_no_spurious_completion": false
+      },
+      "pre_consolidation_baseline": {
+        "eng0_eng1": 0.6,
+        "novel_to_eng0": 0.4266666666666667,
+        "novel_to_eng1": 0.5074626865671642,
+        "n_eng0": 55,
+        "n_eng1": 49,
+        "n_novel": 52
+      },
+      "n_eng0": 55,
+      "n_eng1": 49,
+      "n_eng0_o": 55,
+      "n_eng1_o": 49
+    }
+  ],
+  "scaffolds": [
+    "host-defined input (sensory) patterns + answer assemblies; host reinstatement of each memory's input during replay; the transmission/plasticity gate schedule (WRITE vs READ); the population set-point controller itself is host (a PI loop injecting basket current) -- inherited from #78/#90, unmodified here. NEW this file: the read-boundary pop_state reset is a runner-side host-dict clear (not a sim/ edit); the read + engram measurement stay on-substrate spiking."
+  ],
+  "elapsed_seconds": 5.334514617919922
+}

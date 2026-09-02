@@ -1,0 +1,35 @@
+{
+ "run_id": "1788317481-2963190",
+ "runner": "research/runners/_replay_dg_pattern_separation_readfix_popreset.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a20940669ee17c0ed/research/runners/_replay_dg_pattern_separation_readfix_popreset.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/sep_readfix/popreset_6seed.json"
+ ],
+ "git_sha": "7279d8a32",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T22:51:21",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1028.4,
+ "corpus_check_query": "memory separator read-side false pattern completion subordinate dominant engram CA3",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/sep_readfix/popreset_6seed.json"
+}
