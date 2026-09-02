@@ -1,0 +1,351 @@
+{
+  "runner": "_subword_mouth_tokenizer_coverage_derisk",
+  "seed": 42,
+  "config": {
+    "corpora": {
+      "tinystories": "data/corpus/tinystories_train.txt",
+      "wikitext": "data/corpus/wikitext103.txt"
+    },
+    "vocab_sizes": [
+      4000,
+      8000,
+      16000
+    ],
+    "corpus_max_words": 1500000,
+    "top_k_words": 5000,
+    "freq_cap": 15
+  },
+  "n_probe_utterances": 124,
+  "word_vocab_size": 1000,
+  "word_vocab": {
+    "per_group": {
+      "conversational_register": {
+        "n_utterances": 14,
+        "content_word_oov_rate": 0.25,
+        "fully_representable_pct": 42.86,
+        "fully_representable_frac": "6/14"
+      },
+      "everyday_real_world_topics": {
+        "n_utterances": 10,
+        "content_word_oov_rate": 0.25,
+        "fully_representable_pct": 0.0,
+        "fully_representable_frac": "0/10"
+      },
+      "wikidata_known_agents": {
+        "n_utterances": 100,
+        "content_word_oov_rate": 0.42596,
+        "fully_representable_pct": 1.0,
+        "fully_representable_frac": "1/100"
+      }
+    },
+    "overall": {
+      "n_utterances": 124,
+      "content_word_oov_rate": 0.39876,
+      "fully_representable_pct": 5.65,
+      "fully_representable_frac": "7/124"
+    },
+    "n_distinct_oov_content_words": 214
+  },
+  "subword": {
+    "tinystories": {
+      "n_corpus_words_read": 1500000,
+      "resolved_path": "/home/dant123/Projects/sim/data/corpus/tinystories_train.txt",
+      "by_vocab_size": {
+        "4000": {
+          "actual_vocab_size": 4001,
+          "n_merges": 3972,
+          "n_unique_train_words": 5000,
+          "train_seconds": 63.5,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.4,
+              "max_pieces_per_content_word": 4,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 1.8,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.875,
+              "max_pieces_per_content_word": 6,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 3.5,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 2.051,
+              "max_pieces_per_content_word": 8,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 3.021,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.98,
+            "max_pieces_per_content_word": 8,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.969,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        },
+        "8000": {
+          "actual_vocab_size": 7466,
+          "n_merges": 7437,
+          "n_unique_train_words": 5000,
+          "train_seconds": 29.8,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.15,
+              "max_pieces_per_content_word": 4,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 1.6,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.6,
+              "max_pieces_per_content_word": 5,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 3.4,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 1.786,
+              "max_pieces_per_content_word": 8,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.845,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.716,
+            "max_pieces_per_content_word": 8,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.795,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        },
+        "16000": {
+          "actual_vocab_size": 7466,
+          "n_merges": 7437,
+          "n_unique_train_words": 5000,
+          "train_seconds": 30.7,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.15,
+              "max_pieces_per_content_word": 4,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 1.6,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.6,
+              "max_pieces_per_content_word": 5,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 3.4,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 1.786,
+              "max_pieces_per_content_word": 8,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.845,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.716,
+            "max_pieces_per_content_word": 8,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.795,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        }
+      }
+    },
+    "wikitext": {
+      "n_corpus_words_read": 1500000,
+      "resolved_path": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+      "by_vocab_size": {
+        "4000": {
+          "actual_vocab_size": 4001,
+          "n_merges": 3972,
+          "n_unique_train_words": 5000,
+          "train_seconds": 22.7,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.867,
+              "max_pieces_per_content_word": 6,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.067,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.85,
+              "max_pieces_per_content_word": 6,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 3.4,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 1.899,
+              "max_pieces_per_content_word": 7,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.639,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.893,
+            "max_pieces_per_content_word": 7,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.636,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        },
+        "8000": {
+          "actual_vocab_size": 8001,
+          "n_merges": 7972,
+          "n_unique_train_words": 5000,
+          "train_seconds": 174.4,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.267,
+              "max_pieces_per_content_word": 6,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 1.4,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.3,
+              "max_pieces_per_content_word": 4,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.2,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 1.547,
+              "max_pieces_per_content_word": 7,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.279,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.505,
+            "max_pieces_per_content_word": 7,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.225,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        },
+        "16000": {
+          "actual_vocab_size": 8211,
+          "n_merges": 8182,
+          "n_unique_train_words": 5000,
+          "train_seconds": 83.5,
+          "per_group": {
+            "conversational_register": {
+              "n_utterances": 14,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "14/14",
+              "mean_pieces_per_content_word": 1.233,
+              "max_pieces_per_content_word": 6,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 1.4,
+              "n_wordvocab_oov_words_seen": 15
+            },
+            "everyday_real_world_topics": {
+              "n_utterances": 10,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "10/10",
+              "mean_pieces_per_content_word": 1.3,
+              "max_pieces_per_content_word": 4,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.2,
+              "n_wordvocab_oov_words_seen": 10
+            },
+            "wikidata_known_agents": {
+              "n_utterances": 100,
+              "hard_oov_word_rate": 0.0,
+              "fully_representable_pct": 100.0,
+              "fully_representable_frac": "100/100",
+              "mean_pieces_per_content_word": 1.543,
+              "max_pieces_per_content_word": 7,
+              "mean_pieces_per_WORDVOCAB_OOV_word": 2.27,
+              "n_wordvocab_oov_words_seen": 233
+            }
+          },
+          "overall": {
+            "n_utterances": 124,
+            "hard_oov_word_rate": 0.0,
+            "fully_representable_pct": 100.0,
+            "fully_representable_frac": "124/124",
+            "mean_pieces_per_content_word": 1.499,
+            "max_pieces_per_content_word": 7,
+            "mean_pieces_per_WORDVOCAB_OOV_word": 2.217,
+            "n_wordvocab_oov_words_seen": 258
+          }
+        }
+      }
+    }
+  }
+}

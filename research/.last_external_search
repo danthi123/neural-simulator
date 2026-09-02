@@ -1,1 +1,1 @@
-2026-09-02T10:33:34Z	margin-based confidence degrades with vocabulary/codebook size; runner-up is an order statistic (max over V candidates ~ sigma*sqrt(2 ln V)); winner-vs-bulk z-score as scale-invariant decisiveness
+2026-09-02T11:00:07Z	subword/BPE tokenization to close the closed-word-vocabulary OOV gap for the self-taught WKV spiking mouth (open-vocabulary generation)
