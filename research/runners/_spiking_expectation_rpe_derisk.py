@@ -119,6 +119,26 @@ def _host(a):
         return a
 
 
+# THE READ-ISOLATION FIX (2026-09-02, Port B from `_crossedge_surprise_metacog_derisk.py`
+# `_EXTRA_RESET_ARRAYS`, per the 14-runner audit
+# research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md).
+# The ORIGINAL `_hard_reset` below zeroed membrane/recovery/conductances/firing but reset a
+# NONEXISTENT attribute `cp_refractory` (getattr -> None -> dead no-op) and never touched 3
+# other per-neuron arrays `_run_one_simulation_step` mutates every step:
+#   * cp_refractory_timers / cp_prev_firing_states — HARD firing gates (int32 countdown / bool),
+#     independent of membrane potential; a neuron mid-refractory at the end of one trial stays
+#     gated at the start of the next even though v/u were reset.
+#   * cp_neuron_activity_ema / cp_neuron_firing_thresholds — the homeostatic per-neuron EMA +
+#     adaptive threshold (`sim/bridge.py` fused_homeostasis_update, gated by
+#     `cfg.enable_homeostasis`, default True and NOT overridden by this runner -> all 4 arrays
+#     leak here). `cp_neuron_firing_thresholds` is heterogeneous and NON-ZERO at true rest (drawn
+#     per-neuron at init), so it must be RESTORED to its build-time snapshot, not zeroed.
+# Snapshotted once at true rest in `build_expectation_circuit` (bridge._rest_extra), restored on
+# every `_hard_reset` call below — a pure no-op wherever an array is already clean.
+_EXTRA_RESET_ARRAYS = ("cp_refractory_timers", "cp_prev_firing_states",
+                       "cp_neuron_activity_ema", "cp_neuron_firing_thresholds")
+
+
 def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=24,
                               cue_to_expected_weight=0.8, asserted_to_surprise_weight=5.0,
                               expected_to_surprise_weight=14.0, gabab_prop=0.22,
@@ -278,19 +298,36 @@ def build_expectation_circuit(seed, *, n_trained=5, n_novel=2, blk=24, cue_blk=2
     # that made recall non-selective). A hard reset removes it.
     bridge._rest_v = bridge.cp_membrane_potential_v.copy()
     bridge._rest_u = bridge.cp_recovery_variable_u.copy()
+    # THE READ-ISOLATION FIX (2026-09-02): snapshot the TRUE rest value of the 4 arrays the
+    # original `_hard_reset` missed (see module docstring above `_EXTRA_RESET_ARRAYS`).
+    bridge._rest_extra = {}
+    for nm in _EXTRA_RESET_ARRAYS:
+        arr = getattr(bridge, nm, None)
+        bridge._rest_extra[nm] = arr.copy() if arr is not None else None
     return bridge, cfg, meta
 
 
 def _hard_reset(bridge):
     """Restore the network to its resting snapshot: membrane/recovery to rest, all conductances
-    + firing + refractory + external current to zero. Removes cross-trial state carryover."""
+    + firing + refractory + external current to zero. Removes cross-trial state carryover.
+
+    THE READ-ISOLATION FIX (2026-09-02): the ORIGINAL loop below reset a NONEXISTENT attribute
+    `cp_refractory` (typo for `cp_refractory_timers` -> getattr returned None -> dead no-op) and
+    never touched `cp_prev_firing_states` / `cp_neuron_activity_ema` /
+    `cp_neuron_firing_thresholds` at all -> homeostatic + hard-firing-gate state leaked across
+    trials/conditions (see `_EXTRA_RESET_ARRAYS` docstring above). Now restored from the
+    true-rest snapshot taken once in `build_expectation_circuit`."""
     bridge.cp_membrane_potential_v[:] = bridge._rest_v
     bridge.cp_recovery_variable_u[:] = bridge._rest_u
     for name in ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_gabab",
-                 "cp_conductance_g_nmda", "cp_firing_states", "cp_refractory"):
+                 "cp_conductance_g_nmda", "cp_firing_states"):
         arr = getattr(bridge, name, None)
         if arr is not None:
             arr[:] = 0
+    for nm in _EXTRA_RESET_ARRAYS:
+        val = getattr(bridge, "_rest_extra", {}).get(nm)
+        if val is not None:
+            getattr(bridge, nm)[:] = val
     bridge.cp_external_input_current[:] = 0.0
 
 
@@ -460,6 +497,41 @@ def _lesion_prediction(bridge, meta):
     return _install_block_diagonal(bridge, "patient_expected", "surprise", meta["blk"], 0.0)
 
 
+def selftest_read_isolation(seed=42, verbose=True):
+    """READ-ISOLATION selftest (2026-09-02, the fix's fails-in-failing-direction guard). On a
+    ZEROED-mechanism pool -- untrained (no learned recall) AND lesioned (the
+    patient_expected->surprise prediction pathway zeroed), so the mechanism itself contributes
+    nothing and every trial's drive/read is identical by construction -- two CONSECUTIVE calls to
+    `measure_conditions` on the SAME bridge must be BITWISE identical. Before the
+    `_EXTRA_RESET_ARRAYS` restore, refractory-timer / prev-firing / homeostatic-EMA / adaptive-
+    threshold residue from the first read's trials leaked into the second read's trials (an
+    ORDER-dependent contamination, not a mechanism effect) -> the two reads differed even though
+    the pool being measured never changed. Verified to FAIL in the failing direction: reverting
+    `_hard_reset` to the pre-fix body (the `cp_refractory` typo, no `_EXTRA_RESET_ARRAYS` loop)
+    reproduces a non-zero mismatch on this exact check."""
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    bridge, cfg, meta = build_expectation_circuit(seed)
+    bridge._blk = meta["blk"]
+    regions = ("cue", "patient_expected", "patient_asserted", "surprise")
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in regions}
+    _lesion_prediction(bridge, meta)  # zero the mechanism: nothing left to legitimately vary
+    r1 = measure_conditions(bridge, cfg, idx_map, meta, xp)
+    r2 = measure_conditions(bridge, cfg, idx_map, meta, xp)
+    keys = ("confirm_per", "contradict_per", "novel_per", "recall_hz",
+            "confirm_hz", "contradict_hz", "novel_hz")
+    mismatches = [k for k in keys if r1[k] != r2[k]]
+    ok = not mismatches
+    if verbose:
+        print(f"[selftest read-isolation seed={seed}] consecutive-read bitwise-identity: "
+              f"{'PASS' if ok else 'FAIL'}")
+        for k in mismatches:
+            print(f"    MISMATCH {k}: read1={r1[k]!r}  read2={r2[k]!r}")
+    assert ok, (f"READ-ISOLATION REGRESSION: two consecutive identical reads differ on a "
+                f"zeroed-mechanism pool ({mismatches}) -> state leaking across reads")
+    return ok
+
+
 def run_seed(seed, *, mode="intact", verbose=True, n_reps=20, **build_kw):
     """mode: intact | lesion | untrained."""
     from sim.backend import get_backend
@@ -506,14 +578,23 @@ def main():
     ap.add_argument("--n-reps", type=int, default=22)
     ap.add_argument("--cue-to-expected-weight", type=float, default=0.8,
                     help="prediction gain (recall strength). 0.8 = robust 6/6 GO operating point; "
-                         "0.4 = low-prior, learning-sensitive (3/6, the precision boundary).")
+                         "0.4 = low-prior, learning-sensitive (4/6 under isolated reads -- "
+                         "read-isolation-fixed 2026-09-02, was measured 3/6 pre-fix; still a "
+                         "genuine BOUNDARY, not a GO -- the precision boundary).")
     ap.add_argument("--asserted-to-surprise-weight", type=float, default=5.0)
     ap.add_argument("--expected-to-surprise-weight", type=float, default=14.0)
     ap.add_argument("--gabab-prop", type=float, default=0.22)
     ap.add_argument("--hebbian-learning-rate", type=float, default=0.06)
     ap.add_argument("--opsearch", action="store_true")
+    ap.add_argument("--selftest", action="store_true",
+                    help="read-isolation regression guard: two consecutive reads of a "
+                         "zeroed-mechanism pool must be bitwise identical")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
+
+    if args.selftest:
+        selftest_read_isolation()
+        return
 
     build_kw = dict(cue_to_expected_weight=args.cue_to_expected_weight,
                     asserted_to_surprise_weight=args.asserted_to_surprise_weight,
