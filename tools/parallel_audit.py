@@ -72,9 +72,15 @@ def pool_idle():
 
 
 def active_agents():
-    # Count in-flight Claude subagents: task transcripts touched in the last ~12 min. A building
-    # agent has idle cores now but WILL consume them — counting it prevents a build-phase false alarm.
-    out = sh("find /tmp/claude-1000/-home-dant123-Projects-sim/*/tasks -maxdepth 1 -name '*.output' -mmin -12 2>/dev/null | wc -l")
+    # Count in-flight Claude subagents by their transcript activity. Agent .output files are SYMLINKS to
+    # the growing JSONL transcript; backgrounded bash/monitor .output files are REGULAR files. So: count
+    # only symlinks (agents, not bash tasks) whose TARGET was written in the last ~15 min — `find -L`
+    # follows the link so mtime is the agent's REAL activity, not the symlink's creation time. The old
+    # `-mmin -12` on the symlink itself undercounted every agent running longer than 12 min (the symlink
+    # is stamped once at launch and never re-touched), so a live 1-2 agent hold read as 0 — an audit that
+    # cries "0 agents / STALL" while agents are genuinely building trains the reader to ignore it.
+    out = sh(r"""c=0; for f in /tmp/claude-1000/-home-dant123-Projects-sim/*/tasks/*.output; do """
+             r"""[ -L "$f" ] && [ -n "$(find -L "$f" -mmin -15 2>/dev/null)" ] && c=$((c+1)); done; echo $c""")
     try:
         return int(out)
     except Exception:
