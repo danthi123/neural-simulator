@@ -233,7 +233,7 @@ class MultiReferentWMOrgan:
         return s
 
     def load(self, referents, lesion: bool = False, competitive: bool | None = None,
-             competition_lesion: bool | None = None):
+             competition_lesion: bool | None = None, xedge_drop_current=None):
         """LOAD the ordered `referents` into registers of the spiking buffer, holding each across a short intervening
         span, then READ every register BACK off the held bumps. Returns the register -> referent mapping RECOVERED
         FROM THE SPIKING BUFFER (== the input iff the hold carried it; degrades under lesion). `hold_alive` is the
@@ -244,7 +244,15 @@ class MultiReferentWMOrgan:
         every register's CURRENT occupancy (a genuine `cp_firing_states` read, zero input) and route the referent to
         `argmin(occupancy)` -- the register the substrate itself shows as free, not the loop index. `competition_lesion`
         (default: `BRAIN_MULTIREF_COMPETITION_LESION`) ablates ONLY that selection (always targets register 0),
-        independent of the HOLD lesion above."""
+        independent of the HOLD lesion above.
+
+        `xedge_drop_current` (default None -> byte-identical to the pre-existing behaviour): an optional
+        `(pa, steps)` pair. When given, an EXTRA current is injected directly onto PHYSICAL register 0 (the `w0`
+        region the curiosity->d6 cross-edge targets -- see `onebrain_xedge_curiosity_d6_production.py`) AFTER the
+        normal write+hold span and BEFORE the final read, so if a referent is currently bound to register 0 the
+        read that follows genuinely reflects the post-drive spiking state (a real substrate erasure when `pa` is a
+        clear-strength hyperpolarizing pull), not a cosmetic flag on the returned text. Only ever touches register
+        0's own band (`MultiSlotHold.apply_register_drive`); every other held register is unaffected."""
         self.ensure_built()
         refs = list(referents)[:min(R_MAX, _BINDER_K)]
         buf = self._lesion_buf() if lesion else self.buf
@@ -279,6 +287,15 @@ class MultiReferentWMOrgan:
             # an extra held span (the "... it chased her" gap) with input asserted zero
             buf.hold()
             buf.hold()
+            # ONE-BRAIN CROSS-EDGE SEMANTIC DROP (2026-09-01, additive, opt-in via xedge_drop_current): a validated,
+            # substrate-derived crave-suppression signal (see onebrain_xedge_curiosity_d6_production.py's
+            # semantic_drop_current -- scaled by the frozen cross-edge's OWN measured, lesion-controlled weight, ~0
+            # when lesioned) is applied HERE, directly on register 0's own band, BEFORE the read below -- so a
+            # referent bound to w0 is genuinely dropped from `recovered` by the substrate's own post-drive spiking
+            # state, not by a host if-statement on a diagnostic number. None (default) -> no-op, byte-identical.
+            if xedge_drop_current is not None and not lesion:
+                _pa, _steps = xedge_drop_current
+                buf.apply_register_drive(0, _pa, _steps)
             recovered = {}
             alive = []
             for i, reg in enumerate(registers):
@@ -316,10 +333,14 @@ class MultiReferentWMOrgan:
             "competition_lesioned": bool(competitive and competition_lesion),
         }
 
-    def judge(self, text: str, lesion: bool = False) -> dict | None:
+    def judge(self, text: str, lesion: bool = False, xedge_drop_current=None) -> dict | None:
         """Production entry. Returns None when the input is OUT OF SCOPE (fewer than 2 referents AND not a hold-query)
         -> the caller leaves the turn byte-identical. Otherwise a dict with the held referents recovered off the
-        spiking buffer and (on a hold-query) an honest functional read-out string."""
+        spiking buffer and (on a hold-query) an honest functional read-out string.
+
+        `xedge_drop_current` (default None -> byte-identical): forwarded verbatim to `load()` -- see its own
+        docstring. The caller (webapp/server.py) only ever supplies this on the hold-query path, and only when the
+        curiosity->d6 cross-edge's own validated crave-suppression signal is live."""
         self.ensure_built()
         refs = extract_referents(text)
         query = is_hold_query(text)
@@ -328,13 +349,13 @@ class MultiReferentWMOrgan:
         if len(refs) < 2 and not (query and len(self._slot_of_ref) >= 2):
             return None
         if len(refs) >= 2:
-            res = self.load(refs, lesion=lesion)
+            res = self.load(refs, lesion=lesion, xedge_drop_current=xedge_drop_current)
         else:
             # a hold-query with no new referents: re-materialize + read the currently-known referents
             held = list(self._slot_of_ref.keys())[:R_MAX]
-            res = self.load(held, lesion=lesion) if held else {"recovered": {}, "n_referents": 0,
-                                                               "hold_alive_min": 0.0, "input_order": [],
-                                                               "zero_input_ok": True, "all_recovered": False}
+            res = self.load(held, lesion=lesion, xedge_drop_current=xedge_drop_current) if held else {
+                "recovered": {}, "n_referents": 0, "hold_alive_min": 0.0, "input_order": [],
+                "zero_input_ok": True, "all_recovered": False}
         out = {
             "on": True, "lesioned": bool(lesion), "in_scope": True, "composer": "onebrain",
             "n_referents": res["n_referents"], "input_order": res["input_order"],

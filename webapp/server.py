@@ -4986,51 +4986,75 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             d6org = _get_multiref_organ(cache_key)
             d6les = _D6.multiref_lesioned()
             if _D6.is_hold_query(msg):                       # READ-OUT: 'who/what are we talking about / keeping in mind'
-                jq = d6org.judge(msg, lesion=d6les)
+                # ── BEGIN faculty: onebrain curiosity->d6 LEARNED CROSS-EDGE (2026-09-01), additive,
+                #    default per BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6 (`_XEDGE_CD6_DEFAULT_ON`). Mirrors the
+                #    PART-1/R4 frozen-cross-edge wire-in pattern, but — unlike those two (additive
+                #    DIAGNOSTIC field only) — this one drives the ACTUAL reply text (2026-08-19 "faculties
+                #    must drive, not observe": a neural verdict stashed as metadata + a flip is a hollow
+                #    checkbox). THIS SESSION's own RECENT curiosity-crave state (`d6org.
+                #    _xedge_curiosity_recent_crave`, set+CONSUMED via `_curiosity_followup` below on this
+                #    session's own last abstain -- 2026-08-27 session-isolation pattern: an instance
+                #    attribute on THIS session's own per-session MultiReferentWMOrgan, never on the shared
+                #    process pool, so a fresh session's d6org never inherits another session's crave) drives
+                #    the frozen `ask->w0` cross-edge's OWN validated instrument
+                #    (`crossedge_w0_shift`, reused verbatim from the 6-seed runner-level GO,
+                #    research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md). When the
+                #    measured shift clears the runner's own registered floor (a genuine, lesion-attributable
+                #    suppression), an honest, SELF-CONSUMING functional qualifier is appended to the
+                #    hold-query readout -- never changing WHICH referents are reported held, never
+                #    fabricating a fact. LOAD-BEARING AT THE REPLY-TEXT LEVEL: the qualifier's presence
+                #    depends on BOTH the live crave state AND the cross-edge weight; it never appears when
+                #    `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1` zeroes that edge, regardless of crave.
+                #    DEFAULT-OFF unless flipped: unset -> no extra key, no text change, no attribute ever
+                #    written (see `_curiosity_followup`'s own guard) -> byte-identical. Guarded so a build
+                #    failure never crashes a turn. See
+                #    research/runners/onebrain_xedge_curiosity_d6_production.py.
+                #
+                #    SEMANTIC-DROP rung (2026-09-01, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP`, default
+                #    OFF): the crave gate below (ask_held + clears-floor, computed BEFORE `judge()` so the result
+                #    can be threaded INTO the same load()/read() call that produces `recovered`) is translated by
+                #    `semantic_drop_current` into a genuine hyperpolarizing pull on THIS session's own physical w0
+                #    register, so a suppressed referent is dropped from `recovered` by the D6 substrate's own
+                #    post-drive read -- not merely an appended string. `pool.cross_weight` (zeroed by the lesion)
+                #    gates the magnitude, so lesioning still collapses the effect even if the boolean gate below
+                #    were ever bypassed. See research/runners/onebrain_xedge_curiosity_d6_production.py.
+                _cd6_ask_held, _cd6_read, _cd6_drop_current = False, None, None
+                _cd6_crave_suppresses = False
+                try:
+                    from research.runners.onebrain_xedge_curiosity_d6_production import (
+                        xedge_curiosity_d6_enabled, xedge_curiosity_d6_semantic_drop_enabled,
+                        get_xedge_curiosity_d6_pool, crossedge_w0_shift, semantic_drop_current)
+                    if xedge_curiosity_d6_enabled():
+                        from research.runners._onebrain_crossedge_curiosity_to_d6wm import (
+                            INTACT_FLOOR as _CD6_FLOOR)
+                        _cd6_pool = get_xedge_curiosity_d6_pool(42)
+                        _cd6_ask_held = bool(getattr(d6org, "_xedge_curiosity_recent_crave", False))
+                        _cd6_read = crossedge_w0_shift(_cd6_pool, _cd6_ask_held)
+                        _cd6_crave_suppresses = bool(
+                            _cd6_ask_held and _cd6_read is not None and "error" not in _cd6_read
+                            and _cd6_read.get("shift_w0", 0.0) <= -_CD6_FLOOR)
+                        if _cd6_crave_suppresses and xedge_curiosity_d6_semantic_drop_enabled():
+                            _cd6_drop_current = semantic_drop_current(_cd6_pool, d6org)
+                except Exception as _cd6e0:   # never let the cross-edge read crash a turn
+                    _cd6_read = {"on": True, "error": f"{type(_cd6e0).__name__}: {_cd6e0}"}
+                    _cd6_crave_suppresses = False
+
+                jq = d6org.judge(msg, lesion=d6les, xedge_drop_current=_cd6_drop_current)
                 if jq is not None and jq.get("is_hold_query") and "readout" in jq:
-                    # ── BEGIN faculty: onebrain curiosity->d6 LEARNED CROSS-EDGE (2026-09-01), additive,
-                    #    default per BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6 (`_XEDGE_CD6_DEFAULT_ON`). Mirrors the
-                    #    PART-1/R4 frozen-cross-edge wire-in pattern, but — unlike those two (additive
-                    #    DIAGNOSTIC field only) — this one drives the ACTUAL reply text (2026-08-19 "faculties
-                    #    must drive, not observe": a neural verdict stashed as metadata + a flip is a hollow
-                    #    checkbox). THIS SESSION's own RECENT curiosity-crave state (`d6org.
-                    #    _xedge_curiosity_recent_crave`, set+CONSUMED via `_curiosity_followup` below on this
-                    #    session's own last abstain -- 2026-08-27 session-isolation pattern: an instance
-                    #    attribute on THIS session's own per-session MultiReferentWMOrgan, never on the shared
-                    #    process pool, so a fresh session's d6org never inherits another session's crave) drives
-                    #    the frozen `ask->w0` cross-edge's OWN validated instrument
-                    #    (`crossedge_w0_shift`, reused verbatim from the 6-seed runner-level GO,
-                    #    research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-GO.md). When the
-                    #    measured shift clears the runner's own registered floor (a genuine, lesion-attributable
-                    #    suppression), an honest, SELF-CONSUMING functional qualifier is appended to the
-                    #    hold-query readout -- never changing WHICH referents are reported held, never
-                    #    fabricating a fact. LOAD-BEARING AT THE REPLY-TEXT LEVEL: the qualifier's presence
-                    #    depends on BOTH the live crave state AND the cross-edge weight; it never appears when
-                    #    `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1` zeroes that edge, regardless of crave.
-                    #    DEFAULT-OFF unless flipped: unset -> no extra key, no text change, no attribute ever
-                    #    written (see `_curiosity_followup`'s own guard) -> byte-identical. Guarded so a build
-                    #    failure never crashes a turn. See
-                    #    research/runners/onebrain_xedge_curiosity_d6_production.py.
                     try:
-                        from research.runners.onebrain_xedge_curiosity_d6_production import (
-                            xedge_curiosity_d6_enabled, get_xedge_curiosity_d6_pool, crossedge_w0_shift)
-                        if xedge_curiosity_d6_enabled():
-                            from research.runners._onebrain_crossedge_curiosity_to_d6wm import (
-                                INTACT_FLOOR as _CD6_FLOOR)
-                            _cd6_pool = get_xedge_curiosity_d6_pool(42)
-                            _cd6_ask_held = bool(getattr(d6org, "_xedge_curiosity_recent_crave", False))
-                            _cd6_read = crossedge_w0_shift(_cd6_pool, _cd6_ask_held)
-                            if _cd6_read is not None:
-                                jq["curiosity_crossedge"] = _cd6_read
-                                if _cd6_ask_held:
-                                    # CONSUME the crave -- a self-report qualifier fires once per crave episode,
-                                    # not on every subsequent hold-query indefinitely (mirrors prospective
-                                    # memory's own "fires once" intention consumption).
-                                    d6org._xedge_curiosity_recent_crave = False
-                                    if "error" not in _cd6_read and _cd6_read.get("shift_w0", 0.0) <= -_CD6_FLOOR:
-                                        jq["readout"] = jq["readout"] + (
-                                            " Though a recent flash of curiosity is competing for my "
-                                            "attention right now.")
+                        if _cd6_read is not None:
+                            jq["curiosity_crossedge"] = _cd6_read
+                            if _cd6_ask_held:
+                                # CONSUME the crave -- a self-report qualifier fires once per crave episode,
+                                # not on every subsequent hold-query indefinitely (mirrors prospective
+                                # memory's own "fires once" intention consumption).
+                                d6org._xedge_curiosity_recent_crave = False
+                                if _cd6_crave_suppresses:
+                                    jq["readout"] = jq["readout"] + (
+                                        " Though a recent flash of curiosity is competing for my "
+                                        "attention right now.")
+                                    if _cd6_drop_current is not None:
+                                        jq["curiosity_crossedge"]["semantic_drop_applied"] = True
                     except Exception as _cd6e:   # never let the cross-edge read crash a turn
                         jq["curiosity_crossedge"] = {"on": True, "error": f"{type(_cd6e).__name__}: {_cd6e}"}
                     # ── END faculty: onebrain curiosity->d6 LEARNED CROSS-EDGE ──

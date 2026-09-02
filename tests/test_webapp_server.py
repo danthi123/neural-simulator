@@ -1883,6 +1883,74 @@ def test_brain_chat_xedge_curiosity_d6_on_qualifies_reply_and_lesion_collapses_i
     _xcd6._POOL = None
 
 
+def test_brain_chat_xedge_curiosity_d6_semantic_drop_genuinely_drops_referent(client, monkeypatch):
+    """SEMANTIC-DROP rung (2026-09-01, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP`, default OFF): when a
+    session's crave clears the suppression floor, the referent bound to register 0 ('dog', loaded first under
+    the role-by-position marker) is GENUINELY dropped from the D6 hold-query's own `recovered`/readout -- the
+    held-referent COUNT changes, not just an appended string -- decided by a real hyperpolarizing pull on that
+    session's own physical w0 register (`MultiSlotHold.apply_register_drive`) whose subsequent `read()` no
+    longer recovers it. Cross-edge LESIONED -> the drop vanishes (both referents recovered, the anti-hollow
+    proof). The flag OFF (the default) -> byte-identical to the qualifier-only behaviour already covered by
+    `test_brain_chat_xedge_curiosity_d6_on_qualifies_reply_and_lesion_collapses_it`."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6", "1")
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP", "1")
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    import research.runners.onebrain_xedge_curiosity_d6_production as _xcd6
+    _xcd6._POOL = None
+    _QUALIFIER = " Though a recent flash of curiosity is competing for my attention right now."
+
+    # ── crave + semantic-drop ON + cross-edge INTACT -> 'dog' (register 0) genuinely drops ──
+    sess = "pytest-xedge-cd6-semdrop-intact"
+    _maintain_two_referents(client, sess)
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200 and res.json().get("curiosity", {}).get("curious") is True
+    d = _hold_query(client, sess)
+    assert d["answer"] == "I'm holding one referent in working memory: cat." + _QUALIFIER, d["answer"]
+    recovered_vals = [v for v in (d.get("multiref") or {}).get("recovered", {}).values() if v]
+    assert recovered_vals == ["cat"], recovered_vals
+    xe = (d.get("multiref") or {}).get("curiosity_crossedge")
+    assert xe is not None and xe.get("semantic_drop_applied") is True
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+    _xcd6._POOL = None
+
+    # ── SAME crave, cross-edge LESIONED -> the drop vanishes (both referents recovered) ──
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", "1")
+    sess2 = "pytest-xedge-cd6-semdrop-lesion"
+    _maintain_two_referents(client, sess2)
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess2, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res2.status_code == 200 and res2.json().get("curiosity", {}).get("curious") is True
+    d2 = _hold_query(client, sess2)
+    assert d2["answer"] == "I'm holding 2 referents in working memory at once: dog and cat.", d2["answer"]
+    xe2 = (d2.get("multiref") or {}).get("curiosity_crossedge")
+    assert xe2 is not None and not xe2.get("semantic_drop_applied")
+    client.post("/api/brain-chat/reset", json={"session": sess2, "brain": "tiny-demo", "renderer": "stub"})
+    _xcd6._POOL = None
+    monkeypatch.delenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", raising=False)
+
+    # ── the SEMANTIC-DROP flag left OFF (the default) -> byte-identical to the qualifier-only rung ──
+    monkeypatch.setenv("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP", "0")
+    sess3 = "pytest-xedge-cd6-semdrop-flagoff"
+    _maintain_two_referents(client, sess3)
+    res3 = client.post("/api/brain-chat", json={
+        "session": sess3, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res3.status_code == 200 and res3.json().get("curiosity", {}).get("curious") is True
+    d3 = _hold_query(client, sess3)
+    assert d3["answer"] == "I'm holding 2 referents in working memory at once: dog and cat." + _QUALIFIER, d3["answer"]
+    xe3 = (d3.get("multiref") or {}).get("curiosity_crossedge")
+    assert xe3 is not None and "semantic_drop_applied" not in xe3
+    client.post("/api/brain-chat/reset", json={"session": sess3, "brain": "tiny-demo", "renderer": "stub"})
+    _xcd6._POOL = None
+
+
 def test_brain_chat_xedge_curiosity_d6_session_isolated(client, monkeypatch):
     """A fresh session that never craved must NOT see another session's crave state (2026-08-27 cross-session
     leak-fix pattern, reused): the crave bit lives on THIS session's own per-session `MultiReferentWMOrgan`

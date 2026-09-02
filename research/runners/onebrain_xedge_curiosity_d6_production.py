@@ -49,14 +49,20 @@ probe):
     lesioning the cross-edge (`BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1`) collapses the shift toward zero ->
     the qualifier text never appears regardless of the live crave state (a REPLY-TEXT-level lesion check, not
     only a numeric one).
-  * DECLARED RESIDUAL #1 (carried UNCHANGED from the runner-level finding): the w0 slot the cross-edge biases is
-    d6's OWN direct-drive region (the framework's raw `w0` pool), not (yet) bound to WHICHEVER discourse referent
-    this session's `MultiReferentWMOrgan` has semantically loaded into register 0 — the shift is a genuine
-    substrate-level competition-for-attention read, but it does not (yet) know or care WHICH referent's register
-    it is. Binding the cross-edge onto the SEMANTIC content of the currently-focused register (so the suppressed
-    referent is actually the one the reply drops from its "holding N referents" list, not just an appended
-    qualifier) is a separate, later, reviewed rung — exactly the shape PART-1 itself declared for its own
-    "semantic referent->pool binding is host-directed" residual.
+  * DECLARED RESIDUAL #1, PARTIALLY CLOSED (2026-09-01 SEMANTIC-DROP rung, `BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_
+    SEMANTIC_DROP`, default OFF pending its own 6-seed verification). The w0 slot the cross-edge biases IS d6's
+    OWN direct-drive region (the framework's raw `w0` pool); this rung binds the cross-edge's OWN measured,
+    lesion-controlled weight (`semantic_drop_current`, below) onto a REAL hyperpolarizing pull on THIS SESSION's
+    physical register 0 (`d6org.buf`, the SAME register), applied inside `MultiReferentWMOrgan.load()` before its
+    own read -- so whichever referent this session has semantically bound to register 0 is genuinely dropped from
+    `recovered` by the D6 substrate's own post-drive spiking state, not by an appended string. See
+    `2026-08-11-...multi-slot...` de-risk's own `MultiSlotHold.apply_register_drive` (added here) for the
+    empirical calibration (forward/excitatory drive was tried first and found non-monotonic/seed-inconsistent;
+    a hyperpolarizing pull at the SAME clear-strength `write()` already trusts is the validated direction). Still
+    residual: only register 0 (w0) is ever targeted (the OTHER 4 registers have no declared cross-edge), and the
+    erase is all-or-nothing at read time (this substrate's bistable NMDA hold proved robust to graded/partial
+    suppression at every magnitude probed short of clear-strength — a genuinely MEASURED substrate property, not
+    an assumption) rather than a continuously graded deprioritization.
   * DECLARED RESIDUAL #2: the "recent crave" signal is the ABSTAIN-triggered curiosity read (D3's own novelty
     boundary: NOVELTY = an abstain), carried forward ACROSS turns until consumed by the next hold-query — a
     coarse (binary, non-decaying-until-consumed) model of "a lingering crave", not a continuous-time decay. A
@@ -105,6 +111,25 @@ def xedge_curiosity_d6_enabled() -> bool:
     v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6")
     if v is None:
         return _XEDGE_CD6_DEFAULT_ON
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+_CD6_SEMANTIC_DROP_DEFAULT_ON = False   # gated behind an env flag until 6-seed verified (this rung's own build)
+
+
+def xedge_curiosity_d6_semantic_drop_enabled() -> bool:
+    """`BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP` in {1,true,yes,on} -> the SEMANTIC-DROP rung (2026-09-01)
+    is live: when a hold-query's own crave gate fires (the SAME `ask_held` + registered-floor check that already
+    gates the appended qualifier), the frozen cross-edge's OWN measured weight is translated into a REAL
+    hyperpolarizing pull directly on THIS SESSION's physical `w0` register (see `semantic_drop_current` below),
+    so the referent held there is genuinely dropped from `recovered` by the D6 substrate's own post-drive read --
+    not merely flagged in the reply text. Default OFF (unlike the base cross-edge, this rung has not yet been
+    6-seed verified at the time this flag was added) -- unset/{0,false,no,off} -> byte-identical to the
+    pre-existing qualifier-only behaviour (no current is ever injected, `load()`'s new parameter is never
+    supplied a non-None value)."""
+    v = os.environ.get("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_SEMANTIC_DROP")
+    if v is None:
+        return _CD6_SEMANTIC_DROP_DEFAULT_ON
     return v.strip().lower() in ("1", "true", "yes", "on")
 
 
@@ -233,6 +258,43 @@ def crossedge_w0_shift(pool: "XedgeCuriosityD6ProductionPool", ask_held: bool) -
         return {"on": True, "error": f"{type(e).__name__}: {e}"}
 
 
+def semantic_drop_current(pool: "XedgeCuriosityD6ProductionPool", d6org) -> tuple | None:
+    """SEMANTIC-DROP rung (2026-09-01): the MAGNITUDE (and duration) of a genuine hyperpolarizing erase to apply
+    to THIS SESSION's own physical `w0` register (`d6org.buf`, register 0 -- the same register the ask->w0
+    cross-edge targets), so a curiosity-suppressed referent is dropped from `recovered` by the D6 substrate's
+    own post-drive read, not by a host if-statement on a diagnostic number.
+
+    RIDES THE CROSS-EDGE'S OWN MEASURED WEIGHT, not a fixed constant: `scale = clip(pool.cross_weight, 0, 1)` --
+    the frozen edge grows to ~1.7-2.1 (clamps to the FULL scale=1.0), and `pool.lesion_cross()` zeroes
+    `cross_weight` (clamps to scale=0.0 -> this function returns None -> NO drive is ever injected). The
+    magnitude itself reuses `d6org.buf`'s OWN `clear_gain`/`clear_steps` -- the SAME clear-strength constants
+    `MultiSlotHold.write()`'s overwrite-clear protocol already trusts to erase a held bump (no new magic number
+    introduced here) -- scaled by the cross-edge weight and made hyperpolarizing (negative). Empirically
+    validated (this rung's own de-risk probe, seeds 42/43/44/100/101/102, numpy CPU): a -1500pA/200-step pull on
+    a register's own band collapses that register's `read()` to (-1, 0.0) on all 6 seeds while a co-held,
+    undriven register is untouched; forward (excitatory) drive at the same magnitude was tried FIRST and found
+    non-monotonic/seed-inconsistent (see the module docstring's honest residual) -- the hyperpolarizing direction
+    is the one this function uses.
+
+    Returns None (no drop) when the pool/organ is unavailable, the organ's buffer isn't built, or the measured
+    weight is ~0 (untrained or lesioned) -- the caller then leaves `recovered` untouched, byte-identical to the
+    qualifier-only rung."""
+    try:
+        if pool is None or not pool.ok or d6org is None:
+            return None
+        d6org.ensure_built()
+        buf = d6org.buf
+        if buf is None:
+            return None
+        scale = max(0.0, min(1.0, float(pool.cross_weight or 0.0)))
+        if scale <= 0.0:
+            return None
+        erase_pa = -abs(float(buf.clear_gain)) * scale
+        return (erase_pa, int(buf.clear_steps))
+    except Exception:
+        return None
+
+
 # ─────────────────────────────────────────────────────────────────────────────────────────────
 #  Offline grow + record + self-verify entrypoint (0 Claude tokens; CPU numpy). Mirrors PART-1/R4's
 #  `_selftest_loadbearing` + CLI shape exactly, but against THIS module's own production functions.
@@ -280,16 +342,96 @@ def _selftest_loadbearing(seed: int) -> dict:
     }
 
 
+def _selftest_semantic_drop(seed: int) -> dict:
+    """SEMANTIC-DROP rung self-test (2026-09-01): exercises the REAL production path end to end --
+    `MultiReferentWMOrgan.judge()` + `semantic_drop_current()`, not a bespoke probe. A fresh per-seed
+    `XedgeCuriosityD6ProductionPool` (mirrors `_selftest_loadbearing`'s own seed-reset) and a fresh per-seed
+    `MultiReferentWMOrgan` load two referents ('dog' -> register 0/w0 by role-by-position, 'cat' -> register 1);
+    a hold-query is then judged four ways:
+      (1) no crave (ask_held=False)                       -> both referents recovered (the honest baseline).
+      (2) crave + semantic-drop ON + cross-edge INTACT     -> 'dog' (register 0's referent) genuinely DROPS from
+          `recovered`; 'cat' (register 1, untouched) survives -- decided by `MultiSlotHold.read()`'s own
+          post-drive spiking state, not a string flag.
+      (3) the SAME crave, cross-edge LESIONED               -> the drop VANISHES (both referents recovered again)
+          -- the anti-hollow lesion control (`pool.cross_weight` ~0 -> `semantic_drop_current` returns None).
+      (4) crave present but the SEMANTIC-DROP FLAG left OFF -> byte-identical to (1) (no drop_current is ever
+          computed) -- confirms the FLAG, not the crave alone, gates the new behaviour."""
+    from research.runners.d6_multiref_wm_production_organ import MultiReferentWMOrgan
+    global _POOL
+
+    def _fresh_pool(lesioned: bool):
+        global _POOL
+        _POOL = None
+        os.environ["BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6"] = "1"
+        if lesioned:
+            os.environ["BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION"] = "1"
+        else:
+            os.environ.pop("BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION", None)
+        p = get_xedge_curiosity_d6_pool(seed)
+        assert p is not None and p.ok, "xedge-curiosity-d6 pool failed to build"
+        return p
+
+    def _loaded_organ():
+        org = MultiReferentWMOrgan(seed=seed)
+        org.judge("the dog and the cat are here")   # LOAD: role-by-position -> dog=reg0(w0), cat=reg1
+        return org
+
+    def _judge_holding(org, pool, ask_held: bool, drop_enabled: bool):
+        drop_current = semantic_drop_current(pool, org) if (ask_held and drop_enabled) else None
+        jq = org.judge("who are we talking about", xedge_drop_current=drop_current)
+        named = [v for v in jq["recovered"].values() if v]
+        return {"named": named, "n": len(named), "drop_current": drop_current, "readout": jq.get("readout")}
+
+    pool_i = _fresh_pool(lesioned=False)
+    base = _judge_holding(_loaded_organ(), pool_i, ask_held=False, drop_enabled=True)
+    drop = _judge_holding(_loaded_organ(), pool_i, ask_held=True, drop_enabled=True)
+    flag_off = _judge_holding(_loaded_organ(), pool_i, ask_held=True, drop_enabled=False)
+
+    pool_l = _fresh_pool(lesioned=True)
+    lesioned = _judge_holding(_loaded_organ(), pool_l, ask_held=True, drop_enabled=True)
+
+    no_crave_unchanged = bool(base["n"] == 2 and "dog" in base["named"] and "cat" in base["named"])
+    dog_dropped_intact = bool("dog" not in drop["named"] and "cat" in drop["named"])
+    dog_recovered_lesioned = bool("dog" in lesioned["named"] and "cat" in lesioned["named"])
+    byte_identical_flagoff = bool(flag_off["named"] == base["named"])
+    go = bool(no_crave_unchanged and dog_dropped_intact and dog_recovered_lesioned and byte_identical_flagoff)
+    return {
+        "seed": int(seed), "GO": go, "cross_weight_intact": pool_i.cross_weight,
+        "cross_weight_lesioned": pool_l.cross_weight,
+        "baseline_no_crave": base, "intact_crave_drop": drop, "lesioned_crave": lesioned,
+        "flag_off_crave": flag_off,
+        "no_crave_unchanged": no_crave_unchanged, "dog_dropped_intact": dog_dropped_intact,
+        "dog_recovered_lesioned": dog_recovered_lesioned, "byte_identical_flagoff": byte_identical_flagoff,
+    }
+
+
 def main():
     import argparse
     import json
     from pathlib import Path
     ap = argparse.ArgumentParser()
     ap.add_argument("--grow", action="store_true", help="build+grow the FROZEN pool and self-verify load-bearing")
+    ap.add_argument("--semantic-drop", action="store_true",
+                    help="also self-verify the SEMANTIC-DROP rung (register-0 genuine erase)")
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
+
+    sd_results = []
+    if args.semantic_drop:
+        for s in seeds:
+            sd = _selftest_semantic_drop(s)
+            print(f"[seed {s}] SEMANTIC-DROP {'GO' if sd['GO'] else 'no'} | "
+                  f"cross_weight intact={sd['cross_weight_intact']:.4f} lesioned={sd['cross_weight_lesioned']:.4f} "
+                  f"| no_crave={sd['baseline_no_crave']['named']} "
+                  f"| crave+intact={sd['intact_crave_drop']['named']} (dropped='dog'? {sd['dog_dropped_intact']}) "
+                  f"| crave+lesioned={sd['lesioned_crave']['named']} (recovered? {sd['dog_recovered_lesioned']}) "
+                  f"| flag_off={sd['flag_off_crave']['named']} (byte_id? {sd['byte_identical_flagoff']})",
+                  flush=True)
+            sd_results.append(sd)
+        n_sd_go = sum(r["GO"] for r in sd_results)
+        print(f"\n[SEMANTIC-DROP] {n_sd_go}/{len(sd_results)} seeds GO\n", flush=True)
 
     results = []
     for s in seeds:
@@ -309,19 +451,26 @@ def main():
                "backend": os.environ.get("SIM_BACKEND", "numpy"),
                "n_go": n_go, "n_seeds": len(results),
                "results": results,
+               "semantic_drop": ({"n_go": sum(r["GO"] for r in sd_results), "n_seeds": len(sd_results),
+                                  "results": sd_results} if args.semantic_drop else None),
                "note": ("frozen pre-grown curiosity.ask -> d6.w0 cross-edge wired into a dedicated production "
                         "pool; the DRIVE is lesion-attributable through crossedge_w0_shift (the SAME function "
                         "the live /api/brain-chat D6 hold-query block calls): holding a live recent crave state "
                         "shifts the frozen pool's own w0 rate NEGATIVE (suppression, matching the runner-level "
                         "6-seed GO's own measured sign), within the runner's own noise floor of ~0 shift when "
                         "ask_held=False (no signal, no bias), and the shift collapses under "
-                        "BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1.")}
+                        "BRAIN_ONEBRAIN_XEDGE_CURIOSITY_D6_LESION=1. --semantic-drop additionally verifies the "
+                        "2026-09-01 SEMANTIC-DROP rung: the crave-suppression signal now GENUINELY drops the "
+                        "register-0-bound referent from MultiReferentWMOrgan's own recovered set via a real "
+                        "hyperpolarizing pull on that register (MultiSlotHold.apply_register_drive), not an "
+                        "appended string; lesion-attributable and byte-identical when the rung's own flag is off.")}
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         Path(args.out).write_text(json.dumps(payload, indent=2, default=str))
         print(f"wrote {args.out}", flush=True)
     print(f"\n[XEDGE-CURIOSITY-D6-PRODUCTION] {n_go}/{len(results)} seeds GO (lesion-attributable)", flush=True)
-    return 0 if n_go == len(results) else 1
+    all_go = (n_go == len(results)) and (not args.semantic_drop or sum(r["GO"] for r in sd_results) == len(sd_results))
+    return 0 if all_go else 1
 
 
 if __name__ == "__main__":
