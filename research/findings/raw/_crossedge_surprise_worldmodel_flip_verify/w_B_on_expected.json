@@ -1,0 +1,72 @@
+{
+  "config": "B_on_expected",
+  "env": {
+    "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": "1"
+  },
+  "sequence_turns": [
+    {
+      "answer": "Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    },
+    {
+      "answer": "As for it \u2014 Wonderful! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "update",
+      "predicted_next_sign": 1,
+      "surprised": null,
+      "crossedge": null
+    }
+  ]
+}

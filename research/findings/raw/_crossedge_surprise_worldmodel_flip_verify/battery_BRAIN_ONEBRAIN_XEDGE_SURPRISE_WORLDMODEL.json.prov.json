@@ -1,0 +1,30 @@
+{
+ "run_id": "1788358609-3617548",
+ "runner": "research/runners/_crossedge_surprise_worldmodel_flip_verify.py",
+ "note": "written as an internal side-effect of run_regression_battery(flag=..., out_dir=...) called in-process by the orchestrator below -- not its own -m invocation, so research/runners/__init__'s auto-sidecar (which only stamps the CURRENT process's own --out/--output/--json argv value) never covers it. This sidecar is hand-written to record the SAME run that produced it: same run_id/git_sha/env as numpy_run.json.prov.json, the sibling top-level verdict this battery result feeds into (aggregate.arm_C_regression_battery in numpy_run.json).",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a3e65099d3abdf8cc/research/runners/_crossedge_surprise_worldmodel_flip_verify.py",
+  "--out",
+  "research/findings/raw/_crossedge_surprise_worldmodel_flip_verify/numpy_run.json",
+  "--mem-floor",
+  "3000"
+ ],
+ "git_sha": "02938d965",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T10:16:49",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_crossedge_surprise_worldmodel_flip_verify/battery_BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL.json"
+}

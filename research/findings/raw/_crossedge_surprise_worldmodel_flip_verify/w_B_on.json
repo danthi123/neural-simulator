@@ -1,0 +1,152 @@
+{
+  "config": "B_on",
+  "env": {
+    "BRAIN_ONEBRAIN_XEDGE_SURPRISE_WORLDMODEL": "1"
+  },
+  "sequence_turns": [
+    {
+      "answer": "Honestly! That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad. \u2014 worth going further here.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": true,
+      "crossedge": {
+        "on": true,
+        "state": 0,
+        "observed_sign": -1,
+        "surprise_hz": 44.44444444444444,
+        "gate_threshold": 15.555555555555554,
+        "gate_opened": true,
+        "w_obs_before": 0.012822755612432957,
+        "w_obs_after": 0.13382288813591003,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Gladly! That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": true,
+      "crossedge": {
+        "on": true,
+        "state": 2,
+        "observed_sign": 1,
+        "surprise_hz": 34.72222222222223,
+        "gate_threshold": 12.152777777777779,
+        "gate_opened": true,
+        "w_obs_before": 0.054486796259880066,
+        "w_obs_after": 0.15865059196949005,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 On terrible, then \u2014 Honestly! That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going positive, and my prediction-error unit fired. The terrible bes sad.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": true,
+      "crossedge": {
+        "on": true,
+        "state": 0,
+        "observed_sign": -1,
+        "surprise_hz": 38.88888888888889,
+        "gate_threshold": 15.555555555555554,
+        "gate_opened": true,
+        "w_obs_before": 0.13382288813591003,
+        "w_obs_after": 0.23635080456733704,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 Gladly! That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": true,
+      "crossedge": {
+        "on": true,
+        "state": 2,
+        "observed_sign": 1,
+        "surprise_hz": 34.02777777777778,
+        "gate_threshold": 12.152777777777779,
+        "gate_opened": true,
+        "w_obs_before": 0.15865059196949005,
+        "w_obs_after": 0.2306060791015625,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On terrible, then \u2014 Honestly! The terrible bes sad.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": false,
+      "crossedge": {
+        "on": true,
+        "state": 0,
+        "observed_sign": -1,
+        "surprise_hz": 13.88888888888889,
+        "gate_threshold": 15.555555555555554,
+        "gate_opened": false,
+        "w_obs_before": 0.23635080456733704,
+        "w_obs_after": 0.23635080456733704,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 Gladly! That shifts the mood unexpectedly \u2014 my affective forward model had predicted this would keep going negative, and my prediction-error unit fired. The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": true,
+      "crossedge": {
+        "on": true,
+        "state": 2,
+        "observed_sign": 1,
+        "surprise_hz": 18.40277777777778,
+        "gate_threshold": 12.152777777777779,
+        "gate_opened": true,
+        "w_obs_before": 0.2306060791015625,
+        "w_obs_after": 0.3608657717704773,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On terrible, then \u2014 Honestly! The terrible bes sad.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": false,
+      "crossedge": {
+        "on": true,
+        "state": 0,
+        "observed_sign": -1,
+        "surprise_hz": 14.23611111111111,
+        "gate_threshold": 15.555555555555554,
+        "gate_opened": false,
+        "w_obs_before": 0.23635080456733704,
+        "w_obs_after": 0.23635080456733704,
+        "lesioned": false
+      }
+    },
+    {
+      "answer": "Setting the held thread aside \u2014 As for it \u2014 On wonderful, then \u2014 Gladly! The wonderful bes happy.",
+      "abstained": false,
+      "worldmodel_kind": "violation",
+      "predicted_next_sign": null,
+      "surprised": false,
+      "crossedge": {
+        "on": true,
+        "state": 2,
+        "observed_sign": 1,
+        "surprise_hz": 3.4722222222222223,
+        "gate_threshold": 12.152777777777779,
+        "gate_opened": false,
+        "w_obs_before": 0.3608657717704773,
+        "w_obs_after": 0.3608657717704773,
+        "lesioned": false
+      }
+    }
+  ]
+}
