@@ -26,3 +26,11 @@ OWED when Vikunja is back (run the `vikunja` skill):
 NOT A REAL SYNC (mechanical gate only). OWED when Vikunja returns (adds to the list above):
  - add DONE/reference task: Phase-1 one-brain verification INFRA landed (merge 013884a72) — the generalized flip-verify harness + the cross-faculty regression battery (38 faculties) + the OFF-arm-staleness gate (CLASS OS, caught+fixed a 7th live instance). Plain title e.g. "The brain-merge safety-checker now exists" under Big picture; it unblocks gating for every future organ-merge/flip.
  - add follow-on (de-risked/in-progress): lift the 22 thin regression-battery probes to driving ones (agent in flight); Wave 1 merge (comprehension + source_provenance onto the single pool) — waits on the single-pool 6-seed soak.
+
+--- 2026-09-02 ~10:40 · REAL SYNC (Vikunja reachable) ---
+Reconciled after landing the C2 metacog-confidence read-isolation fix (GO 6/6 numpy, cupy verify queued).
+Task #202 ("Two thinking-organs learning to influence each other") title updated to reflect both edges now
+working (one still pending its production/GPU-backend check); description appended with the read-isolation-fix
+note (Ref: research/findings/2026-09-02-c2-metacog-read-isolation-fix-GO.md). Kept OPEN + `de-risked` label
+(not yet wired/production-default). Checked #82 (DG readout/write) — unrelated task, only referenced by analogy
+in #202's text ("matches board #82 'fix the READ'"), no update needed there.
