@@ -1,0 +1,29 @@
+{
+ "run_id": "1788363839-3698285",
+ "runner": "research/runners/_onebrain_crossedge_curiosity_to_d6wm.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_cafa4862-d16-1/research/runners/_onebrain_crossedge_curiosity_to_d6wm.py",
+  "--seeds",
+  "42,43,44,100,101,102",
+  "--out",
+  "research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_readfix_6seed.json"
+ ],
+ "git_sha": "b0592fae0",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T11:43:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_onebrain_crossedge_curiosity_to_d6wm_readfix_6seed.json"
+}

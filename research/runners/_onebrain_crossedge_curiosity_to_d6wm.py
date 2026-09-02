@@ -78,9 +78,9 @@ import numpy as np
 
 from sim.backend import to_host, get_backend
 
-from research.runners.onebrain_merge_framework import REGISTRY, CrossEdge, merge_organs
+from research.runners.onebrain_merge_framework import REGISTRY, CrossEdge, merge_organs, MergedPool
 from research.runners.onebrain_crossedge_gate import (
-    CrossEdgeGateSpec, run_gate, verify_byte_off, cross_edge_masks,
+    CrossEdgeGateSpec, run_gate, verify_byte_off, cross_edge_masks, lesion_cross_edges,
 )
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────
@@ -172,6 +172,36 @@ class AskToW0Pool:
             self.b._run_one_simulation_step()
         self.rest_v = np.asarray(to_host(self.b.cp_membrane_potential_v)).copy()
         self.rest_u = np.asarray(to_host(self.b.cp_recovery_variable_u)).copy()
+        # THE READ-ISOLATION FIX (2026-09-02, Port A — ported from `onebrain_merge_framework.MergedPool`'s
+        # already-tested `_PER_NEURON_STATE` + `_SEQ_EXTRA_STATE` tuples, the SAME primitives
+        # `read_isolation()`/`sequence_isolation()` use; the audited bug class's own template =
+        # `_crossedge_surprise_metacog_derisk.py`'s `_EXTRA_RESET_ARRAYS`). The ORIGINAL `_hard_reset` below
+        # restored only v/u/conductances/firing_states -- it never touched `cp_refractory_timers`/
+        # `cp_prev_firing_states` (hard firing gates, independent of membrane potential: a neuron mid-refractory
+        # from the immediately-prior read/episode stays gated at the start of the next even though v/u were
+        # reset) or `cp_neuron_activity_ema`/`cp_neuron_firing_thresholds` (the participation-gated homeostatic
+        # EMA + adaptive threshold, which silently drifts on whichever neurons the immediately-prior read/
+        # episode drove) -- the audited C2 bug class, `_PER_NEURON_STATE`.
+        #
+        # HONEST EXTENSION beyond the audited 4-array class, FOUND while building this fix's own selftest (not
+        # assumed): restoring only `_PER_NEURON_STATE` left the selftest's repeat-read still non-identical
+        # (0.0679 vs 0.0607 on a lesioned seed-42 pool). Direct instrumentation (same fixed-vs-not diff the
+        # audit used) isolated the residual to `_SEQ_EXTRA_STATE` -- specifically `cp_conductance_g_nmda_rise` /
+        # `cp_conductance_g_nmda_recurrent` / `cp_conductance_g_nmda_recurrent_rise` (this pair's OWN docstring
+        # already names NMDA-recurrent dynamics as load-bearing for the read's operating point) and
+        # `cp_synapse_pulse_timers`/`cp_synapse_pulse_progress`. This runner's `read_w0()` is a genuine
+        # MULTI-TURN stateful read (a condition-blind LOAD phase, then the scored ask-driven phase, both inside
+        # ONE `_hard_reset()`) -- exactly the shape `sequence_isolation()`'s own docstring says needs the wider
+        # tuple, not just `read_isolation()`'s per-neuron set. Restoring BOTH tuples (this pool has no
+        # co-resident organ to protect, so a plain snapshot/restore in `_hard_reset` is the direct equivalent of
+        # wrapping every read in `sequence_isolation()`) makes the selftest below PASS bitwise. Snapshot BOTH at
+        # TRUE REST (right after the settle loop above) ONCE here; restored wholesale on every `_hard_reset()`
+        # below -- see research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md
+        # (IG-1: this was the ONE inflated GO in that audit, live-wired default-on in /api/brain-chat).
+        self._rest_extra = {}
+        for nm in list(MergedPool._PER_NEURON_STATE) + list(MergedPool._SEQ_EXTRA_STATE):
+            arr = getattr(self.b, nm, None)
+            self._rest_extra[nm] = np.asarray(to_host(arr)).copy() if arr is not None else None
 
     # ---- primitives (R1/R4 house style) ----
     def _hard_reset(self):
@@ -186,6 +216,20 @@ class AskToW0Pool:
             b.cp_firing_states[:] = False
         if getattr(b, "cp_hebb_coactivity_trace", None) is not None:
             b.cp_hebb_coactivity_trace[:] = 0.0
+        # THE READ-ISOLATION FIX: restore EVERY array the framework's `_PER_NEURON_STATE` + `_SEQ_EXTRA_STATE`
+        # tuples name to its TRUE-REST snapshot (captured once in __init__, immediately post-settle). This
+        # supersedes the piecemeal v/u/conductance/firing resets above for anything `_PER_NEURON_STATE` also
+        # names (redundant, harmless -- same target value) and ADDITIONALLY restores `cp_refractory_timers` /
+        # `cp_prev_firing_states` / `cp_neuron_activity_ema` / `cp_neuron_firing_thresholds` (the audited C2
+        # class) plus the NMDA-recurrent + synapse-pulse buffers `_SEQ_EXTRA_STATE` names (this runner's own
+        # extension, found via the selftest below), none of which anything above ever touched. Without this,
+        # whichever condition/episode ran immediately before a scored read leaked its residual
+        # refractory/homeostatic/NMDA-recurrent state into the next one -- an ORDER-dependent bias, not a
+        # genuine condition effect (verified: the fixed `_hard_reset` makes two identical consecutive reads
+        # bitwise identical -- see `_selftest_read_isolation()` below).
+        for nm, val in self._rest_extra.items():
+            if val is not None:
+                getattr(b, nm)[:] = xp.asarray(val)
         b.cp_external_input_current[:] = 0.0
 
     def _drive(self, pairs, steps, learn=False, read=None):
@@ -288,12 +332,39 @@ def run_seed(seed):
             "trajectory": gate["trajectory"]}
 
 
+def _selftest_read_isolation(seed=42):
+    """FAILS-IN-FAILING-DIRECTION guard for the 2026-09-02 Port A read-isolation fix (see `_hard_reset`'s own
+    docstring above): on a MECHANISM-ZEROED pool (the cross-edge's own synapses lesioned to 0.0 -- genuinely
+    inert, not merely untrained), two back-to-back, identically-conditioned `read_w0("familiar")` calls must be
+    BITWISE identical. Each call runs its own `_hard_reset()` internally (via `_drive`'s callers); if any array
+    the reset omits carries residue from the first call into the second, the second read's rate differs -- this
+    is exactly the leak the audit found (`research/findings/
+    2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`). Returns True/False; does not raise, so
+    a caller can assert/report as it likes."""
+    pool = AskToW0Pool(seed)
+    lesion_cross_edges(pool.b, pool.masks, pool.xp)   # zero the ask_to_w0 mechanism in place -- genuinely inert
+    r1 = pool.read_w0("familiar")
+    r2 = pool.read_w0("familiar")
+    ok = (r1["w0"] == r2["w0"]) and (r1["ask"] == r2["ask"])
+    print(f"[selftest] seed={seed} lesioned repeat-read: r1={r1} r2={r2} -> "
+          f"{'PASS (bitwise identical)' if ok else 'FAIL (read-isolation leak)'}", flush=True)
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true", help="1 seed indicator")
+    ap.add_argument("--selftest", action="store_true",
+                     help="read-isolation fails-in-failing-direction guard only (no train/6-seed run)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
+
+    if args.selftest:
+        ok = _selftest_read_isolation()
+        print("SELFTEST " + ("PASS" if ok else "FAIL"), flush=True)
+        return 0 if ok else 1
+
     seeds = [42] if args.smoke else [int(s) for s in args.seeds.split(",") if s.strip()]
 
     runs = []
@@ -319,12 +390,15 @@ def main():
                f"rate; the suppression VANISHES on lesion), and are BYTE-IDENTICAL-OFF. numpy CPU; NO sim/ edit; "
                f"additive.")
 
+    # NOTE (2026-09-02, read-isolation fix landing): `all_seeds_go` (n_go == len(runs)) used to be wrapped as a
+    # THIRD `Vd.require(...)` here — but that is the OUTCOME itself, not a validity precondition, and double-
+    # counting it made `Vd.decide()` collapse to UNDEFINED instead of a genuine NO-GO the one time n_go actually
+    # dropped below 6/6 (this fix's own re-verify, see the finding). Preconditions below are VALIDITY checks only
+    # (did the lesion control work; is the wiring byte-off-clean) — the outcome is passed straight to `decide(go=)`.
     preconditions = []
     try:
         from tools.verdict import Verdict
         Vd = Verdict("onebrain_crossedge_curiosity_to_d6wm")
-        Vd.require("all_seeds_go", n_go, expect=lambda x: x == len(runs),
-                   note="emergence + interaction + byte-off all PASS on every seed")
         Vd.require("lesion_removes_bias", 1 if all(
             abs(r["interaction"]["per_condition"]["novel"]["delta_lesion"]) <
             LESION_RATIO * max(abs(r["interaction"]["per_condition"]["novel"]["delta_intact"]), 1e-9)

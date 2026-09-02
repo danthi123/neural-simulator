@@ -1,6 +1,6 @@
 ---
 type: finding
-status: live
+status: superseded
 date: 2026-09-01
 mechanism: declarative-cross-edge-curiosity-to-d6wm
 lane: onebrain-integration
@@ -16,7 +16,21 @@ builds_on:
 
 # A FRESH declarative cross-edge on the one-brain connectome: curiosity's `ask` crave pool -> d6's `w0` WM slot — added as a data row + 2 callables, 6-seed GO (6/6); the effect is an honest SUPPRESSION, not the boost the first hypothesis predicted
 
-**One-line:** curiosity (D3) and d6_multiref_wm (D6) are both already co-resident on `full7` but had ZERO synaptic
+## ⛔ CORRECTION (2026-09-02, read-isolation fix) — the "6-seed GO (6/6)" headline was PARTIALLY INFLATED by an incomplete `_hard_reset()`; corrected verdict is NO-GO 3/6
+
+`AskToW0Pool._hard_reset()` never restored `cp_refractory_timers`/`cp_prev_firing_states`/`cp_neuron_activity_ema`/
+`cp_neuron_firing_thresholds` (the C2 bug class, `research/findings/2026-09-02-read-isolation-audit-C2-bug-class-across-14-runners.md`)
+nor the NMDA-recurrent/synapse-pulse buffers this pair's own read rides on, leaking residual state
+order-dependently across reads AND training episodes. Isolating the read (both framework state tuples restored,
+verified BITWISE-identical repeat reads on a lesioned pool) collapses `delta_lesion` to exactly 0.0 on every seed
+(the read is now trustworthy) but ALSO collapses `delta_intact` below `INTACT_FLOOR=0.008` on 3 of 6 seeds
+(43, 101, 102) — **n_go 6/6 -> 3/6**. The mechanism itself (Hebbian-grown edge, sign-consistent suppression,
+byte-identical-off) survives on the 3 seeds that still clear the floor; the "GO 6/6" claim below does not. Full
+before/after table, the fix, and the selftest: `research/findings/2026-09-02-onebrain-crossedge-curiosity-to-d6wm-read-isolation-fix-corrects-GO-to-NOGO-3-6.md`.
+This is a LIVE default-ON production faculty (`research/findings/2026-09-01-onebrain-crossedge-curiosity-to-d6wm-production-wire-GO.md`,
+also ⛔-corrected) — the default-ON decision is flagged for owner review there, not changed by this correction.
+
+**One-line (ORIGINAL, now PARTIALLY SUPERSEDED — see the correction above):** curiosity (D3) and d6_multiref_wm (D6) are both already co-resident on `full7` but had ZERO synaptic
 interaction with each other before this edge — two organs sitting side by side, not one brain. This finding wires
 curiosity's `ask` (crave/epistemic-gap) pool -> d6's `w0` working-memory slot, PURELY BY DECLARATION (a 1-row
 `CrossEdge` + `train_fn` + `read_fn`, through the SAME generic `onebrain_crossedge_gate.run_gate` R1/R4/R4-reciprocal
