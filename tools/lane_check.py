@@ -47,7 +47,7 @@ LANES = {
     "C · Self/Workspace": ("CPU/GPU", ["self_schema", "meta_d", "metacog", "false_belief", "workspace", "gnw",
                                         "coincidence", "ignition", "deliberation", "_dr3", "_p1_2", "tom"]),
     "D · Perception":    ("CPU/GPU", ["v1_selforg", "v1_pooler", "pooler", "laned", "hmax", "_b1_", "visual",
-                                        "retina", "gabor", "v2_", "_it_", "nav_"]),
+                                        "retina", "gabor", "v2_", "_it_", "nav_", "vision", "lindiscrim"]),
     "E · Language":      ("CPU",  ["emerge6", "emerge7", "construction", "morpholog", "lexicon", "grammar",
                                     "comprehension", "producer", "confidence_gate"]),
     "F · gap#4 (mapped)": ("GPU",  ["gap4", "deep_credit", "selfpredict", "microcircuit", "bdsp", "eprop",

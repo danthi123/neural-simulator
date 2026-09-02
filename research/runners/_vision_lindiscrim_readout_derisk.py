@@ -141,6 +141,35 @@ OUT = Path("research/findings/raw/lanes/perception/vision_lindiscrim_readout.jso
 # ============================================================================================
 # FIXED spiking front end -> the C2 spike code (SAME features config C reads), averaged over G glimpses.
 # ============================================================================================
+def _apply_s2_norm(drive, a):
+    """The pre-readout S2 lateral normalization, factored out of the two call sites (spike + rate) so the
+    2026-09-01 board-#135 opsweep finding's named next lever can be added ONCE, identically for both.
+
+    'alpha' is the finding's own proposed graded/partial normalization (research/findings/2026-09-01-vision-
+    lindiscrim-opsweep-board135-...): a PARAMETRIC divisive interpolation `drive / (sigma0 + alpha*std)`
+    between the 'none' arm (has RATE headroom -- ceiling 0.57-0.62 vs z's 0.4653 -- but the LIF saturates) and
+    the 'z' arm (avoids saturation but caps the ceiling at the 0.4653 RATE ceiling), swept continuously via
+    alpha in [0,1] instead of the exhausted {none,submean,z} discrete choice. alpha=0 -> drive/sigma0 (a fixed
+    rescale, no per-sample divisive competition, closest to 'none'); alpha=1 with sigma0 tiny approaches pure
+    divisive (std-only, NO mean-subtraction) normalization -- a DIFFERENT family from 'z' (which also
+    subtracts the mean), by design (the finding's decomposition attributes the ceiling specifically to the
+    DIVISIVE step, not the mean-subtraction). Default OFF (s2_norm stays 'z' unless explicitly requested) ->
+    byte-identical to every prior run of this file.
+    """
+    if a.s2_norm == "submean":
+        return np.clip(drive - drive.mean(axis=2, keepdims=True), 0.0, None)
+    elif a.s2_norm == "z":
+        mu = drive.mean(axis=2, keepdims=True)
+        sd = drive.std(axis=2, keepdims=True)
+        return np.clip((drive - mu) / (sd + 1e-6), 0.0, None)
+    elif a.s2_norm == "alpha":
+        sd = drive.std(axis=2, keepdims=True)
+        alpha = float(getattr(a, "s2_norm_alpha", 0.5))
+        sigma0 = float(getattr(a, "s2_norm_sigma0", 1e-3))
+        return np.clip(drive / (sigma0 + alpha * sd), 0.0, None)
+    return drive  # "none"
+
+
 def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
     (winner-relative contrast) -> LIF S2 coincidence spikes -> C2 per-template MAX over locations
@@ -150,12 +179,7 @@ def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
     N, n_loc, D = patches.shape
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)                      # (N, n_loc, n_S2) cosine match
-    if a.s2_norm == "submean":
-        drive = np.clip(drive - drive.mean(axis=2, keepdims=True), 0.0, None)
-    elif a.s2_norm == "z":
-        mu = drive.mean(axis=2, keepdims=True)
-        sd = drive.std(axis=2, keepdims=True)
-        drive = np.clip((drive - mu) / (sd + 1e-6), 0.0, None)
+    drive = _apply_s2_norm(drive, a)
     flat = drive.reshape(N * n_loc, -1)
     acc = None
     G = max(1, int(n_glimpses))
@@ -176,12 +200,7 @@ def _c2_rate_code(c1, W0, a):
     N, n_loc, D = patches.shape
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)
-    if a.s2_norm == "submean":
-        drive = np.clip(drive - drive.mean(axis=2, keepdims=True), 0.0, None)
-    elif a.s2_norm == "z":
-        mu = drive.mean(axis=2, keepdims=True)
-        sd = drive.std(axis=2, keepdims=True)
-        drive = np.clip((drive - mu) / (sd + 1e-6), 0.0, None)
+    drive = _apply_s2_norm(drive, a)
     return drive.max(axis=1).astype(np.float32)                # (N, n_S2)
 
 
@@ -504,7 +523,16 @@ def main():
     p.add_argument("--T-read", type=int, default=48, help="readout LIF window (ms/steps)")
     # SPIKING (LIF) front end operating point (config B defaults)
     p.add_argument("--s1-mode", choices=["spiking", "rate"], default="spiking")
-    p.add_argument("--s2-norm", choices=["none", "submean", "z"], default="z")
+    p.add_argument("--s2-norm", choices=["none", "submean", "z", "alpha"], default="z",
+                   help="'alpha' is the 2026-09-01 board-#135 opsweep finding's named next lever: a graded "
+                        "divisive interpolation drive/(sigma0+alpha*std) between 'none' (has rate headroom, "
+                        "saturates) and 'z' (avoids saturation, caps the ceiling) -- see --s2-norm-alpha")
+    p.add_argument("--s2-norm-alpha", type=float, default=0.5,
+                   help="'alpha' mode only: 0 -> close to 'none' (fixed rescale by sigma0), 1 -> close to "
+                        "pure divisive std-normalization (no mean-subtraction, unlike 'z')")
+    p.add_argument("--s2-norm-sigma0", type=float, default=1e-3,
+                   help="'alpha' mode only: floor added to alpha*std before dividing (numerical safety + "
+                        "sets the alpha=0 fixed rescale)")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
