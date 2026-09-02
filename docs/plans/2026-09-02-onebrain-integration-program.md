@@ -16,14 +16,18 @@ read-outs only; no phenomenal claim.
   4 core organs co-reside as pool#1(surprise+world-model) + pool#2(metacog+pragmatic); surprise↔metacog edges CANNOT be
   produced until the single pool lands.
 
-## The CRUX (both design cruxes converge here)
+## The CRUX — ⛔ CORRECTED 2026-09-02: the "FP-determinism scale ceiling" was a FALSE premise; the 7-organ merge is ALREADY 7/7 GO
 
-**An FP-determinism / scale ceiling at total-N ≈ 4968.** The non-flagged conductance matvec paths (esp. the
-slow-NMDA-recurrent `_nr_mat.T @ prev_firing` in `sim/bridge.py`) carry floating-point summation-order variance that a
-long spiking read amplifies into a 1-spike divergence past ~4968 neurons — which is why the strict 7-organ byte-identity
-batch was NO-GO (an FP artifact, NOT an organ defect). **One `sim/` edit** — generalize the existing
-`deterministic_transpose_matvec` to ALL conductance paths — is the load-bearing prerequisite for merging the full organ
-set. This is the highest-leverage single build in the program.
+The Axis-1 design named an FP-determinism ceiling at N≈4968 (slow-NMDA-recurrent matvec summation-order variance) as
+the merge crux. A verify-first Phase-2 pass REFUTED it: on numpy the matvecs were already co-residence-invariant
+(hardening moved `read_maxerr` by exactly 0 — commit `06ce99c76`, 2026-08-27), and the REAL 7-organ wall was a
+co-residence-DEPENDENT nmda_slow WIRING/RNG seam — **already CLOSED**: `dedup_synapse_masks` (`b22286162`, closes d6
+organ-read) + `per_region_inhibitory_seed` (`cb8bc175b`/`07de22d6e`, closes prospective_memory's residual) → **7/7
+organs GO** (board #180). So there is **NO scale/FP prerequisite** — the merge waves proceed directly, gated only by the
+migration pattern + the Phase-1 harness. The one genuine FP gap that remained (the opt-in megakernel-v1 GPU fast-path's
+cuSPARSE csrmv) is now closed too (`86b8e6384`, additive/default-OFF) but is a determinism-contract completion, NOT a
+blocker. **Net: the program is LESS blocked than designed — the old "Phase 2 / Wave-3 scale gate" is DONE, not a gate;
+Wave 3 (d6 + prospective-memory) can proceed on the same migration pattern as Waves 1-2.**
 
 ## The seam taxonomy (the merge's silent killers — a MergeConflict is NOT raised; the union accepts a default and the faculty dies quietly)
 
@@ -49,9 +53,10 @@ PARTIAL until its 6/6 cupy GO; a NO-GO is a real finding. Controller harvests.
    `="0"` explicitly, never `os.environ.pop()` (which silently becomes ON-vs-ON once a default flips). Closing it here
    protects every later step.
 
-### Phase 2 — THE FP-DETERMINISM `sim/` EDIT (the crux; unblocks scale)
-Generalize deterministic matvec to all conductance paths (additive/guarded, `tests/test_determinism.py`-pinned). Gate:
-the previously-NO-GO strict full-batch byte-identity now passes past N≈4968.
+### Phase 2 — ✅ DONE / NOT A GATE (see the corrected CRUX above)
+The FP-determinism "scale gate" was a false premise: the 7-organ merge is already 7/7 GO (nmda_slow wiring/RNG seam
+closed via `dedup_synapse_masks` + `per_region_inhibitory_seed`). The remaining opt-in megakernel-v1 determinism gap is
+also closed (`86b8e6384`). No scale prerequisite remains — Wave 3 proceeds on the same migration pattern as Waves 1-2.
 
 ### Phase 3 — THE MERGE WAVES (organ merges + cross-edge flips/wire-ins, each gated by Phase-1's harness)
 - **Wave 1** (no new seam, small, default-ON endpoints): merge **comprehension + source_provenance** onto the single pool
@@ -78,7 +83,8 @@ to spiking cross-edges: E1 affect→tone (#84), E2 confidence→forthcomingness 
   (each gated on its soak + the combined battery), then retire `MergedSubstrate`/`MergedSubstrate2` + the converted host
   couplings. Only then does a row read `scaffold_retired=YES`.
 
-## The immediately-actionable next builds (GPU-free, ready now)
-1. **Phase-1 harness + shipped-faculty battery + OFF-arm gate** — the highest-value ready build; unblocks all gating below.
-2. **Phase-2 FP-determinism `sim/` edit** — the scale crux.
-Both are CPU/design-buildable while the GPU finishes the queued verdicts.
+## The immediately-actionable next builds (GPU-free)
+1. **Phase-1 harness + shipped-faculty battery + OFF-arm gate** — IN PROGRESS (branch `research/onebrain-flip-verify-harness`);
+   the highest-value build, it unblocks the gating for every merge/flip below. (Phase-2 FP-determinism is DONE — see CRUX.)
+2. **Then Wave 1** (merge comprehension + source_provenance onto the single pool) — the first merge, on the migration
+   pattern, gated by the Phase-1 battery; no scale prerequisite (the FP "crux" was refuted). This is the true next step.
