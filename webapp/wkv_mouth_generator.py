@@ -164,6 +164,53 @@ def tokenizer_mode() -> str:
     return "bpe" if v == "bpe" else "word"
 
 
+# ── RECURRENCE family (2026-09-03, `LinAttnReadout` production wiring, DEFAULT-OFF -- see research/findings/
+# 2026-09-03-linattn-production-mouth-wiring-DESIGN.md Sec 3e P2). `_get_readout` below is the ONLY place this
+# is read: 'ssm' (unset, the default) builds `WKVReadout` exactly as before this function existed -- BYTE-
+# IDENTICAL default path; 'linattn' builds `research.runners._wkv_fewspike_read_derisk.LinAttnReadout` against a
+# `--recurrence linattn --save-ssm` checkpoint instead (a DIFFERENT, mutually-exclusive recurrence family --
+# never silently mixed with 'ssm', matching the "never share a read path" discipline `WKVReadout`'s own
+# multi-layer 'wkv' extension states for the identical reason: a checkpoint read through the wrong family's math
+# loads WITHOUT error and produces near-uniform garbage, research/findings/2026-07-20-gap1-ROOT-CAUSE-...).
+_RECUR_ENV = "BRAIN_WKV_MOUTH_RECURRENCE"                    # "ssm" (default) | "linattn"
+
+
+def recurrence_mode() -> str:
+    """'ssm' (default, unset or anything other than 'linattn') -> `_get_readout` builds `WKVReadout` and
+    `generate()` drives it through the pre-existing `_free_gen` -- BYTE-IDENTICAL to before this function
+    existed. 'linattn' (`BRAIN_WKV_MOUTH_RECURRENCE=linattn`, opt-in) -> `_get_readout` builds `LinAttnReadout`
+    (point `BRAIN_WKV_MOUTH_CKPT` at a `--recurrence linattn --save-ssm` checkpoint) and `generate()` drives it
+    through `_free_gen_linattn` instead -- a separate driving-loop function (not a branch inside `_free_gen`)
+    because `LinAttnReadout`'s state is one opaque object (`ro.advance(state, tid)`/`ro.logits(state, tid)`),
+    not `WKVReadout`'s `(ap, an)` array pair; every decode control (top-K cut, repetition guard, fact-boost, the
+    genuine few-spike `reader.read(p)` WTA) is copied verbatim between the two, so linattn composes with the
+    exact same spiking read-out for free."""
+    v = os.environ.get(_RECUR_ENV, "ssm").strip().lower()
+    return "linattn" if v == "linattn" else "ssm"
+
+
+# ── SCOPE mode (2026-09-03, design doc Sec 3e P3). `in_vocab_scope`'s function-word/content-word overlap check
+# below assumes a CLOSED word-level vocabulary (the shipped V=1000 TinyStories checkpoint) -- not meaningful over
+# a general-vocabulary BPE checkpoint, which tokenizes any input with no OOV at all (see the module's BPE-mode
+# block, residual #3). "broad" mode names that this gate should become a coverage/confidence decision instead of
+# a hard vocab-overlap gate -- but the exact threshold is an HONEST, NOT-YET-MEASURED de-risk knob (the design
+# doc's own words: "set from the 6-seed's own held-out coverage, NOT guessed here"), so "broad" currently just
+# ADMITS every prompt to this gate (the caller's post_filter VERIFY moat still runs unconditionally afterward --
+# this is scope-ROUTING, not a safety boundary) rather than fabricating an ungrounded number. Tightening this
+# into a real coverage threshold is the named next step once the deployable linattn checkpoint's held-out
+# coverage is measured (design doc Sec 6-iii names the fabrication-surface risk this leaves open until then).
+_SCOPE_ENV = "BRAIN_WKV_MOUTH_SCOPE"                         # "vocab" (default) | "broad"
+
+
+def scope_mode() -> str:
+    """'vocab' (default, unset or anything other than 'broad') -> `in_vocab_scope`'s pre-existing TinyStories
+    word-overlap gate, BYTE-IDENTICAL to before this function existed. 'broad' (`BRAIN_WKV_MOUTH_SCOPE=broad`,
+    opt-in) -> `in_vocab_scope` admits every prompt (see this function's own docstring above for the honest
+    reason a real coverage threshold is not implemented yet)."""
+    v = os.environ.get(_SCOPE_ENV, "vocab").strip().lower()
+    return "broad" if v == "broad" else "vocab"
+
+
 _BPE_TOK_LOCK = threading.Lock()
 _BPE_TOK_CACHE: dict[str, object] = {}
 
@@ -235,8 +282,13 @@ def _apply_learned_head(ro, seed: int) -> dict:
 
 
 def _get_readout(seed: int):
+    """Byte-identical default path: `recurrence_mode()` unset -> 'ssm' -> builds `WKVReadout` exactly as before
+    that function existed (the cache key's 3rd element is a constant "ssm" in that case, so the shipped
+    single-seed / single-recurrence cache behavior is unaffected). `recurrence_mode()=="linattn"` builds
+    `LinAttnReadout` instead, under its OWN cache key so a seed's ssm and linattn readouts never collide."""
     learned = learned_head_enabled()
-    key = (seed, learned)
+    recur = recurrence_mode()
+    key = (seed, learned, recur)
     hit = _CKPT_CACHE.get(key)
     if hit is not None:
         return hit
@@ -244,9 +296,19 @@ def _get_readout(seed: int):
         hit = _CKPT_CACHE.get(key)
         if hit is not None:
             return hit
-        ro = WKVReadout(_ckpt_path(seed))
-        if learned:
-            _HEAD_INFO[key] = _apply_learned_head(ro, seed)      # native head kept on any failure (fail-safe)
+        if recur == "linattn":
+            from research.runners._wkv_fewspike_read_derisk import LinAttnReadout
+            ro = LinAttnReadout(_ckpt_path(seed))
+            # The e-prop learned-head matrices `_apply_learned_head` loads are trained against the ssm/dual-
+            # nonneg checkpoint's OWN hidden basis (`bridges/wkv_ckpt/wkv_ssmU6_*`) -- never apply them to a
+            # linattn readout's differently-shaped/differently-trained hidden representation, regardless of
+            # `BRAIN_WKV_MOUTH_LEARNED_HEAD` (default-ON). `_apply_learned_head`'s own shape check would usually
+            # catch a real mismatch anyway (its fail-safe docstring), but this skip is an explicit guard, not a
+            # reliance on that shape happening to differ.
+        else:
+            ro = WKVReadout(_ckpt_path(seed))
+            if learned:
+                _HEAD_INFO[key] = _apply_learned_head(ro, seed)      # native head kept on any failure (fail-safe)
         vocab = set(w.lower() for w in ro.words)
         word_to_id = {w.lower(): i for i, w in enumerate(ro.words)}
         hit = (ro, vocab, word_to_id)
@@ -256,8 +318,10 @@ def _get_readout(seed: int):
 
 def learned_head_status(seed: int = 42) -> dict | None:
     """Diagnostic: provenance of the last `_get_readout(seed)` call's learned-head load attempt under the
-    CURRENT `learned_head_enabled()` state (None if that state was never off/on-attempted for this seed yet)."""
-    return _HEAD_INFO.get((seed, learned_head_enabled()))
+    CURRENT `learned_head_enabled()`/`recurrence_mode()` state (None if that state was never off/on-attempted
+    for this seed yet, OR if the current recurrence mode is 'linattn' -- the learned-head lever never applies
+    there, see `_get_readout`)."""
+    return _HEAD_INFO.get((seed, learned_head_enabled(), recurrence_mode()))
 
 
 # ── RNG isolation (the #77 fix, replicated from affect_drives_chat.ObservedAffectLadder._isolated) ────────────────
@@ -545,7 +609,14 @@ def in_vocab_scope(text: str, seed: int = 42, min_frac: float = 0.6, min_hits: i
     (`in_vocab_scope("tell me about " + <any nonsense>)` was True 68.17% of the time on a real-topic sample --
     see `_LEADIN_WORDS`'s own docstring above and `research/FAILURE_LOG.md` 2026-09-01). `min_hits`/`min_frac`
     are still scored over the FULL original `text` (unchanged) -- only which hits count as CONTENT changes, so a
-    genuinely content-bearing message is not penalized for also carrying a lead-in phrase."""
+    genuinely content-bearing message is not penalized for also carrying a lead-in phrase.
+
+    `scope_mode()=="broad"` (`BRAIN_WKV_MOUTH_SCOPE=broad`, opt-in, see that function's docstring) bypasses all
+    of the above and returns True unconditionally -- see `scope_mode`'s own docstring for why a real coverage
+    threshold is not implemented yet. Default ('vocab') runs the exact check below, byte-identical to before
+    this bypass existed."""
+    if scope_mode() == "broad":
+        return True
     _, vocab, _ = _get_readout(seed)
     words = [w.lower() for w in _WORD_RE.findall(text or "")]
     if not words:
@@ -648,6 +719,57 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
     return text, (self_nll / max(1, steps)), gen
 
 
+# ── linattn generation (2026-09-03, additive twin of `_free_gen` for `LinAttnReadout` -- see `recurrence_mode`'s
+# docstring for why this is a SEPARATE function rather than a branch inside `_free_gen`). Every decode control
+# below is copied VERBATIM from `_free_gen` (top-K cut, `_apply_repetition_controls`, `_apply_fact_boost`, the
+# genuine few-spike `reader.read(p)` Izhikevich soft-WTA) -- ONLY the state object and the two calls that produce
+# it/read it differ (`state = ro.advance(state, t)` / `ro.logits(state, gen[-1])`, vs `WKVReadout`'s `(ap, an)`
+# array-pair calls). `_free_gen` itself is completely untouched by this function's existence.
+def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int,
+                       gen_temp: float, repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
+                       fact_boost_ids=None, fact_boost: float = 0.0, bpe=None):
+    """`LinAttnReadout`'s own driving loop -- see the module docstring block above `recurrence_mode` for why this
+    exists as a twin of `_free_gen` rather than a generalization of it. `bpe`/prompt-encode/final-decode mirror
+    `_free_gen`'s own handling exactly (see that function's docstring)."""
+    if bpe is not None:
+        pid = bpe.encode(prompt or "")
+    else:
+        pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
+    if not pid:
+        pid = [0]
+    state = ro.init_state()
+    for t in pid:
+        state = ro.advance(state, t)
+    gen = list(pid)
+    self_nll = 0.0
+    steps = 0
+    for _ in range(max_new_tokens):
+        lg = ro.logits(state, gen[-1])
+        if ro.unk_idx >= 0:
+            lg = lg.copy()
+            lg[ro.unk_idx] = -1e30
+        lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
+        lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
+        cand = np.argpartition(-lg, topk - 1)[:topk]
+        cand = cand[np.argsort(-lg[cand])]
+        p = _softmax(lg[cand] / gen_temp)
+        win, _, _ = reader.read(p)
+        nxt = int(cand[win]) if win >= 0 else int(cand[0])
+        pfull = _softmax(lg)
+        self_nll += -float(np.log(max(pfull[nxt], 1e-12)))
+        steps += 1
+        gen.append(nxt)
+        state = ro.advance(state, nxt)
+        if ro.words[nxt] == "endoftext":
+            break
+    if bpe is not None:
+        kept = [i for i in gen if 0 <= i < len(ro.words) and ro.words[i] != "endoftext"]
+        text = bpe.decode(kept)
+    else:
+        text = " ".join(ro.words[i] if 0 <= i < len(ro.words) else "<unk>" for i in gen if ro.words[i] != "endoftext")
+    return text, (self_nll / max(1, steps)), gen
+
+
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
              no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0,
@@ -686,7 +808,13 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     `bpe=None`, its original two lines unchanged. 'bpe' encodes/decodes through a real `BPETokenizer` instead,
     for a BPE-vocabulary checkpoint (e.g. `BRAIN_WKV_MOUTH_CKPT` pointed at the in-flight own-voice retrain's
     eventual `--save-ssm` output, once one exists -- see the honest-scope note above for what is NOT yet true
-    of that checkpoint)."""
+    of that checkpoint).
+
+    RECURRENCE MODE (`BRAIN_WKV_MOUTH_RECURRENCE`, default 'ssm', see `recurrence_mode`'s docstring): 'ssm' (the
+    default) is BYTE-IDENTICAL to before this env var existed -- `_get_readout` builds `WKVReadout` and `_run()`
+    drives it through `_free_gen`, unchanged. 'linattn' builds `LinAttnReadout` instead and drives it through
+    `_free_gen_linattn` -- a different, mutually-exclusive recurrence family (never silently mixed with 'ssm')
+    reading a `--recurrence linattn --save-ssm` checkpoint (point `BRAIN_WKV_MOUTH_CKPT` at it)."""
     t0 = time.time()
 
     def _run():
@@ -698,9 +826,10 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
         bpe = _get_bpe_tokenizer() if tokenizer_mode() == "bpe" else None
-        text, _self_nll, _gen = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
-                                          repetition_penalty, no_repeat_ngram_size,
-                                          fact_boost_ids=fact_ids, fact_boost=fact_boost, bpe=bpe)
+        gen_fn = _free_gen_linattn if recurrence_mode() == "linattn" else _free_gen
+        text, _self_nll, _gen = gen_fn(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
+                                       repetition_penalty, no_repeat_ngram_size,
+                                       fact_boost_ids=fact_ids, fact_boost=fact_boost, bpe=bpe)
         return text
 
     text = _RNG.run(seed, _run)

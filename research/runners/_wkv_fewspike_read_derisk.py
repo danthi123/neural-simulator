@@ -288,6 +288,173 @@ class WKVReadout:
 
 
 # ----------------------------------------------------------------------------------------------------------------
+# LINATTN READOUT (2026-09-03, additive) -- the deployment read-back for a `--recurrence linattn` --save-ssm
+# checkpoint (normalized Hebbian fast-weight linear attention; see research/findings/2026-09-03-linattn-
+# production-mouth-wiring-DESIGN.md and LinAttnLayer's own docstring in _emerge_wkv_lm_derisk.py for the full
+# mechanism + biology). A THIRD, mutually-exclusive recurrence family alongside `advance`/`logits` (ssm/dual-
+# nonneg, above) and `step_wkv` (multi-layer 'wkv', above) -- same discipline: never share a read path or fall
+# back silently between families. A checkpoint trained in the wrong family and read through the wrong class's
+# math produces near-uniform garbage (NLL ~= ln V) that LOADS WITHOUT ERROR -- the 2026-07-20 gap#1 ROOT-CAUSE
+# class this discipline exists to prevent -- so `LinAttnReadout` reads ONLY the `linattn_layers.*` namespace and
+# raises loudly (not silently no-ops) when that namespace is absent, exactly like `init_wkv_state` above raises
+# on a single-layer checkpoint rather than guessing.
+# ----------------------------------------------------------------------------------------------------------------
+class LinAttnReadout:
+    """Autoregressive O(1)-state numpy transcription of `LinAttnLayer.forward` composed with `WKV.forward`'s
+    `RECUR=="linattn"` dispatch (`research.runners._emerge_wkv_lm_derisk`, both read-only -- neither is edited by
+    this class). Loads a `--recurrence linattn --save-ssm <path>_seed{seed}.npz` checkpoint.
+
+    NAMESPACE DISCIPLINE: reads the top-level `emb.weight`/`ln.weight`/`ln.bias`/`head.weight`/`head.bias` keys
+    (shared with every other recurrence family) plus the `linattn_layers.{i}.*` keys (`ln.weight`/`ln.bias`/
+    `Wq.weight`/`Wk.weight`/`Wv.weight`/`Wr.weight`/`Wo.weight`/`w`, optionally `Wg.weight`/`Wg.bias` iff
+    `--assoc-gate`). The checkpoint ALSO carries the base `Wk.weight`/`Wv.weight`/`Wr.weight`/`Wo.weight`/
+    `Wo_sp.weight`/`w`/`u` keys (constructed unconditionally by `WKV.__init__` for cross-recurrence parity) --
+    these are NEVER touched here, matching `WKVReadout._init_wkv_multilayer`'s own `extra.*`-only isolation.
+
+    STATE = `{"layers": [{"M": [D,D], "zden": [D]}, ...], "hh": [D] or None}`: `M` is the real-valued
+    outer-product key(x)value trace (short-term synaptic plasticity / a Hebbian fast-weight matrix -- Mongillo,
+    Barak & Tsodyks 2008, Science 319:1543; Ba, Hinton, Mnih, Leibo & Ionescu 2016, arXiv:1610.06258), `zden` its
+    running normalizer trace (the num/den content-weighted division -- see LinAttnLayer's docstring for the full
+    biology framing, including the honest divisive-normalization residual named there); `hh` is the residual
+    stream AFTER the most recent `advance` call -- cached so `logits` never recomputes it (see below).
+
+    TWO-CALL INTERFACE (matches `WKVReadout.advance`/`.logits`'s CALL SHAPE, so both classes drop into the SAME
+    driving loop -- see `webapp/wkv_mouth_generator.py`), but NOT its independence: `state = ro.advance(state,
+    tid)` does the FULL per-position computation (write AND read share one z/q/k/v computed from `tid`'s
+    embedding -- unlike WKVReadout's dual-nonneg recurrence, this read needs a freshly-computed query `q_t`, so
+    the two cannot be split into independently-recomputable calls) and caches the resulting residual stream in
+    `state["hh"]`; `ro.logits(state, tid)` then only READS `state["hh"]` -- it does not, and must not, recompute
+    the update (an earlier draft of this class called the update again inside `logits`, silently double-applying
+    the current token's own contribution -- caught by this class's own parity test, see the VERIFIED paragraph
+    below). `logits`'s `tid` argument is therefore accepted-and-ignored (kept only for call-shape parity with
+    `WKVReadout.logits(ap, an, tid)`); the real contract is "call `advance(state, tid)` before `logits(state,
+    tid)` for that same position", not "these two calls are independent reads of the same state".
+
+    `phi`/`norm` (the `--linattn-phi`/`--no-linattn-norm` forward-math choices) are NOT persisted by `--save-ssm`
+    (it writes only `net.state_dict()` + `V`/`d_model`/`words` -- see `_emerge_wkv_lm_derisk.py`'s save block,
+    ~line 1464); the caller must pass whatever the checkpoint was actually trained with. Defaults (`elu`, `norm=
+    True`) mirror both the trainer's own CLI defaults and the design doc's P0 deployable-checkpoint recipe
+    (`--linattn-phi elu`, no `--no-linattn-norm`).
+
+    VERIFIED against the real torch `LinAttnLayer.forward` (via the production `build_and_train_wkv`, never a
+    reimplementation) to float64 cross-precision tolerance -- `tests/test_linattn_readout_parity.py`, this
+    deliverable's load-bearing correctness gate (the 2026-07-20 silent-wrong-recurrence class is exactly what a
+    transcription bug here would reproduce, and it loads without error, so the test -- not "it imports fine" --
+    is what proves this class is not that bug)."""
+
+    def __init__(self, ckpt_path, phi="elu", norm=True):
+        W = np.load(ckpt_path, allow_pickle=True)
+        self.V = int(W["V"]); self.D = int(W["d_model"])
+        self.words = list(W["words"])
+        self.unk_idx = (len(self.words) - 1) if (self.words and self.words[-1] == "<unk>") else -1
+        self.emb = W["emb.weight"].astype(np.float64)
+        self.ln_w = W["ln.weight"].astype(np.float64); self.ln_b = W["ln.bias"].astype(np.float64)
+        self.head_w = W["head.weight"].astype(np.float64); self.head_b = W["head.bias"].astype(np.float64)
+        self.layers = []                                    # one dict per linattn block, index-ordered
+        j = 0
+        while f"linattn_layers.{j}.Wq.weight" in W.files:
+            p = f"linattn_layers.{j}."
+            lam = np.exp(-np.log1p(np.exp(W[p + "w"].astype(np.float64))))   # exp(-softplus(w)) in (0,1)
+            self.layers.append({
+                "ln_w": W[p + "ln.weight"].astype(np.float64), "ln_b": W[p + "ln.bias"].astype(np.float64),
+                "Wq": W[p + "Wq.weight"].astype(np.float64), "Wk": W[p + "Wk.weight"].astype(np.float64),
+                "Wv": W[p + "Wv.weight"].astype(np.float64), "Wr": W[p + "Wr.weight"].astype(np.float64),
+                "Wo": W[p + "Wo.weight"].astype(np.float64), "lam": lam,
+                "Wg": (W[p + "Wg.weight"].astype(np.float64) if (p + "Wg.weight") in W.files else None),
+                "Wg_b": (W[p + "Wg.bias"].astype(np.float64) if (p + "Wg.bias") in W.files else None),
+            })
+            j += 1
+        if not self.layers:
+            raise RuntimeError(
+                f"{ckpt_path} is not a --recurrence linattn checkpoint (no linattn_layers.* keys found) -- use "
+                "WKVReadout (advance()/logits() for ssm/dual-nonneg, or step_wkv() for multi-layer 'wkv') "
+                "instead of guessing which recurrence family this file was trained with."
+            )
+        self.phi_kind = phi
+        self.norm = bool(norm)
+
+    def init_state(self):
+        """Fresh per-layer `(M, zden)` state -- all-zero, matching `WKV.forward`'s own `M = torch.zeros(B,D,D);
+        zden = torch.zeros(B,D)` initialization at the start of a sequence -- PLUS `hh: None`, the cached
+        residual stream `logits` reads (see the class docstring's calling-convention note: unlike `WKVReadout`,
+        this recurrence's READ needs a freshly-computed query `q_t`, so write and read are ONE computation, not
+        two independently-callable ones -- `hh` is computed once by `advance` and merely READ by `logits`,
+        never recomputed, so a token's own contribution is never double-applied)."""
+        return {"layers": [{"M": np.zeros((self.D, self.D)), "zden": np.zeros(self.D)} for _ in self.layers],
+                "hh": None}
+
+    @staticmethod
+    def _phi(x, kind):
+        """Byte-for-byte `LinAttnLayer._phi` (torch -> numpy), the non-negative feature map (Katharopoulos, Vyas,
+        Pappas & Fleuret 2020, "Transformers are RNNs", arXiv:2006.16236, Eq.7): elu(x)+1 (default), relu(x)+eps,
+        a per-vector-stable exp, or a k-WTA sparse threshold (`--linattn-phi`)."""
+        if kind == "elu":
+            return np.where(x > 0.0, x, np.exp(x) - 1.0) + 1.0     # elu(x)+1: x>0 -> x+1; x<=0 -> exp(x)
+        if kind == "relu":
+            return np.maximum(x, 0.0) + 1e-3
+        if kind == "exp":
+            return np.exp(x - x.max())                             # per-vector-stable, matches x.amax(-1) in torch
+        if kind == "sparse":
+            k = max(1, x.shape[-1] // 8)
+            kth = np.sort(x)[::-1][k - 1]                          # k-th largest value (torch topk's last-of-top-k)
+            return np.maximum(x - kth, 0.0)
+        raise ValueError(f"unknown --linattn-phi {kind!r}")
+
+    @staticmethod
+    def _ln(v, w, b, eps=1e-5):
+        """Exact `nn.LayerNorm` semantics: `(v - E[v]) / sqrt(Var[v] + eps) * w + b` with the BIASED (population,
+        ddof=0) variance PyTorch uses -- `numpy.var()`'s default -- not the `std()+eps` approximation some other
+        readouts in this file use (their own float32-cross-precision test tolerance already absorbs that gap;
+        this class targets float64 parity, so the exact formula is used instead of re-deriving a new tolerance)."""
+        mean = v.mean(); var = v.var()
+        return (v - mean) / np.sqrt(var + eps) * w + b
+
+    def advance(self, state, tid):
+        """ONE autoregressive step, BOTH halves at once (this recurrence's read needs a freshly-computed query
+        `q_t` from the SAME z that produced this step's `k_t`/`v_t`, so write and read cannot be split into two
+        independently-recomputable calls the way `WKVReadout`'s dual-nonneg `advance`/`logits` can -- see the
+        class docstring). Updates every layer's `(M, zden)` with token `tid`'s own contribution AND caches the
+        resulting residual stream `hh` in the returned state, so `logits` below only ever READS `hh` -- it never
+        recomputes the update, which would double-apply `tid`'s own contribution (the bug this split exists to
+        avoid: an earlier draft of this class called the equivalent of this method again inside `logits`, and a
+        token's write was silently applied TWICE -- caught by this class's own parity test, which is exactly why
+        that test is the deliverable's correctness gate, not a formality)."""
+        h = self.emb[tid]
+        hh = self._ln(h, self.ln_w, self.ln_b)              # WKV.forward: h = self.ln(self.emb(x)), ONCE up front
+        new_layers = []
+        for lyr, st in zip(self.layers, state["layers"]):
+            z = self._ln(hh, lyr["ln_w"], lyr["ln_b"])
+            q = self._phi(lyr["Wq"] @ z, self.phi_kind)
+            k = self._phi(lyr["Wk"] @ z, self.phi_kind)
+            v = lyr["Wv"] @ z
+            r = 1.0 / (1.0 + np.exp(-(lyr["Wr"] @ z)))
+            M = lyr["lam"][:, None] * st["M"] + np.outer(k, v)          # M += phi(k) (x) v  (Hebbian pre x post)
+            zden = lyr["lam"] * st["zden"] + k                          # running normalizer trace
+            num = q @ M                                                  # phi(q)^T M
+            den = float(q @ zden)                                        # phi(q)^T zden
+            read = num / (den + 1e-6) if self.norm else num             # the restored num/den normalization
+            if lyr["Wg"] is not None:
+                read = (1.0 / (1.0 + np.exp(-(lyr["Wg"] @ z + lyr["Wg_b"])))) * read    # --assoc-gate trust gate
+            hh = hh + lyr["Wo"] @ (r * read)                            # pre-norm residual: h = h + delta
+            new_layers.append({"M": M, "zden": zden})
+        return {"layers": new_layers, "hh": hh}
+
+    def logits(self, state, tid=None):
+        """The READ: next-token vocab logits from `state` (already advanced with the current token -- see
+        `advance`'s docstring). `tid` is accepted-and-ignored (kept only so this method's call shape matches
+        `WKVReadout.logits(ap, an, tid)`'s two-call convention that driving loops like `webapp/
+        wkv_mouth_generator.py::_free_gen` already use) -- everything the read needs is already cached in
+        `state["hh"]` by the `advance` call that must precede it. `logits = head.weight @ hh + head.bias` -- NO
+        final LayerNorm before `head`, matching `WKV._out`'s `return self.head(hidden)` exactly (the model's own
+        top-level `ln` is applied ONCE to the embedding at the start of `advance`, not again before `head`)."""
+        hh = state.get("hh")
+        if hh is None:
+            raise RuntimeError("logits() called on a state with no cached residual stream -- call advance(state, "
+                                "tid) at least once first (init_state() alone is not enough).")
+        return self.head_w @ hh + self.head_b
+
+
+# ----------------------------------------------------------------------------------------------------------------
 # The production FEW-SPIKE READ: an Izhikevich soft-WTA over word-candidate pools (replicated from followon2).
 # ----------------------------------------------------------------------------------------------------------------
 class FewSpikeWordRead:
