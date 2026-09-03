@@ -1,0 +1,6 @@
+=== ONE-BRAIN WAVE 3 (FINAL) — ORGAN-READ verify: d6_multiref_wm + prospective_memory on the WAVE-2 POOL ===
+    surprise + world-model + metacog + pragmatic + comprehension + source_provenance + self_schema + curiosity + causal_whatif (the shipped wave-2 pool) + prospective_memory + d6_multiref_wm on ONE bridge
+  [seed 42] N=7002 | (a)cores_byteid=True (b)alive=True (c)answer=True wave2_read=True gain0=True(n=127552,max_w=300.0) legacy_div=True(25) -> GO=True
+      prospective_memory   cores_d=0.00e+00 ship_d=2.95e-01 ship_ans_same=True alive=True
+  [seed 43] N=7002 | (a)cores_byteid=True (b)alive=True (c)answer=True wave2_read=True gain0=True(n=127955,max_w=300.0) legacy_div=True(25) -> GO=True
+      prospective_memory   cores_d=0.00e+00 ship_d=2.33e-01 ship_ans_same=True alive=True

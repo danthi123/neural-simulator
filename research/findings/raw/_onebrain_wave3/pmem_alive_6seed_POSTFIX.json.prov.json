@@ -1,0 +1,27 @@
+{
+ "run_id": "1788389540-4026694",
+ "runner": "../../../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/pmem_final6.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/pmem_final6.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/pmem-wave3-nogo/research/findings/raw/_onebrain_wave3/pmem_alive_6seed_POSTFIX.json"
+ ],
+ "git_sha": "a099e61a5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-02T18:52:20",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4717.9,
+ "corpus_check_query": "prospective_memory cue-monitor coincidence release does not clear silence on the num_traits=1 merged pool NMDA plateau threshold",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_wave3/pmem_alive_6seed_POSTFIX.json"
+}

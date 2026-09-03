@@ -1819,9 +1819,22 @@ _PMEM_N_INTERVENING = 5
 #     pool too, not only hyperpolarizes) -- the noise-free pool's rel accumulator sits BELOW rheobase at bias 0.
 #   * stronger SFA (sfa_g) + plateau (plateau_g/cap) -> the sustained-hold ramp is adapted away and the transient
 #     coincidence is supralinearly amplified, so the release clears the single-input silence on the weaker pool.
+#   * plateau_margin=1.0 (2026-09-02, the wave-3 faculty-alive closure) -> the plateau THRESHOLD theta = the worst
+#     SINGLE input's peak pool-mean g_nmda, NOT 1.05x above it. The coincidence is a genuine spiking AND, so its
+#     pool-mean g_nmda exceeds EITHER single input's -> at margin=1.0 the coincidence clears theta and gets the
+#     supralinear boost, while every single input (at/below its own calibrating peak) has excess<=0 and is NOT
+#     boosted -> the silence clauses hold BY CONSTRUCTION (the anti-cheat is intact). The 1.05 default was too
+#     conservative for the num_traits=1 pool: on the 11-organ wave3 pool a co-resident (metacog) shifts pmem's
+#     operating point just enough that seed 42's already knife-edge coincidence fell BELOW theta -> NO boost fired
+#     -> the release (0.024) sat below its OWN cue-alone silence (0.032) -> faculty-alive NO-GO on seed 42 (5/6).
+#     margin=1.0 lifts the release to 0.10-0.17 (>> the max(2x-silence, 0.03) bar) on ALL of 42/43/44/100/101/102
+#     with every silence clause held 6/6. (Latent pre-wave3: onebrain_merge_verify's full-7 gate read merged-vs-
+#     coresident byte-identity + answer-agreement ONLY, never faculty-alive FIRING, so pmem's pool release was
+#     never actually tested until wave3's faculty-alive gate; pmem DID fire on the no-metacog full-7 pool.)
 # Identical for every seed (label-free); byte-identical merged-vs-coresident (both arms use the SAME params).
 _PMEM_READ_PARAMS = dict(homeostat_bias_max=4000.0, homeostat_r_set=0.035,
-                         sfa_g=20000.0, sfa_tau=60.0, plateau_g=40000.0, plateau_cap=30000.0)
+                         sfa_g=20000.0, sfa_tau=60.0, plateau_g=40000.0, plateau_cap=30000.0,
+                         plateau_margin=1.0)
 
 
 def _pmem_wiring(bridge, rm):
@@ -2001,12 +2014,23 @@ def _pmem_answer(organ):
     clears 2x its own single-input/no-intention silence AND an absolute floor), NOT the de-risk's absolute
     FIRE_THR=0.20: the noise-free num_traits=1 pool operates at a lower release amplitude (~0.05-0.09 vs ~0.4), so
     the faithful read-out is the coincidence SEPARATION, not the standalone's absolute magnitude. Deterministic ->
-    byte-identical merged-vs-coresident (both arms agree)."""
+    byte-identical merged-vs-coresident (both arms agree).
+
+    `silent_wrong` is the coincidence SPECIFICITY: the wrong-cue rel is a small FRACTION of the correct-cue release
+    (`< 0.3 * fire` == the de-risk's own SILENT_MAX/FIRE_THR = 0.06/0.20 ratio), OPERATING-POINT-INVARIANT so it
+    reads the same verdict at the pool's low amplitude AND the standalone's ~0.4 amplitude. (2026-09-02: the prior
+    ABSOLUTE floor `wrongcue <= 0.03` was calibrated for the pool's fire~0.10 — where 0.3*fire ~= 0.03, so this is
+    unchanged there — but gave a FALSE-NEGATIVE on the raw-standalone answer-preservation baseline, whose fire~0.4
+    lifts a genuinely-silent wrong cue (wrong/fire ~0.12, an 8x separation) to ~0.041 > 0.03: it flipped
+    silent_wrong->False on seeds 44/101 vs the pool's own [T,T,T], failing wave3 gate (c) for a pure
+    operating-point artifact, NOT a specificity loss. The relative form fixes that false-negative; on the merged
+    pool wrongcue is 0.0 so it is trivially satisfied, and a genuine wrong-cue firing (wrongcue ~ fire) still
+    FAILS it.)"""
     organ.ensure_built()
     r = organ._reads
     fire = r["fire_A_on_cueA"]
     released = bool(fire >= max(2.0 * r["same_pool_silent"], 0.03))
-    silent_wrong = bool(r["wrongcue_rel_A"] < fire and r["wrongcue_rel_A"] <= 0.03)
+    silent_wrong = bool(r["wrongcue_rel_A"] < 0.3 * fire)
     silent_noint = bool(r["noint_rel_A"] < fire)
     return (released, silent_wrong, silent_noint)
 
