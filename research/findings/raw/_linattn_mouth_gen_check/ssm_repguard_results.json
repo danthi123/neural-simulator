@@ -1,0 +1,98 @@
+{
+  "provenance": {
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "cuda_visible_devices": "",
+    "runner": "ad-hoc verification script (not a `-m research.runners.X` module, so no automatic research/runners/__init__ provenance door applies -- recorded manually here)",
+    "seeds": [
+      42,
+      43
+    ],
+    "git_sha": "b53ac47719391b6657a68c491247ff5d40865f52",
+    "script": "research/findings/raw/_linattn_mouth_gen_check/ssm_gen_check_reppen.py"
+  },
+  "42": [
+    {
+      "prompt": "The sun is",
+      "text": "he sun is a list of the same time in the movie was part of the year old tsunset and it to be made from the first two parts of his life at the end of the world series for the game boy advance one naturson which they are also used on the other show"
+    },
+    {
+      "prompt": "A dog is an animal that",
+      "text": " dog is an animal that the main tributaries of the same time it was a big more than one of these types are in the movie and other parts of the world to the first people who has been used for the game boy advance from the ymunlargest city on may he was made into a new yorz"
+    },
+    {
+      "prompt": "Water is made of",
+      "text": "ater is made of the same time as a year old and will not be able to the other people in the first two days later on january they are called an oath the main character for the movie this means that he has been used by some living things from the game boy which he was born may"
+    },
+    {
+      "prompt": "Yesterday I went to the",
+      "text": "esterday  went to the first time in a woman and other people who is now called the same name for years it on the world as of the th century he has been used by the end of the game boy advance from the movie industry gran oise with the main tributaries of the city of england"
+    },
+    {
+      "prompt": "The city of London is",
+      "text": "he city of ondon is a list of the same time in the movie was part of the year old tsunset and it to be made from the first two parts of his life at the end of the world series for the game boy advance one naturson which they are also used on the other show"
+    },
+    {
+      "prompt": "In the beginning of the story",
+      "text": "n the beginning of the story and was built in it to the other side of the national park for a new york city with the first time he is also known as the main types of the same name by the end of the game boy which could part of the year old mathemes are now ranked"
+    },
+    {
+      "prompt": "The most important thing about science is",
+      "text": "he most important thing about science is a list of the same time in the movie was part of the year old tsunset and it to be made from the first two parts of his life at the end of the world series for the game boy advance one naturson which they are also used on the other show"
+    },
+    {
+      "prompt": "My favorite food is",
+      "text": "y favorite food is a list of the same time in the movie was part of the year old nemeh and other people who are not very successful to be an american racing at the end of the world championship he was released for the first time it will have been used by sp"
+    },
+    {
+      "prompt": "The weather today",
+      "text": "he weather today the main event in the movie was a major league of the same time and other countries on april it is called an oath by the end of his own first to the game for the next day but they are also used witive or more than one of these people who has been made until"
+    },
+    {
+      "prompt": "Once upon a time there was",
+      "text": "nce upon a time there was the first of dying in and his own with the other hand to the same name which is an american racing at the end of the world this means that he has been used for the next day it will be located on the main tributaries of the game boy advance from the book"
+    }
+  ],
+  "43": [
+    {
+      "prompt": "The sun is",
+      "text": "he sun is the next to a of his own life with the other members of the team in the united states it wrote about the city of the first people who are on the island of the world cup series and the game boy that an artist she has appeared in the area nickess and g"
+    },
+    {
+      "prompt": "A dog is an animal that",
+      "text": " dog is an animal that the song of the world cup in which he was a of his own country to the other team for example it has been messier and the most of the original members of the british columbia hockey league championship games she had some of them are small from the town also known that they could"
+    },
+    {
+      "prompt": "Water is made of",
+      "text": "ater is made of the most famous for its wrestlers it to a year old and he has been in the united states the first half of his life as a 'g nicknamed after the death of the game boy which is the second single from being the shaw that they stopped their name in an"
+    },
+    {
+      "prompt": "Yesterday I went to the",
+      "text": "esterday  went to the city of the wall of the worlced at a m in the middle states it is also known as the same as an important for example they are not jessier and his friends on the movie series of the show that he did when she has appeared after the first general election on june the"
+    },
+    {
+      "prompt": "The city of London is",
+      "text": "he city of ondon is the son of a was in the middle ages and other countries to the killer who has been the next day of his own with their food from the town of the family of the house of the world cup series for people that they are on several times it now part is the y"
+    },
+    {
+      "prompt": "In the beginning of the story",
+      "text": "n the beginning of the story of a year in the united states they are the same as an example zero and other to the other wrestlers on the ground that he is a than one of his own country it has been at the end of the season she would not very high or the next day with its"
+    },
+    {
+      "prompt": "The most important thing about science is",
+      "text": "he most important thing about science is the second of a year old and was in the united states it also had been the first to the british columbia pictures that they are the same as the other side of the world cup with the team of the group for three weeks before his parents who died on the island the"
+    },
+    {
+      "prompt": "My favorite food is",
+      "text": "y favorite food is the was a member of the order which he has been in the city of the town of the pile and his friends are the only one of the time to the other hand it is also the first half of the book at that they can addressed them wiearlier the people living things"
+    },
+    {
+      "prompt": "The weather today",
+      "text": "he weather today the player of the city of the wrestlers and a year old and his friends in the united states the movie is an important for example they are called the other players from the university of the family of the world cup series on october it has a similar to the house of trump"
+    },
+    {
+      "prompt": "Once upon a time there was",
+      "text": "nce upon a time there was the first of his own life in the region of the family which is at the end of the world for example it has been messier and other animals are not all over the worldwide the movie to be the same on each day he would not even though every yopping or"
+    }
+  ]
+}

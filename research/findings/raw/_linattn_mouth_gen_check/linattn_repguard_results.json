@@ -1,0 +1,98 @@
+{
+  "provenance": {
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "cuda_visible_devices": "",
+    "runner": "ad-hoc verification script (not a `-m research.runners.X` module, so no automatic research/runners/__init__ provenance door applies -- recorded manually here)",
+    "seeds": [
+      42,
+      43
+    ],
+    "git_sha": "b53ac47719391b6657a68c491247ff5d40865f52",
+    "script": "research/findings/raw/_linattn_mouth_gen_check/linattn_gen_check_reppen.py"
+  },
+  "42": [
+    {
+      "prompt": "The sun is",
+      "text": "he sun is a member of the national assembly from to and was elected into the new york city council in he became president for years before becoming mayor of chicago illinois in june he moved to california state senate on april he studied at romont university after graduating with his first term in s"
+    },
+    {
+      "prompt": "A dog is an animal that",
+      "text": " dog is an animal that lives in the sheep and other animals they are a small fish called tope or bacteria it can be found on the island of kitts and saturn by the sea of mesoid alfoid fumes which have been known as dinner"
+    },
+    {
+      "prompt": "Water is made of",
+      "text": "ater is made of two small islands and the other members of the group was formed in by a member of the order of the genus phoenix they are called 'autobiography mas' or 'nayla calori fabergh which means that it can be covered"
+    },
+    {
+      "prompt": "Yesterday I went to the",
+      "text": "esterday  went to the first and second place in a war on june he played for the season with his father s fran ois died of pneumonia at her home in new york city from respiratory failure aged khamed tamil nadu born november is an american film"
+    },
+    {
+      "prompt": "The city of London is",
+      "text": "he city of ondon is a member of the national assembly from to and was elected into the new york state senate in march napoleon died at his home in luxembourg aged tamb n e dargers born june is an american singer songwriter she became famous for popular"
+    },
+    {
+      "prompt": "In the beginning of the story",
+      "text": "n the beginning of the story was published in and became a member of the new york city from to he served in the united states house of representatives for years until his death at kidnapped patent assembly on march sandland born june is an american politician she represented the democratic cabinet"
+    },
+    {
+      "prompt": "The most important thing about science is",
+      "text": "he most important thing about science is the study of philosophy and sciences in his books are called a modern fiction book series it was published by robert e g nayonne heights or pronounced kirk sauces bundeka which includes the novel of the same name by jeffro"
+    },
+    {
+      "prompt": "My favorite food is",
+      "text": "y favorite food is a american romantic drama movie directed by robert byzantine and starring mike deutsche finger in the movie was based on the novel of the same name it stars jaws heim kadham sherik sabha thorn ma"
+    },
+    {
+      "prompt": "The weather today",
+      "text": "he weather today as a member of the united states house of representatives from to and was elected into the national assembly for years in the election after serving on july she represented all seats since her th birthday she died at age of valentina city her first seat is oklahoma sitcom came"
+    },
+    {
+      "prompt": "Once upon a time there was",
+      "text": "nce upon a time there was no longer the final of the game is played by the player and players in the nhl season it has been made to play for the playoffs he also plays on february at the end of his career when he will be released and luxembourg died from pneumob"
+    }
+  ],
+  "43": [
+    {
+      "prompt": "The sun is",
+      "text": "he sun is a member of the korean national team from may to december and was born against karen died on march she was raised in los angeles california at age new york city aged john adams november june was an american polifeldorf willid rosson whinseted"
+    },
+    {
+      "prompt": "A dog is an animal that",
+      "text": " dog is an animal that lives in the united states it has a small size of its prey and are also used to be called the sphere there are many species from other plants which have been found on their skin they can grow up to metres long but females were water fish such as food for example in some countries"
+    },
+    {
+      "prompt": "Water is made of",
+      "text": "ater is made of a mathematics the word was used in english speaking to the united states it has been built by the british government and the country some people have also had an area of km from its capital city this is called gapult or the largest cities are at north southwest of gu"
+    },
+    {
+      "prompt": "Yesterday I went to the",
+      "text": "esterday  went to the united states in he was also a son of the american civil servant after his death and had been killed from until when he died on june at an old man in the city of san francisco california aged john mcnens december april is an english singer songwriter and former actor kalan"
+    },
+    {
+      "prompt": "The city of London is",
+      "text": "he city of ondon is a municipality in the belgian village and civil parish on march she was married to john mcclane died from until his death at the age of abdullah br jaye were an okinds for the first time after being detained by"
+    },
+    {
+      "prompt": "In the beginning of the story",
+      "text": "n the beginning of the story is a american romantic comedy movie directed by napoleon and starring he was born in los angeles raids his first novel was married to john mcgregor she had two children with her sister willic sley died at this time after marshy will"
+    },
+    {
+      "prompt": "The most important thing about science is",
+      "text": "he most important thing about science is the second of the same name in the universe and a few years ago with the earth to be seen when it was first used for the sun this makes it very short story by the moon they are not true because it got more than one or any other way on the middle ages from"
+    },
+    {
+      "prompt": "My favorite food is",
+      "text": "y favorite food is a type of spider man whovaries from the other hand he was born in new yorcomet and raised in los angeles california his parents are known for his role as mercian and nickelda silvestre dullucci as a b"
+    },
+    {
+      "prompt": "The weather today",
+      "text": "he weather today the macedonian cala is an old man who has been in the middle ages of photographer and was made by the karl s it was first published in the book of the ung series for his role in the rook on december"
+    },
+    {
+      "prompt": "Once upon a time there was",
+      "text": "nce upon a time there was the first african american to be an important event in the united states it is known for its history and the worlz's largest country of america on june he also has been involved with the same name by macedonian and a number of people have started working with this means that"
+    }
+  ]
+}
