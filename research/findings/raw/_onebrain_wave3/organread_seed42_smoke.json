@@ -1,0 +1,362 @@
+{
+  "mode": "onebrain_wave3_organread",
+  "seeds": [
+    42
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_all_neurons": 7002,
+      "gate_a_coresidence_byte_identical": true,
+      "coresident": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "byte_identical": true,
+          "answer_same": true
+        }
+      },
+      "gate_b_faculty_alive": false,
+      "faculty_alive": {
+        "surprise": true,
+        "worldmodel": true,
+        "metacog": true,
+        "pragmatic": true,
+        "comprehension": true,
+        "source_provenance": true,
+        "self_schema": true,
+        "curiosity": true,
+        "causal_whatif": true,
+        "prospective_memory": false,
+        "d6_multiref_wm": true,
+        "surprise_sep": 103.42857142857143
+      },
+      "gate_c_answer_preserved": false,
+      "wave2_carried_read_byte_identical": true,
+      "shipped": {
+        "surprise": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "worldmodel": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "metacog": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "pragmatic": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "comprehension": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "source_provenance": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "self_schema": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "curiosity": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "causal_whatif": {
+          "maxdelta": 0.0,
+          "worst_key": null,
+          "missing": [],
+          "read_byte_identical": true,
+          "answer_same": true,
+          "strict": true
+        },
+        "prospective_memory": {
+          "maxdelta": 0.3705555555555556,
+          "worst_key": "fire_A_on_cueA",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": false,
+          "strict": false
+        },
+        "d6_multiref_wm": {
+          "maxdelta": 0.027777777777777762,
+          "worst_key": "hold_alive_min",
+          "missing": [],
+          "read_byte_identical": false,
+          "answer_same": true,
+          "strict": false
+        }
+      },
+      "gain0_freeze_holds": true,
+      "gain0_freeze_delta": 0.0,
+      "n_frozen_edges": 127552,
+      "max_frozen_weight": 300.010009765625,
+      "legacy_diverges": true,
+      "legacy_delta": 24.887386322021484,
+      "GO": false
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "n_gate_a": 1,
+    "n_gate_b": 0,
+    "n_gate_c": 0,
+    "n_wave2_carried_read_byte_identical": 1,
+    "n_gain0_freeze": 1,
+    "n_legacy_diverges": 1,
+    "n_go": 0
+  },
+  "per_organ": {
+    "surprise": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "worldmodel": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "metacog": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "pragmatic": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "comprehension": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "source_provenance": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "self_schema": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "curiosity": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "causal_whatif": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 1,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.0
+    },
+    "prospective_memory": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 0,
+      "n_alive": 0,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.3705555555555556
+    },
+    "d6_multiref_wm": {
+      "n_coresidence_byte_identical": 1,
+      "n_shipped_read_byte_identical": 0,
+      "n_answer_same": 1,
+      "n_alive": 1,
+      "max_coresidence_delta": 0.0,
+      "max_shipped_delta": 0.027777777777777762
+    }
+  },
+  "all_go": false,
+  "label": "one-brain Wave-3 (FINAL) organ-read (d6_multiref_wm + prospective_memory folded onto the wave-2 pool, N~7002)",
+  "status": "UNDEFINED",
+  "go": false,
+  "undefined_reasons": [
+    "unmet: (b) faculty-alive \u2014 every organ produces its live verdict on the wave3 pool, every seed (measured=0 expect=1)",
+    "unmet: (c) answer-preservation \u2014 every organ's rendered answer == its shipped/standalone baseline, every seed (measured=0 expect=1)"
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "(a) organ-read byte-identity \u2014 every organ's read co-residence-invariant, every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(b) faculty-alive \u2014 every organ produces its live verdict on the wave3 pool, every seed",
+      "ok": false,
+      "detail": "measured=0 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "(c) answer-preservation \u2014 every organ's rendered answer == its shipped/standalone baseline, every seed",
+      "ok": false,
+      "detail": "measured=0 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "gain-0 freeze holds prospective_memory/d6_multiref_wm internal edges bit-frozen across the train+read lifecycle (incl. pmem's 300-weight attractor surviving unclipped vs the pool's 45 ceiling), every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "legacy discriminator diverges (byte-identity NOT vacuous), every seed",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "cross-region interaction (the one-brain INTEGRATION goal)",
+      "why": "MIGRATION gate: byte-identity-in-isolation forbids cross-synapses BY DEFINITION"
+    },
+    {
+      "process": "live-chat production wiring (get_organ() dispatch)",
+      "why": "deliberately deferred to a separate, later commit \u2014 mirrors the wave-1/wave-2 pools' own sequencing (organ-read GO landed before its production wiring commit)"
+    }
+  ],
+  "chance": null
+}

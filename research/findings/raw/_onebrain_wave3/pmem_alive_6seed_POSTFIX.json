@@ -1,0 +1,133 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "fire_merged": 0.1,
+      "silent_merged": 0.03166666666666667,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": true,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        true,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    },
+    {
+      "seed": 43,
+      "fire_merged": 0.14888888888888888,
+      "silent_merged": 0.0,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": true,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        true,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    },
+    {
+      "seed": 44,
+      "fire_merged": 0.15,
+      "silent_merged": 0.03222222222222222,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": false,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        false,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    },
+    {
+      "seed": 100,
+      "fire_merged": 0.15722222222222224,
+      "silent_merged": 0.0,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": true,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        true,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    },
+    {
+      "seed": 101,
+      "fire_merged": 0.11833333333333333,
+      "silent_merged": 0.0,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": false,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        false,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    },
+    {
+      "seed": 102,
+      "fire_merged": 0.16555555555555557,
+      "silent_merged": 0.0,
+      "gate_a_byte_identical": true,
+      "gate_b_alive": true,
+      "gate_c_answer_same": true,
+      "answer_merged": [
+        true,
+        true,
+        true
+      ],
+      "answer_standalone": [
+        true,
+        true,
+        true
+      ],
+      "cores_maxdelta": 0.0
+    }
+  ],
+  "plateau_margin": 1.0,
+  "aggregate": {
+    "gate_a_byte_identical": "6/6",
+    "gate_b_alive": "6/6",
+    "gate_c_answer_same": "4/6"
+  },
+  "all_pmem_go_6seed": false
+}
