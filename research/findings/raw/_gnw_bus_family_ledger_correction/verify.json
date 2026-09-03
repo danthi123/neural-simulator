@@ -1,0 +1,60 @@
+{
+  "runner": "_gnw_bus_family_ledger_correction_verify",
+  "purpose": "confirm gnw-two-organ-bus + gnw-three-organ-bus already never-compute the host combination on the covered class (same pattern gnw-bus-shadow earned via 6ab22eb55 / the SCOPED finding) -- the ledger's RETIRABLE_NOW 2026-09-02 classification for all three rows is stale.",
+  "installed": {
+    "two_organ": true,
+    "three_organ": true
+  },
+  "flags": {
+    "two_organ_enabled_default": true,
+    "three_organ_enabled_default": true,
+    "organ_discriminates_this_backend": true
+  },
+  "rows": {
+    "covered_two_organ": {
+      "q": "what does dog chase?",
+      "want": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "authored_by": "two_organ_bus",
+      "host_combination_computed": false
+    },
+    "covered_three_organ": {
+      "q": "what does dog chase?",
+      "want": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "authored_by": "three_organ_bus",
+      "host_combination_computed": false
+    },
+    "self_three_organ": {
+      "q": "what are you",
+      "svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "authored_by": "host_router",
+      "host_combination_computed": true
+    }
+  },
+  "verdict": {
+    "covered_class_never_computes_host_combination": true,
+    "out_of_scope_class_correctly_keeps_host_router": true,
+    "go": true
+  }
+}
