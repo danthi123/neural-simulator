@@ -25,7 +25,7 @@ Run (scale): python -m research.runners._emerge_wkv_lm_derisk --seeds 42 43 44 1
 from __future__ import annotations
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
-import argparse, json, math, time
+import argparse, hashlib, json, math, time
 from pathlib import Path
 from collections import defaultdict
 import numpy as np
@@ -70,6 +70,67 @@ class _BPEVocabAdapter:
         return out
 
 OUT = Path("research/findings/raw/_emerge_wkv_lm.json")
+TOKCACHE_DIR = Path("data/corpus/.tokcache")   # --tok-cache: cross-RUN (cross-process) BPE token-id cache, see below
+
+
+def _tokcache_key(args):
+    """Content-addressed cache key for the SEED-INDEPENDENT per-sentence BPE token-id lists (SPEED, --tok-cache,
+    BPE mode only): `vocab.ids(s)` depends only on the sentence + the loaded tokenizer, never on the seed, so the
+    whole tokenized corpus can be computed once and shared across every seed AND every process. EVERYTHING that
+    can change the resulting `sents` list or the tokenizer's output MUST be in this key, or a stale disk cache
+    silently poisons every downstream NLL (the exact failure mode this helper exists to prevent)."""
+    corpus_p = Path(args.corpus)
+    try:
+        cst = corpus_p.stat(); corpus_size, corpus_mtime = cst.st_size, cst.st_mtime
+    except OSError:
+        corpus_size, corpus_mtime = -1, -1.0
+    bpe_p = Path(args.bpe_path)
+    try:
+        bst = bpe_p.stat(); bpe_size, bpe_mtime = bst.st_size, bst.st_mtime
+    except OSError:
+        bpe_size, bpe_mtime = -1, -1.0
+    key_obj = {
+        "corpus": str(corpus_p.resolve()), "corpus_size": corpus_size, "corpus_mtime": corpus_mtime,
+        "tokenizer": args.tokenizer, "bpe_path": str(bpe_p.resolve()), "bpe_size": bpe_size, "bpe_mtime": bpe_mtime,
+        "n_sentences": args.n_sentences, "contiguous": bool(getattr(args, "contiguous", False)),
+        "max_len": args.max_len,
+    }
+    return hashlib.sha256(json.dumps(key_obj, sort_keys=True).encode()).hexdigest()[:24]
+
+
+def _tokcache_load(key):
+    """Disk-cache HIT path: load the ragged per-sentence BPE token-id lists saved by `_tokcache_save`. Returns
+    None on any miss/corruption -- a bad or absent cache must degrade to re-tokenizing, never crash the run."""
+    p = TOKCACHE_DIR / f"{key}.npz"
+    if not p.exists():
+        return None
+    try:
+        with np.load(p, allow_pickle=False) as d:
+            concat, offsets = d["ids_concat"], d["offsets"]
+            return [concat[offsets[i]:offsets[i + 1]].tolist() for i in range(len(offsets) - 1)]
+    except Exception as e:
+        print(f"    [tok-cache] load failed ({e}) -- re-tokenizing", flush=True)
+        return None
+
+
+def _tokcache_save(key, sents_ids):
+    """Persist the ragged per-sentence token-id lists as one concatenated int32 array + int64 offsets (an exact,
+    lossless round-trip of a list-of-lists-of-int). Atomic (temp file + os.replace) so a killed run never leaves
+    a corrupt/partial cache entry for the next run to (silently) load."""
+    TOKCACHE_DIR.mkdir(parents=True, exist_ok=True)
+    offsets = np.zeros(len(sents_ids) + 1, dtype=np.int64)
+    for i, ids in enumerate(sents_ids):
+        offsets[i + 1] = offsets[i] + len(ids)
+    concat = np.empty(int(offsets[-1]), dtype=np.int32)
+    pos = 0
+    for ids in sents_ids:
+        n = len(ids)
+        if n:
+            concat[pos:pos + n] = ids
+        pos += n
+    tmp = TOKCACHE_DIR / f".tmp.{key}.{os.getpid()}.npz"
+    np.savez(tmp, ids_concat=concat, offsets=offsets)
+    os.replace(tmp, TOKCACHE_DIR / f"{key}.npz")
 
 
 def load_stories(path, max_stories, max_len=48):
@@ -639,6 +700,15 @@ def main():
     ap.add_argument("--compile-fixed-t", dest="compile_fixed_t", type=int, default=0,
                     help="(--compile) force the fixed padded T instead of auto-sizing to the longest training sequence; "
                          "MUST be >= the longest sequence (asserted) or real tokens would be truncated.")
+    ap.add_argument("--tok-cache", dest="tok_cache", action="store_true", default=True,
+                    help="(--tokenizer bpe only, default ON) SPEED (additive, RESULT-PRESERVING): tokenize the "
+                         "full sentence pool ONCE (not per-seed -- vocab.ids(s) is seed-independent, only the "
+                         "tr/ev/dev SPLIT is seed-dependent) and persist the token-id lists to a content-keyed "
+                         "disk cache under data/corpus/.tokcache/ so a FRESH PROCESS (a new --seeds run) skips "
+                         "re-tokenization entirely instead of re-paying the ~5-6min BPE pass. Verified "
+                         "byte-identical to the per-seed path (--no-tok-cache).")
+    ap.add_argument("--no-tok-cache", dest="tok_cache", action="store_false",
+                    help="disable the once+disk tokenization cache; revert to per-seed re-tokenization.")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
@@ -653,6 +723,30 @@ def main():
     # so build it ONCE and reuse across seeds -> its per-word tokenization cache persists, making seeds 2..N tokenize
     # at cache-hit speed (the whole sentence pool is shared across seeds). Identical vocab/ids to per-seed creation.
     _bpe_vocab = _BPEVocabAdapter(BPETokenizer.load(args.bpe_path)) if args.tokenizer == "bpe" else None
+
+    # SPEED (additive, RESULT-PRESERVING, --tok-cache, default ON for BPE): `vocab.ids(s)` is SEED-INDEPENDENT (a
+    # pure function of the sentence + the loaded tokenizer) -- only the tr/ev/dev SPLIT below is seed-dependent.
+    # Tokenize the WHOLE sentence pool ONCE here and try a content-keyed disk cache first, so a fresh PROCESS (a
+    # new --seeds invocation) skips the ~5-6min BPE pass entirely instead of re-paying it every run.
+    # --no-tok-cache reverts to the original per-seed `vocab.ids(s)` calls in the loop below (both paths verified
+    # byte-identical).
+    _sents_ids_all = None
+    if args.tokenizer == "bpe" and getattr(args, "tok_cache", True):
+        _key = _tokcache_key(args)
+        _cached = _tokcache_load(_key)
+        if _cached is not None and len(_cached) == len(sents):
+            _sents_ids_all = _cached
+            print(f"    [tok-cache] HIT   key={_key} n={len(sents)}  {TOKCACHE_DIR / (_key + '.npz')}", flush=True)
+        else:
+            if _cached is not None:
+                print(f"    [tok-cache] STALE key={_key} (cached len {len(_cached)} != {len(sents)}) -- re-tokenizing", flush=True)
+            else:
+                print(f"    [tok-cache] MISS  key={_key} -- tokenizing {len(sents)} sentences...", flush=True)
+            _tt0 = time.time()
+            _sents_ids_all = [_bpe_vocab.ids(s) for s in sents]
+            _tokcache_save(_key, _sents_ids_all)
+            print(f"    [tok-cache] saved key={_key} in {time.time() - _tt0:.1f}s  {TOKCACHE_DIR / (_key + '.npz')}", flush=True)
+
     for seed in args.seeds:
         rng = np.random.default_rng(seed)
         idx = rng.permutation(len(sents)); cut = int(0.85 * len(sents))
@@ -664,7 +758,18 @@ def main():
         else:
             vocab = Vocab.build(tr, V=args.vocab)         # default path, UNCHANGED
         V = vocab.size
-        tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]; dev_ids = [vocab.ids(s) for s in dev]
+        if _sents_ids_all is not None:
+            # --tok-cache: index the seed-independent token ids instead of re-tokenizing. Identical content/order
+            # to `[vocab.ids(s) for s in tr]` etc. because _sents_ids_all[i] == vocab.ids(sents[i]) (a pure
+            # function) and tr_idx/ev_idx reproduce the EXACT same permutation-slice-truncate arithmetic used to
+            # build tr/ev above; dev_ids is the same suffix-of-tr_ids slice that dev was a suffix-of-tr slice.
+            tr_idx = idx[:cut][:args.max_train_sents]
+            ev_idx = idx[cut:][:args.max_eval_sents]
+            tr_ids = [_sents_ids_all[i] for i in tr_idx]
+            ev_ids = [_sents_ids_all[i] for i in ev_idx]
+            dev_ids = tr_ids[-min(2000, len(tr_ids)//5):]
+        else:
+            tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]; dev_ids = [vocab.ids(s) for s in dev]
 
         P_bi = fit_bigram(tr_ids, V)
         tri, lambdas = fit_interp_trigram(tr_ids, V, dev_ids)
