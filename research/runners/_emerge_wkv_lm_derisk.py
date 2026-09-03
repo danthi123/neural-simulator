@@ -733,10 +733,12 @@ def main():
     _sents_ids_all = None
     if args.tokenizer == "bpe" and getattr(args, "tok_cache", True):
         _key = _tokcache_key(args)
+        _tl0 = time.time()
         _cached = _tokcache_load(_key)
         if _cached is not None and len(_cached) == len(sents):
             _sents_ids_all = _cached
-            print(f"    [tok-cache] HIT   key={_key} n={len(sents)}  {TOKCACHE_DIR / (_key + '.npz')}", flush=True)
+            print(f"    [tok-cache] HIT   key={_key} n={len(sents)} loaded in {time.time() - _tl0:.2f}s  "
+                  f"{TOKCACHE_DIR / (_key + '.npz')}", flush=True)
         else:
             if _cached is not None:
                 print(f"    [tok-cache] STALE key={_key} (cached len {len(_cached)} != {len(sents)}) -- re-tokenizing", flush=True)
