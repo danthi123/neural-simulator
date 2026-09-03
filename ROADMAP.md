@@ -7,7 +7,13 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-02 (latest) — organs start influencing each other on one substrate, and a measurement bug that hid real results is found
+## 2026-09-03 (latest) — the brain's own voice starts BEATING the baseline it kept losing to (a potential open-fluency breakthrough, being confirmed)
+
+- **The brain's own from-scratch spiking "mouth" now beats the simple word-pair baseline it had been losing to — the first time at a real, deployable size.** A new memory-read mechanism (a working memory that recalls the most relevant recent words as it speaks, restoring a "which words matter right now" competition the previous version had dropped) crossed that fluency bar on the first 2 of 6 test runs, both by a clear and consistent margin. Just as important: when actually asked to WRITE, it produces genuinely structured, grammatical English — real sentences, not word-salad — and visibly better than the previous mouth (which collapsed into repeating itself).
+- **Honest caution:** this is 2 of 6 runs (an earlier attempt looked good on one run but averaged out below the bar), so it is NOT declared a breakthrough until the full six-run average holds (running now, a few hours out). The plumbing to actually USE this in the live chat is already built and machine-precision-verified against the trained model, so if the average holds, the only remaining steps are a quality/honesty check on real replies and an owner decision to switch it on.
+- **Also this session:** a curiosity mechanism's "pick the most-worth-learning option" step became fully brain-based (a neural winner-take-all replacing a host shortcut, 6/6); the vision identity-reading wall was diagnosed (the old readout throws away WHERE each feature is, which is exactly what identity depends on) and a fix — binding feature-pairs by their relative position — moved the needle for the first time (best-yet, still short of the bar; a tuning sweep is chasing it); and a measurement correction found the earlier "more training text won't help fluency" belief was wrong at this scale — more/better text is still a live lever.
+
+## 2026-09-02 — organs start influencing each other on one substrate, and a measurement bug that hid real results is found
 - **The first real "organs on one shared brain" merge landed:** two more thinking-organs (language comprehension +
   the source-of-a-belief tracker) now run co-located on the single shared neural pool proven safe earlier, reading
   exactly as they did standalone. Building it also caught a genuine new bug where one organ's learning settings were
