@@ -1,0 +1,1091 @@
+{
+  "runner": "_trigram_baseline_characterization_derisk",
+  "corpus": "data/corpus/simplewiki.txt",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "budgets": [
+    2000000,
+    5000000,
+    9500000
+  ],
+  "n_sentence_mode_sents": 1068816,
+  "n_contiguous_stories": 581249,
+  "tokenizer_vocab_sizes": {
+    "bpe_v8001_production_wikitext103": 8001,
+    "bpe_v2000_simplewiki": 2001,
+    "bpe_v8000_simplewiki": 8001,
+    "bpe_v16000_simplewiki": 16001,
+    "char_level": 29
+  },
+  "tokenizer_total_tokens_full_pool": {
+    "bpe_v8001_production_wikitext103": 15856890,
+    "bpe_v2000_simplewiki": 21991081,
+    "bpe_v8000_simplewiki": 17032491,
+    "bpe_v16000_simplewiki": 14449680,
+    "char_level": 62160167
+  },
+  "contiguous_total_tokens_production_bpe": 33202154,
+  "results": [
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 42,
+        "budget": 2000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 134954,
+        "n_train_tok": 2000004,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 54890,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.257
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.5278
+          },
+          "3": {
+            "n": 3971,
+            "trigram_nll": 5.0003
+          },
+          "4-5": {
+            "n": 7719,
+            "trigram_nll": 5.0721
+          },
+          "6-9": {
+            "n": 13774,
+            "trigram_nll": 5.1315
+          },
+          "10-99": {
+            "n": 21426,
+            "trigram_nll": 4.8171
+          }
+        },
+        "fit_seconds": 10.01,
+        "total_seconds": 10.28
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 43,
+        "budget": 2000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 135060,
+        "n_train_tok": 2000003,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55658,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.3495
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.4827
+          },
+          "3": {
+            "n": 3965,
+            "trigram_nll": 4.9751
+          },
+          "4-5": {
+            "n": 7707,
+            "trigram_nll": 4.9439
+          },
+          "6-9": {
+            "n": 13826,
+            "trigram_nll": 5.0462
+          },
+          "10-99": {
+            "n": 22160,
+            "trigram_nll": 4.7409
+          }
+        },
+        "fit_seconds": 12.09,
+        "total_seconds": 12.35
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 42,
+        "budget": 5000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 337042,
+        "n_train_tok": 5000000,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 54890,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.1815
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.1653
+          },
+          "3": {
+            "n": 3971,
+            "trigram_nll": 4.6418
+          },
+          "4-5": {
+            "n": 7719,
+            "trigram_nll": 4.7641
+          },
+          "6-9": {
+            "n": 13774,
+            "trigram_nll": 4.7731
+          },
+          "10-99": {
+            "n": 21426,
+            "trigram_nll": 4.4731
+          }
+        },
+        "fit_seconds": 15.06,
+        "total_seconds": 15.26
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 43,
+        "budget": 5000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 337287,
+        "n_train_tok": 5000001,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55658,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.2741
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.1265
+          },
+          "3": {
+            "n": 3965,
+            "trigram_nll": 4.6129
+          },
+          "4-5": {
+            "n": 7707,
+            "trigram_nll": 4.6209
+          },
+          "6-9": {
+            "n": 13826,
+            "trigram_nll": 4.702
+          },
+          "10-99": {
+            "n": 22160,
+            "trigram_nll": 4.4053
+          }
+        },
+        "fit_seconds": 11.64,
+        "total_seconds": 11.95
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 42,
+        "budget": 9500000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 640447,
+        "n_train_tok": 9500006,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 54890,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.1402
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.9731
+          },
+          "3": {
+            "n": 3971,
+            "trigram_nll": 4.4548
+          },
+          "4-5": {
+            "n": 7719,
+            "trigram_nll": 4.5511
+          },
+          "6-9": {
+            "n": 13774,
+            "trigram_nll": 4.5589
+          },
+          "10-99": {
+            "n": 21426,
+            "trigram_nll": 4.2619
+          }
+        },
+        "fit_seconds": 24.74,
+        "total_seconds": 24.97
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 42,
+        "name": "bpe_v16000_simplewiki"
+      },
+      "result": {
+        "V": 16001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 12282921,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 49818,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 5.9583
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.2108
+          },
+          "3": {
+            "n": 3969,
+            "trigram_nll": 4.6641
+          },
+          "4-5": {
+            "n": 7699,
+            "trigram_nll": 4.6716
+          },
+          "6-9": {
+            "n": 13454,
+            "trigram_nll": 4.7515
+          },
+          "10-99": {
+            "n": 16696,
+            "trigram_nll": 4.6382
+          }
+        },
+        "fit_seconds": 28.93,
+        "total_seconds": 29.27
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 43,
+        "budget": 9500000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 640378,
+        "n_train_tok": 9500001,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55658,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.2321
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.9095
+          },
+          "3": {
+            "n": 3965,
+            "trigram_nll": 4.4044
+          },
+          "4-5": {
+            "n": 7707,
+            "trigram_nll": 4.4177
+          },
+          "6-9": {
+            "n": 13826,
+            "trigram_nll": 4.5041
+          },
+          "10-99": {
+            "n": 22160,
+            "trigram_nll": 4.205
+          }
+        },
+        "fit_seconds": 18.9,
+        "total_seconds": 19.12
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 42,
+        "name": "bpe_v8000_simplewiki"
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 14478768,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 59470,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 5.4865
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.674
+          },
+          "3": {
+            "n": 3987,
+            "trigram_nll": 3.9419
+          },
+          "4-5": {
+            "n": 7836,
+            "trigram_nll": 4.0424
+          },
+          "6-9": {
+            "n": 14427,
+            "trigram_nll": 4.0878
+          },
+          "10-99": {
+            "n": 25220,
+            "trigram_nll": 3.9819
+          }
+        },
+        "fit_seconds": 31.33,
+        "total_seconds": 31.61
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 42,
+        "name": "char_level"
+      },
+      "result": {
+        "V": 29,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 52834928,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 227726,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 3.3646
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 1.6612
+          },
+          "3": {
+            "n": 4000,
+            "trigram_nll": 2.1678
+          },
+          "4-5": {
+            "n": 8000,
+            "trigram_nll": 2.0795
+          },
+          "6-9": {
+            "n": 15996,
+            "trigram_nll": 2.0928
+          },
+          "10-99": {
+            "n": 191730,
+            "trigram_nll": 2.1075
+          }
+        },
+        "fit_seconds": 32.93,
+        "total_seconds": 33.79
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 42,
+        "name": "bpe_v2000_simplewiki"
+      },
+      "result": {
+        "V": 2001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 18692965,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 77974,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 4.8104
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.1516
+          },
+          "3": {
+            "n": 3999,
+            "trigram_nll": 3.0692
+          },
+          "4-5": {
+            "n": 7948,
+            "trigram_nll": 3.2288
+          },
+          "6-9": {
+            "n": 15334,
+            "trigram_nll": 3.3311
+          },
+          "10-99": {
+            "n": 42693,
+            "trigram_nll": 3.2247
+          }
+        },
+        "fit_seconds": 34.82,
+        "total_seconds": 35.12
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 44,
+        "budget": 2000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 134833,
+        "n_train_tok": 2000015,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55885,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.2998
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.4373
+          },
+          "3": {
+            "n": 3964,
+            "trigram_nll": 5.0041
+          },
+          "4-5": {
+            "n": 7731,
+            "trigram_nll": 5.1174
+          },
+          "6-9": {
+            "n": 13872,
+            "trigram_nll": 5.0738
+          },
+          "10-99": {
+            "n": 22318,
+            "trigram_nll": 4.8543
+          }
+        },
+        "fit_seconds": 4.59,
+        "total_seconds": 4.78
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 44,
+        "budget": 5000000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 337357,
+        "n_train_tok": 5000009,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55885,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.2156
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.0769
+          },
+          "3": {
+            "n": 3964,
+            "trigram_nll": 4.6538
+          },
+          "4-5": {
+            "n": 7731,
+            "trigram_nll": 4.7606
+          },
+          "6-9": {
+            "n": 13872,
+            "trigram_nll": 4.7205
+          },
+          "10-99": {
+            "n": 22318,
+            "trigram_nll": 4.4905
+          }
+        },
+        "fit_seconds": 9.82,
+        "total_seconds": 10.02
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 43,
+        "name": "bpe_v2000_simplewiki"
+      },
+      "result": {
+        "V": 2001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 18693050,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 78606,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 4.8737
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.1614
+          },
+          "3": {
+            "n": 3998,
+            "trigram_nll": 2.9695
+          },
+          "4-5": {
+            "n": 7950,
+            "trigram_nll": 3.2133
+          },
+          "6-9": {
+            "n": 15318,
+            "trigram_nll": 3.2849
+          },
+          "10-99": {
+            "n": 43340,
+            "trigram_nll": 3.2099
+          }
+        },
+        "fit_seconds": 30.18,
+        "total_seconds": 30.58
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 43,
+        "name": "bpe_v16000_simplewiki"
+      },
+      "result": {
+        "V": 16001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 12283571,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 50208,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.0655
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.103
+          },
+          "3": {
+            "n": 3961,
+            "trigram_nll": 4.4743
+          },
+          "4-5": {
+            "n": 7684,
+            "trigram_nll": 4.6404
+          },
+          "6-9": {
+            "n": 13499,
+            "trigram_nll": 4.7352
+          },
+          "10-99": {
+            "n": 17064,
+            "trigram_nll": 4.6316
+          }
+        },
+        "fit_seconds": 30.27,
+        "total_seconds": 30.49
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 43,
+        "name": "bpe_v8000_simplewiki"
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 14477979,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 59907,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 5.5737
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.611
+          },
+          "3": {
+            "n": 3985,
+            "trigram_nll": 3.8361
+          },
+          "4-5": {
+            "n": 7828,
+            "trigram_nll": 3.9637
+          },
+          "6-9": {
+            "n": 14474,
+            "trigram_nll": 4.0879
+          },
+          "10-99": {
+            "n": 25620,
+            "trigram_nll": 3.9676
+          }
+        },
+        "fit_seconds": 33.92,
+        "total_seconds": 34.36
+      }
+    },
+    {
+      "job": {
+        "kind": "budget",
+        "seed": 44,
+        "budget": 9500000
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 640542,
+        "n_train_tok": 9500010,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 55885,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.1812
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.8937
+          },
+          "3": {
+            "n": 3964,
+            "trigram_nll": 4.4696
+          },
+          "4-5": {
+            "n": 7731,
+            "trigram_nll": 4.5649
+          },
+          "6-9": {
+            "n": 13872,
+            "trigram_nll": 4.5047
+          },
+          "10-99": {
+            "n": 22318,
+            "trigram_nll": 4.2702
+          }
+        },
+        "fit_seconds": 26.81,
+        "total_seconds": 27.21
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 44,
+        "name": "bpe_v2000_simplewiki"
+      },
+      "result": {
+        "V": 2001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 18693219,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 78693,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 4.8983
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.1022
+          },
+          "3": {
+            "n": 4000,
+            "trigram_nll": 2.9877
+          },
+          "4-5": {
+            "n": 7956,
+            "trigram_nll": 3.2562
+          },
+          "6-9": {
+            "n": 15310,
+            "trigram_nll": 3.3163
+          },
+          "10-99": {
+            "n": 43427,
+            "trigram_nll": 3.2437
+          }
+        },
+        "fit_seconds": 29.86,
+        "total_seconds": 30.1
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 43,
+        "name": "char_level"
+      },
+      "result": {
+        "V": 29,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 52837956,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 229342,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 3.357
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 1.6201
+          },
+          "3": {
+            "n": 4000,
+            "trigram_nll": 2.2043
+          },
+          "4-5": {
+            "n": 8000,
+            "trigram_nll": 2.0769
+          },
+          "6-9": {
+            "n": 15992,
+            "trigram_nll": 2.1064
+          },
+          "10-99": {
+            "n": 193350,
+            "trigram_nll": 2.1071
+          }
+        },
+        "fit_seconds": 36.58,
+        "total_seconds": 36.98
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 44,
+        "name": "bpe_v8000_simplewiki"
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 14478478,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 60093,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 5.5722
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 3.5217
+          },
+          "3": {
+            "n": 3987,
+            "trigram_nll": 3.9102
+          },
+          "4-5": {
+            "n": 7848,
+            "trigram_nll": 4.0643
+          },
+          "6-9": {
+            "n": 14459,
+            "trigram_nll": 4.076
+          },
+          "10-99": {
+            "n": 25799,
+            "trigram_nll": 4.0126
+          }
+        },
+        "fit_seconds": 29.94,
+        "total_seconds": 30.16
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 44,
+        "name": "bpe_v16000_simplewiki"
+      },
+      "result": {
+        "V": 16001,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 12283107,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 50397,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.042
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.0376
+          },
+          "3": {
+            "n": 3970,
+            "trigram_nll": 4.585
+          },
+          "4-5": {
+            "n": 7706,
+            "trigram_nll": 4.7575
+          },
+          "6-9": {
+            "n": 13507,
+            "trigram_nll": 4.7652
+          },
+          "10-99": {
+            "n": 17214,
+            "trigram_nll": 4.6631
+          }
+        },
+        "fit_seconds": 27.71,
+        "total_seconds": 27.92
+      }
+    },
+    {
+      "job": {
+        "kind": "tokenization",
+        "seed": 44,
+        "name": "char_level"
+      },
+      "result": {
+        "V": 29,
+        "n_train_sents_or_stories": 908493,
+        "n_train_tok": 52832956,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 229892,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 3.35
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 1.654
+          },
+          "3": {
+            "n": 4000,
+            "trigram_nll": 2.1999
+          },
+          "4-5": {
+            "n": 8000,
+            "trigram_nll": 2.0885
+          },
+          "6-9": {
+            "n": 15999,
+            "trigram_nll": 2.0857
+          },
+          "10-99": {
+            "n": 193893,
+            "trigram_nll": 2.1082
+          }
+        },
+        "fit_seconds": 29.35,
+        "total_seconds": 29.73
+      }
+    },
+    {
+      "job": {
+        "kind": "contiguous",
+        "seed": 42
+      },
+      "result": {
+        "V": 8001,
+        "n_train_sents_or_stories": 494061,
+        "n_train_tok": 28223786,
+        "n_dev_sents": 2000,
+        "n_eval_tok": 224509,
+        "lambdas": [
+          0.050000000000000044,
+          0.05,
+          0.2,
+          0.7
+        ],
+        "by_depth": {
+          "1": {
+            "n": 4000,
+            "trigram_nll": 6.2378
+          },
+          "2": {
+            "n": 4000,
+            "trigram_nll": 4.3461
+          },
+          "3": {
+            "n": 4000,
+            "trigram_nll": 4.3854
+          },
+          "4-5": {
+            "n": 8000,
+            "trigram_nll": 4.3982
+          },
+          "6-9": {
+            "n": 16000,
+            "trigram_nll": 4.4902
+          },
+          "10-99": {
+            "n": 188509,
+            "trigram_nll": 4.4146
+          }
+        },
+        "fit_seconds": 49.38,
+        "total_seconds": 50.15
+      }
+    }
+  ],
+  "elapsed_s": 2538.3,
+  "backend": "numpy",
+  "device": "cpu"
+}
