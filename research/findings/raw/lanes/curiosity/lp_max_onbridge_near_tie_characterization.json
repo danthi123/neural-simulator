@@ -1,0 +1,50 @@
+{
+  "purpose": "supplementary characterization of design failure-mode #1 (WTA indecision under close LP-slope margins); NOT one of the four formal GO gates in the de-risk sweep.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_trials_per_margin_total": 120,
+  "base_lp": 0.6,
+  "rows": [
+    {
+      "margin": 0.2,
+      "n_trials": 120,
+      "n_evaluable": 118,
+      "evaluable_rate": 0.9833333333333333,
+      "accuracy_when_evaluable": 1.0
+    },
+    {
+      "margin": 0.1,
+      "n_trials": 120,
+      "n_evaluable": 64,
+      "evaluable_rate": 0.5333333333333333,
+      "accuracy_when_evaluable": 1.0
+    },
+    {
+      "margin": 0.05,
+      "n_trials": 120,
+      "n_evaluable": 22,
+      "evaluable_rate": 0.18333333333333332,
+      "accuracy_when_evaluable": 1.0
+    },
+    {
+      "margin": 0.02,
+      "n_trials": 120,
+      "n_evaluable": 8,
+      "evaluable_rate": 0.06666666666666667,
+      "accuracy_when_evaluable": 0.875
+    },
+    {
+      "margin": 0.01,
+      "n_trials": 120,
+      "n_evaluable": 7,
+      "evaluable_rate": 0.058333333333333334,
+      "accuracy_when_evaluable": 0.5714285714285714
+    }
+  ]
+}
