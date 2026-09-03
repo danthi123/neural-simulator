@@ -462,8 +462,50 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
         (eval_perdepth's permute=True, shuffles the prefix order before the net ever sees it) should degrade
         `assoc_t` MORE than the bag-of-tokens `assoc`, because `assoc_t` is now the one arm whose read genuinely
         depends on positional order -- `assoc` was already order-blind (nothing left for permutation to break).
+
+        LEARNED RETRIEVAL GATE (2026-09-03, `--assoc-gate`, default OFF, composes with BOTH `assoc` and
+        `assoc_t`): the 2026-07-11 learned-keys de-risk (research/findings/2026-07-11-LEARNED-keys-make-
+        content-addressable-retrieval-load-bearing-...md) found the raw associative read is
+        informative-but-NOISY -- content-addressing IS load-bearing (content << shuffle) but the raw retrieved
+        feature is a net COST over the base read-out (content - base stays positive), and that finding names the
+        fix explicitly: "a learned GATING of when to trust the retrieval; retrieval as a RESIDUAL CORRECTION,
+        not a raw appended feature." Until now `read` was appended UNGATED (`hh = hh + blk(hh)`, and
+        `blk(hh) = Wo(read)`, an unconditional residual). This adds a per-channel, input-conditioned trust gate
+        `g_t = sigmoid(Wg(z_t)) in (0,1)^D` (z_t = the block's OWN pre-norm'd input, the same tensor that feeds
+        Wq/Wk/Wv -- so "how much do I trust a recall here" is itself content-conditioned, not context-free) that
+        scales the recalled value BEFORE the output mixing: `delta_t = Wo(g_t * read_t)`.
+
+        BIO FRAMING: gating WHETHER a hippocampal/associative recall is trusted right now is not exotic --
+        thalamocortical and neuromodulatory (ACh/NE) gating of what a cortical target admits from a hippocampal
+        CA3 read-out is a standing motif (the same "open the channel only when the recall is useful" role
+        LSTM/GRU input gates formalize computationally). This is a FORWARD-pass gain-control decision on the
+        read, not a credit-assignment rule -- it does not touch how Wq/Wk/Wv/Wo/Wg themselves get their
+        gradients.
+
+        PLACEMENT CHOICE (pre-Wo on the read, not post-Wo on the block output): the read `read_t` lives in the
+        SAME per-channel space as `v_t = Wv(z_s)` (V's native content channels), so a per-channel gate there
+        reads literally as "trust THIS recalled content channel." Gating the block's OUTPUT instead (after Wo
+        has already linearly mixed those channels together) would conflate "distrust this recalled feature"
+        with "distrust this particular Wo-mixed combination of features" -- a less legible knob, and it would
+        NOT compose as cleanly with the biological framing above (the gate belongs on the retrieved content
+        itself, mirroring where an LSTM/GRU input gate sits -- on the candidate value BEFORE it is written in,
+        not on the cell's already-mixed output).
+
+        INIT-OPEN (Wg.weight = 0, Wg.bias = +2.0 -> g_t = sigmoid(2.0) ~ 0.88 at init, UNIFORMLY across
+        channels/positions, independent of z_t until training moves the weight off zero): the standard forget-
+        gate-bias-positive trick (Jozefowicz, Sutskever, Vinyals 2015, "An Empirical Exploration of Recurrent
+        Network Architectures") applied to a trust gate instead of a forget gate -- at init the gate is ROUGHLY
+        OPEN (close to the pre-gate ungated behavior, `g~0.88` not `g~1.0` so there is already a small headroom
+        pushing training to explore closing it), so training only has to LEARN where to CLOSE the gate (down-
+        weight channels where the recall is noisy), not first discover that opening it helps.
+
+        BYTE-IDENTICAL WHEN OFF (the load-bearing guarantee): `self.Wg` is constructed ONLY when `gate=True` is
+        passed in -- when `--assoc-gate` is unset, no `Wg` module exists at all, so it consumes ZERO init RNG
+        draws and the forward path is the untouched original `return self.Wo(read)`. `assoc`/`assoc_t` without
+        `--assoc-gate` are therefore bit-identical to before this addition; wkv/ssm/hippo never construct
+        AssocLayer at all (see `assoc_layers`'s conditional construction below) and are unaffected regardless.
         """
-        def __init__(self, D, temporal=False):
+        def __init__(self, D, temporal=False, gate=False):
             super().__init__()
             self.ln = nn.LayerNorm(D)
             self.Wq = nn.Linear(D, D, bias=False)
@@ -482,6 +524,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # position-dependent code is built per-forward from this ladder (sequence length T varies).
                 div_term = torch.exp(torch.arange(0, D, 2, dtype=torch.float32) * (-math.log(10000.0) / D))
                 self.register_buffer("_time_div", div_term)          # [ceil(D/2)] fixed frequency ladder
+            # LEARNED RETRIEVAL GATE (--assoc-gate, see the class docstring's LEARNED RETRIEVAL GATE section):
+            # constructed ONLY when gate=True -- when the flag is unset, `self` has NO `Wg` attribute, consumes
+            # ZERO extra init-RNG draws, and `self.gate` is a plain False the forward branch below skips, so the
+            # Wq/Wk/Wv/Wo/(_time_div) construction above and the whole forward computation are BYTE-IDENTICAL
+            # to before this addition -- the required off-by-default guarantee.
+            self.gate = gate
+            if gate:
+                self.Wg = nn.Linear(D, D, bias=True)
+                nn.init.zeros_(self.Wg.weight)          # g_t starts UNIFORM across channels (no input dependence yet)
+                nn.init.constant_(self.Wg.bias, 2.0)    # sigmoid(2.0)~0.88 -> roughly OPEN at init (see docstring)
 
         def forward(self, h, memoryless=False):        # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
             B, T, D = h.shape
@@ -509,6 +561,14 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             scores = scores.masked_fill(~causal.unsqueeze(0), float("-inf"))
             alpha = torch.softmax(scores, dim=-1)                        # [B,T,T] causal content-addressed weights
             read = torch.einsum("bts,bsd->btd", alpha, v)                # [B,T,D] weighted associative recall
+            if self.gate:
+                # LEARNED RETRIEVAL GATE (--assoc-gate): per-channel "trust this recall" gate, content-
+                # conditioned on the block's own pre-norm'd input z (NOT zt -- the gate decision itself is a
+                # pure-content read of the current position, matching Wv's convention of reading z not zt).
+                # Gates the associative VALUE before Wo mixes channels (see PLACEMENT CHOICE in the class
+                # docstring). Skipped entirely when gate=False -> untouched original `return self.Wo(read)`.
+                g = torch.sigmoid(self.Wg(z))          # [B,T,D] in (0,1), init ~0.88 (roughly open, see docstring)
+                read = g * read
             return self.Wo(read)
 
     class WKV(nn.Module):
@@ -559,8 +619,13 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             # __init__) -- RECUR=="assoc" (the original bag-of-tokens read) is therefore byte-identical to
             # before this addition: same Wq/Wk/Wv/Wo init order, same forward computation (temporal=False takes
             # the zt=z branch, identical to the pre-assoc_t code).
+            # `gate=getattr(args, "assoc_gate", False)` (2026-09-03, --assoc-gate, see AssocLayer's LEARNED
+            # RETRIEVAL GATE docstring section): default False -> every AssocLayer built here is IDENTICAL to
+            # before the gate existed (no Wg, zero extra RNG draws, untouched forward). Only when --assoc-gate is
+            # passed does each layer additionally build its own Wg -- composes with BOTH assoc and assoc_t.
             self.assoc_layers = nn.ModuleList([
-                AssocLayer(D, temporal=(RECUR == "assoc_t")) for _ in range(max(n_layers, 1))
+                AssocLayer(D, temporal=(RECUR == "assoc_t"), gate=getattr(args, "assoc_gate", False))
+                for _ in range(max(n_layers, 1))
             ]) if RECUR in ("assoc", "assoc_t") else nn.ModuleList()
 
         def forward(self, x):                          # x: [B,T] token ids
@@ -930,6 +995,15 @@ def main():
                          "see AssocLayer's TEMPORAL CODE docstring section. RECUR=='assoc' itself is untouched "
                          "(byte-identical) by assoc_t's addition; use --recurrence assoc for the original "
                          "bag-of-tokens ablation arm.")
+    ap.add_argument("--assoc-gate", dest="assoc_gate", action="store_true",
+                    help="(--recurrence assoc / assoc_t only) LEARNED RETRIEVAL GATE (2026-09-03, default OFF, "
+                         "see AssocLayer's LEARNED RETRIEVAL GATE docstring section): a per-channel, input-"
+                         "conditioned trust gate g_t=sigmoid(Wg(z_t)) that scales the associative read BEFORE Wo "
+                         "(delta_t = Wo(g_t*read_t)) instead of appending it UNGATED, the fix the 2026-07-11 "
+                         "learned-keys de-risk named for the raw read's informative-but-noisy net-cost-over-base "
+                         "problem. Wg is initialized near-OPEN (weight=0, bias=+2.0, sigmoid(2.0)~0.88) so training "
+                         "only has to learn where to CLOSE it. Off by default -> Wg is not even constructed, so "
+                         "assoc/assoc_t are byte-identical to before this flag existed; composes with both arms.")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
