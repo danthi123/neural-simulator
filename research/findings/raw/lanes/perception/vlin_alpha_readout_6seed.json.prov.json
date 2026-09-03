@@ -1,0 +1,39 @@
+{
+ "run_id": "1788309017-366863",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--s2-norm",
+  "alpha",
+  "--s2-norm-alpha",
+  "0.5",
+  "--out",
+  "research/findings/raw/lanes/perception/vlin_alpha_readout_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "21abcf806efc23a67aad3af049f53099c9792ec47cc5a6396af6dd228f5dbf0f",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-01T20:30:17",
+ "env": {
+  "POOL_CHECKED_REASON": "lane D perception: 2026-09-01 finding (vision-lindiscrim-opsweep-board135-znorm-dominates-small-nonoverfit-lift-not-capability-crossing.md) explicitly names, as its own next mechanism after exhausting the discrete {none,submean,z} s2-norm grid, a graded/partial divisive interpolation drive/(sigma0+alpha*std) swept continuously in alpha in [0,1] (none has RATE headroom 0.57-0.62 but the LIF saturates; z avoids saturation but caps at 0.4653); grep of research/runners + research/findings finds no prior alpha-mode implementation; alpha=0.5 is the first decisive interior test point",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/vlin_alpha_readout_6seed.json"
+}
