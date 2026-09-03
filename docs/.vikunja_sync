@@ -1,5 +1,1 @@
-Vikunja board reconciled 2026-09-03 (fluency arc): added #205 "give the brain's own
-voice a working memory that recalls the right recent words" (the deployable spiking
-content-addressable read / linattn frontier) under the #193 own-voice epic. #135 vision-
-readout already reflects satdiv BORDERLINE. Findings synced: assoc_t-at-bound +
-bound-investigation (3479c41d), spiking-read DESIGN (066dde61), gate+objective merged.
+Board reconciled 2026-09-03 ~18:00: #205 updated — deployable spiking read (linattn) crosses trigram on seed 42 (+0.049 GO, 1/6, 6-seed running), deployment read-back built+parity-verified on main @0ae81f70. Breadth merged: LP-max 6/6 GO, configural PARTIAL 3/6.
