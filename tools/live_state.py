@@ -120,11 +120,29 @@ def _bytes(s: str) -> int:
 # durable-source parsers
 # --------------------------------------------------------------------------------------------------
 def frontier(board: str) -> str:
-    """The CURRENT ARC line from the latest STATE header (first match from the top = newest)."""
+    """The frontier summary from the LATEST anchor. Anchors are append-at-top (newest first).
+    Newer anchors head with 'STATE OF THE PROJECT — <date>'; older ones carried a 'CURRENT ARC'
+    line. Prefer the newest STATE-OF-THE-PROJECT header + its first content paragraph so the
+    re-injected frontier tracks the newest anchor (not a stale 'CURRENT ARC' from 2 anchors down)."""
     lines = board.splitlines()
+    # newest anchor first: the top-most STATE OF THE PROJECT header
+    for i, line in enumerate(lines):
+        if "STATE OF THE PROJECT" in line:
+            m = re.search(r"(\d{4}-\d{2}-\d{2}[a-z]?)", line)
+            tag = m.group(1) if m else ""
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            joined = ""
+            while j < len(lines) and lines[j].strip() and not lines[j].lstrip().startswith(
+                    ("#", "---")) and len(joined) < 360:
+                joined += (" " if joined else "") + lines[j].strip()
+                j += 1
+            head = ("ARC " + tag + " — ") if tag else ""
+            return _shorten(head + joined, 300)
+    # fallback (old format): the top-most CURRENT ARC wrapped paragraph
     for i, line in enumerate(lines):
         if "CURRENT ARC" in line:
-            # CURRENT ARC is a wrapped paragraph — join continuation lines so the sentence is whole
             joined = line
             j = i + 1
             while j < len(lines) and lines[j].strip() and not lines[j].lstrip().startswith(
@@ -132,7 +150,6 @@ def frontier(board: str) -> str:
                 joined += " " + lines[j].strip()
                 j += 1
             return _shorten(joined, 240)
-    # fallback: the first STATE-OF-THE-PROJECT line's follow-on, or the NORTH-STAR line
     for line in board.splitlines():
         if "NORTH-STAR" in line or "north-star" in line:
             return _shorten(line, 300)
