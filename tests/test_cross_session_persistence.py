@@ -160,3 +160,166 @@ def test_facts_save_and_reload_roundtrip(tmp_path, monkeypatch):
 
     # idempotent: a second reload adds nothing (dedup against already-present facts).
     assert CSP.reload_session_facts(("sess", "brain", "qwen"), chat2, base=tmp_path) == 0
+
+
+# ────────────────────────────────────────────────────────────────────────────────────────────
+# PRODUCTION LATEST-CHECKPOINT UX (2026-09-02, layered on the mechanism above, same flag):
+#   - successive saves ACCUMULATE as versioned checkpoints, not one overwritten file;
+#   - a reload with no explicit selector loads the LATEST checkpoint automatically;
+#   - `checkpoint=<id>` (or `BRAIN_PERSIST_CHECKPOINT=<id>`) pins an explicit OLDER one;
+#   - retention (`BRAIN_PERSIST_KEEP_N`) prunes the oldest checkpoints beyond N so they don't grow unbounded.
+# ────────────────────────────────────────────────────────────────────────────────────────────
+def test_checkpoint_id_monotonic_and_lexicographically_sortable():
+    a = CSP._new_checkpoint_id()
+    b = CSP._new_checkpoint_id()
+    assert a != b
+    assert sorted([b, a]) == [a, b], "checkpoint ids must sort in arrival order (string sort == time order)"
+
+
+def test_facts_save_accumulates_versioned_checkpoints_not_overwrite(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+    identity_dir = CSP._facts_identity_dir(cache_key, tmp_path)
+
+    p1 = CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("cat", "sat", "mat")])), base=tmp_path)
+    p2 = CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("dog", "ran", "park")])), base=tmp_path)
+
+    assert p1 is not None and p2 is not None and p1 != p2, "each save must land in a NEW checkpoint path"
+    assert len(CSP.list_checkpoints(identity_dir)) == 2, "two saves must accumulate as two versions"
+
+
+def test_reload_default_selector_loads_latest_checkpoint(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("cat", "sat", "mat")])), base=tmp_path)
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("dog", "ran", "park")])), base=tmp_path)
+
+    fresh = _FakeChat(_FakeComposer([]))
+    added = CSP.reload_session_facts(cache_key, fresh, base=tmp_path)   # no selector -> "latest"
+    assert added == 1
+    stored = {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
+    assert ("dog", "ran", "park") in stored and ("cat", "sat", "mat") not in stored, (
+        "a fresh boot with no override must load the NEWEST checkpoint, not the oldest")
+
+
+def test_reload_explicit_checkpoint_arg_overrides_latest(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+    identity_dir = CSP._facts_identity_dir(cache_key, tmp_path)
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("cat", "sat", "mat")])), base=tmp_path)
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("dog", "ran", "park")])), base=tmp_path)
+    first_id = CSP.list_checkpoints(identity_dir)[0]
+
+    fresh = _FakeChat(_FakeComposer([]))
+    added = CSP.reload_session_facts(cache_key, fresh, base=tmp_path, checkpoint=first_id)
+    stored = {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
+    assert added == 1 and ("cat", "sat", "mat") in stored and ("dog", "ran", "park") not in stored
+
+
+def test_reload_brain_persist_checkpoint_env_overrides_latest(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+    identity_dir = CSP._facts_identity_dir(cache_key, tmp_path)
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("cat", "sat", "mat")])), base=tmp_path)
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("dog", "ran", "park")])), base=tmp_path)
+    first_id = CSP.list_checkpoints(identity_dir)[0]
+
+    monkeypatch.setenv("BRAIN_PERSIST_CHECKPOINT", first_id)
+    fresh = _FakeChat(_FakeComposer([]))
+    added = CSP.reload_session_facts(cache_key, fresh, base=tmp_path)   # no explicit arg -> reads the env
+    stored = {(f["agent"], f["action"], f["patient"]) for f, _ in fresh.agent.composer.kb}
+    assert added == 1 and ("cat", "sat", "mat") in stored and ("dog", "ran", "park") not in stored
+
+
+def test_reload_unknown_explicit_checkpoint_degrades_to_baseline(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+    CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([("cat", "sat", "mat")])), base=tmp_path)
+    fresh = _FakeChat(_FakeComposer([]))
+    added = CSP.reload_session_facts(cache_key, fresh, base=tmp_path, checkpoint="not-a-real-checkpoint-id")
+    assert added == 0, "an unknown explicit checkpoint must degrade to 'nothing loaded', never raise/corrupt"
+
+
+def test_retention_prunes_oldest_checkpoints_beyond_keep_n(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    monkeypatch.setenv("BRAIN_PERSIST_KEEP_N", "2")
+    cache_key = ("sess", "brain", "qwen")
+    identity_dir = CSP._facts_identity_dir(cache_key, tmp_path)
+    for w in ("a", "b", "c", "d"):
+        CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([(w, "v", "p")])), base=tmp_path)
+    assert len(CSP.list_checkpoints(identity_dir)) == 2, "retention must prune down to the newest KEEP_N"
+
+    fresh = _FakeChat(_FakeComposer([]))
+    CSP.reload_session_facts(cache_key, fresh, base=tmp_path)
+    stored = {f["agent"] for f, _ in fresh.agent.composer.kb}
+    assert "d" in stored, "the newest checkpoint (last save) must have survived pruning"
+
+
+def test_retention_keep_n_zero_is_unlimited(tmp_path, monkeypatch):
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    monkeypatch.setenv("BRAIN_PERSIST_KEEP_N", "0")
+    cache_key = ("sess", "brain", "qwen")
+    identity_dir = CSP._facts_identity_dir(cache_key, tmp_path)
+    for w in ("a", "b", "c"):
+        CSP.save_session_facts(cache_key, _FakeChat(_FakeComposer([(w, "v", "p")])), base=tmp_path)
+    assert len(CSP.list_checkpoints(identity_dir)) == 3, "KEEP_N<=0 must disable pruning (keep every version)"
+
+
+def test_save_session_learning_shares_one_checkpoint_id_across_d5_and_facts(tmp_path, monkeypatch):
+    """d5 + facts are both keyed by the session's cache_key, so a single `save_session_learning` call mints ONE
+    checkpoint id and versions them together as one snapshot."""
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+
+    class _Mem:
+        def __init__(self):
+            self.formed = {1}
+            self.store_log = []
+            self.bridge = type("B", (), {"cp_connections": _example([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])})()
+
+    class _Organ:
+        def __init__(self):
+            self.mem = _Mem()
+            self.seed = 42
+            self.topics = ["cat", "dog"]
+            self.sep_bias = 0.0
+            self._store_order = []
+
+    chat = _FakeChat(_FakeComposer([("cat", "sat", "mat")]))
+    rec = CSP.save_session_learning(cache_key, chat, _Organ(), base=tmp_path)
+    assert rec.get("checkpoint"), "the record must report which checkpoint was just written"
+    assert rec["checkpoint"] in str(rec["d5"]) and rec["checkpoint"] in str(rec["facts"]), (
+        "d5 and facts must land under the SAME checkpoint id from one save_session_learning call")
+
+
+def test_d5_checkpoint_selection_versions_and_resolves(tmp_path, monkeypatch):
+    """Fast unit coverage of the D5 checkpoint SELECTION surface (versioning + latest + explicit override); the
+    full teach->save->fresh-substrate-reload round trip is `_selftest_d5` / `python -m
+    research.runners.cross_session_persistence` (heavy: builds the real n_ca3=2000 GO organ)."""
+    monkeypatch.setenv("BRAIN_PERSIST_LEARNING", "1")
+    cache_key = ("sess", "brain", "qwen")
+
+    class _Mem:
+        def __init__(self, data):
+            self.formed = {1}
+            self.store_log = []
+            self.bridge = type("B", (), {"cp_connections": _example(data)})()
+
+    class _Organ:
+        def __init__(self, data):
+            self.mem = _Mem(data)
+            self.seed = 42
+            self.topics = ["cat", "dog"]
+            self.sep_bias = 0.0
+            self._store_order = []
+
+    identity_dir = CSP._d5_identity_dir(cache_key, tmp_path)
+    p1 = CSP.save_d5_organ(cache_key, _Organ([0.1] * 6), base=tmp_path)
+    p2 = CSP.save_d5_organ(cache_key, _Organ([0.9] * 6), base=tmp_path)
+    assert p1 != p2
+    ids = CSP.list_checkpoints(identity_dir)
+    assert len(ids) == 2
+
+    assert CSP._resolve_checkpoint(identity_dir, None) == ids[-1], "default selector must resolve to the latest"
+    assert CSP._resolve_checkpoint(identity_dir, ids[0]) == ids[0], "an explicit id must resolve to itself"
+    assert CSP._resolve_checkpoint(identity_dir, "bogus-id") is None, "an unknown id must resolve to None"
