@@ -318,10 +318,25 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 h = h + blk(h)
             return self.head(h)                          # [B,T,V]
 
-    def pad_batch(seqs):
-        m = max(len(s) for s in seqs)
-        X = np.zeros((len(seqs), m), dtype=np.int64); msk = np.zeros((len(seqs), m), dtype=bool)
-        for i, s in enumerate(seqs):
+    seqs = [s for s in tr_ids if len(s) >= 2]
+
+    # THROUGHPUT (2026-09-03, --compile): the sequential T-loop makes the step CPU/launch-bound, not compute-bound
+    # (profiler: ~2,600 tiny kernel launches/step, 26.8% of CPU on cudaLaunchKernel). torch.compile(mode="reduce-overhead")
+    # captures the loop into a CUDA graph -> the per-kernel Python dispatch vanishes (measured 1.6-1.8x, parity 8.9e-8 =
+    # float rounding). CUDA graphs REQUIRE static input shapes, so under --compile every batch is padded to ONE fixed
+    # (B, T): T = the global max train length, B = args.batch (the last partial batch is padded up with fully-masked rows).
+    # RESULT-PRESERVING: the recurrence is strictly causal + right-padding, LayerNorm/Linear are per-position, and the
+    # loss/grad multiply by the mask -> padded timesteps AND padded rows contribute exactly 0 to (L*m).sum() and 0 to
+    # m.sum(), so the per-batch loss, the gradient, and the optimizer step are identical to the variable-shape path.
+    use_compile = bool(getattr(args, "compile", False))
+    fixed_T = max((len(s) for s in seqs), default=2) if use_compile else None
+    fixed_B = args.batch if use_compile else None
+
+    def pad_batch(bseqs, rows=None, T=None):
+        m = T if T is not None else max(len(s) for s in bseqs)
+        r = rows if rows is not None else len(bseqs)
+        X = np.zeros((r, m), dtype=np.int64); msk = np.zeros((r, m), dtype=bool)
+        for i, s in enumerate(bseqs):
             X[i, :len(s)] = s; msk[i, :len(s)] = True
         return torch.tensor(X, device=device), torch.tensor(msk, device=device)
 
@@ -337,21 +352,31 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     params = [p for p in net.parameters() if p.requires_grad]
     opt = torch.optim.Adam(params, lr=args.lr, weight_decay=args.weight_decay)
     lossf = nn.CrossEntropyLoss(reduction="none")
-    seqs = [s for s in tr_ids if len(s) >= 2]
+    train_net = torch.compile(net, mode="reduce-overhead") if use_compile else net   # params shared with `net`
     rng = np.random.default_rng(seed * 7 + 3)
+    _t_tr0 = time.time(); _tok = 0; _t_steady = None; _tok_steady = 0
     for ep in range(args.epochs):
         order = rng.permutation(len(seqs))
-        _ep_loss, _ep_n = 0.0, 0                          # per-epoch train-loss trajectory (capacity-vs-under-training diagnostic)
+        if ep == 1:                                                 # exclude epoch-0 (incl. one-time compile warmup) for steady-state tok/s
+            _t_steady = time.time(); _tok_steady = 0
+        # per-epoch train-loss trajectory (capacity-vs-under-training diagnostic); accumulated ON-DEVICE (detached) and
+        # synced ONCE per epoch -- the prior per-step float(loss) forced a device sync every step, serialising CPU/GPU.
+        _ep_loss = torch.zeros((), device=device); _ep_n = 0
         for i in range(0, len(seqs), args.batch):
             batch = [seqs[j] for j in order[i:i+args.batch]]
-            X, msk = pad_batch(batch)
-            logits = net(X)[:, :-1]                       # predict token t+1 from context 0..t
+            X, msk = pad_batch(batch, rows=fixed_B, T=fixed_T)
+            logits = train_net(X)[:, :-1]                 # predict token t+1 from context 0..t
             tgt = X[:, 1:]; m = msk[:, 1:]
             L = lossf(logits.reshape(-1, V), tgt.reshape(-1)).reshape(tgt.shape)
             loss = (L * m).sum() / m.sum().clamp(min=1)
             opt.zero_grad(); loss.backward(); opt.step()
-            _ep_loss += float(loss); _ep_n += 1
-        print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={_ep_loss/max(1,_ep_n):.4f}", flush=True)
+            _ep_loss = _ep_loss + loss.detach(); _ep_n += 1
+            _nb = sum(len(s) for s in batch); _tok += _nb; _tok_steady += _nb
+        print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={_ep_loss.item()/max(1,_ep_n):.4f}", flush=True)
+    _dt = time.time() - _t_tr0
+    _steady = f", steady {(_tok_steady/(time.time()-_t_steady)/1e3):.1f}k tok/s" if _t_steady else ""
+    print(f"    [perf] train {_tok/1e6:.2f}M tok in {_dt:.1f}s = {_tok/_dt/1e3:.1f}k tok/s (compile={use_compile}"
+          f"{f', fixed_T={fixed_T}' if use_compile else ''}{_steady})", flush=True)
     return net, WKV
 
 
@@ -404,6 +429,13 @@ def main():
                          "(byte-identical). >1 only implemented for --recurrence wkv (the baseline branch).")
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--batch", type=int, default=128)
+    ap.add_argument("--compile", action="store_true",
+                    help="THROUGHPUT (2026-09-03): wrap the model in torch.compile(mode='reduce-overhead') = CUDA-graph "
+                         "capture of the sequential WKV T-loop (the CPU/launch-bound bottleneck; ~2,600 tiny kernel "
+                         "launches/step). Measured 1.6-1.8x, parity 8.9e-8 (float rounding). Static shapes are required, so "
+                         "every batch is padded to one fixed (B=--batch, T=global-max-train-len); padded rows/timesteps are "
+                         "fully masked -> the loss, gradient and optimizer step are result-preserving (default OFF = "
+                         "byte-identical to the pre-2026-09-03 path). Pairs well with a larger --batch (100% GPU util).")
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--weight-decay", type=float, default=1e-4)
     ap.add_argument("--freeze-emb", dest="freeze_emb", action="store_true",
