@@ -571,6 +571,126 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 read = g * read
             return self.Wo(read)
 
+    class LinAttnLayer(nn.Module):
+        """NORMALIZED HEBBIAN FAST-WEIGHT LINEAR ATTENTION (--recurrence linattn, 2026-09-03), the deployable-
+        spiking successor to ssm/dual-nonneg -- see the full DESIGN doc,
+        research/findings/2026-09-03-spiking-content-addressable-read-DESIGN.md, for the complete derivation,
+        the deep-read of the spiking-LM literature (SpikeGPT/SpikeLM/SpikingSSMs/Spikformer/BiSpikCLM/
+        WTA-Spiking-Transformer), and the biological anchors. Summary of the mechanism this class implements:
+
+        `dual-nonneg` (SsmDualNonnegLayer above) discards RWKV's numerator/denominator NORMALIZATION -- the
+        division by an accumulated decay-weighted denominator that gives `wkv` its content-addressed,
+        softmax-like weighting over past tokens (diagnosed in research/findings/2026-09-03-spiking-mouth-ssm-
+        dualnonneg-fluency-NO-GO-first-brain-based-baseline.md). This class restores BOTH coupled pieces the
+        diagnosis names -- a content-dependent nonnegative WRITE GAIN phi(k_t) on each token's contribution, and
+        a running DENOMINATOR trace that accumulates that same gain and DIVIDES the read by it -- AND adds
+        genuine query-key content-addressing (phi(q)^T M) that even `wkv` lacks (wkv's `k` is a per-channel
+        gain, not a q.k match). It is linear-attention in the fast-weight form (Katharopoulos, Vyas, Pappas &
+        Fleuret 2020, "Transformers are RNNs", arXiv:2006.16236, Eqs. 7/10-12/18-20): O(T) recurrent, no T x T
+        matrix (unlike `assoc`/`assoc_t`), so it is spike-deployable.
+
+        Mechanism per position t (causal, D x D real-valued state):
+          z_t = LN(h_t);  q_t=Wq(z_t), k_t=Wk(z_t), v_t=Wv(z_t);  phi(.) = elu(.)+1 by default (non-negative
+          feature map, Katharopoulos Eq.7; --linattn-phi selects relu/exp/sparse alternatives, see AssocLayer's
+          TEMPORAL CODE docstring section for the WTA-sparse-key precedent).
+          WRITE:  M_t = lam (*) M_{t-1} + phi(k_t) (x) v_t        -- a real-valued outer-product KV trace (D x D)
+                  zden_t = lam (*) zden_{t-1} + phi(k_t)          -- its running normalizer (the denominator trace)
+          READ:   num_t = phi(q_t)^T M_t;  den_t = phi(q_t)^T zden_t;  read_t = num_t / (den_t + eps)
+          delta_t = Wo(r_t (*) read_t), r_t = sigmoid(Wr(z_t))    -- caller adds this to the residual stream
+
+        `lam = exp(-softplus(w)) in (0,1)` is the per-channel (or scalar, --uniform-decay) leak, identical in
+        role to wkv's exp(-w). This STRICTLY GENERALIZES wkv (restrict M to its diagonal, Wq=Wk=I, phi=exp and
+        it degenerates to wkv's per-channel num/den), so with usable capacity it cannot do worse than the wkv
+        upper bound it descends from.
+
+        BIOLOGY (DESIGN doc Sec 3, brief): the real-valued outer-product KV trace M is short-term synaptic
+        plasticity / a fast-weight matrix -- graded, calcium-mediated synaptic facilitation holding working
+        memory (Mongillo, Barak & Tsodyks 2008, Science 319:1543-1546, doi:10.1126/science.1150769; Ba, Hinton,
+        Mnih, Leibo & Ionescu 2016, "Using Fast Weights to Attend to the Recent Past", arXiv:1610.06258). The
+        Hebbian outer-product WRITE (phi(k) (x) v, pre x post) is CA3 recurrent-collateral autoassociation
+        (Marr 1971; Treves & Rolls 1994; Rolls & Treves 1998) -- the same anchor AssocLayer's docstring uses for
+        its causal-softmax read (Ramsauer et al. 2020 proves modern-Hopfield <-> attention equivalence). The
+        DIVISION num/den is divisive normalization by shunting inhibition (Carandini & Heeger 1994, 2012, Nat
+        Rev Neurosci 13:51-62) -- over the QUERY'S MATCH-MASS axis, not the channel population (the axis fix
+        that distinguishes this from the already-refuted `--dual-nonneg-divnorm` channel-pool NO-GO, DESIGN
+        doc Sec 4); honest caveat, Holt & Koch 1997 (Neural Comput. 9:1001) found pure somatic shunting is
+        SUBTRACTIVE not divisive on firing rate -- the on-substrate realization is a later rung, in scope for an
+        honest negative if it degrades.
+
+        `--linattn-phi sparse`: a k-winners-take-all phi(k) approximates a hard content match -- biologically a
+        sparse pattern-separated key (DG->CA3), the WTA-Spiking-Transformer's sparse-softmax limit (DESIGN doc
+        Sec 2/5b).
+
+        `--assoc-gate` (gate=True, reused from AssocLayer, same init-open trick: Wg.weight=0, Wg.bias=+2.0 ->
+        g~0.88 at init): the 2026-07-11 learned-keys de-risk found the raw retrieved feature is
+        informative-but-noisy and named the fix "a learned GATING of when to trust the retrieval, retrieval as
+        a RESIDUAL CORRECTION" -- gates `read_t` before Wo, exactly as AssocLayer's LEARNED RETRIEVAL GATE does.
+
+        `--no-linattn-norm` (norm=False): THE KEY ABLATION -- drops the `/ (den_t + eps)` division so the read
+        is the raw unnormalized sum `num_t`, isolating whether the restored content-weighted normalization
+        (not merely the outer-product q.k widening) is what is load-bearing (DESIGN doc Sec 6, the cheapest
+        decisive CPU experiment).
+
+        Pre-norm residual block, `forward(h, memoryless=False) -> delta`, IDENTICAL contract to
+        WkvLayer/HippoLayer/AssocLayer, so it stacks under --n-layers and composes with --contiguous/
+        --tokenizer bpe unchanged (DESIGN doc Sec 5c). MEMORYLESS anti-cheat: mirrors AssocLayer's semantics
+        exactly ("no carry, current token only") -- when True, M/zden are never accumulated across positions;
+        each position's read uses ONLY that position's own phi(k_t) (x) v_t / phi(k_t), so no past position can
+        be recalled. The generic sequence-level --permute anti-cheat (eval_perdepth's permute=True) also
+        applies unmodified, exactly as for every other --recurrence branch.
+
+        BYTE-IDENTICAL WHEN OFF: this class and `self.linattn_layers` are constructed ONLY when
+        `--recurrence linattn` is selected (see the ModuleList construction in WKV.__init__, and the
+        RECUR=="linattn" forward dispatch below) -- when linattn is not selected, this class is defined but
+        never instantiated, consuming ZERO init-RNG draws, so wkv/ssm/hippo/assoc/assoc_t are completely
+        unaffected by this addition.
+        """
+        def __init__(self, D, uniform_decay=False, phi="elu", gate=False, norm=True):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wq = nn.Linear(D, D, bias=False); self.Wk = nn.Linear(D, D, bias=False)
+            self.Wv = nn.Linear(D, D, bias=False); self.Wr = nn.Linear(D, D, bias=False)
+            self.Wo = nn.Linear(D, D, bias=False)
+            self.w = nn.Parameter(torch.zeros(1 if uniform_decay else D))   # lam = exp(-softplus(w)), like wkv
+            self.phi = phi
+            self.norm = norm            # --no-linattn-norm ablation: False -> raw unnormalized sum (num_t only)
+            self.gate = gate
+            if gate:
+                self.Wg = nn.Linear(D, D, bias=True)
+                nn.init.zeros_(self.Wg.weight); nn.init.constant_(self.Wg.bias, 2.0)   # init-open, reuse assoc-gate
+
+        def _phi(self, x):
+            if self.phi == "elu":  return torch.nn.functional.elu(x) + 1.0
+            if self.phi == "relu": return torch.relu(x) + 1e-3
+            if self.phi == "exp":  return torch.exp(x - x.amax(-1, keepdim=True))       # stable RWKV-like
+            if self.phi == "sparse":                                                     # k-WTA sparse key
+                kth = torch.topk(x, max(1, x.shape[-1] // 8), dim=-1).values[..., -1:]
+                return torch.relu(x - kth)
+            raise ValueError(self.phi)
+
+        def forward(self, h, memoryless=False):        # h:[B,T,D] -> delta:[B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            q = self._phi(self.Wq(z)); k = self._phi(self.Wk(z)); v = self.Wv(z)
+            r = torch.sigmoid(self.Wr(z))
+            lam = torch.exp(-torch.nn.functional.softplus(self.w))          # (D,) or (1,)
+            M = torch.zeros(B, D, D, device=h.device)                       # outer-product KV trace
+            zden = torch.zeros(B, D, device=h.device)                       # normalizer trace
+            outs = []
+            for t in range(T):
+                if memoryless:                                              # ANTI-CHEAT: current token only
+                    M_r = torch.einsum("bd,be->bde", k[:, t], v[:, t]); zden_r = k[:, t]
+                else:
+                    M = lam.unsqueeze(-1) * M + torch.einsum("bd,be->bde", k[:, t], v[:, t])
+                    zden = lam * zden + k[:, t]
+                    M_r, zden_r = M, zden
+                num = torch.einsum("bd,bde->be", q[:, t], M_r)              # phi(q)^T M
+                den = torch.einsum("bd,bd->b", q[:, t], zden_r).unsqueeze(-1)   # phi(q)^T zden  (scalar/token)
+                read = num / (den + 1e-6) if self.norm else num            # --no-linattn-norm = raw sum ablation
+                if self.gate: read = torch.sigmoid(self.Wg(z[:, t])) * read
+                outs.append(self.Wo(r[:, t] * read))
+            return torch.stack(outs, 1)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -627,6 +747,24 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 AssocLayer(D, temporal=(RECUR == "assoc_t"), gate=getattr(args, "assoc_gate", False))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR in ("assoc", "assoc_t") else nn.ModuleList()
+
+            # --recurrence linattn (2026-09-03, DESIGN doc research/findings/2026-09-03-spiking-content-
+            # addressable-read-DESIGN.md): NORMALIZED HEBBIAN FAST-WEIGHT LINEAR ATTENTION, the deployable-
+            # spiking successor to ssm/dual-nonneg -- see LinAttnLayer's docstring for the full mechanism + bio
+            # framing. Composed with --n-layers depth exactly like hippo_layers/assoc_layers above (ALL n_layers
+            # blocks are uniform LinAttnLayer instances in ONE list). `gate=getattr(args, "assoc_gate", False)`
+            # reuses the SAME learned-retrieval-gate flag AssocLayer uses (default False -> no Wg, byte-
+            # identical forward). `norm=getattr(args, "linattn_norm", True)` wires --no-linattn-norm (THE KEY
+            # ABLATION, default True=normalization ON). Built ONLY when RECUR=="linattn" (else an empty
+            # ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm/hippo/assoc/assoc_t paths'
+            # parameter-init RNG order -- hence their outputs -- is UNCHANGED by this addition at any
+            # --n-layers, not just n_layers=1.
+            self.linattn_layers = nn.ModuleList([
+                LinAttnLayer(D, uniform_decay=getattr(args, "uniform_decay", False),
+                             phi=getattr(args, "linattn_phi", "elu"), gate=getattr(args, "assoc_gate", False),
+                             norm=getattr(args, "linattn_norm", True))
+                for _ in range(max(n_layers, 1))
+            ]) if RECUR == "linattn" else nn.ModuleList()
 
             # PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, --pred-aux-weight, own-voice-fluency arc). WHY:
             # the bound-investigation of the fluency arc (research/findings/2026-09-03-spiking-depth-tokens-
@@ -722,6 +860,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # byte-identical to before assoc_t existed (see the assoc_layers construction comment above).
                 hh = h
                 for blk in self.assoc_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self._out(hh, aux)
+            if RECUR == "linattn":
+                # NORMALIZED HEBBIAN FAST-WEIGHT LINEAR ATTENTION (see LinAttnLayer's docstring). Self-
+                # contained: does NOT touch self.Wk/Wv/Wr/w/u below (unused on this branch, no gradient reaches
+                # them). Inserted BEFORE any wkv/ssm-specific line, mirroring the hippo/assoc insertions above,
+                # so when RECUR != "linattn" this is one skipped comparison and every line below runs
+                # byte-identically to before this addition.
+                hh = h
+                for blk in self.linattn_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self._out(hh, aux)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
@@ -1111,7 +1259,7 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
@@ -1128,7 +1276,12 @@ def main():
                          "the Q/K projections only (not V) so the read competition becomes order-sensitive -- "
                          "see AssocLayer's TEMPORAL CODE docstring section. RECUR=='assoc' itself is untouched "
                          "(byte-identical) by assoc_t's addition; use --recurrence assoc for the original "
-                         "bag-of-tokens ablation arm.")
+                         "bag-of-tokens ablation arm. linattn = NORMALIZED HEBBIAN FAST-WEIGHT LINEAR ATTENTION "
+                         "(see LinAttnLayer + research/findings/2026-09-03-spiking-content-addressable-read-"
+                         "DESIGN.md) -- an O(T) recurrent real-valued D x D outer-product KV trace + running "
+                         "denominator, read by phi(q)^T M / phi(q)^T zden (content-weighted, softmax-free); "
+                         "the deployable-spiking successor to ssm/dual-nonneg, and a strict generalization of "
+                         "wkv (restrict M to its diagonal, phi=exp, Wq=Wk=I -> degenerates to wkv's num/den).")
     ap.add_argument("--assoc-gate", dest="assoc_gate", action="store_true",
                     help="(--recurrence assoc / assoc_t only) LEARNED RETRIEVAL GATE (2026-09-03, default OFF, "
                          "see AssocLayer's LEARNED RETRIEVAL GATE docstring section): a per-channel, input-"
@@ -1137,7 +1290,24 @@ def main():
                          "learned-keys de-risk named for the raw read's informative-but-noisy net-cost-over-base "
                          "problem. Wg is initialized near-OPEN (weight=0, bias=+2.0, sigmoid(2.0)~0.88) so training "
                          "only has to learn where to CLOSE it. Off by default -> Wg is not even constructed, so "
-                         "assoc/assoc_t are byte-identical to before this flag existed; composes with both arms.")
+                         "assoc/assoc_t are byte-identical to before this flag existed; composes with both arms. "
+                         "Also reused by --recurrence linattn (LinAttnLayer), same init-open semantics.")
+    ap.add_argument("--linattn-phi", dest="linattn_phi", choices=["elu", "relu", "exp", "sparse"], default="elu",
+                    help="(--recurrence linattn only) the non-negative feature map phi(.) applied to Q/K before "
+                         "the outer-product write + content-weighted read (see LinAttnLayer's docstring). "
+                         "elu = elu(x)+1 (default, Katharopoulos et al. 2020 Eq.7); relu = relu(x)+1e-3; "
+                         "exp = a numerically-stabilized exp(x-max) (RWKV-like, sharper matching); sparse = a "
+                         "k-winners-take-all top-(D/8) rectified key (a hard content match, biologically a "
+                         "sparse pattern-separated DG->CA3-style key -- the WTA-Spiking-Transformer's "
+                         "sparse-softmax limit, DESIGN doc Sec 2/5b).")
+    ap.add_argument("--no-linattn-norm", dest="linattn_norm", action="store_false", default=True,
+                    help="(--recurrence linattn only) THE KEY ABLATION: drop the '/ (den_t + eps)' division so "
+                         "the read is the raw unnormalized outer-product sum num_t, instead of the "
+                         "content-weighted average num_t/den_t. Tests whether the restored RWKV-style "
+                         "numerator/denominator normalization -- not merely the outer-product q.k widening -- "
+                         "is what is load-bearing (research/findings/2026-09-03-spiking-content-addressable-"
+                         "read-DESIGN.md Sec 6, the cheapest decisive CPU experiment). Default (flag unset) = "
+                         "normalization ON = args.linattn_norm=True = the design's primary arm.")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,

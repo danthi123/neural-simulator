@@ -1,0 +1,87 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "seeds": [
+    42
+  ],
+  "d_model": 96,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "42": {
+      "V": 800,
+      "n_train": 6800,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 1200,
+          "wkv": 3.466,
+          "bigram": 4.374,
+          "trigram": 5.02,
+          "wkv_perm": 8.367,
+          "wkv_memoryless": 3.466,
+          "margin_vs_trigram": 1.554,
+          "margin_vs_bigram": 0.908
+        },
+        "2": {
+          "n": 1200,
+          "wkv": 2.955,
+          "bigram": 4.426,
+          "trigram": 3.371,
+          "wkv_perm": 7.483,
+          "wkv_memoryless": 3.885,
+          "margin_vs_trigram": 0.416,
+          "margin_vs_bigram": 1.471
+        },
+        "3": {
+          "n": 1163,
+          "wkv": 3.137,
+          "bigram": 4.442,
+          "trigram": 3.521,
+          "wkv_perm": 6.948,
+          "wkv_memoryless": 4.769,
+          "margin_vs_trigram": 0.385,
+          "margin_vs_bigram": 1.305
+        },
+        "4-5": {
+          "n": 2064,
+          "wkv": 3.25,
+          "bigram": 4.587,
+          "trigram": 3.712,
+          "wkv_perm": 6.867,
+          "wkv_memoryless": 5.196,
+          "margin_vs_trigram": 0.462,
+          "margin_vs_bigram": 1.337
+        },
+        "6-9": {
+          "n": 2733,
+          "wkv": 3.536,
+          "bigram": 4.667,
+          "trigram": 4.01,
+          "wkv_perm": 6.827,
+          "wkv_memoryless": 5.084,
+          "margin_vs_trigram": 0.474,
+          "margin_vs_bigram": 1.131
+        },
+        "10-99": {
+          "n": 1084,
+          "wkv": 3.526,
+          "bigram": 4.668,
+          "trigram": 3.961,
+          "wkv_perm": 7.057,
+          "wkv_memoryless": 5.23,
+          "margin_vs_trigram": 0.435,
+          "margin_vs_bigram": 1.143
+        }
+      }
+    }
+  },
+  "elapsed_s": 118.3
+}
