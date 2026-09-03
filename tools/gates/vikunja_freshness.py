@@ -34,7 +34,12 @@ BLOCKING = True
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-THRESHOLD = 6            # findings may accumulate up to this many before the Vikunja board MUST be reconciled.
+THRESHOLD = 4            # findings may accumulate up to this many before the Vikunja board MUST be reconciled.
+                        # Tightened 2026-09-03 (6→4): now a BACKSTOP. The primary forcing-function moved into
+                        # sync-documentation Check I (item 6) — the board reconciles WITH the docs on a
+                        # capability-status landing — so this budget only catches a missed doc-sync, and a
+                        # tighter net costs little (2026-09-03 the board drifted "quite out of date" at 5/6,
+                        # one finding under the old budget).
 MARKER = "docs/.vikunja_sync"   # tracked stamp; the `vikunja` skill updates+stages it after reconciling the board.
 
 
