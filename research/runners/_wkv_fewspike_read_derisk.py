@@ -89,6 +89,11 @@ class WKVReadout:
         self.decay = float(np.exp(-np.log1p(np.exp(W["w"][0]))))
         self.words = list(W["words"])
         self.unk_idx = (len(self.words) - 1) if (self.words and self.words[-1] == "<unk>") else -1
+        # ---- multi-layer 'wkv'-recurrence support (2026-09-03, ADDITIVE -- see the big block below the
+        # unmodified methods for the full explanation). Every line above this is UNCHANGED from before this
+        # rung; this call only ADDS attributes, it reads no key the constructor above didn't already isolate
+        # a separate namespace for (extra.*), so it cannot alter what the lines above computed.
+        self._init_wkv_multilayer(W)
 
     def _ln(self, v):
         m = v.mean(); s = v.std() + 1e-5
@@ -107,6 +112,179 @@ class WKVReadout:
         state = np.concatenate([ap, an])                                # [2D] dual-nonneg deployed state form
         r_h = 1.0 / (1.0 + np.exp(-(self.Wr @ self._ln(self.emb[tid]))))
         return self.head_w @ (r_h * (self.Wo_sp @ state)) + self.head_b
+
+    # ================================================================================================================
+    # MULTI-LAYER 'wkv'-RECURRENCE SUPPORT (2026-09-03, additive; `advance`/`logits` above are UNTOUCHED).
+    #
+    # WHY A SEPARATE CODE PATH, NOT AN EXTENSION OF advance()/logits(). `research.runners._emerge_wkv_lm_derisk`'s
+    # `WKV` model has TWO mutually-exclusive recurrence families, selected by `--recurrence`:
+    #   (a) `--recurrence ssm --dual-nonneg` (what `advance`/`logits` above realize): two POSITIVE leaky
+    #       integrators `ap`/`an` read out via `Wo_sp` (2D->D). This is what the ALREADY-DEPLOYED
+    #       `wkv_ssmU6_v1000_d128_seed{seed}.npz` checkpoint was trained with, and it is the ONLY family the
+    #       on-bridge spiking realization (a leaky membrane conductance) can directly represent — established by
+    #       `research/findings/2026-07-20-gap1-ROOT-CAUSE-wrong-recurrence-mode-retrain-fixes-catastrophe-
+    #       residual-remains.md`: a checkpoint trained in the OTHER family and read through THIS class's own
+    #       `ap`/`an`/`Wo_sp` math produced near-uniform garbage (NLL 6.7 ~= ln(1000)) despite loading without
+    #       error — a SILENT wrong-recurrence bug, not a crash, which is exactly why this block never lets the
+    #       two families share one code path or fall back silently into each other.
+    #   (b) `--recurrence wkv` (the DEFAULT — no `--recurrence` flag at all, e.g. the in-flight 2026-09-03
+    #       "own-voice" simplewiki crux run): the classic RWKV numerator/denominator running-max linear
+    #       attention, read out via `Wo` (D->D) and gated by a current-token bonus `u`. `--n-layers N>1` (the
+    #       crux's OWN `--n-layers 2`) is implemented ONLY for this family — `_emerge_wkv_lm_derisk.py` itself
+    #       `assert`s `self.n_layers == 1` inside the `RECUR == "ssm"` branch ("--n-layers>1 is only implemented
+    #       for --recurrence wkv"), so a checkpoint that is BOTH multi-layer AND `ssm`/`dual-nonneg` cannot even
+    #       be trained by the current code — there is no version of "extend advance()/logits() for depth" that
+    #       could ever load a real file, because that file can never exist.
+    #
+    # WHAT THIS MEANS FOR DEPLOYMENT (an honest, unresolved gap this block does NOT close): a `--save-ssm` run
+    # of the in-flight crux's OWN config (`--n-layers 2`, default `--recurrence wkv`) produces a checkpoint this
+    # NEW code path (`step_wkv`/`generate_wkv_multilayer`, below) can load and decode CORRECTLY — but it is
+    # NOT the family the deployed spiking few-spike mouth (`webapp/wkv_mouth_generator.py`, built on `advance`/
+    # `logits` above) can realize as a spiking membrane state. Until either (i) the `ssm`/`dual-nonneg` branch
+    # is extended to support depth (a trainer architecture change, not attempted here), or (ii) the project
+    # accepts `n_layers=1` for the deployed spiking mouth while `n_layers=2` stays an NLL-gate/architecture-
+    # proof-only configuration, THIS code path is a CPU-side host DECODE/VERIFICATION utility (proving a
+    # `--save-ssm` checkpoint loads and generates coherent-shaped text at all) — not a drop-in replacement for
+    # the spiking `advance`/`logits` path, and it is not wired into `webapp/wkv_mouth_generator.py`'s
+    # production `generate()` here. See the Task-2 report this rung shipped alongside for the full analysis.
+    #
+    # BACK-COMPAT / BYTE-IDENTICAL: `_init_wkv_multilayer` only READS the `extra.*` namespace, which a
+    # single-layer (`n_layers=1`) checkpoint — including the shipped `wkv_ssmU6_*` file — never has (the
+    # ModuleList is empty at `n_layers=1`, so `net.state_dict()` contributes zero `extra.*` keys; see
+    # `_emerge_wkv_lm_derisk.py`'s own `WKV.__init__` comment: "Constructed AFTER self.head so at n_layers=1
+    # the ModuleList is EMPTY"). `is_wkv_multilayer` is therefore False for every checkpoint this class has
+    # ever loaded before this rung, `step_wkv`/`generate_wkv_multilayer` raise rather than silently no-op if
+    # called on one, and `advance`/`logits` above are not read by any of the new code — so nothing here can
+    # change what any existing caller (this file's own `run_seed`, `webapp/wkv_mouth_generator.py`, or any of
+    # the ~30 research runners under `research/runners/_wkv_*` that call `WKVReadout(...)`) observes.
+    # ================================================================================================================
+    def _init_wkv_multilayer(self, W):
+        """Detects + loads an OPTIONAL multi-layer 'wkv'-recurrence stack (`extra.0.*`, `extra.1.*`, ...) from
+        the SAME already-open npz `W`. Sets `is_wkv_multilayer` (False -> nothing else in this block is ever
+        populated/reachable) and, when True, `n_wkv_layers` (>=2) and the per-layer weight dicts `_wkv_layers`
+        (index 0 = the base block, using the TOP-LEVEL `Wk.weight`/`Wo.weight`/`u`/`ln.*` keys this class's
+        __init__ above does NOT read for the ssm/dual-nonneg path -- they are read HERE, for the first time,
+        only on this opt-in branch)."""
+        self.is_wkv_multilayer = "extra.0.Wk.weight" in W.files
+        if not self.is_wkv_multilayer:
+            self.n_wkv_layers = 0
+            self._wkv_layers = []
+            return
+        n_extra = 0
+        while f"extra.{n_extra}.Wk.weight" in W.files:
+            n_extra += 1
+        self.n_wkv_layers = 1 + n_extra
+
+        def _mk_layer(wk, wv, wr, wo, ln_w, ln_b, wdecay, u):
+            return {
+                "Wk": wk.astype(np.float64), "Wv": wv.astype(np.float64),
+                "Wr": wr.astype(np.float64), "Wo": wo.astype(np.float64),
+                "ln_w": ln_w.astype(np.float64), "ln_b": ln_b.astype(np.float64),
+                # softplus decay -> (0,1), per-channel [D] or broadcastable [1] (--uniform-decay) -- computed
+                # ONCE here, matching WKV.forward's own `wdec = exp(-softplus(self.w))` computed once outside
+                # its per-token loop.
+                "wdec": np.exp(-np.log1p(np.exp(wdecay.astype(np.float64)))),
+                "u": u.astype(np.float64),
+            }
+
+        layers = [_mk_layer(W["Wk.weight"], W["Wv.weight"], W["Wr.weight"], W["Wo.weight"],
+                             W["ln.weight"], W["ln.bias"], W["w"], W["u"])]
+        for j in range(n_extra):
+            p = f"extra.{j}."
+            layers.append(_mk_layer(W[p + "Wk.weight"], W[p + "Wv.weight"], W[p + "Wr.weight"], W[p + "Wo.weight"],
+                                     W[p + "ln.weight"], W[p + "ln.bias"], W[p + "w"], W[p + "u"]))
+        self._wkv_layers = layers
+
+    @staticmethod
+    def _wkv_layer_step(layer, a, b, pmax, x):
+        """One timestep of ONE 'wkv'-recurrence block (RWKV numerator/denominator linear attention,
+        BYTE-FOR-BYTE the same algebra as `_emerge_wkv_lm_derisk.py`'s `WKV.forward` default branch / its
+        `WkvLayer.forward`, transcribed from torch to numpy -- verified to match the real torch forward to
+        float32 precision by this rung's own test, see `tests/test_wkv_readout_multilayer.py`). `x` is the
+        RAW (pre-LayerNorm) input vector for this layer at this timestep -- the token embedding row for layer
+        0, or the PREVIOUS layer's output `h` at this same timestep for an extra layer (see `step_wkv`).
+
+        Reads using the PRE-update state (`a`,`b`,`pmax` reflect strictly EARLIER timesteps) combined with
+        `x`'s OWN current-token bonus `u` -- this is the RWKV design (`wkv_t = (a_{t-1} + exp(u+k_t)*v_t) /
+        (b_{t-1} + exp(u+k_t))`) and is the OPPOSITE order from `logits()`/`advance()` above (that ssm/
+        dual-nonneg branch updates state to include the current token, THEN reads) -- getting this order
+        backwards silently shifts every logit by one timestep, so it is called out explicitly here rather than
+        left to be inferred from the algebra alone.
+
+        Returns `(new_a, new_b, new_pmax, out)`; `out = r * (Wo @ wkv)` is this layer's contribution at this
+        timestep (the base layer's own output IS `out`; an extra layer's caller adds it as a residual — see
+        `step_wkv`)."""
+        m = x.mean(); s = x.std() + 1e-5
+        z = (x - m) / s * layer["ln_w"] + layer["ln_b"]
+        kt = layer["Wk"] @ z; vt = layer["Wv"] @ z
+        rt = 1.0 / (1.0 + np.exp(-(layer["Wr"] @ z)))
+        u = layer["u"]
+        q = np.maximum(pmax, u + kt)
+        e1 = np.exp(pmax - q); e2 = np.exp(u + kt - q)
+        wkv = (e1 * a + e2 * vt) / (e1 * b + e2 + 1e-8)
+        out = rt * (layer["Wo"] @ wkv)
+        logwdec = np.log(layer["wdec"] + 1e-30)
+        pmax2 = np.maximum(pmax + logwdec, kt)
+        e1b = np.exp(pmax + logwdec - pmax2); e2b = np.exp(kt - pmax2)
+        a2 = e1b * a + e2b * vt; b2 = e1b * b + e2b
+        return a2, b2, pmax2, out
+
+    def init_wkv_state(self):
+        """Fresh per-layer `(a,b,pmax)` running state for `step_wkv` -- one dict per layer in `_wkv_layers`,
+        matching `WKV.forward`'s own `a=zeros; b=zeros; pmax=full(-1e30)` initialization at the start of a
+        sequence. Requires `is_wkv_multilayer` (raises `RuntimeError` otherwise, naming the single-layer
+        `advance`/`logits` API as the alternative -- this class never silently guesses which recurrence family
+        a checkpoint uses)."""
+        if not self.is_wkv_multilayer:
+            raise RuntimeError(
+                "init_wkv_state()/step_wkv() require a multi-layer 'wkv'-recurrence checkpoint "
+                "(is_wkv_multilayer is False for this one -- use advance()/logits() instead, the "
+                "ssm/dual-nonneg path this checkpoint was actually trained with)."
+            )
+        D = self.D
+        return [{"a": np.zeros(D), "b": np.zeros(D), "pmax": np.full(D, -1e30)} for _ in range(self.n_wkv_layers)]
+
+    def step_wkv(self, state, tid):
+        """One autoregressive step of the FULL multi-layer 'wkv'-recurrence stack: reads `tid` through every
+        layer (layer 0 from the token embedding directly -- NO residual, matching `WKV.forward`'s own
+        `h = stack(outs,1)`, not `x + stack(outs,1)`; each extra layer residual-added onto the running `h`,
+        matching `h = h + blk(h)`), then applies the SAME `head` Linear both recurrence families share
+        (`head.weight`/`head.bias`, already loaded in `__init__` as `self.head_w`/`self.head_b` -- reused
+        UNCHANGED, not re-read here). Returns `(new_state, logits[V])`; `logits` predicts the token AFTER
+        `tid`, exactly like `WKV.forward`'s own per-position output."""
+        x = self.emb[tid]
+        new_state = []
+        h = None
+        for idx, (layer, st) in enumerate(zip(self._wkv_layers, state)):
+            layer_input = x if idx == 0 else h
+            a2, b2, pmax2, out = self._wkv_layer_step(layer, st["a"], st["b"], st["pmax"], layer_input)
+            new_state.append({"a": a2, "b": b2, "pmax": pmax2})
+            h = out if idx == 0 else h + out
+        logits = self.head_w @ h + self.head_b
+        return new_state, logits
+
+    def generate_wkv_multilayer(self, prompt_ids, max_new_tokens=20, temperature=1.0, seed=0, unk_penalty=-1e30):
+        """Greedy-temperature autoregressive free-generation through `step_wkv` -- a HOST-SIDE decode/
+        verification utility (categorical sampling via `numpy.random`, NOT the genuine few-spike Izhikevich
+        soft-WTA `FewSpikeWordRead` uses; see this block's own module-level docstring for why this recurrence
+        family is not yet spiking-deployed at all). Proves a `--save-ssm` checkpoint loads + free-generates a
+        coherent-shaped token sequence end-to-end; it is NOT a claim of a spiking read, and is not called from
+        `webapp/wkv_mouth_generator.py`. Returns the full token-id sequence (`prompt_ids` + generated)."""
+        rng = np.random.default_rng(seed)
+        state = self.init_wkv_state()
+        gen = list(prompt_ids)
+        logits = None
+        for t in gen:
+            state, logits = self.step_wkv(state, t)
+        for _ in range(max_new_tokens):
+            lg = logits.copy()
+            if self.unk_idx >= 0:
+                lg[self.unk_idx] = unk_penalty
+            p = _softmax(lg / max(temperature, 1e-6))
+            nxt = int(rng.choice(len(p), p=p))
+            gen.append(nxt)
+            state, logits = self.step_wkv(state, nxt)
+        return gen
 
 
 # ----------------------------------------------------------------------------------------------------------------
