@@ -20,7 +20,15 @@
 set -e
 OUT_REL="$1"; TEMPLATE="$2"; shift 2
 [ -z "$OUT_REL" ] || [ -z "$TEMPLATE" ] && { echo "see header for usage" >&2; exit 1; }
-NODES=(pool40 pool41 pool42)
+NODES=(${POOL_NODES:-pool40 pool41 pool42})
+# SINGLE-NODE RESILIENCE (2026-09-03, matches tools/pool_queue.sh): drop unreachable nodes so one
+# down node (e.g. pool40 offline) does NOT round-robin ~1/3 of the sweep onto a dead host. Respects a
+# POOL_NODES override too. Refuses only if NO node is reachable.
+_live=(); for _n in "${NODES[@]}"; do
+  timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=6 "$_n" true >/dev/null 2>&1 && _live+=("$_n") \
+    || echo "  (sweep_pool: skipping unreachable node $_n)" >&2
+done
+[ ${#_live[@]} -gt 0 ] && NODES=("${_live[@]}") || { echo "sweep_pool: no reachable pool node" >&2; exit 1; }
 REMOTE="derisk-pool/sim"
 
 # Build the grid: first axis fills {V} (the template's inline slot); further axes append as --name value.
