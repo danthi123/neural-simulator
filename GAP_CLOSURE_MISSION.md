@@ -13,6 +13,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02d (READ FIRST; LATEST anchor — supersedes 2026-09-02c below)
+**`main` = `ff616636` (CLAUDE driving; owner engaged this session, steered a strategic reframe).**
+
+**⭐ STRATEGIC REFRAME (owner, 2026-09-02): the objective flips from "wire faculties ON" to "RETIRE scaffolds OFF."** Ground truth: ~47 faculties are default-ON but `scaffold_retired=YES` on **ZERO** of 64 — we integrated faculties ONTO the host scaffold (Qwen mouth generates, host composer binds, separate pools run) and retired none, which is why huge integration progress didn't change the felt character. Run TWO lanes in parallel (owner: "do both"): **LANE A** = plumbing made defensible/biologized/RETIRED; **LANE B** = the frontier (own-voice fluency + lived learning). Full grounded roadmap: the `scaffold-retirement-roadmap` workflow output (walls + fastest routes), and the 2026-09-02 findings below.
+
+**MERGE-WAVE ARC COMPLETE this session:** Wave 1+2+3 = 11 organs on ONE `merge_organs` pool, all gates GO; wave1+wave2 organ-read parity confirmed on cupy 6/6 byte-identical (2 cupy fixes: `from_host` `a099e61a` + `_rest_v` `3ed20b24`); Wave 3 pmem NO-GO CLOSED (`ff616636`: latent seed-42 release fragility + operating-point instrument artifact, biology-grounded plateau_margin fix).
+
+**Also landed this session:** #108 100k-knowledge flip (`673b49c5`); read-isolation integrity sweep (14+15th+29-runner audits, comprehension LIVE Gate-B leak fixed); **plastic-mask fix** (`509c7137`, additive default-off `BRAIN_ENFORCE_PLASTIC_MASK`, adversarially verified 4/4 — closes the Hebbian-path `plastic=False`-unenforced substrate bug, flip owner-gated); **own-voice fluency capacity rung** (`ddad9d0c`, d192 within **0.084 nats** of the fluency band, 6/6 — capacity is the efficient lever); **subword tokenizer swap** (`ef792d01`, retrain unblocked); **single-pool flip soak GO 6/6** (substrate consolidation no-regression-verified, flip ready).
+
+**IN FLIGHT:** cross-session-persistence workflow (`wh7n3ggkk`, additive default-off — the "brain remembers yesterday" learn-grow unlock; B7 prove-gap → build → verify).
+
+**OWNER-GATED DECISIONS (do NOT do autonomously):** (1) the own-voice fluency **retrain** (~60 GPU-h, d192-256/subword/matched-corpus 6-seed — the one genuine open-research bet: does a single-layer SSM CROSS the fluency band); (2) the production-default **flips** — single-pool (soak GO, ready), plastic-mask, C1 surprise→world-model (flip-verify GO), own-voice mouth (pending retrain). Everything cheap/safe/additive is being done autonomously.
+
+**OPEN RESIDUALS logged:** the N>4968 megakernel-v2 determinism gap (FAILURE_LOG; NOT a blocker for the single-pool/wave2 flips, sizes <4968); the STDP-path `plastic=False` gap; the composer's host VSA algebra + hand-wired connectome (emergent-structure follow-ons).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02c (READ FIRST; LATEST anchor — supersedes the 2026-09-02b header below)
 **↓ CURRENT ARC 2026-09-02c — `main` = `a3710bd3` (CLAUDE driving; owner present earlier this session).** Arc = ONE-BRAIN MERGE-WAVE completion + a read-isolation integrity sweep. All items below are on `main` + both remotes unless marked in-flight.
 
