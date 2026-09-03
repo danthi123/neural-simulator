@@ -29,6 +29,32 @@ carry machine-checkable anchors into live source, plus a claim<->ledger link. Th
   C  RATCHET (standing measurement). Recompute headline.total_faculties == len(rows) and headline.scaffold_retired ==
      count(scaffold_retired==YES); a mismatch blocks (mechanical drift, like summary_doc_freshness).
 
+  D  SCAFFOLD-RETIREMENT FORCING FUNCTION (added 2026-09-02, owner steer: make scaffold-retirement a first-class,
+     GATE-BLOCKED state, not a thing you can leave on forever). Every row carries a retire_status ∈
+       RETIRED                     the host cheat is gone from the default path (scaffold_retired must be YES)
+       RETIRABLE_NOW <YYYY-MM-DD>   the neural replacement already authors the verdict; only dead/overridden/demoted
+                                    host code remains — retire it. The DATE is when it became retirable.
+       BLOCKED:<frontier-row>       host cognition is still in the default path AND its neural replacement is not GO;
+                                    <frontier-row> names the ledger row carrying the unmet wall.
+       LEGITIMATE                   world/body/clock/initial-education (curriculum/corpus) — EXEMPT, never owes retirement.
+       ADDITIVE                     no host-COGNITION scaffold in the default path (a substrate-consolidation gap or a
+                                    permanent additive config bound is not a cheat) — a valid terminal state.
+     Four sub-rules block a commit:
+       (a) an on_by_default:YES row with NO retire_status BLOCKS (you must classify a live faculty).
+       (b) a BLOCKED:<key> must name a REAL frontier row that is genuinely NOT yet in the production default —
+           de_risked!=YES OR on_by_default!=YES. A dangling key, or one naming a row already fully in production
+           (de_risked=YES AND on_by_default=YES), BLOCKS. (The literal owner spec was "de_risked!=YES"; the ledger
+           currently has only neural-render+perception-motor at de_risked!=YES, both world/body-ish, so enforcing that
+           ALONE would collapse every BLOCKED onto neural-render and erase the genuine reward/topic-swap dependencies.
+           "de_risked!=YES OR on_by_default!=YES" is the strict-superset guard that still forbids the case the rule
+           targets — naming a solved, deployed capability as your blocker — while letting each BLOCKED point at its
+           actual unmet frontier.)
+       (c) a RETIRABLE_NOW dated more than K_RETIRABLE_DAYS (14) ago BLOCKS — the forcing function: a cheat that CAN be
+           retired cannot be left ON indefinitely; ship the retirement or re-classify with evidence.
+       (d) LEGITIMATE / ADDITIVE / RETIRED are valid terminal states (the curriculum/world/body/clock never owe a
+           retirement; a completed retirement is done).
+     Check D runs whenever the ledger or an anchored source file is staged (like A + C).
+
 HONEST BOUNDARY. A static gate proves reachable + default-on (config-as-source), NOT correctness, and cannot see a
 runtime brain.json manifest override (developed_brain_io) — those need a nightly BEHAVIORAL probe that builds the default
 ChatBrain and runs a lesion battery. LEVEL-3 ("spiking, on by default") credit is only real under a LESION test (disable
@@ -105,6 +131,10 @@ def _load_ledger(text):
             m = re.search(r'^\s{4}%s:\s*"?(.+?)"?\s*$' % f, block, re.M)
             if m:
                 row[f] = m.group(1)
+        # retire_status: quote- and trailing-comment-robust (PyYAML strips comments; the fallback must too).
+        m = re.search(r'^\s{4}retire_status:\s*"([^"]*)"|^\s{4}retire_status:\s*([^"#\n]+?)\s*(?:#.*)?$', block, re.M)
+        if m:
+            row["retire_status"] = (m.group(1) if m.group(1) is not None else m.group(2)).strip()
         # default_anchor entries
         anchors = []
         for a in re.split(r"\n\s{6}-\s+file:\s*", block)[1:]:
@@ -255,6 +285,75 @@ def _check_claim(text, rel, data):
     return []
 
 
+# ---------------------------------------------------------------- Check D: scaffold-retirement forcing function
+K_RETIRABLE_DAYS = 14  # a RETIRABLE_NOW cheat older than this BLOCKS — the forcing function.
+_RETIRE_TERMINAL = {"RETIRED", "LEGITIMATE", "ADDITIVE"}
+_RETIRE_DATE_RE = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
+
+
+def _check_retire_status(data, today=None):
+    """Every row must carry an honest retire_status; RETIRABLE_NOW ages out; BLOCKED must name a live frontier."""
+    import datetime
+    if today is None:
+        today = datetime.date.today()
+    problems = []
+    rows = data.get("rows", [])
+    keys = {r.get("key") for r in rows}
+    for row in rows:
+        key = row.get("key", "?")
+        on = _level(row.get("on_by_default", ""))
+        rs = row.get("retire_status")
+        rs = "" if rs is None else str(rs).strip()
+        # (a) absent on an on_by_default:YES row BLOCKS.
+        if not rs:
+            if on == "YES":
+                problems.append("[D] row %r is on_by_default:YES but has no retire_status — classify it "
+                                "(RETIRED / RETIRABLE_NOW <date> / BLOCKED:<frontier-row> / LEGITIMATE / ADDITIVE)." % key)
+            continue
+        head = re.split(r"[:\s]", rs, 1)[0]
+        if head == "RETIRED":
+            # (d) consistency: a RETIRED row's scaffold_retired must actually be YES.
+            if _level(row.get("scaffold_retired", "")) != "YES":
+                problems.append("[D] row %r retire_status:RETIRED but scaffold_retired!=YES — the two must agree." % key)
+        elif head in ("LEGITIMATE", "ADDITIVE"):
+            pass  # (d) valid terminal states — never owe a retirement.
+        elif head == "RETIRABLE_NOW":
+            m = _RETIRE_DATE_RE.search(rs)
+            if not m:
+                problems.append("[D] row %r retire_status:RETIRABLE_NOW must carry a YYYY-MM-DD date "
+                                "(e.g. 'RETIRABLE_NOW 2026-09-02')." % key)
+            else:
+                try:
+                    d = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+                except ValueError:
+                    problems.append("[D] row %r retire_status:RETIRABLE_NOW carries an invalid date %r." % (key, m.group(0)))
+                    continue
+                age = (today - d).days
+                if age > K_RETIRABLE_DAYS:
+                    problems.append("[D] row %r retire_status:RETIRABLE_NOW dated %s is %d days old (> %d) — a cheat "
+                                    "scaffold that CAN be retired cannot be left ON: ship the retirement (flip to "
+                                    "RETIRED) or re-classify with evidence." % (key, m.group(0), age, K_RETIRABLE_DAYS))
+        elif head == "BLOCKED":
+            fr = rs.partition(":")[2].strip()
+            if not fr:
+                problems.append("[D] row %r retire_status:BLOCKED must name a frontier row (BLOCKED:<key>)." % key)
+            elif fr not in keys:
+                problems.append("[D] row %r retire_status:BLOCKED:%s — %r is not a row in the ledger (dangling frontier)."
+                                % (key, fr, fr))
+            else:
+                frow = next(r for r in rows if r.get("key") == fr)
+                fde = _level(frow.get("de_risked", ""))
+                fon = _level(frow.get("on_by_default", ""))
+                if fde == "YES" and fon == "YES":
+                    problems.append("[D] row %r is BLOCKED on %r, but %r is ALREADY in the production default "
+                                    "(de_risked=YES AND on_by_default=YES) — not a genuine unmet frontier. Name a row "
+                                    "not yet in production (de_risked!=YES or on_by_default!=YES), or re-classify." % (key, fr, fr))
+        else:
+            problems.append("[D] row %r has an unknown retire_status %r (expected RETIRED / RETIRABLE_NOW <date> / "
+                            "BLOCKED:<row> / LEGITIMATE / ADDITIVE)." % (key, rs))
+    return problems
+
+
 # ---------------------------------------------------------------- entry points
 def check(paths):
     if paths is None or len(paths) == 0:
@@ -271,10 +370,11 @@ def check(paths):
     if not data or not data.get("rows"):
         return ["[PI] %s failed to parse / has no rows." % LEDGER_REL]
 
-    # A + C run when the ledger or any anchored source file is staged.
+    # A + C + D run when the ledger or any anchored source file is staged.
     if any(p == LEDGER_REL or p in ANCHORED_FILES for p in norm):
         problems += _check_anchors(data)
         problems += _check_ratchet(data)
+        problems += _check_retire_status(data)
     # B runs on staged governed docs.
     for p in norm:
         if not p.endswith(".md"):
@@ -405,6 +505,62 @@ def selftest():
     supported = "---\ntype: finding\nintegration_faculty: semantic-recall\n---\n\nNow integrated into /api/brain-chat.\n"
     if _check_claim(supported, "research/findings/g.md", d_boolB):
         bad.append("[B/bool] FALSE POSITIVE: a supported claim with BOOLEAN levels (wired=True) was flagged (the _level fix is dead)")
+
+    # ---- Check D: retire-status forcing function (FAILING DIRECTION FIRST, then negative controls) ----
+    import datetime as _dt
+    NOW = _dt.date(2026, 9, 2)
+    # fixture frontier targets (carry their own valid retire_status so they add no problems of their own):
+    fr_off = {"key": "neural-render", "de_risked": "PARTIAL", "on_by_default": "NO",
+              "retire_status": "LEGITIMATE"}                                              # a genuine frontier
+    fr_live = {"key": "semantic-recall", "de_risked": "YES", "on_by_default": "YES",
+               "retire_status": "LEGITIMATE"}                                             # already in production
+
+    def _d(rows):
+        return _check_retire_status({"rows": rows + [fr_off, fr_live]}, today=NOW)
+
+    # (a) absent retire_status on an on_by_default:YES row MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES"}]):
+        bad.append("[D] did NOT catch a missing retire_status on an on_by_default:YES row")
+    # (a) absent on an on_by_default:NO row must NOT flag.
+    if _d([{"key": "x", "on_by_default": "NO"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a missing retire_status on an on_by_default:NO row")
+    # (c) RETIRABLE_NOW past the age MUST flag (dated 2026-08-01 vs today 2026-09-02 -> 32 days > 14).
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "RETIRABLE_NOW 2026-08-01"}]):
+        bad.append("[D] did NOT catch a RETIRABLE_NOW aged past K_RETIRABLE_DAYS")
+    # (c) RETIRABLE_NOW within the age must NOT flag (dated today).
+    if _d([{"key": "x", "on_by_default": "YES", "retire_status": "RETIRABLE_NOW 2026-09-02"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a fresh (0-day) RETIRABLE_NOW")
+    # RETIRABLE_NOW with no date MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "RETIRABLE_NOW"}]):
+        bad.append("[D] did NOT catch a RETIRABLE_NOW with no date")
+    # (b) BLOCKED naming a dangling key MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "BLOCKED:no-such-row"}]):
+        bad.append("[D] did NOT catch a BLOCKED naming a non-existent frontier row")
+    # (b) BLOCKED naming a row already fully in production (de=YES AND on=YES) MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "BLOCKED:semantic-recall"}]):
+        bad.append("[D] did NOT catch a BLOCKED naming an already-in-production frontier (de=YES AND on=YES)")
+    # (b) BLOCKED with no frontier named MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "BLOCKED:"}]):
+        bad.append("[D] did NOT catch a BLOCKED with no frontier row named")
+    # (b) BLOCKED naming a genuine frontier (on=NO) must NOT flag.
+    if _d([{"key": "x", "on_by_default": "YES", "retire_status": "BLOCKED:neural-render"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a BLOCKED naming a genuine unmet frontier row")
+    # (d) RETIRED with scaffold_retired!=YES MUST flag; with scaffold_retired=YES must NOT.
+    if not _d([{"key": "x", "on_by_default": "YES", "scaffold_retired": "NO", "retire_status": "RETIRED"}]):
+        bad.append("[D] did NOT catch a RETIRED row whose scaffold_retired!=YES")
+    if _d([{"key": "x", "on_by_default": "YES", "scaffold_retired": "YES", "retire_status": "RETIRED"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a consistent RETIRED row (scaffold_retired=YES)")
+    # (d) LEGITIMATE / ADDITIVE are valid terminal states — must NOT flag.
+    if _d([{"key": "x", "on_by_default": "YES", "retire_status": "LEGITIMATE"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a valid LEGITIMATE terminal state")
+    if _d([{"key": "x", "on_by_default": "YES", "retire_status": "ADDITIVE"}]):
+        bad.append("[D] FALSE POSITIVE: flagged a valid ADDITIVE terminal state")
+    # an unknown status MUST flag.
+    if not _d([{"key": "x", "on_by_default": "YES", "retire_status": "MAYBE_LATER"}]):
+        bad.append("[D] did NOT catch an unknown retire_status token")
+    # BOOLEAN-coerced on_by_default (PyYAML) must still be read as YES by (a)/(b).
+    if not _check_retire_status({"rows": [{"key": "x", "on_by_default": True}, fr_off, fr_live]}, today=NOW):
+        bad.append("[D/bool] did NOT catch a missing retire_status on on_by_default=True(bool)")
 
     # ---- scoping ----
     if check(None) or check([]):
