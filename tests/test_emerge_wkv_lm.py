@@ -12,6 +12,48 @@ import numpy as np
 import pytest
 
 
+def test_bpe_vocab_adapter_is_a_drop_in_for_vocab_interface(tmp_path):
+    """Subword-tokenizer swap (additive, --tokenizer bpe, 2026-09-02): the trainer was word-vocab-only (<unk>-riddled
+    on arbitrary chat topics) -- _BPEVocabAdapter wraps a loaded BPETokenizer with Vocab's own interface
+    (.ids/.i2w/.w2i/.unk/.size) so fit_bigram/fit_interp_trigram/build_and_train_wkv/--save-ssm/--generate need ZERO
+    changes. Pins: the adapter's surface matches the tokenizer, and --tokenizer defaults to 'word' (the pre-swap
+    default path stays byte-identical -- verified separately by SHA256-identical --save-ssm checkpoints, see the
+    2026-09-02 landing commit)."""
+    from sim.bpe_tokenizer import BPETokenizer
+    from research.runners._emerge_wkv_lm_derisk import _BPEVocabAdapter, DEFAULT_BPE_PATH
+    corpus = "the cat sat on the mat . the cat ran away . " * 30
+    tok = BPETokenizer(); tok.train(corpus, vocab_size=60)
+    p = tmp_path / "bpe.json"; tok.save(str(p))
+    loaded = BPETokenizer.load(str(p))
+    adapter = _BPEVocabAdapter(loaded)
+    assert adapter.size == loaded.vocab_size == len(adapter.i2w)
+    assert adapter.i2w == loaded.vocab
+    assert adapter.unk == adapter.w2i["<UNK>"]
+    s = ["the", "cat", "sat"]
+    assert adapter.ids(s) == loaded.encode(" ".join(s))                    # exact re-use of the tokenizer's own contract
+    assert DEFAULT_BPE_PATH == "bridges/wkv_ckpt/wkv_bpe8k.json"
+
+
+def test_tokenizer_cli_flag_defaults_to_word(monkeypatch):
+    """--tokenizer must default to 'word' -- the additive-swap guarantee (byte-identical when the flag is unused)."""
+    import argparse
+    from research.runners import _emerge_wkv_lm_derisk as mod
+    captured = {}
+    real_parse_args = argparse.ArgumentParser.parse_args
+    def fake_parse_args(self, *a, **kw):
+        ns = real_parse_args(self, ["--seeds", "0"])   # only what's needed to populate defaults
+        captured["tokenizer"] = ns.tokenizer
+        captured["bpe_path"] = ns.bpe_path
+        raise SystemExit(0)   # bail before any actual training work
+    monkeypatch.setattr(argparse.ArgumentParser, "parse_args", fake_parse_args)
+    try:
+        mod.main()
+    except SystemExit:
+        pass
+    assert captured["tokenizer"] == "word"
+    assert captured["bpe_path"] == mod.DEFAULT_BPE_PATH
+
+
 def test_fair_trigram_and_ppmi_and_loader_import_and_run():
     from research.runners._emerge_wkv_lm_derisk import fit_interp_trigram, build_ppmi_codes, load_stories, _bucket
     V = 30

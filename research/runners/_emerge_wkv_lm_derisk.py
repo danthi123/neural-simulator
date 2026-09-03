@@ -33,6 +33,27 @@ import numpy as np
 from research.runners._emerge_reservoir_lm_derisk import Vocab, fit_bigram
 from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentences
 from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, _bucket
+from sim.bpe_tokenizer import BPETokenizer
+
+DEFAULT_BPE_PATH = "bridges/wkv_ckpt/wkv_bpe8k.json"
+
+
+class _BPEVocabAdapter:
+    """Subword-tokenizer swap (additive, --tokenizer bpe): wraps a loaded BPETokenizer with the SAME interface the
+    trainer already uses off `Vocab` (.ids/.i2w/.w2i/.unk/.size) so the WORD path below is untouched byte-for-byte
+    and every downstream consumer (fit_bigram/fit_interp_trigram/build_and_train_wkv/--save-ssm/--generate) is a
+    pure drop-in -- no other call site changes. `.ids(s)` re-joins the already-tokenized word list and re-splits
+    it through the BPE merges (the tokenizer's own .encode contract), so 0% hard-OOV replaces the word vocab's
+    <unk>-riddled top-K."""
+    def __init__(self, bpe: BPETokenizer):
+        self.bpe = bpe
+        self.i2w = list(bpe.vocab)
+        self.w2i = {t: i for i, t in enumerate(bpe.vocab)}
+        self.unk = self.w2i.get("<UNK>", 0)
+        self.size = bpe.vocab_size
+
+    def ids(self, s):
+        return self.bpe.encode(" ".join(s))
 
 OUT = Path("research/findings/raw/_emerge_wkv_lm.json")
 
@@ -367,6 +388,13 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories_train.txt")
     ap.add_argument("--vocab", type=int, default=2000)
+    ap.add_argument("--tokenizer", choices=["word", "bpe"], default="word",
+                    help="word (default) = per-word top-K vocab, byte-identical to pre-swap behavior. bpe = load a "
+                         "pretrained subword BPE tokenizer (--bpe-path); V is then the TOKENIZER's vocab_size "
+                         "(--vocab is ignored) so arbitrary chat-topic corpora become representable (measured 0% "
+                         "hard-OOV for wkv_bpe8k.json) instead of <unk>-riddled word-salad.")
+    ap.add_argument("--bpe-path", dest="bpe_path", type=str, default=DEFAULT_BPE_PATH,
+                    help="(--tokenizer bpe) path to the pretrained BPE merges+vocab JSON (sim.bpe_tokenizer.BPETokenizer.load).")
     ap.add_argument("--n-sentences", type=int, default=200000)
     ap.add_argument("--max-train-sents", type=int, default=60000)
     ap.add_argument("--max-eval-sents", type=int, default=3000)
@@ -430,7 +458,11 @@ def main():
         tr = [sents[i] for i in idx[:cut]][:args.max_train_sents]
         ev = [sents[i] for i in idx[cut:]][:args.max_eval_sents]
         dev = tr[-min(2000, len(tr)//5):]                # held-out dev for trigram lambda tuning
-        vocab = Vocab.build(tr, V=args.vocab); V = vocab.size
+        if args.tokenizer == "bpe":                      # additive subword swap -- see _BPEVocabAdapter docstring
+            vocab = _BPEVocabAdapter(BPETokenizer.load(args.bpe_path))
+        else:
+            vocab = Vocab.build(tr, V=args.vocab)         # default path, UNCHANGED
+        V = vocab.size
         tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]; dev_ids = [vocab.ids(s) for s in dev]
 
         P_bi = fit_bigram(tr_ids, V)
