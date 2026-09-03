@@ -1,1 +1,1 @@
-2026-09-03T19:06:19Z	content-addressable retrieval-augmented LM long-tail gains
+2026-09-03T18:58:50Z	perplexity/NLL comparability across tokenization granularities (char vs BPE vs word) -- does the crossing bar move with tokenizer choice
