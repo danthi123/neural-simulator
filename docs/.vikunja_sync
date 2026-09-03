@@ -18,3 +18,6 @@ self-model, vision-identity, grammar) — confirmation of already-DONE/closed ca
 no natural task to attach a note to without bloat; (2) the hardware-upgrade decision (consumer-3090
 reference gate landed, commit 4bd3a7ac1/dd132f8a5) — already tracked in owner memory, no dedicated
 big-picture board row exists for it and creating one would blur capability-tracking with infra/procurement.
+
+## 2026-09-03  fluency-arc-cont
+Reconciled #193 with the token-lever + divnorm-NO-GO + depth-next results (per the new Check-I coupling).
