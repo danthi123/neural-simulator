@@ -523,6 +523,10 @@ def main():
     sents = (load_stories(args.corpus, args.n_sentences, max_len=args.max_len)
              if getattr(args, "contiguous", False) else load_sentences(args.corpus, args.n_sentences))
     t0 = time.time(); per_seed = {}
+    # SPEED (additive, result-preserving): the BPE adapter is seed-INDEPENDENT (it just wraps the loaded tokenizer),
+    # so build it ONCE and reuse across seeds -> its per-word tokenization cache persists, making seeds 2..N tokenize
+    # at cache-hit speed (the whole sentence pool is shared across seeds). Identical vocab/ids to per-seed creation.
+    _bpe_vocab = _BPEVocabAdapter(BPETokenizer.load(args.bpe_path)) if args.tokenizer == "bpe" else None
     for seed in args.seeds:
         rng = np.random.default_rng(seed)
         idx = rng.permutation(len(sents)); cut = int(0.85 * len(sents))
@@ -530,7 +534,7 @@ def main():
         ev = [sents[i] for i in idx[cut:]][:args.max_eval_sents]
         dev = tr[-min(2000, len(tr)//5):]                # held-out dev for trigram lambda tuning
         if args.tokenizer == "bpe":                      # additive subword swap -- see _BPEVocabAdapter docstring
-            vocab = _BPEVocabAdapter(BPETokenizer.load(args.bpe_path))
+            vocab = _bpe_vocab                           # ONE adapter (cache persists across seeds); ids are identical
         else:
             vocab = Vocab.build(tr, V=args.vocab)         # default path, UNCHANGED
         V = vocab.size
