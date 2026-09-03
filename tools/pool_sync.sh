@@ -33,7 +33,12 @@ for N in $NODES; do
         "$N:$REMOTE_DIR" "$LOCAL_DIR" 2>/dev/null) || { echo "  $N: UNREACHABLE (skipped)"; continue; }
   n=$(printf '%s\n' "$out" | grep -cE '^>f' || true)
   echo "  $N: ${DRY:+would pull }$n file(s)"
-  printf '%s\n' "$out" | grep -E '^>f' | grep -vE '\.prov\.json$' | awk '{print "      "$2}' | head -30
+  # BUGFIX (2026-09-03): under `set -eo pipefail`, this display-only pipeline dies with exit 1 whenever
+  # a node has ZERO new files -- grep '^>f' finds no match, exits 1, and pipefail propagates that through
+  # awk/head to kill the WHOLE SCRIPT before later nodes are even reached. Caught wiring this into a
+  # systemd timer for unattended runs: the very first automated invocation "failed" after pool41 (0 new
+  # files) and never reached pool42. `|| true` makes "nothing new to show" a normal outcome, not a crash.
+  printf '%s\n' "$out" | grep -E '^>f' | grep -vE '\.prov\.json$' | awk '{print "      "$2}' | head -30 || true
   total=$((total+n))
 done
 echo "pool_sync: ${DRY:+(dry-run) }$total file(s) ${DRY:+would be }pulled from [$NODES]"

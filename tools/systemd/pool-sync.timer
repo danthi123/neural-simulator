@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the pool result sync-back every 15 min (2026-09-03: found 179 result JSONs stranded on pool41/pool42 because pool_sync.sh existed but nothing ever invoked it — the dispatcher pushes jobs but nothing pulled results back)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

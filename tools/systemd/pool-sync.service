@@ -1,0 +1,12 @@
+[Unit]
+Description=Pull completed result artifacts back from the mini-PC pool (tools/pool_sync.sh)
+
+[Service]
+Type=oneshot
+User=dant123
+Group=dant123
+WorkingDirectory=/home/dant123/Projects/sim
+Environment=HOME=/home/dant123
+ExecStart=/usr/bin/bash /home/dant123/Projects/sim/tools/pool_sync.sh
+StandardOutput=append:/home/dant123/Projects/sim/research/queue/pool_sync.log
+StandardError=append:/home/dant123/Projects/sim/research/queue/pool_sync.log
