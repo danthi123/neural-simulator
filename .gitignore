@@ -103,6 +103,13 @@ bridges/lineage/
 # state; not source.
 bridges/synapse_shards/
 
+# Cross-session learning persistence (#B8, BRAIN_PERSIST_LEARNING, default-OFF). Per-user/brain-identity
+# versioned checkpoints (D5 store + xedge weights + acquired facts) written by
+# research/runners/cross_session_persistence.py on the sleep-depth tick / shutdown, reloaded at boot.
+# Runtime state, not source; accumulates over a production server's lifetime (retention-pruned but still
+# not something to commit).
+bridges/persist/
+
 # Webapp runtime artifacts (logs, restart helpers)
 webapp_restart*.log
 webapp_restart*.log.err
