@@ -1,0 +1,43 @@
+{
+ "run_id": "1788420431-612495",
+ "runner": "research/runners/_vision_lindiscrim_readout_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_vision_lindiscrim_readout_derisk.py",
+  "--s2-norm",
+  "satdiv",
+  "--s2-satdiv-sigma",
+  "16",
+  "--s2-satdiv-scale",
+  "1200",
+  "--s2-satdiv-n",
+  "2.0",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/lanes/perception/satdiv_sig16_sc1200_6seed.json"
+ ],
+ "git_sha": "65c5a334",
+ "git_dirty": true,
+ "source_kind": "git_archive",
+ "source_manifest_sha256": "cf052cc3c5681d943167636745f13e0250403c0dc95ccb6d4a834c487a3db9d0",
+ "source_manifest_verified_at_start": true,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": true,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-03T03:27:11",
+ "env": {
+  "POOL_CHECKED_REASON": "board #135 satdiv (Carandini-Heeger divisive-norm ratio) \u2014 scoped ad0648672; the alpha/z AFFINE readout family is EXHAUSTED (alpha=0.5 collapses LEARNED_spkwta to ~0.257 at/below chance, 0/6); named next step is this (sigma,scale) sweep re-tuned for satdiv geometry; 2-seed smoke found sigma=8/scale=771 promising (rate ceiling 0.62 vs z 0.47) but capability_go still 0/6",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/lanes/perception/satdiv_sig16_sc1200_6seed.json"
+}

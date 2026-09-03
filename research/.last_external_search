@@ -1,1 +1,1 @@
-2026-09-02T11:38:34Z	cross-faculty no-regression / no-op-flip-preserves-decision instrument for a spiking one-brain: external methodology
+2026-09-03T07:47:28Z	fixed random-projection reservoir (frozen random hidden bank) + trained linear readout: does readout-side normalization/regularization improve separability, or does capacity scale with hidden-layer size (S2 template bank size)?
