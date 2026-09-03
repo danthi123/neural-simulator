@@ -190,6 +190,47 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 a = e1 * a + e2 * vt; b = e1 * b + e2; pmax = pmax2
             return torch.stack(outs, 1)
 
+    class SsmDualNonnegLayer(nn.Module):
+        """DEPTH LEVER (2026-09-03, gap#1 fluency arc -- the spiking mouth's next mechanism after the ssm/
+        dual-nonneg NO-GO and the divnorm NO-GO; research/findings/2026-09-03-spiking-mouth-ssm-dualnonneg-
+        fluency-NO-GO-first-brain-based-baseline.md named DEPTH as the untested architectural lever, since the
+        exact-math wkv reaches fluency at n_layers=2 but ssm/dual-nonneg was capped at n_layers=1 by an assert).
+        One STACKABLE pre-norm residual dual-nonneg leaky-integrator block, used for layers >=1 (the deeper
+        layers on top of layer 0, the model's existing base dual-nonneg loop in WKV.forward). Mirrors WkvLayer's
+        stacking pattern EXACTLY (pre-norm -> per-layer recurrence -> the caller adds the residual h = h + delta)
+        -- but its recurrence is the SSM/dual-nonneg leaky integrator, byte-for-byte the base loop's per-step
+        update (ap2 = wdec*ap2 + relu(v_t); an2 = wdec*an2 + relu(-v_t); out = r_t * Wo_sp([ap2, an2])), NOT
+        WkvLayer's num/den-normalized wkv_t. This is deliberate, not an oversight: --recurrence ssm's entire
+        reason to exist (see the Rung 2 comment below, ~"SPIKING-SUBSTRATE-FAITHFUL leaky-integrator") is that
+        the SPIKING SUBSTRATE realizes a slow leaky conductance integral, not a normalized-attention read;
+        stacking WkvLayer blocks on an ssm base would silently reintroduce the exp(k)-weighted num/den op this
+        branch exists to avoid, defeating the substrate-faithfulness the whole --recurrence ssm family is for.
+        Each layer owns its own Wv/Wr/Wo_sp + decay w (uniform or per-channel per --uniform-decay) -- independent
+        state, exactly like WkvLayer owns its own Wk/Wv/Wr/Wo/w/u rather than sharing layer 0's. Deliberately
+        OMITS the base loop's optional co-adaptation levers (--input-noise/--plateau-surrogate/--dual-nonneg-
+        divnorm): WkvLayer is "BYTE-FOR-BYTE the baseline wkv branch's DEFAULT loop" (its own docstring), so this
+        mirrors that -- the bare recurrence only, matching the plain wkv depth lever's scope."""
+        def __init__(self, D, uniform_decay):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wv = nn.Linear(D, D, bias=False)
+            self.Wr = nn.Linear(D, D, bias=False)
+            self.Wo_sp = nn.Linear(2 * D, D, bias=False)
+            self.w = nn.Parameter(torch.zeros(1 if uniform_decay else D))
+
+        def forward(self, h):                          # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            v = self.Wv(z); r = torch.sigmoid(self.Wr(z))
+            wdec = torch.exp(-torch.nn.functional.softplus(self.w))
+            ap2 = torch.zeros(B, D, device=h.device); an2 = torch.zeros(B, D, device=h.device)
+            outs = []
+            for t in range(T):
+                ip = torch.relu(v[:, t]); im = torch.relu(-v[:, t])
+                ap2 = wdec * ap2 + ip; an2 = wdec * an2 + im
+                outs.append(r[:, t] * self.Wo_sp(torch.cat([ap2, an2], -1)))
+            return torch.stack(outs, 1)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -210,6 +251,12 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             # are BYTE-IDENTICAL to the original single-block model (the load-bearing reproduction guarantee).
             self.n_layers = n_layers
             self.extra = nn.ModuleList([WkvLayer(D, getattr(args, "uniform_decay", False)) for _ in range(n_layers - 1)])
+            # DEPTH LEVER (2026-09-03, ssm/dual-nonneg): mirrors self.extra immediately above, but stacks
+            # SsmDualNonnegLayer blocks (see that class's docstring) instead of WkvLayer blocks -- used only by
+            # the --recurrence ssm --dual-nonneg branch below. Also EMPTY at n_layers=1 (range(0)), so it
+            # consumes zero RNG draws at init regardless of --recurrence -> the n_layers=1 byte-identical
+            # guarantee holds unconditionally, not just for the branch that happens to be selected.
+            self.extra_ssm = nn.ModuleList([SsmDualNonnegLayer(D, getattr(args, "uniform_decay", False)) for _ in range(n_layers - 1)])
 
         def forward(self, x):                          # x: [B,T] token ids
             B, T = x.shape
@@ -219,7 +266,11 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             if self.memoryless:
                 wdec = torch.zeros_like(wdec)           # ANTI-CHEAT: no carry -> only the current token
             if RECUR == "ssm":
-                assert self.n_layers == 1, "--n-layers>1 is only implemented for --recurrence wkv (the baseline branch)"
+                # DEPTH LEVER (2026-09-03): --n-layers>1 is now ALSO implemented for --recurrence ssm
+                # --dual-nonneg (the base loop below -- see the `for blk in self.extra_ssm` stacking after it).
+                # --plateau-exact and the plain/--spiking-state/--nonneg-state branch at the bottom of this `if
+                # RECUR == "ssm":` are UNCHANGED and still assert n_layers==1 inline, at the point each is
+                # selected (they have their own realizability targets this lever does not touch).
                 # SPIKING-SUBSTRATE-FAITHFUL leaky-integrator (Rung 2 de-risk): a_t = decay*a_{t-1} + v_t (a slow
                 # conductance/membrane leak -- NO exp(k) weighting, NO num/den normalization = the part hard on spikes),
                 # out = receptance-gated read. If GO, the spiking membrane leak realizes this state directly.
@@ -242,6 +293,9 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                     _dnv_sigma = float(getattr(args, "divnorm_sigma", 0.5))
                     _dnv_scale = float(getattr(args, "divnorm_scale", 1.0))
                     if getattr(args, "plateau_exact", False):
+                        assert self.n_layers == 1, ("--n-layers>1 is only implemented for --recurrence ssm "
+                            "--dual-nonneg's BASE loop, not --plateau-exact (a distinct exact on-bridge "
+                            "transfer target -- see SsmDualNonnegLayer's docstring for the scope)")
                         # EXACT on-bridge plateau transfer (gap#1<->gap#4 convergence): the recurrence IS
                         # fused_graded_dendritic_plateau's read state -- V = relu(sigmoid(slope*(pathway_w*rate - center)) - floor),
                         # floor = sigmoid(-slope*center) so V(0)=0. The leaky-integral of V (strength absorbed by the read-out) is
@@ -319,7 +373,13 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                         else:
                             rate = torch.cat([ap2, an2], -1)
                         outs2.append(r[:, t] * self.Wo_sp(rate))
-                    return self.head(torch.stack(outs2, 1))
+                    h = torch.stack(outs2, 1)             # [B,T,D] = layer-0 output (the base dual-nonneg loop, unchanged)
+                    for blk in self.extra_ssm:             # DEPTH: pre-norm residual ssm/dual-nonneg layers (empty at n_layers=1)
+                        h = h + blk(h)
+                    return self.head(h)
+                assert self.n_layers == 1, ("--n-layers>1 (--recurrence ssm) is only implemented for "
+                    "--dual-nonneg's base loop; the plain/--spiking-state/--nonneg-state branch below is "
+                    "still n_layers==1 only")
                 for t in range(T):
                     a = wdec * a + v[:, t]
                     if _nn:
@@ -508,8 +568,10 @@ def main():
     ap.add_argument("--max-eval-sents", type=int, default=3000)
     ap.add_argument("--d-model", type=int, default=256)
     ap.add_argument("--n-layers", dest="n_layers", type=int, default=1,
-                    help="DEPTH LEVER (gap#1): stack N pre-norm residual WKV layers. 1 = the original single block "
-                         "(byte-identical). >1 only implemented for --recurrence wkv (the baseline branch).")
+                    help="DEPTH LEVER (gap#1): stack N pre-norm residual layers. 1 = the original single block "
+                         "(byte-identical). >1 implemented for --recurrence wkv (the baseline branch) AND for "
+                         "--recurrence ssm --dual-nonneg's base loop (2026-09-03, SsmDualNonnegLayer); other ssm "
+                         "sub-paths (--plateau-exact, plain/--spiking-state/--nonneg-state) remain n_layers==1 only.")
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--batch", type=int, default=128)
     ap.add_argument("--lr", type=float, default=3e-3)
