@@ -814,6 +814,20 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 7. WALLS LEDGER (every known wall + its planned biological surpass)
 
+> **⭐ 2026-09-03 (board #135 continuation) — the satdiv divisive-normalization readout lever (named 2026-09-01)
+> is characterized BORDERLINE, not exhausted and not GO.** A full decisive 6-seed sweep of satdiv's (sigma,
+> scale) operating point (Carandini & Heeger 2012 semi-saturating ratio, `--s2-norm satdiv`) — 9 cells, sigma in
+> {8,16,32} x scale in {500,771,1200} — found `capability_go` 0/6 on every cell (54/54 seeds), so the strict
+> per-seed capability bar this lane uses is NOT crossed. But the best cell (sigma=8, scale=771) is the strongest
+> readout found anywhere in this arc (LEARNED_spkwta_held 0.4722, beats-NOGO-floor 5/6, load-bearing 6/6), with
+> `capability_go` misses that are narrow/structured (the learned-minus-V1-direct margin and position-pooled-out
+> criteria specifically, not a collapse) rather than exhausted. A new instrument finding: this operating point is
+> precision-fragile — a 0.1-unit scale change (771.0 vs 771.1) flipped the beats-NOGO verdict from 5/6 to 1/3 on
+> 3 shared seeds, so the prior "readout-exhausted" call (2026-09-01) was drawn at an unlucky scale precision, not
+> a fully-searched axis. Verdict: BORDERLINE — names a finer (sigma, scale, ridge) grid as next, not a fourth
+> confirmation of exhaustion. Finding
+> `2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md`.
+
 > **⭐ 2026-08-27 (continuation) — the one-brain INTEGRATION goal has its first two GO rungs (a LEARNED cross-region edge, then a genuinely three-factor/self-organized version); a hollow production flip on the honesty spine was found + fixed; a flip-soak instrument bug recurred 5×; the known-topic honesty gap named in the 2026-08-21 open-ended-chat wiring is closed.**
 > - **One-brain INTEGRATION R1: the FIRST learned faculty→faculty cross-region edge on the shared merge pool, 6/6 GO.** `d6_multiref_wm`'s held-referent slot pool → comprehension's `sel_agent`/`sel_patient` accumulators (WM-guided pronoun/reference resolution), admitted by the new FUNCTIONAL gate (F1-F4) the DESIGN branch specified, grown 0.05→~11-14 by the substrate's OWN rate-window Hebbian rule — advances the 2026-08-11 cross-region GO (which hand-injected a fixed-weight pathway) to a genuinely LEARNED one. Declared residuals: two-factor (not three-factor) plasticity, and a host-hardcoded candidate edge pair. Finding `2026-08-27-onebrain-integration-R1-wm-to-comprehension`.
 > - **One-brain INTEGRATION R2 closes both R1 residuals, 6/6 GO, with two honestly-narrower-than-bare-"self-organized" scope notes.** The rule is upgraded to strict three-factor (reward-deferred credit-gated) STDP, and the candidate set widens from R1's one hardcoded pair to an unbiased 6-edge set whose winning wire self-selects and tracks a per-seed RANDOM ground truth. Finding `2026-08-27-onebrain-integration-R2-threefactor-selforganized`.
