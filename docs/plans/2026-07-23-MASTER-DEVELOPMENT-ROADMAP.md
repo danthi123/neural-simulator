@@ -827,6 +827,16 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 > a fully-searched axis. Verdict: BORDERLINE — names a finer (sigma, scale, ridge) grid as next, not a fourth
 > confirmation of exhaustion. Finding
 > `2026-09-03-vision-satdiv-divisive-norm-readout-BORDERLINE.md`.
+> **UPDATE (same day, reframe/precision re-check):** the "capability_go was a STRICT GO" reading of the sig8/
+> scale771 6-seed artifacts was a terminology mix-up — `capability_go` stayed 0/6 throughout; the string those
+> artifacts carry is the looser `task_go_5of6_beat_and_lb` bar. The reframe-control concern (a 1-seed pipe test
+> found "93% of the readout's effect also present in a bare V1-direct control") does NOT hold at 93% across the
+> full 6-seed set — the real number is ~11% attributable to the manipulation / ~89% shared with the control,
+> seed-variable (-2.3% to +31.1%). The scale-precision-fragility claim (771.0 vs 771.1 flipping 5/6->1/3) also
+> does not replicate at 6 seeds (real flip: 5/6->4/6) — but the underlying scale-sensitivity IS real and a NEW
+> best-in-arc cell was found one step below the old hot zone: sigma=8, scale=763.3 (LEARNED_spkwta_held 0.5052,
+> first-ever `capability_go=True` on any single seed in this arc). Still BORDERLINE, better-bounded. Finding
+> `2026-09-03-satdiv-readout-mostly-in-control-BORDERLINE-refined.md`.
 
 > **⭐ 2026-08-27 (continuation) — the one-brain INTEGRATION goal has its first two GO rungs (a LEARNED cross-region edge, then a genuinely three-factor/self-organized version); a hollow production flip on the honesty spine was found + fixed; a flip-soak instrument bug recurred 5×; the known-topic honesty gap named in the 2026-08-21 open-ended-chat wiring is closed.**
 > - **One-brain INTEGRATION R1: the FIRST learned faculty→faculty cross-region edge on the shared merge pool, 6/6 GO.** `d6_multiref_wm`'s held-referent slot pool → comprehension's `sel_agent`/`sel_patient` accumulators (WM-guided pronoun/reference resolution), admitted by the new FUNCTIONAL gate (F1-F4) the DESIGN branch specified, grown 0.05→~11-14 by the substrate's OWN rate-window Hebbian rule — advances the 2026-08-11 cross-region GO (which hand-injected a fixed-weight pathway) to a genuinely LEARNED one. Declared residuals: two-factor (not three-factor) plasticity, and a host-hardcoded candidate edge pair. Finding `2026-08-27-onebrain-integration-R1-wm-to-comprehension`.
