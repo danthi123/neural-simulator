@@ -8,6 +8,17 @@ multi-file --corpus-paths path already consumes it. Lowercase because the
 tokenizer is re.findall(r"[a-z]+") (uppercase chars would mis-tokenize).
 
 Re-runnable; tries a small set of public Simple-Wiki sources in order.
+
+--- As downloaded 2026-09-03 (source rahular/simple-wikipedia), for the own-voice fluency retrain ---
+The output data/corpus/simplewiki.txt stays GITIGNORED (regenerable ~142 MB cache); this docstring is
+the tracked provenance/README pointer (owner-approved initial-education scaffold, decision #3).
+  rows (articles) . . . . . . . . . . . 769,764
+  size on disk  . . . . . . . . . . . . 142.4 MB
+  word-tokens ([a-z']+) . . . . . . . . ~23,367,858
+  BPE tokens (bridges/wkv_ckpt/wkv_bpe8k.json, V=8001) . . ~31.6M (measured BPE/word ratio 1.354)
+  hard-OOV under wkv_bpe8k.json . . . . 0.0000% (0 <UNK> in a 42,812-token sample -> byte/char fallback covers it)
+  mean/max BPE tokens per sentence (load_sentences 3-16 words) . . 14.3 / 45
+Consumed by: research/runners/_emerge_wkv_lm_derisk.py --tokenizer bpe --corpus data/corpus/simplewiki.txt
 """
 import os
 import re
