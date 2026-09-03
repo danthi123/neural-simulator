@@ -628,7 +628,76 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 for _ in range(max(n_layers, 1))
             ]) if RECUR in ("assoc", "assoc_t") else nn.ModuleList()
 
-        def forward(self, x):                          # x: [B,T] token ids
+            # PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, --pred-aux-weight, own-voice-fluency arc). WHY:
+            # the bound-investigation of the fluency arc (research/findings/2026-09-03-spiking-depth-tokens-
+            # closing-fluency-gap-milestone.md and its completeness-critic) converged every --recurrence family
+            # tried so far (wkv/ssm/hippo/assoc/assoc_t) on margin_vs_trigram ~ -0.13 to -0.15 at the ~20M-token
+            # budget -- an ARCHITECTURE-invariant floor. The strongest same-budget EXTERNAL datapoint the search
+            # surfaced is that the TRAINING OBJECTIVE, not architecture or data, is the dominant lever below
+            # ~20M tokens: at a matched 10M-word budget a hybrid causal+masked-objective model reaches BLiMP
+            # 0.794 vs a tuned n-gram's 0.633 and a plain causal LSTM's 0.661 (recurrence alone barely ties the
+            # n-gram -- exactly this arc's own failure mode). We cannot adopt a bidirectional/MLM objective
+            # outright (a causal model can never peek both sides at inference, and the deployable mouth is
+            # causal + eventually spiking), so this ports the underlying INSIGHT -- richer prediction targets
+            # densify the training signal -- into a strictly causal-compatible form.
+            #
+            # BIO FRAMING: cortical predictive coding (Rao & Ballard 1999, "Predictive coding in the visual
+            # cortex", Nat Neurosci 2:79-87; see also Friston's hierarchical predictive-processing account) casts
+            # cortex as continuously generating predictions of UPCOMING input at multiple levels/horizons, with
+            # only the residual (prediction error) driving further processing -- not merely a single "next
+            # token" read-out. This adds one FURTHER-AHEAD auxiliary read-out per --pred-aux-offsets entry
+            # (default: t+2 only), each an independent nn.Linear(D, V) applied to the SAME per-position hidden
+            # state `hidden` that self.head already reads (see `_out` below) -- so the shared recurrent
+            # representation is pushed, via gradient, to encode structure useful for predicting further ahead
+            # than the single-step causal objective alone requires, mirroring the multi-horizon character of
+            # cortical prediction. ONE HEAD PER OFFSET (not one head shared across offsets): a shared read-out
+            # would be asked to match two different token distributions (t+2 and t+3) from a single predicted
+            # distribution at position t, an incoherent objective -- each offset gets its own linear read-out so
+            # the objective stays well-posed.
+            #
+            # STRICTLY CAUSAL (the deployable-mouth-compatible part): hidden state at position t is built ONLY
+            # from tokens 0..t (unchanged -- this addition does not touch the recurrence), so nothing about the
+            # architecture or the forward pass looks into the future; only the auxiliary loss's TARGET (the
+            # token actually at t+k) reaches ahead, exactly like the existing causal loss's target (t+1) already
+            # does. Unlike an MLM objective, inference-time autoregressive generation (--generate) is completely
+            # unaffected -- the aux heads are pure TRAINING-time regularizers on the representation, discarded at
+            # generation time (generate() never calls net(x, aux=True)).
+            #
+            # BYTE-IDENTICAL WHEN OFF (the load-bearing guarantee, matching every other additive lever in this
+            # file): `self.aux_heads` is an nn.ModuleDict built empty by default and populated ONLY when
+            # `args.pred_aux_weight > 0.0`, and this construction is the LAST statement in __init__ (after
+            # self.head/self.extra/self.extra_ssm/self.hippo_layers/self.assoc_layers, exactly the position
+            # self.extra's own docstring establishes as required for RNG-order-preserving additive levers). When
+            # --pred-aux-weight is unset/0.0, `self.aux_heads` stays a truly EMPTY ModuleDict -- zero extra
+            # parameters, zero extra init-RNG draws -- so parameter init for every existing --recurrence arm is
+            # completely undisturbed, and `_out()` below degenerates to exactly `return self.head(hidden)`, the
+            # pre-existing return value at every one of this class's 6 return points.
+            self.aux_heads = nn.ModuleDict()
+            _pred_aux_w = float(getattr(args, "pred_aux_weight", 0.0) or 0.0)
+            if _pred_aux_w > 0.0:
+                for _k in (getattr(args, "pred_aux_offsets", None) or [2]):
+                    self.aux_heads[str(int(_k))] = nn.Linear(D, V)
+
+        def _out(self, hidden, aux):
+            """Single exit point for every --recurrence branch's final per-position hidden state -> vocab
+            logits, used by all 6 return points below (hippo/assoc/plateau-exact/ssm-dual-nonneg/ssm-plain/wkv)
+            instead of each calling `self.head(...)` directly, so the predictive-coding auxiliary objective
+            (see the docstring on `self.aux_heads` above) composes with EVERY branch from one place. `aux` is
+            False at every existing call site unless the caller explicitly opts in (see build_and_train_wkv's
+            training loop) -- eval/generate call `net(x)` with the forward default `aux=False`, so they are
+            unaffected regardless of whether aux_heads were constructed. When aux is False, OR when aux_heads is
+            empty (--pred-aux-weight unset), this is exactly `return self.head(hidden)` -- byte-identical to
+            every branch's pre-existing `return self.head(...)` line."""
+            logits = self.head(hidden)
+            if aux and len(self.aux_heads) > 0:
+                return logits, {k: ah(hidden) for k, ah in self.aux_heads.items()}
+            return logits
+
+        def forward(self, x, aux=False):
+            # x: [B,T] token ids. aux=False (default, every pre-existing call site: eval_perdepth/--generate)
+            # returns just the logits [B,T,V], byte-identical to before this addition. aux=True (only the
+            # training loop, only when --pred-aux-weight>0) additionally returns a {offset_str: aux_logits}
+            # dict from the SAME hidden state, via `_out` above -- see `self.aux_heads`'s docstring.
             B, T = x.shape
             h = self.ln(self.emb(x))                    # [B,T,D]
             if RECUR == "hippo":
@@ -640,7 +709,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 hh = h
                 for blk in self.hippo_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
-                return self.head(hh)
+                return self._out(hh, aux)
             if RECUR in ("assoc", "assoc_t"):
                 # CONTENT-ADDRESSABLE associative read (see AssocLayer's docstring for the full mechanism + bio
                 # framing: CA3 pattern completion / cortical associative memory, Ramsauer et al. 2020's modern-
@@ -654,7 +723,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 hh = h
                 for blk in self.assoc_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
-                return self.head(hh)
+                return self._out(hh, aux)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
             wdec = torch.exp(-torch.nn.functional.softplus(self.w))       # per-channel decay in (0,1)
             if self.memoryless:
@@ -711,7 +780,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                             ap2 = wdec * ap2 + Von; an2 = wdec * an2 + Voff
                             rate = torch.cat([ap2, an2], -1)
                             outs2.append(r[:, t] * self.Wo_sp(rate))
-                        return self.head(torch.stack(outs2, 1))
+                        return self._out(torch.stack(outs2, 1), aux)
                     for t in range(T):
                         ip = torch.relu(v[:, t]); im = torch.relu(-v[:, t])
                         if _inz > 0.0 and self.training:
@@ -770,7 +839,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                     h = torch.stack(outs2, 1)             # [B,T,D] = layer-0 output (the base dual-nonneg loop, unchanged)
                     for blk in self.extra_ssm:             # DEPTH: pre-norm residual ssm/dual-nonneg layers (empty at n_layers=1)
                         h = h + blk(h)
-                    return self.head(h)
+                    return self._out(h, aux)
                 assert self.n_layers == 1, ("--n-layers>1 (--recurrence ssm) is only implemented for "
                     "--dual-nonneg's base loop; the plain/--spiking-state/--nonneg-state branch below is "
                     "still n_layers==1 only")
@@ -810,7 +879,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                         outs.append(y)
                     else:
                         outs.append(r[:, t] * self.Wo(a))
-                return self.head(torch.stack(outs, 1))
+                return self._out(torch.stack(outs, 1), aux)
             u = self.u
             a = torch.zeros(B, D, device=x.device); b = torch.zeros(B, D, device=x.device)
             pmax = torch.full((B, D), -1e30, device=x.device)            # running max for numerical stability
@@ -830,7 +899,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             h = torch.stack(outs, 1)                     # [B,T,D]  = layer-0 output (the original single block)
             for blk in self.extra:                       # DEPTH: pre-norm residual WKV layers on top (empty at n_layers=1)
                 h = h + blk(h)
-            return self.head(h)                          # [B,T,V]
+            return self._out(h, aux)                     # [B,T,V], or ([B,T,V], aux_logits) when aux=True
 
     def pad_batch(seqs):
         m = max(len(s) for s in seqs)
@@ -854,6 +923,17 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     seqs = [s for s in tr_ids if len(s) >= 2]
     rng = np.random.default_rng(seed * 7 + 3)
 
+    # PREDICTIVE-CODING AUXILIARY OBJECTIVE (--pred-aux-weight, see self.aux_heads' docstring inside WKV.__init__
+    # for the full bio framing + design rationale). use_pred_aux gates the training-loop wiring below; when it is
+    # False (the default, --pred-aux-weight 0.0/unset), the training loop's forward call and loss computation are
+    # spelled EXACTLY as before this addition (`fwd(X)` -> `causal_loss` -> `loss = causal_loss`), so this branch
+    # is a pure byte-identical no-op. net.parameters() above already includes any constructed aux_heads
+    # (Adam optimizes them jointly with everything else) -- when aux_heads is empty (weight<=0) this is an
+    # empty-set no-op contribution to `params`.
+    pred_aux_weight = float(getattr(args, "pred_aux_weight", 0.0) or 0.0)
+    pred_aux_offsets = list(getattr(args, "pred_aux_offsets", None) or [2])
+    use_pred_aux = pred_aux_weight > 0.0
+
     # ---- SPEED (additive, --compile; RESULT-PRESERVING): the per-step WKV recurrence launches ~2.6k tiny kernels/step
     # (the `for t in range(T)` loop x ~10 ops), so training is launch/CPU-bound (GPU ~24% idle). torch.compile fuses the
     # unrolled loop into a CUDA-graph -- but reduce-overhead needs STATIC shapes. We pad every batch to ONE global fixed
@@ -866,6 +946,15 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     # eager branch below is byte-identical to the pre-optimization trainer. torch.compile is opt-in and NLL-parity-checked.
     fwd = net
     use_compile = bool(getattr(args, "compile", False))
+    if use_compile and use_pred_aux:
+        # NOT WIRED (honest scope limit, not a silent wrong-result risk): the aux forward path returns an extra
+        # {offset: tensor} dict output that reduce-overhead's static CUDA-graph capture is not verified against;
+        # rather than risk a silently-corrupted graph, refuse the combination until it is explicitly de-risked.
+        # Neither the CPU smoke nor the ready-to-fire GPU commands for this lever use --compile, so this does not
+        # block the arc; it only guards a combination nobody has exercised yet.
+        raise NotImplementedError(
+            "--compile + --pred-aux-weight>0 is not wired yet (the aux forward returns an extra dict output the "
+            "reduce-overhead CUDA-graph capture path has not been verified against) -- use one or the other.")
     Xbuf = None
     if use_compile:
         fixed_T = max((len(s) for s in seqs), default=2)
@@ -907,12 +996,37 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             else:
                 batch = [seqs[j] for j in idx_b]
                 X, msk = pad_batch(batch)                     # EAGER default path: byte-identical to the pre-opt trainer
-            logits = fwd(X)[:, :-1]                           # predict token t+1 from context 0..t
+            if use_pred_aux:
+                full_logits, aux_logits_by_off = fwd(X, aux=True)
+            else:
+                full_logits = fwd(X)                          # UNCHANGED call site when the aux objective is off
+            logits = full_logits[:, :-1]                      # predict token t+1 from context 0..t
             tgt = X[:, 1:]; m = msk[:, 1:]
             L = lossf(logits.reshape(-1, V), tgt.reshape(-1)).reshape(tgt.shape)
-            loss = (L * m).sum() / m.sum().clamp(min=1)
+            causal_loss = (L * m).sum() / m.sum().clamp(min=1)
+            loss = causal_loss
+            if use_pred_aux:
+                # ADDITIVE PREDICTIVE-CODING AUXILIARY LOSS (see self.aux_heads' docstring in WKV.__init__ for
+                # the full bio framing): for each --pred-aux-offsets entry k, predict the token at t+k from the
+                # SAME per-position hidden state the causal head reads (full_logits' aux counterpart), masked +
+                # averaged exactly like the causal loss above, then averaged across offsets so --pred-aux-weight
+                # is a single interpretable coefficient regardless of how many offsets are requested.
+                _aux_terms = []
+                _Tf = full_logits.shape[1]
+                for _k_str, _ah_logits in aux_logits_by_off.items():
+                    _k = int(_k_str)
+                    if _Tf <= _k:
+                        continue                              # this batch's (padded) T is too short for offset k
+                    _pred_k = _ah_logits[:, :_Tf - _k]         # hidden@t predicts the token at t+k
+                    _tgt_k = X[:, _k:]; _m_k = msk[:, _k:]
+                    _Lk = lossf(_pred_k.reshape(-1, V), _tgt_k.reshape(-1)).reshape(_tgt_k.shape)
+                    _aux_terms.append((_Lk * _m_k).sum() / _m_k.sum().clamp(min=1))
+                if _aux_terms:
+                    aux_loss = sum(_aux_terms) / len(_aux_terms)
+                    loss = causal_loss + pred_aux_weight * aux_loss
             opt.zero_grad(); loss.backward(); opt.step()
-            _ep_loss += loss.detach(); _ep_n += 1
+            _ep_loss += causal_loss.detach(); _ep_n += 1      # reported mean_train_loss stays the CAUSAL
+                                                                # component only, for fair cross-config comparison
         print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={(_ep_loss/max(1,_ep_n)).item():.4f}", flush=True)
     return net, WKV
 
@@ -970,6 +1084,26 @@ def main():
     ap.add_argument("--batch", type=int, default=128)
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--weight-decay", type=float, default=1e-4)
+    ap.add_argument("--pred-aux-weight", dest="pred_aux_weight", type=float, default=0.0,
+                    help="PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, own-voice-fluency arc -- see the "
+                         "WKV.__init__ 'PREDICTIVE-CODING AUXILIARY OBJECTIVE' docstring for the full bio "
+                         "framing + design rationale). ADDITIVE to the causal next-token loss: "
+                         "total_loss = causal_loss + pred_aux_weight * aux_loss, where aux_loss is a FURTHER-"
+                         "AHEAD token-prediction loss (--pred-aux-offsets, default t+2) read off the SAME "
+                         "per-position hidden state the causal head reads -- a causal-compatible stand-in for "
+                         "cortical predictive coding (Rao & Ballard 1999): the cortex continuously predicts "
+                         "UPCOMING input at multiple horizons, not just the single next token. Composes with "
+                         "EVERY --recurrence choice (wkv/ssm/hippo/assoc/assoc_t) unmodified -- it only adds an "
+                         "extra linear read-out head + an extra loss term, never touches the recurrence itself. "
+                         "Default 0.0 = OFF = byte-identical to before this flag existed: the auxiliary head is "
+                         "not even constructed (zero extra init-RNG draws) and the training loop's forward call "
+                         "is spelled identically to the pre-existing code (see build_and_train_wkv).")
+    ap.add_argument("--pred-aux-offsets", dest="pred_aux_offsets", type=int, nargs="+", default=[2],
+                    help="(--pred-aux-weight>0 only) which future offsets k to predict (token at t+k from the "
+                         "hidden state at position t), one independent linear read-out head per offset (NOT one "
+                         "shared head across offsets -- a shared head would be asked to match two different "
+                         "target distributions from one prediction, an incoherent objective). Default [2] = "
+                         "predict 2 steps ahead only; pass e.g. --pred-aux-offsets 2 3 to add a t+3 head too.")
     ap.add_argument("--freeze-emb", dest="freeze_emb", action="store_true",
                     help="Rung 1b de-risk: freeze the input embedding at random init (only WKV+head learn) = the frozen "
                          "emergent-code regime; GO => the recurrence does not need an LM-learned input.")
@@ -1200,6 +1334,7 @@ def main():
                   f"mless-collapse {deep['wkv_memoryless']-deep['wkv']:+.3f} -> {'GO' if go else 'no-go'}", flush=True)
 
     out = {"runner": "_emerge_wkv_lm_derisk", "corpus": args.corpus, "seeds": args.seeds, "d_model": args.d_model,
+           "pred_aux_weight": args.pred_aux_weight, "pred_aux_offsets": args.pred_aux_offsets,
            "per_seed": per_seed, "elapsed_s": round(time.time() - t0, 1)}
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json} ({out['elapsed_s']}s)", flush=True)
