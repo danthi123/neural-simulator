@@ -1,0 +1,247 @@
+{
+  "provenance": {
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "cuda_visible_devices": "",
+    "runner": "ad-hoc verification script (not a `-m research.runners.X` module, so no automatic research/runners/__init__ provenance door applies -- recorded manually here)",
+    "seeds": [
+      42,
+      43
+    ],
+    "git_sha": "b53ac47719391b6657a68c491247ff5d40865f52",
+    "script": "research/findings/raw/_linattn_mouth_gen_check/linattn_gen_check.py"
+  },
+  "linattn": {
+    "42": [
+      {
+        "prompt": "The sun is",
+        "text": "he sun is a member of the national assembly of the national assembly of the senate from to he was the president of the senate from to he was elected to the senate from to he was elected to the election to the candidate for the election to the election to the election to the election candidate",
+        "secs": 0.334
+      },
+      {
+        "prompt": "A dog is an animal that",
+        "text": " dog is an animal that lives in the sheep and the other side of the body and the other side of the body the body is the main body of the body of the body of the body the body is the body of the body it is the arm some of the body is called a body of the body it shows",
+        "secs": 0.288
+      },
+      {
+        "prompt": "Water is made of",
+        "text": "ater is made of two small islands and the other islands are the largest island in the world the island of the island of the island of the island of the island of the island of the island of the island of the island of the island of the small provinces of the island of the island of the island of an",
+        "secs": 0.276
+      },
+      {
+        "prompt": "Yesterday I went to the",
+        "text": "esterday  went to the first and second place in the th century the first time in the th century the th century was the th century was the th century and was the th century in the th century the th century was the th century the county was the th century and was the th century and",
+        "secs": 0.276
+      },
+      {
+        "prompt": "The city of London is",
+        "text": "he city of ondon is a member of the national assembly of the national assembly of the national assembly of the republic of the republic of the republic of the republic of the republic of the republic of the republic of the republic of the republic of the republic of the flag arnata was made by the republic of the house",
+        "secs": 0.266
+      },
+      {
+        "prompt": "In the beginning of the story",
+        "text": "n the beginning of the story of the movie was released in the movie the movie was released on july the movie was released on july the movie was released on july the movie has been released in the movie the movie was released on july the comic stroke was released on july the movie was re",
+        "secs": 0.341
+      },
+      {
+        "prompt": "The most important thing about science is",
+        "text": "he most important thing about science is the study of science fiction and science fiction books and science fiction books and science fiction books about science fiction and science fiction books and science fiction books and science fiction books about science fiction and science fiction books and science fiction books and science fiction many poetry books and books published in the novel of the novel of art",
+        "secs": 0.239
+      },
+      {
+        "prompt": "My favorite food is",
+        "text": "y favorite food is a american romantic drama movie directed by robert byzantine and starring mike pelin and stars robert byzantine and was distributed by the movie director of the movie was produced by robert batia and was nominated for the movie the movie was nominated",
+        "secs": 0.27
+      },
+      {
+        "prompt": "The weather today",
+        "text": "he weather today he was a member of the united states house of representatives from to he was a member of the house of representatives from to he was the th district he was a member of the house of representatives from to he wunder two senate district from to he was a member of ro",
+        "secs": 0.266
+      },
+      {
+        "prompt": "Once upon a time there was",
+        "text": "nce upon a time there was a well known for his role as the movie was shot dead in the movie was shot dead in the movie was shot dead in the movie was shot dead in the movie was shot dead in the movie wable's heart attack on june in the movie was shot wh",
+        "secs": 0.231
+      }
+    ],
+    "43": [
+      {
+        "prompt": "The sun is",
+        "text": "he sun is a member of the korean national team he served as the first african american football coach and coach of the united states the team was the first african american football player he has played for the first time in the season he was the highest medal of the united kenya fense and the",
+        "secs": 0.492
+      },
+      {
+        "prompt": "A dog is an animal that",
+        "text": " dog is an animal that is a kind of spiny it does not have a spiny called spiny spiny the spiny spiny spiny spiny spiny spiny spiny spinker mathematicy has been used in the photo",
+        "secs": 0.258
+      },
+      {
+        "prompt": "Water is made of",
+        "text": "ater is made of a mathematics the patricia is a type unit of time it is a small mathematics it is a substance that is used to make a solution that is used to make a chemical problem for example it it means that it in the reaction is not",
+        "secs": 0.289
+      },
+      {
+        "prompt": "Yesterday I went to the",
+        "text": "esterday  went to the united states in the united states and the population was at the census the area was the county seat of sanders were living in the city of the city of the city of the city of the city of the city near darwin city he was home of photo",
+        "secs": 0.254
+      },
+      {
+        "prompt": "The city of London is",
+        "text": "he city of ondon is a calendar that is the year of the year of days in the year the you can be made by the you can be seen as a result of the you can be seen in the y's life it is a number or you what is used to mean",
+        "secs": 0.275
+      },
+      {
+        "prompt": "In the beginning of the story",
+        "text": "n the beginning of the story of the story of the story of the characters are usually written in the adventures of the story of the story was written by the story of the story of the story of the story of the story of the story of the box story of the story it is about a cat whyou is",
+        "secs": 0.25
+      },
+      {
+        "prompt": "The most important thing about science is",
+        "text": "he most important thing about science is the photographer of the human rights movement in the world is the most important part of the life of the world the world the world is the world of the world in the world the main book of the worlhen's worltter series of the",
+        "secs": 0.248
+      },
+      {
+        "prompt": "My favorite food is",
+        "text": "y favorite food is a type of food that is used to add it to the food food whtain the food is used to make money or drink it is usually used to make food products and goods from food food food products are made of food products and prices are used the food food products are used to store",
+        "secs": 0.244
+      },
+      {
+        "prompt": "The weather today",
+        "text": "he weather today he was a member of the national team he was the first african patrist of the yard of the national hockey league nhl he was the th overall by the national hockey league nhl season he was the president since he was born as a member due to its first w",
+        "secs": 0.279
+      },
+      {
+        "prompt": "Once upon a time there was",
+        "text": "nce upon a time there was a small town in the town of nessy in the town of neng neng nensen was a municipality in the district of neng in the canton of ticino in inhabitants szschen wolf he want to go to the",
+        "secs": 0.313
+      }
+    ]
+  },
+  "ssm_bpe_control": {
+    "42": [
+      {
+        "prompt": "The sun is",
+        "text": "he sun is a list of the same time in the same time in the united states and the other parts of the same time in the same time it was the first time it was a major league of the same time in the world and worked on the other side of the same time in the movie",
+        "secs": 0.372
+      },
+      {
+        "prompt": "A dog is an animal that",
+        "text": " dog is an animal that the main tributaries of the same time and the other hand the game of the same name it was the first time in the movie the first time in the movie this was the first time in the movie the first time of the game is a list of the same time in the same time the season",
+        "secs": 0.261
+      },
+      {
+        "prompt": "Water is made of",
+        "text": "ater is made of the same time to the other hand the same name the first time in the movie the world was in the first time in the movie the first time of the first time in the movie the first time in the first time in for king of the year the first time in the movie the big",
+        "secs": 0.263
+      },
+      {
+        "prompt": "Yesterday I went to the",
+        "text": "esterday  went to the first time in the movie the first time of the first time in the movie the first time and the other player to the other hand the same name the same name is the same as the same as the same as the same as the longest after the first time in the movie the first time of the game",
+        "secs": 0.265
+      },
+      {
+        "prompt": "The city of London is",
+        "text": "he city of ondon is a list of the same time in the same time in the united states and the other parts of the same time in the same time it was the first time it was a major league of the same time in the world and worked on the other side of the same time in the movie",
+        "secs": 0.265
+      },
+      {
+        "prompt": "In the beginning of the story",
+        "text": "n the beginning of the story of the same time in the same time in the s and other parts of the same time to the other members of the same time the first time in the movie this was the first time in the movie the first time of the game is a list of the same time in the same time the season",
+        "secs": 0.258
+      },
+      {
+        "prompt": "The most important thing about science is",
+        "text": "he most important thing about science is a list of the same time in the same time in the united states and the other parts of the same time in the same time it was the first time it was a major league of the same time in the world and worked on the other side of the same time in the movie",
+        "secs": 0.269
+      },
+      {
+        "prompt": "My favorite food is",
+        "text": "y favorite food is a list of the same time in the same time in the united states and the other parts of the same time in the same time it was the first time it was a major league of the same time in the world and worked on the other side of the same time in the movie",
+        "secs": 0.298
+      },
+      {
+        "prompt": "The weather today",
+        "text": "he weather today the main event in the movie the main character of the first time in the movie the world was in the first time in the movie the first time of the first time in the movie the first time in the first time in for king of the year the first time in the movie the big",
+        "secs": 0.275
+      },
+      {
+        "prompt": "Once upon a time there was",
+        "text": "nce upon a time there was a major league of the same time and the other hand the game of the same name it was the first time in the movie the first time in the movie this was the first time in the movie the first time of the game is a list of the same time in the same time the season",
+        "secs": 0.283
+      }
+    ],
+    "43": [
+      {
+        "prompt": "The sun is",
+        "text": "he sun is the next to the south of the wales of the was the first round of the was the first round of the was the first of the world the movie was the first of the first time in the region however it is the only a was the to the north of the",
+        "secs": 0.525
+      },
+      {
+        "prompt": "A dog is an animal that",
+        "text": " dog is an animal that the song of the world cup of which the other players from the album of the world cup of america the movie was the first of the world the movie was the first of the first time in the region however it is the only a was the to the north of the",
+        "secs": 0.25
+      },
+      {
+        "prompt": "Water is made of",
+        "text": "ater is made of the city of the city of the welsh and the other members of the united states in the united states it from the other was the first of the world the movie was the first of the first time in the region however it is the only a was the to the north of the",
+        "secs": 0.249
+      },
+      {
+        "prompt": "Yesterday I went to the",
+        "text": "esterday  went to the city of the wall of the worlced at the end of the worldiggles and the other team that he was the best known as the pearl of the was the first of the first time in the region however it is the only a was the to the north of the",
+        "secs": 0.249
+      },
+      {
+        "prompt": "The city of London is",
+        "text": "he city of ondon is the son of the sandrowant to the other and the other half of the world cup of america the movie was the first of the world the movie was the first of the first time in the region however it is the only a was the to the north of the",
+        "secs": 0.264
+      },
+      {
+        "prompt": "In the beginning of the story",
+        "text": "n the beginning of the story of the was a of the tasks of the was the first in the united states in the united killer and the other of the walls of the city of the was the first of the was the first round until the windows the movie was used to czephy",
+        "secs": 0.32
+      },
+      {
+        "prompt": "The most important thing about science is",
+        "text": "he most important thing about science is the and the other side of the worlding the song of the nickel and the other was the last of the wall of the a mask the story of the world cup of the show the song of the pearer and the the band of the world with the",
+        "secs": 0.489
+      },
+      {
+        "prompt": "My favorite food is",
+        "text": "y favorite food is the was the most of the worlding the first of the game of life and the other was the last of the wall of the a mask the story of the world cup of the show the song of the pearer and the the band of the world with the",
+        "secs": 0.422
+      },
+      {
+        "prompt": "The weather today",
+        "text": "he weather today the player of the city of the wrestlers and the other and the team of the united states in the world the first of the wall the most of the world cup of the the movie of the was the best sports of the war a of the first time was the",
+        "secs": 0.471
+      },
+      {
+        "prompt": "Once upon a time there was",
+        "text": "nce upon a time there was a of the first of the wall sells and the other the album from the other hand of the game show that the game of the world cup he was the first of the was the most of the same as there after the wall the other hand of years of the n",
+        "secs": 0.442
+      }
+    ]
+  },
+  "gen_kwargs": {
+    "max_new_tokens": 60,
+    "topk": 64,
+    "read_window": 40,
+    "pop": 8,
+    "gen_temp": 0.8,
+    "repetition_penalty": 1.0,
+    "no_repeat_ngram_size": 0
+  },
+  "prompts": [
+    "The sun is",
+    "A dog is an animal that",
+    "Water is made of",
+    "Yesterday I went to the",
+    "The city of London is",
+    "In the beginning of the story",
+    "The most important thing about science is",
+    "My favorite food is",
+    "The weather today",
+    "Once upon a time there was"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "provenance": {
+    "backend": "numpy",
+    "sim_backend_env": "numpy",
+    "cuda_visible_devices": "",
+    "runner": "ad-hoc verification script (not a `-m research.runners.X` module, so no automatic research/runners/__init__ provenance door applies -- recorded manually here)",
+    "seeds": [
+      42,
+      43
+    ],
+    "git_sha": "b53ac47719391b6657a68c491247ff5d40865f52",
+    "note": "verbatim transcription from prior runner logs -- see source_log fields; provenance describes HOW this transcription file was produced (by hand, read from the cited .log files), not a simulation run of its own"
+  },
+  "purpose": "verbatim transcription of the per-seed depth-10-99 margin_vs_trigram values this finding QUOTES from the 6-seed BPE-arc runner's own stdout logs -- the runner's structured .json output did not exist yet at verification time (still training seeds 44/100/101/102), so the log is the only machine-readable artifact available for these two already-finished seeds. This file exists only so claim_check.py (which parses .json/.jsonl, not .log) has something to check the quoted numbers against; it introduces no new measurement of its own.",
+  "linattn_depth2_contiguous": {
+    "source_log": "research/findings/raw/_emerge_wkv_lm_linattn_depth2_contiguous_6seed.log",
+    "seed42_margin_vs_trigram_depth10_99": 0.049,
+    "seed43_margin_vs_trigram_depth10_99": 0.053
+  },
+  "ssm_depth2_contiguous_control": {
+    "source_log": "research/findings/raw/_emerge_wkv_lm_ssm_depth2_contiguous_6seed.log",
+    "seed42_margin_vs_trigram_depth10_99": -0.125,
+    "seed43_margin_vs_trigram_depth10_99": -0.125
+  }
+}
