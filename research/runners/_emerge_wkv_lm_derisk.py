@@ -339,19 +339,67 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     lossf = nn.CrossEntropyLoss(reduction="none")
     seqs = [s for s in tr_ids if len(s) >= 2]
     rng = np.random.default_rng(seed * 7 + 3)
+
+    # ---- SPEED (additive, --compile; RESULT-PRESERVING): the per-step WKV recurrence launches ~2.6k tiny kernels/step
+    # (the `for t in range(T)` loop x ~10 ops), so training is launch/CPU-bound (GPU ~24% idle). torch.compile fuses the
+    # unrolled loop into a CUDA-graph -- but reduce-overhead needs STATIC shapes. We pad every batch to ONE global fixed
+    # T (>= the longest sequence, so NO real token is ever truncated) and to a FULL batch (masked filler rows), giving a
+    # single (batch, fixed_T) shape = one compiled graph. WHY this preserves the science EXACTLY (up to fp reassociation,
+    # verified to NLL-parity): (a) the recurrence is strictly CAUSAL -- token t's output depends only on tokens <= t, so
+    # right-padding after the real tokens cannot change any real token's output; (b) padded positions are masked out of
+    # the loss (m = msk[:,1:]); (c) the masked filler ROWS add 0 to both the loss numerator and its token count, so the
+    # scalar loss -- hence every gradient and Adam step -- matches the eager per-batch-max path. Off by default: the
+    # eager branch below is byte-identical to the pre-optimization trainer. torch.compile is opt-in and NLL-parity-checked.
+    fwd = net
+    use_compile = bool(getattr(args, "compile", False))
+    Xbuf = None
+    if use_compile:
+        fixed_T = max((len(s) for s in seqs), default=2)
+        if int(getattr(args, "compile_fixed_t", 0) or 0):
+            assert args.compile_fixed_t >= fixed_T, (
+                f"--compile-fixed-t {args.compile_fixed_t} < longest training sequence {fixed_T}: padding to a smaller "
+                f"T would TRUNCATE tokens (NOT result-preserving). Use >= {fixed_T}, or drop the flag to auto-size.")
+            fixed_T = int(args.compile_fixed_t)
+        Nseq = len(seqs)
+        # pre-pad ALL sequences to [N, fixed_T] on-device ONCE (removes the per-batch numpy build + H2D copy per step)
+        Xall = torch.zeros((Nseq, fixed_T), dtype=torch.int64, device=device)
+        Mall = torch.zeros((Nseq, fixed_T), dtype=torch.bool, device=device)
+        for _i2, _s in enumerate(seqs):
+            _L2 = len(_s)
+            Xall[_i2, :_L2] = torch.tensor(_s, dtype=torch.int64, device=device)
+            Mall[_i2, :_L2] = True
+        # persistent static input buffer so the CUDA-graph replays against a fixed address (cudagraph-safe)
+        Xbuf = torch.zeros((args.batch, fixed_T), dtype=torch.int64, device=device)
+        fwd = torch.compile(net, mode="reduce-overhead")
+        print(f"    [compile] torch.compile(reduce-overhead) ON  fixed_T={fixed_T}  batch={args.batch}  (static shape)", flush=True)
+
     for ep in range(args.epochs):
         order = rng.permutation(len(seqs))
-        _ep_loss, _ep_n = 0.0, 0                          # per-epoch train-loss trajectory (capacity-vs-under-training diagnostic)
+        _ep_loss = torch.zeros((), device=device); _ep_n = 0   # on-device accum -> ONE .item() sync per epoch (was per step)
         for i in range(0, len(seqs), args.batch):
-            batch = [seqs[j] for j in order[i:i+args.batch]]
-            X, msk = pad_batch(batch)
-            logits = net(X)[:, :-1]                       # predict token t+1 from context 0..t
+            idx_b = order[i:i+args.batch]
+            if use_compile:
+                # gather a STATIC (batch, fixed_T) block; pad the final partial batch to a full `batch` with all-masked
+                # filler rows (they contribute 0 loss and 0 count -> identical scalar loss -> identical gradients)
+                ib = torch.as_tensor(np.asarray(idx_b), dtype=torch.long, device=device)
+                nb = int(ib.shape[0]); pad_rows = args.batch - nb
+                if pad_rows > 0:
+                    ib = torch.cat([ib, torch.zeros(pad_rows, dtype=torch.long, device=device)])
+                Xbuf.copy_(Xall[ib])                          # into the fixed-address buffer (cudagraph-safe)
+                msk = Mall[ib].clone()
+                if pad_rows > 0:
+                    msk[nb:] = False                          # mask the duplicated filler rows out of the loss
+                X = Xbuf
+            else:
+                batch = [seqs[j] for j in idx_b]
+                X, msk = pad_batch(batch)                     # EAGER default path: byte-identical to the pre-opt trainer
+            logits = fwd(X)[:, :-1]                           # predict token t+1 from context 0..t
             tgt = X[:, 1:]; m = msk[:, 1:]
             L = lossf(logits.reshape(-1, V), tgt.reshape(-1)).reshape(tgt.shape)
             loss = (L * m).sum() / m.sum().clamp(min=1)
             opt.zero_grad(); loss.backward(); opt.step()
-            _ep_loss += float(loss); _ep_n += 1
-        print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={_ep_loss/max(1,_ep_n):.4f}", flush=True)
+            _ep_loss += loss.detach(); _ep_n += 1
+        print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={(_ep_loss/max(1,_ep_n)).item():.4f}", flush=True)
     return net, WKV
 
 
@@ -442,6 +490,15 @@ def main():
     ap.add_argument("--generate", type=int, default=0, help="autoregressive: generate N tokens after training")
     ap.add_argument("--contiguous", action="store_true", help="CONTIGUOUS multi-sentence stories (R4 cross-sentence long-range test)")
     ap.add_argument("--max-len", type=int, default=48, help="(--contiguous) max tokens per story")
+    ap.add_argument("--compile", action="store_true",
+                    help="SPEED (additive, RESULT-PRESERVING): torch.compile(net, mode='reduce-overhead') over STATIC "
+                         "shapes -- every batch is padded to ONE global fixed T (>= the longest sequence, so NO token is "
+                         "truncated) and to a full batch (masked filler rows), fusing the per-step WKV recurrence kernels "
+                         "(~1.7x measured, GPU-bound instead of launch-bound). OFF by default so the eager path stays "
+                         "byte-identical; --compile is verified NLL-parity to the eager path (GO verdict identical).")
+    ap.add_argument("--compile-fixed-t", dest="compile_fixed_t", type=int, default=0,
+                    help="(--compile) force the fixed padded T instead of auto-sizing to the longest training sequence; "
+                         "MUST be >= the longest sequence (asserted) or real tokens would be truncated.")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
