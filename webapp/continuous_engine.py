@@ -1237,6 +1237,23 @@ def tick_idle_sessions(session_mood: dict, affect_organ_getter, now: float | Non
                     _lg.getLogger(__name__).warning(
                         "sleep-replay consolidation failed for %s (persistent store rolled back)", cache_key,
                         exc_info=True)
+            # CROSS-SESSION PERSISTENCE (#B8): on a genuine sleep-depth idle, FLUSH this session's conversation-driven
+            # learning to disk (D5 within-assembly weights + the _maybe_acquire runtime facts) + the process-global
+            # xedge cross-edge, so a server restart RELOADS it at boot instead of reverting to the build-time state.
+            # Gated by BRAIN_PERSIST_LEARNING (DEFAULT-OFF -> the import returns a flag that is False -> the branch is
+            # never entered -> no file I/O, no substrate read -> byte-identical to HEAD) AND _is_sleep_tick (a genuine
+            # offline sleep event, not a light between-turn pause). Best-effort; never raises into the tick.
+            try:
+                from research.runners.cross_session_persistence import (persist_learning_enabled as _pl_on,
+                                                                         save_session_learning as _pl_save)
+                if _pl_on() and _is_sleep_tick(cache_key, now):
+                    _porg = episodic_getter(cache_key) if episodic_getter is not None else None
+                    _pchat = chat_getter(cache_key) if chat_getter is not None else None
+                    _pl_save(cache_key, _pchat, _porg)
+            except Exception:
+                import logging as _lg
+                _lg.getLogger(__name__).warning(
+                    "cross-session persistence save failed for %s", cache_key, exc_info=True)
             # DA-ENCODING SUBSTRATE HOMEOSTASIS: run the Turrigiano synaptic-scaling consolidation pass on this idle
             # session's live composer store when new facts were taught since the last pass. Self-gates on the DA-encoding
             # faculty (no-op under BRAIN_DA_ENCODING=0), so this is byte-identical to HEAD when the faculty is off. It
