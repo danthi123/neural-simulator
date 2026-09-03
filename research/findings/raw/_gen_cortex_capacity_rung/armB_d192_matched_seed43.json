@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    8000,
+    16000,
+    32000,
+    64000,
+    104000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "4aceb87a43aa",
+      "vocab_sha": "4c77b4b82ba9",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 8000,
+          "n_train_passages": 8000,
+          "n_tokens": 320000,
+          "tok_per_active_param": 0.348,
+          "wkv_deep_nll": 4.3268,
+          "trigram_deep_nll": 4.6419,
+          "bigram_deep_nll": 5.0314,
+          "margin_vs_trigram": 0.3151,
+          "perm_collapse": 1.26,
+          "mless_collapse": 0.0942,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.1143,
+          "overfit_gap": 0.2126,
+          "n_deep": 45000,
+          "elapsed_s": 368.3
+        },
+        {
+          "max_train_sents": 16000,
+          "n_train_passages": 16000,
+          "n_tokens": 640000,
+          "tok_per_active_param": 0.697,
+          "wkv_deep_nll": 4.1548,
+          "trigram_deep_nll": 4.4606,
+          "bigram_deep_nll": 4.832,
+          "margin_vs_trigram": 0.3057,
+          "perm_collapse": 1.5125,
+          "mless_collapse": 0.109,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9777,
+          "overfit_gap": 0.1771,
+          "n_deep": 45000,
+          "elapsed_s": 719.4
+        },
+        {
+          "max_train_sents": 32000,
+          "n_train_passages": 32000,
+          "n_tokens": 1280000,
+          "tok_per_active_param": 1.394,
+          "wkv_deep_nll": 3.98,
+          "trigram_deep_nll": 4.307,
+          "bigram_deep_nll": 4.6467,
+          "margin_vs_trigram": 0.327,
+          "perm_collapse": 1.6692,
+          "mless_collapse": 0.1593,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8496,
+          "overfit_gap": 0.1304,
+          "n_deep": 45000,
+          "elapsed_s": 1548.8
+        },
+        {
+          "max_train_sents": 64000,
+          "n_train_passages": 64000,
+          "n_tokens": 2560000,
+          "tok_per_active_param": 2.788,
+          "wkv_deep_nll": 3.8377,
+          "trigram_deep_nll": 4.1733,
+          "bigram_deep_nll": 4.4839,
+          "margin_vs_trigram": 0.3355,
+          "perm_collapse": 1.7764,
+          "mless_collapse": 0.2224,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7595,
+          "overfit_gap": 0.0783,
+          "n_deep": 45000,
+          "elapsed_s": 2661.8
+        },
+        {
+          "max_train_sents": 104000,
+          "n_train_passages": 104000,
+          "n_tokens": 4160000,
+          "tok_per_active_param": 4.53,
+          "wkv_deep_nll": 3.7855,
+          "trigram_deep_nll": 4.0974,
+          "bigram_deep_nll": 4.385,
+          "margin_vs_trigram": 0.3119,
+          "perm_collapse": 1.8087,
+          "mless_collapse": 0.2485,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7511,
+          "overfit_gap": 0.0345,
+          "n_deep": 45000,
+          "elapsed_s": 3993.0
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> some of these <unk> <unk> it is not intended to be rather <unk> <unk> <unk> <unk> <unk> or <unk> the <unk> that the <unk> or <unk> of <unk> the <unk> of the animal and other <unk>",
+        "in the <unk> and the <unk> of <unk> <unk> <unk> published in the article magazine <unk> <unk> <unk> <unk> <unk> <unk> of <unk> <unk> <unk> reported in the <unk> simple <unk> in <unk> from the early century the <unk> the <unk> the",
+        "he was a <unk> <unk> and was all under the <unk> of <unk> <unk> him that he argued that the <unk> of the kingdom of <unk> like <unk> the world 's <unk> remains when you <unk> and in a fight between <unk>",
+        "it is a <unk> color <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> box <unk> the most <unk> <unk> <unk> energy <unk> <unk> <unk> data as a model <unk> <unk> is also compared to the us space <unk> of the <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.5413,
+      "top_segment_slope": 0.0522,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.5413,
+    "mean_top_point_wkv_deep_nll": 3.7855,
+    "max_tok_per_active_param_reached": 4.53,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0955
+  },
+  "elapsed_s": 9350.7
+}

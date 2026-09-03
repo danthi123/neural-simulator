@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    48000,
+    72000,
+    96000,
+    128000,
+    160000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "6f07a6711962",
+      "vocab_sha": "dbb3f3a23c1c",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 1920000,
+          "tok_per_active_param": 4.536,
+          "wkv_deep_nll": 3.945,
+          "trigram_deep_nll": 4.2042,
+          "bigram_deep_nll": 4.5238,
+          "margin_vs_trigram": 0.2592,
+          "perm_collapse": 1.6121,
+          "mless_collapse": 0.1492,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8728,
+          "overfit_gap": 0.0722,
+          "n_deep": 45000,
+          "elapsed_s": 1196.2
+        },
+        {
+          "max_train_sents": 72000,
+          "n_train_passages": 72000,
+          "n_tokens": 2880000,
+          "tok_per_active_param": 6.805,
+          "wkv_deep_nll": 3.8744,
+          "trigram_deep_nll": 4.1373,
+          "bigram_deep_nll": 4.4362,
+          "margin_vs_trigram": 0.2629,
+          "perm_collapse": 1.671,
+          "mless_collapse": 0.1832,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.823,
+          "overfit_gap": 0.0514,
+          "n_deep": 45000,
+          "elapsed_s": 2009.1
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 3840000,
+          "tok_per_active_param": 9.073,
+          "wkv_deep_nll": 3.8345,
+          "trigram_deep_nll": 4.0916,
+          "bigram_deep_nll": 4.3785,
+          "margin_vs_trigram": 0.2571,
+          "perm_collapse": 1.7099,
+          "mless_collapse": 0.2052,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8016,
+          "overfit_gap": 0.0329,
+          "n_deep": 45000,
+          "elapsed_s": 2286.9
+        },
+        {
+          "max_train_sents": 128000,
+          "n_train_passages": 128000,
+          "n_tokens": 5120000,
+          "tok_per_active_param": 12.097,
+          "wkv_deep_nll": 3.812,
+          "trigram_deep_nll": 4.0447,
+          "bigram_deep_nll": 4.3254,
+          "margin_vs_trigram": 0.2327,
+          "perm_collapse": 1.7584,
+          "mless_collapse": 0.2204,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7914,
+          "overfit_gap": 0.0205,
+          "n_deep": 45000,
+          "elapsed_s": 2887.1
+        },
+        {
+          "max_train_sents": 160000,
+          "n_train_passages": 160000,
+          "n_tokens": 6400000,
+          "tok_per_active_param": 15.121,
+          "wkv_deep_nll": 3.7987,
+          "trigram_deep_nll": 4.0147,
+          "bigram_deep_nll": 4.2879,
+          "margin_vs_trigram": 0.2159,
+          "perm_collapse": 1.7453,
+          "mless_collapse": 0.2251,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7862,
+          "overfit_gap": 0.0125,
+          "n_deep": 45000,
+          "elapsed_s": 3969.7
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> has been <unk> to the west bank of the former <unk> <unk> <unk> for the <unk> and <unk> <unk> tells <unk> <unk> that <unk> <unk> <unk> from <unk> to <unk> making <unk> <unk> <unk> because it is as a",
+        "in the northern area district of <unk> <unk> and the community and the <unk> district council was established in february the general election and named <unk> from the san <unk> <unk> in <unk> <unk> <unk> to the northern <unk> of parliament as",
+        "he was among the first shown to <unk> the <unk> <unk> by <unk> <unk> in the <unk> and this left one on the <unk> time that he had a hands of the time by <unk> <unk> and <unk> <unk> over the <unk>",
+        "it is a <unk> <unk> <unk> of <unk> central <unk> and the <unk> of the <unk> and <unk> <unk> <unk> has been <unk> with a <unk> <unk> of the bay <unk> <unk> <unk> the <unk> <unk> <unk> on the <unk> <unk> at the"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1463,
+      "top_segment_slope": 0.0133,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1463,
+    "mean_top_point_wkv_deep_nll": 3.7987,
+    "max_tok_per_active_param_reached": 15.121,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1087
+  },
+  "elapsed_s": 12434.5
+}

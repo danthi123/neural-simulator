@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    48000,
+    72000,
+    96000,
+    128000,
+    160000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "159840c80c71",
+      "vocab_sha": "12860251724e",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 1920000,
+          "tok_per_active_param": 4.536,
+          "wkv_deep_nll": 3.9503,
+          "trigram_deep_nll": 4.211,
+          "bigram_deep_nll": 4.5356,
+          "margin_vs_trigram": 0.2607,
+          "perm_collapse": 1.6125,
+          "mless_collapse": 0.1504,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.938,
+          "overfit_gap": 0.0123,
+          "n_deep": 45000,
+          "elapsed_s": 1184.5
+        },
+        {
+          "max_train_sents": 72000,
+          "n_train_passages": 72000,
+          "n_tokens": 2880000,
+          "tok_per_active_param": 6.805,
+          "wkv_deep_nll": 3.8779,
+          "trigram_deep_nll": 4.1323,
+          "bigram_deep_nll": 4.4456,
+          "margin_vs_trigram": 0.2545,
+          "perm_collapse": 1.6648,
+          "mless_collapse": 0.1815,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8827,
+          "overfit_gap": -0.0049,
+          "n_deep": 45000,
+          "elapsed_s": 1947.6
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 3840000,
+          "tok_per_active_param": 9.073,
+          "wkv_deep_nll": 3.8422,
+          "trigram_deep_nll": 4.0889,
+          "bigram_deep_nll": 4.3881,
+          "margin_vs_trigram": 0.2468,
+          "perm_collapse": 1.7086,
+          "mless_collapse": 0.2009,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8605,
+          "overfit_gap": -0.0183,
+          "n_deep": 45000,
+          "elapsed_s": 2366.7
+        },
+        {
+          "max_train_sents": 128000,
+          "n_train_passages": 128000,
+          "n_tokens": 5120000,
+          "tok_per_active_param": 12.097,
+          "wkv_deep_nll": 3.8139,
+          "trigram_deep_nll": 4.0464,
+          "bigram_deep_nll": 4.3361,
+          "margin_vs_trigram": 0.2325,
+          "perm_collapse": 1.7454,
+          "mless_collapse": 0.2229,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8475,
+          "overfit_gap": -0.0336,
+          "n_deep": 45000,
+          "elapsed_s": 3288.8
+        },
+        {
+          "max_train_sents": 160000,
+          "n_train_passages": 160000,
+          "n_tokens": 6400000,
+          "tok_per_active_param": 15.121,
+          "wkv_deep_nll": 3.7969,
+          "trigram_deep_nll": 4.0118,
+          "bigram_deep_nll": 4.298,
+          "margin_vs_trigram": 0.2149,
+          "perm_collapse": 1.7588,
+          "mless_collapse": 0.2269,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8471,
+          "overfit_gap": -0.0502,
+          "n_deep": 45000,
+          "elapsed_s": 3699.9
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> he <unk> to <unk> the <unk> brother <unk> the <unk> <unk> of <unk> from to <unk> in the <unk> of april <unk> <unk> <unk> <unk> david",
+        "in the <unk> <unk> <unk> were <unk> to <unk> at the house of <unk> in <unk> <unk> by <unk> <unk> <unk> <unk> d <unk> <unk> <unk> and <unk> and <unk> <unk> <unk> shortly after the ship 's <unk> and <unk> <unk> <unk>",
+        "he was married to become more of the year as an <unk> <unk> of <unk> his year and <unk> <unk> from both vietnam and whom he <unk> two <unk> <unk> for the <unk> in the <unk> <unk> palace in july he <unk>",
+        "it is a <unk> to the national district of honor john <unk> has a <unk> <unk> <unk> <unk> <unk> <unk> <unk> of <unk> <unk> <unk> <unk> and religious <unk> the <unk> of the th on the <unk> was not an <unk> to <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1534,
+      "top_segment_slope": 0.017,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1534,
+    "mean_top_point_wkv_deep_nll": 3.7969,
+    "max_tok_per_active_param_reached": 15.121,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1069
+  },
+  "elapsed_s": 12579.8
+}

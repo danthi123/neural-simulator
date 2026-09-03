@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    8000,
+    16000,
+    32000,
+    64000,
+    104000
+  ],
+  "seeds": [
+    100
+  ],
+  "per_seed": {
+    "100": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "afdb5da4ad41",
+      "vocab_sha": "7aa8dc13daf2",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 8000,
+          "n_train_passages": 8000,
+          "n_tokens": 320000,
+          "tok_per_active_param": 0.348,
+          "wkv_deep_nll": 4.3096,
+          "trigram_deep_nll": 4.6266,
+          "bigram_deep_nll": 5.0249,
+          "margin_vs_trigram": 0.317,
+          "perm_collapse": 1.2215,
+          "mless_collapse": 0.0961,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.076,
+          "overfit_gap": 0.2336,
+          "n_deep": 45000,
+          "elapsed_s": 347.0
+        },
+        {
+          "max_train_sents": 16000,
+          "n_train_passages": 16000,
+          "n_tokens": 640000,
+          "tok_per_active_param": 0.697,
+          "wkv_deep_nll": 4.1422,
+          "trigram_deep_nll": 4.4444,
+          "bigram_deep_nll": 4.8225,
+          "margin_vs_trigram": 0.3023,
+          "perm_collapse": 1.4595,
+          "mless_collapse": 0.1111,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9459,
+          "overfit_gap": 0.1963,
+          "n_deep": 45000,
+          "elapsed_s": 757.0
+        },
+        {
+          "max_train_sents": 32000,
+          "n_train_passages": 32000,
+          "n_tokens": 1280000,
+          "tok_per_active_param": 1.394,
+          "wkv_deep_nll": 3.9561,
+          "trigram_deep_nll": 4.2862,
+          "bigram_deep_nll": 4.6375,
+          "margin_vs_trigram": 0.3301,
+          "perm_collapse": 1.6184,
+          "mless_collapse": 0.1644,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8262,
+          "overfit_gap": 0.1299,
+          "n_deep": 45000,
+          "elapsed_s": 1412.4
+        },
+        {
+          "max_train_sents": 64000,
+          "n_train_passages": 64000,
+          "n_tokens": 2560000,
+          "tok_per_active_param": 2.788,
+          "wkv_deep_nll": 3.8114,
+          "trigram_deep_nll": 4.1562,
+          "bigram_deep_nll": 4.4729,
+          "margin_vs_trigram": 0.3449,
+          "perm_collapse": 1.7599,
+          "mless_collapse": 0.2245,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7383,
+          "overfit_gap": 0.073,
+          "n_deep": 45000,
+          "elapsed_s": 1939.8
+        },
+        {
+          "max_train_sents": 104000,
+          "n_train_passages": 104000,
+          "n_tokens": 4160000,
+          "tok_per_active_param": 4.53,
+          "wkv_deep_nll": 3.7669,
+          "trigram_deep_nll": 4.0676,
+          "bigram_deep_nll": 4.3731,
+          "margin_vs_trigram": 0.3007,
+          "perm_collapse": 1.8078,
+          "mless_collapse": 0.249,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7297,
+          "overfit_gap": 0.0372,
+          "n_deep": 45000,
+          "elapsed_s": 2329.5
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> is a <unk> to the west <unk> where the spanish <unk> <unk> are <unk> in <unk> and <unk> <unk> along with <unk> <unk> <unk> <unk> <unk> from <unk> to <unk> <unk> <unk> <unk> <unk> <unk> <unk> such as <unk>",
+        "in the late s <unk> as a <unk> and a vocal <unk> of the <unk> <unk> for the show you are produced by some <unk> <unk> but they can be <unk> to <unk> <unk> <unk> in the rest areas of the <unk>",
+        "he was near the end of the <unk> and <unk> <unk> he <unk> at the time early a tour of his career in <unk> year he was appointed to the east of the <unk> <unk> before the <unk> <unk> his way to",
+        "it is a <unk> <unk> <unk> of <unk> which <unk> the player is a low <unk> of the <unk> <unk> is a <unk> structure in the <unk> of the northern <unk> <unk> <unk> the <unk> <unk> <unk> a <unk> against <unk> despite the"
+      ],
+      "delta_nll_min_to_max_tokens": 0.5427,
+      "top_segment_slope": 0.0445,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.5427,
+    "mean_top_point_wkv_deep_nll": 3.7669,
+    "max_tok_per_active_param_reached": 4.53,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0769
+  },
+  "elapsed_s": 6836.9
+}

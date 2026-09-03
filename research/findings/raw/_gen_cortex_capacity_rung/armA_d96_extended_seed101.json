@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    48000,
+    72000,
+    96000,
+    128000,
+    160000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "96b1aad30393",
+      "vocab_sha": "7fe1be431c4b",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 1920000,
+          "tok_per_active_param": 4.536,
+          "wkv_deep_nll": 3.938,
+          "trigram_deep_nll": 4.2039,
+          "bigram_deep_nll": 4.5247,
+          "margin_vs_trigram": 0.2659,
+          "perm_collapse": 1.6256,
+          "mless_collapse": 0.1534,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.899,
+          "overfit_gap": 0.039,
+          "n_deep": 45000,
+          "elapsed_s": 1312.8
+        },
+        {
+          "max_train_sents": 72000,
+          "n_train_passages": 72000,
+          "n_tokens": 2880000,
+          "tok_per_active_param": 6.805,
+          "wkv_deep_nll": 3.8638,
+          "trigram_deep_nll": 4.1286,
+          "bigram_deep_nll": 4.4348,
+          "margin_vs_trigram": 0.2649,
+          "perm_collapse": 1.6705,
+          "mless_collapse": 0.1885,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8492,
+          "overfit_gap": 0.0146,
+          "n_deep": 45000,
+          "elapsed_s": 1908.9
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 3840000,
+          "tok_per_active_param": 9.073,
+          "wkv_deep_nll": 3.8301,
+          "trigram_deep_nll": 4.0841,
+          "bigram_deep_nll": 4.3768,
+          "margin_vs_trigram": 0.254,
+          "perm_collapse": 1.7082,
+          "mless_collapse": 0.2093,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8252,
+          "overfit_gap": 0.005,
+          "n_deep": 45000,
+          "elapsed_s": 2296.3
+        },
+        {
+          "max_train_sents": 128000,
+          "n_train_passages": 128000,
+          "n_tokens": 5120000,
+          "tok_per_active_param": 12.097,
+          "wkv_deep_nll": 3.8058,
+          "trigram_deep_nll": 4.0395,
+          "bigram_deep_nll": 4.3239,
+          "margin_vs_trigram": 0.2336,
+          "perm_collapse": 1.7621,
+          "mless_collapse": 0.2236,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.826,
+          "overfit_gap": -0.0202,
+          "n_deep": 45000,
+          "elapsed_s": 3411.1
+        },
+        {
+          "max_train_sents": 160000,
+          "n_train_passages": 160000,
+          "n_tokens": 6400000,
+          "tok_per_active_param": 15.121,
+          "wkv_deep_nll": 3.7917,
+          "trigram_deep_nll": 4.0063,
+          "bigram_deep_nll": 4.2851,
+          "margin_vs_trigram": 0.2145,
+          "perm_collapse": 1.7433,
+          "mless_collapse": 0.2327,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8155,
+          "overfit_gap": -0.0237,
+          "n_deep": 45000,
+          "elapsed_s": 3874.8
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first two <unk> in the <unk> <unk> <unk> color of <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> and <unk> and <unk> <unk> <unk> was <unk> in the development of the pacific league to which",
+        "in the summer olympics earned the history of its first <unk> and the team won the <unk> award for the <unk> ' fourth best known for <unk> <unk> test <unk> and was completely <unk> by the <unk> <unk> <unk> in a <unk>",
+        "he was <unk> on october <unk> <unk> <unk> that such <unk> was born in <unk> five ships and <unk> <unk> for <unk> <unk> <unk> <unk> <unk> <unk> <unk> a <unk> to think of <unk> <unk> <unk> an <unk> <unk> after <unk> <unk>",
+        "it is a <unk> tournament against the <unk> <unk> with <unk> and <unk> <unk> at the end of the season <unk> has a <unk> <unk> and <unk> <unk> points to <unk> <unk> and <unk> <unk> <unk> that <unk> were <unk> by the <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1463,
+      "top_segment_slope": 0.0141,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1463,
+    "mean_top_point_wkv_deep_nll": 3.7917,
+    "max_tok_per_active_param_reached": 15.121,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1017
+  },
+  "elapsed_s": 12894.2
+}

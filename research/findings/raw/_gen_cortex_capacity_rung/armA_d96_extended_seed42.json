@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    48000,
+    72000,
+    96000,
+    128000,
+    160000
+  ],
+  "seeds": [
+    42
+  ],
+  "per_seed": {
+    "42": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "1f92ac8ee3b5",
+      "vocab_sha": "8153aaa2e972",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 1920000,
+          "tok_per_active_param": 4.536,
+          "wkv_deep_nll": 3.953,
+          "trigram_deep_nll": 4.2137,
+          "bigram_deep_nll": 4.5386,
+          "margin_vs_trigram": 0.2607,
+          "perm_collapse": 1.6279,
+          "mless_collapse": 0.1548,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9069,
+          "overfit_gap": 0.0461,
+          "n_deep": 45000,
+          "elapsed_s": 1272.4
+        },
+        {
+          "max_train_sents": 72000,
+          "n_train_passages": 72000,
+          "n_tokens": 2880000,
+          "tok_per_active_param": 6.805,
+          "wkv_deep_nll": 3.8794,
+          "trigram_deep_nll": 4.1483,
+          "bigram_deep_nll": 4.4493,
+          "margin_vs_trigram": 0.2689,
+          "perm_collapse": 1.681,
+          "mless_collapse": 0.1922,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8539,
+          "overfit_gap": 0.0255,
+          "n_deep": 45000,
+          "elapsed_s": 1968.9
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 3840000,
+          "tok_per_active_param": 9.073,
+          "wkv_deep_nll": 3.8451,
+          "trigram_deep_nll": 4.1018,
+          "bigram_deep_nll": 4.3912,
+          "margin_vs_trigram": 0.2567,
+          "perm_collapse": 1.7353,
+          "mless_collapse": 0.213,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8261,
+          "overfit_gap": 0.019,
+          "n_deep": 45000,
+          "elapsed_s": 2302.5
+        },
+        {
+          "max_train_sents": 128000,
+          "n_train_passages": 128000,
+          "n_tokens": 5120000,
+          "tok_per_active_param": 12.097,
+          "wkv_deep_nll": 3.8231,
+          "trigram_deep_nll": 4.0564,
+          "bigram_deep_nll": 4.3374,
+          "margin_vs_trigram": 0.2333,
+          "perm_collapse": 1.7509,
+          "mless_collapse": 0.2212,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8198,
+          "overfit_gap": 0.0033,
+          "n_deep": 45000,
+          "elapsed_s": 2860.5
+        },
+        {
+          "max_train_sents": 160000,
+          "n_train_passages": 160000,
+          "n_tokens": 6400000,
+          "tok_per_active_param": 15.121,
+          "wkv_deep_nll": 3.8075,
+          "trigram_deep_nll": 4.0245,
+          "bigram_deep_nll": 4.2997,
+          "margin_vs_trigram": 0.217,
+          "perm_collapse": 1.7763,
+          "mless_collapse": 0.2289,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8164,
+          "overfit_gap": -0.0089,
+          "n_deep": 45000,
+          "elapsed_s": 3637.5
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> between <unk> and <unk> the <unk> <unk> <unk> <unk> <unk> in <unk> <unk> to be <unk> <unk> in the english the <unk> has <unk> <unk> and <unk> <unk> and a <unk> <unk> <unk> <unk> and <unk> regarding the",
+        "in the north west coast <unk> of <unk> had <unk> the highway closed in the s <unk> <unk> was completely <unk> <unk> who commented that <unk> was at that point the site the <unk> had to live on <unk> good <unk> <unk>",
+        "he was the first time the american th <unk> and the <unk> <unk> of his wife <unk> <unk> <unk> <unk> of <unk> and <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> <unk> <unk> in former <unk> <unk> <unk> the",
+        "it is a <unk> of the <unk> of <unk> and <unk> <unk> <unk> <unk> from to it <unk> in <unk> <unk> <unk> <unk> and <unk> <unk> <unk> the <unk> <unk> in the southern <unk> <unk> is a <unk> of <unk> <unk> and <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.1455,
+      "top_segment_slope": 0.0156,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.1455,
+    "mean_top_point_wkv_deep_nll": 3.8075,
+    "max_tok_per_active_param_reached": 15.121,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1175
+  },
+  "elapsed_s": 12136.9
+}

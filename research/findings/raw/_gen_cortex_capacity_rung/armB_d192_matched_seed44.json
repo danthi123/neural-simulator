@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    8000,
+    16000,
+    32000,
+    64000,
+    104000
+  ],
+  "seeds": [
+    44
+  ],
+  "per_seed": {
+    "44": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "8da498bdb0c3",
+      "vocab_sha": "28f759201976",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 8000,
+          "n_train_passages": 8000,
+          "n_tokens": 320000,
+          "tok_per_active_param": 0.348,
+          "wkv_deep_nll": 4.3105,
+          "trigram_deep_nll": 4.6236,
+          "bigram_deep_nll": 5.0207,
+          "margin_vs_trigram": 0.3131,
+          "perm_collapse": 1.2263,
+          "mless_collapse": 0.0952,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0806,
+          "overfit_gap": 0.2299,
+          "n_deep": 45000,
+          "elapsed_s": 391.9
+        },
+        {
+          "max_train_sents": 16000,
+          "n_train_passages": 16000,
+          "n_tokens": 640000,
+          "tok_per_active_param": 0.697,
+          "wkv_deep_nll": 4.1359,
+          "trigram_deep_nll": 4.4375,
+          "bigram_deep_nll": 4.8181,
+          "margin_vs_trigram": 0.3016,
+          "perm_collapse": 1.4852,
+          "mless_collapse": 0.1102,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9199,
+          "overfit_gap": 0.2161,
+          "n_deep": 45000,
+          "elapsed_s": 654.7
+        },
+        {
+          "max_train_sents": 32000,
+          "n_train_passages": 32000,
+          "n_tokens": 1280000,
+          "tok_per_active_param": 1.394,
+          "wkv_deep_nll": 3.9617,
+          "trigram_deep_nll": 4.2874,
+          "bigram_deep_nll": 4.6335,
+          "margin_vs_trigram": 0.3256,
+          "perm_collapse": 1.6547,
+          "mless_collapse": 0.1597,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7962,
+          "overfit_gap": 0.1656,
+          "n_deep": 45000,
+          "elapsed_s": 1390.1
+        },
+        {
+          "max_train_sents": 64000,
+          "n_train_passages": 64000,
+          "n_tokens": 2560000,
+          "tok_per_active_param": 2.788,
+          "wkv_deep_nll": 3.8331,
+          "trigram_deep_nll": 4.1515,
+          "bigram_deep_nll": 4.4691,
+          "margin_vs_trigram": 0.3183,
+          "perm_collapse": 1.7422,
+          "mless_collapse": 0.2112,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.721,
+          "overfit_gap": 0.1121,
+          "n_deep": 45000,
+          "elapsed_s": 2043.5
+        },
+        {
+          "max_train_sents": 104000,
+          "n_train_passages": 104000,
+          "n_tokens": 4160000,
+          "tok_per_active_param": 4.53,
+          "wkv_deep_nll": 3.7846,
+          "trigram_deep_nll": 4.0703,
+          "bigram_deep_nll": 4.37,
+          "margin_vs_trigram": 0.2856,
+          "perm_collapse": 1.7998,
+          "mless_collapse": 0.2351,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7153,
+          "overfit_gap": 0.0693,
+          "n_deep": 45000,
+          "elapsed_s": 2364.1
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first two of the original episode <unk> were largely produced in <unk> <unk> and <unk> he died at <unk> on <unk> to <unk> <unk> the <unk> <unk> of <unk> and <unk> the <unk> <unk> were given the <unk> but were",
+        "in the <unk> language <unk> in new york and <unk> <unk> the author of <unk> james <unk> <unk> <unk> <unk> <unk> of the school was described as a <unk> the <unk> of the <unk> <unk> and <unk> as a <unk> <unk> about",
+        "he was the first <unk> to have a <unk> <unk> he was <unk> to the role of a <unk> <unk> <unk> in the <unk> commercial christian church <unk> before at the <unk> ' <unk> lake <unk> governor <unk> <unk> many of them",
+        "it is a <unk> <unk> an american <unk> <unk> <unk> <unk> is a part of the <unk> and a <unk> <unk> of <unk> <unk> between <unk> and <unk> <unk> <unk> <unk> <unk> and the traditional <unk> in <unk> <unk> <unk> there are two"
+      ],
+      "delta_nll_min_to_max_tokens": 0.5259,
+      "top_segment_slope": 0.0485,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.5259,
+    "mean_top_point_wkv_deep_nll": 3.7846,
+    "max_tok_per_active_param_reached": 4.53,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0946
+  },
+  "elapsed_s": 6893.9
+}

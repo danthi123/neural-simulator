@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    8000,
+    16000,
+    32000,
+    64000,
+    104000
+  ],
+  "seeds": [
+    101
+  ],
+  "per_seed": {
+    "101": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "0cd6c5b9a438",
+      "vocab_sha": "a5232cc246f1",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 8000,
+          "n_train_passages": 8000,
+          "n_tokens": 320000,
+          "tok_per_active_param": 0.348,
+          "wkv_deep_nll": 4.2972,
+          "trigram_deep_nll": 4.6223,
+          "bigram_deep_nll": 5.0135,
+          "margin_vs_trigram": 0.3251,
+          "perm_collapse": 1.2029,
+          "mless_collapse": 0.0935,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0712,
+          "overfit_gap": 0.226,
+          "n_deep": 45000,
+          "elapsed_s": 373.8
+        },
+        {
+          "max_train_sents": 16000,
+          "n_train_passages": 16000,
+          "n_tokens": 640000,
+          "tok_per_active_param": 0.697,
+          "wkv_deep_nll": 4.1398,
+          "trigram_deep_nll": 4.4392,
+          "bigram_deep_nll": 4.8145,
+          "margin_vs_trigram": 0.2994,
+          "perm_collapse": 1.4695,
+          "mless_collapse": 0.1065,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9401,
+          "overfit_gap": 0.1998,
+          "n_deep": 45000,
+          "elapsed_s": 517.0
+        },
+        {
+          "max_train_sents": 32000,
+          "n_train_passages": 32000,
+          "n_tokens": 1280000,
+          "tok_per_active_param": 1.394,
+          "wkv_deep_nll": 3.9629,
+          "trigram_deep_nll": 4.2916,
+          "bigram_deep_nll": 4.6324,
+          "margin_vs_trigram": 0.3287,
+          "perm_collapse": 1.6392,
+          "mless_collapse": 0.1532,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8255,
+          "overfit_gap": 0.1374,
+          "n_deep": 45000,
+          "elapsed_s": 846.4
+        },
+        {
+          "max_train_sents": 64000,
+          "n_train_passages": 64000,
+          "n_tokens": 2560000,
+          "tok_per_active_param": 2.788,
+          "wkv_deep_nll": 3.825,
+          "trigram_deep_nll": 4.1576,
+          "bigram_deep_nll": 4.469,
+          "margin_vs_trigram": 0.3327,
+          "perm_collapse": 1.7296,
+          "mless_collapse": 0.2106,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7509,
+          "overfit_gap": 0.074,
+          "n_deep": 45000,
+          "elapsed_s": 1504.2
+        },
+        {
+          "max_train_sents": 104000,
+          "n_train_passages": 104000,
+          "n_tokens": 4160000,
+          "tok_per_active_param": 4.53,
+          "wkv_deep_nll": 3.7737,
+          "trigram_deep_nll": 4.0766,
+          "bigram_deep_nll": 4.371,
+          "margin_vs_trigram": 0.3029,
+          "perm_collapse": 1.7753,
+          "mless_collapse": 0.2376,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7357,
+          "overfit_gap": 0.038,
+          "n_deep": 45000,
+          "elapsed_s": 1997.4
+        }
+      ],
+      "gen_samples_top_point": [
+        "the first two tests in the <unk> <unk> <unk> <unk> the <unk> <unk> <unk> even though <unk> which did not <unk> <unk> on any of the game while <unk> <unk> in <unk> and <unk> on the <unk> and <unk> from the",
+        "in the mid year according to the first <unk> of <unk> and the issue was of <unk> 's <unk> and <unk> that he was for a <unk> <unk> for <unk> of the <unk> to move to <unk> green his father had been",
+        "he was twelve times material <unk> <unk> <unk> on july <unk> and his <unk> <unk> which one of a <unk> for <unk> <unk> <unk> <unk> something <unk> that 's <unk> was not <unk> until this point he ran at the <unk> from",
+        "it is a <unk> planet bond that <unk> <unk> is <unk> and <unk> <unk> with the fruit bodies that are <unk> as the <unk> dedicated to north america as a <unk> <unk> of the <unk> <unk> and <unk> that <unk> are not <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.5235,
+      "top_segment_slope": 0.0513,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.5235,
+    "mean_top_point_wkv_deep_nll": 3.7737,
+    "max_tok_per_active_param_reached": 4.53,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.0837
+  },
+  "elapsed_s": 5275.5
+}

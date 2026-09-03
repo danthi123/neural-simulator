@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 96,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    48000,
+    72000,
+    96000,
+    128000,
+    160000
+  ],
+  "seeds": [
+    43
+  ],
+  "per_seed": {
+    "43": {
+      "V": 2000,
+      "active_params": 423248,
+      "eval_ids_sha": "440ac7fd1149",
+      "vocab_sha": "427f738d35a2",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 48000,
+          "n_train_passages": 48000,
+          "n_tokens": 1920000,
+          "tok_per_active_param": 4.536,
+          "wkv_deep_nll": 3.9811,
+          "trigram_deep_nll": 4.2472,
+          "bigram_deep_nll": 4.5592,
+          "margin_vs_trigram": 0.2662,
+          "perm_collapse": 1.6019,
+          "mless_collapse": 0.1439,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8495,
+          "overfit_gap": 0.1316,
+          "n_deep": 45000,
+          "elapsed_s": 1274.3
+        },
+        {
+          "max_train_sents": 72000,
+          "n_train_passages": 72000,
+          "n_tokens": 2880000,
+          "tok_per_active_param": 6.805,
+          "wkv_deep_nll": 3.9072,
+          "trigram_deep_nll": 4.1712,
+          "bigram_deep_nll": 4.4701,
+          "margin_vs_trigram": 0.264,
+          "perm_collapse": 1.6648,
+          "mless_collapse": 0.1884,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7973,
+          "overfit_gap": 0.1099,
+          "n_deep": 45000,
+          "elapsed_s": 1901.1
+        },
+        {
+          "max_train_sents": 96000,
+          "n_train_passages": 96000,
+          "n_tokens": 3840000,
+          "tok_per_active_param": 9.073,
+          "wkv_deep_nll": 3.8746,
+          "trigram_deep_nll": 4.1234,
+          "bigram_deep_nll": 4.4116,
+          "margin_vs_trigram": 0.2488,
+          "perm_collapse": 1.703,
+          "mless_collapse": 0.1995,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7713,
+          "overfit_gap": 0.1033,
+          "n_deep": 45000,
+          "elapsed_s": 2323.8
+        },
+        {
+          "max_train_sents": 128000,
+          "n_train_passages": 128000,
+          "n_tokens": 5120000,
+          "tok_per_active_param": 12.097,
+          "wkv_deep_nll": 3.8439,
+          "trigram_deep_nll": 4.081,
+          "bigram_deep_nll": 4.3577,
+          "margin_vs_trigram": 0.237,
+          "perm_collapse": 1.713,
+          "mless_collapse": 0.2146,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7469,
+          "overfit_gap": 0.0971,
+          "n_deep": 45000,
+          "elapsed_s": 3464.1
+        },
+        {
+          "max_train_sents": 160000,
+          "n_train_passages": 160000,
+          "n_tokens": 6400000,
+          "tok_per_active_param": 15.121,
+          "wkv_deep_nll": 3.8251,
+          "trigram_deep_nll": 4.0482,
+          "bigram_deep_nll": 4.3204,
+          "margin_vs_trigram": 0.2231,
+          "perm_collapse": 1.7353,
+          "mless_collapse": 0.2276,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7511,
+          "overfit_gap": 0.0739,
+          "n_deep": 45000,
+          "elapsed_s": 3847.8
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> of <unk> <unk> which was <unk> by <unk> which it was broadcast in the episode sent <unk> <unk> <unk> <unk> on february the match was a <unk> rose second and <unk> the <unk> of the united states to <unk>",
+        "in the <unk> and the <unk> of <unk> <unk> <unk> which included the <unk> style <unk> <unk> <unk> <unk> usually <unk> the <unk> <unk> <unk> are a <unk> <unk> <unk> <unk> for <unk> such as the <unk> of <unk> the <unk> the",
+        "he was at next <unk> and the <unk> and the <unk> of <unk> <unk> into a <unk> <unk> as a <unk> of the battalion he led to <unk> the th infantry division in three <unk> <unk> the th infantry division from <unk>",
+        "it is a <unk> behind <unk> <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> of the <unk> <unk> <unk> into a <unk> <unk> system in the development process has been <unk> by john <unk> the <unk> <unk> of the <unk> <unk>"
+      ],
+      "delta_nll_min_to_max_tokens": 0.156,
+      "top_segment_slope": 0.0188,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": false,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 0,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.156,
+    "mean_top_point_wkv_deep_nll": 3.8251,
+    "max_tok_per_active_param_reached": 15.121,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.1351
+  },
+  "elapsed_s": 12912.2
+}
