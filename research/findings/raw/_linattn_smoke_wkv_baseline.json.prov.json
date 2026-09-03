@@ -1,0 +1,42 @@
+{
+ "run_id": "1788464736-1169154",
+ "runner": "research/runners/_emerge_wkv_lm_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9b18ef44b19c98a0/research/runners/_emerge_wkv_lm_derisk.py",
+  "--recurrence",
+  "wkv",
+  "--n-layers",
+  "2",
+  "--d-model",
+  "96",
+  "--seeds",
+  "42",
+  "--n-sentences",
+  "8000",
+  "--vocab",
+  "800",
+  "--epochs",
+  "8",
+  "--json",
+  "research/findings/raw/_linattn_smoke_wkv_baseline.json"
+ ],
+ "git_sha": "066dde61e",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-03T15:45:36",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_linattn_smoke_wkv_baseline.json"
+}
