@@ -81,17 +81,34 @@ case "${1:-list}" in
          # the failure the argparse gate was built for, one layer up: an INTEGRATION SEAM between the
          # validator's world and the executor's world. Measured: _affect_eviction_derisk was queued, gated,
          # dispatched, and exited rc=1 on all three nodes.
+         # SINGLE-NODE RESILIENCE (2026-09-03). The old form required the runner to --help on ALL of
+         # pool40/41/42 and refused otherwise -- so ONE unreachable node stranded the WHOLE pool (pool40
+         # offline "No route to host" refused every add while pool41/42 sat idle with 24 free cores). But
+         # the dispatcher (pool_autodispatch.sh: node_is_idle) already ssh-health-checks each node every
+         # cycle and SKIPS unreachable ones, so an unreachable node is NEVER a dispatch target -- gating
+         # staging on it is redundant AND fragile. Fix: probe reachability first, SKIP unreachable nodes
+         # (dispatcher skips them too), and only refuse when a REACHABLE node lacks the runner (the real
+         # integration-seam check, preserved) or when NO node is reachable at all.
          if [ -n "$MOD" ]; then
-           NODE_BAD=""
+           NODE_BAD=""; NODE_OK=""; NODE_UNREACH=""
            for n in pool40 pool41 pool42; do
-             if ! timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
+             if ! timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=6 "$n" true >/dev/null 2>&1; then
+               NODE_UNREACH="$NODE_UNREACH $n"; continue
+             fi
+             if timeout 25 ssh -o BatchMode=yes -o ConnectTimeout=8 "$n" \
                   "cd ~/derisk-pool/sim && SIM_NO_PROVENANCE=1 SIM_BACKEND=numpy .venv/bin/python -m $MOD --help" \
-                  >/dev/null 2>&1; then NODE_BAD="$NODE_BAD $n"; fi
+                  >/dev/null 2>&1; then NODE_OK="$NODE_OK $n"; else NODE_BAD="$NODE_BAD $n"; fi
            done
+           [ -n "$NODE_UNREACH" ] && echo "ℹ️  skipping unreachable node(s):$NODE_UNREACH (dispatcher health-checks + skips them too)" >&2
            if [ -n "$NODE_BAD" ]; then
-             echo "⛔ REFUSED: $MOD is not runnable on every dispatch target:$NODE_BAD" >&2
-             echo "   The dispatcher may choose any node; synchronize all three first:" >&2
-             echo "   bash tools/pool_provision.sh pool40 pool41 pool42" >&2
+             echo "⛔ REFUSED: $MOD is not runnable on REACHABLE dispatch target(s):$NODE_BAD" >&2
+             echo "   Those nodes are UP but the runner fails there (stale rsync?); synchronize them:" >&2
+             echo "   bash tools/pool_provision.sh$NODE_BAD" >&2
+             exit 2
+           fi
+           if [ -z "$NODE_OK" ]; then
+             echo "⛔ REFUSED: no reachable pool node can run $MOD (unreachable:$NODE_UNREACH)." >&2
+             echo "   Restore a node before queueing (pool health: .venv/bin/python tools/pool_health.py)." >&2
              exit 2
            fi
          fi
