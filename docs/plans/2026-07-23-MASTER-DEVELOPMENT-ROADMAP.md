@@ -142,6 +142,19 @@ long-pole stays gated and honest, not faked with more templates.
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-09-03 — Wall-2 scaffold-retirement ledger-drift CORRECTION (read this FIRST for the retire_status column).**
+> The 2026-09-02 Check-D seeding (`560968f03`) marked THREE rows `retire_status: RETIRABLE_NOW` — `gnw-bus-shadow`,
+> `gnw-two-organ-bus`, `gnw-three-organ-bus` — describing all three as still "computed-then-overridden." Checked
+> against source + re-verified live: stale for all three. `gnw-bus-shadow`'s `gate_via_bus` follow-on (line 221 below)
+> was already built + committed SAME-DAY 2026-08-13 (`6ab22eb55`, GO 22/22) and the file has had no commit since; the
+> two/three-organ rows were each BUILT with the identical never-compute-the-host-combination pattern from their own
+> inception (their own docstrings say so), so neither ever had a dead-code follow-on to build. All three now correctly
+> read `scaffold_retired: PARTIAL` / `retire_status: BLOCKED:neural-render` (the same PARTIAL shape as
+> `content-selection`'s residual). No `sim`/`webapp` code changed. finding
+> [`2026-09-03-gnw-bus-family-retire-status-ledger-drift-CORRECTED.md`](../../research/findings/2026-09-03-gnw-bus-family-retire-status-ledger-drift-CORRECTED.md);
+> artifact `research/findings/raw/_gnw_bus_family_ledger_correction/verify.json` (GO). Vikunja #204 closed
+> (re-classified with evidence, its own stated alternative to a flip-to-RETIRED).
+
 > **🗓️ 2026-08-18 — GNW-KEYSTONE + INTEGRATION WAVE (read this FIRST; consolidated on main, both remotes).** 8 landings.
 > **THE GNW KEYSTONE ADVANCED 3 RUNGS + a synthesis:** (1) **keystone rung-d LANDED GO-caveat 6/6** (`c22c8156`) — the
 > re-entrant deliberation loop-count EMERGES from the substrate's OWN spiking read (n_ignited ignition/conflict count),
