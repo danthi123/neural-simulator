@@ -1,0 +1,448 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/simplewiki.txt",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "d_model": 192,
+  "per_seed": {
+    "42": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.429,
+          "bigram": 5.3,
+          "trigram": 6.238,
+          "wkv_perm": 8.942,
+          "wkv_memoryless": 5.429,
+          "margin_vs_trigram": 0.809,
+          "margin_vs_bigram": -0.129
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.052,
+          "bigram": 5.395,
+          "trigram": 4.346,
+          "wkv_perm": 8.537,
+          "wkv_memoryless": 5.718,
+          "margin_vs_trigram": -0.706,
+          "margin_vs_bigram": 0.344
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 5.0,
+          "bigram": 5.436,
+          "trigram": 4.385,
+          "wkv_perm": 8.55,
+          "wkv_memoryless": 5.779,
+          "margin_vs_trigram": -0.614,
+          "margin_vs_bigram": 0.436
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.909,
+          "bigram": 5.42,
+          "trigram": 4.398,
+          "wkv_perm": 8.428,
+          "wkv_memoryless": 5.76,
+          "margin_vs_trigram": -0.511,
+          "margin_vs_bigram": 0.51
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.866,
+          "bigram": 5.46,
+          "trigram": 4.49,
+          "wkv_perm": 8.308,
+          "wkv_memoryless": 5.807,
+          "margin_vs_trigram": -0.376,
+          "margin_vs_bigram": 0.594
+        },
+        "10-99": {
+          "n": 188509,
+          "wkv": 4.77,
+          "bigram": 5.433,
+          "trigram": 4.415,
+          "wkv_perm": 8.134,
+          "wkv_memoryless": 5.799,
+          "margin_vs_trigram": -0.355,
+          "margin_vs_bigram": 0.663
+        }
+      }
+    },
+    "43": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.474,
+          "bigram": 5.369,
+          "trigram": 6.301,
+          "wkv_perm": 9.024,
+          "wkv_memoryless": 5.474,
+          "margin_vs_trigram": 0.827,
+          "margin_vs_bigram": -0.105
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.044,
+          "bigram": 5.339,
+          "trigram": 4.309,
+          "wkv_perm": 8.649,
+          "wkv_memoryless": 5.659,
+          "margin_vs_trigram": -0.735,
+          "margin_vs_bigram": 0.296
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 4.971,
+          "bigram": 5.385,
+          "trigram": 4.336,
+          "wkv_perm": 8.419,
+          "wkv_memoryless": 5.772,
+          "margin_vs_trigram": -0.635,
+          "margin_vs_bigram": 0.415
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.877,
+          "bigram": 5.374,
+          "trigram": 4.409,
+          "wkv_perm": 8.409,
+          "wkv_memoryless": 5.739,
+          "margin_vs_trigram": -0.468,
+          "margin_vs_bigram": 0.497
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.848,
+          "bigram": 5.434,
+          "trigram": 4.446,
+          "wkv_perm": 8.244,
+          "wkv_memoryless": 5.797,
+          "margin_vs_trigram": -0.402,
+          "margin_vs_bigram": 0.586
+        },
+        "10-99": {
+          "n": 187997,
+          "wkv": 4.77,
+          "bigram": 5.445,
+          "trigram": 4.438,
+          "wkv_perm": 8.14,
+          "wkv_memoryless": 5.836,
+          "margin_vs_trigram": -0.332,
+          "margin_vs_bigram": 0.675
+        }
+      }
+    },
+    "44": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.446,
+          "bigram": 5.302,
+          "trigram": 6.234,
+          "wkv_perm": 9.034,
+          "wkv_memoryless": 5.446,
+          "margin_vs_trigram": 0.789,
+          "margin_vs_bigram": -0.144
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.069,
+          "bigram": 5.398,
+          "trigram": 4.362,
+          "wkv_perm": 8.714,
+          "wkv_memoryless": 5.717,
+          "margin_vs_trigram": -0.706,
+          "margin_vs_bigram": 0.33
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 5.105,
+          "bigram": 5.498,
+          "trigram": 4.44,
+          "wkv_perm": 8.406,
+          "wkv_memoryless": 5.877,
+          "margin_vs_trigram": -0.665,
+          "margin_vs_bigram": 0.393
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.971,
+          "bigram": 5.474,
+          "trigram": 4.469,
+          "wkv_perm": 8.427,
+          "wkv_memoryless": 5.867,
+          "margin_vs_trigram": -0.502,
+          "margin_vs_bigram": 0.502
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.847,
+          "bigram": 5.435,
+          "trigram": 4.426,
+          "wkv_perm": 8.266,
+          "wkv_memoryless": 5.849,
+          "margin_vs_trigram": -0.421,
+          "margin_vs_bigram": 0.588
+        },
+        "10-99": {
+          "n": 187911,
+          "wkv": 4.754,
+          "bigram": 5.422,
+          "trigram": 4.404,
+          "wkv_perm": 8.131,
+          "wkv_memoryless": 5.838,
+          "margin_vs_trigram": -0.35,
+          "margin_vs_bigram": 0.667
+        }
+      }
+    },
+    "100": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.501,
+          "bigram": 5.349,
+          "trigram": 6.281,
+          "wkv_perm": 9.067,
+          "wkv_memoryless": 5.501,
+          "margin_vs_trigram": 0.779,
+          "margin_vs_bigram": -0.152
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.155,
+          "bigram": 5.456,
+          "trigram": 4.437,
+          "wkv_perm": 8.719,
+          "wkv_memoryless": 5.788,
+          "margin_vs_trigram": -0.718,
+          "margin_vs_bigram": 0.301
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 5.097,
+          "bigram": 5.496,
+          "trigram": 4.399,
+          "wkv_perm": 8.527,
+          "wkv_memoryless": 5.88,
+          "margin_vs_trigram": -0.698,
+          "margin_vs_bigram": 0.399
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.954,
+          "bigram": 5.459,
+          "trigram": 4.416,
+          "wkv_perm": 8.395,
+          "wkv_memoryless": 5.862,
+          "margin_vs_trigram": -0.537,
+          "margin_vs_bigram": 0.506
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.882,
+          "bigram": 5.446,
+          "trigram": 4.444,
+          "wkv_perm": 8.287,
+          "wkv_memoryless": 5.828,
+          "margin_vs_trigram": -0.438,
+          "margin_vs_bigram": 0.564
+        },
+        "10-99": {
+          "n": 188428,
+          "wkv": 4.762,
+          "bigram": 5.436,
+          "trigram": 4.42,
+          "wkv_perm": 8.151,
+          "wkv_memoryless": 5.839,
+          "margin_vs_trigram": -0.342,
+          "margin_vs_bigram": 0.674
+        }
+      }
+    },
+    "101": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.418,
+          "bigram": 5.277,
+          "trigram": 6.209,
+          "wkv_perm": 9.102,
+          "wkv_memoryless": 5.418,
+          "margin_vs_trigram": 0.791,
+          "margin_vs_bigram": -0.141
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.169,
+          "bigram": 5.429,
+          "trigram": 4.374,
+          "wkv_perm": 8.661,
+          "wkv_memoryless": 5.82,
+          "margin_vs_trigram": -0.795,
+          "margin_vs_bigram": 0.26
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 4.991,
+          "bigram": 5.404,
+          "trigram": 4.344,
+          "wkv_perm": 8.493,
+          "wkv_memoryless": 5.766,
+          "margin_vs_trigram": -0.647,
+          "margin_vs_bigram": 0.413
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 5.012,
+          "bigram": 5.464,
+          "trigram": 4.431,
+          "wkv_perm": 8.359,
+          "wkv_memoryless": 5.847,
+          "margin_vs_trigram": -0.581,
+          "margin_vs_bigram": 0.452
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.892,
+          "bigram": 5.478,
+          "trigram": 4.475,
+          "wkv_perm": 8.286,
+          "wkv_memoryless": 5.849,
+          "margin_vs_trigram": -0.418,
+          "margin_vs_bigram": 0.586
+        },
+        "10-99": {
+          "n": 188570,
+          "wkv": 4.755,
+          "bigram": 5.429,
+          "trigram": 4.414,
+          "wkv_perm": 8.14,
+          "wkv_memoryless": 5.819,
+          "margin_vs_trigram": -0.34,
+          "margin_vs_bigram": 0.675
+        }
+      }
+    },
+    "102": {
+      "V": 8001,
+      "n_train": 494061,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.535,
+          "bigram": 5.33,
+          "trigram": 6.261,
+          "wkv_perm": 9.133,
+          "wkv_memoryless": 5.535,
+          "margin_vs_trigram": 0.726,
+          "margin_vs_bigram": -0.205
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 5.229,
+          "bigram": 5.478,
+          "trigram": 4.413,
+          "wkv_perm": 8.716,
+          "wkv_memoryless": 5.895,
+          "margin_vs_trigram": -0.816,
+          "margin_vs_bigram": 0.249
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 5.021,
+          "bigram": 5.435,
+          "trigram": 4.341,
+          "wkv_perm": 8.482,
+          "wkv_memoryless": 5.814,
+          "margin_vs_trigram": -0.68,
+          "margin_vs_bigram": 0.414
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.928,
+          "bigram": 5.427,
+          "trigram": 4.425,
+          "wkv_perm": 8.396,
+          "wkv_memoryless": 5.831,
+          "margin_vs_trigram": -0.504,
+          "margin_vs_bigram": 0.499
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.878,
+          "bigram": 5.454,
+          "trigram": 4.459,
+          "wkv_perm": 8.297,
+          "wkv_memoryless": 5.896,
+          "margin_vs_trigram": -0.42,
+          "margin_vs_bigram": 0.575
+        },
+        "10-99": {
+          "n": 188737,
+          "wkv": 4.762,
+          "bigram": 5.43,
+          "trigram": 4.401,
+          "wkv_perm": 8.124,
+          "wkv_memoryless": 5.871,
+          "margin_vs_trigram": -0.361,
+          "margin_vs_bigram": 0.667
+        }
+      }
+    }
+  },
+  "elapsed_s": 2684.7
+}
