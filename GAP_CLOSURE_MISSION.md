@@ -13,6 +13,24 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02c (READ FIRST; LATEST anchor — supersedes the 2026-09-02b header below)
+**↓ CURRENT ARC 2026-09-02c — `main` = `a3710bd3` (CLAUDE driving; owner present earlier this session).** Arc = ONE-BRAIN MERGE-WAVE completion + a read-isolation integrity sweep. All items below are on `main` + both remotes unless marked in-flight.
+
+**LANDED this arc:**
+- Merge-wave: Wave 1 (comprehension+source_provenance) + Wave 2 (self_schema+curiosity+causal_whatif) = 9 organs on one `merge_organs` pool; **wave1+wave2 organ-read parity confirmed on cupy 6/6 byte-identical** (cross-backend), unblocked by two real cupy fixes: `from_host` restore in source_provenance `_reset_dynamics` (`a099e61a`) + `_rest_v`/`_rest_u` `.copy()` (not `np.asarray`) in the merge framework's causal_whatif `ensure_built` (`3ed20b24`). Both byte-identical on numpy.
+- #108 knowledge flip LANDED (`673b49c5`): default LTM → full `wikidata_100k` (78,857 facts) — brain talks from a real body of knowledge by default (reversible via `BRAIN_LTM_BUNDLE`).
+- Read-isolation integrity sweep: C2 `_hard_reset` leak class mapped across 14 (`b0592fae0`) + record follow-through (`61e58a52`: 15th instance in `ProvToAuthorPool` fixed; honest GO-headroom corrections — reciprocal-GO 2.1-2.4x→1.18-1.37x, r4 floor 5/6→2/6; semantic-drop-GO survives-but-inert-in-production) + the ~29-runner audit (`a3710bd3`: **comprehension's LIVE Gate-B read-isolation leak fixed**, 0 verdict flips elsewhere).
+- ⚠️ **BIGGER bug DISCOVERED, NOT fixed (Vikunja #203 / chip task_ab06b2b1):** `plastic=False`/`plastic_internal=False` is NOT enforced by the runtime Hebbian update in `sim/bridge.py` — non-plastic synapses drift purely from being READ (comprehension recurrent weights 13.8→56.1 over 30 reads; live in every chat turn). Core-kernel fix, owner-worthy, deferred as its own careful arc (additive/default-off/byte-identical-when-off).
+
+**IN FLIGHT (both notify on completion):**
+- pmem Wave-3 NO-GO CLOSURE: fix = `_PMEM_READ_PARAMS` `plateau_margin` 1.05→1.0 (biology-grounded calibration of the cited SFA-NMDA coincidence-amplifier `single-input g_nmda < theta < coincidence g_nmda`, for the num_traits=1 pool where seed 42's margin collapsed). **seed 42 (the only failing seed) CONFIRMED post-fix on the real merged-11 pool** (fire 0.024→0.100; byte-id+alive+answer all True). Full 6-seed POSTFIX verify running (~1h/seed, bandwidth-thrashed by the fluency sweep). Branch `research/pmem-wave3-multiturn-nogo` (NOT yet pushed).
+- **WHEN pmem 6/6 LANDS → RESUME HERE:** harvest the pmem-fix branch + the Wave 3 runners (backed up at `scratchpad/wave3_runners_backup/` = `onebrain_wave3_pool_production.py` + `_onebrain_wave3_organread_verify.py`; also in worktree `agent-a502f01b3f81e3646`) + write the Wave 3 finding (substrate byte-identity GO 3/3 + pmem functional GO post-fix) + queue the post-fix Wave 3 cupy verify on `gpu_queue.sh`. That COMPLETES the merge-wave arc.
+- Own-voice fluency capacity rung (#193): d192 matched-tok/param sweep on local CPU (bandwidth-thrashed, ~2.6h/job, 2/12 done). Early GO-TOKEN-LEVER signal: d192 seed 43 NLL 3.7855 < d96's 3.9321 → capacity is an independent lever from tokens (toward the NLL 3.0-3.69 fluency band). 6-seed per-arm verdict pending. Branch `research/gen-cortex-fluency-next-rung`.
+
+**OWNER-GATED:** C1 (D2-surprise→E2-world-model) is flip-verify GO through the real handler (flip-ready) — awaiting the owner's production-default flip decision (or hold to flip the whole pool together when Wave 3 lands).
+
+---
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02b (READ FIRST; LATEST anchor — supersedes the 2026-09-02 header below)
 
 **↓ CURRENT ARC 2026-09-02b — `main` = `53ccc475` (CLAUDE driving; owner PRESENT, hands-on infra maintenance this session).** Post-infra-maintenance resync COMPLETE: gitea/origin synced (both at `53ccc475`); the deferred code-vs-ledger drift is CLOSED — PI-gate coverage rows for the 2 flagship xedge faculties (`896738a1b`) + the A1/A2 flip-reconcile rows (d6-wm-competitive-slot-allocation on_by_default:YES, wkv-mouth-learned-head PARTIAL) + the #108 R2 scale_note (`53ccc475`); `research/flip-108-wire-escalation-reverify` pushed to both remotes (`af3a4c12`); anti-stall RUN-STATE heartbeat re-armed (continuation). Board reconciled: #196/#191 DONE, #199 opened (R1 free-talk pipeline integration).
