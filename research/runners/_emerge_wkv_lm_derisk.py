@@ -367,6 +367,89 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 outs.append(r[:, t] * self.Wo(x))            # LEARNED local read-out C
             return torch.stack(outs, 1)
 
+    class AssocLayer(nn.Module):
+        """CONTENT-ADDRESSABLE associative read (learned-key attention), gap#1's next mechanism CLASS after the
+        exhausted linear-recurrence family: WKV's num/den normalization, the ssm/dual-nonneg leaky integrator,
+        and the FIXED-diagonal HiPPO multi-timescale SSM (--recurrence hippo, above) all converged on the SAME
+        ~-0.125 margin_vs_trigram bound (research/findings/2026-09-03-spiking-depth-tokens-closing-fluency-gap-
+        milestone.md; the HiPPO run reproduced it 2-seed). research/findings/2026-07-15-selective-ssm-generator-
+        trigram-bound-... diagnosed WHY: every linear-recurrence family compresses the whole prefix into a
+        FIXED-size state through a projection the read-out cannot losslessly invert, so it can only ever
+        APPROXIMATE which past token mattered. A trigram instead keeps the EXACT identity of the last two
+        tokens. This class is the mechanism the July record named to close that gap: EXACT content-addressable
+        recall of a SPECIFIC past position, not a lossy compressed summary of all of them.
+
+        OWNER STEER (2026-09-03): pursue open-ended own-voice fluency FULLY; content-addressable/attention-like
+        reads are ACCEPTED even against the retire-the-transformer grain, PROVIDED they are biologically framed.
+        BIOLOGICAL ANCHOR (not a raw transformer bolted on for its own sake): this is framed as an associative-
+        memory / content-addressable-recall operation -- the computation CA3's recurrent collaterals perform
+        during hippocampal PATTERN COMPLETION (a partial/current cue retrieves a whole previously-stored pattern
+        by similarity), and that a cortical associative-memory column performs when a current context "looks
+        up" a previously experienced conjunction. Ramsauer et al. 2020 ("Hopfield Networks is All You Need",
+        ICLR 2021) proved the MODERN HOPFIELD NETWORK's continuous energy-based update -- iterated pattern
+        completion against a set of stored patterns -- is mathematically IDENTICAL to dot-product-softmax
+        attention; so "learned keys queried by a current probe, softmax-weighted retrieval of the associated
+        value" is simultaneously the standard attention formulation AND a one-shot (single-iteration) modern-
+        Hopfield/associative-memory read. The keys/values (Wk, Wv) are LEARNED FROM EXPERIENCE exactly as a
+        cortical associative memory's synaptic weights are shaped by what actually co-occurred, not designed or
+        hand-set -- "the keys learned from experience" the task spec names.
+
+        Mechanism per position t (CAUSAL: t only ever reads s <= t, matching the recurrent layers' strict
+        causality -- no leakage from the future):
+          q_t = Wq(z_t)                                  -- the current probe/cue
+          k_s = Wk(z_s), v_s = Wv(z_s)  for all s <= t    -- learned keys/values over every PAST position
+          score_{t,s} = (q_t . k_s) / sqrt(D)             -- scaled dot-product content-similarity
+          alpha_{t,:} = softmax_s(score_{t,:}, causal-masked at s>t)   -- competitive normalization over
+                                                              candidate past positions (the "which past token
+                                                              matters right now" competition a lossy fixed-size
+                                                              state cannot run)
+          read_t = sum_{s<=t} alpha_{t,s} v_s             -- the associative recall itself
+          delta_t = Wo(read_t)                            -- caller adds this to the residual stream, h = h+delta
+        Pre-norm residual block, matching WkvLayer/HippoLayer's `forward(h) -> delta` contract exactly so it
+        stacks identically under --n-layers and composes with --contiguous unchanged (--contiguous only changes
+        how load_stories builds the input token sequence upstream of this block; the block itself is agnostic
+        to where its input sequence came from).
+
+        MEMORYLESS anti-cheat (shared eval_perdepth machinery, WKV.forward's `self.memoryless` flag): masks
+        every query to attend ONLY to s==t (itself) -- "no carry, current token only", the same semantics the
+        ssm/hippo branches give this flag (their recurrence-off state). If deep-context NLL collapses toward
+        bigram-level under this, the class's advantage was genuinely coming from READING the past through the
+        causal attention, not from the current-token projection alone. The generic sequence-level --permute
+        anti-cheat (eval_perdepth's `permute=True`, shuffles the prefix order per eval sentence) also applies
+        unmodified to this branch -- it operates on the input token order before the net ever sees it, so no
+        assoc-specific plumbing is needed; a collapse there shows the causal ORDER (not just bag-of-past-tokens
+        membership) is load-bearing to the read.
+
+        NOT a hidden re-admission of the retired transformer: no positional encoding, no multi-head split, no
+        FFN sublayer, no post-attention LayerNorm, no learned temperature -- exactly the four projections plus
+        one causal softmax the biological framing above calls for, and nothing more of the standard transformer
+        block.
+        """
+        def __init__(self, D):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wq = nn.Linear(D, D, bias=False)
+            self.Wk = nn.Linear(D, D, bias=False)
+            self.Wv = nn.Linear(D, D, bias=False)
+            self.Wo = nn.Linear(D, D, bias=False)
+            self.scale = 1.0 / math.sqrt(D)
+
+        def forward(self, h, memoryless=False):        # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            q = self.Wq(z); k = self.Wk(z); v = self.Wv(z)
+            scores = torch.einsum("btd,bsd->bts", q, k) * self.scale    # [B,T,T] raw content-similarity scores
+            causal = torch.tril(torch.ones(T, T, dtype=torch.bool, device=h.device))
+            if memoryless:
+                # ANTI-CHEAT: no carry -> current token only (mirrors ssm/hippo's memoryless semantics) --
+                # restrict every query to attend ONLY to itself (s==t), collapsing the associative read to a
+                # pure self-read (no content-addressable recall of any PAST position survives).
+                causal = torch.eye(T, dtype=torch.bool, device=h.device)
+            scores = scores.masked_fill(~causal.unsqueeze(0), float("-inf"))
+            alpha = torch.softmax(scores, dim=-1)                        # [B,T,T] causal content-addressed weights
+            read = torch.einsum("bts,bsd->btd", alpha, v)                # [B,T,D] weighted associative recall
+            return self.Wo(read)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -404,6 +487,15 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                            permute_a=getattr(args, "hippo_permute_a", False))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "hippo" else nn.ModuleList()
+            # --recurrence assoc (2026-09-03): CONTENT-ADDRESSABLE associative read, composed with --n-layers
+            # depth exactly like hippo_layers above (ALL n_layers blocks are uniform AssocLayer instances in ONE
+            # list -- see AssocLayer's docstring for the full mechanism + bio framing). Built ONLY when
+            # RECUR=="assoc" (else an empty ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm/hippo
+            # paths' parameter-init RNG order -- hence their outputs -- is UNCHANGED by this addition at any
+            # --n-layers, not just n_layers=1.
+            self.assoc_layers = nn.ModuleList([
+                AssocLayer(D) for _ in range(max(n_layers, 1))
+            ]) if RECUR == "assoc" else nn.ModuleList()
 
         def forward(self, x):                          # x: [B,T] token ids
             B, T = x.shape
@@ -416,6 +508,17 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # is one skipped comparison and every line below runs byte-identically to before this change.
                 hh = h
                 for blk in self.hippo_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self.head(hh)
+            if RECUR == "assoc":
+                # CONTENT-ADDRESSABLE associative read (see AssocLayer's docstring for the full mechanism + bio
+                # framing: CA3 pattern completion / cortical associative memory, Ramsauer et al. 2020's modern-
+                # Hopfield<->attention equivalence). Self-contained: does NOT touch self.Wk/Wv/Wr/w/u below
+                # (unused on this branch, no gradient reaches them). Inserted BEFORE any wkv/ssm-specific line,
+                # mirroring the hippo insertion immediately above, so when RECUR != "assoc" this is one skipped
+                # comparison and every line below runs byte-identically to before this addition.
+                hh = h
+                for blk in self.assoc_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self.head(hh)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
@@ -740,12 +843,16 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
                          "decay grid, B=fixed random input projection) + LEARNED local read-out C (see HippoLayer) "
-                         "-- no learned recurrent credit through the transition dynamics, composable with --n-layers.")
+                         "-- no learned recurrent credit through the transition dynamics, composable with --n-layers; "
+                         "assoc = CONTENT-ADDRESSABLE associative read (learned-key causal attention, see "
+                         "AssocLayer) -- EXACT recall of a specific past position via learned Wq/Wk/Wv/Wo, framed "
+                         "as hippocampal CA3 pattern-completion / cortical associative memory (Ramsauer et al. "
+                         "2020's modern-Hopfield<->attention equivalence), composable with --n-layers.")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
