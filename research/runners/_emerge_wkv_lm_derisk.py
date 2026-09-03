@@ -234,6 +234,13 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                     _pc = float(getattr(args, "plateau_sur_center", 1.0)); _psl = float(getattr(args, "plateau_sur_slope", 1.0))
                     ap2 = torch.zeros(B, D, device=x.device); an2 = torch.zeros(B, D, device=x.device); outs2 = []
                     _inz = float(getattr(args, "input_noise", 0.0))
+                    # DIVISIVE-NORMALIZATION GATE (2026-09-03, additive, default OFF -- --dual-nonneg-divnorm):
+                    # read once, used only in the base dual-nonneg loop below (NOT the plateau_exact branch,
+                    # which returns early and is untouched). See the in-loop comment for the full justification.
+                    _dnv = getattr(args, "dual_nonneg_divnorm", False)
+                    _dnv_n = float(getattr(args, "divnorm_n", 2.0))
+                    _dnv_sigma = float(getattr(args, "divnorm_sigma", 0.5))
+                    _dnv_scale = float(getattr(args, "divnorm_scale", 1.0))
                     if getattr(args, "plateau_exact", False):
                         # EXACT on-bridge plateau transfer (gap#1<->gap#4 convergence): the recurrence IS
                         # fused_graded_dendritic_plateau's read state -- V = relu(sigmoid(slope*(pathway_w*rate - center)) - floor),
@@ -271,7 +278,46 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                             # WKV read + input map co-adapt to the plateau's realizable state. If GO -> the actual port beats.
                             ip = torch.sigmoid(_psl * (ip - _pc)); im = torch.sigmoid(_psl * (im - _pc))
                         ap2 = wdec * ap2 + ip; an2 = wdec * an2 + im
-                        rate = torch.cat([ap2, an2], -1)
+                        if _dnv:
+                            # DIVISIVE-NORMALIZATION GATE (2026-09-03 convergent next mechanism after the ssm/
+                            # dual-nonneg NO-GO -- research/findings/2026-09-03-spiking-mouth-ssm-dualnonneg-
+                            # fluency-NO-GO-first-brain-based-only-baseline.md). DIAGNOSIS: dual-nonneg's ap2/an2
+                            # are raw leaky SUMS (a_t = decay*a_{t-1} + v_t) with no accumulated denominator, so
+                            # they discard RWKV's numerator/denominator normalization (wkv_t divides its running
+                            # numerator by a running denominator b_t, making the read a content-weighted AVERAGE,
+                            # not a raw sum -- the "cross-time competition" the diagnosis names as missing). A
+                            # LITERAL per-channel temporal transfer of b_t degenerates here: dual-nonneg has no
+                            # exp(k_t) content-weighting term to normalize against (b_t would reduce to
+                            # decay*b+1, a channel-independent constant at steady state, i.e. a no-op divisor).
+                            # So instead we transfer the SAME Carandini & Heeger (2012, Nat Rev Neurosci 13:51-62)
+                            # semi-saturating divisive-normalization ratio the vision lane's `satdiv` readout
+                            # already validated (BORDERLINE, 2026-09-03,
+                            # research/runners/_vision_lindiscrim_readout_derisk.py::_apply_s2_norm) for the
+                            # identical "affine-normalization-exhausted, need a bounded competitive ratio" failure
+                            # mode: R_i = drive_i^n / (sigma^n + pool), pool = sum over a POPULATION of drive^n.
+                            # PLACEMENT (justified against the RWKV analogy): applied to the dual-nonneg STATE
+                            # (ap2, an2) immediately before the Wo_sp readout -- the same point in the pipeline
+                            # where RWKV's wkv_t is normalized before its own Wo readout. POOL AXIS: the CHANNEL
+                            # population (dim -1, size D) at the current timestep, computed SEPARATELY for the ON
+                            # (ap2) and OFF (an2) populations (their own local pool, not mixed -- mirrors
+                            # biological ON/OFF center-surround normalization, and matches satdiv's per-population
+                            # pool convention). This makes each channel's contribution COMPETITIVE and BOUNDED: a
+                            # channel that dominates its population's drive gets a near-full-scale response, a
+                            # channel among many co-active channels is suppressed -- restoring content-SELECTIVE
+                            # (which channel carries the informative signal right now), not merely channel-
+                            # independent accumulation. This is a FORWARD-pass content-selection computation, NOT
+                            # a credit-assignment rule -- explicitly DISTINCT from the already-refuted dendritic/
+                            # two-compartment/BDSP/burstprop deep-credit line (that addressed hidden-credit-on-
+                            # spikes via the frozen fixed-random feedback SIGNAL, not this topology; see
+                            # research/findings/2026-07-22-gap4-real-issue-NOT-dendrites*.md). Default OFF (--dual-
+                            # nonneg-divnorm) -> byte-identical to the pre-existing dual-nonneg path when unset.
+                            _dp = torch.clamp(ap2, min=0.0).pow(_dnv_n); _dn = torch.clamp(an2, min=0.0).pow(_dnv_n)
+                            _poolp = _dp.sum(-1, keepdim=True); _pooln = _dn.sum(-1, keepdim=True)
+                            rp = _dnv_scale * _dp / ((_dnv_sigma ** _dnv_n) + _poolp + 1e-12)
+                            rn = _dnv_scale * _dn / ((_dnv_sigma ** _dnv_n) + _pooln + 1e-12)
+                            rate = torch.cat([rp, rn], -1)
+                        else:
+                            rate = torch.cat([ap2, an2], -1)
                         outs2.append(r[:, t] * self.Wo_sp(rate))
                     return self.head(torch.stack(outs2, 1))
                 for t in range(T):
@@ -492,6 +538,24 @@ def main():
     ap.add_argument("--plateau-sur-center", dest="plateau_sur_center", type=float, default=1.0)
     ap.add_argument("--plateau-sur-slope", dest="plateau_sur_slope", type=float, default=1.0)
     ap.add_argument("--dual-nonneg", dest="dual_nonneg", action="store_true", help="two positive leaky integrators = the plateau realizable state")
+    ap.add_argument("--dual-nonneg-divnorm", dest="dual_nonneg_divnorm", action="store_true",
+                    help="(--dual-nonneg only, base loop -- NOT --plateau-exact) Carandini & Heeger divisive-"
+                         "normalization gate on the ON/OFF dual-nonneg state before the Wo_sp readout: R_i = "
+                         "drive_i^n / (sigma^n + pool), pool = sum over the CHANNEL population of drive^n, "
+                         "applied separately to ap2 (ON) and an2 (OFF). Restores RWKV-style content-addressed "
+                         "normalization dual-nonneg otherwise lacks (2026-09-03 convergent-mechanism finding, "
+                         "the SAME functional form as the vision lane's --s2-norm satdiv). FORWARD-pass content-"
+                         "selection only -- not credit assignment. Default OFF -> byte-identical to the "
+                         "pre-existing dual-nonneg path.")
+    ap.add_argument("--divnorm-n", dest="divnorm_n", type=float, default=2.0,
+                    help="(--dual-nonneg-divnorm only) exponent n in drive^n/(sigma^n+pool) (Heeger 1992 fits "
+                         "~2; matches the vision lane's --s2-satdiv-n default).")
+    ap.add_argument("--divnorm-sigma", dest="divnorm_sigma", type=float, default=0.5,
+                    help="(--dual-nonneg-divnorm only) semi-saturation constant sigma (matches the vision "
+                         "lane's --s2-satdiv-sigma default).")
+    ap.add_argument("--divnorm-scale", dest="divnorm_scale", type=float, default=1.0,
+                    help="(--dual-nonneg-divnorm only) output rescale so the bounded ratio lands in the "
+                         "read-out's useful range (matches the vision lane's --s2-satdiv-scale default).")
     ap.add_argument("--nonneg-state", dest="nonneg_state", action="store_true", help="rectified non-negative leaky state a=relu(decay*a+v) -> the dendritic plateau holds it directly, no ON/OFF opponency")
     ap.add_argument("--spike-output", dest="spike_output", action="store_true",
                     help="SpikeGPT-faithful: GRADED state + SPIKE-CODED output y_t (straight-through), trained end-to-end")
