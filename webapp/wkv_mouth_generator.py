@@ -120,6 +120,75 @@ def _learned_head_path(seed: int) -> str:
     return _LEARNED_HEAD_PATH_TEMPLATE
 
 
+# ── BPE tokenizer mode (2026-09-03, "own-voice fluency retrain" decode wiring, DEFAULT-OFF). The checkpoint this
+# module has shipped against so far (`wkv_ssmU6_v1000_d128_seed{seed}.npz`) is WORD-level: each vocabulary entry
+# in the checkpoint's own `words` array is one whole TinyStories word, so `_free_gen`'s final join
+# (`" ".join(ro.words[i] for i in gen ...)`) is a correct detokenizer for it. The in-flight "own-voice fluency"
+# retrain (`research.runners._emerge_wkv_lm_derisk --tokenizer bpe --corpus data/corpus/simplewiki.txt`, 6-seed,
+# GPU, running as of this comment -- see research/findings/raw/_emerge_wkv_lm_simplewiki_6seed.log) instead uses
+# `_BPEVocabAdapter` (that module) to tokenize with `sim.bpe_tokenizer.BPETokenizer`, so ITS checkpoint's `words`
+# array holds Sennrich-BPE SUBWORD SYMBOLS (`</w>`-suffixed at a word boundary, e.g. "un", "happi", "ness</w>"),
+# not whole words -- naively space-joining them would emit "un happi ness" instead of "unhappiness". This block
+# wires the fix: an opt-in tokenizer mode that, when set, decodes (and encodes the prompt) via the SAME
+# `BPETokenizer` class the trainer used, reusing its `.decode`/`.encode` VERBATIM (no `sim/` edit; see
+# `_get_bpe_tokenizer`). DEFAULT is "word" -- byte-identical to every call site and every behavior that existed
+# before this block (see `_free_gen`'s own `bpe=None` branch, which is the UNMODIFIED original code path).
+#
+# HONEST SCOPE -- what this rung does NOT do (named here so the gap is visible, not silently assumed away):
+#   1. No real BPE checkpoint exists yet. The in-flight training run above does not pass `--save-ssm`, so it
+#      persists no weights at all -- only NLL metrics to its `--json` output. A follow-up `--save-ssm`-enabled
+#      run is needed regardless of the NLL verdict before this mode has anything real to load.
+#   2. `WKVReadout` (`research.runners._wkv_fewspike_read_derisk`, reused unmodified here) only reads a SINGLE
+#      WKV block's weights (`Wv.weight`/`Wr.weight`/`Wo_sp.weight`/`head.*`) -- it has no code path for the
+#      `extra.*` residual layers `_emerge_wkv_lm_derisk --n-layers 2` (the in-flight run's own config) would add
+#      to a `--save-ssm` checkpoint's state dict. Loading an n-layers>1 checkpoint here would silently ignore the
+#      second layer's weights, not error -- `WKVReadout` needs an `--n-layers`-aware extension before a
+#      multi-layer checkpoint can be read correctly. Named, not fixed, in this rung.
+#   3. `in_vocab_scope`'s function-word/content-word heuristic below is untouched and still assumes a WORD-level
+#      vocabulary; it is not meaningful over a BPE subword vocabulary. Routing a NEW BPE checkpoint into the live
+#      `answer_turn` dispatch (`webapp/open_ended_chat.py`) needs its own scoping decision -- out of scope here.
+# This rung's OWN scope is exactly the token-id<->text boundary: given a BPE-vocabulary checkpoint already
+# loaded by `WKVReadout`, decode its generated ids into real detokenized text (and encode a prompt into ids),
+# proven end-to-end against a tiny synthetic checkpoint (see the module's own test companion).
+_TOKENIZER_ENV = "BRAIN_WKV_MOUTH_TOKENIZER"                 # "word" (default) | "bpe"
+_BPE_PATH_ENV = "BRAIN_WKV_MOUTH_BPE_PATH"
+_DEFAULT_BPE_PATH = os.environ.get(_BPE_PATH_ENV, str(_REPO_ROOT / "bridges/wkv_ckpt/wkv_bpe8k.json"))
+
+
+def tokenizer_mode() -> str:
+    """'word' (default, unset or anything other than 'bpe') -> `generate()`'s pre-existing word-level prompt-encode
+    + space-join decode, BYTE-IDENTICAL to before this function existed. 'bpe' (`BRAIN_WKV_MOUTH_TOKENIZER=bpe`,
+    opt-in) -> `generate()` instead encodes the prompt and decodes the generated ids through a real
+    `sim.bpe_tokenizer.BPETokenizer` (see `_get_bpe_tokenizer`), matching a BPE-vocabulary checkpoint."""
+    v = os.environ.get(_TOKENIZER_ENV, "word").strip().lower()
+    return "bpe" if v == "bpe" else "word"
+
+
+_BPE_TOK_LOCK = threading.Lock()
+_BPE_TOK_CACHE: dict[str, object] = {}
+
+
+def _get_bpe_tokenizer(path: str | None = None):
+    """A cached `sim.bpe_tokenizer.BPETokenizer` loaded from `path` (default `_DEFAULT_BPE_PATH`, the SAME
+    `bridges/wkv_ckpt/wkv_bpe8k.json` artifact `research.runners._emerge_wkv_lm_derisk.DEFAULT_BPE_PATH` trains
+    against -- so a BPE checkpoint's own vocabulary ids are, BY CONSTRUCTION, the SAME id space as this loaded
+    tokenizer's `.vocab`/`.merges`, see `_BPEVocabAdapter` in that module). Lazy-imported (only when a caller
+    actually requests 'bpe' mode) so the default 'word' path never even imports `sim.bpe_tokenizer` -- matching
+    this module's existing "off imports nothing" discipline (see the module docstring's DEFAULT-OFF paragraph)."""
+    p = path or _DEFAULT_BPE_PATH
+    hit = _BPE_TOK_CACHE.get(p)
+    if hit is not None:
+        return hit
+    with _BPE_TOK_LOCK:
+        hit = _BPE_TOK_CACHE.get(p)
+        if hit is not None:
+            return hit
+        from sim.bpe_tokenizer import BPETokenizer          # lazy: only 'bpe' mode ever imports this
+        bt = BPETokenizer.load(p)
+        _BPE_TOK_CACHE[p] = bt
+        return bt
+
+
 # ── the checkpoint (pure np.load — no RNG effect, cached) ─────────────────────────────────────────────────────────
 _CKPT_LOCK = threading.Lock()
 _CKPT_CACHE: dict[tuple, tuple] = {}
@@ -526,8 +595,18 @@ def _apply_repetition_controls(lg: np.ndarray, gen: list, repetition_penalty: fl
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
 def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float,
               repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
-              fact_boost_ids=None, fact_boost: float = 0.0):
-    pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
+              fact_boost_ids=None, fact_boost: float = 0.0, bpe=None):
+    """`bpe` (default `None`, added 2026-09-03): a `sim.bpe_tokenizer.BPETokenizer` instance (see
+    `_get_bpe_tokenizer`) for BPE-vocabulary checkpoints. `bpe=None` (the default, and every pre-existing call
+    site) runs the EXACT SAME two lines that existed before this parameter did -- the word-level prompt-id
+    lookup and the final space-joined decode -- so the default path is byte-identical BY CONSTRUCTION, not
+    merely by equivalent behavior. When `bpe` is given, both the prompt encode and the final decode instead go
+    through that tokenizer's own `.encode`/`.decode` (Sennrich-BPE subword id space, matching what produced the
+    checkpoint's `words` vocabulary in the first place -- see the module's BPE-mode block above)."""
+    if bpe is not None:
+        pid = bpe.encode(prompt or "")
+    else:
+        pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
     if not pid:
         pid = [0]
     ap = np.zeros(ro.D)
@@ -561,7 +640,11 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         ap, an = ro.advance(ap, an, nxt)
         if ro.words[nxt] == "endoftext":
             break
-    text = " ".join(ro.words[i] if 0 <= i < len(ro.words) else "<unk>" for i in gen if ro.words[i] != "endoftext")
+    if bpe is not None:
+        kept = [i for i in gen if 0 <= i < len(ro.words) and ro.words[i] != "endoftext"]
+        text = bpe.decode(kept)
+    else:
+        text = " ".join(ro.words[i] if 0 <= i < len(ro.words) else "<unk>" for i in gen if ro.words[i] != "endoftext")
     return text, (self_nll / max(1, steps)), gen
 
 
@@ -596,7 +679,14 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     straight through to the SAME free-generation path as before this parameter existed (still honoring `facts`/
     `fact_boost` if those were also passed) -- so this parameter can only ADD a generator choice, never remove
     the pre-existing fallback. `sentence_facts=None` (the default and every pre-existing call site) is
-    BYTE-IDENTICAL to before this parameter existed: `render_fact_sentence` is never even imported."""
+    BYTE-IDENTICAL to before this parameter existed: `render_fact_sentence` is never even imported.
+
+    TOKENIZER MODE (`BRAIN_WKV_MOUTH_TOKENIZER`, default 'word', see `tokenizer_mode`/the module's BPE-mode
+    block above): 'word' (the default) is BYTE-IDENTICAL to before this env var existed -- `_free_gen` runs
+    `bpe=None`, its original two lines unchanged. 'bpe' encodes/decodes through a real `BPETokenizer` instead,
+    for a BPE-vocabulary checkpoint (e.g. `BRAIN_WKV_MOUTH_CKPT` pointed at the in-flight own-voice retrain's
+    eventual `--save-ssm` output, once one exists -- see the honest-scope note above for what is NOT yet true
+    of that checkpoint)."""
     t0 = time.time()
 
     def _run():
@@ -607,9 +697,10 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
+        bpe = _get_bpe_tokenizer() if tokenizer_mode() == "bpe" else None
         text, _self_nll, _gen = _free_gen(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
                                           repetition_penalty, no_repeat_ngram_size,
-                                          fact_boost_ids=fact_ids, fact_boost=fact_boost)
+                                          fact_boost_ids=fact_ids, fact_boost=fact_boost, bpe=bpe)
         return text
 
     text = _RNG.run(seed, _run)
