@@ -231,6 +231,85 @@ def _kwta_over_templates(drive, frac):
     return np.where(drive >= thr, drive, 0.0).astype(np.float32)
 
 
+def _make_conjunction_bank(n_s2, conj_n, offset_max, delta0_only, seed):
+    """Sample the (template_a, template_b, Delta) triples for the S2.5 CONFIGURAL-BINDING conjunctive
+    layer (design: research/findings/2026-09-03-vision-configural-binding-DESIGN.md Part 2) -- ONCE PER
+    SEED, exactly as the design's Part 2b specifies ("Start with a FROZEN RANDOM conjunction bank...
+    sample the (a,b,Delta) triples once per seed"), mirroring how the frozen-random S2 bank W0 itself is
+    sampled once per seed (`seed*29+13`) and then reused UNCHANGED across the train/held/scramble splits
+    -- the same must hold here, or a conjunction unit's index would mean a DIFFERENT (a,b,Delta) triple
+    on the train split than on the held split and the learned readout would be reading noise. Returns
+    pairs (conj_n,2) int64 (template indices into the n_s2 bank) and offsets (conj_n,) int64 (the
+    relative x-displacement Delta for afferent b, sampled from +-1..+-offset_max, 0 excluded unless
+    delta0_only -- the Delta=0 anti-cheat control)."""
+    rng = np.random.default_rng(seed * 641 + 17)
+    pairs = rng.integers(0, n_s2, size=(conj_n, 2))
+    if delta0_only:
+        offsets = np.zeros(conj_n, dtype=np.int64)
+    else:
+        off_set = np.array([d for d in range(-offset_max, offset_max + 1) if d != 0])
+        offsets = rng.choice(off_set, size=conj_n)
+    return pairs.astype(np.int64), offsets.astype(np.int64)
+
+
+def _bind_conjunctions(drive, pairs, offsets, mode, shuffle_seed=None):
+    """The S2.5 CONFIGURAL-BINDING stage (design Part 2a) -- inserted BETWEEN the per-location S2
+    template drive and the C2 max-over-locations pool, in BOTH `_c2_spike_code` and `_c2_rate_code`.
+
+    conj_response_c(image) = MAX over absolute location p of AND( drive[p,a] , drive[p+Delta,b] )
+
+    The AND (a coincidence gate -- `research/biology/coincidence-binding.md`, status: established; a
+    synapse as "a biochemical detector of near-simultaneity" whose conjunction is supralinear) makes the
+    unit fire only when template a matches at some location AND template b matches Delta away -- a BOUND
+    feature-pair-in-relative-arrangement. The caller's subsequent MAX over absolute p keeps translation
+    invariance while Delta (internal to the unit, never pooled) preserves the relative arrangement --
+    this is exactly the discarded quantity diagnosed in Part 1 as the cause of the flat-pool plateau.
+
+    drive (N, n_loc, n_S2) post-`_apply_s2_norm`/post-`_kwta_over_templates` S2 template match per
+    location. n_loc is guaranteed a perfect square (g x g) by `_extract_patches`'s row-major
+    `itertools.product(range(g-p+1), range(g-p+1))` location enumeration, so `drive.reshape(N,g,g,n_S2)`
+    recovers the 2-D grid exactly as this function assumes. Returns (N, n_loc, n_conj); the caller then
+    MAX-pools over n_loc unchanged (D flows through the array shape into the readout with zero readout-
+    side edit, per the design's hook table).
+
+    pairs (n_conj,2) / offsets (n_conj,): from `_make_conjunction_bank`, fixed for this seed.
+    mode: 'min' (conservative AND) or 'prod' (supralinear NMDA-like AND); 'coincidence' (spiking arm)
+        uses 'min'/'prod' identically at this stage -- the caller (`_c2_spike_code`) additionally raises
+        the LIF gain, the "raised threshold" that makes the readout coincidence-selective on spikes.
+    shuffle_seed: anti-cheat 2 (offset-shuffle LESION, `--conj-shuffle-offsets`). When set, afferent b is
+        NOT read at p+Delta but at an INDEPENDENT location drawn from a permutation of the grid columns
+        (a fresh `np.random.default_rng(shuffle_seed)` is created HERE, not passed in as a live
+        Generator, so that calling this function with the SAME shuffle_seed on the train/held/scramble
+        splits of one seed -- which all share the same grid size g -- draws the IDENTICAL sequence of
+        permutations; the lesion breaks the a<->b RELATIVE correspondence while keeping each conjunction
+        unit's semantics internally consistent across splits, so any residual capability truly comes from
+        "AND of two features anywhere" rather than a train/held bookkeeping mismatch)."""
+    N, n_loc, n_S2 = drive.shape
+    g = int(round(n_loc ** 0.5))
+    if g * g != n_loc:
+        raise ValueError(f"_bind_conjunctions assumes a square C1 location grid; got n_loc={n_loc}")
+    da = drive.reshape(N, g, g, n_S2)
+    n_conj = pairs.shape[0]
+    srng = np.random.default_rng(shuffle_seed) if shuffle_seed is not None else None
+    out = np.zeros((N, g, g, n_conj), dtype=np.float32)
+    for c in range(n_conj):
+        a_idx, b_idx, d = int(pairs[c, 0]), int(pairs[c, 1]), int(offsets[c])
+        aresp = da[:, :, :, a_idx]
+        if srng is not None:
+            bresp = da[:, :, srng.permutation(g), b_idx]           # LESION: b at an unrelated location
+        elif d == 0:
+            bresp = da[:, :, :, b_idx]                             # Delta=0 degenerate control
+        else:
+            bresp = np.roll(da[:, :, :, b_idx], -d, axis=2)        # template b at p + Delta (x-shift)
+            bresp = bresp.copy()
+            if d > 0:
+                bresp[:, :, g - d:] = 0.0                          # drop wrap-around, keep binding local
+            else:
+                bresp[:, :, :-d] = 0.0
+        out[:, :, :, c] = np.minimum(aresp, bresp) if mode != "prod" else (aresp * bresp)
+    return out.reshape(N, g * g, n_conj)
+
+
 def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epochs, renorm,
                              competitive_frac, seed):
     """Activity-dependent BCM (Bienenstock, Cooper & Munro 1982) learning of the S2 template bank --
@@ -351,40 +430,55 @@ def _bcm_learn_s2_templates(patches_flat, W0, gain, theta_alpha, pre_floor, epoc
     return W.astype(np.float32), theta.astype(np.float32), diag
 
 
-def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses):
+def _c2_spike_code(c1, W0, a, code, base_seed, n_glimpses, conj_pairs=None, conj_offsets=None,
+                    conj_shuffle_seed=None):
     """c1 (N, n_orient, g, g) spiking C1 -> convolutional S2 cosine match -> S2 lateral inhibition
-    (winner-relative contrast) -> LIF S2 coincidence spikes -> C2 per-template MAX over locations
-    (position-invariant). Averaged over `n_glimpses` INDEPENDENT LIF draws (temporal evidence
-    integration; G=1 reproduces the config-C single-glimpse read). Returns r (N, n_S2)."""
+    (winner-relative contrast) -> [S2.5 CONFIGURAL-BINDING conjunctions, --conj-bind != none, design
+    2026-09-03] -> LIF S2 coincidence spikes -> C2 per-template MAX over locations (position-invariant).
+    Averaged over `n_glimpses` INDEPENDENT LIF draws (temporal evidence integration; G=1 reproduces the
+    config-C single-glimpse read). `conj_pairs`/`conj_offsets`/`conj_shuffle_seed` default None ->
+    `_bind_conjunctions` is never called -> BYTE-IDENTICAL to every prior run of this file. Returns
+    r (N, n_S2) when off, r (N, n_conj) when the binding stage is on (D flows through via array shape)."""
     patches = _extract_patches(c1, a.s2_p)                     # (N, n_loc, D)
     N, n_loc, D = patches.shape
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)                      # (N, n_loc, n_S2) cosine match
     drive = _apply_s2_norm(drive, a)
     drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
+    s2_gain = a.s2_gain
+    if conj_pairs is not None:
+        drive = _bind_conjunctions(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
+        if a.conj_mode == "coincidence":
+            # the spiking arm's predicted-positive: raise the LIF gain (~a raised firing threshold for
+            # the coincidence-detector soma) so the class-population read only responds to genuinely
+            # JOINT (a AND b) drive, not either afferent alone (design Part 3, failure mode 5).
+            s2_gain = s2_gain * 1.6
     flat = drive.reshape(N * n_loc, -1)
     acc = None
     G = max(1, int(n_glimpses))
     for gi in range(G):
         counts, first = lif_spike_read(flat, a.T2, base_seed + 101 + gi * 13,
                                        tau=a.tau, v_thresh=a.v_thresh, t_ref=a.t_ref,
-                                       noise=a.noise, gain=a.s2_gain)
-        s2 = spike_code(counts, first, a.T2, code).reshape(N, n_loc, -1)  # (N, n_loc, n_S2)
+                                       noise=a.noise, gain=s2_gain)
+        s2 = spike_code(counts, first, a.T2, code).reshape(N, n_loc, -1)  # (N, n_loc, n_S2 or n_conj)
         r = s2.max(axis=1).astype(np.float32)                  # C2 MAX over locations (position-invariant)
         acc = r if acc is None else acc + r
     return (acc / G).astype(np.float32)
 
 
-def _c2_rate_code(c1, W0, a):
-    """The RATE C2 features (cosine match + z lateral inhibition + MAX over locations, NO LIF): the
-    ceiling reference for a signed linear readout."""
+def _c2_rate_code(c1, W0, a, conj_pairs=None, conj_offsets=None, conj_shuffle_seed=None):
+    """The RATE C2 features (cosine match + z lateral inhibition + [S2.5 binding] + MAX over locations,
+    NO LIF): the ceiling reference for a signed linear readout. Binding args default None -> byte-
+    identical (see `_c2_spike_code`)."""
     patches = _extract_patches(c1, a.s2_p)
     N, n_loc, D = patches.shape
     pn = _l2n(patches, axis=2)
     drive = np.clip(pn @ W0.T, 0.0, None)
     drive = _apply_s2_norm(drive, a)
     drive = _kwta_over_templates(drive, getattr(a, "s2_kwta_frac", 0.0))
-    return drive.max(axis=1).astype(np.float32)                # (N, n_S2)
+    if conj_pairs is not None:
+        drive = _bind_conjunctions(drive, conj_pairs, conj_offsets, a.conj_mode, conj_shuffle_seed)
+    return drive.max(axis=1).astype(np.float32)                # (N, n_S2 or n_conj)
 
 
 # ============================================================================================
@@ -510,13 +604,27 @@ def run_seed(seed, a, code):
             renorm=bool(a.s2_bcm_renorm), competitive_frac=a.s2_bcm_competitive_frac,
             seed=seed * 733 + 5)
 
+    # ---- S2.5 CONFIGURAL-BINDING conjunction bank (--conj-bind != none; design 2026-09-03) ----
+    # Sampled ONCE PER SEED (design Part 2b) and reused UNCHANGED across train/held/scramble, exactly
+    # like W0 above -- a conjunction unit's index must mean the SAME (a,b,Delta) triple on every split.
+    conj_pairs = conj_offsets = None
+    conj_shuffle_seed = None
+    if getattr(a, "conj_bind", "none") != "none":
+        conj_pairs, conj_offsets = _make_conjunction_bank(
+            W0.shape[0], a.conj_n, a.conj_offset_max, bool(getattr(a, "conj_delta0", False)), seed)
+        if getattr(a, "conj_shuffle", False):
+            conj_shuffle_seed = seed * 823 + 29
+
     # ---- C2 spike code (SAME features config C reads), averaged over G glimpses (temporal integration) ----
-    r_tr = _c2_spike_code(tr_c1, W0, a, code, seed * 991 + 100, a.n_glimpses)
-    r_he = _c2_spike_code(he_c1, W0, a, code, seed * 991 + 200, a.n_glimpses)
-    r_sc = _c2_spike_code(sc_c1, W0, a, code, seed * 991 + 300, a.n_glimpses)
+    r_tr = _c2_spike_code(tr_c1, W0, a, code, seed * 991 + 100, a.n_glimpses,
+                          conj_pairs, conj_offsets, conj_shuffle_seed)
+    r_he = _c2_spike_code(he_c1, W0, a, code, seed * 991 + 200, a.n_glimpses,
+                          conj_pairs, conj_offsets, conj_shuffle_seed)
+    r_sc = _c2_spike_code(sc_c1, W0, a, code, seed * 991 + 300, a.n_glimpses,
+                          conj_pairs, conj_offsets, conj_shuffle_seed)
     # RATE C2 features (ceiling reference)
-    rr_tr = _c2_rate_code(tr_c1, W0, a)
-    rr_he = _c2_rate_code(he_c1, W0, a)
+    rr_tr = _c2_rate_code(tr_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed)
+    rr_he = _c2_rate_code(he_c1, W0, a, conj_pairs, conj_offsets, conj_shuffle_seed)
 
     # ---- LEARNED signed linear readout on the SPIKE C2 code ----
     V, b, mu, sd = _train_linreadout(r_tr, tr_cls, a.n_classes, a, seed)
@@ -528,7 +636,11 @@ def run_seed(seed, a, code):
 
     # ---- RANDOM control: identical spike-ported architecture, V untrained (random signed) ----
     rngV = np.random.default_rng(seed * 131 + 7)
-    Vr = (rngV.standard_normal((a.n_classes, a.n_s2)).astype(np.float32) * float(np.abs(V).mean() + 1e-6))
+    # D = V.shape[1], NOT a.n_s2 -- when the S2.5 binding stage is on, the C2 feature count is n_conj,
+    # not n_s2 (a pre-existing hard-coded-a.n_s2 bug this build fixes, since it would otherwise crash /
+    # silently mismatch shapes the moment --conj-bind fixed changes D; harmless no-op when binding is
+    # off, since V.shape[1] == a.n_s2 there exactly as before).
+    Vr = (rngV.standard_normal((a.n_classes, V.shape[1])).astype(np.float32) * float(np.abs(V).mean() + 1e-6))
     br = np.zeros(a.n_classes, dtype=np.float32)
     pred_he_rnd, _ = _spiking_class_read(r_he, Vr, br, mu, sd, a, code, seed * 773 + 21)
     rnd_spkwta_held = float((pred_he_rnd == he_cls).mean())
@@ -790,6 +902,41 @@ def main():
                         "top frac fraction of templates' responses, zero the rest (Foldiak 1991 lateral "
                         "inhibition / a hard-threshold LCA, Rozell et al. 2008). Applied AFTER --s2-norm. "
                         "0.0 (default) disables -> byte-identical to every prior run of this file.")
+    # S2.5 CONFIGURAL-BINDING conjunctive layer (2026-09-03 design; board #135/#75). Applied AFTER
+    # --s2-norm/--s2-kwta-frac, BEFORE the C2 max-over-locations pool, in BOTH the rate and spike C2
+    # codes. `none` (default) never calls `_bind_conjunctions` -> byte-identical to every prior run.
+    p.add_argument("--conj-bind", choices=["none", "fixed"], default="none",
+                   help="S2.5 configural-binding stage: relative-offset conjunctive units c=(a,b,Delta) "
+                        "computing MAX_p AND(drive[p,a], drive[p+Delta,b]) before the C2 pool -- binds "
+                        "WHICH feature is at WHICH slot, which the flat max-pool discards (design: "
+                        "research/findings/2026-09-03-vision-configural-binding-DESIGN.md). 'none' "
+                        "(default) = the current max-pool path, byte-identical. 'fixed' = a FROZEN "
+                        "RANDOM conjunction bank sampled once per seed (isolates the representational "
+                        "change from any learning question; the design's 'learned' supervised-selection "
+                        "rung is deferred behind this proving out first, so it is not offered here).")
+    p.add_argument("--conj-n", type=int, default=192,
+                   help="'fixed' mode only: number of conjunctive units. --n-s2 192 with --conj-bind "
+                        "none is the WIDTH-MATCHED FLAT CONTROL (anti-cheat 1, the ELM/Huang-Zhu-Siew "
+                        "2006 capacity confound) -- same feature count, no binding, must NOT clear GO.")
+    p.add_argument("--conj-offset-max", type=int, default=4,
+                   help="'fixed' mode only: sample Delta (afferent b's relative x-displacement) from "
+                        "+-1..+-this value (location units). Ignored when --conj-delta0-only is set.")
+    p.add_argument("--conj-mode", choices=["min", "prod", "coincidence"], default="min",
+                   help="'fixed' mode only: the coincidence AND. 'min' = conservative AND (rate proxy); "
+                        "'prod' = a supralinear NMDA-like AND; 'coincidence' = same drive-level AND as "
+                        "'prod', but also raises the LIF gain at the spiking S2 layer (design Part 2d) "
+                        "so the class read is coincidence-selective on spikes -- the predicted-positive "
+                        "spiking arm, run AFTER 'min' clears at rate (design Part 3, failure mode 5).")
+    p.add_argument("--conj-delta0-only", dest="conj_delta0", action="store_true",
+                   help="ANTI-CHEAT 3 (degenerate control): force Delta=0 for every conjunction (same-"
+                        "location AND only, no cross-slot binding). Must NOT clear GO -- if it does, the "
+                        "win is local feature interaction, not configural arrangement.")
+    p.add_argument("--conj-shuffle-offsets", dest="conj_shuffle", action="store_true",
+                   help="ANTI-CHEAT 2 (offset-shuffle LESION): read afferent b at an INDEPENDENT random "
+                        "location instead of p+Delta (min of two bags, no relative binding). Capability "
+                        "must VANISH -- proves it is the RELATIVE arrangement, not just 'AND of two "
+                        "features anywhere'. Fixed per seed (see _bind_conjunctions docstring) so the "
+                        "lesion is internally consistent across the train/held/scramble splits.")
     p.add_argument("--T1", type=int, default=64)
     p.add_argument("--T2", type=int, default=48)
     p.add_argument("--tau", type=float, default=8.0)
