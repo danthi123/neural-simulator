@@ -1856,6 +1856,9 @@ async def _warm_chat_brain() -> None:
             chat._brain_chat_source = source  # type: ignore[attr-defined]
             cache_key = ("default", default_brain, renderer)
             _BRAIN_CHATS.setdefault(cache_key, chat)
+            # CROSS-SESSION PERSISTENCE (#B8): reload the default session's persisted learning onto the warm chat
+            # (no-op unless BRAIN_PERSIST_LEARNING is armed). Best-effort; never blocks boot.
+            _reload_persisted_learning(cache_key, _BRAIN_CHATS[cache_key])
             # AFFECT (Gate-B): pre-build the co-resident spiking affect organ so the first turn's mood read is
             # fast. Best-effort + guarded (default-ON; BRAIN_AFFECT=0 skips it); a failure never blocks chat.
             try:
@@ -1950,6 +1953,45 @@ async def _warm_chat_brain() -> None:
 
     # Daemon thread: never blocks process exit, never blocks uvicorn boot.
     _threading.Thread(target=_warm, name="qwen-warm", daemon=True).start()
+
+
+@app.on_event("shutdown")
+async def _persist_learning_on_shutdown() -> None:
+    """CROSS-SESSION PERSISTENCE (#B8, additive/DEFAULT-OFF): on graceful shutdown, FLUSH every live session's
+    conversation-driven learning (D5 store + `_maybe_acquire` runtime facts) + the process-global xedge cross-edge to
+    disk, so the NEXT boot reloads it. Gated by BRAIN_PERSIST_LEARNING: unset/off -> the loop below never writes
+    anything (byte-identical to HEAD). Best-effort; a save failure never blocks shutdown. The sleep-depth idle tick
+    already saves during a live session, so this only captures learning since the last sleep tick."""
+    try:
+        from research.runners.cross_session_persistence import persist_learning_enabled, save_session_learning, save_xedge
+        if not persist_learning_enabled():
+            return
+        try:
+            import research.runners.d5_episodic_production_organ as _EP_sd
+            _organs = dict(_EP_sd._ORGANS)
+        except Exception:
+            _organs = {}
+        saved = 0
+        for cache_key, chat in list(_BRAIN_CHATS.items()):
+            try:
+                save_session_learning(cache_key, chat, _organs.get(cache_key))
+                saved += 1
+            except Exception:
+                continue
+        # any D5 session whose chat is not in _BRAIN_CHATS (e.g. a stub-renderer session) still gets its store saved
+        for cache_key, organ in _organs.items():
+            if cache_key not in _BRAIN_CHATS:
+                try:
+                    save_session_learning(cache_key, None, organ)
+                except Exception:
+                    continue
+        try:
+            save_xedge()
+        except Exception:
+            pass
+        print(f"[webapp] shutdown: cross-session persistence flushed {saved} session(s)", flush=True)
+    except Exception as e:
+        print(f"[webapp] shutdown: cross-session persistence flush skipped ({type(e).__name__}: {e})", flush=True)
 
 
 class ControlUpdate(BaseModel):
@@ -3339,6 +3381,22 @@ def _get_chat_existing(cache_key):
     return _BRAIN_CHATS.get(cache_key)
 
 
+def _reload_persisted_learning(cache_key, chat) -> None:
+    """CROSS-SESSION PERSISTENCE (#B8, additive/DEFAULT-OFF): after a fresh chat build, reload this session's
+    conversation-driven learning saved by a prior process — the D5 episodic store (registered into `_ORGANS`) + the
+    `_maybe_acquire` runtime facts (re-stored into the fresh composer). The process-global xedge cross-edge reloads
+    inside its own pool build. Gated by BRAIN_PERSIST_LEARNING: unset/off -> a no-op (byte-identical to a fresh
+    build). Best-effort; never raises into brain load."""
+    try:
+        from research.runners.cross_session_persistence import persist_learning_enabled, reload_session_learning
+        if not persist_learning_enabled():
+            return
+        topics = getattr(chat, "agents_set", None) or _brain_vocab(chat)
+        reload_session_learning(cache_key, chat, 42, topics)
+    except Exception:
+        pass
+
+
 def _get_multiref_organ(cache_key):
     """The PER-SESSION spiking multi-referent WM buffer (lazy build ~0.46s on the first >=2-referent turn). NOT a
     process singleton: the organ's own get_organ() shares a referent codebook across sessions, which would leak
@@ -4212,6 +4270,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
                      f"{renderer!r}: {type(e).__name__}: {e}")
         chat._brain_chat_source = source  # type: ignore[attr-defined]
         _BRAIN_CHATS[cache_key] = chat
+        _reload_persisted_learning(cache_key, chat)
     source = getattr(chat, "_brain_chat_source", source)
 
     # THE SHARED FULL-FACULTY PIPELINE (extracted 2026-08-27): everything from here — the gate-wrapper installs +

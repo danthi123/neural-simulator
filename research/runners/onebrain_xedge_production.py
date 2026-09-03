@@ -288,6 +288,17 @@ class XedgeProductionPool:
         self.pool.xedge_amb_read = p.amb_read
         self.pool.xedge_balanced_cues = [("cue_animacy_pos", AMBIG_PA), ("cue_animacy_neg", AMBIG_PA)]
         self.pool.xedge_base_pool = BASE_POOL
+        # CROSS-SESSION PERSISTENCE (#B8, additive/DEFAULT-OFF): if BRAIN_PERSIST_LEARNING is armed and a prior
+        # process saved the grown cross-edge weights, overwrite this fresh W0=0.05 build with them (gated on a
+        # structural fingerprint match — see cross_session_persistence.reload_xedge). OFF (default) or no saved
+        # file -> no-op, byte-identical to the fresh build. Runs BEFORE the lesion control so an explicit lesion
+        # still wins. Best-effort; a failure never crashes brain load.
+        try:
+            from research.runners.cross_session_persistence import persist_learning_enabled, reload_xedge
+            if persist_learning_enabled():
+                reload_xedge(self)
+        except Exception:
+            pass
         # optional lesion control (env) — zero the cross-edge weights in place.
         if xedge_lesioned():
             self.lesion_cross()
