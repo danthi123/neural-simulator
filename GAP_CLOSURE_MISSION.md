@@ -13,6 +13,21 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-03 (READ FIRST; LATEST anchor — supersedes 2026-09-02d below)
+**`main` = `a44d4436` (CLAUDE driving; owner engaged, steered the scaffold-retirement + hardware direction).**
+
+**⭐ OWNER STEER 2026-09-03: run all three walls in parallel; make scaffold-retirement first-class; the sim is benchmarked around ACCESSIBLE CONSUMER HARDWARE (a single RTX 3090, 24GB/936GB/s) as the perf+runability reference (see memory `project_consumer_hardware_reference_principle`); the host training curriculum is a LEGITIMATE initial-education scaffold, NOT a cheat.**
+
+**ALL THREE FRONTIER WALLS ADVANCED + LANDED to main this session:**
+- **Wall 1 (own-voice fluency / retire the Qwen mouth):** subword-swap + trainer **6x optimized** (torch.compile + batch512 + BPE memoization, eager-default byte-identical, parity 4e-6) + **Simple-English-Wikipedia initial-education corpus** acquired (`data/corpus/simplewiki.txt`, gitignored, ~15.85M BPE tokens, 0% OOV). **6-seed retrain FIRING on gpu_queue NOW** (`_emerge_wkv_lm_derisk --tokenizer bpe --n-layers 2 --d-model 192 --compile --batch 512 --corpus data/corpus/simplewiki.txt ... --seeds 42 43 44 100 101 102`, ~8min GPU/seed, ~1.5-2h total, 11GB VRAM = consumer-3090-runnable).
+  **WHEN IT LANDS → RESUME:** read `research/findings/raw/_emerge_wkv_lm_simplewiki_6seed.json` — the crux verdict: does the WKV cortex (depth2+capacity+matched-corpus) CROSS the 3.0-3.69 fluency band? (today's d192 rung was 0.084 nats above). If GO → wire the decode detokenizer + flip `BRAIN_OPEN_ENDED`+`BRAIN_OPEN_ENDED_WKV_MOUTH` (owner-gated); if NO-GO → the honest residual names the next lever (more depth/capacity/tokens), NOT a wall.
+- **Wall 2 (retirement first-class):** `retire_status` gate + Check D on main (`193dba9e`) — LEGITIMATE (world/body/clock/curriculum) vs CHEAT (host cognition); a RETIRABLE_NOW aged past window BLOCKS. First proof-retirement was an HONEST no-op (candidates already wired, not dead code). NEXT: work the C-BLOCKED cheat scaffolds down as their neural replacements GO (the taxonomy is in the workflow output / ledger `retire_status` seeds).
+- **Wall 3 (learn+grow):** cross-session persistence mechanism + **per-user latest-checkpoint production UX** on main (`47905d18`, flag `BRAIN_PERSIST_LEARNING` default-off, byte-identical-off SHA-verified on the real substrate; auto-load-latest + `BRAIN_PERSIST_CHECKPOINT` override + keep-N). Gap PROVEN (teach→restart reverted exactly). Flip-to-default owner-gated.
+
+**Also landed this session (merge-wave arc + integrity):** Wave 1+2+3 = 11 organs on ONE pool all-GO (`ff616636`, pmem NO-GO closed); wave1/2 cupy parity 6/6; #108 100k-knowledge flip; read-isolation sweep (14+15th+29-runner, comprehension live-leak fixed); plastic-mask fix (`509c7137`); single-pool flip soak GO 6/6 (flip owner-gated).
+
+**OWNER-GATED FLIPS (do NOT do autonomously):** own-voice mouth (pending retrain GO), single-pool default, plastic-mask default, C1 surprise→world-model, persistence-in-production. **HARDWARE decided:** AM5 + reuse-RAM + reuse-3090 + add 3090(s) (memory `project_hardware_upgrade_plan_2026_09`; artifact d4d2a9e5).
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-02d (READ FIRST; LATEST anchor — supersedes 2026-09-02c below)
 **`main` = `ff616636` (CLAUDE driving; owner engaged this session, steered a strategic reframe).**
 
