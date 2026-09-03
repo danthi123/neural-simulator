@@ -292,6 +292,81 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 outs.append(r[:, t] * self.Wo_sp(torch.cat([ap2, an2], -1)))
             return torch.stack(outs, 1)
 
+    class HippoLayer(nn.Module):
+        """FIXED diagonal HiPPO-structured multi-timescale recurrence + LEARNED local read-out (--recurrence
+        hippo, 2026-09-03, gap#1 fluency arc's next mechanism after dual-nonneg+depth+tokens closed to
+        margin_vs_trigram -0.125 but stayed trigram-bound -- research/findings/2026-09-03-spiking-depth-tokens-
+        closing-fluency-gap-milestone.md). Ports the FIXED-recurrence extract already validated 6-seed GO on the
+        pure memory-horizon task (research/findings/2026-07-13-SSM-fixed-structured-multitimescale-reservoir-
+        SURPASSES-fading-memory-ceiling-6seed-GO.md, runner _ssm_fixed_structured_reservoir_derisk.py) into THIS
+        file's language-model harness, so it is finally tested apples-to-apples on real NEXT-TOKEN PREDICTION
+        (not pure retention). The July SCOPE CORRECTION on that same finding found a BARE linear diagonal fails
+        at language prediction specifically because prediction needs nonlinear conjunctions over context that a
+        LINEAR read-out over a LINEAR reservoir cannot form; here the read-out is a full learned Wo Linear PLUS a
+        per-token receptance GATE r_t=sigmoid(Wr(z_t)) (the same nonlinear-gating machinery WkvLayer/
+        SsmDualNonnegLayer already use), giving the read-out the nonlinear-conjunction capacity the bare-linear
+        July arm lacked, while keeping the recurrence itself (A, the transition dynamics) exactly as FIXED/
+        unlearned as the July gate -- the emergence-compatible bar from the task spec: "no BPTT through the
+        recurrence structure; only C/head learned."
+
+        A-INIT (HiPPO-LegS approximation, diag, fast->slow), justified against the theory: true HiPPO-LegS's
+        continuous-time state matrix (Gu, Dao, Ermon, Rudra, Re 2020, "HiPPO: Recurrent Memory with Optimal
+        Polynomial Projections", NeurIPS) has eigenvalues with real part ~ -(2n+1)/2 for Legendre basis order
+        n=0..D-1 -- a SPREAD of decay rates growing with basis order, i.e. a genuine multi-timescale family of
+        leaky integrators, NOT one shared time constant. SpikingSSMs (arXiv:2408.14909, cited by the fresh-gate
+        finding this class descends from) frames this spread as dendritic-inspired multi-timescale integration.
+        We reuse the SAME practical diagonal approximation already validated on the memory-horizon task
+        (_ssm_fixed_structured_reservoir_derisk.py._build_A, kind="multitimescale"): tau_i LOG-spaced across
+        [tau_lo, tau_hi] (default 1.5..1000 steps), a_i = exp(-1/tau_i) in (~0.49, ~0.999) -- fast units (small
+        tau, a near 0) forget almost every step (shallow/local context, the bigram-like end of the spectrum),
+        slow units (large tau, a near 1) integrate over the whole sequence (deep context). `A` is a torch BUFFER
+        (register_buffer, NOT nn.Parameter) -- gradient NEVER reaches it, so there is zero learned recurrent
+        credit through the transition dynamics.
+
+        B (the input coupling into the recurrence, `x_{t+1}=A x_t + B u_t`) is ALSO a FIXED frozen random
+        projection (a buffer, not nn.Parameter) -- matching the July gate's own W_in (a random reservoir input
+        matrix, never trained) and the task spec's explicit "only C/head learned" bar: A and B together ARE the
+        fixed developmental structure; only the read-out C (`self.Wo` below) and the receptance gate `self.Wr`
+        (a per-token modulation of what is READ from the fixed state, not a change to the state dynamics itself)
+        are learned by gradient, on top of the shared embedding upstream of B (self.emb, common to every
+        --recurrence arm in this file).
+
+        PERMUTE-A anti-cheat (--hippo-permute-a): reassigns which CHANNEL gets which tau (same multiset of decay
+        rates, shuffled labeling) -- structurally distinct from eval_perdepth's generic sequence-level --permute
+        anti-cheat (which shuffles TOKEN order, already exercised for every --recurrence arm). Included per the
+        task spec; NOTE the July runner's OWN docstring for this exact control (kind="permuted" in
+        _ssm_fixed_structured_reservoir_derisk.py._build_A) calls it "the diagonal structure without the
+        principled range; should NOT change a diagonal reservoir, a SANITY control" -- i.e. the July source
+        expects near-IDENTICAL results (channel identity is arbitrary to a fully-connected linear read-out),
+        not a collapse. We run it and report the honest empirical number either way; see the runner's report for
+        the reconciliation.
+        """
+        def __init__(self, D, tau_lo=1.5, tau_hi=1000.0, permute_a=False):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            tau = torch.exp(torch.linspace(math.log(tau_lo), math.log(tau_hi), D))
+            A = torch.exp(-1.0 / tau)                      # FIXED diagonal decay, HiPPO-LegS-approx fast->slow
+            if permute_a:
+                A = A[torch.randperm(D)]                   # structural anti-cheat: shuffle channel<->tau labeling
+            self.register_buffer("A", A)
+            Bmat = torch.randn(D, D) / math.sqrt(D)         # FIXED random input projection (never trained)
+            self.register_buffer("B", Bmat)
+            self.Wr = nn.Linear(D, D, bias=False)           # LEARNED receptance gate (read-out pathway)
+            self.Wo = nn.Linear(D, D, bias=False)           # LEARNED local read-out C
+
+        def forward(self, h, memoryless=False):             # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
+            Bsz, T, D = h.shape
+            z = self.ln(h)
+            u = z @ self.B.t()                              # B u_t (fixed random input coupling)
+            r = torch.sigmoid(self.Wr(z))
+            A_eff = torch.zeros_like(self.A) if memoryless else self.A   # ANTI-CHEAT: no carry -> current token only
+            x = torch.zeros(Bsz, D, device=h.device)
+            outs = []
+            for t in range(T):
+                x = A_eff * x + u[:, t]                     # x_{t+1} = A x_t + B u_t  (FIXED recurrence)
+                outs.append(r[:, t] * self.Wo(x))            # LEARNED local read-out C
+            return torch.stack(outs, 1)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -318,10 +393,31 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             # consumes zero RNG draws at init regardless of --recurrence -> the n_layers=1 byte-identical
             # guarantee holds unconditionally, not just for the branch that happens to be selected.
             self.extra_ssm = nn.ModuleList([SsmDualNonnegLayer(D, getattr(args, "uniform_decay", False)) for _ in range(n_layers - 1)])
+            # --recurrence hippo (2026-09-03): composed with --n-layers depth (see HippoLayer's docstring).
+            # UNLIKE self.extra/self.extra_ssm (n_layers-1 EXTRA layers stacked on a separate inline "layer 0"
+            # kept for wkv/ssm backward-compat), hippo has no legacy inline layer-0 to preserve byte-identically
+            # -- ALL n_layers blocks are uniform HippoLayer instances in ONE list. Built ONLY when RECUR=="hippo"
+            # (else an empty ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm paths' parameter-init RNG
+            # order -- hence their outputs -- is UNCHANGED by this addition at any --n-layers, not just n_layers=1.
+            self.hippo_layers = nn.ModuleList([
+                HippoLayer(D, tau_lo=getattr(args, "hippo_tau_lo", 1.5), tau_hi=getattr(args, "hippo_tau_hi", 1000.0),
+                           permute_a=getattr(args, "hippo_permute_a", False))
+                for _ in range(max(n_layers, 1))
+            ]) if RECUR == "hippo" else nn.ModuleList()
 
         def forward(self, x):                          # x: [B,T] token ids
             B, T = x.shape
             h = self.ln(self.emb(x))                    # [B,T,D]
+            if RECUR == "hippo":
+                # FIXED HiPPO-structured multi-timescale recurrence + LEARNED local read-out (see HippoLayer).
+                # Self-contained: does NOT touch self.Wk/Wv/Wr/w/u below (those stay unconditionally constructed
+                # for wkv/ssm parity but are simply unused on this branch -- no gradient reaches them). Inserted
+                # BEFORE any wkv/ssm-specific line so this is a pure insertion: when RECUR != "hippo" this `if`
+                # is one skipped comparison and every line below runs byte-identically to before this change.
+                hh = h
+                for blk in self.hippo_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self.head(hh)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
             wdec = torch.exp(-torch.nn.functional.softplus(self.w))       # per-channel decay in (0,1)
             if self.memoryless:
@@ -644,9 +740,22 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
-                         "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form).")
+                         "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
+                         "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
+                         "decay grid, B=fixed random input projection) + LEARNED local read-out C (see HippoLayer) "
+                         "-- no learned recurrent credit through the transition dynamics, composable with --n-layers.")
+    ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
+                    help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
+    ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
+                    help="(--recurrence hippo) slowest time constant (steps) in the log-spaced decay grid")
+    ap.add_argument("--hippo-permute-a", dest="hippo_permute_a", action="store_true",
+                    help="ANTI-CHEAT (structural, per the task spec): shuffle the per-channel tau assignment (same "
+                         "multiset of decay rates, different channel labeling) -- distinct from eval_perdepth's "
+                         "generic sequence-level --permute anti-cheat. NOTE: the July gate's own runner docstring "
+                         "for this control (_ssm_fixed_structured_reservoir_derisk.py, kind='permuted') calls it a "
+                         "SANITY control expected NOT to change a linear-readout reservoir's result, not a collapse.")
     ap.add_argument("--spiking-state", dest="spiking_state", action="store_true",
                     help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
