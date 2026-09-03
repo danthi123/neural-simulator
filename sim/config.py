@@ -442,6 +442,18 @@ class CoreSimConfig:
     # 15-45x faster in the launch/sync-bound learning regime (~100K-1M nnz); byte-identical (tests/test_branchless_plasticity.py).
     # Structural plasticity stays on the compacting path (it mutates the CSR nnz/shape) -- out of scope for this flag.
     enable_branchless_plasticity: bool = False
+    # ADDITIVE, DEFAULT-OFF correctness enforcement (2026-09-02). The runtime Hebbian LTP/decay/clip path historically
+    # consulted ONLY the named `plasticity_gate` (cp_plasticity_rate_gain); it never read cp_synapse_plastic_mask, so a
+    # RegionPathway(plastic=False)/BrainRegion(plastic_internal=False) synapse WITHOUT an explicit zeroed named gate
+    # still drifted from read-driven co-activity (measured 13.8->56.1 max-weight-delta over 30 reads of a shared organ).
+    # STDP/BDSP/BTSP already respect the mask; this closes the same hole for Hebbian. When True (or the env var
+    # BRAIN_ENFORCE_PLASTIC_MASK is set truthy), non-plastic synapses' Hebbian potentiation/decay/clip are frozen by
+    # cp.where against the plastic mask, reusing the existing gate machinery. 0/False => the mask is NOT enforced =>
+    # byte-identical to the historical (buggy) permissive behavior => zero production change. Flipping the default to
+    # True is an OWNER-GATED decision because of the blast radius (runners that grew a dependency on the permissive
+    # behavior via ad hoc per-file gate mitigations). Verified default-off byte-identical + on-flat by
+    # tests/test_enforce_plastic_mask.py (both directions: fails on pre-fix code, passes on this fix).
+    enforce_plastic_mask_in_hebbian: bool = False
     # Opt-in GENERAL-STEP MEGAKERNEL (perf, default OFF -> byte-identical to the per-step loop). Fuses the per-neuron
     # ELEMENT-WISE inference chain -- conductance decay + I_syn + (pre-computed) E/I matvec increment + total-input
     # assembly + Izhikevich-2007 dynamics + threshold-select + fast_spike_reset -- into ONE @cp.fuse launch, collapsing
