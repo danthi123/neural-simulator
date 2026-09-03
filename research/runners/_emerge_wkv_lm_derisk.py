@@ -420,12 +420,50 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
         assoc-specific plumbing is needed; a collapse there shows the causal ORDER (not just bag-of-past-tokens
         membership) is load-bearing to the read.
 
-        NOT a hidden re-admission of the retired transformer: no positional encoding, no multi-head split, no
-        FFN sublayer, no post-attention LayerNorm, no learned temperature -- exactly the four projections plus
-        one causal softmax the biological framing above calls for, and nothing more of the standard transformer
-        block.
+        NOT a hidden re-admission of the retired transformer: no multi-head split, no FFN sublayer, no
+        post-attention LayerNorm, no learned temperature -- exactly the four projections plus one causal softmax
+        the biological framing above calls for, plus (--recurrence assoc_t only, see TEMPORAL CODE below) a
+        FIXED "when" signal on the read competition -- and nothing more of the standard transformer block.
+
+        TEMPORAL CODE (2026-09-03, `temporal=True` -> --recurrence assoc_t, diagnosing the underfit measured on
+        the bag-of-tokens `assoc` above: at full scale its TRAINING loss converged to ~4.79, WORSE than the
+        recurrences' ~4.36, and deep-bucket margin_vs_trigram ~ -0.35, worse than the SSM family's -0.125
+        bound). ROOT CAUSE: `assoc` (temporal=False, the ORIGINAL branch, still reachable and UNCHANGED) reads
+        z_s for every past position s<=t with no signal that distinguishes "s was 1 token ago" from "s was 30
+        tokens ago" -- the causal softmax over content alone reads the past as an unordered BAG of tokens (two
+        prefixes that contain the same tokens in a different ORDER produce IDENTICAL keys, hence identical
+        read), so word ORDER within the context window is invisible to it. A sequential recurrence (wkv/ssm/
+        hippo) gets order for free because its state is built by literally stepping through the sequence; a
+        content-addressable read has to be TOLD when, or it cannot reconstruct it from content alone. This is
+        why the bag-of-tokens read underfit the recurrences it was meant to surpass.
+
+        BIOLOGICAL ANCHOR for the "when" signal (distinct from, and layered on top of, the CA3 pattern-
+        completion anchor for the read itself, above): hippocampal TIME CELLS (MacDonald, Lepage, Eden, Eichenbaum
+        2011, Neuron 71:737-749, "Hippocampal 'Time Cells' Bridge the Gap in Memory for Discontiguous Events")
+        fire at successive, overlapping latencies during an unfilled temporal gap, tiling elapsed time with a
+        population code the way place cells tile space -- so a CA3 pattern-completion read in vivo is never a
+        pure content match; it is always conjoined with this population's "when" signal, which is what lets an
+        animal retrieve the events of an episode IN ORDER rather than as an unordered set. Howard & Kahana's
+        Temporal Context Model (2002, J. Math. Psychol. 46:269-299) formalizes the companion mechanism at the
+        systems level: a slowly-drifting temporal-context vector is bound to each item at encoding and used as
+        part of the retrieval cue, so recall competition is driven by content-similarity CONJOINED WITH
+        context/recency, not content alone -- exactly the missing conjunction diagnosed above. We realize this
+        population code as a bank of fixed sinusoidal "time cells" (frequencies log-spaced across the sequence,
+        each a smooth, overlapping, monotonically-phase-advancing function of elapsed position t -- MacDonald's
+        tiling property in closed form) ADDED to the per-position representation feeding Wq/Wk ONLY (the read
+        COMPETITION becomes when-and-what sensitive) and NOT Wv (the read VALUE stays pure content, matching
+        the CA3 anchor: what is retrieved is a stored pattern, not a timestamp). This is deliberately NOT framed
+        as a bare transformer positional encoding bolted on for engagement: it is fixed (a registered buffer,
+        `nn.Parameter` never touches it, exactly like HippoLayer's fixed A/B above -- no gradient can warp the
+        time code into an arbitrary learned signal), and it is added to a MEMORY RETRIEVAL competition (Q/K),
+        never to the recalled content (V) -- the TCM/time-cell role, not a sequence-labeling trick.
+
+        ANTI-CHEAT PREDICTION (falsifiable, checked in the CPU smoke): the existing generic --permute anti-cheat
+        (eval_perdepth's permute=True, shuffles the prefix order before the net ever sees it) should degrade
+        `assoc_t` MORE than the bag-of-tokens `assoc`, because `assoc_t` is now the one arm whose read genuinely
+        depends on positional order -- `assoc` was already order-blind (nothing left for permutation to break).
         """
-        def __init__(self, D):
+        def __init__(self, D, temporal=False):
             super().__init__()
             self.ln = nn.LayerNorm(D)
             self.Wq = nn.Linear(D, D, bias=False)
@@ -433,12 +471,35 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.Wv = nn.Linear(D, D, bias=False)
             self.Wo = nn.Linear(D, D, bias=False)
             self.scale = 1.0 / math.sqrt(D)
+            self.temporal = temporal
+            if temporal:
+                # FIXED (buffer, not nn.Parameter -- gradient never reaches it, matching HippoLayer's fixed A/B
+                # discipline) sinusoidal "time cell" frequency ladder: log-spaced frequencies over the channel
+                # dim, standard sin/cos construction (Vaswani et al. 2017 Sec 3.5) reused here as the closed-form
+                # realization of MacDonald et al. 2011's overlapping-latency time-cell population code (see the
+                # class docstring's TEMPORAL CODE section for the bio anchor + why this is not a bare
+                # transformer PE). Depends only on D (not on T), so it is computed once here; the actual
+                # position-dependent code is built per-forward from this ladder (sequence length T varies).
+                div_term = torch.exp(torch.arange(0, D, 2, dtype=torch.float32) * (-math.log(10000.0) / D))
+                self.register_buffer("_time_div", div_term)          # [ceil(D/2)] fixed frequency ladder
 
         def forward(self, h, memoryless=False):        # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
             B, T, D = h.shape
             z = self.ln(h)
-            q = self.Wq(z); k = self.Wk(z); v = self.Wv(z)
-            scores = torch.einsum("btd,bsd->bts", q, k) * self.scale    # [B,T,T] raw content-similarity scores
+            if self.temporal:
+                # "when" signal (time cells / TCM temporal context, see docstring): a population of fixed
+                # overlapping phase codes over elapsed position t, added to Q/K's input only -- z itself (hence
+                # V = Wv(z) below) is untouched, so the associative VALUE stays pure content.
+                pos = torch.arange(T, dtype=torch.float32, device=h.device).unsqueeze(1)     # [T,1]
+                ang = pos * self._time_div.unsqueeze(0)                                       # [T,ceil(D/2)]
+                time_code = torch.zeros(T, D, device=h.device, dtype=z.dtype)
+                time_code[:, 0::2] = torch.sin(ang)
+                time_code[:, 1::2] = torch.cos(ang[:, :time_code[:, 1::2].shape[1]])
+                zt = z + time_code.unsqueeze(0)                       # [B,T,D], broadcast over the batch
+            else:
+                zt = z                                                # bag-of-tokens (unchanged, --recurrence assoc)
+            q = self.Wq(zt); k = self.Wk(zt); v = self.Wv(z)
+            scores = torch.einsum("btd,bsd->bts", q, k) * self.scale    # [B,T,T] raw content(+when)-similarity scores
             causal = torch.tril(torch.ones(T, T, dtype=torch.bool, device=h.device))
             if memoryless:
                 # ANTI-CHEAT: no carry -> current token only (mirrors ssm/hippo's memoryless semantics) --
@@ -487,15 +548,20 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                            permute_a=getattr(args, "hippo_permute_a", False))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "hippo" else nn.ModuleList()
-            # --recurrence assoc (2026-09-03): CONTENT-ADDRESSABLE associative read, composed with --n-layers
-            # depth exactly like hippo_layers above (ALL n_layers blocks are uniform AssocLayer instances in ONE
-            # list -- see AssocLayer's docstring for the full mechanism + bio framing). Built ONLY when
-            # RECUR=="assoc" (else an empty ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm/hippo
-            # paths' parameter-init RNG order -- hence their outputs -- is UNCHANGED by this addition at any
-            # --n-layers, not just n_layers=1.
+            # --recurrence assoc / assoc_t (2026-09-03, assoc_t added same day): CONTENT-ADDRESSABLE associative
+            # read, composed with --n-layers depth exactly like hippo_layers above (ALL n_layers blocks are
+            # uniform AssocLayer instances in ONE list -- see AssocLayer's docstring for the full mechanism +
+            # bio framing, including the TEMPORAL CODE section for assoc_t). Built ONLY when RECUR is "assoc" or
+            # "assoc_t" (else an empty ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm/hippo paths'
+            # parameter-init RNG order -- hence their outputs -- is UNCHANGED by this addition at any
+            # --n-layers, not just n_layers=1. `temporal=(RECUR=="assoc_t")` is the ONLY difference between the
+            # two arms' AssocLayer construction (an extra fixed, non-RNG-consuming buffer, see AssocLayer.
+            # __init__) -- RECUR=="assoc" (the original bag-of-tokens read) is therefore byte-identical to
+            # before this addition: same Wq/Wk/Wv/Wo init order, same forward computation (temporal=False takes
+            # the zt=z branch, identical to the pre-assoc_t code).
             self.assoc_layers = nn.ModuleList([
-                AssocLayer(D) for _ in range(max(n_layers, 1))
-            ]) if RECUR == "assoc" else nn.ModuleList()
+                AssocLayer(D, temporal=(RECUR == "assoc_t")) for _ in range(max(n_layers, 1))
+            ]) if RECUR in ("assoc", "assoc_t") else nn.ModuleList()
 
         def forward(self, x):                          # x: [B,T] token ids
             B, T = x.shape
@@ -510,13 +576,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 for blk in self.hippo_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self.head(hh)
-            if RECUR == "assoc":
+            if RECUR in ("assoc", "assoc_t"):
                 # CONTENT-ADDRESSABLE associative read (see AssocLayer's docstring for the full mechanism + bio
                 # framing: CA3 pattern completion / cortical associative memory, Ramsauer et al. 2020's modern-
-                # Hopfield<->attention equivalence). Self-contained: does NOT touch self.Wk/Wv/Wr/w/u below
-                # (unused on this branch, no gradient reaches them). Inserted BEFORE any wkv/ssm-specific line,
-                # mirroring the hippo insertion immediately above, so when RECUR != "assoc" this is one skipped
-                # comparison and every line below runs byte-identically to before this addition.
+                # Hopfield<->attention equivalence; assoc_t additionally layers a hippocampal time-cell / TCM
+                # "when" signal onto the read competition, see TEMPORAL CODE in the same docstring). Self-
+                # contained: does NOT touch self.Wk/Wv/Wr/w/u below (unused on this branch, no gradient reaches
+                # them). Inserted BEFORE any wkv/ssm-specific line, mirroring the hippo insertion immediately
+                # above, so when RECUR is neither "assoc" nor "assoc_t" this is one skipped comparison and every
+                # line below runs byte-identically to before this addition. RECUR=="assoc" itself is also
+                # byte-identical to before assoc_t existed (see the assoc_layers construction comment above).
                 hh = h
                 for blk in self.assoc_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
@@ -843,7 +912,7 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
@@ -852,7 +921,15 @@ def main():
                          "assoc = CONTENT-ADDRESSABLE associative read (learned-key causal attention, see "
                          "AssocLayer) -- EXACT recall of a specific past position via learned Wq/Wk/Wv/Wo, framed "
                          "as hippocampal CA3 pattern-completion / cortical associative memory (Ramsauer et al. "
-                         "2020's modern-Hopfield<->attention equivalence), composable with --n-layers.")
+                         "2020's modern-Hopfield<->attention equivalence), composable with --n-layers. This "
+                         "bag-of-tokens read has NO signal that distinguishes token ORDER (diagnosed 2026-09-03: "
+                         "it underfit the recurrences it was meant to surpass, ~4.79 vs ~4.36 train loss at "
+                         "scale); assoc_t = the SAME associative read PLUS a fixed hippocampal time-cell / "
+                         "Howard-Kahana temporal-context 'when' signal (sinusoidal, non-learned buffer) added to "
+                         "the Q/K projections only (not V) so the read competition becomes order-sensitive -- "
+                         "see AssocLayer's TEMPORAL CODE docstring section. RECUR=='assoc' itself is untouched "
+                         "(byte-identical) by assoc_t's addition; use --recurrence assoc for the original "
+                         "bag-of-tokens ablation arm.")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
