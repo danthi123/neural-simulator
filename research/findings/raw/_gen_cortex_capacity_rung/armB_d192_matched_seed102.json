@@ -1,0 +1,150 @@
+{
+  "runner": "_gen_cortex_token_supply_scaling_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "d_model": 192,
+  "vocab_cap": 2000,
+  "epochs": 6,
+  "max_len": 40,
+  "token_points": [
+    8000,
+    16000,
+    32000,
+    64000,
+    104000
+  ],
+  "seeds": [
+    102
+  ],
+  "per_seed": {
+    "102": {
+      "V": 2000,
+      "active_params": 918224,
+      "eval_ids_sha": "0474575d23dc",
+      "vocab_sha": "bf7258f86947",
+      "n_eval": 1500,
+      "points": [
+        {
+          "max_train_sents": 8000,
+          "n_train_passages": 8000,
+          "n_tokens": 320000,
+          "tok_per_active_param": 0.348,
+          "wkv_deep_nll": 4.3081,
+          "trigram_deep_nll": 4.6267,
+          "bigram_deep_nll": 5.0166,
+          "margin_vs_trigram": 0.3185,
+          "perm_collapse": 1.2417,
+          "mless_collapse": 0.0992,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 4.0746,
+          "overfit_gap": 0.2335,
+          "n_deep": 45000,
+          "elapsed_s": 316.8
+        },
+        {
+          "max_train_sents": 16000,
+          "n_train_passages": 16000,
+          "n_tokens": 640000,
+          "tok_per_active_param": 0.697,
+          "wkv_deep_nll": 4.142,
+          "trigram_deep_nll": 4.4534,
+          "bigram_deep_nll": 4.818,
+          "margin_vs_trigram": 0.3114,
+          "perm_collapse": 1.4711,
+          "mless_collapse": 0.1138,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.9329,
+          "overfit_gap": 0.2091,
+          "n_deep": 45000,
+          "elapsed_s": 471.1
+        },
+        {
+          "max_train_sents": 32000,
+          "n_train_passages": 32000,
+          "n_tokens": 1280000,
+          "tok_per_active_param": 1.394,
+          "wkv_deep_nll": 3.9709,
+          "trigram_deep_nll": 4.2988,
+          "bigram_deep_nll": 4.6335,
+          "margin_vs_trigram": 0.3279,
+          "perm_collapse": 1.6294,
+          "mless_collapse": 0.1593,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.8025,
+          "overfit_gap": 0.1684,
+          "n_deep": 45000,
+          "elapsed_s": 836.6
+        },
+        {
+          "max_train_sents": 64000,
+          "n_train_passages": 64000,
+          "n_tokens": 2560000,
+          "tok_per_active_param": 2.788,
+          "wkv_deep_nll": 3.8334,
+          "trigram_deep_nll": 4.1708,
+          "bigram_deep_nll": 4.4719,
+          "margin_vs_trigram": 0.3374,
+          "perm_collapse": 1.7408,
+          "mless_collapse": 0.2184,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7242,
+          "overfit_gap": 0.1092,
+          "n_deep": 45000,
+          "elapsed_s": 1479.0
+        },
+        {
+          "max_train_sents": 104000,
+          "n_train_passages": 104000,
+          "n_tokens": 4160000,
+          "tok_per_active_param": 4.53,
+          "wkv_deep_nll": 3.783,
+          "trigram_deep_nll": 4.0875,
+          "bigram_deep_nll": 4.3733,
+          "margin_vs_trigram": 0.3045,
+          "perm_collapse": 1.8014,
+          "mless_collapse": 0.2476,
+          "uses_context": true,
+          "beats_trigram": true,
+          "train_nll": 3.7067,
+          "overfit_gap": 0.0763,
+          "n_deep": 45000,
+          "elapsed_s": 1951.1
+        }
+      ],
+      "gen_samples_top_point": [
+        "the <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> <unk> wrote that the <unk> of the <unk> <unk> the <unk> <unk> of <unk> who tv <unk> to the environment in order to <unk> which <unk> a",
+        "in the <unk> <unk> <unk> or <unk> were <unk> by the <unk> of <unk> and <unk> <unk> between <unk> and <unk> <unk> were <unk> <unk> <unk> and <unk> and <unk> <unk> <unk> e in the early s <unk> of <unk> <unk> <unk>",
+        "he was transferred to the <unk> of the state as an <unk> <unk> of <unk> him the game <unk> <unk> but later <unk> the staff of <unk> <unk> win he was announced with the following <unk> <unk> used a <unk> <unk> <unk>",
+        "it is a <unk> in the united states the <unk> <unk> to a process who <unk> <unk> <unk> <unk> <unk> <unk> and <unk> <unk> <unk> <unk> to the <unk> the <unk> in the s the <unk> <unk> several former members is among the"
+      ],
+      "delta_nll_min_to_max_tokens": 0.5251,
+      "top_segment_slope": 0.0504,
+      "margin_grows_with_tokens": false,
+      "uses_tokens": true,
+      "still_descending_at_top": true,
+      "uses_context_at_top": true,
+      "beats_trigram_at_top": true
+    }
+  },
+  "verdict": {
+    "verdict": "GO-TOKEN-LEVER",
+    "n_seeds": 1,
+    "n_uses_tokens": 1,
+    "n_still_descending_at_top": 1,
+    "n_uses_context_at_top": 1,
+    "n_beats_trigram_at_top": 1,
+    "n_margin_grows_with_tokens": 0,
+    "mean_delta_nll_min_to_max_tokens": 0.5251,
+    "mean_top_point_wkv_deep_nll": 3.783,
+    "max_tok_per_active_param_reached": 4.53,
+    "fluency_target_nll_band": [
+      3.0,
+      3.69
+    ],
+    "residual_top_nll_above_fluency_band_hi": 0.093
+  },
+  "elapsed_s": 5090.1
+}
