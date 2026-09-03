@@ -1221,7 +1221,29 @@ class SimulationBridge:
             delta_all = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - w)
         if self.cp_plasticity_rate_gain is not None:
             delta_all = delta_all * self.cp_plasticity_rate_gain[:nnz]
+        if self._hebbian_plastic_mask_enforced(cfg) and self.cp_synapse_plastic_mask is not None:
+            # ADDITIVE, DEFAULT-OFF (2026-09-02): freeze non-plastic synapses (RegionPathway plastic=False /
+            # BrainRegion plastic_internal=False) under the Hebbian rule, the same cp.where(mask) idiom STDP uses at
+            # :10121. Zero the delta where non-plastic so the write below is a no-op there. Byte-identical when the
+            # flag is off (this branch is skipped entirely). Mirrors the gain multiply directly above.
+            _pm_full = self._ensure_gate_capacity(
+                "cp_synapse_plastic_mask", nnz, fill=False, dtype=cp.bool_)[:nnz]
+            delta_all = cp.where(_pm_full, delta_all, cp.float32(0.0))
         self.cp_connections.data[:] = cp.where(heb_mask, w + delta_all, w)
+
+    def _hebbian_plastic_mask_enforced(self, cfg):
+        """ADDITIVE, DEFAULT-OFF gate for enforcing cp_synapse_plastic_mask in the Hebbian LTP/decay/clip path.
+
+        True iff the env var BRAIN_ENFORCE_PLASTIC_MASK is set truthy OR cfg.enforce_plastic_mask_in_hebbian is True.
+        Default (neither set) => False => the mask is NOT enforced in Hebbian => byte-identical to the historical
+        (permissive) behavior. STDP/BDSP/BTSP already enforce the mask unconditionally; this closes the same hole for
+        the plain Hebbian rule without changing any production default. Evaluated at the use site so tests/callers can
+        toggle the env var between builds. Works identically on numpy and cupy (no backend calls here).
+        """
+        _env = os.environ.get("BRAIN_ENFORCE_PLASTIC_MASK", "")
+        if _env.strip().lower() not in ("", "0", "false", "no", "off"):
+            return True
+        return bool(getattr(cfg, "enforce_plastic_mask_in_hebbian", False))
 
     def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
         """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
@@ -9856,6 +9878,17 @@ class SimulationBridge:
             # --- 4. Hebbian Learning (Long-Term Potentiation/Depression) ---
             if _plasticity_gated and cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
+                # ADDITIVE, DEFAULT-OFF plastic-mask enforcement for the Hebbian path (2026-09-02). When enabled,
+                # non-plastic synapses (RegionPathway plastic=False / BrainRegion plastic_internal=False) are frozen
+                # under Hebbian LTP + decay + clip, the same cp_synapse_plastic_mask STDP already respects at :10121.
+                # _pm_heb is the full nnz-sized bool mask (True = plastic) or None; when None (flag off, or no mask
+                # built), every masked branch below is skipped => byte-identical to the historical permissive path.
+                if self._hebbian_plastic_mask_enforced(cfg) and self.cp_synapse_plastic_mask is not None:
+                    _pm_heb = self._ensure_gate_capacity(
+                        "cp_synapse_plastic_mask", self.cp_connections.nnz,
+                        fill=False, dtype=cp.bool_)[:self.cp_connections.nnz]
+                else:
+                    _pm_heb = None
                 # RATE-WINDOW co-activity trace (BCM/rate-Hebbian; guarded, updated EVERY step). trace = trace*decay
                 # + (1-decay)*fired -> a per-neuron EMA in [0,1]; two neurons BOTH active over the window potentiate
                 # regardless of exact-step spike alignment -- the fix for a recurrent autoassociator (CA3) whose
@@ -9905,6 +9938,8 @@ class SimulationBridge:
                                 _dw_b = cp.float32(_bcm) * _pa * _ya * (_ya - _tha)
                                 if self.cp_plasticity_rate_gain is not None:
                                     _dw_b = _dw_b * self.cp_plasticity_rate_gain[_bcm_sel]
+                                if _pm_heb is not None:
+                                    _dw_b = cp.where(_pm_heb[_bcm_sel], _dw_b, cp.float32(0.0))
                                 base_weights_data_array[_bcm_sel] += _dw_b
                                 num_potentiation_events = int(_bcm_sel.size)
                             # BCM has applied its own signed update; make the potentiation-only body below inert.
@@ -9956,6 +9991,10 @@ class SimulationBridge:
                                     cp.add.at(_cnt_dh, _post_h, cp.ones_like(delta_weights))
                                 _mean_dh = _sum_dh / cp.maximum(_cnt_dh, cp.float32(1.0))
                                 delta_weights = delta_weights - cp.float32(_hms) * _mean_dh[_post_h]
+                            if _pm_heb is not None:
+                                # Freeze non-plastic synapses AFTER gain + mean-subtract so neither reintroduces drift.
+                                delta_weights = cp.where(
+                                    _pm_heb[active_synapse_indices_heb], delta_weights, cp.float32(0.0))
                             base_weights_data_array[active_synapse_indices_heb] += delta_weights
                             num_potentiation_events = active_synapse_indices_heb.size
                     else:
@@ -9974,6 +10013,9 @@ class SimulationBridge:
                             # Per-pathway plasticity gain (Stage 1, 2026-04-27)
                             if self.cp_plasticity_rate_gain is not None:
                                 delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
+                            if _pm_heb is not None:
+                                delta_weights = cp.where(
+                                    _pm_heb[active_synapse_indices_heb], delta_weights, cp.float32(0.0))
                             base_weights_data_array[active_synapse_indices_heb] += delta_weights
                             num_potentiation_events = active_synapse_indices_heb.size
 
@@ -9997,7 +10039,16 @@ class SimulationBridge:
                             _nnz_heb = self.cp_connections.nnz
                             gated_decay = cfg.hebbian_weight_decay * self._ensure_gate_capacity(
                                 "cp_plasticity_rate_gain", _nnz_heb)[:_nnz_heb]
+                            if _pm_heb is not None:
+                                # Freeze decay for non-plastic synapses (decay 0 => multiplier 1.0 => no change).
+                                gated_decay = cp.where(_pm_heb, gated_decay, cp.float32(0.0))
                             self.cp_connections.data *= (1.0 - gated_decay)
+                        elif _pm_heb is not None:
+                            # No named gate array, but plastic-mask enforcement is ON: build a per-synapse decay
+                            # multiplier from the mask alone so non-plastic synapses do not decay. Byte-identical to
+                            # the scalar path below when every synapse is plastic; unreachable when the flag is off.
+                            _dec_pm = cp.where(_pm_heb, cp.float32(cfg.hebbian_weight_decay), cp.float32(0.0))
+                            self.cp_connections.data *= (1.0 - _dec_pm)
                         else:
                             self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
                     # Per-pathway plasticity gain: GATE the clip the same way the decay is gated above. A FROZEN
@@ -10020,7 +10071,17 @@ class SimulationBridge:
                         _nnz_c = self.cp_connections.nnz
                         _active_syn = self._ensure_gate_capacity(
                             "cp_plasticity_rate_gain", _nnz_c)[:_nnz_c] > 0.0
+                        if _pm_heb is not None:
+                            # A non-plastic synapse must not be clipped either (its fixed weight may sit above a
+                            # temporarily-lowered hebbian_max_weight, the same foot-gun the gain-gate guards).
+                            _active_syn = _active_syn & _pm_heb
                         self.cp_connections.data[_active_syn] = _clipped_data[_active_syn]
+                    elif _pm_heb is not None:
+                        # No named gate array, but plastic-mask enforcement is ON: clip only plastic synapses,
+                        # leaving non-plastic (frozen) weights verbatim. Byte-identical to the full clip below when
+                        # every synapse is plastic; unreachable when the flag is off.
+                        _clipped_pm = cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight)
+                        self.cp_connections.data[_pm_heb] = _clipped_pm[_pm_heb]
                     else:
                         cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
