@@ -184,7 +184,7 @@ def render():
 ACTIONS = {
     "hermes_on": ["bash", "tools/hermes_takeover.sh", "on"],
     "hermes_off": ["bash", "tools/hermes_takeover.sh", "off"],
-    "game_on": ["bash", "tools/game.sh", "on"],
+    "game_on": ["bash", "tools/game.sh", "on", "--force"],
     "game_off": ["bash", "tools/game.sh", "off"],
 }
 
