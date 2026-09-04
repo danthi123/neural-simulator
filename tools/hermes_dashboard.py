@@ -77,6 +77,22 @@ def gpu_queue():
     return cur, depth
 
 
+def gpu_research_count():
+    """Count brain-loading research GPU procs (python with >1.5GB VRAM) — excludes desktop apps (kwin/Discord/etc.)."""
+    out = sh(["nvidia-smi", "--query-compute-apps=pid,used_memory,process_name",
+              "--format=csv,noheader,nounits"], timeout=10)
+    n = 0
+    for ln in out.splitlines():
+        p = [x.strip() for x in ln.split(",")]
+        if len(p) >= 3 and "python" in p[2].lower():
+            try:
+                if int(p[1]) > 1500:
+                    n += 1
+            except Exception:
+                pass
+    return n
+
+
 def read_state():
     active = exists("HERMES_ACTIVE")
     game = exists("GAME_MODE")
@@ -90,6 +106,8 @@ def read_state():
         "gpu": gpu_line(),
         "gpu_cur": cur,
         "gpu_depth": gdepth,
+        "research_gpu": gpu_research_count(),
+        "last_action": tail(os.path.join(Q, "dashboard_actions.log"), 6),
         "pool_depth": count_lines(os.path.join(Q, "pool.queue")),
         "live_state": tail(os.path.join(REPO, "research", "coordination", "live_state.md"), 40),
         "commits": sh(["git", "log", "--oneline", "-14"], timeout=10),
@@ -133,10 +151,12 @@ pre{{background:#0e1015;border:1px solid #22262e;border-radius:6px;padding:10px;
 <h2>Control</h2>
 <div class="card">
   <div class="row">Driver: <span class="v">{driver}</span> &nbsp; {b_active} {b_game} {b_gpause}</div>
+  <div class="row" style="margin-top:8px;font-size:16px;font-weight:700">{game_status}</div>
   <div style="margin-top:10px">
     {btn_on} {btn_off} &nbsp;|&nbsp; {btn_game_on} {btn_game_off}
   </div>
-  <div class="sub" style="margin-top:8px">Start/Stop = tools/hermes_takeover.sh · Pause/Resume = tools/game.sh (frees the GPU's VRAM for gaming). Buttons act on THIS box.</div>
+  <div class="sub" style="margin-top:8px">Start/Stop = tools/hermes_takeover.sh · Pause = tools/game.sh on --force (kills any resident GPU job + frees VRAM for gaming) · Resume = game.sh off. Buttons act on THIS box.</div>
+  <div class="k" style="margin-top:8px">last action (tools/game.sh / takeover output):</div><pre style="max-height:130px">{last_action}</pre>
 </div>
 
 <h2>Compute</h2>
@@ -165,8 +185,20 @@ pre{{background:#0e1015;border:1px solid #22262e;border-radius:6px;padding:10px;
 
 def render():
     s = read_state()
+    rg = s["research_gpu"]
+    if s["game"] and rg == 0:
+        gs = '<span style="color:#5fd97a">🎮 SAFE TO GAME — GPU free (no research job resident)</span>'
+    elif s["game"] and rg >= 1:
+        gs = f'<span style="color:#e0533d">⚠️ PAUSED but {rg} GPU job still resident — click Pause again (it force-kills)</span>'
+    elif rg > 1:
+        gs = f'<span style="color:#e0533d">⚠️ {rg} GPU jobs resident — possible contention; click Pause to clear</span>'
+    elif rg == 1:
+        gs = '<span style="color:#8b94a3">⚙️ 1 research job running on the GPU (normal)</span>'
+    else:
+        gs = '<span style="color:#8b94a3">GPU idle (no research job)</span>'
     return PAGE.format(
         now=html.escape(s["now"]), repo=html.escape(REPO), driver=html.escape(s["driver"]),
+        game_status=gs, last_action=html.escape(s["last_action"]),
         b_active=badge("Hermes", s["active"], "ACTIVE", "idle"),
         b_game=badge("Game-pause", s["game"]),
         b_gpause=badge("GPU-pause", s["gpaused"]),
