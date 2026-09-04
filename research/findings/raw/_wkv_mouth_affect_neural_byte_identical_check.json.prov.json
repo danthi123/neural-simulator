@@ -1,0 +1,31 @@
+{
+ "run_id": "1788564934-3144808",
+ "runner": "research/runners/_wkv_mouth_affect_neural_byte_identical_check.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a9f11f76f510c2025/research/runners/_wkv_mouth_affect_neural_byte_identical_check.py",
+  "--before-ref",
+  "HEAD",
+  "--seed",
+  "42",
+  "--json",
+  "research/findings/raw/_wkv_mouth_affect_neural_byte_identical_check.json"
+ ],
+ "git_sha": "aa55a2f63",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T19:35:34",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_mouth_affect_neural_byte_identical_check.json"
+}

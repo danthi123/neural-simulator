@@ -765,6 +765,30 @@ def wkv_mouth_affect_enabled() -> bool:
     return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
+# ── NEURAL affect coupling (2026-09-04, scaffold-retirement: fold the mood coupling into the spiking read's OWN
+# Izhikevich population gain instead of a host logit bias -- see `_affect_pool_gains` + `FewSpikeWordRead.
+# set_mood` below for the mechanism, and `research/findings/2026-09-04-affect-coupling-neural-not-host-*.md` for
+# the load-bearing verification). Default OFF -- an A/B toggle against the pre-existing `_apply_affect_bias` host
+# mechanism above, INDEPENDENT of `wkv_mouth_affect_enabled()` (`BRAIN_WKV_MOUTH_AFFECT` remains the master
+# affect on/off switch; this flag only selects WHICH mechanism realizes the coupling while affect is on).
+_AFFECT_NEURAL_ENV = "BRAIN_WKV_MOUTH_AFFECT_NEURAL"
+
+
+def wkv_mouth_affect_neural_enabled() -> bool:
+    """Default-OFF (opt-in A/B against the host `_apply_affect_bias` mechanism). `BRAIN_WKV_MOUTH_AFFECT_NEURAL`
+    in {1,true,yes,on} -> ON: `generate()`'s `_run()` builds `FewSpikeWordRead(..., affect_neural=True)` and
+    `_free_gen`/`_free_gen_linattn` route the mood coupling through `_affect_pool_gains` + `reader.set_mood(...)`
+    (a neuromodulatory `excitability_drive` on the population read itself -- see that class's own docstring)
+    INSTEAD of calling `_apply_affect_bias` on the logits. Default/unset/anything else -> OFF, and `generate()`/
+    `_free_gen`/`_free_gen_linattn` are BYTE-IDENTICAL to before this flag existed -- `FewSpikeWordRead` is built
+    exactly as before (`affect_neural` defaults to False on that class too), and the pre-existing host
+    `_apply_affect_bias` call site runs unchanged."""
+    v = os.environ.get(_AFFECT_NEURAL_ENV)
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
 _AFFECT_BIAS_LOCK = threading.Lock()
 _AFFECT_BIAS_CACHE: dict[int, dict] = {}
 
@@ -942,12 +966,93 @@ def _apply_affect_bias(lg: np.ndarray, affect_ids, valence: float, arousal: floa
     return out
 
 
+# ── NEURAL affect coupling (2026-09-04, scaffold-retirement -- see `wkv_mouth_affect_neural_enabled` above and
+# `FewSpikeWordRead.set_mood`/`_build_bank` in research/runners/_wkv_fewspike_read_derisk.py for the substrate
+# side). `_apply_affect_bias` above is HOST arithmetic: it computes a signed bias and adds it to `lg` BEFORE any
+# neuron exists, so the spiking `reader.read(p)` call only ever sees an already mood-cooked probability vector --
+# the population itself has no idea "mood" was involved. This function instead computes, per TOP-K CANDIDATE
+# (not per full-vocab id), an extra picoamp value to hand to `FewSpikeWordRead.set_mood` -- which sets a REAL
+# `sim.neuromodulators.NeuromodulatorManager` concentration that `sim/bridge.py`'s OWN unmodified per-step
+# current computation then adds to that candidate's pool of Izhikevich neurons for every one of the
+# `read_window` competition steps. The winner is still decided entirely by the genuine spiking competition (OU
+# noise + accumulated firing) -- this function only decides WHICH pool(s) get an excitability nudge and how
+# large, exactly the same "labelled-line pool assignment is a legitimate host INPUT" category `drive_from_weights`
+# already relies on (assigning candidate rank k to pool k), not a value baked into the read-out itself.
+#
+# CONGRUENCE + HABITUATION are reused VERBATIM from `_apply_affect_bias` (same Warriner-gated `affect_ids` map,
+# same sign-agreement test, same `_HABIT_WINDOW` short-term-depression-shaped damping) -- ONE shared mood policy
+# realized through two different destinations (a logit add vs a neuromodulator concentration), so an A/B between
+# the two mechanisms isolates "which substrate carries the effect" and does not also silently vary "what counts
+# as mood-congruent." UNLIKE `_apply_affect_bias`, there is no host `np.clip(...,-1,1)` saturation step here --
+# `strength` is already bounded to <=1.0 by construction (valence/arousal in [-1,1]/[0,1], habituation in [0,1],
+# word-valence in [-1,1]), and `FewSpikeWordRead`'s own `concentration_max` (see its `_build_bank`) is the ONLY
+# additional saturation point -- the substrate's own clamp, not a second host formula.
+#
+# CALIBRATION (2026-09-04, research/findings/raw/_affect_wkv_mouth_neural_pa_calibration_sweep.json): `pA`/
+# LOGIT-unit are different scales on different mechanisms, so `affect_boost`'s existing calibrated value
+# (10.0, tuned FOR THE HOST LOGIT MECHANISM at the realistic valence=0.16/arousal=0.65 operating point -- see
+# `generate()`'s own docstring) does not transfer literally. Rather than add a SECOND, independently-tuned
+# public knob, `affect_boost` stays the ONE caller-facing "how strong is mood coloring" control for EITHER
+# mechanism: `_AFFECT_NEURAL_PA_AT_REFERENCE_BOOST` is the pA delivered to a fully-congruent pool (`strength==
+# 1.0`) at `affect_boost==_AFFECT_NEURAL_REFERENCE_BOOST` (the host mechanism's own reference/default value),
+# and scales linearly with the caller's `affect_boost` from there.
+_AFFECT_NEURAL_REFERENCE_BOOST = 10.0
+_AFFECT_NEURAL_PA_AT_REFERENCE_BOOST = 880.0
+
+
+def _affect_pool_gains(cand: np.ndarray, affect_ids, valence: float, arousal: float, affect_boost: float,
+                        recent_ids=None) -> dict:
+    """{local top-K candidate index k: extra_pA} for every `cand[k]` that is a mood-CONGRUENT affect-bearing word
+    -- consumed by `FewSpikeWordRead.set_mood(...)`, NOT applied to `lg` (contrast `_apply_affect_bias`, which
+    this function's congruence/habituation logic mirrors exactly). Returns `{}` (an EXACT no-op via `set_mood`'s
+    own reset-every-pool-to-0.0 behavior) when `affect_ids` is empty, `affect_boost == 0.0`, or `valence == 0.0`
+    -- the identical three-way lesion guard `_apply_affect_bias` uses, so `BRAIN_AFFECT_LESION=1` (which clamps
+    the real organ's differential, hence the mapped valence, to exactly 0.0) collapses this coupling too.
+
+    `affect_boost` (the SAME parameter/value `generate()`'s caller already passes for the host mechanism) is
+    converted to a picoamp scale via `_AFFECT_NEURAL_PA_AT_REFERENCE_BOOST`/`_AFFECT_NEURAL_REFERENCE_BOOST`
+    (see the module comment block above), then multiplies a [0,1]-bounded congruence `strength`: `pA = max_pA *
+    strength`. `recent_ids` (default None): the driving loop's own `gen` list so far; mirrors
+    `_apply_affect_bias`'s own habituation multiplier (`1 - recent_affect_frac` over the last `_HABIT_WINDOW`
+    tokens) so a mood tag does not perpetually re-trigger itself once recent output is already affect-saturated
+    -- `None`/empty leaves habituation at 1.0 (no damping)."""
+    gains: dict = {}
+    if not affect_ids or affect_boost == 0.0 or valence == 0.0:
+        return gains
+    max_pA = _AFFECT_NEURAL_PA_AT_REFERENCE_BOOST * (float(affect_boost) / _AFFECT_NEURAL_REFERENCE_BOOST)
+    habit = 1.0
+    if recent_ids:
+        recent = recent_ids[-_HABIT_WINDOW:]
+        if recent:
+            habit = 1.0 - (sum(1 for t in recent if t in affect_ids) / len(recent))
+    v_gain = float(valence) * max(0.0, min(1.0, float(arousal))) * habit
+    if v_gain == 0.0:
+        return gains
+    for k, tid in enumerate(cand):
+        wv = affect_ids.get(int(tid))
+        if wv is None:
+            continue
+        strength = v_gain * wv                    # signed; >0 only when word-valence AGREES with mood sign
+        if strength <= 0.0:
+            continue
+        gains[k] = max_pA * strength
+    return gains
+
+
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
 def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float,
               repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
               fact_boost_ids=None, fact_boost: float = 0.0,
-              affect_ids=None, valence: float = 0.0, arousal: float = 0.0, affect_boost: float = 0.0, bpe=None):
-    """`bpe` (default `None`, added 2026-09-03): a `sim.bpe_tokenizer.BPETokenizer` instance (see
+              affect_ids=None, valence: float = 0.0, arousal: float = 0.0, affect_boost: float = 0.0, bpe=None,
+              affect_neural: bool = False):
+    """`affect_neural` (default False, 2026-09-04): routes the affect coupling through `reader.set_mood(...)`
+    (a neuromodulatory `excitability_drive` on `reader`'s OWN Izhikevich population, see `_affect_pool_gains`)
+    INSTEAD of `_apply_affect_bias`'s host logit add -- `reader` must have been built with
+    `FewSpikeWordRead(..., affect_neural=True)` for this to have any effect (see `generate()`'s `_run()`).
+    Default False is BYTE-IDENTICAL to before this parameter existed: the pre-existing `_apply_affect_bias` call
+    below runs exactly as before, and `reader.set_mood` (harmless even if called) is simply never called.
+
+    `bpe` (default `None`, added 2026-09-03): a `sim.bpe_tokenizer.BPETokenizer` instance (see
     `_get_bpe_tokenizer`) for BPE-vocabulary checkpoints. `bpe=None` (the default, and every pre-existing call
     site) runs the EXACT SAME two lines that existed before this parameter did -- the word-level prompt-id
     lookup and the final space-joined decode -- so the default path is byte-identical BY CONSTRUCTION, not
@@ -982,14 +1087,23 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         # cannot be un-banned by the boost (an additive `+boost` cannot overcome a `-1e30` hard ban). No-op
         # (same object, no allocation) when `fact_boost_ids` is empty or `fact_boost == 0.0`.
         lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
-        # affect bias (2026-09-03, closes the affect-hollow gap -- see the module comment block above
-        # `_apply_affect_bias`): applied AFTER fact-boost/repetition, same full-vocab logits, same "additive,
-        # cannot un-ban a repetition-suppressed token" composition rule. No-op when `affect_ids` is empty,
-        # `affect_boost == 0.0`, or `valence == 0.0` (the lesioned-organ / neutral-mood case).
-        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
+        # affect coupling (2026-09-03 host / 2026-09-04 neural, see `affect_neural`'s own docstring above):
+        # EXACTLY ONE of the two mechanisms below ever runs for a given call. HOST (affect_neural=False, the
+        # default): `_apply_affect_bias` biases `lg` BEFORE the top-k cut, same full-vocab logits, same
+        # "additive, cannot un-ban a repetition-suppressed token" composition rule as `_apply_fact_boost` above.
+        # NEURAL (affect_neural=True): `lg` is left UNTOUCHED by mood -- `_affect_pool_gains` instead computes a
+        # per-TOP-K-CANDIDATE picoamp value from the SAME congruence/habituation policy, and `reader.set_mood`
+        # sets that as a neuromodulator concentration `sim/bridge.py`'s own per-step current computation applies
+        # to the population `reader.read(p)` is about to run -- so mood colors the actual spiking competition,
+        # not a pre-softmax probability. Both are no-ops when `affect_ids` is empty, the boost is 0.0, or
+        # `valence == 0.0` (the lesioned-organ / neutral-mood case).
+        if not affect_neural:
+            lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
+        if affect_neural:
+            reader.set_mood(_affect_pool_gains(cand, affect_ids, valence, arousal, affect_boost, recent_ids=gen))
         win, _, _ = reader.read(p)
         nxt = int(cand[win]) if win >= 0 else int(cand[0])
         pfull = _softmax(lg)
@@ -1017,13 +1131,14 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
                        gen_temp: float, repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
                        fact_boost_ids=None, fact_boost: float = 0.0,
                        affect_ids=None, valence: float = 0.0, arousal: float = 0.0, affect_boost: float = 0.0,
-                       bpe=None):
+                       bpe=None, affect_neural: bool = False):
     """`LinAttnReadout`'s own driving loop -- see the module docstring block above `recurrence_mode` for why this
     exists as a twin of `_free_gen` rather than a generalization of it. `bpe`/prompt-encode/final-decode, and the
-    affect-bias coupling (2026-09-03, see `_apply_affect_bias`), mirror `_free_gen`'s own handling exactly (see
-    that function's docstring) -- this is what closes the affect-hollow gap for BOTH recurrence families from
-    ONE shared mechanism, not just the `ssm` default. The prompt encode goes through `_bpe_encode_prompt`
-    (2026-09-04 BPE-caps fix), same as `_free_gen` -- see that function's docstring."""
+    affect coupling (HOST, 2026-09-03, see `_apply_affect_bias`; NEURAL, 2026-09-04, see `affect_neural`'s own
+    docstring on `_free_gen`), mirror `_free_gen`'s own handling exactly (see that function's docstring) -- this
+    is what closes the affect-hollow gap, and now offers the substrate-mediated alternative, for BOTH recurrence
+    families from ONE shared mechanism, not just the `ssm` default. The prompt encode goes through
+    `_bpe_encode_prompt` (2026-09-04 BPE-caps fix), same as `_free_gen` -- see that function's docstring."""
     if bpe is not None:
         pid = _bpe_encode_prompt(bpe, prompt)
     else:
@@ -1043,10 +1158,13 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
             lg[ro.unk_idx] = -1e30
         lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
         lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
-        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
+        if not affect_neural:
+            lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
+        if affect_neural:
+            reader.set_mood(_affect_pool_gains(cand, affect_ids, valence, arousal, affect_boost, recent_ids=gen))
         win, _, _ = reader.read(p)
         nxt = int(cand[win]) if win >= 0 else int(cand[0])
         pfull = _softmax(lg)
@@ -1231,6 +1349,19 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     re-tuned per checkpoint/topic; a production deployment that finds it too weak or too strong on real traffic
     should re-run that sweep rather than assume this value transfers unconditionally.
 
+    NEURAL AFFECT COUPLING (`wkv_mouth_affect_neural_enabled()`, `BRAIN_WKV_MOUTH_AFFECT_NEURAL`, default OFF,
+    2026-09-04 scaffold-retirement): an A/B alternative to the host `_apply_affect_bias` mechanism above -- see
+    that function's own docstring and `FewSpikeWordRead.set_mood` (research/runners/_wkv_fewspike_read_derisk.py)
+    for the mechanism. When ON, `_run()` builds `reader` with `affect_neural=True` and `_free_gen`/
+    `_free_gen_linattn` route mood through `_affect_pool_gains` + `reader.set_mood(...)` -- a neuromodulatory
+    `excitability_drive` on the population read's OWN Izhikevich neurons (applied by `sim/neuromodulators.py` +
+    `sim/bridge.py`'s existing, UNMODIFIED per-step current computation) -- INSTEAD of a pre-softmax logit bias.
+    `affect_boost`/`valence`/`arousal` keep the SAME meaning and the SAME lesion guard (`valence==0.0` is an
+    exact no-op either way); only the DESTINATION of the resulting scalar changes. Default OFF is
+    BYTE-IDENTICAL to before this flag existed: `FewSpikeWordRead` is built with `affect_neural=False` (its own
+    default) and the pre-existing host path runs unchanged. See research/findings/2026-09-04-affect-coupling-
+    neural-not-host-*.md for the load-bearing verification against this host mechanism.
+
     `trace` (default `None`, additive -- 2026-09-04, closes the generator-trace mislabel the 2026-09-03 linattn
     live verification found: see research/findings/2026-09-04-generator-trace-mislabel-fix.md): when the caller
     passes a dict, `_run()` records `trace["sentence_fact_used"] = True` right before returning a
@@ -1271,7 +1402,12 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
         if trace is not None:
             trace["sentence_fact_used"] = False
         ro, _vocab, word_to_id = _get_readout(seed)
-        reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
+        # `neural_affect`: 2026-09-04 scaffold-retirement A/B (see `wkv_mouth_affect_neural_enabled`'s own
+        # docstring). Decided ONCE per `generate()` call (valence/arousal/affect_boost are themselves fixed for
+        # the whole call) -- `FewSpikeWordRead(..., affect_neural=False)` (the default, when this is False) is
+        # BYTE-IDENTICAL to before this branch existed.
+        neural_affect = wkv_mouth_affect_neural_enabled()
+        reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window, affect_neural=neural_affect)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
         aff_ids = _affect_bias_ids(seed) if (valence != 0.0 and wkv_mouth_affect_enabled()) else None
         bpe = _get_bpe_tokenizer() if tokenizer_mode() == "bpe" else None
@@ -1280,7 +1416,7 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
                                        repetition_penalty, no_repeat_ngram_size,
                                        fact_boost_ids=fact_ids, fact_boost=fact_boost,
                                        affect_ids=aff_ids, valence=valence, arousal=arousal,
-                                       affect_boost=affect_boost, bpe=bpe)
+                                       affect_boost=affect_boost, bpe=bpe, affect_neural=neural_affect)
         return text
 
     text = _RNG.run(seed, _run)

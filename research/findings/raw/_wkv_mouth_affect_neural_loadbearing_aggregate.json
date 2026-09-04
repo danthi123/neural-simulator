@@ -1,0 +1,32 @@
+{
+  "seed": 42,
+  "affect_boost": 10.0,
+  "summary": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "in_pattern": "research/findings/raw/_wkv_mouth_affect_neural_loadbearing_s{seed}.json",
+    "per_mechanism": {
+      "host": {
+        "n_prompt_seed_combos": 18,
+        "affect_loadbearing_A_ne_B": "18/18",
+        "determinism_A_eq_C": "18/18",
+        "lesion_diverges_positive_direction": "18/18",
+        "lesion_diverges_negative_direction": "18/18"
+      },
+      "neural": {
+        "n_prompt_seed_combos": 18,
+        "affect_loadbearing_A_ne_B": "18/18",
+        "determinism_A_eq_C": "18/18",
+        "lesion_diverges_positive_direction": "18/18",
+        "lesion_diverges_negative_direction": "11/18"
+      }
+    }
+  },
+  "elapsed_s": 0.0
+}
