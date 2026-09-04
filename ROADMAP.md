@@ -7,7 +7,29 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, is `research/coordination/workboard.json`; it records
 active lanes, resources, blockers, and exact next actions.
 
-## 2026-09-03 (latest) — the brain's own voice starts BEATING the baseline it kept losing to (a potential open-fluency breakthrough, being confirmed)
+## 2026-09-04 (latest) — mood now genuinely colors what the newer, broader-vocabulary voice says, closing the last blocker before switching to it
+
+- **The mood-coloring fix from 2026-09-03 worked for the currently-shipped voice but not the newer, wider-
+  vocabulary one being evaluated to replace it — now it works for both.** Priming the brain into a happy mood and
+  then asking it a question produced a genuinely warmer reply on the current voice, but the exact same words on
+  the newer voice — a real gap the live check caught rather than assumed away.
+- **Why:** the newer voice tends to have one strongly-favored next word at almost every point in a sentence (it
+  writes more "confidently"), so the same fixed nudge that was enough to shift the current voice's more open-
+  ended choices was too small to ever beat that confident favorite — not because the newer voice's overall
+  wording is somehow "sharper" in general (measured directly: it isn't), but specifically because mood-fitting
+  words were rarely even in contention for a typical reply on this voice's broader vocabulary.
+- **The fix scales the nudge to how far a mood-fitting word actually is from being chosen right now** (never
+  further than fully catching up, so mood can tip a close call but never force an answer), and it **fades out
+  once mood has already colored a couple of recent words** so the reply doesn't spiral into repeating the same
+  handful of feeling-words instead of writing normally — an early version without that fade-out did exactly that.
+- **Re-checked for real, end to end:** with a genuinely happy mood established, the SAME question now gets a
+  different, still-fluent reply than with the mood switched off; asking twice with the mood ON reproduces the
+  identical reply (so the difference really is the mood, not random noise); asked about something the brain
+  does not know, it still honestly says so, mood or no mood; and the ORIGINAL (currently-shipped) voice was
+  re-tested and still works as before. The last blocker named 2026-09-03 for trying the newer voice as the
+  default is now cleared — switching to it is a deliberate next step, not done automatically here.
+
+## 2026-09-03 — the brain's own voice starts BEATING the baseline it kept losing to (a potential open-fluency breakthrough, being confirmed)
 
 - **The brain's own from-scratch spiking "mouth" now beats the simple word-pair baseline it had been losing to — the first time at a real, deployable size.** A new memory-read mechanism (a working memory that recalls the most relevant recent words as it speaks, restoring a "which words matter right now" competition the previous version had dropped) crossed that fluency bar on the first 2 of 6 test runs, both by a clear and consistent margin. Just as important: when actually asked to WRITE, it produces genuinely structured, grammatical English — real sentences, not word-salad — and visibly better than the previous mouth (which collapsed into repeating itself).
 - **Honest caution:** this is 2 of 6 runs (an earlier attempt looked good on one run but averaged out below the bar), so it is NOT declared a breakthrough until the full six-run average holds (running now, a few hours out). The plumbing to actually USE this in the live chat is already built and machine-precision-verified against the trained model, so if the average holds, the only remaining steps are a quality/honesty check on real replies and an owner decision to switch it on.

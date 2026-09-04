@@ -13,7 +13,39 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-03 (READ FIRST; LATEST anchor — supersedes 2026-09-02d below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04 (READ FIRST; LATEST anchor — supersedes 2026-09-03 below)
+
+**AFFECT-LOAD-BEARING FLIP-GATE BLOCKER ON `linattn` IS CLOSED.** The affect-fix named as CRITICAL PATH in the
+2026-09-03 entry below (`d798b2bf7`, merged) made affect load-bearing on the `ssm` (shipped-default) mouth but
+NOT on `linattn` (the flip target) — confirmed by a full live `webapp.server.brain_chat` run:
+`Q1_affect_loadbearing_PASS: false`, raw output byte-identical `BRAIN_AFFECT_LESION=0` vs `=1`, despite a real
++mood (organ differential `+0.040`) — `research/findings/raw/_affect_wkv_mouth_verify_phase4_linattn_flip_
+confirmation_BEFORE.json`. DIAGNOSIS: the live valence magnitude (`~0.16`, `clip(4*organ_differential,-1,1)`)
+is ~5.6x smaller than the `+-0.9` sweep the fixed `affect_boost=5.0` was calibrated against, AND (independent of
+magnitude) `linattn`'s confidently-templated continuations put its top-1 pick 4-11 raw logit units above ANY
+affect candidate — a fixed absolute bias measured in the wrong units for that checkpoint's own logit landscape,
+not a generic "sharper distribution" effect (full-vocab logit std/top1-top2 gap were measured comparable
+between the two checkpoints). FIX (`research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-
+GO.md`): redesigned `_apply_affect_bias` (`webapp/wkv_mouth_generator.py`) — a SATURATING per-word congruence
+strength (mood can close a candidate's margin to top-1 to at most PARITY, never override it, regardless of
+`boost`), CONCENTRATED on the single closest mood-congruent candidate (not spread across the whole lexicon, the
+failure mode of an intermediate design), and HABITUATED against its own recent output (short-term-synaptic-
+depression-shaped, breaks an autoregressive word-salad cascade a non-habituating version produced). Re-run LIVE
+against the identical BEFORE scenario: `FLIP_CONFIRM_GO: true`
+(`research/findings/raw/_affect_wkv_mouth_verify_phase4_linattn_flip_confirmation_AFTER.json`) — raw now
+genuinely differs lesion0-vs-lesion1, stays deterministic, stays fluent (salad-heuristic 0.115, vs a ~0.09
+neutral baseline), and the moat still holds on an unknown topic. `ssm` re-confirmed NOT regressed
+(`..._phase3_live_pipeline_lesion_ssm.json`, re-run fresh).
+**PRE-DECIDED NEXT ACTIONS list below (line ~26) item 1 is DONE for BOTH recurrence families now — item 2 (the
+`BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on flip itself) is UNBLOCKED and next, but was DELIBERATELY NOT
+EXECUTED by this rung** (a narrowly-delegated affect-coupling task, not a mandate to also flip a production
+default) — it is the concrete resume action for whoever picks this up next. Branch
+`research/linattn-affect-coupling-strength`. Honest residuals (still HOST decode-time arithmetic over an
+already-neural signal; one shared `affect_boost=10.0`/habituation-window=8 constant, cross-checked on 2 prompts
+x 2 mood directions x 2 families rather than 6 seeds — a causal-wiring claim, see the finding's seed-waiver;
+the `linattn` checkpoint files remain uncommitted, a separate flagged follow-up) are in the finding in full.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-03 (LATEST anchor as of that date — supersedes 2026-09-02d below; superseded by the 2026-09-04 header above)
 **`main` = `a44d4436` (CLAUDE driving; owner engaged, steered the scaffold-retirement + hardware direction).**
 
 **⭐ LATEST (post-compaction ~23:35 — LIVE RESUME POINT; supersedes the flip-gate line further below). main now = `87d9954e` (merged: num/den design, one-brain roadmap, live verification).**
@@ -23,8 +55,13 @@ The SPLIT: facts ARE grounded (via the fact-clause routing) but AFFECT (valence/
 **3 AGENTS IN FLIGHT:** (1) affect-fix `a53f4d11` = CRITICAL PATH (make affect load-bearing on the mouth → re-verify → flip); (2) coverage-threshold `ade68245` (one-brain de-risk #1); (3) num/den Tier-1 shunt-gain read `a1979a3c` (fully-spiking closure).
 **ONE-BRAIN ROADMAP landed (`f943cc28`):** the mouth is the SINGLE blocker for **48/64** ledger rows (`BLOCKED:neural-render`) — flipping + retiring its Qwen roles unblocks the one-brain retirement at once. Staged path: flip → retire the open-ended Qwen fallback → retire Touchpoint-A open-prose recall (the 48-row stage) → merge surfaces → substrate consolidation → developmental/spike-native residuals; first de-risks + 5 owner-forks banked.
 **PRE-DECIDED NEXT ACTIONS (ordered):**
-1. AFFECT-FIX `a53f4d11` (CRITICAL PATH) — make affect load-bearing on the wkv/linattn mouth; when it lands, RE-VERIFY affect-grounding (vary→change, lesion→vanish).
-2. On a CLEAN re-verify (affect load-bearing + honest + moat) → FLIP `BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on AUTONOMOUSLY (owner-authorized), verify + commit + report. A still-hollow mouth = NO-GO → next affect lever.
+1. ✅ DONE (2026-09-04, see the header above) — AFFECT-FIX `a53f4d11`/`d798b2bf7` made affect load-bearing on
+   the ssm mouth (2026-09-03); the linattn gap this left open is now ALSO closed
+   (`research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md`, live re-verify
+   `FLIP_CONFIRM_GO: true`).
+2. NEXT (UNBLOCKED, not yet executed — see the 2026-09-04 header above for why). On the now-CLEAN re-verify
+   (affect load-bearing + honest + moat, both confirmed) → FLIP `BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on
+   AUTONOMOUSLY (owner-authorized), verify + commit + report.
 3. ONE-BRAIN de-risks: coverage-threshold `ade68245` → then per-touchpoint Qwen-call-share (blocked on trace-fix `c0a29f21`) → then Surface-A A/B vs Qwen-oracle → then the roadmap's Stage 1/2 retirements.
 4. num/den Tier-1 shunt-gain read `a1979a3c` (fully-spiking mouth closure) — harvest when it lands; Tier-2 on-bridge behind it.
 5. Keep BREADTH (owner: don't tunnel); EVERY sim-running agent MEMORY BUDGET RSS<4GB. Open task-chips: `c0a29f21` (trace) · `d734efe8` (device/SIM_BACKEND) · `b5d80fe3` (pool-provision) · `0ab782cb` (BPE-caps).

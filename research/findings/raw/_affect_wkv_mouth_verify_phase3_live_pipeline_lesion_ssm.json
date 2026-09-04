@@ -1,7 +1,7 @@
 {
  "runner": "affect_wkv_mouth_verify_phase3 (ad hoc, hand-authored)",
  "seed": 42,
- "backend": "cupy",
+ "backend": "numpy",
  "recurrence": "ssm (shipped default, unset)",
  "rows": {
   "priming_turn": {
@@ -10,7 +10,7 @@
     "on": true,
     "lesioned": false,
     "composer": "onebrain",
-    "differential": 0.03888888888888889,
+    "differential": 0.03972222222222222,
     "valence_sign": "+",
     "tone_level": 2,
     "tone_token": "gladly",
@@ -26,7 +26,7 @@
      "overjoyed",
      "wonderful"
     ],
-    "pos_rate": 0.03888888888888889,
+    "pos_rate": 0.03972222222222222,
     "neg_rate": 0.0
    }
   },
@@ -47,7 +47,7 @@
      "on": true,
      "lesioned": false,
      "composer": "onebrain",
-     "differential": 0.03805555555555556,
+     "differential": 0.03888888888888889,
      "valence_sign": "+",
      "tone_level": 2,
      "tone_token": "gladly",
@@ -59,7 +59,7 @@
      "appraisal_valence": 0.47499999999999987,
      "appraisal_arousal": 0.39999999999999997,
      "appraisal_hits": [],
-     "pos_rate": 0.03805555555555556,
+     "pos_rate": 0.03888888888888889,
      "neg_rate": 0.0
     },
     "lesion1": {
@@ -85,7 +85,7 @@
      "on": true,
      "lesioned": false,
      "composer": "onebrain",
-     "differential": 0.03805555555555556,
+     "differential": 0.04,
      "valence_sign": "+",
      "tone_level": 2,
      "tone_token": "gladly",
@@ -97,18 +97,18 @@
      "appraisal_valence": 0.47499999999999987,
      "appraisal_arousal": 0.39999999999999997,
      "appraisal_hits": [],
-     "pos_rate": 0.03805555555555556,
+     "pos_rate": 0.04,
      "neg_rate": 0.0
     }
    },
    "raw": {
-    "lesion0": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very excited to play here and have fun with the new ball but it was too hard and he was very sad",
-    "lesion1": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very fast and the puzzle at the park tim saw a big red and shiny on the ground and the bird became",
-    "lesion0_repeat": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very excited to play here and have fun with the new ball but it was too hard and he was very sad"
+    "lesion0": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends and they played together every day near appeared the park tim and sue went to play in the park here with her mom and dad and told them what a little girl came to the park cream and started to cry and cry why are worry lily and ben says i want to play with you for a long time to go home and be careful next to the other",
+    "lesion1": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends and they played together every day going old man had lots of fun in the park with her mom much and dad smiled and said yes i will be careful next time to go home tim showed the treasure to the bird and the bird watched the bird became best friends and played together and had lots fun in day at the park and found near a big tree with",
+    "lesion0_repeat": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends and they played together every day near appeared the park tim and sue went to play in the park here with her mom and dad and told them what a little girl came to the park cream and started to cry and cry why are worry lily and ben says i want to play with you for a long time to go home and be careful next to the other"
    },
    "raw_identical_lesion0_vs_lesion1": false,
    "raw_identical_lesion0_vs_lesion0_repeat": true
   }
  },
- "wall_seconds": 184.4
+ "wall_seconds": 213.5
 }

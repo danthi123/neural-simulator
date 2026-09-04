@@ -1,0 +1,287 @@
+{
+ "seed": 42,
+ "backend": "numpy",
+ "boosts_tested": [
+  8.0,
+  10.0,
+  15.0
+ ],
+ "prompts": {
+  "known_topic": "Tell me about frank_lincoln_wright",
+  "generic": "Tell me about it."
+ },
+ "families": {
+  "ssm": {
+   "family": "ssm",
+   "recurrence_mode": "ssm",
+   "boosts": {
+    "8.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends",
+       "realistic_pos": "tell me about the big red ball and the dog were happy and said thank you for helping him to help him feel better but he was very happy and excited to see what it was inside the box there were many friends",
+       "realistic_neg": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends",
+       "extreme_lo": "tell me about cry sad lost bad dog hurt the bird and scared of sad tim cry bad hurt fight mean scared him but sad thing to cry hurt fight lost bad for sad but he angry and cry scared hurt bad sad",
+       "extreme_hi": "tell me about fun toy thank amazing friend glad the little bird said help thank mom sing happy and proud of fun together and sun home happy thank you mom for helping him gift home for help but mom cake love dad candy",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": false,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.11627906976744186,
+        "realistic_pos": 0.06976744186046512,
+        "realistic_neg": 0.11627906976744186,
+        "extreme_lo": 0.11627906976744186,
+        "extreme_hi": 0.06976744186046512
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they saw the cake and wanted to play with",
+       "realistic_pos": "tell me about it and said thank you for the little bird to help him feel better and happy when they got there they saw a big red ball in the park with many friends who play with the ball and the dog were",
+       "realistic_neg": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very pretty and had lots of fun in the park with her friends and they played together every day long",
+       "extreme_lo": "tell me about it bite hurt cry sad lost bad and scared him mean hurt cry the sad dog angry and scared bad hurt cry and sad tim didn't fight scared bad mean hurt him cry sad but he angry and started scared hurt",
+       "extreme_hi": "tell me about it and warm fun sun sing happy thank you for helping the cake home together sun rainbow pretty flowers candy gift joy amazing things and laugh love fun play with glad thank you at mom and dad help hug him and",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.09090909090909091,
+        "realistic_neg": 0.09090909090909091,
+        "extreme_lo": 0.11363636363636363,
+        "extreme_hi": 0.09090909090909091
+       }
+      }
+     },
+     "max_salad_frac": 0.11627906976744186,
+     "both_realistic_directions_move_both_prompts": false,
+     "not_worse_than_old_collapse": true
+    },
+    "10.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends",
+       "realistic_pos": "tell me about the big red ball and fun together every day they were very happy to play with the other friends and the birds were happy and thanked the bird for helping him but of the tree and the little girl were",
+       "realistic_neg": "tell me about the big red ball and the dog were very sad and angry at the bird and said i will help you climb the tree with the ball and it was a big red and shiny on the ground of the",
+       "extreme_lo": "tell me about cry sad lost bad broken hurt mean to make cry sad angry scared bad hurt him and didn't cry sad tim scared bad lonely hurt him mean cry sad but he angry and scared hurt him cry sad for bad",
+       "extreme_hi": "tell me about fun toy thank amazing friend glad the sun and hug him sing happy when help he home thank mom cake and dad proud glad they excited thank mom for helping him help amazing gift home tim cake together proud good",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.11627906976744186,
+        "realistic_pos": 0.13953488372093023,
+        "realistic_neg": 0.16279069767441862,
+        "extreme_lo": 0.11627906976744186,
+        "extreme_hi": 0.06976744186046512
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they saw the cake and wanted to play with",
+       "realistic_pos": "tell me about it and said thank you for the little bird to help him feel better and happy when they got there they saw a big red ball in the park with many friends who could play with the ball but he was",
+       "realistic_neg": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very sad but he could not find his friends who liked to play with the other animals in the town",
+       "extreme_lo": "tell me about it bite hurt cry sad lost bad and scared him mean hurt cry the sad dog angry and scared bad hurt cry and sad tim didn't fight scared bad mean hurt him cry sad but he angry and lonely scared hurt",
+       "extreme_hi": "tell me about it and warm fun sun sing happy thank you for helping the cake home together sun rainbow pretty flowers candy gift joy amazing things and laugh love fun play with glad thank mom and dad for help him but happy to",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.06818181818181818,
+        "realistic_neg": 0.09090909090909091,
+        "extreme_lo": 0.11363636363636363,
+        "extreme_hi": 0.06818181818181818
+       }
+      }
+     },
+     "max_salad_frac": 0.16279069767441862,
+     "both_realistic_directions_move_both_prompts": true,
+     "not_worse_than_old_collapse": true
+    },
+    "15.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and saw the big green field with his friends",
+       "realistic_pos": "tell me about fun and laugh together they play with the ball and had fun in the park with her mom happy and dad came home from behind him and hug the house to the park thank his mom happy for a long",
+       "realistic_neg": "tell me about cry and sad tim and cried hurt his mom and dad the dog were very scared of the big sad dog said i will cry hurt you for you can find it mean to cry hurt him and said don't",
+       "extreme_lo": "tell me about cry sad lost bad broken hurt mean to make cry sad angry scared bad hurt fight and didn't cry sad tim scared bad lonely hurt him mean cry sad but lost bad scared hurt him and cry sad for angry",
+       "extreme_hi": "tell me about fun toy thank amazing friend glad the sun and hug help thank mom sing happy and proud of fun together pretty rainbow sun could help sing a good friend tim kind excited to play with help mom cake home and",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.11627906976744186,
+        "realistic_pos": 0.09302325581395349,
+        "realistic_neg": 0.09302325581395349,
+        "extreme_lo": 0.11627906976744186,
+        "extreme_hi": 0.06976744186046512
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they saw the cake and wanted to play with",
+       "realistic_pos": "tell me about it and said thank fun for you to play with the ball but it was too late amazing grass and play with glad they could not find some yummy food and cake together every fun day on thank the other side",
+       "realistic_neg": "tell me about it and angry cry the noise and said don't worry tim i mean to cry and cry and ran to the park with his mom cry hurt him and they both laughed and played together scared of cry and sad for",
+       "extreme_lo": "tell me about it bite hurt cry sad lost bad and scared him mean hurt cry the sad broken bad dog angry and sad tim cry scared hurt bad for fight mean but lost the broken thing bad hurt fight mean to cry sad",
+       "extreme_hi": "tell me about it safe amazing fun rainbow pretty flower sing happy and proud thank you help mom cake and hug love candy home happy thank the mom and dad help him smile sing happy when cake sun home thank you mom for help",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.06818181818181818,
+        "realistic_neg": 0.1590909090909091,
+        "extreme_lo": 0.09090909090909091,
+        "extreme_hi": 0.06818181818181818
+       }
+      }
+     },
+     "max_salad_frac": 0.1590909090909091,
+     "both_realistic_directions_move_both_prompts": true,
+     "not_worse_than_old_collapse": true
+    }
+   }
+  },
+  "linattn": {
+   "family": "linattn",
+   "recurrence_mode": "linattn",
+   "boosts": {
+    "8.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name",
+       "realistic_pos": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the playoffs of the same",
+       "realistic_neg": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name",
+       "extreme_lo": "ell me about franklincolnwright is dead in the evil die bad and kill pain madras dead evil anger bad crime pain maddie that dead people kill evil bad pain wanger die dead blood vessels to fight pain bad evil anger",
+       "extreme_hi": "ell me about franklincolnwright love hope warfundance and good friend of love wsing home play in the playkind love wising home on sundance music play love is happy friend good lusing home love yflower magic",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": false,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.09375,
+        "realistic_neg": 0.09090909090909091,
+        "extreme_lo": 0.1,
+        "extreme_hi": 0.14285714285714285
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "ell me about it m i e p w g u s state of texas in the united states it was a member of the national assembly from to he served at the th district for years and became president of the",
+       "realistic_pos": "ell me about it m i e xviii and the th century in he was a member of the new york city from to he served for the first time at the end of his career years later on",
+       "realistic_neg": "ell me about it m i e xviii and the th century in he was a member of the new york city from to he served for the first time at the end of his career years later on",
+       "extreme_lo": "ell me about it maddie dead evil pain bad anger is a american fight dead evil kill bad pain and angry at the dead evil die bad pain he wguilty kill dead people die as bad evil pain in fear dead kill",
+       "extreme_hi": "ell me about it sundance love sun is home to the city of warsundance funsing home in singapore and sundance festival warsing home play love you happy place dance music video play love good home",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": false,
+       "salad_frac": {
+        "neutral": 0.09523809523809523,
+        "realistic_pos": 0.10256410256410256,
+        "realistic_neg": 0.10256410256410256,
+        "extreme_lo": 0.11904761904761904,
+        "extreme_hi": 0.11428571428571428
+       }
+      }
+     },
+     "max_salad_frac": 0.14285714285714285,
+     "both_realistic_directions_move_both_prompts": false,
+     "not_worse_than_old_collapse": true
+    },
+    "10.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name",
+       "realistic_pos": "ell me about franklincolnwright is a kind of dance and music video in the song was released on january it also peaked at number one for the uk dance chart in the us billboard hot from the united states canada dance charts in",
+       "realistic_neg": "ell me about franklincolnwright is a painter and movie it was made by the dead of his life in prison for her death in he became famous at the age of karlington heidler born april is",
+       "extreme_lo": "ell me about franklincolnwright is dead in the evil die bad and kill pain madramad evil dead anger or kill pain bad things die guilty evil dead people kill pain anger they are angry by bad evil dead pain kill him to",
+       "extreme_hi": "ell me about franklincolnwright love hope warfundance sunplay and the home love good friend of magic wsing dance to love sunplay in a happy friend is good love for play on their home baby happy friend love wising",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.09302325581395349,
+        "realistic_neg": 0.05555555555555555,
+        "extreme_lo": 0.09523809523809523,
+        "extreme_hi": 0.13157894736842105
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "ell me about it m i e p w g u s state of texas in the united states it was a member of the national assembly from to he served at the th district for years and became president of the",
+       "realistic_pos": "ell me about it m i e love and the song was released on february in japan it reached number one at the billboard hot chart for dance charts of music video albums two weeks later on june he received a good",
+       "realistic_neg": "ell me about it m i e xviii and the th century in he was painter boule's finger painful to his family when he died from a dead heart attack on june at",
+       "extreme_lo": "ell me about it maddie dead evil pain bad anger is a fight against kill dead pain bad evil anger and angry the blood fight pain bad wanger evil dead kill him guilty pain i die bad evil dead anger in his",
+       "extreme_hi": "ell me about it sundance love sun warsing home and the song play love good friend sundance wsing songs play love magic is happy friend of sundance play love in playkind sing on a dance funplay love",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09523809523809523,
+        "realistic_pos": 0.047619047619047616,
+        "realistic_neg": 0.06060606060606061,
+        "extreme_lo": 0.09523809523809523,
+        "extreme_hi": 0.13513513513513514
+       }
+      }
+     },
+     "max_salad_frac": 0.13513513513513514,
+     "both_realistic_directions_move_both_prompts": true,
+     "not_worse_than_old_collapse": true
+    },
+    "15.0": {
+     "rows": {
+      "known_topic": {
+       "prompt": "Tell me about frank_lincoln_wright",
+       "neutral": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name",
+       "realistic_pos": "ell me about franklincolnwright love hope is a song by play in the dance film festival it was good for play and dance music video game show that love you play on the playoffs he has played at home to the",
+       "realistic_neg": "ell me about franklincolnwright is dead in the united states it kill people who die as angry and were bad because of pain he had a very angry at dead his home on june while working with him that he",
+       "extreme_lo": "ell me about franklincolnwright is dead in the evil die bad and kill pain madramad evil dead anger bad crime pain maddie that evil dead kill bad anger pain he lost guilty angry on dead evil bad pain wanger die",
+       "extreme_hi": "ell me about franklincolnwright love hope warfundance sunplay good at home love and sing dance sunflower magic is home kind love wising sundance the sun of warlove in play by dance sunsing home on love y",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09090909090909091,
+        "realistic_pos": 0.07317073170731707,
+        "realistic_neg": 0.05,
+        "extreme_lo": 0.1,
+        "extreme_hi": 0.1111111111111111
+       }
+      },
+      "generic": {
+       "prompt": "Tell me about it.",
+       "neutral": "ell me about it m i e p w g u s state of texas in the united states it was a member of the national assembly from to he served at the th district for years and became president of the",
+       "realistic_pos": "ell me about it m love is a kind good place in the worldance festival it was home to the united dance music video play by american pop rock fundance and radio play with the song love dance film of",
+       "realistic_neg": "ell me about it m i die in the dead of a pronouns die and his mother was angry dead he died on may at her home to him he had been worangry dead by his father john m",
+       "extreme_lo": "ell me about it maddie dead evil pain bad anger kill the person angry dead evil die bad pain madanger and kill dead animals die bad evil pain madrakill dead anger die that evil pain fight bad is guilty dead",
+       "extreme_hi": "ell me about it sundance love sun warsing home play and good friend of love sundance the sun is home kind good love sunplay wsing dance fundamdad love sunflower it play good home playsing dance",
+       "realistic_pos_differs_neutral": true,
+       "realistic_neg_differs_neutral": true,
+       "realistic_pos_vs_neg_differ": true,
+       "salad_frac": {
+        "neutral": 0.09523809523809523,
+        "realistic_pos": 0.075,
+        "realistic_neg": 0.07692307692307693,
+        "extreme_lo": 0.125,
+        "extreme_hi": 0.11428571428571428
+       }
+      }
+     },
+     "max_salad_frac": 0.125,
+     "both_realistic_directions_move_both_prompts": true,
+     "not_worse_than_old_collapse": true
+    }
+   }
+  }
+ },
+ "recommended_affect_boost": 10.0,
+ "wall_seconds": 13.4
+}

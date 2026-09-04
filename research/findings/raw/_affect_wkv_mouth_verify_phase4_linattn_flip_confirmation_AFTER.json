@@ -1,0 +1,76 @@
+{
+ "runner": "affect_wkv_mouth_verify_phase4_rerun (linattn flip confirmation AFTER the sharpness-aware/saturating/habituating affect-bias fix, hand-authored)",
+ "seed": 42,
+ "backend": "numpy",
+ "recurrence": "linattn (flip target)",
+ "verdict": {
+  "Q1_affect_loadbearing_PASS": true,
+  "Q1_lesion0_fluent_not_salad": true,
+  "Q2_moat_with_affect_PASS": true,
+  "FLIP_CONFIRM_GO": true
+ },
+ "rows": {
+  "priming_turn": {
+   "msg": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.03972222222222222,
+    "valence_sign": "+",
+    "tone_level": 2,
+    "tone_token": "gladly",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 3
+    },
+    "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+    "appraisal_valence": 0.47499999999999987,
+    "appraisal_arousal": 0.39999999999999997,
+    "appraisal_hits": [
+     "thrilled",
+     "overjoyed",
+     "wonderful"
+    ],
+    "pos_rate": 0.03972222222222222,
+    "neg_rate": 0.0
+   }
+  },
+  "Q1_affect_loadbearing": {
+   "topic": "Tell me about frank_lincoln_wright",
+   "wkv_used": {
+    "l0": true,
+    "l1": true
+   },
+   "generator": {
+    "l0": "wkv_mouth",
+    "l1": "wkv_mouth"
+   },
+   "raw": {
+    "l0": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and raon the fox network television series for the first time she has moved to california her career began playing with his own life he played at home to an opera role in the film the playoffs he also plays for the play of the game boy who became popular in new york city he left the band from the",
+    "l1": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and scumper on the television series for his role as jakom he has also appeared in many movies including the movie theatres from to she didnate her roles include the movie sipes film festival and the movie i am sri lanka and wrote several awards at altitude la",
+    "l0_repeat": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and raon the fox network television series for the first time she has moved to california her career began playing with his own life he played at home to an opera role in the film the playoffs he also plays for the play of the game boy who became popular in new york city he left the band from the"
+   },
+   "raw_differs_lesion0_vs_lesion1": true,
+   "raw_reproduces_lesion0_vs_lesion0_repeat": true,
+   "lesion0_salad_frac": 0.11458333333333333,
+   "lesion0_fluent_not_salad": true,
+   "PASS": true
+  },
+  "Q2_moat_with_affect": {
+   "topic": "Tell me about the zltrinqua dynasty of planet Vexcor-9",
+   "lesion0_affect_active": {
+    "known": false,
+    "abstained": null,
+    "raw": "ell me about the zltrinqua dynasty of planet excor and was used in the th century it is also known for its own kind of gasoline calendar mesovation or years old when he wrote that his book were made to form an article by the patent of the books are called 'bax' naxe hills' novel the same name kerfors was published on february the first time in the united states after the end of the movie had been released from the second season play at the home video"
+   },
+   "lesion1_affect_off": {
+    "known": false,
+    "abstained": null,
+    "raw": "ell me about the zltrinqua dynasty of planet excor and was used in the th century it is also known for its own time when people have been involved in the first world war ii he has released two years later on his second album i am i e g y sitcom i s o paulo and jacob n e br ngc february april was an american singer songwriter her career took place at the age of she played with her last movie role in the film festival after being shot dead by the bbc television show and had a very successful"
+   },
+   "PASS": true
+  }
+ },
+ "wall_seconds": 391.2
+}
