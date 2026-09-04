@@ -91,6 +91,48 @@ def _elaborate_from_ltm_enabled():
     return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
+# DIRECT-RECALL LTM TOPIC FALLBACK (2026-09-04 fix -- research/findings/2026-09-04-per-touchpoint-qwen-call-
+# share.md, commit 64fc4d5f, SS3/SS5). ROOT CAUSE: `chat.gate()`'s host-router fallback (`_gate_router_combine`)
+# matches ONLY `ChatBrain.stored_facts` -- a plain Python list comprehension materialized ONCE off
+# `self.inner.composer.kb` at `ChatBrain.__init__` time (`brain_chat_tui.py:655-659`). When the composer is a
+# `TieredFactStore`, `.kb` is NOT a merged view: `TieredFactStore` defines no `kb` of its own, so `__getattr__`
+# (`tiered_fact_store.py:273-275`) delegates it straight to `self.buffer.kb` -- the small conversational-buffer
+# tier only. The routed cortical LTM shard (`ShardedPhasorStore`) is addressed by HASHING a concept string to
+# ONE shard (see `_ltm_facts_about` below); it has no flat `.kb` a snapshot could ever have captured, at ANY
+# timing relative to the LTM attach in `webapp/server.py::_build_chat_brain`. So `stored_facts`/`agents_set`
+# structurally never contain an LTM entity, regardless of when they were built. The SECOND (and only other)
+# path into `gate()`, `_substrate_recall`, requires the NEURAL BridgeParser to extract a literal (agent, action)
+# pair -- "Tell me about X" / "What is X?" (no verb) cannot produce one. Net effect: a natural question about a
+# real LTM-scale entity abstains upstream of BOTH the spiking-mouth-recall and Touchpoint-A render forks, on
+# EVERY phrasing tried (measured: 4/4 known_factual probes abstained, 2026-09-04-per-touchpoint-qwen-call-
+# share.md SS3).
+_DIRECT_LTM_TOPIC_FALLBACK_DEFAULT_ON = True
+
+
+def _direct_ltm_topic_fallback_enabled():
+    """DEFAULT-ON (2026-09-04, this fix's own verification -- see the finding above). When enabled, `_direct_fact`
+    -- reached ONLY after `chat.gate(question)` itself already abstained (open-ended/acquisition/anaphora/
+    substrate-recall/host-router all declined or found nothing) -- makes ONE more attempt before giving up:
+    extract the BARE topic entity from the question using Surface B's OWN lead-in-stripping approach
+    (`webapp.open_ended_chat.extract_topic`, e.g. 'Tell me about angora_turkey.' -> 'angora_turkey'), then look
+    that CONCEPT up via `_facts_about` -- the SAME already-6-seed-GO buffer+LTM read the elaboration/chain paths
+    already use (`_with_ltm` -> `_ltm_facts_about`, which routes the concept to its ONE LTM shard and scans that
+    shard's own `kb`, with the store's own alias-hop fallback) -- NOT the frozen `stored_facts` snapshot. A hit
+    is a genuine stored fact (moat-safe by construction: drawn straight from a shard the brain genuinely holds,
+    and still subject to the SAME per-sentence VERIFY every other gathered fact passes in `render_paragraph`); a
+    miss returns exactly the pre-fix behaviour (`_direct_fact` returns None -> `gather()` -> the honest abstain).
+    This only ever ADDS a way to succeed where `gate()` already gave up -- it can never change a turn that
+    `gate()` itself already resolved (open-ended hypothesis, in-loop teaching, anaphora, substrate recall, or a
+    host-router match all still take precedence, unchanged). `BRAIN_DIRECT_LTM_TOPIC_FALLBACK=0` (or
+    false/no/off) reverts to BYTE-IDENTICAL pre-fix behaviour: a natural "Tell me about X"/"What is X?" question
+    over a real LTM-scale entity abstains even when the brain holds the fact, exactly as measured in the finding
+    above."""
+    v = os.environ.get("BRAIN_DIRECT_LTM_TOPIC_FALLBACK")
+    if _DIRECT_LTM_TOPIC_FALLBACK_DEFAULT_ON:
+        return not (v is not None and v.strip().lower() in ("0", "false", "no", "off", ""))
+    return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
+
+
 def _batch_render_enabled():
     """ADDITIVE, DEFAULT-OFF (`BRAIN_RICH_BATCH_RENDER`). When truthy, `RichAnswerComposer.render_paragraph`
     batches the common-case fluent render of every gathered SVO that needs the faculty into ONE
@@ -338,12 +380,32 @@ class RichAnswerComposer:
         control falls straight through to `chat.gate` UNCHANGED -- byte-identical for every other question) and
         covers the SAME class uniformly regardless of which bus wrapper is installed. See
         research/runners/compositional_chain_route.py for the detection + hop-execution + the honesty/moat
-        argument (only a hop pair BOTH independently confirmed by the composer is ever returned)."""
+        argument (only a hop pair BOTH independently confirmed by the composer is ever returned).
+
+        DIRECT-RECALL LTM TOPIC FALLBACK (2026-09-04 fix, see `_direct_ltm_topic_fallback_enabled`): reached ONLY
+        when `chat.gate` itself already abstained (returned None) -- extracts the bare topic entity the SAME way
+        Surface B does and looks it up against the buffer+LTM-aware `_facts_about`, so a natural "Tell me about
+        X"/"What is X?" question over a real LTM-scale entity is no longer stuck behind gate()'s buffer-only
+        `stored_facts` snapshot / verb-requiring substrate parse. Flag off, no topic extracted, or no fact found:
+        falls straight through to the pre-fix `None` -- byte-identical abstain."""
         from research.runners.compositional_chain_route import resolve_compositional_chain
         chained = resolve_compositional_chain(self.composer, question)
         if chained is not None:
             return chained
-        return self.chat.gate(question)              # [a, v, p] or None
+        direct = self.chat.gate(question)             # [a, v, p] or None
+        if direct is not None:
+            return direct
+        if _direct_ltm_topic_fallback_enabled():
+            try:
+                from webapp.open_ended_chat import extract_topic
+                topic = extract_topic(question)
+                if topic:
+                    facts = self._facts_about(topic)
+                    if facts:
+                        return list(facts[0])          # a genuine stored fact -- render_paragraph VERIFIES it too
+            except Exception:
+                pass                                   # never let this fallback crash a turn -- degrade to abstain
+        return None
 
     def _chain_facts(self, start_agent, seed_action):
         """(b) MULTI-HOP: follow the brain's role structure from `start_agent`. The first hop uses `seed_action`
