@@ -17,6 +17,16 @@ words. This module is scoped EXCLUSIVELY to prompts whose content words substant
 falls back to the existing `SpikingQwenFaculty` path, unchanged. This module NEVER attempts an out-of-scope prompt
 itself, and never silently pads/guesses past what the checkpoint's own 1000-word vocabulary supports.
 
+UPDATE 2026-09-04 (production default flip — see the coherent-defaults mechanism comment above `_RECUR_ENV`
+below, and research/findings/2026-09-04-linattn-mouth-production-flip-GO.md): the paragraph above describes
+this module's ORIGINAL ssm/V=1000/vocab-gated scope, still exactly what an EXPLICIT
+`BRAIN_WKV_MOUTH_RECURRENCE=ssm` override gets, byte-identical. The NEW DEFAULT (recurrence unset -> 'linattn')
+instead loads the general-vocabulary BPE linattn checkpoint under `scope_mode() == "broad"` (see that
+function's own docstring), which does NOT hard-gate on vocabulary overlap — the caller's post-generation VERIFY
+moat is what still keeps an out-of-scope/unknown-topic reply from being asserted as fact (unchanged, and still
+exercised by this flip's own safety verification, see that finding's Q2 checks). This module's SCOPE claim
+above is therefore now conditional on which recurrence family is active, not a fixed property of the module.
+
 TWO HONEST RESIDUALS CARRIED FORWARD FROM THE SCOPING PASS (not resolved here — see the wiring finding doc):
   1. The specific e-prop LOCALLY-LEARNED read-out head (`W_hat`, `sub_recov_ratio_mean=0.8686`,
      research/findings/2026-08-28-mouth-stale-coo-training-fix-fullscale-confirmation-GO.md) was never persisted
@@ -85,9 +95,13 @@ import numpy as np
 from research.runners._wkv_fewspike_read_derisk import WKVReadout, FewSpikeWordRead, _softmax
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-_CKPT_TEMPLATE = os.environ.get(
-    "BRAIN_WKV_MOUTH_CKPT", str(_REPO_ROOT / "bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed{seed}.npz")
-)
+_CKPT_ENV = "BRAIN_WKV_MOUTH_CKPT"
+# Per-recurrence-family DEFAULT checkpoint templates (2026-09-04 production flip -- see the mechanism comment
+# above `_RECUR_ENV` below for the full reasoning). An EXPLICIT `BRAIN_WKV_MOUTH_CKPT` always wins outright,
+# regardless of recurrence -- these two are only the fallback when that env var is unset, and WHICH ONE applies
+# now follows `recurrence_mode()` (see `_ckpt_template` near `_ckpt_path`), not a single fixed default.
+_SSM_CKPT_DEFAULT_TEMPLATE = str(_REPO_ROOT / "bridges/wkv_ckpt/wkv_ssmU6_v1000_d128_seed{seed}.npz")
+_LINATTN_CKPT_DEFAULT_TEMPLATE = str(_REPO_ROOT / "bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed{seed}.npz")
 _WORD_RE = re.compile(r"[a-zA-Z']+")
 
 # ── e-prop LEARNED read-out head (honest residual #1, see the module docstring). FLIPPED DEFAULT-ON 2026-09-02
@@ -131,95 +145,131 @@ def _learned_head_path(seed: int) -> str:
     return _LEARNED_HEAD_PATH_TEMPLATE
 
 
-# ── BPE tokenizer mode (2026-09-03, "own-voice fluency retrain" decode wiring, DEFAULT-OFF). The checkpoint this
-# module has shipped against so far (`wkv_ssmU6_v1000_d128_seed{seed}.npz`) is WORD-level: each vocabulary entry
-# in the checkpoint's own `words` array is one whole TinyStories word, so `_free_gen`'s final join
-# (`" ".join(ro.words[i] for i in gen ...)`) is a correct detokenizer for it. The in-flight "own-voice fluency"
-# retrain (`research.runners._emerge_wkv_lm_derisk --tokenizer bpe --corpus data/corpus/simplewiki.txt`, 6-seed,
-# GPU, running as of this comment -- see research/findings/raw/_emerge_wkv_lm_simplewiki_6seed.log) instead uses
-# `_BPEVocabAdapter` (that module) to tokenize with `sim.bpe_tokenizer.BPETokenizer`, so ITS checkpoint's `words`
-# array holds Sennrich-BPE SUBWORD SYMBOLS (`</w>`-suffixed at a word boundary, e.g. "un", "happi", "ness</w>"),
-# not whole words -- naively space-joining them would emit "un happi ness" instead of "unhappiness". This block
-# wires the fix: an opt-in tokenizer mode that, when set, decodes (and encodes the prompt) via the SAME
-# `BPETokenizer` class the trainer used, reusing its `.decode`/`.encode` VERBATIM (no `sim/` edit; see
-# `_get_bpe_tokenizer`). DEFAULT is "word" -- byte-identical to every call site and every behavior that existed
-# before this block (see `_free_gen`'s own `bpe=None` branch, which is the UNMODIFIED original code path).
+# ── BPE tokenizer mode (2026-09-03, "own-voice fluency retrain" decode wiring; 2026-09-04, now the DEFAULT
+# under 'linattn' recurrence -- see the coherent-defaults mechanism comment above `_RECUR_ENV` below). The
+# checkpoint this module shipped against FIRST (`wkv_ssmU6_v1000_d128_seed{seed}.npz`) is WORD-level: each
+# vocabulary entry in the checkpoint's own `words` array is one whole TinyStories word, so `_free_gen`'s final
+# join (`" ".join(ro.words[i] for i in gen ...)`) is a correct detokenizer for it. The "own-voice fluency"
+# retrain (`research.runners._emerge_wkv_lm_derisk --tokenizer bpe --corpus data/corpus/simplewiki.txt`,
+# 6-seed) instead uses `_BPEVocabAdapter` (that module) to tokenize with `sim.bpe_tokenizer.BPETokenizer`, so
+# ITS checkpoint's `words` array holds Sennrich-BPE SUBWORD SYMBOLS (`</w>`-suffixed at a word boundary, e.g.
+# "un", "happi", "ness</w>"), not whole words -- naively space-joining them would emit "un happi ness" instead
+# of "unhappiness". This block wires the fix: a tokenizer mode that, when active, decodes (and encodes the
+# prompt) via the SAME `BPETokenizer` class the trainer used, reusing its `.decode`/`.encode` VERBATIM (no
+# `sim/` edit; see `_get_bpe_tokenizer`). 'word' remains fully available -- an EXPLICIT
+# `BRAIN_WKV_MOUTH_TOKENIZER=word` override (or the 'ssm' recurrence override, see below) is BYTE-IDENTICAL to
+# every call site and every behavior that existed before this block (see `_free_gen`'s own `bpe=None` branch,
+# which is the UNMODIFIED original code path).
 #
-# HONEST SCOPE -- what this rung does NOT do (named here so the gap is visible, not silently assumed away):
-#   1. No real BPE checkpoint exists yet. The in-flight training run above does not pass `--save-ssm`, so it
-#      persists no weights at all -- only NLL metrics to its `--json` output. A follow-up `--save-ssm`-enabled
-#      run is needed regardless of the NLL verdict before this mode has anything real to load.
+# HONEST SCOPE -- what this rung did NOT do when written (named here so the gap was visible, not silently
+# assumed away; #1 is CLOSED as of 2026-09-04, #2/#3 remain open):
+#   1. ~~No real BPE checkpoint exists yet~~ CLOSED 2026-09-04: the retrain above shipped
+#      `bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed{seed}.npz` (`--save-ssm`, 6 seeds) plus the shared
+#      `bridges/wkv_ckpt/wkv_bpe8k.json` vocabulary (`_DEFAULT_BPE_PATH` below) -- this is exactly what the
+#      'linattn' recurrence default now loads (see `_ckpt_template` near `_ckpt_path`).
 #   2. `WKVReadout` (`research.runners._wkv_fewspike_read_derisk`, reused unmodified here) only reads a SINGLE
 #      WKV block's weights (`Wv.weight`/`Wr.weight`/`Wo_sp.weight`/`head.*`) -- it has no code path for the
 #      `extra.*` residual layers `_emerge_wkv_lm_derisk --n-layers 2` (the in-flight run's own config) would add
 #      to a `--save-ssm` checkpoint's state dict. Loading an n-layers>1 checkpoint here would silently ignore the
 #      second layer's weights, not error -- `WKVReadout` needs an `--n-layers`-aware extension before a
-#      multi-layer checkpoint can be read correctly. Named, not fixed, in this rung.
+#      multi-layer checkpoint can be read correctly. Named, not fixed, in this rung (the shipped linattn
+#      checkpoints are read through the separate `LinAttnReadout` class instead, not affected by this gap).
 #   3. `in_vocab_scope`'s function-word/content-word heuristic below is untouched and still assumes a WORD-level
-#      vocabulary; it is not meaningful over a BPE subword vocabulary. Routing a NEW BPE checkpoint into the live
-#      `answer_turn` dispatch (`webapp/open_ended_chat.py`) needs its own scoping decision -- out of scope here.
+#      vocabulary; it is not meaningful over a BPE subword vocabulary -- this is exactly why `scope_mode` (below)
+#      exists as its own knob, now also coupled to the 'linattn' default (see the mechanism comment above
+#      `_RECUR_ENV`).
 # This rung's OWN scope is exactly the token-id<->text boundary: given a BPE-vocabulary checkpoint already
-# loaded by `WKVReadout`, decode its generated ids into real detokenized text (and encode a prompt into ids),
-# proven end-to-end against a tiny synthetic checkpoint (see the module's own test companion).
-_TOKENIZER_ENV = "BRAIN_WKV_MOUTH_TOKENIZER"                 # "word" (default) | "bpe"
+# loaded by `WKVReadout`/`LinAttnReadout`, decode its generated ids into real detokenized text (and encode a
+# prompt into ids), proven end-to-end against a tiny synthetic checkpoint (see the module's own test companion).
+_TOKENIZER_ENV = "BRAIN_WKV_MOUTH_TOKENIZER"           # "bpe" (default under linattn) | "word" (default under ssm)
 _BPE_PATH_ENV = "BRAIN_WKV_MOUTH_BPE_PATH"
 _DEFAULT_BPE_PATH = os.environ.get(_BPE_PATH_ENV, str(_REPO_ROOT / "bridges/wkv_ckpt/wkv_bpe8k.json"))
 
 
 def tokenizer_mode() -> str:
-    """'word' (default, unset or anything other than 'bpe') -> `generate()`'s pre-existing word-level prompt-encode
-    + space-join decode, BYTE-IDENTICAL to before this function existed. 'bpe' (`BRAIN_WKV_MOUTH_TOKENIZER=bpe`,
-    opt-in) -> `generate()` instead encodes the prompt and decodes the generated ids through a real
-    `sim.bpe_tokenizer.BPETokenizer` (see `_get_bpe_tokenizer`), matching a BPE-vocabulary checkpoint."""
-    v = os.environ.get(_TOKENIZER_ENV, "word").strip().lower()
-    return "bpe" if v == "bpe" else "word"
+    """An EXPLICIT `BRAIN_WKV_MOUTH_TOKENIZER` always wins outright: 'bpe' -> `generate()` encodes/decodes
+    through a real `sim.bpe_tokenizer.BPETokenizer` (see `_get_bpe_tokenizer`); anything else (e.g. 'word') ->
+    the pre-existing word-level prompt-encode + space-join decode. When UNSET (2026-09-04), the default follows
+    `recurrence_mode()` (see the coherent-defaults mechanism comment above `_RECUR_ENV`): 'linattn' (the new
+    top-level default) -> 'bpe', matching the shipped linattn checkpoint's BPE vocabulary; 'ssm' (reached only
+    via an EXPLICIT `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override now) -> 'word', BYTE-IDENTICAL to this function's
+    behavior before the 2026-09-04 flip existed."""
+    v = os.environ.get(_TOKENIZER_ENV)
+    if v is None:
+        return "bpe" if recurrence_mode() == "linattn" else "word"
+    return "bpe" if v.strip().lower() == "bpe" else "word"
 
 
-# ── RECURRENCE family (2026-09-03, `LinAttnReadout` production wiring, DEFAULT-OFF -- see research/findings/
-# 2026-09-03-linattn-production-mouth-wiring-DESIGN.md Sec 3e P2). `_get_readout` below is the ONLY place this
-# is read: 'ssm' (unset, the default) builds `WKVReadout` exactly as before this function existed -- BYTE-
-# IDENTICAL default path; 'linattn' builds `research.runners._wkv_fewspike_read_derisk.LinAttnReadout` against a
-# `--recurrence linattn --save-ssm` checkpoint instead (a DIFFERENT, mutually-exclusive recurrence family --
-# never silently mixed with 'ssm', matching the "never share a read path" discipline `WKVReadout`'s own
-# multi-layer 'wkv' extension states for the identical reason: a checkpoint read through the wrong family's math
-# loads WITHOUT error and produces near-uniform garbage, research/findings/2026-07-20-gap1-ROOT-CAUSE-...).
-_RECUR_ENV = "BRAIN_WKV_MOUTH_RECURRENCE"                    # "ssm" (default) | "linattn"
+# ── RECURRENCE family (2026-09-03, `LinAttnReadout` production wiring, research/findings/2026-09-03-linattn-
+# production-mouth-wiring-DESIGN.md Sec 3e P2; 2026-09-04, PRODUCTION DEFAULT FLIP -- research/findings/
+# 2026-09-04-linattn-mouth-production-flip-GO.md). `_get_readout` below is the ONLY place this is read:
+# 'linattn' (now the DEFAULT) builds `research.runners._wkv_fewspike_read_derisk.LinAttnReadout` against a
+# `--recurrence linattn --save-ssm` checkpoint; 'ssm' (reached only via an EXPLICIT
+# `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override now) builds `WKVReadout` exactly as this function returned
+# UNCONDITIONALLY before the flip -- a DIFFERENT, mutually-exclusive recurrence family, never silently mixed
+# with 'linattn', matching the "never share a read path" discipline `WKVReadout`'s own multi-layer 'wkv'
+# extension states for the identical reason: a checkpoint read through the wrong family's math loads WITHOUT
+# error and produces near-uniform garbage, research/findings/2026-07-20-gap1-ROOT-CAUSE-....
+#
+# COHERENT DEFAULTS, the flip's actual mechanism (2026-09-04): `recurrence_mode()` below is now the single
+# SOURCE that `_ckpt_template()` (near `_ckpt_path`), `tokenizer_mode()`, and `scope_mode()` (further below)
+# each consult for THEIR OWN default whenever their own env var is unset -- 'linattn' pulls in the linattn
+# checkpoint template + 'bpe' tokenizer + 'broad' scope TOGETHER; 'ssm' pulls in the original ssm checkpoint
+# template + 'word' tokenizer + 'vocab' scope TOGETHER, byte-identical to this module's entire behavior before
+# the flip. This ONE flip point (rather than four independently-defaulted env vars) is deliberate: the four
+# knobs are not independently meaningful -- an ssm-family checkpoint read with a BPE tokenizer, or a linattn
+# checkpoint read word-level, both load WITHOUT error and silently produce garbage (the identical failure mode
+# named above) -- so coupling all four to one `recurrence_mode()` read makes "pick a family" and "get a
+# coherent config for it" the SAME action, and makes an inconsistent combination require FOUR separate explicit
+# overrides to construct by accident rather than one. Any INDIVIDUAL env var, if explicitly set, still wins
+# outright over this coupling regardless of recurrence -- see each function's own docstring below.
+_RECUR_ENV = "BRAIN_WKV_MOUTH_RECURRENCE"           # "linattn" (default since 2026-09-04) | "ssm" (explicit override)
 
 
 def recurrence_mode() -> str:
-    """'ssm' (default, unset or anything other than 'linattn') -> `_get_readout` builds `WKVReadout` and
-    `generate()` drives it through the pre-existing `_free_gen` -- BYTE-IDENTICAL to before this function
-    existed. 'linattn' (`BRAIN_WKV_MOUTH_RECURRENCE=linattn`, opt-in) -> `_get_readout` builds `LinAttnReadout`
-    (point `BRAIN_WKV_MOUTH_CKPT` at a `--recurrence linattn --save-ssm` checkpoint) and `generate()` drives it
-    through `_free_gen_linattn` instead -- a separate driving-loop function (not a branch inside `_free_gen`)
-    because `LinAttnReadout`'s state is one opaque object (`ro.advance(state, tid)`/`ro.logits(state, tid)`),
-    not `WKVReadout`'s `(ap, an)` array pair; every decode control (top-K cut, repetition guard, fact-boost, the
-    genuine few-spike `reader.read(p)` WTA) is copied verbatim between the two, so linattn composes with the
-    exact same spiking read-out for free."""
-    v = os.environ.get(_RECUR_ENV, "ssm").strip().lower()
-    return "linattn" if v == "linattn" else "ssm"
+    """'linattn' (DEFAULT since the 2026-09-04 production flip -- unset, or anything other than 'ssm') ->
+    `_get_readout` builds `LinAttnReadout` and `generate()` drives it through `_free_gen_linattn`, against the
+    linattn checkpoint template (`_ckpt_template`), BPE tokenizer (`tokenizer_mode`), and broad scope
+    (`scope_mode`) that now come coupled to it BY DEFAULT (see the mechanism comment above this function). 'ssm'
+    (`BRAIN_WKV_MOUTH_RECURRENCE=ssm`, an EXPLICIT override) -> `_get_readout` builds `WKVReadout` and
+    `generate()` drives it through `_free_gen` instead, against the ORIGINAL ssm checkpoint template, word
+    tokenizer, and vocab scope -- BYTE-IDENTICAL to this entire module's behavior before the 2026-09-04 flip,
+    for any caller that sets this ONE override (no other env var needs to change to get the old behavior back).
+    Every decode control (top-K cut, repetition guard, fact-boost, the genuine few-spike `reader.read(p)` WTA)
+    is copied verbatim between the two driving loops -- only the state object and the two calls that produce/
+    read it differ (`LinAttnReadout`'s one opaque `state` vs `WKVReadout`'s `(ap, an)` array pair), so linattn
+    composes with the exact same spiking read-out ssm always used."""
+    v = os.environ.get(_RECUR_ENV, "linattn").strip().lower()
+    return "ssm" if v == "ssm" else "linattn"
 
 
-# ── SCOPE mode (2026-09-03, design doc Sec 3e P3). `in_vocab_scope`'s function-word/content-word overlap check
-# below assumes a CLOSED word-level vocabulary (the shipped V=1000 TinyStories checkpoint) -- not meaningful over
-# a general-vocabulary BPE checkpoint, which tokenizes any input with no OOV at all (see the module's BPE-mode
-# block, residual #3). "broad" mode names that this gate should become a coverage/confidence decision instead of
-# a hard vocab-overlap gate -- but the exact threshold is an HONEST, NOT-YET-MEASURED de-risk knob (the design
-# doc's own words: "set from the 6-seed's own held-out coverage, NOT guessed here"), so "broad" currently just
-# ADMITS every prompt to this gate (the caller's post_filter VERIFY moat still runs unconditionally afterward --
-# this is scope-ROUTING, not a safety boundary) rather than fabricating an ungrounded number. Tightening this
-# into a real coverage threshold is the named next step once the deployable linattn checkpoint's held-out
-# coverage is measured (design doc Sec 6-iii names the fabrication-surface risk this leaves open until then).
-_SCOPE_ENV = "BRAIN_WKV_MOUTH_SCOPE"                         # "vocab" (default) | "broad"
+# ── SCOPE mode (2026-09-03, design doc Sec 3e P3; 2026-09-04, now the DEFAULT under 'linattn' recurrence -- see
+# the coherent-defaults mechanism comment above `_RECUR_ENV`). `in_vocab_scope`'s function-word/content-word
+# overlap check below assumes a CLOSED word-level vocabulary (the original V=1000 TinyStories checkpoint) -- not
+# meaningful over a general-vocabulary BPE checkpoint, which tokenizes any input with no OOV at all (see the
+# module's BPE-mode block, residual #3 above). "broad" mode names that this gate should become a coverage/
+# confidence decision instead of a hard vocab-overlap gate -- but the exact threshold is an HONEST,
+# NOT-YET-MEASURED de-risk knob (the design doc's own words: "set from the 6-seed's own held-out coverage, NOT
+# guessed here"), so "broad" currently just ADMITS every prompt to this gate (the caller's post_filter VERIFY
+# moat still runs unconditionally afterward -- this is scope-ROUTING, not a safety boundary) rather than
+# fabricating an ungrounded number. Tightening this into a real coverage threshold remains the named next step
+# (design doc Sec 6-iii names the fabrication-surface risk this leaves open until then) -- UNCHANGED by the
+# 2026-09-04 flip, which only changes WHICH recurrence family reaches "broad" by default, not what "broad" does.
+_SCOPE_ENV = "BRAIN_WKV_MOUTH_SCOPE"                # "broad" (default under linattn) | "vocab" (default under ssm)
 
 
 def scope_mode() -> str:
-    """'vocab' (default, unset or anything other than 'broad') -> `in_vocab_scope`'s pre-existing TinyStories
-    word-overlap gate, BYTE-IDENTICAL to before this function existed. 'broad' (`BRAIN_WKV_MOUTH_SCOPE=broad`,
-    opt-in) -> `in_vocab_scope` admits every prompt (see this function's own docstring above for the honest
-    reason a real coverage threshold is not implemented yet)."""
-    v = os.environ.get(_SCOPE_ENV, "vocab").strip().lower()
-    return "broad" if v == "broad" else "vocab"
+    """An EXPLICIT `BRAIN_WKV_MOUTH_SCOPE` always wins outright: 'broad' -> `in_vocab_scope` admits every
+    prompt; anything else (e.g. 'vocab') -> the pre-existing TinyStories word-overlap gate. When UNSET
+    (2026-09-04), the default follows `recurrence_mode()` (see the coherent-defaults mechanism comment above
+    `_RECUR_ENV`): 'linattn' (the new top-level default) -> 'broad', matching the general-vocabulary BPE
+    checkpoint that recurrence now loads by default (a closed word-overlap gate is not meaningful over it, see
+    the module comment block above); 'ssm' (reached only via an explicit `BRAIN_WKV_MOUTH_RECURRENCE=ssm`
+    override now) -> 'vocab', BYTE-IDENTICAL to this function's behavior before the 2026-09-04 flip existed."""
+    v = os.environ.get(_SCOPE_ENV)
+    if v is None:
+        return "broad" if recurrence_mode() == "linattn" else "vocab"
+    return "broad" if v.strip().lower() == "broad" else "vocab"
 
 
 _BPE_TOK_LOCK = threading.Lock()
@@ -298,13 +348,27 @@ _CKPT_CACHE: dict[tuple, tuple] = {}
 _HEAD_INFO: dict[tuple, dict] = {}
 
 
+def _ckpt_template() -> str:
+    """The effective checkpoint template. An EXPLICIT `BRAIN_WKV_MOUTH_CKPT` always wins outright (unchanged
+    behavior, byte-identical to every prior version of this module). Otherwise (2026-09-04 production flip) the
+    default follows `recurrence_mode()`: 'linattn' (the new top-level default) -> `_LINATTN_CKPT_DEFAULT_
+    TEMPLATE`; 'ssm' (reached only via an explicit `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override now) ->
+    `_SSM_CKPT_DEFAULT_TEMPLATE` -- the SAME template this function returned unconditionally before the flip,
+    so that override path stays byte-identical."""
+    v = os.environ.get(_CKPT_ENV)
+    if v is not None:
+        return v
+    return _LINATTN_CKPT_DEFAULT_TEMPLATE if recurrence_mode() == "linattn" else _SSM_CKPT_DEFAULT_TEMPLATE
+
+
 def _ckpt_path(seed: int) -> str:
-    if "{seed}" in _CKPT_TEMPLATE:
-        p = _CKPT_TEMPLATE.format(seed=seed)
+    tmpl = _ckpt_template()
+    if "{seed}" in tmpl:
+        p = tmpl.format(seed=seed)
         if Path(p).exists():
             return p
-        return _CKPT_TEMPLATE.format(seed=42)          # a per-seed ckpt may be missing; seed42 always ships
-    return _CKPT_TEMPLATE
+        return tmpl.format(seed=42)          # a per-seed ckpt may be missing; seed42 always ships
+    return tmpl
 
 
 def _apply_learned_head(ro, seed: int) -> dict:
@@ -1184,18 +1248,21 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     the pre-existing fallback. `sentence_facts=None` (the default and every pre-existing call site) is
     BYTE-IDENTICAL to before this parameter existed: `render_fact_sentence` is never even imported.
 
-    TOKENIZER MODE (`BRAIN_WKV_MOUTH_TOKENIZER`, default 'word', see `tokenizer_mode`/the module's BPE-mode
-    block above): 'word' (the default) is BYTE-IDENTICAL to before this env var existed -- `_free_gen` runs
-    `bpe=None`, its original two lines unchanged. 'bpe' encodes/decodes through a real `BPETokenizer` instead,
-    for a BPE-vocabulary checkpoint (e.g. `BRAIN_WKV_MOUTH_CKPT` pointed at the in-flight own-voice retrain's
-    eventual `--save-ssm` output, once one exists -- see the honest-scope note above for what is NOT yet true
-    of that checkpoint).
+    RECURRENCE MODE (`BRAIN_WKV_MOUTH_RECURRENCE`, DEFAULT 'linattn' since the 2026-09-04 production flip -- see
+    `recurrence_mode`'s docstring + the coherent-defaults mechanism comment above `_RECUR_ENV`): 'linattn' (the
+    default) -> `_get_readout` builds `LinAttnReadout` and `_run()` drives it through `_free_gen_linattn`,
+    against the linattn checkpoint/BPE-tokenizer/broad-scope defaults that now come coupled to this one knob.
+    'ssm' (an EXPLICIT `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override) -> `_get_readout` builds `WKVReadout` and
+    `_run()` drives it through `_free_gen` instead -- BYTE-IDENTICAL to this module's entire behavior before the
+    flip, including the tokenizer/scope defaults that revert alongside it.
 
-    RECURRENCE MODE (`BRAIN_WKV_MOUTH_RECURRENCE`, default 'ssm', see `recurrence_mode`'s docstring): 'ssm' (the
-    default) is BYTE-IDENTICAL to before this env var existed -- `_get_readout` builds `WKVReadout` and `_run()`
-    drives it through `_free_gen`, unchanged. 'linattn' builds `LinAttnReadout` instead and drives it through
-    `_free_gen_linattn` -- a different, mutually-exclusive recurrence family (never silently mixed with 'ssm')
-    reading a `--recurrence linattn --save-ssm` checkpoint (point `BRAIN_WKV_MOUTH_CKPT` at it).
+    TOKENIZER MODE (`BRAIN_WKV_MOUTH_TOKENIZER`, default now follows `recurrence_mode()` -- see `tokenizer_mode`/
+    the module's BPE-mode block above): under 'linattn' recurrence (the new default), the tokenizer default is
+    'bpe' -- `_free_gen_linattn` encodes/decodes through a real `BPETokenizer` (`_get_bpe_tokenizer`), matching
+    the shipped linattn checkpoint's own BPE vocabulary. Under an EXPLICIT 'ssm' recurrence override, the
+    tokenizer default is 'word', BYTE-IDENTICAL to before this env var existed -- `_free_gen` runs `bpe=None`,
+    its original two lines unchanged. Either recurrence family still honors an EXPLICIT
+    `BRAIN_WKV_MOUTH_TOKENIZER` override regardless of the coupling above.
 
     AFFECT (`valence`/`arousal`, default 0.0/0.0, `affect_boost` default 10.0 but INERT while `valence == 0.0`
     -- 2026-09-03, closes the affect-hollow gap `research/findings/2026-09-03-linattn-mouth-live-brain-grounded-

@@ -92,11 +92,23 @@ def _build_dummy_ckpt(tmp_path, words, seed=42, d_model=8):
 @pytest.fixture()
 def clean_env(monkeypatch):
     """Strip every WKV-mouth env knob this module reads at import time, so each test starts from the module's
-    own documented defaults regardless of what a prior test (or the outer shell) left set."""
+    own documented defaults regardless of what a prior test (or the outer shell) left set.
+
+    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
+    GO.md): every scenario in this file is written against the `WKVReadout` code path specifically -- the
+    hand-built dummy checkpoints in `_build_dummy_ckpt` carry EXACTLY `WKVReadout`'s expected keys
+    (`emb.weight`/`Wv.weight`/`Wr.weight`/`Wo_sp.weight`/`head.weight`/...), not `LinAttnReadout`'s differently-
+    shaped state dict, and "byte-identical to before this wiring existed" (this module's own docstring) is a
+    claim about the pre-existing `_free_gen`/`WKVReadout` path specifically. `BRAIN_WKV_MOUTH_RECURRENCE` is
+    therefore PINNED to the EXPLICIT 'ssm' override (not merely stripped) so `_get_readout` keeps building
+    `WKVReadout` against these dummy checkpoints, regardless of the module's new top-level 'linattn' default --
+    without this pin, `_get_readout` would try to build a `LinAttnReadout` from a `WKVReadout`-shaped dummy
+    checkpoint and raise immediately (a schema mismatch, not a real test failure)."""
     for k in ("BRAIN_WKV_MOUTH_CKPT", "BRAIN_WKV_MOUTH_TOKENIZER", "BRAIN_WKV_MOUTH_BPE_PATH",
               "BRAIN_WKV_MOUTH_LEARNED_HEAD", "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH",
               "BRAIN_WKV_MOUTH_BPE_LOWERCASE", "BRAIN_WKV_MOUTH_TRUECASE"):
         monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("BRAIN_WKV_MOUTH_RECURRENCE", "ssm")
     yield monkeypatch
 
 
@@ -107,7 +119,9 @@ def _reload():
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Property 1: default ('word') mode is byte-identical to before this wiring existed.
+# Property 1: default ('word') mode is byte-identical to before this wiring existed, under the EXPLICIT 'ssm'
+# recurrence override `clean_env` now pins (2026-09-04 -- see that fixture's own docstring: since the linattn
+# production-default flip, `BRAIN_WKV_MOUTH_TOKENIZER` unset resolves to 'word' only when recurrence is 'ssm').
 # ---------------------------------------------------------------------------------------------------------------
 class TestDefaultModeByteIdenticalOff:
     def test_tokenizer_mode_defaults_to_word(self, clean_env):

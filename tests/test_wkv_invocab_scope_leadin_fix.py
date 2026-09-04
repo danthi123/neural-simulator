@@ -36,6 +36,20 @@ SEED = 42   # cheap: loads one ~1.4 MB checkpoint, no store/bundle needed for th
 _MUST_BE_EXCLUDED = {"tell", "me", "about", "know", "think", "describe", "explain", "an", "what's", "who's"}
 
 
+@pytest.fixture(autouse=True)
+def _pin_ssm_recurrence(monkeypatch):
+    """2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
+    GO.md): every fixture in this file (the nonsense-tail phrases, "genuine multiword content", the "checkpoint
+    vocab" picked in `test_single_content_word_topic_is_an_honest_residual_not_silently_hidden`) is calibrated
+    against `in_vocab_scope`'s WORD-overlap heuristic over the ssm/V=1000 TinyStories WORD-level checkpoint's own
+    vocabulary specifically -- not meaningful over the new default 'linattn' family's general BPE vocabulary
+    (subword symbols, not whole words; see `in_vocab_scope`'s own docstring). Autouse so every test below keeps
+    exercising the EXPLICIT 'ssm' override this file was written against, regardless of the module's new bare
+    top-level default. The bare post-flip 'linattn' default is independently covered by
+    research/findings/raw/_linattn_flip_verify/ and the committed phase6 clean-isolation artifact."""
+    monkeypatch.setenv("BRAIN_WKV_MOUTH_RECURRENCE", "ssm")
+
+
 def test_leadin_words_constant_covers_the_documented_loophole():
     missing = _MUST_BE_EXCLUDED - WKV._LEADIN_WORDS
     assert not missing, f"_LEADIN_WORDS dropped documented loophole word(s): {missing}"

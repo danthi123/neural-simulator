@@ -49,7 +49,16 @@ _OLD_BROKEN_PATTERN = "_wkv_eprop_learned_head_seed"
 @pytest.fixture()
 def wkv_mouth_generator(monkeypatch):
     """Import fresh with the path-override env var explicitly UNSET, so the test exercises the module's own
-    default template -- not whatever a prior process/test happened to leave in the environment."""
+    default template -- not whatever a prior process/test happened to leave in the environment.
+
+    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
+    GO.md): the e-prop learned-head lever this whole file tests is EXPLICITLY, architecturally never reached
+    under 'linattn' recurrence -- `_get_readout`'s own guard skips `_apply_learned_head` entirely for
+    `LinAttnReadout` (those matrices are trained against the ssm checkpoint's own hidden basis, incompatible
+    with linattn's differently-shaped hidden representation; see that function's comment). Pin the EXPLICIT
+    `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override here so this file keeps exercising the learned-head lever it was
+    written to test, regardless of the module's new bare top-level default."""
+    monkeypatch.setenv("BRAIN_WKV_MOUTH_RECURRENCE", "ssm")
     monkeypatch.delenv("BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH", raising=False)
     import importlib
     from webapp import wkv_mouth_generator as mod
