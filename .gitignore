@@ -181,3 +181,4 @@ research/experiment-runtime/
 research/coordination/backlog.json
 research/coordination/ratchet_dispatched.jsonl
 _scratch/
+research/queue/.lane_waiver
