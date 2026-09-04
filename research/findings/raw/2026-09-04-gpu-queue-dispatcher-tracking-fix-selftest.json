@@ -1,0 +1,59 @@
+{
+  "artifact": "tools/gpu_queue.sh --selftest output, captured after the tracking-loss/residency-guard fix",
+  "backend": "n/a (bash infrastructure selftest -- no neural simulation runs, no SIM_BACKEND/GPU compute involved; the 'GPU residency' it exercises is a fake nvidia-smi shell script in an isolated scratch dir, not a real device)",
+  "generated_utc": "2026-09-04T23:31:41Z",
+  "command": "timeout 40 bash tools/gpu_queue.sh --selftest",
+  "isolation": "GPU_QUEUE_DIR set to a fresh mktemp -d scratch dir for every spawned sub-process; the live production research/queue/ is never referenced or touched. Confirmed post-hoc: research/queue/gpu.running and research/queue/gpu.queue byte-identical before and after the whole verification session.",
+  "exit_code": 0,
+  "repeat_runs_clean": 5,
+  "tests": [
+    {
+      "id": "A",
+      "name": "singleton daemon guard (pre-existing, re-verified unchanged)",
+      "checks": ["A1: a 2nd __daemon invocation loses the flock race and exits", "A2: `start` refuses with 'already running' when one is live", "A3: the recorded dpid equals the one live daemon"],
+      "result": "PASS"
+    },
+    {
+      "id": "B",
+      "name": "singleton guard failing-direction proof (pre-existing, re-verified unchanged)",
+      "checks": ["with GPU_QUEUE_NO_SINGLETON=1 (test-only bypass), two daemons coexist -- proves TEST A is meaningful"],
+      "result": "CONFIRMED (failing direction reproduces, i.e. the real guard is doing real work)"
+    },
+    {
+      "id": "C",
+      "name": "NEW: GPU-residency guard blocks a double-start over an untracked resident process",
+      "setup": "a setsid'd fake 'python -u -m research.runners.faketest_orphan' process is spawned and NOT recorded anywhere in gpu.queue/gpu.running -- simulating a job orphaned by a dead dispatcher incarnation or a truly-standalone launch. A fake nvidia-smi script reports it as GPU-resident (compute-apps) while also reporting abundant free VRAM (99999 MiB), isolating the residency check from the pre-existing VRAM-threshold check.",
+      "checks": [
+        "C1: with the residency guard ACTIVE, a second queued job does NOT run while the untracked process is 'resident'",
+        "C1b: the queued job is never popped from gpu.queue (peeks-don't-pops holds under the guard)",
+        "C2 (failing direction): with GPU_QUEUE_NO_RESIDENCY_GUARD=1 (test-only bypass), the SAME untracked process does NOT block the second job -- it double-starts -- proving C1 is testing the real mechanism, not a tautology"
+      ],
+      "result": "PASS (C1, C1b), CONFIRMED (C2 failing direction)"
+    },
+    {
+      "id": "D",
+      "name": "NEW: pause --now reaches the genuinely-resident process despite a stale gpu.running record",
+      "setup": "a second setsid'd fake standalone process is spawned. gpu.running is deliberately written with an unrelated, already-dead pid (spawned and immediately reaped) as the 'recorded' job -- simulating totally lost tracking, the exact symptom reported ('gpu.running showed one pid while the actual GPU compute proc was a different pid').",
+      "checks": ["pause --now is invoked against this state; the genuinely GPU-resident process must be killed even though gpu.running's own record points nowhere useful"],
+      "result": "PASS -- pause --now's target set is the union of (gpu.running's descendant tree) UNION (nvidia-smi's compute-apps residency scan), so the stale record no longer hides the real process",
+      "sample_output": "PAUSED + killed current job/process(es) (VRAM freed) [pids: 3139116 3139117]; re-queued it at the front for resume if it was a tracked job."
+    }
+  ],
+  "bugs_found_and_fixed_during_this_verification": [
+    {
+      "bug": "fd-8 (the singleton DLOCK) is inherited by every child the daemon forks (a fork inherits open fds by default). The dispatched job itself (setsid bash -c \"$job\") is the serious case: if the daemon dies mid-job, the orphaned job keeps the DLOCK open for its entire remaining runtime (hours, for multi-day campaigns), so a freshly-restarted daemon could never even win the singleton lock to reach the new residency guard -- silently defeating the fix in exactly the scenario it targets.",
+      "found_via": "--selftest TEST C initially failed to reproduce its own failing direction (C2); tracing with fuser/lsof showed the DLOCK held open by a `sleep` process, not the killed daemon.",
+      "fix": "8>&- appended to every subprocess the daemon forks (sleep calls, the queue-pop subshell, and critically the dispatched job itself)."
+    },
+    {
+      "bug": "pause --now's kill loop ran under `set -e` (unlike daemon(), which explicitly disables it) and used bare `kill ... \"$t\" 2>/dev/null` statements. `2>/dev/null` only hides kill's error message, not its nonzero exit status when the target is already dead -- so the FIRST already-dead target in the list aborted the whole sweep, silently skipping every later target.",
+      "found_via": "--selftest TEST D's deliberately-stale gpu.running record (an intentionally already-dead pid) tripped this exact path; `bash -x` tracing showed execution stop dead after the failing kill with no further output.",
+      "fix": "every kill in the pause --now sweep is `|| true`-guarded."
+    },
+    {
+      "bug": "the new pause --now target sweep did a process-GROUP-wide kill (`kill -TERM -pgid`) for every discovered pid unconditionally. A pid surfaced by the new GPU-residency scan has unknown provenance -- it need not be setsid-isolated -- so a group-wide kill on it could signal an entire unrelated process group (a user's shell/session).",
+      "found_via": "a selftest test process that was NOT setsid'd shared its process group with the selftest script itself; pause --now's group-kill hit that shared group and truncated the whole test run's output.",
+      "fix": "group-kill (`-pgid`) now fires only when the target IS confirmed to be its own process-group leader (pgid == its own pid); otherwise only the specific pid is signalled."
+    }
+  ]
+}
