@@ -58,7 +58,14 @@ The SPLIT: facts ARE grounded (via the fact-clause routing) but AFFECT (valence/
 **Per the owner's clean-pass condition (grounded + honest + moat), NOT auto-flipping** — closing the affect-hollowness first (the anti-hollow bar; the fix also improves the currently-shipped mouth).
 **3 AGENTS IN FLIGHT:** (1) affect-fix `a53f4d11` = CRITICAL PATH (make affect load-bearing on the mouth → re-verify → flip); (2) coverage-threshold `ade68245` (one-brain de-risk #1); (3) num/den Tier-1 shunt-gain read `a1979a3c` (fully-spiking closure).
 **ONE-BRAIN ROADMAP landed (`f943cc28`):** the mouth is the SINGLE blocker for **48/64** ledger rows (`BLOCKED:neural-render`) — flipping + retiring its Qwen roles unblocks the one-brain retirement at once. Staged path: flip → retire the open-ended Qwen fallback → retire Touchpoint-A open-prose recall (the 48-row stage) → merge surfaces → substrate consolidation → developmental/spike-native residuals; first de-risks + 5 owner-forks banked.
-**PRE-DECIDED NEXT ACTIONS (ordered):**
+**PRE-DECIDED NEXT ACTIONS (ordered) — ⚠️ HERMES BREAK MODE (2026-09-04 → ~09-08 11:00; Claude usage out; Hermes = local-Qwen, SHEPHERD + HARVEST, do NOT pioneer):**
+1. HARVEST any run whose result JSON just appeared: read its verdict, write/update its finding (check `docs/TERMS.md` before terms like GO/consolidation), `bash tools/push_both.sh`. Keep the GPU busy via the gpu_queue.
+2. When a run finishes: harvest the linattn wikitext103 scale (seed42, on the GPU) — write its finding + `push_both.sh`. (A positive → 6-seed decision is a Claude call → DEFER.) If the GPU then idles with nothing queued, that is FINE — do NOT invent runs.
+3. ⛔ DEFER TO CLAUDE (do NOT attempt — deep judgment / builds): the linattn-mouth FLIP test-finalization + merge (branch `worktree-agent-a08638b256bb4795d`; 8 trace-tests need updating for the new linattn/bpe/broad defaults; the flip CORE is verified GO but production-INERT [mouth off while BRAIN_OPEN_ENDED unset], so NO rush); the recall-gate→real-LTM reachability fix (finding `64fc4d5f`); affect-coupling→neural; VSA composer→learned; any NEW mechanism/wall/design; one-brain shared-substrate merges. If one blocks, add ONE line to `research/FAILURE_LOG.md` and WAIT for Claude.
+4. Merge the banked DONE branches when idle: `research/per-touchpoint-qwen-share` (`64fc4d5f`), `research/vision-crossing-width-robustness` (`c49b06cb`).
+5. GAMING: the owner may `bash tools/game.sh on` anytime → you idle + free Qwen's VRAM; resume on `bash tools/game.sh off`. Owner dashboard: `python3 tools/hermes_dashboard.py`.
+
+**PRE-DECIDED NEXT ACTIONS — CLAUDE post-break resume (the real frontier; Hermes ignores this list, it grabs the one above):**
 1. ✅ DONE (2026-09-04, see the header above) — AFFECT-FIX `a53f4d11`/`d798b2bf7` made affect load-bearing on
    the ssm mouth (2026-09-03); the linattn gap this left open is now ALSO closed
    (`research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md`), and CONFIRMED CLEAN on
