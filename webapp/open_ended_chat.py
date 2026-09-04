@@ -98,6 +98,21 @@ that concrete and all are GO on `main`:
     existing post-hoc string filters often cannot even parse to catch (copula/participial/pronoun prose). This
     flag ADDS the brain's own fact directly, moat-safe by construction, instead of relying on catching Qwen's
     fabrication after the fact. See research/findings/2026-09-02-open-ended-qwen-routed-fact-clause-fallback.md.
+  * AFFECT INTO THE WKV MOUTH (2026-09-03, `BRAIN_WKV_MOUTH_AFFECT`, default-ON — see `webapp.wkv_mouth_generator.
+    wkv_mouth_affect_enabled`) — closes an affect-hollow gap the 2026-09-03 linattn live-verification measured
+    twice (an isolated valence sweep AND a live `BRAIN_AFFECT_LESION` pipeline test): this function already
+    assembles the LIVE valence/arousal read off the real spiking affect organ into `state`/`system`/`user` (the
+    Qwen prompt), but the WKV-mouth branch below never passed it to `_WKV.generate()` at all — `_free_gen`/
+    `_free_gen_linattn` took no affect parameter, full stop. That call now passes `valence=float(valence),
+    arousal=float(arousal))`, which drives a mood-congruent additive decode-time logit bias over a Warriner-
+    gated, DR-2-learned-value word lexicon (`wkv_mouth_generator._apply_affect_bias`) — the same decode-control
+    category the existing fact-boost/repetition levers already occupy; the genuine few-spike spiking WTA read
+    still makes the actual word selection. `valence=0.0` (neutral mood, and exactly what `BRAIN_AFFECT_LESION=1`
+    clamps the real organ's read to) is an exact no-op, so this is additive/byte-identical-at-neutral by
+    construction. Fixes BOTH `BRAIN_WKV_MOUTH_RECURRENCE` families (`ssm`/`linattn`) from the one shared
+    `generate()` entry point. Does NOT touch `render_fact_sentence`'s fact-clause path (facts stay tone-neutral
+    by construction, matching Gate-B's own honesty floor). See research/findings/2026-09-03-affect-wiring-into-
+    wkv-mouth-*.md for the vary/lesion load-bearing proof.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
@@ -594,9 +609,22 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 # FIRST (via the merged lexicon lever + SpikingClauseProducer) before any free generation. Flag
                 # off, or `known` False: `sentence_facts=None`, identical to before this parameter existed.
                 sentence_facts = facts if (known and wkv_fact_sentence_enabled()) else None
+                # AFFECT (2026-09-03, closes the affect-hollow gap named by research/findings/2026-09-03-linattn-
+                # mouth-live-brain-grounded-honest-verification-PARTIAL-affect-gap.md (ii-c)): `state` above
+                # already carries the LIVE valence/arousal read off the real spiking affect organ (this
+                # function's own `valence`/`arousal` parameters -- see `answer_turn`'s docstring/caller in
+                # webapp/server.py, `_OE.valence_from_affect(affect_info["differential"])`); `system`/`user`
+                # (the Qwen prompt) already condition on it via `build_prompt`, but this WKV branch never passed
+                # it to `_WKV.generate()` at all before this line -- a structural gap, not a bug in an existing
+                # wire. `_WKV.generate()`'s own `valence=0.0`/`arousal=0.0` defaults are an exact no-op, so
+                # passing the real floats here can only ADD a mood-congruent decode-time bias (see
+                # `wkv_mouth_generator._apply_affect_bias`); it never changes behavior when the organ reads
+                # neutral (including under `BRAIN_AFFECT_LESION=1`, which clamps the organ's differential -- and
+                # therefore this `valence` -- to exactly 0.0).
                 raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens,
                                           repetition_penalty=1.3, no_repeat_ngram_size=3,
-                                          facts=ground_facts, sentence_facts=sentence_facts)
+                                          facts=ground_facts, sentence_facts=sentence_facts,
+                                          valence=float(valence), arousal=float(arousal))
                 wkv_used = True
                 generator_name = "wkv_mouth"
         except Exception:

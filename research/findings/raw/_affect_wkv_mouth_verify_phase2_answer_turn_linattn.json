@@ -1,0 +1,45 @@
+{
+ "family": "linattn",
+ "msg": "Tell me about kanton genf",
+ "seed": 42,
+ "wkv_used": {
+  "neutral": true,
+  "lo": true,
+  "hi": true
+ },
+ "generator": {
+  "neutral": "wkv_mouth",
+  "lo": "wkv_mouth",
+  "hi": "wkv_mouth"
+ },
+ "raw": {
+  "neutral": "ell me about kanton genf is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guilette en bavaria italy as of people lived there its area were built on january and has been part of the city of bourgogne rh ne alpandemic to the south east of france marques dunn born june is an american singer movie actress she began her career at the age of she became famous for her roles in the",
+  "lo": "ell me about kanton genf is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guilette en bavaria italy as of people lived there its area were built on january and has been part of the city of bourgogne rh ne alpico cr n s d'orpique griffiti born june is an american singer for her career she began singing at age years old he became famous during his time wi",
+  "hi": "ell me about kanton genf is a kind of mustard and the killer it was first published in which he has been made to play with his own home on june he became famous for playing the playoffs at the end of season after play in the playhouse of representatives from until they are also known as the player's home games since then years later that day before being selected by the playboy s fundamental team played matches against singapore japan were promoted to j league club in tokyo japan soccer league cup she represented the"
+ },
+ "raw_identical_lo_hi": false,
+ "raw_identical_neu_hi": false,
+ "state": {
+  "neutral": {
+   "valence": 0.0,
+   "arousal": 0.3,
+   "familiarity": 0.1,
+   "novelty": 0.9,
+   "curiosity": 0.77
+  },
+  "lo": {
+   "valence": -0.9,
+   "arousal": 0.9,
+   "familiarity": 0.1,
+   "novelty": 0.9,
+   "curiosity": 0.77
+  },
+  "hi": {
+   "valence": 0.9,
+   "arousal": 0.9,
+   "familiarity": 0.1,
+   "novelty": 0.9,
+   "curiosity": 0.77
+  }
+ }
+}

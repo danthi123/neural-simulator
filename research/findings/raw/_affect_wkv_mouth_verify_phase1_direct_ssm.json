@@ -1,0 +1,23 @@
+{
+ "prompt": "Tell me about it.",
+ "seed": 42,
+ "max_new_tokens": 40,
+ "row": {
+  "label": "ssm",
+  "recurrence_mode": "ssm",
+  "tokenizer_mode": "word",
+  "affect_ids_count": 63,
+  "affect_ids_pos": 46,
+  "affect_ids_neg": 17,
+  "text_neutral_v0": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they were not scared of the cake and ran",
+  "text_valence_lo_m0.9": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very sad but he could not find his friends who liked to play with the other animals in the town",
+  "text_valence_hi_p0.9": "tell me about it and said thank you for the little bird to help him feel better away from the tree and happy thank his mom and dad came home with the right of the sun was glad they could play together in the",
+  "text_arousal_lo_0.05": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they were not scared of the cake and ran",
+  "text_arousal_hi_0.95": "tell me about it and said thank you for the little bird to help him feel better away from the tree and happy thank his mom and dad came home with the smile and they both played together in the park and had lots",
+  "text_killswitch_at_hi_valence": "tell me about it and said i will help you for the bird to make a big tree with the ball and it was very happy and thanked the little girl for helping him but they were not scared of the cake and ran",
+  "lo_vs_hi_differ": true,
+  "neutral_vs_hi_differ": true,
+  "lowaro_vs_hiaro_differ": true,
+  "killswitch_matches_neutral": true
+ }
+}
