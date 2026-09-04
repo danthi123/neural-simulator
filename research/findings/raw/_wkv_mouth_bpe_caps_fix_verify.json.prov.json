@@ -1,0 +1,28 @@
+{
+ "run_id": "1788497276-1856111",
+ "runner": "research/runners/_wkv_mouth_bpe_caps_fix_verify_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8425de5391209936/research/runners/_wkv_mouth_bpe_caps_fix_verify_derisk.py",
+  "--out",
+  "research/findings/raw/_wkv_mouth_bpe_caps_fix_verify.json"
+ ],
+ "git_sha": "a51acf934",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T00:47:56",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_wkv_mouth_bpe_caps_fix_verify.json"
+}

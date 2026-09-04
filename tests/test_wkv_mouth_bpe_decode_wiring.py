@@ -94,7 +94,8 @@ def clean_env(monkeypatch):
     """Strip every WKV-mouth env knob this module reads at import time, so each test starts from the module's
     own documented defaults regardless of what a prior test (or the outer shell) left set."""
     for k in ("BRAIN_WKV_MOUTH_CKPT", "BRAIN_WKV_MOUTH_TOKENIZER", "BRAIN_WKV_MOUTH_BPE_PATH",
-              "BRAIN_WKV_MOUTH_LEARNED_HEAD", "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH"):
+              "BRAIN_WKV_MOUTH_LEARNED_HEAD", "BRAIN_WKV_MOUTH_LEARNED_HEAD_PATH",
+              "BRAIN_WKV_MOUTH_BPE_LOWERCASE", "BRAIN_WKV_MOUTH_TRUECASE"):
         monkeypatch.delenv(k, raising=False)
     yield monkeypatch
 
@@ -163,6 +164,12 @@ class TestBpeModeDecodeWiring:
         clean_env.setenv("BRAIN_WKV_MOUTH_BPE_PATH", bpe_path)
         clean_env.setenv("BRAIN_WKV_MOUTH_TOKENIZER", "bpe")
         clean_env.setenv("BRAIN_WKV_MOUTH_LEARNED_HEAD", "0")   # no real learned-head file for this dummy ckpt
+        # this test's own purpose is BPE encode/decode round-trip wiring, not casing -- the 2026-09-04 BPE-caps
+        # fix's OUTPUT half (`_truecase`, default ON) would otherwise capitalize the sentence-initial word below
+        # and break the exact-case assertion this test is actually about; turning it off here keeps this test
+        # scoped to what it claims to verify (see tests/test_wkv_mouth_bpe_caps_fix.py for truecasing's own
+        # coverage, including that it recovers to exactly this pre-fix text when explicitly disabled).
+        clean_env.setenv("BRAIN_WKV_MOUTH_TRUECASE", "0")
         mod = _reload()
 
         assert mod.tokenizer_mode() == "bpe"
