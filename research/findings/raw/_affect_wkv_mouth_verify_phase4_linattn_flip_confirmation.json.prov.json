@@ -1,0 +1,27 @@
+{
+ "run_id": "1788495509-1804164",
+ "runner": "research/findings/raw/_affect_wkv_mouth_verify/phase4_linattn_flip_confirmation.py",
+ "argv": [
+  "research/findings/raw/_affect_wkv_mouth_verify/phase4_linattn_flip_confirmation.py"
+ ],
+ "git_sha": "ea5c57d8f",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T00:18:29",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 46137.7,
+ "corpus_check_query": "spiking dual-nonneg SSM leaky-integrator language recurrence loses to trigram at deep context \u2014 how to make it content-selective for fluency",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_wkv_mouth_verify_phase4_linattn_flip_confirmation.json"
+}

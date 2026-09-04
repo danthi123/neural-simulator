@@ -1093,7 +1093,13 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 
 ## 8. IMMEDIATE NEXT ACTIONS
 
-**2026-09-01 (newest — one-brain connectome growth, now cheap via the declarative gate):**
+**2026-09-04 (newest — own-voice fluency breakthrough CONFIRMED, production flip HELD on affect-grounding):**
+- **CONFIRMED 6/6:** the deployable spiking own-voice mouth (`--recurrence linattn`, normalized Hebbian fast-weight linear attention) beats a fair trigram at deep context on all 6 seeds (mean +0.0505; MILESTONE finding `43c5b6b4`). Trained with BPTT + beats only a trigram on ~13.5M tokens → a genuine project milestone, NOT a field discovery (honest scope in GAP_CLOSURE).
+- **Production flip HELD (NOT auto-flipped despite owner-authorization-on-clean-pass):** the live gate found the linattn mouth fluent + honest but AFFECT-HOLLOW — byte-identical output under a full-live `BRAIN_AFFECT_LESION` (finding `2026-09-04-linattn-flip-confirmation-affect-still-hollow-live-NOGO`).
+- An affect-fix (`d798b2bf`) made affect load-bearing for ssm but NOT linattn (its additive logit bias is too weak vs linattn's sharper logits at realistic live valence ~0.04). **NEXT: a sharpness-aware affect coupling for linattn (in flight, branch `research/linattn-affect-coupling-strength`) → re-verify affect+fluency+moat live → then FLIP.**
+- **In flight:** GPU wikitext103 data-scale probe (does the margin grow toward genuine fluency?); num/den Tier-1 spike-native read (fully-spiking mouth closure); one-brain roadmap (`f943cc28`: the mouth blocks 48/64 ledger rows). **Top bug:** BPE drops capitals (~5.6x perplexity hit) — the real broad-scope coverage blocker (task-chipped).
+
+**2026-09-01 (one-brain connectome growth, now cheap via the declarative gate):**
 - **Declarative cross-edge functional gate landed** (`onebrain_crossedge_gate.py`, `4380e42d1`): the emergence/
   interaction/byte-off checks are now GENERIC, driven from a `CrossEdgeGateSpec` declaration — a new edge is a
   `CrossEdge` row + `train_fn` + `read_fn`, not a bespoke ~40KB runner. Proof edge: comprehension role -> d6 WM
