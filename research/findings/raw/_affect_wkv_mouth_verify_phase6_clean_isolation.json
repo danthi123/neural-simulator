@@ -1,0 +1,21 @@
+{
+ "runner": "phase6_clean_isolation (fresh-session-per-arm)",
+ "backend": "numpy",
+ "recurrence": "linattn",
+ "verdict": {
+  "affect_loadbearing_rawA_ne_rawB": true,
+  "determinism_rawA_eq_rawC": true,
+  "wkv_mouth_used": {
+   "A": true,
+   "B": true,
+   "C": true
+  },
+  "CLEAN_FLIP_GO": true
+ },
+ "raw": {
+  "A_l0": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+  "B_l1": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his father abbreviated to her mother she studied law school for children who worked in new york city university",
+  "C_l0rep": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been"
+ },
+ "wall_seconds": 645.4
+}

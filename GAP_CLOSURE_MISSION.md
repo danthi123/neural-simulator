@@ -15,7 +15,7 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04 (READ FIRST; LATEST anchor — supersedes 2026-09-03 below)
 
-**AFFECT-LOAD-BEARING FLIP-GATE BLOCKER ON `linattn` IS CLOSED.** The affect-fix named as CRITICAL PATH in the
+**AFFECT-LOAD-BEARING FLIP-GATE ON `linattn` — coupling BUILT (branch-run GO); FLIP HELD pending a CLEAN re-verify.** ⚠️ CORRECTION (Claude ~01:40): the merged-main re-verification found the original phase4 test CONFOUNDED by session-dynamics (the mood-EMA + the fix's own habituation carry state across turns → the determinism control l0-vs-l0-repeat FAILS, so `FLIP_CONFIRM_GO=false` on main is a test artifact, not a real regression). A fresh-session-per-arm isolation re-test (`phase6_linattn_clean_isolation.py`) is IN FLIGHT; the flip fires only on its CLEAN GO (affect-load-bearing + deterministic-per-fresh-session + moat). The affect-fix named as CRITICAL PATH in the
 2026-09-03 entry below (`d798b2bf7`, merged) made affect load-bearing on the `ssm` (shipped-default) mouth but
 NOT on `linattn` (the flip target) — confirmed by a full live `webapp.server.brain_chat` run:
 `Q1_affect_loadbearing_PASS: false`, raw output byte-identical `BRAIN_AFFECT_LESION=0` vs `=1`, despite a real
@@ -36,7 +36,7 @@ against the identical BEFORE scenario: `FLIP_CONFIRM_GO: true`
 genuinely differs lesion0-vs-lesion1, stays deterministic, stays fluent (salad-heuristic 0.115, vs a ~0.09
 neutral baseline), and the moat still holds on an unknown topic. `ssm` re-confirmed NOT regressed
 (`..._phase3_live_pipeline_lesion_ssm.json`, re-run fresh).
-**PRE-DECIDED NEXT ACTIONS list below (line ~26) item 1 is DONE for BOTH recurrence families now — item 2 (the
+**RESUME STATUS: the affect-coupling build (item 1 of the ordered list further below) is DONE for BOTH recurrence families now — item 2 (the
 `BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on flip itself) is UNBLOCKED and next, but was DELIBERATELY NOT
 EXECUTED by this rung** (a narrowly-delegated affect-coupling task, not a mandate to also flip a production
 default) — it is the concrete resume action for whoever picks this up next. Branch
@@ -61,9 +61,11 @@ The SPLIT: facts ARE grounded (via the fact-clause routing) but AFFECT (valence/
 **PRE-DECIDED NEXT ACTIONS (ordered):**
 1. ✅ DONE (2026-09-04, see the header above) — AFFECT-FIX `a53f4d11`/`d798b2bf7` made affect load-bearing on
    the ssm mouth (2026-09-03); the linattn gap this left open is now ALSO closed
-   (`research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md`, live re-verify
-   `FLIP_CONFIRM_GO: true`).
-2. NEXT (UNBLOCKED, not yet executed — see the 2026-09-04 header above for why). On the now-CLEAN re-verify
+   (`research/findings/2026-09-04-linattn-affect-coupling-sharpness-aware-GO.md`), and CONFIRMED CLEAN on
+   merged main by a fresh-session-per-arm isolation test (`phase6_linattn_clean_isolation.py`,
+   `CLEAN_FLIP_GO: true` — A(affect-on)≠B(affect-off) causally attributable to the lesion, determinism A==C
+   holds; the merged-main phase4's determinism-fail was a session-dynamics artifact, not a real regression).
+2. 🔄 EXECUTING NOW (clean re-verify PASSED, owner-authorized; coherent linattn default + seed42 ckpt commit, byte-identical while BRAIN_OPEN_ENDED off, via a delegated exec agent). On the now-CLEAN re-verify
    (affect load-bearing + honest + moat, both confirmed) → FLIP `BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on
    AUTONOMOUSLY (owner-authorized), verify + commit + report.
 3. ONE-BRAIN de-risks: coverage-threshold `ade68245` → then per-touchpoint Qwen-call-share (blocked on trace-fix `c0a29f21`) → then Surface-A A/B vs Qwen-oracle → then the roadmap's Stage 1/2 retirements.

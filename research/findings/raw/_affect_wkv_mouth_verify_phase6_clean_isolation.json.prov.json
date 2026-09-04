@@ -1,0 +1,27 @@
+{
+ "run_id": "1788500815-1952439",
+ "runner": "research/findings/raw/_affect_wkv_mouth_verify/phase6_linattn_clean_isolation.py",
+ "argv": [
+  "research/findings/raw/_affect_wkv_mouth_verify/phase6_linattn_clean_isolation.py"
+ ],
+ "git_sha": "e9d6325d5",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T01:46:55",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 51814.9,
+ "corpus_check_query": "spiking dual-nonneg SSM leaky-integrator language recurrence loses to trigram at deep context \u2014 how to make it content-selective for fluency",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_wkv_mouth_verify_phase6_clean_isolation.json"
+}
