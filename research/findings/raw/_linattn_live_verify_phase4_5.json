@@ -1,0 +1,62 @@
+{
+ "lexicon_relation_count": 34,
+ "covered_examples": [
+  [
+   "frank_lincoln_wright",
+   "instance_of",
+   "human_specie"
+  ],
+  [
+   "harold_clayton_lloyd",
+   "instance_of",
+   "human_specie"
+  ],
+  [
+   "walker_glockenhammer",
+   "instance_of",
+   "human_specie"
+  ],
+  [
+   "atlantic_jazz",
+   "country",
+   "u_s_of_a"
+  ],
+  [
+   "x_cell_records",
+   "country",
+   "u_s_of_a"
+  ]
+ ],
+ "sentence_facts_render": {
+  "('frank_lincoln_wright', 'instance_of', 'human_specie')": "the Frank Lincoln Wright is a Human Specie",
+  "('harold_clayton_lloyd', 'instance_of', 'human_specie')": "the Harold Clayton Lloyd is a Human Specie"
+ },
+ "sentence_facts_vs_freegen": {
+  "with_sf": "the Frank Lincoln Wright is a Human Specie",
+  "without_sf": "ell me about it m i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i e i",
+  "differ": true
+ },
+ "valence_isolation": {
+  "lo_valence": -0.9,
+  "hi_valence": 0.9,
+  "raw_lo": "ell me about kanton genf is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guilette en bavaria italy as of people lived there its area were built on january and has been part of the city of bourgogne rh ne alpandemic to the south east of france marques dunn born june is an american singer movie actress she began her career at the age of she became famous for her roles in the",
+  "raw_hi": "ell me about kanton genf is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guilette en bavaria italy as of people lived there its area were built on january and has been part of the city of bourgogne rh ne alpandemic to the south east of france marques dunn born june is an american singer movie actress she began her career at the age of she became famous for her roles in the",
+  "raw_identical_across_valence": true,
+  "generator_lo": "wkv_mouth",
+  "generator_hi": "wkv_mouth",
+  "state_lo": {
+   "valence": -0.9,
+   "arousal": 0.1,
+   "familiarity": 0.1,
+   "novelty": 0.9,
+   "curiosity": 0.77
+  },
+  "state_hi": {
+   "valence": 0.9,
+   "arousal": 0.9,
+   "familiarity": 0.1,
+   "novelty": 0.9,
+   "curiosity": 0.77
+  }
+ }
+}
