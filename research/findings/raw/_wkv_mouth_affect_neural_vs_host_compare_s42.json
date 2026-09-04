@@ -1,0 +1,119 @@
+{
+  "seed": 42,
+  "affect_boost": 10.0,
+  "compare": {
+    "seed": 42,
+    "affect_boost": 10.0,
+    "rows": [
+      {
+        "prompt": "the little girl was",
+        "mood": "positive",
+        "valence": 0.16,
+        "arousal": 0.65,
+        "host_text": "The little girl was happy and thanked the bird for the bird and the bird became good friends and played together every day and had lots of fun in the park with her friends and they all played together and had lots of fun in the park with her mom cream okay",
+        "neural_text": "The little girl was very happy and happy and thanked the bird for her friends and they played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they were walking faster",
+        "host_affect_frac": 0.09615384615384616,
+        "neural_affect_frac": 0.07692307692307693,
+        "host_secs": 0.141,
+        "neural_secs": 0.388
+      },
+      {
+        "prompt": "the little girl was",
+        "mood": "negative",
+        "valence": -0.16,
+        "arousal": 0.65,
+        "host_text": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were very sad and cried and said I will help you feel better than the little dog and the dog were very sad and angry at the bird and said became oh",
+        "neural_text": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were sad and the dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of all glass",
+        "host_affect_frac": 0.11538461538461539,
+        "neural_affect_frac": 0.07692307692307693,
+        "host_secs": 0.143,
+        "neural_secs": 0.25
+      },
+      {
+        "prompt": "the little girl was",
+        "mood": "neutral",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "host_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "neural_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "host_affect_frac": 0.057692307692307696,
+        "neural_affect_frac": 0.057692307692307696,
+        "host_secs": 0.115,
+        "neural_secs": 0.21
+      },
+      {
+        "prompt": "tom and his dog were",
+        "mood": "positive",
+        "valence": 0.16,
+        "arousal": 0.65,
+        "host_text": "Tom and his dog were happy and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day long in the park with her mom and dad and they both laughed and played together every than would",
+        "neural_text": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day thank the bird and the bird became best friends home happy and played together every day they were playing in the park with their toys and hug clothes",
+        "host_affect_frac": 0.11320754716981132,
+        "neural_affect_frac": 0.09433962264150944,
+        "host_secs": 0.144,
+        "neural_secs": 0.312
+      },
+      {
+        "prompt": "tom and his dog were",
+        "mood": "negative",
+        "valence": -0.16,
+        "arousal": 0.65,
+        "host_text": "Tom and his dog were very sad and angry at the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they wanted at",
+        "neural_text": "Tom and his dog were very happy and angry with him again and they both laughed and played together every day long in the park with her mom and dad and they both laughed cry and they both laughed and played together every day long in the park with her friends coming so",
+        "host_affect_frac": 0.07547169811320754,
+        "neural_affect_frac": 0.09433962264150944,
+        "host_secs": 0.137,
+        "neural_secs": 0.235
+      },
+      {
+        "prompt": "tom and his dog were",
+        "mood": "neutral",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "host_text": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "neural_text": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "host_affect_frac": 0.05660377358490566,
+        "neural_affect_frac": 0.05660377358490566,
+        "host_secs": 0.117,
+        "neural_secs": 0.209
+      },
+      {
+        "prompt": "one day the boy",
+        "mood": "positive",
+        "valence": 0.16,
+        "arousal": 0.65,
+        "host_text": "One day the boy saw the big red ball and the ball were happy and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her mom and dad and they both laughed and played together every snow away",
+        "neural_text": "One day the boy saw the big red ball and the ball were very happy and excited to see what was inside the big red ball but it was too hard and he was very happy and thanked the bird for his friends and happy and they played together every played glass",
+        "host_affect_frac": 0.09615384615384616,
+        "neural_affect_frac": 0.07692307692307693,
+        "host_secs": 0.142,
+        "neural_secs": 0.288
+      },
+      {
+        "prompt": "one day the boy",
+        "mood": "negative",
+        "valence": -0.16,
+        "arousal": 0.65,
+        "host_text": "One day the boy saw the big red ball and the ball were very sad and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they played together and had lots of fun kids are",
+        "neural_text": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "host_affect_frac": 0.07692307692307693,
+        "neural_affect_frac": 0.038461538461538464,
+        "host_secs": 0.155,
+        "neural_secs": 0.24
+      },
+      {
+        "prompt": "one day the boy",
+        "mood": "neutral",
+        "valence": 0.0,
+        "arousal": 0.0,
+        "host_text": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "neural_text": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "host_affect_frac": 0.038461538461538464,
+        "neural_affect_frac": 0.038461538461538464,
+        "host_secs": 0.117,
+        "neural_secs": 0.207
+      }
+    ]
+  },
+  "elapsed_s": 14.8
+}

@@ -1,0 +1,95 @@
+{
+  "seed": 42,
+  "affect_boost": 10.0,
+  "calibrate": {
+    "prompt": "the little girl was",
+    "seed": 42,
+    "rows": [
+      {
+        "affect_boost": 2.0,
+        "pos_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "neg_text": "The little girl was very happy and angry and sad for Tim to help him feel better and they both laughed and played together every day long and had lots of fun in the park with his friends and they were very happy and played together every day and had seen thank",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": false,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.057692307692307696,
+        "neg_affect_frac": 0.1346153846153846,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 5.0,
+        "pos_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "neg_text": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with flowers green",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": false,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.057692307692307696,
+        "neg_affect_frac": 0.07692307692307693,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 10.0,
+        "pos_text": "The little girl was very happy and happy and thanked the bird for her friends and they played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they were walking faster",
+        "neg_text": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were sad and the dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of all glass",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": true,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.07692307692307693,
+        "neg_affect_frac": 0.07692307692307693,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 20.0,
+        "pos_text": "The little girl was happy thank thank you for helping the bird to the bird home and happy thank his friends and they played together happy together and had lots of fun in the park with his friends and they were proud of the play with the ball and the mom all",
+        "neg_text": "The little girl was very sad and angry and sad dog cry him cry and cry and cry why are you sad Tim and cried the bird and said I scared you too much too much for Tim and Sue for cry and said I will help you for you sad want",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": true,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.21153846153846154,
+        "neg_affect_frac": 0.23076923076923078,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 40.0,
+        "pos_text": "The little girl was happy thank thank thank you for helping you for the mom and dad for the dad and dad were happy cake and they both laugh and play together in fun together and laugh and fun together they thank the good friends good friends and play laugh laugh near",
+        "neg_text": "The little girl was sad scared of sad and angry anymore sad Tim and cried cry cry sad sad Tim cry and asked why bad I mean to cry and cry and cry cry and cry cry and cry and cry why are you sad Tim scared of sad sad Sam cry",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": true,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.40384615384615385,
+        "neg_affect_frac": 0.4807692307692308,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 80.0,
+        "pos_text": "The little girl was happy thank thank thank you mom for proud and happy and proud thank thank thank thank you sing for glad you thank you thank you for glad fun mom and dad love the puzzle thank the cake thank you thank mom for proud glad to love thank thank",
+        "neg_text": "The little girl was sad scared of sad and angry cry sad Tim angry and sad sad Tim angry and sad scared him cry cry sad Tim cry and cry cry and cry sad cry cry and cry and cry why cry and cry cry cry cry cry cry and cry tight",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": true,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.5961538461538461,
+        "neg_affect_frac": 0.6153846153846154,
+        "neutral_affect_frac": 0.057692307692307696
+      },
+      {
+        "affect_boost": 160.0,
+        "pos_text": "The little girl was happy thank thank help help thank mom cake and proud of thank fun for joy and love thank fun mom for help him gift home Tim cake and they love help good fun and happy together proud good thank amazing fun and fun play with fun song of",
+        "neg_text": "The little girl was sad scared of sad and angry cry sad Tim angry and sad sad sad Tim scared him cry cry sad cry sad Tim scared him and angry sad and bad cry cry cry and cry and cry sad cry Tim cry cry cry cry sad Tim cry sad",
+        "neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "pos_ne_neg": true,
+        "pos_ne_neutral": true,
+        "neg_ne_neutral": true,
+        "pos_affect_frac": 0.6346153846153846,
+        "neg_affect_frac": 0.6538461538461539,
+        "neutral_affect_frac": 0.057692307692307696
+      }
+    ]
+  },
+  "elapsed_s": 13.3
+}

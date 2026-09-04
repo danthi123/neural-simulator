@@ -1,0 +1,46 @@
+{
+  "before_ref": "HEAD",
+  "seed": 42,
+  "affect_boost": 10.0,
+  "off_by_default_checks": [
+    {
+      "ref": "HEAD",
+      "prompt": "the little girl was",
+      "seed": 42,
+      "valence": 0.16,
+      "arousal": 0.65,
+      "orig_text": "The little girl was happy and thanked the bird for the bird and the bird became good friends and played together every day and had lots of fun in the park with her friends and they all played together and had lots of fun in the park with her mom cream okay",
+      "new_text_flag_off": "The little girl was happy and thanked the bird for the bird and the bird became good friends and played together every day and had lots of fun in the park with her friends and they all played together and had lots of fun in the park with her mom cream okay",
+      "byte_identical": true
+    },
+    {
+      "ref": "HEAD",
+      "prompt": "tom and his dog were",
+      "seed": 42,
+      "valence": 0.16,
+      "arousal": 0.65,
+      "orig_text": "Tom and his dog were happy and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day long in the park with her mom and dad and they both laughed and played together every than would",
+      "new_text_flag_off": "Tom and his dog were happy and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day long in the park with her mom and dad and they both laughed and played together every than would",
+      "byte_identical": true
+    }
+  ],
+  "off_by_default_all_byte_identical": true,
+  "lesion_equivalent_checks": [
+    {
+      "prompt": "the little girl was",
+      "seed": 42,
+      "host_neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+      "neural_neutral_text": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+      "byte_identical": true
+    },
+    {
+      "prompt": "tom and his dog were",
+      "seed": 42,
+      "host_neutral_text": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+      "neural_neutral_text": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+      "byte_identical": true
+    }
+  ],
+  "lesion_equivalent_all_byte_identical": true,
+  "elapsed_s": 5.3
+}

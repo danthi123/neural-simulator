@@ -461,9 +461,27 @@ class FewSpikeWordRead:
     """Izhikevich soft-WTA read of a categorical winner from a SMALL number of spikes.  K candidate WORDS, each a
     pool of P neurons (population coding).  Drive[k] (from the model's top-K softmax) -> all P neurons of pool k;
     OU membrane noise -> the winner is stochastic ~ softmax(drive/T); winner = argmax over per-POOL accumulated
-    firing read from `cp_firing_states` over `read_window` steps (the few-spike budget)."""
+    firing read from `cp_firing_states` over `read_window` steps (the few-spike budget).
 
-    def __init__(self, n_pools, pop, seed, ou_std=200.0, base_pA=110.0, gain_pA=160.0, read_window=120):
+    NEUROMODULATORY AFFECT GAIN (`affect_neural`, 2026-09-04, default OFF -- webapp/wkv_mouth_generator.py's
+    scaffold-retirement task: fold the mood coupling into THIS population's own substrate dynamics instead of a
+    host bias on the logits feeding it, see `set_mood` below). `affect_neural=False` (the default, and every
+    pre-existing caller of this class) is BYTE-IDENTICAL to before this parameter existed -- `_build_bank` skips
+    the new branch entirely, `set_mood` is a no-op guard, `read`/`_compete`/`drive_from_weights` are UNTOUCHED.
+    `affect_neural=True` registers K per-pool `NeuromodulatorConfig`s (`sim/neuromodulators.py`, the SAME
+    general-purpose subsystem already used project-wide for dopamine/ACh/dynorphin/per-action-DA/NE-gain -- see
+    `research.runners._ne_lc_gain_vigilance_realbridge_derisk` for the precedent this mirrors: an
+    `excitability_drive` target with `sensitivity=1.0`, `decay_tau_ms=1e12` so a manually-set concentration holds
+    across one competition window) on `sim/bridge.py`'s OWN unmodified per-step current computation (bridge.py's
+    "Neuromodulator excitability_drive" block, applied BEFORE the Izhikevich threshold, same place
+    `cp_external_input_current` is read) -- NOT a NEW mechanism invented here, and NOT one line of `sim/` edited.
+    ZERO changes to `read`/`_compete`/`drive_from_weights`: the modulator's effect reaches the neurons entirely
+    through the bridge's existing step function, so the winner is still decided purely by the genuine few-spike
+    Izhikevich competition over `read_window` steps -- the SAME anti-cheats (scramble/equal-drive/noise-ablation/
+    provenance) this class's own docstring already establishes are unaffected by this addition."""
+
+    def __init__(self, n_pools, pop, seed, ou_std=200.0, base_pA=110.0, gain_pA=160.0, read_window=120,
+                 affect_neural=False, affect_max_pA=200.0, affect_decay_tau_ms=1e12):
         self.K = int(n_pools); self.P = int(pop)
         self.n = self.K * self.P
         self.base_pA = float(base_pA); self.gain_pA = float(gain_pA)
@@ -471,6 +489,9 @@ class FewSpikeWordRead:
         self.ou_std = float(ou_std)
         self.seed = int(seed)
         self.n_host_rng_draws = 0                                       # MUST stay 0 (the whole point)
+        self.affect_neural = bool(affect_neural)
+        self.affect_max_pA = float(affect_max_pA)
+        self.affect_decay_tau_ms = float(affect_decay_tau_ms)
         self._bank = self._build_bank()
 
     def _build_bank(self):
@@ -482,21 +503,94 @@ class FewSpikeWordRead:
         cfg.dt_ms = 1.0
         cfg.connections_per_neuron = 0
         cfg.num_traits = 1
+        # `affect_neural` opts back INTO the neuromodulator subsystem this loop otherwise force-disables for
+        # every other caller -- every other flag here (STDP/Hebbian/STP/structural/homeostasis/reward/WS/
+        # brain-region) is UNCONDITIONALLY forced off regardless of `affect_neural`; only this ONE name is
+        # skipped, and only when the caller opted in, so the default (`affect_neural=False`) loop body is
+        # byte-identical to before this branch existed.
         for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity",
                   "enable_structural_plasticity", "enable_homeostasis", "enable_reward_modulation",
                   "enable_watts_strogatz", "enable_neuromodulator_subsystem", "enable_brain_region_framework"):
+            if self.affect_neural and f == "enable_neuromodulator_subsystem":
+                continue
             if hasattr(cfg, f):
                 setattr(cfg, f, False)
         cfg.enable_ou_process = self.ou_std > 0.0
         cfg.ou_mean_current_pA = 0.0
         cfg.ou_std_current_pA = self.ou_std
         cfg.ou_tau_ms = 15.0
+        if self.affect_neural:
+            # One "mood_pool_K" modulator PER CANDIDATE POOL (mirrors the established per-action-DA pattern,
+            # `sim.neuromodulators._default_per_action_dopamine_config` / `ModulatorTarget(scope="action:N")`,
+            # applied here as `scope="group:pool_K"` instead -- N independent channels, one per competing
+            # option, is an EXISTING project convention, not invented for this rung). Manual-only (no
+            # `production_rules`): the CALLER (`set_mood`) drives the concentration directly from the real
+            # spiking AffectProductionOrgan's valence/arousal read, exactly like `AffectProductionOrgan.
+            # read_differential` already drives `appraisal_lad_vplus`/`appraisal_lad_vminus`/
+            # `appraisal_lad_arousal` via `nm.set_concentration` on ITS OWN bridge (research/runners/
+            # affect_production_organ.py) -- the SAME "host-computed scalar -> neuromodulator concentration
+            # -> substrate reads/applies the effect" boundary already accepted project-wide for the affect
+            # pathway's appraisal injection. `sensitivity=1.0`, `baseline=0.0` -> effect_pA == concentration
+            # itself, so `set_mood` can pass a plain pA value with no extra host arithmetic in between.
+            # `concentration_max=affect_max_pA` is the ONLY saturation point (no separate host np.clip) --
+            # `set_mood`'s own strength computation is mathematically bounded to <=1.0 (see its docstring), so
+            # this cap only ever binds defensively. `decay_tau_ms=1e12` (the `_ne_lc_gain_vigilance_realbridge_
+            # derisk` precedent's own value): a manually-set concentration barely decays across one
+            # `read_window`-step competition (or even many), so `set_mood` -> `read` sees an effectively
+            # CONSTANT modulatory drive for the read it was set for, and `set_mood`'s own explicit
+            # reset-every-pool-to-0.0 (see below) is what ends a mood tag's effect, not decay.
+            from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget
+            cfg.enable_neuromodulator_subsystem = True
+            cfg.neuromodulators = [
+                NeuromodulatorConfig(
+                    name=f"mood_pool_{k}", baseline=0.0, decay_tau_ms=self.affect_decay_tau_ms,
+                    concentration_min=0.0, concentration_max=max(1.0, self.affect_max_pA),
+                    targets=[ModulatorTarget(target_type="excitability_drive",
+                                             scope=f"group:pool_{k}", sensitivity=1.0)],
+                    production_rules=[],
+                )
+                for k in range(self.K)
+            ]
         bank = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                                 runtime_state=RuntimeState(), gpu_config=GPUConfig())
         bank._initialize_simulation_data(called_from_playback_init=False)
+        if self.affect_neural:
+            # Pool k is neuron indices [k*P, (k+1)*P) BY CONSTRUCTION (`_compete`'s own `np.repeat(drive_pools,
+            # self.P)` flattening) -- registering these as `group:pool_k` needs no `cp_traits`/region-manager
+            # machinery at all, matching `set_group_indices`'s own "optional, for group:NAME scopes" contract.
+            bank.neuromodulator_manager.set_group_indices(
+                {f"pool_{k}": list(range(k * self.P, (k + 1) * self.P)) for k in range(self.K)}
+            )
         bank._v0 = bank.cp_membrane_potential_v.copy()
         bank._u0 = bank.cp_recovery_variable_u.copy()
         return bank
+
+    def set_mood(self, pool_gains_pA) -> None:
+        """Set (or clear) this read's per-pool NEUROMODULATOR CONCENTRATION -- the genuinely substrate-mediated
+        affect coupling. `pool_gains_pA`: {local_top-K_index: extra_pA} for the mood-CONGRUENT candidates in the
+        CURRENT step's top-K list (see `webapp.wkv_mouth_generator._affect_pool_gains`, which computes this dict
+        from the SAME Warriner-gated affect lexicon + valence/arousal/habituation policy the host
+        `_apply_affect_bias` mechanism uses -- only the DESTINATION of the resulting scalar changes: a
+        neuromodulator concentration instead of an additive logit). A no-op when `affect_neural=False`
+        (`__init__`'s default) -- callers may call this UNCONDITIONALLY every decode step with zero cost/risk on
+        the byte-identical-off path, mirroring this class's own `equal_drive`-style "safe to always pass"
+        convention.
+
+        EVERY pool's concentration is reset to 0.0 pA FIRST, then only the entries in `pool_gains_pA` (with
+        `pA > 0`) are raised -- so a mood tag never bleeds from one decode step's candidate set into the next
+        step's DIFFERENT top-K list (pool index k is a fixed neuron GROUP, but which vocabulary word occupies it
+        changes every step). This is what makes `decay_tau_ms=1e12` (see `_build_bank`) safe: this explicit
+        reset, not decay, is what ends each mood tag's effect. `pA<=0` entries are skipped (this coupling only
+        EXCITES a mood-congruent pool, mirroring `_apply_affect_bias`'s own `congruent = strength > 0.0` sign
+        gate -- it never inhibits a rival candidate)."""
+        if not self.affect_neural:
+            return
+        nm = self._bank.neuromodulator_manager
+        for k in range(self.K):
+            nm.set_concentration(f"mood_pool_{k}", 0.0)
+        for k, pA in pool_gains_pA.items():
+            if 0 <= k < self.K and pA > 0.0:
+                nm.set_concentration(f"mood_pool_{k}", float(pA))
 
     def drive_from_weights(self, w):
         """w[K] nonneg (the top-K softmax mass).  Active (w>0) pools get base_pA + gain_pA*(w/peak); a zero-weight
