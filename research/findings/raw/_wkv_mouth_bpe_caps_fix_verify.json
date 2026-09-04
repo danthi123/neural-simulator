@@ -1,0 +1,150 @@
+{
+  "runner": "_wkv_mouth_bpe_caps_fix_verify_derisk",
+  "fix_module": "webapp/wkv_mouth_generator.py",
+  "part_A_B_input_recovery_and_byte_identical_off": {
+    "n_probe_utterances": 124,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "A_input_fix_on_ids_match_lowercased_counterfactual": {
+      "n_match": 124,
+      "n_total": 124,
+      "all_match": true
+    },
+    "B_input_fix_off_ids_match_raw_asfed_pre_fix": {
+      "n_match": 124,
+      "n_total": 124,
+      "all_match": true
+    },
+    "per_seed_ppl": {
+      "42": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed42.npz",
+        "mean_fix_on_ppl": 2080.04,
+        "mean_fix_off_ppl": 10487.62
+      },
+      "43": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed43.npz",
+        "mean_fix_on_ppl": 2293.34,
+        "mean_fix_off_ppl": 16375.71
+      },
+      "44": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed44.npz",
+        "mean_fix_on_ppl": 2368.87,
+        "mean_fix_off_ppl": 10814.67
+      },
+      "100": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed100.npz",
+        "mean_fix_on_ppl": 2508.04,
+        "mean_fix_off_ppl": 13986.04
+      },
+      "101": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed101.npz",
+        "mean_fix_on_ppl": 2340.82,
+        "mean_fix_off_ppl": 11790.6
+      },
+      "102": {
+        "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed102.npz",
+        "mean_fix_on_ppl": 2110.76,
+        "mean_fix_off_ppl": 13509.25
+      }
+    },
+    "cross_seed_mean_ppl": {
+      "fix_on__production_asfed_now": 2283.64,
+      "fix_off__pre_fix_raw_asfed": 12827.32,
+      "recovery_ratio": 5.617
+    },
+    "cited_artifact_cross_check": {
+      "artifact": "research/findings/raw/_wkv_mouth_linattn_broad_scope_coverage.json",
+      "cited_mean_asfed_ppl_pre_fix": 12827.32,
+      "cited_mean_lowercased_ppl": 2283.64,
+      "this_run_fix_off_vs_cited_asfed_close": true,
+      "this_run_fix_on_vs_cited_lowercased_close": true,
+      "note": "small residual vs the cited numbers is expected: that finding round-trips through JSON-rounded per-seed/per-prompt intermediate ppl before its own cross-seed mean, this run recomputes from scratch against the same checkpoints/probe -- an exact match is not implied."
+    }
+  },
+  "part_C_output_truecase_and_moat_regression": {
+    "seed": 42,
+    "max_new_tokens": 20,
+    "rows": [
+      {
+        "prompt": "Hi there! How are you doing today?",
+        "fix_on_text": "Hi there how are you doing today and the first time in the world war I was the first time in the world",
+        "fix_on_has_uppercase": true,
+        "fix_off_text": "i there ow are you doing today and the first person to be a member of the world war i was the first person",
+        "fix_off_has_uppercase": false,
+        "fix_off_nonempty": true
+      },
+      {
+        "prompt": "Tell me about Paris.",
+        "fix_on_text": "Tell me about paris and was a member of the new york city from to he was the th cong",
+        "fix_on_has_uppercase": true,
+        "fix_off_text": "ell me about aris is a city in the u s state of south carolina it is the county seat of the city of",
+        "fix_off_has_uppercase": false,
+        "fix_off_nonempty": true
+      },
+      {
+        "prompt": "What do you know about the United Kingdom?",
+        "fix_on_text": "What do you know about the united kingdom is a kind of people who are called the people who are called the people who are",
+        "fix_on_has_uppercase": true,
+        "fix_off_text": "hat do you know about the nited ingdom and the other women in the world the first women to be the first time in the",
+        "fix_off_has_uppercase": false,
+        "fix_off_nonempty": true
+      },
+      {
+        "prompt": "Tell me about music.",
+        "fix_on_text": "Tell me about music and the song is about the same thing as the song was released on the billboard hot in the",
+        "fix_on_has_uppercase": true,
+        "fix_off_text": "ell me about music and the first person to be the second world war ii the first was the first time",
+        "fix_off_has_uppercase": false,
+        "fix_off_nonempty": true
+      }
+    ],
+    "n_prompts": 4,
+    "n_fix_on_produced_a_capital": 4,
+    "n_fix_off_produced_a_capital": 0,
+    "moat_fact_routing_regression": {
+      "rows": [
+        {
+          "bpe_lowercase_flag": null,
+          "truecase_flag": null,
+          "in_vocab_scope": false,
+          "fact_grounding_ids": []
+        },
+        {
+          "bpe_lowercase_flag": "0",
+          "truecase_flag": "0",
+          "in_vocab_scope": false,
+          "fact_grounding_ids": []
+        },
+        {
+          "bpe_lowercase_flag": null,
+          "truecase_flag": "0",
+          "in_vocab_scope": false,
+          "fact_grounding_ids": []
+        },
+        {
+          "bpe_lowercase_flag": "0",
+          "truecase_flag": null,
+          "in_vocab_scope": false,
+          "fact_grounding_ids": []
+        }
+      ],
+      "identical_regardless_of_new_flags": true
+    }
+  },
+  "peak_rss_mb": 367.2,
+  "verdict": {
+    "input_fix_recovers_lowercased_ids_on_every_probe_utterance": true,
+    "input_fix_off_is_byte_identical_to_pre_fix_on_every_probe_utterance": true,
+    "input_fix_perplexity_recovery_ratio": 5.617,
+    "output_fix_on_produced_capitals": true,
+    "output_fix_off_produced_zero_capitals_structural_check": true,
+    "moat_and_fact_routing_unaffected_by_new_flags": true,
+    "GO": true
+  }
+}

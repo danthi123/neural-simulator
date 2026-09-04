@@ -60,6 +60,17 @@ Gated by `webapp.open_ended_chat.wkv_fact_sentence_enabled()` (`BRAIN_OPEN_ENDED
 default-OFF) — see that module's docstring for the live call-site wiring and honest scope (only fires for a
 known topic whose relation the lexicon covers; falls through to the pre-existing free-gen/fact-boost path
 otherwise).
+
+BPE-CAPS FIX (2026-09-04, closes the DOMINANT broad-scope coverage blocker research/findings/2026-09-03-linattn-
+mouth-broad-scope-coverage-threshold.md's Result 2 measured: a case-folding bug, not topic mismatch, worth ~5.6x
+in teacher-forced perplexity on its own, 12827 -> 2284). Both checkpoint families' vocabularies are trained
+EXCLUSIVELY on lowercase text, so a raw-case prompt's capitals BPE-encode to `<UNK>` on the way IN, and the
+model structurally cannot emit a capital letter on the way OUT. Two independent, independently-guarded fixes,
+both default-ON: INPUT — `_bpe_encode_prompt`/`bpe_lowercase_enabled()` lowercase the prompt before BPE-encoding
+it (`_free_gen`/`_free_gen_linattn`'s only two `bpe.encode` call sites); OUTPUT — `_truecase`/`truecase_enabled()`
+restore sentence-initial + pronoun-"I" + a small known-name-allowlist capitalization on `generate()`'s final
+text. See `generate()`'s own docstring for the full mechanism and the two flags' own docstrings for the
+byte-identical-off guard.
 """
 from __future__ import annotations
 
@@ -234,6 +245,51 @@ def _get_bpe_tokenizer(path: str | None = None):
         bt = BPETokenizer.load(p)
         _BPE_TOK_CACHE[p] = bt
         return bt
+
+
+# ── BPE-CAPS FIX, INPUT half (2026-09-04, research/findings/2026-09-03-linattn-mouth-broad-scope-coverage-
+# threshold.md Result 2 -- the "dominant driver" finding). `sim.bpe_tokenizer.BPETokenizer.train`'s merge table
+# is built EXCLUSIVELY over lowercase `[a-z']+` corpus words (`_train_bpe_bounded`'s `raw.lower()`), and the
+# shipped `bridges/wkv_ckpt/wkv_bpe8k.json` was itself trained against `data/corpus/simplewiki.txt`, which is
+# PRE-LOWERCASED ON DISK (verified by reading the raw file) -- so the checkpoint never saw a single capital
+# letter during training. A raw, un-lowercased chat prompt's every capital -- every sentence-initial word, every
+# proper noun -- therefore falls outside the trained character alphabet and BPE-encodes to `<UNK>` id 0, one per
+# capital letter (`BPETokenizer._encode_word`'s `self._sym_to_id.get(sym, 0)` fallback). Measured directly: mean
+# 6-seed teacher-forced perplexity over the 124-utterance realistic-chat probe is 12827.32 AS FED vs 2283.64 once
+# capitals are lowercased -- a ~5.6x hit, and (per that finding's Result 3) larger than any plausible topic/
+# vocabulary-coverage effect. `_bpe_encode_prompt` below is the ONE place `_free_gen`/`_free_gen_linattn` turn a
+# raw prompt into BPE ids -- fixing it here fixes both call sites at once and keeps the coverage/perplexity
+# measurement runner (`research.runners._wkv_mouth_linattn_broad_scope_coverage_derisk`) production-faithful by
+# CONSTRUCTION if it is ever pointed at this same helper, rather than a hand-copied duplicate that could drift.
+_BPE_LOWERCASE_ENV = "BRAIN_WKV_MOUTH_BPE_LOWERCASE"
+
+
+def bpe_lowercase_enabled() -> bool:
+    """Default-ON (this closes a MEASURED ~5.6x production-perplexity gap, not an opt-in trial -- see the module
+    comment block above). `BRAIN_WKV_MOUTH_BPE_LOWERCASE` in {0,false,no,off} -> an explicit OFF, reverting
+    `_bpe_encode_prompt` to the pre-fix raw-case `bpe.encode(prompt)`, BYTE-IDENTICAL to before this function
+    existed. Only ever reached when `bpe is not None` in `_free_gen`/`_free_gen_linattn`, i.e. `tokenizer_mode()
+    == 'bpe'` (itself default-OFF, see that function's docstring) -- the shipped word-level default path never
+    calls this at all, so this fix has ZERO effect on anything unless BOTH the WKV mouth AND its BPE tokenizer
+    mode are already opted into."""
+    v = os.environ.get(_BPE_LOWERCASE_ENV)
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+def _bpe_encode_prompt(bpe, prompt: str) -> list:
+    """The SINGLE source of truth for "what does the BPE-mode mouth path feed the tokenizer" -- called from both
+    `_free_gen` and `_free_gen_linattn`'s prompt-encode step (replacing their prior direct `bpe.encode(prompt or
+    "")` call), and reusable by a measurement runner that wants to stay production-faithful rather than
+    reimplementing this logic. `bpe_lowercase_enabled()` (default ON, see above) lowercases `prompt` before
+    encoding it -- matching the training distribution and recovering the ~5.6x perplexity measured in the module
+    comment block above. Flag OFF reverts to `bpe.encode(prompt or "")` verbatim, byte-identical to every call
+    site's behavior before this function existed."""
+    text = prompt or ""
+    if bpe_lowercase_enabled():
+        text = text.lower()
+    return bpe.encode(text)
 
 
 # ── the checkpoint (pure np.load — no RNG effect, cached) ─────────────────────────────────────────────────────────
@@ -786,9 +842,12 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
     lookup and the final space-joined decode -- so the default path is byte-identical BY CONSTRUCTION, not
     merely by equivalent behavior. When `bpe` is given, both the prompt encode and the final decode instead go
     through that tokenizer's own `.encode`/`.decode` (Sennrich-BPE subword id space, matching what produced the
-    checkpoint's `words` vocabulary in the first place -- see the module's BPE-mode block above)."""
+    checkpoint's `words` vocabulary in the first place -- see the module's BPE-mode block above). The prompt
+    encode goes through `_bpe_encode_prompt` (2026-09-04 BPE-caps fix -- see that function's own docstring and
+    the module comment block above `bpe_lowercase_enabled`), which lowercases by default before calling
+    `bpe.encode`."""
     if bpe is not None:
-        pid = bpe.encode(prompt or "")
+        pid = _bpe_encode_prompt(bpe, prompt)
     else:
         pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
     if not pid:
@@ -852,9 +911,10 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
     exists as a twin of `_free_gen` rather than a generalization of it. `bpe`/prompt-encode/final-decode, and the
     affect-bias coupling (2026-09-03, see `_apply_affect_bias`), mirror `_free_gen`'s own handling exactly (see
     that function's docstring) -- this is what closes the affect-hollow gap for BOTH recurrence families from
-    ONE shared mechanism, not just the `ssm` default."""
+    ONE shared mechanism, not just the `ssm` default. The prompt encode goes through `_bpe_encode_prompt`
+    (2026-09-04 BPE-caps fix), same as `_free_gen` -- see that function's docstring."""
     if bpe is not None:
-        pid = bpe.encode(prompt or "")
+        pid = _bpe_encode_prompt(bpe, prompt)
     else:
         pid = [vocab_ids_by_word[w] for w in (t.lower() for t in _WORD_RE.findall(prompt or "")) if w in vocab_ids_by_word]
     if not pid:
@@ -891,6 +951,92 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
     else:
         text = " ".join(ro.words[i] if 0 <= i < len(ro.words) else "<unk>" for i in gen if ro.words[i] != "endoftext")
     return text, (self_nll / max(1, steps)), gen
+
+
+# ── BPE-CAPS FIX, OUTPUT half (2026-09-04, same finding as `_bpe_encode_prompt` above -- readability, not the
+# perplexity-recovery mechanism). BOTH checkpoint families ship an ENTIRELY lowercase vocabulary -- verified
+# directly by loading the checkpoints: 0/1000 `wkv_ssmU6_v1000_d128_seed42.npz` word entries and the BPE
+# `wkv_bpe8k.json` merge table's symbols alike contain a single uppercase character, because BOTH training
+# corpora (TinyStories via `_train_bpe_bounded`'s `raw.lower()`; the pre-lowercased-on-disk `data/corpus/
+# simplewiki.txt`) were lowercased before training. The mouth therefore CANNOT emit a capital letter --
+# structurally, not as a decode-time failure -- regardless of `tokenizer_mode()`/`recurrence_mode()`. This is a
+# lightweight, EXPLICITLY-TRACKED host articulation scaffold restoring readable casing on the way OUT, the same
+# category the task that added it named as precedent: `_apply_affect_bias`'s host decode-time arithmetic over an
+# already-neurally-sourced signal. It is pure string post-processing on the ALREADY-CHOSEN word sequence --
+# never touches token selection or the genuine few-spike spiking read (`reader.read(p)`) -- and it is NOT a
+# claim of general proper-noun/NER capability; see `_KNOWN_CAPITALIZED_WORDS`'s own comment for that scope.
+_TRUECASE_ENV = "BRAIN_WKV_MOUTH_TRUECASE"
+
+
+def truecase_enabled() -> bool:
+    """Default-ON (this closes a named readability gap -- the checkpoint's structural inability to emit a
+    capital letter, see the module comment block above -- not an opt-in trial). `BRAIN_WKV_MOUTH_TRUECASE` in
+    {0,false,no,off} -> an explicit OFF, `generate()`'s return value stays the checkpoint's raw all-lowercase
+    text, BYTE-IDENTICAL to before this function existed."""
+    v = os.environ.get(_TRUECASE_ENV)
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+# A SMALL, EXPLICIT allowlist -- NOT a general NER/proper-noun detector. Hand-curated directly from the V=1000
+# `wkv_ssmU6_*` checkpoint's own vocabulary (dumped and read by hand), keeping only names/titles with negligible
+# collision risk against an ordinary English word. Deliberately EXCLUDES several genuine TinyStories character-
+# name candidates that ALSO sit in the same vocabulary as ordinary words -- "will", "rose", "mark", "hope",
+# "joy", "grace" -- because capitalizing those on sight would be WRONG most of the time (a modal verb, a past
+# tense of "rise", ordinary nouns); left out on purpose, an honest bounded residual rather than an oversight.
+# Matched case-insensitively per whitespace token, `'s`-suffix-aware (`_truecase_word` below) -- e.g. "tom's" ->
+# "Tom's". This list is TinyStories-specific and will rarely fire on the very different BPE/simplewiki
+# checkpoint family's vocabulary; a cross-domain gazetteer (e.g. sourced from the live `wikidata_core_15k`
+# store's own agent names) was considered and NOT built here -- named as the natural next step in the finding's
+# honest-residuals section, not attempted in this lightweight pass.
+_KNOWN_CAPITALIZED_WORDS = frozenset("""
+tim timmy tom tommy max sue sam ben mia lucy bob bobo bobby sara sarah anna amy jack jane
+daisy john joe lila billy molly remy bella leo emma ella mimi polly lisa jen jenny momo
+buddy spot mr mrs dr
+""".split())
+
+_SENT_BOUNDARY_RE = re.compile(r"([.!?]\s+)")
+_I_WORD_RE = re.compile(r"\bi\b")
+
+
+def _cap_first_alpha(s: str) -> str:
+    """Uppercase the first alphabetic character in `s`, leaving any leading whitespace/punctuation untouched.
+    A no-op (returns `s` unchanged) when `s` has no alphabetic character at all."""
+    for i, ch in enumerate(s):
+        if ch.isalpha():
+            return s[:i] + ch.upper() + s[i + 1:]
+    return s
+
+
+def _truecase_word(w: str) -> str:
+    """Capitalize `w` in place IF its `'s`-stripped, lowercased form is a known name/title (see
+    `_KNOWN_CAPITALIZED_WORDS`) -- returns `w` UNCHANGED otherwise (including when it is already correctly
+    cased, e.g. a `render_fact_sentence` proper-noun NP already capitalized by `slug_to_np` -- re-uppercasing an
+    already-uppercase first letter is a no-op, so this never fights that path)."""
+    core = w[:-2] if w.lower().endswith("'s") else w
+    if core and core.lower() in _KNOWN_CAPITALIZED_WORDS:
+        return core[:1].upper() + core[1:] + w[len(core):]
+    return w
+
+
+def _truecase(text: str) -> str:
+    """The full truecasing pass (see the module comment block above `truecase_enabled`): capitalizes the first
+    letter of each sentence (split on '.'/'!'/'?' followed by whitespace -- today's checkpoints structurally
+    never emit punctuation at all, per the module comment block, so in practice this fires once, on the whole
+    string, but the split is written generally rather than assuming that stays true forever), the standalone
+    pronoun "i" (and its contractions "i'm"/"i've"/"i'll"/"i'd" -- the apostrophe is itself a `\\b` word
+    boundary, so `\\bi\\b` already matches the bare "i" in all of these), and any token matching
+    `_KNOWN_CAPITALIZED_WORDS`. Pure string manipulation, no RNG draw -- safe to call OUTSIDE `_RngIsolation.run`
+    (see `generate()`'s own call site, after `_RNG.run` returns) without touching that function's RNG-isolation
+    contract. Empty input returned unchanged."""
+    if not text:
+        return text
+    parts = _SENT_BOUNDARY_RE.split(text)
+    parts = [_cap_first_alpha(p) if (i % 2 == 0) else p for i, p in enumerate(parts)]
+    text = "".join(parts)
+    text = _I_WORD_RE.sub("I", text)
+    return " ".join(_truecase_word(w) for w in text.split(" "))
 
 
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
@@ -983,7 +1129,20 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     never reached), the reply was genuinely written by `render_fact_sentence` but the caller labelled it
     `generator="wkv_mouth"` regardless. `trace=None` (the default and every pre-existing call site) is an exact
     no-op -- both `if trace is not None:` guards below never fire, so `generate()`'s behavior and return value
-    are BYTE-IDENTICAL to before this parameter existed."""
+    are BYTE-IDENTICAL to before this parameter existed.
+
+    BPE-CAPS FIX (2026-09-04, research/findings/2026-09-03-linattn-mouth-broad-scope-coverage-threshold.md):
+    two independent, independently-guarded pieces. INPUT -- `bpe_lowercase_enabled()` (default ON): when `bpe`
+    mode is active, `_free_gen`/`_free_gen_linattn` lowercase the prompt before BPE-encoding it (via
+    `_bpe_encode_prompt`), recovering a measured ~5.6x teacher-forced-perplexity hit the raw-case encode paid
+    (every capital letter fell outside the checkpoint's trained, lowercase-only character alphabet and
+    BPE-encoded to `<UNK>`). Inert whenever `tokenizer_mode() != 'bpe'` (the shipped default). OUTPUT --
+    `truecase_enabled()` (default ON): both checkpoint families ship an entirely lowercase vocabulary and so
+    structurally cannot emit a capital letter at all; `_truecase` (a lightweight sentence-initial + pronoun-"I"
+    + small known-name-allowlist heuristic, NOT retrained, NOT a general NER) is applied to this function's
+    final return text regardless of which internal path produced it (free-gen or `render_fact_sentence`).
+    BOTH default ON but are independently `BRAIN_WKV_MOUTH_BPE_LOWERCASE=0` / `BRAIN_WKV_MOUTH_TRUECASE=0`
+    revertible to the exact pre-fix behavior (byte-identical text) -- see each flag function's own docstring."""
     t0 = time.time()
 
     def _run():
@@ -1009,4 +1168,6 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
         return text
 
     text = _RNG.run(seed, _run)
+    if truecase_enabled():
+        text = _truecase(text)
     return text, round(time.time() - t0, 3)
