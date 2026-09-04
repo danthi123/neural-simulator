@@ -124,9 +124,16 @@ def _extract_svo_from_prose(prose, agents, actions, patients, inflect):
     None (the prose did not yield a clean SVO -> VERIFY cannot confirm -> reject). This is the real re-parse
     of the model's output: it strips function words (determiners, 'in'/'the'/'a'), normalizes verb
     inflection back to the base form, and reads the content words in the order they appear -- exactly what a
-    downstream comprehension stage does to a heard sentence."""
-    # tokenize: lowercase words only (drop punctuation)
-    toks = re.findall(r"[a-z]+", prose.lower())
+    downstream comprehension stage does to a heard sentence.
+
+    UNDERSCORE-PRESERVING (2026-09-04 fix, research/findings/2026-09-04-recall-gate-reaches-real-ltm-*.md): a
+    multi-word LTM/Wikidata-style slug (e.g. 'angora_turkey') is one token in `agents`/`actions`/`patients`
+    (the caller's own vocabulary sets); the old `[a-z]+` pattern split it into separate runs at the underscore
+    ('angora', 'turkey'), so it could never match. `[a-z_]+` keeps a run intact across underscores and is
+    byte-identical for every underscore-free word (the tiny-demo's own vocabulary), so this only ADDS
+    recognition for the underscored case -- it never changes what an existing single-word match extracts."""
+    # tokenize: lowercase words + underscored multi-word slugs (drop other punctuation)
+    toks = re.findall(r"[a-z_]+", prose.lower())
     found_agent = None
     found_action = None
     found_patient = None

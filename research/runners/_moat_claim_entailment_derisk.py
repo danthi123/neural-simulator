@@ -226,7 +226,18 @@ class ClaimEntailmentVerifier:
     def _clauses(self, prose):
         """Split prose into clauses. Sentences split on . ! ? ; :  and , ; each sentence further split on the
         BOUNDARY_WORDS. Returns a flat list of token-lists (lowercased alphabetic tokens, contractions'
-        apostrophes dropped so n't-style negation survives as 'nt')."""
+        apostrophes dropped so n't-style negation survives as 'nt').
+
+        UNDERSCORE-PRESERVING (2026-09-04 fix, research/findings/2026-09-04-recall-gate-reaches-real-ltm-*.md):
+        a multi-word LTM/Wikidata-style slug (e.g. 'angora_turkey', 'located_in_time_zone') is a SINGLE token in
+        `self.nouns`/`self.verbs` (built straight from the gathered facts' own literal strings) but used to be
+        SPLIT APART here -- the old `[^a-z]` filter stripped the underscore, turning 'angora_turkey' into the
+        unrecognized 'angoraturkey' -- so every clause about a real LTM entity hit `n_unknown > 0` and was
+        rejected as 'ungrounded/unrepresentable content', regardless of whether the substrate's own role-parse
+        (verified separately, unaffected by this bug) would have confirmed it correctly. Keeping '_' alongside
+        [a-z] is BYTE-IDENTICAL for every token this tokenizer has ever previously seen (the tiny-demo's own
+        built-in vocabulary is single English words with no underscores) and only ADDS recognition for the
+        underscored multi-word case this project's LTM shard actually uses."""
         # normalize: lowercase, turn sentence/segment punctuation into a boundary token, drop other punctuation
         text = prose.lower().replace("'", "")
         text = re.sub(r"[.!?;:,]", " __b__ ", text)
@@ -237,7 +248,7 @@ class ClaimEntailmentVerifier:
                 if cur:
                     clauses.append(cur); cur = []
                 continue
-            tok = re.sub(r"[^a-z]", "", w)
+            tok = re.sub(r"[^a-z_]", "", w)
             if not tok:
                 continue
             if tok in BOUNDARY_WORDS:
@@ -423,10 +434,15 @@ class ClaimEntailmentVerifier:
 
     @staticmethod
     def _noun_is_before(toks, noun, verb_base):
-        """True iff `noun` first appears before the (possibly inflected) verb in the surface clause."""
+        """True iff `noun` first appears before the (possibly inflected) verb in the surface clause.
+
+        `toks` are already-tokenized by `_clauses` (underscore-preserving as of the 2026-09-04 fix above), so
+        `noun`/`verb_base` (drawn from the SAME gathered facts) may themselves contain underscores; re-stripping
+        with the old `[^a-z]` filter here would re-introduce the identical mismatch on a re-derived copy of `t`.
+        Keeping '_' matches `_clauses` and is byte-identical for every underscore-free token."""
         n_i = v_i = None
         for i, t in enumerate(toks):
-            tt = re.sub(r"[^a-z]", "", t)
+            tt = re.sub(r"[^a-z_]", "", t)
             if n_i is None and tt == noun:
                 n_i = i
             if v_i is None and (tt == verb_base or tt.startswith(verb_base[:3])):
