@@ -815,20 +815,131 @@ def _affect_bias_ids(seed: int) -> dict:
         return hit
 
 
-def _apply_affect_bias(lg: np.ndarray, affect_ids, valence: float, arousal: float, boost: float) -> np.ndarray:
-    """Additive decode-time logit bias toward mood-congruent in-vocab affect-bearing words -- see the module
-    comment block above this function for the full mechanism + biology citations. Returns `lg` UNCHANGED (same
-    object, no allocation) when `affect_ids` is empty, OR `boost == 0.0`, OR `valence == 0.0` -- the last
-    condition is what makes `BRAIN_AFFECT_LESION=1` (which clamps the real organ's differential, hence the
-    mapped valence, to exactly 0.0) collapse this coupling to an EXACT no-op regardless of the host-appraised
-    arousal that turn (arousal alone supplies no direction, see the mechanism comment above)."""
+# ── MARGIN-TO-TOP1, SATURATING scaling (2026-09-04, closes the linattn flip-gate FAIL named by
+# `research/findings/raw/_affect_wkv_mouth_verify_phase4_linattn_flip_confirmation.json`: through the real
+# `webapp.server.brain_chat`, a genuine +mood (organ differential +0.040, appraisal 'thrilled/overjoyed/
+# wonderful') left the linattn mouth's raw output BYTE-IDENTICAL lesion0-vs-lesion1, while the SAME mechanism
+# was already load-bearing for ssm). DIAGNOSIS (measured, not assumed -- see the finding this rung shipped
+# with for the full numbers + the two rejected intermediate designs):
+#   (a) the valence magnitude that actually reaches this function LIVE is neither the raw organ differential
+#       (~0.04) nor the raw appraisal (`appraisal_valence`, ~0.475) -- it is `_valence_from_differential(diff)
+#       = clip(4*diff, -1, 1)` (`webapp/open_ended_chat.py::valence_from_affect`, `research.runners.
+#       _open_ended_state_driven_generation_derisk._valence_from_differential`), i.e. ~0.16 for this scenario.
+#       That is ~5.6x smaller than the `valence=+-0.9` sweep the pre-existing `affect_boost=5.0` calibration
+#       (see `generate()`'s own docstring) was tuned against -- the fixed boost was calibrated at a magnitude
+#       the live pipeline never actually presents.
+#   (b) the actual obstacle is NOT generic "sharpness" (full-vocab logit std and the plain top1-vs-top2 gap
+#       were measured comparable between the checkpoints, ratio 0.8-1.1x) and NOT merely "is an affect word
+#       inside the top-K candidate window" (a first design scaled the bias by the gap to the top-K CUTOFF --
+#       rejected: on a templated "tell me about <encyclopedic topic>" continuation the linattn checkpoint's
+#       TOP-1 pick routinely out-scores the top-64 cutoff by 4-11 raw logit units, e.g. measured top1=9.3 vs
+#       cutoff=5.3 at step 0 of the `frank_lincoln_wright` trajectory -- a candidate can clear the cutoff and
+#       still lose to top1 by a wide margin, which is what a realistic-magnitude bias against the cutoff alone
+#       measurably failed to move). The quantity that determines whether mood can plausibly change the WORD
+#       actually selected is the gap to the CURRENT TOP-1 logit, `margin(t) = top1 - lg[t]` -- what `t` must
+#       close to become a genuine rival, not merely a candidate.
+#   (c) a second rejected design applied a `gain*wv*deficit`-shaped assist UNIFORMLY to every affect id at
+#       once: at the realistic magnitude the assist was correspondingly too small everywhere (no measured
+#       diff); scaling it up to compensate caused an unbounded, UNconcentrated pileup across dozens of
+#       simultaneously-boosted affect words at the pre-existing calibration's own `valence=+-0.9` sweep
+#       (salad_frac up to 0.48 on this prompt, worse than the pre-existing `affect_boost>=8` failure it was
+#       supposed to avoid re-creating) -- an absolute, un-saturating multiplier on `margin` has no ceiling, so
+#       any boost large enough to matter at realistic magnitude overshoots wildly at the sweep's extreme.
+#   (d) even CONCENTRATING that assist onto one candidate (dropping the "every affect id at once" flaw in (c))
+#       still cascaded once `boost` was raised enough to make the realistic magnitude cross the margin at all
+#       (measured: `boost=15` produced a genuine diff at `valence=0.16`, but salad_frac 0.60 -- WORSE than the
+#       `boost=5` extreme-sweep collapse this rung is meant to avoid). Root cause: selecting ONE affect word
+#       shifts the CONTEXT the next step conditions on toward affect-adjacent continuations, so later steps
+#       need progressively LESS help from this bias to also select an affect word -- an autoregressive
+#       positive-feedback cascade, not a per-step calibration problem, so no fixed `boost` alone threads the
+#       needle between "never fires" and "runs away".
+# THE FIX, three changes together: (1) SATURATE the per-word congruence strength at +-1 -- `strength(t) =
+# clip(boost*valence*clip(arousal,0,1)*wv(t), -1, 1)` -- so mood can, AT MOST, close a candidate's ENTIRE
+# margin to the current top-1 (full parity, never a forced override past it), regardless of how large `boost`
+# is tuned; this is what makes the extreme `valence=+-0.9` sweep safe by construction rather than by finding
+# another fragile constant. (2) CONCENTRATE the margin-closing assist on the single mood-CONGRUENT candidate
+# already closest to top1 (smallest `margin`) -- spreading it over every affect id at once is what caused (c)'s
+# pileup; one contextually-plausible word contending for the win reads as mood coloring word choice, not
+# flooding the sequence with disconnected affect vocabulary. A small, UNSATURATED, UNCONCENTRATED floor
+# (`strength(t)` alone, capped at +-1 per word) still colors every matched word mildly -- this term alone is
+# already bounded, so applying it broadly (as the pre-existing 2026-09-03 formula did) stays safe. (3)
+# HABITUATE: scale `strength` by `(1 - recent_affect_frac)`, where `recent_affect_frac` is the fraction of the
+# last `_HABIT_WINDOW` generated tokens (see `recent_ids`) that were ALREADY an affect-lexicon word --
+# short-term synaptic depression's own shape (Tsodyks & Markram 1997, PNAS 94:719-723: a synapse driven
+# repeatedly by the same input transmits progressively less) applied to this decode-time population so a mood
+# can tip ONE word choice without the resulting context perpetually re-triggering itself -- this is what closes
+# (d)'s cascade. `recent_ids=None` (every pre-existing call site before this rung) leaves habituation at its
+# neutral value (no damping) -- additive, not a behavior change for a caller that does not opt in.
+_HABIT_WINDOW = 8
+
+
+def _apply_affect_bias(lg: np.ndarray, affect_ids, valence: float, arousal: float, boost: float,
+                        topk: int = 64, recent_ids=None) -> np.ndarray:
+    """Additive decode-time logit bias toward mood-congruent in-vocab affect-bearing words, saturating,
+    margin-to-top1-aware, and habituating -- see the module comment block directly above this function for the
+    full mechanism + the two rejected intermediate designs. Returns `lg` UNCHANGED (same object, no allocation)
+    when `affect_ids` is empty, OR `boost == 0.0`, OR `valence == 0.0` -- the last condition is what makes
+    `BRAIN_AFFECT_LESION=1` (which clamps the real organ's differential, hence the mapped valence, to exactly
+    0.0) collapse this coupling to an EXACT no-op regardless of the host-appraised arousal that turn (arousal
+    alone supplies no direction, see the mechanism comment above). `topk` is accepted for call-shape continuity
+    with callers that also apply a top-`topk` candidate cut right after this function returns, but this
+    function's own scaling no longer depends on it (see (b) in the mechanism comment for why the top-K cutoff
+    was the wrong reference point) -- unused, kept so neither call site needs touching if a future design
+    reintroduces it. `recent_ids` (default None): the driving loop's own `gen` list-so-far (prompt ids +
+    generated ids); when given, the last `_HABIT_WINDOW` entries are checked against `affect_ids` to compute a
+    habituation multiplier -- `None` (or an empty/short history) leaves it at 1.0 (no damping).
+
+    THREE TERMS: (1) a broad, SATURATING floor -- `strength(t) = clip(boost*valence*arousal*wv(t), -1, 1)`
+    added to every affect id, capped at +-1 raw logit unit per word regardless of `boost`; (2) a CONCENTRATED
+    assist -- `strength(best) * margin(best)` where `best` is the single mood-congruent affect id already
+    closest to the current step's top-1 logit and `margin(best) = top1 - lg[best]` -- added ONLY to that one
+    candidate, so at `strength==+-1` (full saturation) it exactly ties top1 (parity, never an override), and at
+    partial saturation it closes only that fraction of the gap; (3) HABITUATION -- both (1) and (2) are scaled
+    by `(1 - recent_affect_frac)` BEFORE the saturation clip, damping the coupling once recent output is already
+    affect-saturated (breaks the autoregressive cascade named in the mechanism comment's (d), without capping
+    how strongly an ISOLATED, in-context nudge can act when the recent context is still neutral). `boost` sets
+    how much realistic-magnitude valence*arousal (~0.1, see (a) above) it takes to approach saturation; it can
+    no longer cause unbounded overshoot at the sweep's `valence=+-0.9` extreme, because `strength` is clipped
+    before it ever multiplies `margin`."""
     if not affect_ids or boost == 0.0 or valence == 0.0:
         return lg
-    lg = lg.copy()
-    gain = float(boost) * float(valence) * max(0.0, min(1.0, float(arousal)))
-    for t, wv in affect_ids.items():
-        lg[t] += gain * wv
-    return lg
+    habit = 1.0
+    if recent_ids:
+        recent = recent_ids[-_HABIT_WINDOW:]
+        if recent:
+            habit = 1.0 - (sum(1 for t in recent if t in affect_ids) / len(recent))
+    gain = float(boost) * float(valence) * max(0.0, min(1.0, float(arousal))) * habit
+    if gain == 0.0:
+        return lg
+    ids = np.fromiter(affect_ids.keys(), dtype=np.intp, count=len(affect_ids))
+    wv = np.fromiter((affect_ids[i] for i in affect_ids), dtype=np.float64, count=len(affect_ids))
+    strength = np.clip(gain * wv, -1.0, 1.0)              # saturating: mood can tip a close call, never force
+    orig = lg[ids]                                        # pre-bias reference for the margin measurement
+    out = lg.copy()
+    out[ids] += strength                                  # (1) broad, saturating floor -- +-1 logit unit max
+    congruent = strength > 0.0                            # only a word AGREEING in sign with this turn's mood
+    if recent_ids:
+        # the CONCENTRATED assist (below) must not repeatedly re-select the SAME just-used affect word -- the
+        # pre-existing `_apply_repetition_controls` runs BEFORE this function and already damped that word's
+        # logit, but a large concentrated assist can re-inflate it past that penalty every step (measured: this
+        # is what produced literal "love love love" 3-in-a-row at the START of a sequence, before habituation
+        # (3) has enough history to have damped anything -- no earlier occurrence exists yet for the no-repeat-
+        # ngram guard to have banned). Excluding the last `_HABIT_WINDOW` tokens from the CONCENTRATED pool
+        # (not the broad floor, which stays a small, harmless per-word nudge either way) forces each assisted
+        # pick to be a genuinely DIFFERENT affect word -- thematically consistent, lexically varied.
+        just_used = set(recent_ids[-_HABIT_WINDOW:])
+        if just_used:
+            congruent = congruent & ~np.isin(ids, np.fromiter(just_used, dtype=np.intp, count=len(just_used)))
+    if congruent.any():
+        top1 = float(lg.max())
+        cong_ids = ids[congruent]
+        cong_orig = orig[congruent]
+        cong_strength = strength[congruent]
+        best_local = int(np.argmax(cong_orig))            # smallest margin-to-top1 among congruent candidates
+        best_id = int(cong_ids[best_local])
+        margin = max(0.0, top1 - cong_orig[best_local])   # what full parity with the current top-1 would need
+        out[best_id] += cong_strength[best_local] * margin      # (2) concentrated, saturating assist
+    return out
 
 
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
@@ -875,7 +986,7 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         # `_apply_affect_bias`): applied AFTER fact-boost/repetition, same full-vocab logits, same "additive,
         # cannot un-ban a repetition-suppressed token" composition rule. No-op when `affect_ids` is empty,
         # `affect_boost == 0.0`, or `valence == 0.0` (the lesioned-organ / neutral-mood case).
-        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost)
+        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -932,7 +1043,7 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
             lg[ro.unk_idx] = -1e30
         lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
         lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
-        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost)
+        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost, topk=topk, recent_ids=gen)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -1043,7 +1154,7 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
              no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0,
              sentence_facts=None, valence: float = 0.0, arousal: float = 0.0,
-             affect_boost: float = 5.0, trace: dict | None = None) -> tuple[str, float]:
+             affect_boost: float = 10.0, trace: dict | None = None) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
@@ -1086,34 +1197,39 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     `_free_gen_linattn` -- a different, mutually-exclusive recurrence family (never silently mixed with 'ssm')
     reading a `--recurrence linattn --save-ssm` checkpoint (point `BRAIN_WKV_MOUTH_CKPT` at it).
 
-    AFFECT (`valence`/`arousal`, default 0.0/0.0, `affect_boost` default 5.0 but INERT while `valence == 0.0` --
-    2026-09-03, closes the affect-hollow gap `research/findings/2026-09-03-linattn-mouth-live-brain-grounded-
+    AFFECT (`valence`/`arousal`, default 0.0/0.0, `affect_boost` default 10.0 but INERT while `valence == 0.0`
+    -- 2026-09-03, closes the affect-hollow gap `research/findings/2026-09-03-linattn-mouth-live-brain-grounded-
     honest-verification-PARTIAL-affect-gap.md` (ii-c) measured: `_free_gen`/`_free_gen_linattn` took NO affect
     parameter at all before this triple existed, so the real spiking affect organ's live valence/arousal read,
     already assembled by `answer_turn` into `state`/`system`/`user`, never reached this generator). See
-    `_apply_affect_bias`'s own docstring for the mechanism (a mood-congruent additive logit bias over a Warriner-
-    gated, DR-2-learned-value word lexicon, gain-scaled by arousal, applied in the SAME decode-control category
-    as `fact_boost`/the repetition guards -- the spiking `reader.read(p)` selection itself is untouched).
-    `valence=0.0` (the default, and what `BRAIN_AFFECT_LESION=1` clamps the real organ's read to) is an EXACT
-    no-op -- `generate()` is byte-identical to before this triple existed. Gated additionally by
-    `wkv_mouth_affect_enabled()` (`BRAIN_WKV_MOUTH_AFFECT`, default-ON, an independent kill switch).
+    `_apply_affect_bias`'s own docstring for the mechanism (a mood-congruent additive logit bias, saturating and
+    margin-to-top1-aware, over a Warriner-gated, DR-2-learned-value word lexicon, gain-scaled by arousal and
+    habituated against its own recent output, applied in the SAME decode-control category as `fact_boost`/the
+    repetition guards -- the spiking `reader.read(p)` selection itself is untouched). `valence=0.0` (the
+    default, and what `BRAIN_AFFECT_LESION=1` clamps the real organ's read to) is an EXACT no-op -- `generate()`
+    is byte-identical to before this triple existed. Gated additionally by `wkv_mouth_affect_enabled()`
+    (`BRAIN_WKV_MOUTH_AFFECT`, default-ON, an independent kill switch).
 
-    `affect_boost=5.0` is an EMPIRICAL CALIBRATION (2026-09-03, `research/findings/raw/_affect_wkv_mouth_verify_
-    phase1_direct_linattn.json` + the boost-sweep in the finding's own provenance), not a guess: measured
-    directly on the HARDER of the two checkpoint families (the `linattn`/BPE V=8001 general-vocabulary
-    checkpoint, where an off-topic prompt's natural top-64 candidates rarely include an affect word at all --
-    the `ssm`/TinyStories V=1000 checkpoint separates cleanly even at a smaller boost, since affect words are
-    already near-plausible children's-story continuations there). Below ~5, the bias is too small to lift a
-    buried affect-tagged token into the top-`topk` candidates on an adversarial (topic-empty) linattn prompt --
-    measured byte-identical across a `valence=-0.9` vs `+0.9` sweep at `affect_boost=4.0`. At `affect_boost>=8`,
-    the SAME sweep instead collapses into a repetitive word-salad dominated by 2-3 of the highest-baseline
-    affect words ("love love love ... dance dance dance" / "pain pain pain ... dead pain kill") -- a real
-    fluency cost, the same shape (not the same severity) as the pre-existing `fact_boost=6.0` NO-GO on this
-    checkpoint family. `5.0` is the empirically-largest value tested that still produced a genuinely coherent,
-    mood-congruent sentence rather than word-salad on that same adversarial prompt. HONEST RESIDUAL: this is
-    ONE constant shared by both recurrence families and not independently re-tuned per checkpoint/topic; a
-    production deployment that finds it too weak or too strong on real traffic should re-run that sweep rather
-    than assume this value transfers unconditionally.
+    `affect_boost=10.0` is an EMPIRICAL CALIBRATION (2026-09-04, re-measured against the REBUILT mechanism --
+    see `_apply_affect_bias`'s own mechanism comment for why the ORIGINAL `5.0`/2026-09-03 calibration, which
+    scaled a fixed absolute bias against a `valence=+-0.9` sweep, was replaced rather than reused: that
+    magnitude never occurs on the LIVE pipeline, see `webapp.open_ended_chat.valence_from_affect` -- a real
+    'thrilled/overjoyed/wonderful' priming turn measured `valence~0.16` live, ~5.6x smaller). `10.0` is
+    calibrated at THAT realistic magnitude directly (`valence=0.16, arousal=0.65`, `research/findings/raw/
+    _affect_wkv_mouth_verify_phase5_boost_and_prompt_sweep.json`), on the HARDER of the two checkpoint families
+    (`linattn`/BPE V=8001 general-vocabulary, whose confidently-templated continuations put the checkpoint's
+    top-1 pick 4-11 raw logit units above ANY affect-tagged candidate on a typical "tell me about <topic>"
+    prompt -- the `ssm`/TinyStories V=1000 checkpoint moves cleanly at this same value, its continuations
+    already lean toward affect vocabulary). Below ~8, one of the two mood directions sometimes failed to
+    measurably move the realistic-magnitude output on the tested prompts (undershoot, not a safety concern);
+    `10.0` reliably differed from neutral in BOTH mood directions on both prompts tested. Because the
+    saturating cap in `_apply_affect_bias` bounds a single word's assist to at most FULL PARITY with the
+    current top-1 regardless of `boost`, this value does not reproduce the OLD mechanism's `>=8` word-salad
+    collapse at the sweep's `valence=+-0.9` extreme (measured salad-fraction <=0.14 across both families, both
+    mood directions, both prompts tested, vs a neutral baseline of ~0.09-0.10 on the same prompts -- see the
+    finding). HONEST RESIDUAL: this is ONE constant shared by both recurrence families and not independently
+    re-tuned per checkpoint/topic; a production deployment that finds it too weak or too strong on real traffic
+    should re-run that sweep rather than assume this value transfers unconditionally.
 
     `trace` (default `None`, additive -- 2026-09-04, closes the generator-trace mislabel the 2026-09-03 linattn
     live verification found: see research/findings/2026-09-04-generator-trace-mislabel-fix.md): when the caller

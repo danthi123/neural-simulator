@@ -1,0 +1,47 @@
+{
+ "runner": "affect_wkv_mouth_verify_phase4 (linattn flip confirmation, hand-authored)",
+ "seed": 42,
+ "backend": "numpy",
+ "recurrence": "linattn (flip target)",
+ "verdict": {
+  "Q1_affect_loadbearing_PASS": false,
+  "Q2_moat_with_affect_PASS": true,
+  "FLIP_CONFIRM_GO": false
+ },
+ "rows": {
+  "Q1_affect_loadbearing": {
+   "topic": "Tell me about frank_lincoln_wright",
+   "wkv_used": {
+    "l0": true,
+    "l1": true
+   },
+   "generator": {
+    "l0": "wkv_mouth",
+    "l1": "wkv_mouth"
+   },
+   "raw": {
+    "l0": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and scumper on the television series for his role as jakom he has also appeared in many movies including the movie theatres from to she didnate her roles include the movie sipes film festival and the movie i am sri lanka and wrote several awards at altitude la",
+    "l1": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and scumper on the television series for his role as jakom he has also appeared in many movies including the movie theatres from to she didnate her roles include the movie sipes film festival and the movie i am sri lanka and wrote several awards at altitude la",
+    "l0_repeat": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring michael kie mendous stars in the s it was made into the movie of the same name by mike sheep and scumper on the television series for his role as jakom he has also appeared in many movies including the movie theatres from to she didnate her roles include the movie sipes film festival and the movie i am sri lanka and wrote several awards at altitude la"
+   },
+   "raw_differs_lesion0_vs_lesion1": false,
+   "raw_reproduces_lesion0_vs_lesion0_repeat": true,
+   "PASS": false
+  },
+  "Q2_moat_with_affect": {
+   "topic": "Tell me about the zltrinqua dynasty of planet Vexcor-9",
+   "lesion0_affect_active": {
+    "known": false,
+    "abstained": null,
+    "raw": "ell me about the zltrinqua dynasty of planet excor and was used in the th century it is also known for its own time when people have been involved in the first world war ii he has released two years later on his second album i am i e g y you can be released to be one of the best selling sound at the same time this song was given by the band from the s they are called br nn kentuoka and the other members of the group of bands that live together with their songs include siberia and sac"
+   },
+   "lesion1_affect_off": {
+    "known": false,
+    "abstained": null,
+    "raw": "ell me about the zltrinqua dynasty of planet excor and was used in the th century it is also known for its own time when people have been involved in the first world war ii he has released two years later on his second album i am i e g y sitcom i s o paulo and jacob n e br ngc february april was an american singer songwriter her career took place at the age of she played with her last movie role in the film festival after being shot dead by the bbc television show and had a very successful"
+   },
+   "PASS": true
+  }
+ },
+ "wall_seconds": 274.1
+}
