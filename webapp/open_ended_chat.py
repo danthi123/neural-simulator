@@ -113,6 +113,25 @@ that concrete and all are GO on `main`:
     `generate()` entry point. Does NOT touch `render_fact_sentence`'s fact-clause path (facts stay tone-neutral
     by construction, matching Gate-B's own honesty floor). See research/findings/2026-09-03-affect-wiring-into-
     wkv-mouth-*.md for the vary/lesion load-bearing proof.
+  * GENERATOR-TRACE MISLABEL FIX (2026-09-04, additive/guarded, no reply-content change — found during the
+    2026-09-03 linattn live verification) — `webapp.wkv_mouth_generator.generate()`'s OWN `sentence_facts`
+    branch (see the rung-3 wire-in bullet above) can render via `render_fact_sentence` INSIDE the WKV-mouth
+    try-block below, but this function used to infer the `generator` trace label purely from WHICH try-block
+    called `generate()`, not from what `generate()` itself did — so whenever that inner branch fired (the
+    common case once `BRAIN_WKV_MOUTH_SCOPE=broad` routes nearly every prompt into the WKV-mouth try-block
+    first, starving the separate FACT-CLAUSE FALLBACK branch below of ever running), the reply was actually
+    written by the SAME SpikingClauseProducer mechanism the fallback branch names, but `generator` read
+    `"wkv_mouth"` instead of `"spiking_clause"` — corrupting the per-touchpoint Qwen-vs-substrate provenance
+    the one-brain roadmap's de-risk #2 depends on (research/findings/2026-09-03-one-brain-mouth-integration-
+    ROADMAP.md SS3). Fixed by threading a `trace` dict through `_WKV.generate()` (see that function's own
+    `trace` parameter) so THIS caller reads back which of `generate()`'s OWN internal branches produced `raw`
+    and labels `generator`/`fact_clause_used`/`wkv_mouth_used` from THAT, independent of which of `answer_turn`'s
+    two try-blocks reached it. `trace=None` (every pre-existing call site) is an exact no-op in `generate()`
+    itself; here, the new `wkv_attempted` variable (see the WKV-mouth block below) additionally fixes a second-
+    order bug the mislabel would otherwise have caused once the fallback branch's guard is corrected: gating the
+    fallback on `not wkv_used` alone (now `wkv_used` no longer covers the inner-sentence-fact case) would have
+    made it re-render the SAME fact a second time. See research/findings/2026-09-04-generator-trace-mislabel-
+    fix.md for the root cause, the fix, and the byte-identical-reply verification.
 
 THE LIVE RECIPE (per turn): extract the TOPIC from the user message -> RETRIEVE the grounded facts the live brain
 holds about it (the LTM / chat bundle) -> ASSEMBLE a StateContext from the LIVE affect read (valence/arousal) +
@@ -390,8 +409,12 @@ def fact_clause_fallback_enabled() -> bool:
     not just the ~3% that also happen to pass the checkpoint's free-gen vocabulary gate.
 
     Reached only when `known` (facts were retrieved) AND the WKV mouth did NOT already produce `raw` for this
-    turn (`not wkv_used` -- when it DID, `wkv_fact_sentence_enabled`'s own gate on the identical mechanism already
-    ran first; this flag never re-renders on top of that). A hit means the rendered clause becomes `raw` and
+    turn BY EITHER of its own internal mechanisms (`not wkv_attempted`, 2026-09-04 -- was `not wkv_used` before
+    the generator-trace-mislabel fix, research/findings/2026-09-04-generator-trace-mislabel-fix.md; the earlier
+    name under-counted the case where `_WKV.generate()` itself already rendered via `sentence_facts` -- when it
+    did, `wkv_fact_sentence_enabled`'s own gate on the identical mechanism already ran first; this flag never
+    re-renders on top of that, and `answer_turn` labels that case `"spiking_clause"` too, from inside the
+    WKV-mouth try-block). A hit means the rendered clause becomes `raw` and
     NEITHER Qwen NOR the generation-time consensus veto runs for this turn (a guaranteed-correct single fact
     replaces a free-form paragraph that might fabricate around it) -- `generator` reports `"spiking_clause"`
     and the new `fact_clause_used` trace key is `True`. A miss (no lexicon-covered relation in `facts`, or the
@@ -567,10 +590,16 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
     `facts`, the assembled `state`, `gen_seconds`, `gen_time_honesty_used`, `gen_time_trace`, `generator` —
     `"wkv_mouth"`, `"spiking_clause"`, or `"qwen"` — `wkv_mouth_used`, and `fact_clause_used`). `known` is True
     iff the store held facts about the topic — the caller maps it to `abstained = not known` / `verified = known`
-    (an unknown topic is an honest abstain). `fact_clause_used` (see `fact_clause_fallback_enabled`) is True when
-    a known topic the WKV mouth did NOT handle was instead answered by the SAME brain-based fact->sentence render
-    the WKV mouth's own `sentence_facts` path uses — closing the much larger Qwen-routed known-topic grounding
-    regression `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured."""
+    (an unknown topic is an honest abstain). ALL THREE of `generator`/`wkv_mouth_used`/`fact_clause_used` follow
+    the ACTUAL PRODUCER of `raw`, independent of which internal try-block reached it (fixed 2026-09-04, see
+    research/findings/2026-09-04-generator-trace-mislabel-fix.md): `wkv_mouth_used` is True only when the
+    genuine WKV/linattn free-gen spiking decode wrote `raw`; `fact_clause_used` (see `fact_clause_fallback_enabled`)
+    is True whenever the SAME brain-based fact->sentence render (`render_fact_sentence`, the already-6-seed-GO
+    `SpikingClauseProducer`) wrote `raw` instead — whether reached from the WKV mouth's OWN `sentence_facts`
+    path (the mouth was attempted, and it happened to render via that mechanism) or the separate fact-clause
+    FALLBACK below (the mouth was never attempted, or attempted-but-declined) — closing the much larger
+    Qwen-routed known-topic grounding regression
+    `research/findings/2026-09-01-open-ended-bundle-moat-safety-soak-fabrication-delta.md` measured."""
     by_agent = build_index(ltm_bundle, brain_bundle)
     topic = extract_topic(msg)
     facts = retrieve(by_agent, topic)
@@ -591,6 +620,15 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
     # any exception from the WKV path: falls straight through to the existing Qwen path, unchanged -- this branch
     # can only ADD a generator choice, never remove or alter the fallback.
     wkv_used = False
+    # `wkv_attempted` (2026-09-04, see the `generator`-trace-mislabel fix below): True whenever `_WKV.generate()`
+    # itself successfully returned `raw` -- via EITHER of ITS OWN two internal branches (the genuine WKV/linattn
+    # free-gen spiking decode, OR its own `sentence_facts`-driven `render_fact_sentence` call, see that
+    # function's `trace` parameter). This gates the FACT-CLAUSE FALLBACK block below (never re-render when the
+    # WKV call already produced `raw` by ANY mechanism) and is DELIBERATELY SEPARATE from `wkv_used`, which now
+    # means only "the free-gen spiking decode was the actual producer" -- see the root-cause note at the
+    # `wkv_trace` check below.
+    wkv_attempted = False
+    fact_clause_used = False
     generator_name = "qwen"
     if wkv_mouth_enabled():
         try:
@@ -621,26 +659,47 @@ def answer_turn(msg: str, warm_faculty, valence: float, arousal: float, *,
                 # `wkv_mouth_generator._apply_affect_bias`); it never changes behavior when the organ reads
                 # neutral (including under `BRAIN_AFFECT_LESION=1`, which clamps the organ's differential -- and
                 # therefore this `valence` -- to exactly 0.0).
+                # `trace` (2026-09-04, the generator-trace-mislabel fix -- research/findings/2026-09-04-
+                # generator-trace-mislabel-fix.md): a fresh dict `_WKV.generate()` fills in with which of ITS
+                # OWN internal branches produced `raw`, so THIS caller no longer has to (wrongly) infer the
+                # producer from which of ITS OWN branches called `generate()`.
+                wkv_trace: dict = {}
                 raw, secs = _WKV.generate(msg, seed=seed, max_new_tokens=max_new_tokens,
                                           repetition_penalty=1.3, no_repeat_ngram_size=3,
                                           facts=ground_facts, sentence_facts=sentence_facts,
-                                          valence=float(valence), arousal=float(arousal))
-                wkv_used = True
-                generator_name = "wkv_mouth"
+                                          valence=float(valence), arousal=float(arousal), trace=wkv_trace)
+                wkv_attempted = True
+                if wkv_trace.get("sentence_fact_used"):
+                    # ROOT CAUSE OF THE 2026-09-03 MISLABEL: `_WKV.generate()` itself tried `sentence_facts`
+                    # FIRST (see `wkv_fact_sentence_enabled`) and its `render_fact_sentence` call found a
+                    # lexicon-covered relation -- the SAME SpikingClauseProducer mechanism the FACT-CLAUSE
+                    # FALLBACK block below wires in, reached from INSIDE this try-block instead. Under
+                    # `BRAIN_WKV_MOUTH_SCOPE=broad`, `in_vocab_scope` admits nearly every prompt, so this
+                    # branch (not the outer fallback below, which `wkv_attempted` now short-circuits) is what
+                    # actually fires on most known-topic turns -- the label must follow the PRODUCER, not
+                    # WHICH TRY-BLOCK called `generate()`.
+                    fact_clause_used = True
+                    generator_name = "spiking_clause"
+                else:
+                    wkv_used = True
+                    generator_name = "wkv_mouth"
         except Exception:
             wkv_used = False               # never let a WKV failure crash the turn -- degrade to the Qwen path
+            wkv_attempted = False
 
     # ── FACT-CLAUSE FALLBACK (board #112 residual, default-OFF) ──────────────────────────────────────────────
     # `BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK` truthy AND the topic is KNOWN AND the WKV mouth did NOT already
-    # produce `raw` above -> try the SAME brain-based fact->sentence render (`render_fact_sentence`) on the
-    # already-retrieved `facts`, independent of `in_vocab_scope` (that gate only scopes the checkpoint's OWN
-    # free-gen word decode; the clause render uses its own closed-class lexicon + the already-6-seed-GO
-    # SpikingClauseProducer). This is what reaches the real-traffic MAJORITY of known topics that route to
-    # Qwen -- see `fact_clause_fallback_enabled`'s docstring for the diagnosis this closes. Flag off, `known`
-    # False, `wkv_used` True, no lexicon-covered relation, or any exception: `fact_clause_used` stays False and
-    # control falls straight through to the UNCHANGED branch below -- this can only ADD a generator choice.
-    fact_clause_used = False
-    if not wkv_used and known and fact_clause_fallback_enabled():
+    # produce `raw` above (by EITHER of its own internal mechanisms -- `wkv_attempted`, see the block above,
+    # 2026-09-04; was `not wkv_used` before the generator-trace-mislabel fix, which under-counted the case where
+    # `_WKV.generate()` itself already rendered via `sentence_facts`) -> try the SAME brain-based fact->sentence
+    # render (`render_fact_sentence`) on the already-retrieved `facts`, independent of `in_vocab_scope` (that
+    # gate only scopes the checkpoint's OWN free-gen word decode; the clause render uses its own closed-class
+    # lexicon + the already-6-seed-GO SpikingClauseProducer). This is what reaches the real-traffic MAJORITY of
+    # known topics that route to Qwen -- see `fact_clause_fallback_enabled`'s docstring for the diagnosis this
+    # closes. Flag off, `known` False, `wkv_attempted` True, no lexicon-covered relation, or any exception:
+    # `fact_clause_used` stays False and control falls straight through to the UNCHANGED branch below -- this
+    # can only ADD a generator choice.
+    if not wkv_attempted and known and fact_clause_fallback_enabled():
         try:
             from webapp import wkv_mouth_generator as _WKVFC
             t0fc = time.time()

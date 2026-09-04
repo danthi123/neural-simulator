@@ -897,7 +897,7 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
              no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0,
              sentence_facts=None, valence: float = 0.0, arousal: float = 0.0,
-             affect_boost: float = 5.0) -> tuple[str, float]:
+             affect_boost: float = 5.0, trace: dict | None = None) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
@@ -967,14 +967,34 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     mood-congruent sentence rather than word-salad on that same adversarial prompt. HONEST RESIDUAL: this is
     ONE constant shared by both recurrence families and not independently re-tuned per checkpoint/topic; a
     production deployment that finds it too weak or too strong on real traffic should re-run that sweep rather
-    than assume this value transfers unconditionally."""
+    than assume this value transfers unconditionally.
+
+    `trace` (default `None`, additive -- 2026-09-04, closes the generator-trace mislabel the 2026-09-03 linattn
+    live verification found: see research/findings/2026-09-04-generator-trace-mislabel-fix.md): when the caller
+    passes a dict, `_run()` records `trace["sentence_fact_used"] = True` right before returning a
+    `render_fact_sentence` clause (the `sentence_facts` branch above fired), or `= False` right before falling
+    through to genuine `_free_gen`/`_free_gen_linattn` decode -- so the caller can tell WHICH mechanism actually
+    produced the returned text, independent of which of `generate()`'s own internal branches reached it. ROOT
+    CAUSE this closes: `webapp/open_ended_chat.py::answer_turn` previously inferred the producer purely from
+    WHICH CODE PATH called `generate()` (its own WKV-mouth try-block vs the separate fact-clause-fallback
+    branch) rather than from what `generate()` itself actually did -- so whenever `sentence_facts` found a
+    lexicon-covered relation INSIDE this call (the common case once `BRAIN_WKV_MOUTH_SCOPE=broad` routes nearly
+    every prompt through the WKV-mouth try-block first, since the outer fact-clause-fallback branch is then
+    never reached), the reply was genuinely written by `render_fact_sentence` but the caller labelled it
+    `generator="wkv_mouth"` regardless. `trace=None` (the default and every pre-existing call site) is an exact
+    no-op -- both `if trace is not None:` guards below never fire, so `generate()`'s behavior and return value
+    are BYTE-IDENTICAL to before this parameter existed."""
     t0 = time.time()
 
     def _run():
         if sentence_facts:
             sentence = render_fact_sentence(sentence_facts, seed=seed)
             if sentence is not None:
+                if trace is not None:
+                    trace["sentence_fact_used"] = True
                 return sentence
+        if trace is not None:
+            trace["sentence_fact_used"] = False
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None

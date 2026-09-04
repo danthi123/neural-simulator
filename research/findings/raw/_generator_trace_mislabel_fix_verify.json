@@ -1,0 +1,266 @@
+{
+  "runner": "_generator_trace_mislabel_fix_verify",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "rows": [
+    {
+      "case": "1_broad_scope_covered_relation_6seed",
+      "rows": [
+        {
+          "seed": 42,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        },
+        {
+          "seed": 43,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        },
+        {
+          "seed": 44,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        },
+        {
+          "seed": 100,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        },
+        {
+          "seed": 101,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        },
+        {
+          "seed": 102,
+          "generator": "spiking_clause",
+          "fact_clause_used": true,
+          "wkv_mouth_used": false,
+          "raw": "the Isaac Asimov works for the University of Boston",
+          "expected": "the Isaac Asimov works for the University of Boston",
+          "raw_matches_expected": true,
+          "ok": true
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "case": "2_vocab_scope_in_vocab_covered_relation",
+      "in_vocab_scope": true,
+      "generator": "spiking_clause",
+      "fact_clause_used": true,
+      "wkv_mouth_used": false,
+      "ok": true
+    },
+    {
+      "case": "3_vocab_scope_out_of_vocab_covered_relation_preexisting_correct",
+      "in_vocab_scope": false,
+      "generator": "spiking_clause",
+      "fact_clause_used": true,
+      "wkv_mouth_used": false,
+      "ok": true
+    },
+    {
+      "case": "4_uncovered_relation_genuine_free_gen",
+      "rows": [
+        {
+          "scope": "broad",
+          "generator": "wkv_mouth",
+          "wkv_mouth_used": true,
+          "fact_clause_used": false,
+          "ok": true
+        },
+        {
+          "scope": "vocab",
+          "generator": "wkv_mouth",
+          "wkv_mouth_used": true,
+          "fact_clause_used": false,
+          "ok": true
+        }
+      ],
+      "all_ok": true
+    },
+    {
+      "case": "5_unknown_topic_in_vocab",
+      "known": false,
+      "generator": "wkv_mouth",
+      "ok": true
+    },
+    {
+      "case": "6_out_of_vocab_unknown_qwen_fallback",
+      "in_vocab_scope": false,
+      "known": false,
+      "generator": "qwen",
+      "qwen_stub_fired": 1,
+      "ok": true
+    },
+    {
+      "case": "7_byte_identical_reply_content_across_scope",
+      "raw_vocab": "the Isaac Asimov works for the University of Boston",
+      "raw_broad": "the Isaac Asimov works for the University of Boston",
+      "answer_vocab": "the Isaac Asimov works for the University of Boston",
+      "answer_broad": "the Isaac Asimov works for the University of Boston",
+      "generator_vocab": "spiking_clause",
+      "generator_broad": "spiking_clause",
+      "ok": true
+    }
+  ],
+  "all_ok_by_case": {
+    "1_broad_scope_covered_relation_6seed": true,
+    "2_vocab_scope_in_vocab_covered_relation": true,
+    "3_vocab_scope_out_of_vocab_covered_relation_preexisting_correct": true,
+    "4_uncovered_relation_genuine_free_gen": true,
+    "5_unknown_topic_in_vocab": true,
+    "6_out_of_vocab_unknown_qwen_fallback": true,
+    "7_byte_identical_reply_content_across_scope": true
+  },
+  "verdict": {
+    "label": "generator-trace-mislabel fix: label follows the actual producer, reply content unchanged",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "case 1 -- broad-scope covered-relation traces spiking_clause, 6/6 seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 2 -- vocab-scope in-vocab covered-relation ALSO traces spiking_clause (the ~3% residual)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 3 -- pre-existing-correct cell unaffected (vocab-scope out-of-vocab fallback)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 4 -- uncovered-relation genuine free-gen still traces wkv_mouth (no over-correction)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 5 -- unknown-topic in-vocab traces wkv_mouth",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 6 -- out-of-vocab+unknown degrades to qwen, unaffected",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 7 -- reply content byte-identical across scope for the same fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  },
+  "verdict_preconditions": {
+    "label": "generator-trace-mislabel fix: label follows the actual producer, reply content unchanged",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "case 1 -- broad-scope covered-relation traces spiking_clause, 6/6 seeds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 2 -- vocab-scope in-vocab covered-relation ALSO traces spiking_clause (the ~3% residual)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 3 -- pre-existing-correct cell unaffected (vocab-scope out-of-vocab fallback)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 4 -- uncovered-relation genuine free-gen still traces wkv_mouth (no over-correction)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 5 -- unknown-topic in-vocab traces wkv_mouth",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 6 -- out-of-vocab+unknown degrades to qwen, unaffected",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "case 7 -- reply content byte-identical across scope for the same fact",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}
