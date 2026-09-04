@@ -1,0 +1,372 @@
+{
+  "runner": "_wkv_mouth_linattn_broad_scope_coverage_derisk",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "bpe_path": "/home/dant123/Projects/sim/.claude/worktrees/agent-ade682452cd809ba1/bridges/wkv_ckpt/wkv_bpe8k.json",
+  "bpe_vocab_size": 8001,
+  "scope_mode_today": "broad admits every prompt unconditionally (webapp.wkv_mouth_generator.scope_mode placeholder) -- this measurement is what that placeholder's own docstring named as the missing input.",
+  "n_probe_utterances": 124,
+  "coverage": {
+    "per_group": {
+      "conversational_register": {
+        "n_utterances": 14,
+        "asfed_token_unk_rate": 0.193,
+        "asfed_token_coverage_pct": 80.7,
+        "lowercased_token_unk_rate": 0.1148,
+        "lowercased_token_coverage_pct": 88.52,
+        "content_word_hard_oov_rate": 0.0,
+        "content_word_coverage_pct": 100.0,
+        "content_word_whole_word_pct": 81.67,
+        "mean_pieces_per_content_word": 1.267,
+        "mean_whole_word_frac_per_prompt": 0.7439,
+        "serve_fraction_at_cutoff": {
+          "whole_word_frac>=1.0": {
+            "n_serve": 4,
+            "frac_serve": 0.2857
+          },
+          "whole_word_frac>=0.9": {
+            "n_serve": 4,
+            "frac_serve": 0.2857
+          },
+          "whole_word_frac>=0.8": {
+            "n_serve": 7,
+            "frac_serve": 0.5
+          },
+          "whole_word_frac>=0.7": {
+            "n_serve": 8,
+            "frac_serve": 0.5714
+          },
+          "whole_word_frac>=0.6": {
+            "n_serve": 12,
+            "frac_serve": 0.8571
+          },
+          "whole_word_frac>=0.5": {
+            "n_serve": 13,
+            "frac_serve": 0.9286
+          },
+          "whole_word_frac>=0.4": {
+            "n_serve": 13,
+            "frac_serve": 0.9286
+          },
+          "whole_word_frac>=0.3": {
+            "n_serve": 13,
+            "frac_serve": 0.9286
+          },
+          "whole_word_frac>=0.0": {
+            "n_serve": 14,
+            "frac_serve": 1.0
+          }
+        }
+      },
+      "everyday_real_world_topics": {
+        "n_utterances": 10,
+        "asfed_token_unk_rate": 0.2198,
+        "asfed_token_coverage_pct": 78.02,
+        "lowercased_token_unk_rate": 0.1235,
+        "lowercased_token_coverage_pct": 87.65,
+        "content_word_hard_oov_rate": 0.0,
+        "content_word_coverage_pct": 100.0,
+        "content_word_whole_word_pct": 87.5,
+        "mean_pieces_per_content_word": 1.3,
+        "mean_whole_word_frac_per_prompt": 0.875,
+        "serve_fraction_at_cutoff": {
+          "whole_word_frac>=1.0": {
+            "n_serve": 5,
+            "frac_serve": 0.5
+          },
+          "whole_word_frac>=0.9": {
+            "n_serve": 5,
+            "frac_serve": 0.5
+          },
+          "whole_word_frac>=0.8": {
+            "n_serve": 5,
+            "frac_serve": 0.5
+          },
+          "whole_word_frac>=0.7": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.6": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.5": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.4": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.3": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.0": {
+            "n_serve": 10,
+            "frac_serve": 1.0
+          }
+        }
+      },
+      "wikidata_known_agents": {
+        "n_utterances": 100,
+        "asfed_token_unk_rate": 0.3007,
+        "asfed_token_coverage_pct": 69.93,
+        "lowercased_token_unk_rate": 0.0957,
+        "lowercased_token_coverage_pct": 90.43,
+        "content_word_hard_oov_rate": 0.0,
+        "content_word_coverage_pct": 100.0,
+        "content_word_whole_word_pct": 76.78,
+        "mean_pieces_per_content_word": 1.547,
+        "mean_whole_word_frac_per_prompt": 0.7654,
+        "serve_fraction_at_cutoff": {
+          "whole_word_frac>=1.0": {
+            "n_serve": 13,
+            "frac_serve": 0.13
+          },
+          "whole_word_frac>=0.9": {
+            "n_serve": 13,
+            "frac_serve": 0.13
+          },
+          "whole_word_frac>=0.8": {
+            "n_serve": 64,
+            "frac_serve": 0.64
+          },
+          "whole_word_frac>=0.7": {
+            "n_serve": 67,
+            "frac_serve": 0.67
+          },
+          "whole_word_frac>=0.6": {
+            "n_serve": 94,
+            "frac_serve": 0.94
+          },
+          "whole_word_frac>=0.5": {
+            "n_serve": 100,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.4": {
+            "n_serve": 100,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.3": {
+            "n_serve": 100,
+            "frac_serve": 1.0
+          },
+          "whole_word_frac>=0.0": {
+            "n_serve": 100,
+            "frac_serve": 1.0
+          }
+        }
+      }
+    },
+    "overall": {
+      "n_utterances": 124,
+      "asfed_token_unk_rate": 0.2833,
+      "asfed_token_coverage_pct": 71.67,
+      "lowercased_token_unk_rate": 0.1001,
+      "lowercased_token_coverage_pct": 89.99,
+      "content_word_hard_oov_rate": 0.0,
+      "content_word_coverage_pct": 100.0,
+      "content_word_whole_word_pct": 77.9,
+      "mean_pieces_per_content_word": 1.505,
+      "mean_whole_word_frac_per_prompt": 0.7718,
+      "serve_fraction_at_cutoff": {
+        "whole_word_frac>=1.0": {
+          "n_serve": 22,
+          "frac_serve": 0.1774
+        },
+        "whole_word_frac>=0.9": {
+          "n_serve": 22,
+          "frac_serve": 0.1774
+        },
+        "whole_word_frac>=0.8": {
+          "n_serve": 76,
+          "frac_serve": 0.6129
+        },
+        "whole_word_frac>=0.7": {
+          "n_serve": 85,
+          "frac_serve": 0.6855
+        },
+        "whole_word_frac>=0.6": {
+          "n_serve": 116,
+          "frac_serve": 0.9355
+        },
+        "whole_word_frac>=0.5": {
+          "n_serve": 123,
+          "frac_serve": 0.9919
+        },
+        "whole_word_frac>=0.4": {
+          "n_serve": 123,
+          "frac_serve": 0.9919
+        },
+        "whole_word_frac>=0.3": {
+          "n_serve": 123,
+          "frac_serve": 0.9919
+        },
+        "whole_word_frac>=0.0": {
+          "n_serve": 124,
+          "frac_serve": 1.0
+        }
+      }
+    }
+  },
+  "cutoffs_tested": [
+    1.0,
+    0.9,
+    0.8,
+    0.7,
+    0.6,
+    0.5,
+    0.4,
+    0.3,
+    0.0
+  ],
+  "indomain_reference": {
+    "n_sentences": 20,
+    "sentences_sample": [
+      "irrigation (adding water from rivers) can pollute water and lower the water table.",
+      "these problems have all got solutions, and modern young farmers usually have a good technical education.",
+      "farmers select plants with better yield, taste, and nutritional value."
+    ]
+  },
+  "teacher_forced_by_seed": {
+    "42": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed42.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 10487.62,
+      "median_asfed_ppl": 8100.79,
+      "mean_lowercased_ppl": 2080.04,
+      "median_lowercased_ppl": 1287.66,
+      "mean_indomain_reference_ppl": 885.67
+    },
+    "43": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed43.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 16375.71,
+      "median_asfed_ppl": 10881.25,
+      "mean_lowercased_ppl": 2293.34,
+      "median_lowercased_ppl": 1380.12,
+      "mean_indomain_reference_ppl": 908.39
+    },
+    "44": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed44.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 10814.67,
+      "median_asfed_ppl": 9052.19,
+      "mean_lowercased_ppl": 2368.87,
+      "median_lowercased_ppl": 1644.22,
+      "mean_indomain_reference_ppl": 1049.44
+    },
+    "100": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed100.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 13986.04,
+      "median_asfed_ppl": 9703.28,
+      "mean_lowercased_ppl": 2508.04,
+      "median_lowercased_ppl": 1392.4,
+      "mean_indomain_reference_ppl": 852.92
+    },
+    "101": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed101.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 11790.6,
+      "median_asfed_ppl": 8938.55,
+      "mean_lowercased_ppl": 2340.82,
+      "median_lowercased_ppl": 1401.15,
+      "mean_indomain_reference_ppl": 912.91
+    },
+    "102": {
+      "checkpoint_path": "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed102.npz",
+      "checkpoint_V": 8001,
+      "checkpoint_d_model": 192,
+      "checkpoint_unk_idx_detected": -1,
+      "mean_asfed_ppl": 13509.25,
+      "median_asfed_ppl": 10564.29,
+      "mean_lowercased_ppl": 2110.76,
+      "median_lowercased_ppl": 1296.06,
+      "mean_indomain_reference_ppl": 1020.68
+    }
+  },
+  "vocab_size_seed_invariant": true,
+  "vocab_sizes_seen": [
+    8001
+  ],
+  "case_fold_impact": {
+    "mean_asfed_ppl_across_probe_and_seeds": 12827.32,
+    "mean_lowercased_ppl_across_probe_and_seeds": 2283.64,
+    "mean_indomain_reference_ppl_across_seeds": 938.34,
+    "interpretation": "asfed >> lowercased implies the capital-letter/punctuation UNK artifact (module docstring) -- not genuine topic mismatch -- is the dominant driver of asfed's poor score; lowercased vs indomain_reference isolates the REMAINING register/vocabulary gap once that artifact is removed."
+  },
+  "coverage_vs_confidence_buckets": [
+    {
+      "whole_word_frac_range": "[1.0,1.0]",
+      "n": 22,
+      "mean_lowercased_ppl_across_6seed": 3874.16,
+      "median_lowercased_ppl_across_6seed": 2909.65,
+      "min_ppl": 569.01,
+      "max_ppl": 10856.07
+    },
+    {
+      "whole_word_frac_range": "[0.9,0.999]",
+      "n": 0,
+      "mean_lowercased_ppl": null
+    },
+    {
+      "whole_word_frac_range": "[0.7,0.9]",
+      "n": 63,
+      "mean_lowercased_ppl_across_6seed": 2239.86,
+      "median_lowercased_ppl_across_6seed": 1338.98,
+      "min_ppl": 319.31,
+      "max_ppl": 17133.65
+    },
+    {
+      "whole_word_frac_range": "[0.5,0.7]",
+      "n": 38,
+      "mean_lowercased_ppl_across_6seed": 1465.55,
+      "median_lowercased_ppl_across_6seed": 1098.04,
+      "min_ppl": 273.65,
+      "max_ppl": 9387.82
+    },
+    {
+      "whole_word_frac_range": "[0.0,0.5]",
+      "n": 1,
+      "mean_lowercased_ppl_across_6seed": 1138.63,
+      "median_lowercased_ppl_across_6seed": 1138.63,
+      "min_ppl": 1138.63,
+      "max_ppl": 1138.63
+    }
+  ],
+  "per_group_lowercased_ppl": {
+    "conversational_register": {
+      "n": 14,
+      "mean_lowercased_ppl_across_6seed": 2816.19,
+      "median_lowercased_ppl_across_6seed": 1138.63
+    },
+    "everyday_real_world_topics": {
+      "n": 10,
+      "mean_lowercased_ppl_across_6seed": 2890.62,
+      "median_lowercased_ppl_across_6seed": 2492.1
+    },
+    "wikidata_known_agents": {
+      "n": 100,
+      "mean_lowercased_ppl_across_6seed": 2148.39,
+      "median_lowercased_ppl_across_6seed": 1409.37
+    }
+  }
+}
