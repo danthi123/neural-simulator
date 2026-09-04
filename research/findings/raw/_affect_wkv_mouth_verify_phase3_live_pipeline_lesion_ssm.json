@@ -1,0 +1,114 @@
+{
+ "runner": "affect_wkv_mouth_verify_phase3 (ad hoc, hand-authored)",
+ "seed": 42,
+ "backend": "cupy",
+ "recurrence": "ssm (shipped default, unset)",
+ "rows": {
+  "priming_turn": {
+   "msg": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.03888888888888889,
+    "valence_sign": "+",
+    "tone_level": 2,
+    "tone_token": "gladly",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 3
+    },
+    "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+    "appraisal_valence": 0.47499999999999987,
+    "appraisal_arousal": 0.39999999999999997,
+    "appraisal_hits": [
+     "thrilled",
+     "overjoyed",
+     "wonderful"
+    ],
+    "pos_rate": 0.03888888888888889,
+    "neg_rate": 0.0
+   }
+  },
+  "lesion_test": {
+   "topic_msg": "Tell me about frank_lincoln_wright",
+   "generator": {
+    "lesion0": "wkv_mouth",
+    "lesion1": "wkv_mouth",
+    "lesion0_repeat": "wkv_mouth"
+   },
+   "wkv_used": {
+    "lesion0": true,
+    "lesion1": true,
+    "lesion0_repeat": true
+   },
+   "affect": {
+    "lesion0": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.03805555555555556,
+     "valence_sign": "+",
+     "tone_level": 2,
+     "tone_token": "gladly",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 3
+     },
+     "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+     "appraisal_valence": 0.47499999999999987,
+     "appraisal_arousal": 0.39999999999999997,
+     "appraisal_hits": [],
+     "pos_rate": 0.03805555555555556,
+     "neg_rate": 0.0
+    },
+    "lesion1": {
+     "on": true,
+     "lesioned": true,
+     "composer": "onebrain",
+     "differential": 0.0,
+     "valence_sign": "0",
+     "tone_level": 0,
+     "tone_token": "",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 2
+     },
+     "manner_template": "",
+     "appraisal_valence": 0.47499999999999987,
+     "appraisal_arousal": 0.39999999999999997,
+     "appraisal_hits": [],
+     "pos_rate": 0.0,
+     "neg_rate": 0.0
+    },
+    "lesion0_repeat": {
+     "on": true,
+     "lesioned": false,
+     "composer": "onebrain",
+     "differential": 0.03805555555555556,
+     "valence_sign": "+",
+     "tone_level": 2,
+     "tone_token": "gladly",
+     "forthcomingness": {
+      "max_sentences": 4,
+      "max_elaborations": 3
+     },
+     "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+     "appraisal_valence": 0.47499999999999987,
+     "appraisal_arousal": 0.39999999999999997,
+     "appraisal_hits": [],
+     "pos_rate": 0.03805555555555556,
+     "neg_rate": 0.0
+    }
+   },
+   "raw": {
+    "lesion0": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very excited to play here and have fun with the new ball but it was too hard and he was very sad",
+    "lesion1": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very fast and the puzzle at the park tim saw a big red and shiny on the ground and the bird became",
+    "lesion0_repeat": "tell me about the big red ball and the dog were very happy and thanked the bird for helping him to help him feel better but he was too scared of the big tree and the little girl were playing in the park with their friends and they played together every day long and had lots of fun in the end of the day tim and sue were very surprised but happy to see a big tree with the other kids saw the big green field with and his friends were very excited to play here and have fun with the new ball but it was too hard and he was very sad"
+   },
+   "raw_identical_lesion0_vs_lesion1": false,
+   "raw_identical_lesion0_vs_lesion0_repeat": true
+  }
+ },
+ "wall_seconds": 184.4
+}

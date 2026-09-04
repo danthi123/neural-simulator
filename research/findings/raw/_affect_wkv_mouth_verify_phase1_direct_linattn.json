@@ -1,0 +1,23 @@
+{
+ "prompt": "Tell me about it.",
+ "seed": 42,
+ "max_new_tokens": 40,
+ "row": {
+  "label": "linattn",
+  "recurrence_mode": "linattn",
+  "tokenizer_mode": "bpe",
+  "affect_ids_count": 57,
+  "affect_ids_pos": 34,
+  "affect_ids_neg": 23,
+  "text_neutral_v0": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and became deputy leader of the",
+  "text_valence_lo_m0.9": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and lost his seat at the",
+  "text_valence_hi_p0.9": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and became deputy leader of the",
+  "text_arousal_lo_0.05": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and became deputy leader of the",
+  "text_arousal_hi_0.95": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and became deputy leader of the",
+  "text_killswitch_at_hi_valence": "ell me about it m i e g u s state of texas in the united states on april it was a member of the national assembly from to he served as president of the senate and became deputy leader of the",
+  "lo_vs_hi_differ": true,
+  "neutral_vs_hi_differ": false,
+  "lowaro_vs_hiaro_differ": false,
+  "killswitch_matches_neutral": true
+ }
+}

@@ -663,10 +663,123 @@ def _apply_repetition_controls(lg: np.ndarray, gen: list, repetition_penalty: fl
     return lg
 
 
+# ── AFFECT coupling (2026-09-03, closes the affect-hollow gap named by research/findings/2026-09-03-linattn-
+# mouth-live-brain-grounded-honest-verification-PARTIAL-affect-gap.md (ii-c): `answer_turn` already assembles a
+# LIVE valence/arousal read off the real spiking affect organ (`research.runners.affect_production_organ.
+# AffectProductionOrgan.read_differential`, `_valence_from_differential`) into `state`/`system`/`user` for the
+# Qwen/gen-time-veto paths, but never passed it to `_WKV.generate()` at all -- `_free_gen`/`_free_gen_linattn`
+# took no affect parameter, full stop (a NEVER-IMPLEMENTED gap for the WKV-mouth family, not a dropped wire).
+# THE MECHANISM (the SAME decode-control category as `_apply_fact_boost`/`_apply_repetition_controls` above --
+# an additive bias on the FULL-vocab logits, applied BEFORE the top-k cut, so the genuine few-spike Izhikevich
+# soft-WTA `reader.read(p)` still makes the actual selection among the biased candidates; the read mechanism
+# itself is untouched, only which candidates reach it shifts): every checkpoint-vocabulary word that is a
+# strongly affect-bearing word in the SAME Warriner-norm-gated, DR-2-learned-value lexicon `research.runners.
+# affect_production_organ.appraise_text` already uses to appraise the LIVE conversational turn (reused BY
+# IMPORT, not re-derived) gets a signed per-word valence in [-1,1]. The bias added to that word's logit is
+# `affect_boost * valence * clip(arousal,0,1) * word_valence` -- POSITIVE (favored) when the turn's mood and the
+# word's own valence AGREE in sign (mood-CONGRUENT production, the same direction Bower 1981's mood-congruent
+# recall/production effect describes), scaled by arousal as a GAIN term (arousal amplifies an existing
+# directional signal; it supplies no direction of its own -- the same shape as LC-noradrenergic arousal-
+# dependent gain modulation, Aston-Jones & Cohen 2005, "An integrative theory of locus coeruleus-norepinephrine
+# function," Annu. Rev. Neurosci. 28:403-450). `valence == 0.0` (the parameter's own default, and EXACTLY what
+# `AffectProductionOrgan.read_differential(..., lesion=True)` clamps the organ's differential -- hence the
+# mapped valence -- to, see `affect_production_organ.py`'s own `set_transmission_gate("affect_out", 0.0)`)
+# collapses this to an EXACT no-op regardless of arousal, which is what makes `BRAIN_AFFECT_LESION=1` genuinely
+# lesion this coupling's effect, not merely dampen it.
+#
+# HONEST SCOPE: this is HOST decode-territory arithmetic over an already-neurally-sourced signal (the valence/
+# arousal floats themselves ARE the real organ's read, not invented here) -- the SAME category the module
+# docstring already claims for `_apply_fact_boost`. It is a TRACKED SHORTCUT toward a genuinely neural version
+# (e.g. a neuromodulatory gain/threshold term inside `FewSpikeWordRead`'s own Izhikevich population, so arousal
+# and valence act on the SPIKING read mechanism itself rather than the logits feeding it) -- named, not resolved,
+# here; see the finding's "Honest residual" section. It does NOT touch `render_fact_sentence`'s closed-class
+# fact-clause path (facts stay tone-neutral by construction, matching Gate-B's own honesty floor: affect colors
+# manner, never the certainty band) -- only `_free_gen`/`_free_gen_linattn`'s free generation.
+_AFFECT_ENV = "BRAIN_WKV_MOUTH_AFFECT"
+
+
+def wkv_mouth_affect_enabled() -> bool:
+    """Default-ON (this closes a named production gap, not an opt-in trial). `BRAIN_WKV_MOUTH_AFFECT` in
+    {0,false,no,off} -> an explicit OFF, reverting `generate()`'s affect coupling to a hard no-op -- combined
+    with the parameter default `valence=0.0`, `arousal=0.0`, this is BYTE-IDENTICAL to `generate()`'s behavior
+    before this coupling existed (no import of the affect lexicon, no bias ever computed)."""
+    v = os.environ.get(_AFFECT_ENV)
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
+
+
+_AFFECT_BIAS_LOCK = threading.Lock()
+_AFFECT_BIAS_CACHE: dict[int, dict] = {}
+
+
+def _affect_bias_ids(seed: int) -> dict:
+    """{token_id: signed_word_valence in [-1,1]} for every word in the checkpoint's OWN vocabulary that is a
+    strongly affect-bearing word per `research.runners.affect_production_organ`'s existing salience-gated
+    lexicon (the Warriner-norm gate + the DR-2 LEARNED per-word value when `affect_production_organ.
+    dr2_enabled()`) -- REUSE of the shipped Gate-B appraisal artifact (the SAME map that already appraises the
+    live user message for the strict/rich-path mood coupling), not a fresh host sentiment formula invented for
+    this module. Pure dict build over the checkpoint's ~V words (no RNG effect); cached per seed, mirroring
+    `_get_readout`'s own cache discipline. Lazy-imports `affect_production_organ` (only when this coupling is
+    actually enabled and a non-neutral valence is in play, see `generate()`'s `_run()`) so the default-OFF /
+    neutral-valence path never even imports it."""
+    hit = _AFFECT_BIAS_CACHE.get(seed)
+    if hit is not None:
+        return hit
+    with _AFFECT_BIAS_LOCK:
+        hit = _AFFECT_BIAS_CACHE.get(seed)
+        if hit is not None:
+            return hit
+        import research.runners.affect_production_organ as _AO
+        ro, _vocab, _word_to_id = _get_readout(seed)
+        learned = _AO._get_learned_valence() if _AO.dr2_enabled() else {}
+        out: dict = {}
+        for tid, w in enumerate(ro.words):
+            raw = str(w).lower()
+            # BPE word-boundary normalization (2026-09-03): a BPE-vocabulary checkpoint (`tokenizer_mode()==
+            # "bpe"`) spells a whole word that survived merging intact as e.g. "happy</w>"/"angry</w>", NOT
+            # "happy"/"angry" -- confirmed empirically against the shipped linattn checkpoint's own vocabulary
+            # (`happy</w>`, `angry</w>`, `good</w>`, `bad</w>`, `love</w>` all present; a naive un-stripped
+            # lookup would silently match ZERO of them, the exact BPE-vs-word-level mismatch class
+            # `fact_grounding_ids`'s own docstring already names for the fact-boost lever). A word-level
+            # checkpoint's vocabulary never contains this marker, so the strip is a no-op there -- one lookup
+            # path serves both recurrence families. A content word split across MULTIPLE subwords (e.g. a
+            # hypothetical "af" + "raid</w>") still misses -- an honest partial-coverage residual, the same
+            # shape as the fact-boost lever's own named limitation, not resolved here.
+            lookup = raw[:-4] if raw.endswith("</w>") else raw
+            if not lookup or lookup in _AO.STOP or lookup not in _AO.WARRINER:
+                continue
+            v9, a9 = _AO.WARRINER[lookup]
+            if abs(v9 - 5.0) < _AO._STRONG_MARGIN:      # not strongly affective -> ignore (mirrors appraise_text)
+                continue
+            v9l, _a9l = learned.get(lookup, (v9, a9))
+            out[tid] = float(max(-1.0, min(1.0, (v9l - 5.0) / 4.0)))
+        hit = out
+        _AFFECT_BIAS_CACHE[seed] = hit
+        return hit
+
+
+def _apply_affect_bias(lg: np.ndarray, affect_ids, valence: float, arousal: float, boost: float) -> np.ndarray:
+    """Additive decode-time logit bias toward mood-congruent in-vocab affect-bearing words -- see the module
+    comment block above this function for the full mechanism + biology citations. Returns `lg` UNCHANGED (same
+    object, no allocation) when `affect_ids` is empty, OR `boost == 0.0`, OR `valence == 0.0` -- the last
+    condition is what makes `BRAIN_AFFECT_LESION=1` (which clamps the real organ's differential, hence the
+    mapped valence, to exactly 0.0) collapse this coupling to an EXACT no-op regardless of the host-appraised
+    arousal that turn (arousal alone supplies no direction, see the mechanism comment above)."""
+    if not affect_ids or boost == 0.0 or valence == 0.0:
+        return lg
+    lg = lg.copy()
+    gain = float(boost) * float(valence) * max(0.0, min(1.0, float(arousal)))
+    for t, wv in affect_ids.items():
+        lg[t] += gain * wv
+    return lg
+
+
 # ── generation (reuses WKVReadout + FewSpikeWordRead verbatim; only the driving loop is new) ───────────────────────
 def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int, gen_temp: float,
               repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
-              fact_boost_ids=None, fact_boost: float = 0.0, bpe=None):
+              fact_boost_ids=None, fact_boost: float = 0.0,
+              affect_ids=None, valence: float = 0.0, arousal: float = 0.0, affect_boost: float = 0.0, bpe=None):
     """`bpe` (default `None`, added 2026-09-03): a `sim.bpe_tokenizer.BPETokenizer` instance (see
     `_get_bpe_tokenizer`) for BPE-vocabulary checkpoints. `bpe=None` (the default, and every pre-existing call
     site) runs the EXACT SAME two lines that existed before this parameter did -- the word-level prompt-id
@@ -699,6 +812,11 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
         # cannot be un-banned by the boost (an additive `+boost` cannot overcome a `-1e30` hard ban). No-op
         # (same object, no allocation) when `fact_boost_ids` is empty or `fact_boost == 0.0`.
         lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
+        # affect bias (2026-09-03, closes the affect-hollow gap -- see the module comment block above
+        # `_apply_affect_bias`): applied AFTER fact-boost/repetition, same full-vocab logits, same "additive,
+        # cannot un-ban a repetition-suppressed token" composition rule. No-op when `affect_ids` is empty,
+        # `affect_boost == 0.0`, or `valence == 0.0` (the lesioned-organ / neutral-mood case).
+        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -727,10 +845,14 @@ def _free_gen(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tok
 # array-pair calls). `_free_gen` itself is completely untouched by this function's existence.
 def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max_new_tokens: int, topk: int,
                        gen_temp: float, repetition_penalty: float = 1.0, no_repeat_ngram_size: int = 0,
-                       fact_boost_ids=None, fact_boost: float = 0.0, bpe=None):
+                       fact_boost_ids=None, fact_boost: float = 0.0,
+                       affect_ids=None, valence: float = 0.0, arousal: float = 0.0, affect_boost: float = 0.0,
+                       bpe=None):
     """`LinAttnReadout`'s own driving loop -- see the module docstring block above `recurrence_mode` for why this
-    exists as a twin of `_free_gen` rather than a generalization of it. `bpe`/prompt-encode/final-decode mirror
-    `_free_gen`'s own handling exactly (see that function's docstring)."""
+    exists as a twin of `_free_gen` rather than a generalization of it. `bpe`/prompt-encode/final-decode, and the
+    affect-bias coupling (2026-09-03, see `_apply_affect_bias`), mirror `_free_gen`'s own handling exactly (see
+    that function's docstring) -- this is what closes the affect-hollow gap for BOTH recurrence families from
+    ONE shared mechanism, not just the `ssm` default."""
     if bpe is not None:
         pid = bpe.encode(prompt or "")
     else:
@@ -750,6 +872,7 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
             lg[ro.unk_idx] = -1e30
         lg = _apply_repetition_controls(lg, gen, repetition_penalty, no_repeat_ngram_size)
         lg = _apply_fact_boost(lg, fact_boost_ids, fact_boost)
+        lg = _apply_affect_bias(lg, affect_ids, valence, arousal, affect_boost)
         cand = np.argpartition(-lg, topk - 1)[:topk]
         cand = cand[np.argsort(-lg[cand])]
         p = _softmax(lg[cand] / gen_temp)
@@ -773,7 +896,8 @@ def _free_gen_linattn(ro, vocab_ids_by_word, reader, prompt: str, seed: int, max
 def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 64, read_window: int = 40,
              pop: int = 8, gen_temp: float = 0.8, repetition_penalty: float = 1.0,
              no_repeat_ngram_size: int = 0, facts=None, fact_boost: float = 6.0,
-             sentence_facts=None) -> tuple[str, float]:
+             sentence_facts=None, valence: float = 0.0, arousal: float = 0.0,
+             affect_boost: float = 5.0) -> tuple[str, float]:
     """Free-generate a continuation of `prompt` via the GENUINE few-spike Izhikevich spiking soft-WTA word decode
     (`FewSpikeWordRead.read`, population-coded winner read off `cp_firing_states` over `read_window` Izhikevich
     steps -- NOT a host argmax/softmax-sample; reused verbatim from the GO-verified
@@ -814,7 +938,36 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
     default) is BYTE-IDENTICAL to before this env var existed -- `_get_readout` builds `WKVReadout` and `_run()`
     drives it through `_free_gen`, unchanged. 'linattn' builds `LinAttnReadout` instead and drives it through
     `_free_gen_linattn` -- a different, mutually-exclusive recurrence family (never silently mixed with 'ssm')
-    reading a `--recurrence linattn --save-ssm` checkpoint (point `BRAIN_WKV_MOUTH_CKPT` at it)."""
+    reading a `--recurrence linattn --save-ssm` checkpoint (point `BRAIN_WKV_MOUTH_CKPT` at it).
+
+    AFFECT (`valence`/`arousal`, default 0.0/0.0, `affect_boost` default 5.0 but INERT while `valence == 0.0` --
+    2026-09-03, closes the affect-hollow gap `research/findings/2026-09-03-linattn-mouth-live-brain-grounded-
+    honest-verification-PARTIAL-affect-gap.md` (ii-c) measured: `_free_gen`/`_free_gen_linattn` took NO affect
+    parameter at all before this triple existed, so the real spiking affect organ's live valence/arousal read,
+    already assembled by `answer_turn` into `state`/`system`/`user`, never reached this generator). See
+    `_apply_affect_bias`'s own docstring for the mechanism (a mood-congruent additive logit bias over a Warriner-
+    gated, DR-2-learned-value word lexicon, gain-scaled by arousal, applied in the SAME decode-control category
+    as `fact_boost`/the repetition guards -- the spiking `reader.read(p)` selection itself is untouched).
+    `valence=0.0` (the default, and what `BRAIN_AFFECT_LESION=1` clamps the real organ's read to) is an EXACT
+    no-op -- `generate()` is byte-identical to before this triple existed. Gated additionally by
+    `wkv_mouth_affect_enabled()` (`BRAIN_WKV_MOUTH_AFFECT`, default-ON, an independent kill switch).
+
+    `affect_boost=5.0` is an EMPIRICAL CALIBRATION (2026-09-03, `research/findings/raw/_affect_wkv_mouth_verify_
+    phase1_direct_linattn.json` + the boost-sweep in the finding's own provenance), not a guess: measured
+    directly on the HARDER of the two checkpoint families (the `linattn`/BPE V=8001 general-vocabulary
+    checkpoint, where an off-topic prompt's natural top-64 candidates rarely include an affect word at all --
+    the `ssm`/TinyStories V=1000 checkpoint separates cleanly even at a smaller boost, since affect words are
+    already near-plausible children's-story continuations there). Below ~5, the bias is too small to lift a
+    buried affect-tagged token into the top-`topk` candidates on an adversarial (topic-empty) linattn prompt --
+    measured byte-identical across a `valence=-0.9` vs `+0.9` sweep at `affect_boost=4.0`. At `affect_boost>=8`,
+    the SAME sweep instead collapses into a repetitive word-salad dominated by 2-3 of the highest-baseline
+    affect words ("love love love ... dance dance dance" / "pain pain pain ... dead pain kill") -- a real
+    fluency cost, the same shape (not the same severity) as the pre-existing `fact_boost=6.0` NO-GO on this
+    checkpoint family. `5.0` is the empirically-largest value tested that still produced a genuinely coherent,
+    mood-congruent sentence rather than word-salad on that same adversarial prompt. HONEST RESIDUAL: this is
+    ONE constant shared by both recurrence families and not independently re-tuned per checkpoint/topic; a
+    production deployment that finds it too weak or too strong on real traffic should re-run that sweep rather
+    than assume this value transfers unconditionally."""
     t0 = time.time()
 
     def _run():
@@ -825,11 +978,14 @@ def generate(prompt: str, seed: int = 42, max_new_tokens: int = 60, topk: int = 
         ro, _vocab, word_to_id = _get_readout(seed)
         reader = FewSpikeWordRead(topk, pop, seed, read_window=read_window)
         fact_ids = fact_grounding_ids(facts, seed=seed) if facts else None
+        aff_ids = _affect_bias_ids(seed) if (valence != 0.0 and wkv_mouth_affect_enabled()) else None
         bpe = _get_bpe_tokenizer() if tokenizer_mode() == "bpe" else None
         gen_fn = _free_gen_linattn if recurrence_mode() == "linattn" else _free_gen
         text, _self_nll, _gen = gen_fn(ro, word_to_id, reader, prompt, seed, max_new_tokens, topk, gen_temp,
                                        repetition_penalty, no_repeat_ngram_size,
-                                       fact_boost_ids=fact_ids, fact_boost=fact_boost, bpe=bpe)
+                                       fact_boost_ids=fact_ids, fact_boost=fact_boost,
+                                       affect_ids=aff_ids, valence=valence, arousal=arousal,
+                                       affect_boost=affect_boost, bpe=bpe)
         return text
 
     text = _RNG.run(seed, _run)
