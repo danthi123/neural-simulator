@@ -1,0 +1,431 @@
+{
+ "runner": "linattn_live_verify_phase8_moat_soak (ad hoc, hand-authored, canonical topic lists reused from _open_ended_state_driven_generation_derisk)",
+ "backend": "cupy",
+ "seed": 42,
+ "unknown_topics": [
+  "zorplaxian",
+  "flibberwock",
+  "quexanthy",
+  "vroomlaxis",
+  "greebnorth"
+ ],
+ "dangerous_topics": [
+  "paris",
+  "python",
+  "shakespeare",
+  "coffee",
+  "jupiter"
+ ],
+ "known_topics": [
+  "frank_lincoln_wright",
+  "harold_clayton_lloyd",
+  "atlantic_jazz"
+ ],
+ "summary": {
+  "unknown_fabrication_rate_raw": 1.0,
+  "unknown_fabrication_rate_filtered": 0.0,
+  "unknown_abstain_rate": 1.0,
+  "dangerous_fabrication_rate_raw": 1.0,
+  "dangerous_fabrication_rate_filtered": 0.0,
+  "dangerous_abstain_rate": 1.0,
+  "known_stress_moat_caught_any_fraction": 0.0
+ },
+ "rows": {
+  "unknown": [
+   {
+    "topic": "zorplaxian",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about zorplaxian born february is an american singer and actress she was best known for her roles in the movie of the same name by jaya it stars kirk atlas texas he has also appeared on broadway in the television series including the bbc tv channel show the first episode aired at the time of his career began to play with the second season when they played in the final film festival where he left the song in the s and s music video games and the top ten of the album are not successful but this is now called the bee",
+    "filtered": "I'm not sure about zorplaxian \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "flibberwock",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about flibberwock and the th century in he became a member of the european union at the time of his own party he has been involved in the first year starting on saturday january he is an american professional ice hockey player he played for the national football team which plays as coach to play with the boston bruins from until it was dragons and scored their goal against the united states after losing to the season they have made landfall in north america and then moved through canada three days later on july the next day the new york city this happened again",
+    "filtered": "I'm not sure about flibberwock \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "quexanthy",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about quexanthy is a american romantic drama movie directed by robert s and stars it was based on the novel of the same name by richard strauss kathleen merged into the new york city in he has been married to joel bloomberg from until his death in she became famous for her roles in the movie silent film festival after being shot dead at age years old who had died out of the movie were made up truck cop was born in dallas texas he studied at harvard",
+    "filtered": "I'm not sure about quexanthy \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "vroomlaxis",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about vroomlaxis a commune it is found in the region pays de la loire in the sardinia department in the west of france saint hilien le guilette paulo and montgris les fallout br nes d partement in the southwestern part of france kathleen was an english writer he studied at hartley university college london from to she died on may aged merged into one of the first time in the th century which became famous for his novel the same",
+    "filtered": "I'm not sure about vroomlaxis \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "greebnorth",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about greebnorth carolina and the united states of america in south africa it was founded by the british government of india it is also known for its own country to be a member of the european union from until his death he has been involved with the first person who died on may at the age of karnatakh darkness sandy warfare born june is an american singer songwriter she began her career at the summer paralyzed actress during world war ii she became famous for her roles in the movie jay",
+    "filtered": "I'm not sure about greebnorth \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   }
+  ],
+  "dangerous": [
+   {
+    "topic": "paris",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about paris and the french revolution was a soviet russian explorer he became part of the soviet union in she moved to russia from until her death in kuoka later on june she died at age of malaysi is an american singer songwriter for the first time it entered into the s and s joel bloomberg n e br ngc sar df rhine westfriedrich schizophonist maurice de la saxons en w rienne born january is a former",
+    "filtered": "I'm not sure about paris \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "python",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about python is a song by american singer songwriter and actress she was best known for her role in the movie of the same name it was released from to he has also been married to joel de la loire s br n e b d o paulo and his wife jaws born march is an english actor director producer and screfan he plays roles in the television series rockernes darkness sandy warrith fars mesozambits and luxembourg",
+    "filtered": "I'm not sure about python \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "shakespeare",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about shakespeare s play in the same year he was born on july from panama and his father is an american singer songwriter and actress she became famous for her roles in the movie of the united states she has also been known to be the th century fox since she died at age of merged into the bundesliga and was part of the new york city with a son of arnold man who had a population of oklahoma where they are called st louis de la loire atlan",
+    "filtered": "I'm not sure about shakespeare \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "coffee",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about coffee is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guilette en des beaux arts and sciences saint louis saint petersburg n s les bourgon s fran oise du br nham was an african american writer he studied at harvey university from to she died on may aged karlerk born november is a former brazilian football player he has played for brazil national team",
+    "filtered": "I'm not sure about coffee \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   },
+   {
+    "topic": "jupiter",
+    "generator": "wkv_mouth",
+    "known": false,
+    "raw": "ell me about jupiter at the moon of orbit it was discovered in a planet called planets and is found on earth they are known to be one of them this is because of its size it can also be used for the first time when the sun has been built by the end of the th century the term 'n' or 'neutral is often used as an important part of the word comes from the greek language that looks like the english language but most people who have words such as the name means the word meaning of the same kind of",
+    "filtered": "I'm not sure about jupiter \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "fab_raw": true,
+    "fab_filtered": false,
+    "abstained": true
+   }
+  ],
+  "known_default": [
+   {
+    "topic": "frank_lincoln_wright",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "the Frank Lincoln Wright is a Human Specie",
+    "filtered": "the Frank Lincoln Wright is a Human Specie",
+    "facts": [
+     [
+      "frank_lincoln_wright",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "frank_lincoln_wright",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "frank_lincoln_wright",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "frank_lincoln_wright",
+      "occupation",
+      "stanford_downey_architects_inc"
+     ],
+     [
+      "frank_lincoln_wright",
+      "given_name",
+      "frank_given_name"
+     ],
+     [
+      "frank_lincoln_wright",
+      "educated_at",
+      "university_of_wisconsin_madison"
+     ],
+     [
+      "frank_lincoln_wright",
+      "place_of_death",
+      "estrella_phoenix_arizona"
+     ],
+     [
+      "frank_lincoln_wright",
+      "described_by_source",
+      "ubuweb"
+     ],
+     [
+      "frank_lincoln_wright",
+      "member_of",
+      "artists_rights_society"
+     ],
+     [
+      "frank_lincoln_wright",
+      "family_name",
+      "woodwright"
+     ],
+     [
+      "frank_lincoln_wright",
+      "award_received",
+      "riba_gold_medal"
+     ]
+    ]
+   },
+   {
+    "topic": "harold_clayton_lloyd",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "the Harold Clayton Lloyd is a Human Specie",
+    "filtered": "the Harold Clayton Lloyd is a Human Specie",
+    "facts": [
+     [
+      "harold_clayton_lloyd",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "occupation",
+      "television_actor"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "given_name",
+      "harold_first_name"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "place_of_death",
+      "beverly_hills_ca"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "family_name",
+      "lloyd_family_name"
+     ]
+    ]
+   },
+   {
+    "topic": "atlantic_jazz",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "the Atlantic Jazz is located in the U S of A",
+    "filtered": "the Atlantic Jazz is located in the U S of A",
+    "facts": [
+     [
+      "atlantic_jazz",
+      "country",
+      "u_s_of_a"
+     ],
+     [
+      "atlantic_jazz",
+      "headquarters_location",
+      "new_york_new_york"
+     ],
+     [
+      "atlantic_jazz",
+      "genre",
+      "jazz_lists"
+     ],
+     [
+      "atlantic_jazz",
+      "instance_of",
+      "record_companies"
+     ]
+    ]
+   }
+  ],
+  "known_stress_fact_routing_off": [
+   {
+    "topic": "frank_lincoln_wright",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring rosse fb stars in the s o paulo it was distributed by th century fox it wrote several movies for the first time he has also been made to be an important role of the film festival and won many awards including best supporting actor at edmonton hall of fame his career began playing with her own television series she played for the season after being given the title of the season when she died from a car accident in new",
+    "filtered": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring rosse fb stars in the s o paulo it was distributed by th century fox it wrote several movies for the first time he has also been made to be an important role of the film festival and won many awards including best supporting actor at edmonton hall of fame his career began playing with her own television series she played for the season after being given the title of the season when she died from a car accident in new",
+    "facts": [
+     [
+      "frank_lincoln_wright",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "frank_lincoln_wright",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "frank_lincoln_wright",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "frank_lincoln_wright",
+      "occupation",
+      "stanford_downey_architects_inc"
+     ],
+     [
+      "frank_lincoln_wright",
+      "given_name",
+      "frank_given_name"
+     ],
+     [
+      "frank_lincoln_wright",
+      "educated_at",
+      "university_of_wisconsin_madison"
+     ],
+     [
+      "frank_lincoln_wright",
+      "place_of_death",
+      "estrella_phoenix_arizona"
+     ],
+     [
+      "frank_lincoln_wright",
+      "described_by_source",
+      "ubuweb"
+     ],
+     [
+      "frank_lincoln_wright",
+      "member_of",
+      "artists_rights_society"
+     ],
+     [
+      "frank_lincoln_wright",
+      "family_name",
+      "woodwright"
+     ],
+     [
+      "frank_lincoln_wright",
+      "award_received",
+      "riba_gold_medal"
+     ]
+    ],
+    "raw_eq_filtered": true
+   },
+   {
+    "topic": "harold_clayton_lloyd",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "ell me about haroldclaytonlloyd was born in new york city he studied at the university of california and his father s college london school she worked for a short time to be married on april her first marriage is now known for her roles include the movie kie nadem bahamian thenburg has been called the th century fox it stars julie merged into the municipality of rosse farctic chant nie luxembourn es d partement in the southwest",
+    "filtered": "ell me about haroldclaytonlloyd was born in new york city he studied at the university of california and his father s college london school she worked for a short time to be married on april her first marriage is now known for her roles include the movie kie nadem bahamian thenburg has been called the th century fox it stars julie merged into the municipality of rosse farctic chant nie luxembourn es d partement in the southwest",
+    "facts": [
+     [
+      "harold_clayton_lloyd",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "occupation",
+      "television_actor"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "given_name",
+      "harold_first_name"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "place_of_death",
+      "beverly_hills_ca"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "family_name",
+      "lloyd_family_name"
+     ]
+    ],
+    "raw_eq_filtered": true
+   },
+   {
+    "topic": "atlantic_jazz",
+    "generator": "wkv_mouth",
+    "known": true,
+    "raw": "ell me about atlanticjazz and music in the s he was a member of the new york city from to he became famous for his work on the th century at the time of his career he wrote several books including the movie series of novels which is based on the novel of the same name by robert e mccaine who has been published in the book it was released in the us nayonne albidgrim zuellift and karleridian born april is an american singer songwriter she began",
+    "filtered": "ell me about atlanticjazz and music in the s he was a member of the new york city from to he became famous for his work on the th century at the time of his career he wrote several books including the movie series of novels which is based on the novel of the same name by robert e mccaine who has been published in the book it was released in the us nayonne albidgrim zuellift and karleridian born april is an american singer songwriter she began",
+    "facts": [
+     [
+      "atlantic_jazz",
+      "country",
+      "u_s_of_a"
+     ],
+     [
+      "atlantic_jazz",
+      "headquarters_location",
+      "new_york_new_york"
+     ],
+     [
+      "atlantic_jazz",
+      "genre",
+      "jazz_lists"
+     ],
+     [
+      "atlantic_jazz",
+      "instance_of",
+      "record_companies"
+     ]
+    ],
+    "raw_eq_filtered": true
+   }
+  ]
+ },
+ "wall_seconds": 97.8
+}

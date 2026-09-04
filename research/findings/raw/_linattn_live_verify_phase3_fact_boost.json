@@ -1,0 +1,47 @@
+{
+ "prompt": "Tell me about kanton genf.",
+ "seed": 42,
+ "fact_boost_default": 6.0,
+ "facts_A": [
+  [
+   "kanton_genf",
+   "located_in_time_zone",
+   "rome_time"
+  ],
+  [
+   "kanton_genf",
+   "country",
+   "conf_d_ration_suisse"
+  ],
+  [
+   "kanton_genf",
+   "shares_border_with",
+   "ain_d_partement"
+  ]
+ ],
+ "facts_B": [
+  [
+   "history_of_rochester_minnesota",
+   "country",
+   "u_s_of_a"
+  ],
+  [
+   "history_of_rochester_minnesota",
+   "instance_of",
+   "city_work"
+  ],
+  [
+   "history_of_rochester_minnesota",
+   "located_in_time_zone",
+   "central_daylight_time"
+  ]
+ ],
+ "out_none": "ell me about kanton genf is a municipality in the district of byzantine province it lies between and its capital city centre for the town of kidnapping river at the census havilon county new york city is one",
+ "out_A": "ell me about kanton genf daindwin dallas texas darker dildddindkirdd's dundsdale d'ddordinate ddying dame ddavddp d",
+ "out_B": "ell me about kanton genf uuukraine uppar ukrainian ukraut ukrainuit ukrai ukraka ukrain ukrasukuwaiti uuzuki uugud uugu",
+ "out_A_noboost": "ell me about kanton genf is a municipality in the district of byzantine province it lies between and its capital city centre for the town of kidnapping river at the census havilon county new york city is one",
+ "lesion_boost0_matches_none": true,
+ "A_differs_from_B": true,
+ "A_differs_from_none": true,
+ "note": "A/B outputs are non-linguistic repetitive BPE-fragment garbage at boost=6.0 (the caller's own default, used unmodified by webapp/open_ended_chat.py's WKV-mouth branch) -- see the finding doc for why: fact_grounding_ids matches mostly 1-3-letter slug fragments against the BPE vocabulary, not real content words, and the resulting boost overwhelms the decode."
+}

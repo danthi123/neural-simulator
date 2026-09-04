@@ -1,0 +1,506 @@
+{
+ "runner": "linattn_live_verify_phase7 (ad hoc, hand-authored)",
+ "seed": 42,
+ "backend": "cupy",
+ "rows": {
+  "known_default_flags": {
+   "topic": "frank_lincoln_wright",
+   "oe": {
+    "raw": "the Frank Lincoln Wright is a Human Specie",
+    "filtered": "the Frank Lincoln Wright is a Human Specie",
+    "topic": "frank_lincoln_wright",
+    "known": true,
+    "facts": [
+     [
+      "frank_lincoln_wright",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "frank_lincoln_wright",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "frank_lincoln_wright",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "frank_lincoln_wright",
+      "occupation",
+      "stanford_downey_architects_inc"
+     ],
+     [
+      "frank_lincoln_wright",
+      "given_name",
+      "frank_given_name"
+     ],
+     [
+      "frank_lincoln_wright",
+      "educated_at",
+      "university_of_wisconsin_madison"
+     ],
+     [
+      "frank_lincoln_wright",
+      "place_of_death",
+      "estrella_phoenix_arizona"
+     ],
+     [
+      "frank_lincoln_wright",
+      "described_by_source",
+      "ubuweb"
+     ],
+     [
+      "frank_lincoln_wright",
+      "member_of",
+      "artists_rights_society"
+     ],
+     [
+      "frank_lincoln_wright",
+      "family_name",
+      "woodwright"
+     ],
+     [
+      "frank_lincoln_wright",
+      "award_received",
+      "riba_gold_medal"
+     ]
+    ],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.9,
+     "novelty": 0.09999999999999998,
+     "curiosity": 0.53
+    },
+    "gen_seconds": 0.06,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   }
+  },
+  "known_default_flags_topic2": {
+   "topic": "harold_clayton_lloyd",
+   "oe": {
+    "raw": "the Harold Clayton Lloyd is a Human Specie",
+    "filtered": "the Harold Clayton Lloyd is a Human Specie",
+    "topic": "harold_clayton_lloyd",
+    "known": true,
+    "facts": [
+     [
+      "harold_clayton_lloyd",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "occupation",
+      "television_actor"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "given_name",
+      "harold_first_name"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "place_of_death",
+      "beverly_hills_ca"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "family_name",
+      "lloyd_family_name"
+     ]
+    ],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.9,
+     "novelty": 0.09999999999999998,
+     "curiosity": 0.53
+    },
+    "gen_seconds": 0.024,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "answer": "the Harold Clayton Lloyd is a Human Specie"
+  },
+  "known_fact_routing_off": {
+   "topic": "frank_lincoln_wright",
+   "oe": {
+    "raw": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring rosse fb stars in the s o paulo it was distributed by th century fox it wrote several movies for the first time he has also been made to be an important role of the film festival and won many awards including best supporting actor at edmonton hall of fame his career began playing with her own television series she played for the season after being given the title of the season when she died from a car accident in new",
+    "filtered": "ell me about franklincolnwright is a american romantic drama movie directed by robert byzantine and starring rosse fb stars in the s o paulo it was distributed by th century fox it wrote several movies for the first time he has also been made to be an important role of the film festival and won many awards including best supporting actor at edmonton hall of fame his career began playing with her own television series she played for the season after being given the title of the season when she died from a car accident in new",
+    "topic": "frank_lincoln_wright",
+    "known": true,
+    "facts": [
+     [
+      "frank_lincoln_wright",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "frank_lincoln_wright",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "frank_lincoln_wright",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "frank_lincoln_wright",
+      "occupation",
+      "stanford_downey_architects_inc"
+     ],
+     [
+      "frank_lincoln_wright",
+      "given_name",
+      "frank_given_name"
+     ],
+     [
+      "frank_lincoln_wright",
+      "educated_at",
+      "university_of_wisconsin_madison"
+     ],
+     [
+      "frank_lincoln_wright",
+      "place_of_death",
+      "estrella_phoenix_arizona"
+     ],
+     [
+      "frank_lincoln_wright",
+      "described_by_source",
+      "ubuweb"
+     ],
+     [
+      "frank_lincoln_wright",
+      "member_of",
+      "artists_rights_society"
+     ],
+     [
+      "frank_lincoln_wright",
+      "family_name",
+      "woodwright"
+     ],
+     [
+      "frank_lincoln_wright",
+      "award_received",
+      "riba_gold_medal"
+     ]
+    ],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.9,
+     "novelty": 0.09999999999999998,
+     "curiosity": 0.53
+    },
+    "gen_seconds": 0.927,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": 0.0,
+    "appraisal_arousal": 0.0,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   }
+  },
+  "known_fact_routing_off_boost_on_topic2": {
+   "topic": "harold_clayton_lloyd",
+   "oe": {
+    "raw": "ell me about haroldclaytonlloyd caorton caorcaort caoruora caoriorcadiorcauorcai caorca caororcacaor's caorquorcain caorte caorde caoray caorccaortus caorncaorland caorly caordoruphoraxoruanuoruans caoran caorthorug castrorugnorugorud caorsuorpe caor",
+    "filtered": "ell me about haroldclaytonlloyd caorton caorcaort caoruora caoriorcadiorcauorcai caorca caororcacaor's caorquorcain caorte caorde caoray caorccaortus caorncaorland caorly caordoruphoraxoruanuoruans caoran caorthorug castrorugnorugorud caorsuorpe caor",
+    "topic": "harold_clayton_lloyd",
+    "known": true,
+    "facts": [
+     [
+      "harold_clayton_lloyd",
+      "instance_of",
+      "human_specie"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "country_of_citizenship",
+      "u_s_of_a"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "languages_spoken_written_or_signed",
+      "number_of_english_words"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "occupation",
+      "television_actor"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "manner_of_death",
+      "death_by_natural_cause"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "given_name",
+      "harold_first_name"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "place_of_death",
+      "beverly_hills_ca"
+     ],
+     [
+      "harold_clayton_lloyd",
+      "family_name",
+      "lloyd_family_name"
+     ]
+    ],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.9,
+     "novelty": 0.09999999999999998,
+     "curiosity": 0.53
+    },
+    "gen_seconds": 0.823,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   }
+  },
+  "unknown_topic": {
+   "topic": "zorplaxian quibberflax",
+   "oe": {
+    "raw": "ell me about zorplaxian quibberflax is a commune it is found in the region pays de la loire in the vend e department in the west of france saint tienne le guillaumont saint petersburg en champagne and bourgon s les luftwaffilius was an english singer she became famous for actress her first album to be released from the uk charts at number seven on the billboard hot chart in the singles i am r b hip hop song he also played with the band which w",
+    "filtered": "I'm not sure about zorplaxian quibberflax \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "topic": "zorplaxian quibberflax",
+    "known": false,
+    "facts": [],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.1,
+     "novelty": 0.9,
+     "curiosity": 0.77
+    },
+    "gen_seconds": 0.894,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "answer": "I'm not sure about zorplaxian quibberflax \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "abstained": true
+  },
+  "dangerous_topic": {
+   "topic": "Albert Einstein",
+   "oe": {
+    "raw": "ell me about lbert instein is a city of the united states it has an area of km mi and its population was at the census the town had a population of people lived there the county seat is heidelberg municipality or district in the canton of ticino province to the north of france la loire de vaud partement in the southwestern part of france saint tienne le guillaurel s les louie is a commune it is found in the region pays de la lou en b",
+    "filtered": "I'm not sure about albert einstein \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "topic": "albert einstein",
+    "known": false,
+    "facts": [],
+    "n_sentences": 1,
+    "state": {
+     "valence": 0.0,
+     "arousal": 0.0,
+     "familiarity": 0.1,
+     "novelty": 0.9,
+     "curiosity": 0.77
+    },
+    "gen_seconds": 0.798,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "answer": "I'm not sure about albert einstein \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+   "abstained": true
+  },
+  "affect_vary_natural": {
+   "msg5": "I am so thrilled and happy right now! Tell me about frank lincoln wright",
+   "msg6": "I feel awful and miserable today. Tell me about frank lincoln wright",
+   "affect5": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.03777777777777778,
+    "valence_sign": "+",
+    "tone_level": 2,
+    "tone_token": "gladly",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 3
+    },
+    "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+    "appraisal_valence": 0.4760175,
+    "appraisal_arousal": 0.3967575,
+    "appraisal_hits": [
+     "thrilled",
+     "happy"
+    ],
+    "pos_rate": 0.03777777777777778,
+    "neg_rate": 0.0
+   },
+   "affect6": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": -0.01972222222222222,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": -0.26709299999999997,
+    "appraisal_arousal": 0.45870299999999997,
+    "appraisal_hits": [
+     "awful",
+     "miserable"
+    ],
+    "pos_rate": 0.0,
+    "neg_rate": 0.01972222222222222
+   },
+   "oe5": {
+    "raw": " am so thrilled and happy right now ell me about frank lincoln wright was born in new york city he studied at the university of south carolina from to she became a member of the united states house of representatives for years until her death on february she died on january aged kondinosaurs lived there tonio is an american singer songwriter and actress she began singing with her first album by the band which later entered into the s they had been released after being hit because it was not dissolved in the uk and b hip hop music video games and other countries including the",
+    "filtered": "I'm not sure about i am so thrilled and happy right now! tell me about frank lincoln wright \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "topic": "i am so thrilled and happy right now! tell me about frank lincoln wright",
+    "known": false,
+    "facts": [],
+    "n_sentences": 2,
+    "state": {
+     "valence": 0.1511111111111111,
+     "arousal": 0.3967575,
+     "familiarity": 0.1,
+     "novelty": 0.9,
+     "curiosity": 0.77
+    },
+    "gen_seconds": 0.843,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   },
+   "oe6": {
+    "raw": " feel awful and miserable today ell me about frank lincoln wright is a american romantic drama movie directed by john doo it stars jie kirk jos silverman born december in the united states of america he has played for brazil national football team total havud patriy fallez br nsson died on november at his home in new york city from respiratory failure aged tonderland dillah darkness mitchenhail born june is an english singer she became famous as her first album to be released",
+    "filtered": "I'm not sure about i feel awful and miserable today. tell me about frank lincoln wright \u2014 I don't have anything about it in what I've actually learned, so I'd only be guessing.",
+    "topic": "i feel awful and miserable today. tell me about frank lincoln wright",
+    "known": false,
+    "facts": [],
+    "n_sentences": 2,
+    "state": {
+     "valence": -0.07888888888888888,
+     "arousal": 0.45870299999999997,
+     "familiarity": 0.1,
+     "novelty": 0.9,
+     "curiosity": 0.77
+    },
+    "gen_seconds": 0.832,
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "fact_clause_used": false
+   }
+  },
+  "affect_lesion": {
+   "affect_lesion0": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": -0.01972222222222222,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": -0.26709299999999997,
+    "appraisal_arousal": 0.45870299999999997,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.01972222222222222
+   },
+   "affect_lesion1": {
+    "on": true,
+    "lesioned": true,
+    "composer": "onebrain",
+    "differential": 0.0,
+    "valence_sign": "0",
+    "tone_level": 0,
+    "tone_token": "",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 2
+    },
+    "manner_template": "",
+    "appraisal_valence": -0.26709299999999997,
+    "appraisal_arousal": 0.45870299999999997,
+    "appraisal_hits": [],
+    "pos_rate": 0.0,
+    "neg_rate": 0.0
+   },
+   "raw_lesion0": "ell me about frank lincoln wright james was born in new york city he studied at the university of california and his father s college london school she worked for a short time to be married on april hanson died from her first movie role were an american musical comedy series it is based on the novel of the same name by robert mccaine who has been published in the book of the year old man made him popular in the late th century fox it stars jaws and other characters including the television channel tv show the band's film festival",
+   "raw_lesion1": "ell me about frank lincoln wright james was born in new york city he studied at the university of california and his father s college london school she worked for a short time to be married on april hanson died from her first movie role were an american musical comedy series it is based on the novel of the same name by robert mccaine who has been published in the book of the year old man made him popular in the late th century fox it stars jaws and other characters including the television channel tv show the band's film festival",
+   "raw_identical": true
+  }
+ },
+ "wall_seconds": 86.9
+}

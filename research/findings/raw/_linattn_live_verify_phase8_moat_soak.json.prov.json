@@ -1,0 +1,25 @@
+{
+ "run_id": "1788492051-1697858",
+ "runner": "research/findings/raw/_linattn_live_verify/phase8_moat_soak.py",
+ "argv": [
+  "research/findings/raw/_linattn_live_verify/phase8_moat_soak.py"
+ ],
+ "git_sha": "80825b63b",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-03T23:20:51",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_linattn_live_verify_phase8_moat_soak.json"
+}
