@@ -1,0 +1,169 @@
+{
+ "mouth_module_imported": false,
+ "response_body": {
+  "abstained": true,
+  "activity": {
+   "abstained": true,
+   "composer": "onebrain",
+   "matched_fact_index": null,
+   "n_facts_scanned": 5,
+   "rf": {
+    "frac_fired": 0.00023988136775994416,
+    "mean_magnitude": 0.7253335931464091,
+    "n_readout_neurons": 45856
+   },
+   "roles": [
+    {
+     "asserted": "hello",
+     "confidence": null,
+     "cue": true,
+     "margin": null,
+     "role": "agent",
+     "word": "hello"
+    },
+    {
+     "asserted": "how",
+     "confidence": null,
+     "cue": true,
+     "margin": null,
+     "role": "action",
+     "word": "how"
+    }
+   ]
+  },
+  "affect": {
+   "appraisal_arousal": 0.0,
+   "appraisal_hits": [],
+   "appraisal_valence": 0.0,
+   "composer": "onebrain",
+   "differential": 0.0,
+   "forthcomingness": {
+    "max_elaborations": 2,
+    "max_sentences": 4
+   },
+   "lesioned": false,
+   "manner_template": "",
+   "neg_rate": 0.0,
+   "on": true,
+   "pos_rate": 0.0,
+   "tone_level": 0,
+   "tone_token": "",
+   "valence_sign": "0"
+  },
+  "affect_drives": {
+   "acted": true,
+   "body_a": 0.0,
+   "body_h": 0.5,
+   "ema_arousal": 0.0,
+   "ema_valence": 0.0,
+   "felt_arousal": 0.0,
+   "high_arousal": false,
+   "lead": "",
+   "lesioned": false,
+   "level": 0,
+   "mood": -0.003375000000000003,
+   "reason": "neutral_hold",
+   "seed": 42,
+   "turn": 1,
+   "vminus_rate": 0.04016666666666667,
+   "vplus_rate": 0.03679166666666667
+  },
+  "answer": "I don't know about that. My curiosity is piqued \u2014 I haven't learned about hello yet: what can you tell me about hello? \u2014 worth going further here.",
+  "brain": "tiny-demo",
+  "common_ground_drives": {
+   "decision": null,
+   "lead": "",
+   "lesioned": false,
+   "on": true,
+   "reason": "no_grounded_topic",
+   "reason_lead": "no_referent",
+   "topic": null
+  },
+  "comprehension": null,
+  "curiosity": {
+   "calib": {
+    "familiar_signal": 0.0,
+    "novel_signal": 0.95,
+    "read_reps": 4,
+    "threshold_hz": 65.88541666666666,
+    "want_familiar_hz": 5.208333333333332,
+    "want_novel_hz": 126.56249999999999
+   },
+   "curiosity_da": {
+    "base_threshold": 65.88541666666666,
+    "curious": true,
+    "da_crave_gain": 1.3014204749955915,
+    "da_level": 0.7009469833303944,
+    "da_tonic": 0.5,
+    "eff_threshold": 50.62577232534307,
+    "k_da": 1.5,
+    "lesioned": false,
+    "on": true,
+    "want_eff_hz": 168.10014468693058,
+    "want_hz": 129.16666666666666
+   },
+   "curious": true,
+   "lesioned": false,
+   "novelty": 0.95,
+   "on": true,
+   "threshold": 65.88541666666666,
+   "topic": "hello",
+   "want_hz": 129.16666666666666
+  },
+  "da_drives": {
+   "acted": true,
+   "afferent_pA": 588.0,
+   "da_level": 0.7009469833303944,
+   "ema_engagement": 0.42,
+   "lead": " \u2014 worth going further here.",
+   "lesioned": false,
+   "mode": "focus",
+   "on": true,
+   "reason": "engaged",
+   "seed": 42,
+   "snc_firing": 0.10833333333333332,
+   "turn": 1,
+   "turn_engagement": 0.7
+  },
+  "da_encoding": {
+   "da_level": 0.7009469833303944,
+   "g": 1.4018939666607888,
+   "lesioned": false,
+   "on": true
+  },
+  "derived": false,
+  "derived_from": null,
+  "episodic": null,
+  "followup": false,
+  "metacog": null,
+  "multiref": null,
+  "n_sentences": 0,
+  "noncontradiction": null,
+  "pragmatic": null,
+  "recalled_svo": null,
+  "reconsolidation": null,
+  "renderer": "template-stub (GPU-free)",
+  "rich": true,
+  "source": "tiny-demo +LTM",
+  "supporting_facts": [],
+  "surprise": null,
+  "swap_drives": {
+   "acted": false,
+   "evicted_topic": null,
+   "held_topic": null,
+   "held_topic_before": null,
+   "lead": "",
+   "lesioned": false,
+   "new_topic": null,
+   "on": true,
+   "reason": "no_topic_hold",
+   "reason_lead": "no_topic_hold",
+   "seed": 42,
+   "swapped": false,
+   "topic": null,
+   "turn": 1
+  },
+  "verified": false,
+  "worldmodel": null
+ }
+}

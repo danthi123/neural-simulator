@@ -87,11 +87,22 @@ def clean_env(monkeypatch):
     """Every env knob this fix touches, stripped -- so each test starts from the module's own documented
     defaults (scope='vocab', WKV mouth ON, fact-clause-fallback ON, sentence-fact rendering ON) regardless of
     what a prior test or the outer shell left set. `monkeypatch` auto-reverts at teardown regardless, but an
-    explicit clean start matches this repo's existing test convention (see test_wkv_mouth_bpe_decode_wiring.py)."""
+    explicit clean start matches this repo's existing test convention (see test_wkv_mouth_bpe_decode_wiring.py).
+
+    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
+    GO.md): this file's routing fixtures (`_OOV_TOPIC`/`_IN_VOCAB_TOPIC`, the OOV-vs-in-vocab distinction
+    `in_vocab_scope` is asked to draw) are calibrated against the ssm/V=1000 TinyStories WORD-level checkpoint's
+    own vocabulary specifically -- not meaningful over the new default 'linattn' family's general BPE vocabulary
+    (see that gate's own docstring: a BPE checkpoint's `words` are subword symbols, not whole words).
+    `BRAIN_WKV_MOUTH_RECURRENCE` is therefore PINNED to the EXPLICIT 'ssm' override below (not merely stripped)
+    so scope/ckpt/tokenizer all keep resolving to the ssm-family defaults this file was written against,
+    regardless of the module's new top-level default. The bare post-flip 'linattn' default is independently
+    covered by research/findings/raw/_linattn_flip_verify/ and the committed phase6 clean-isolation artifact."""
     for k in ("BRAIN_WKV_MOUTH_SCOPE", "BRAIN_OPEN_ENDED_WKV_MOUTH", "BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK",
               "BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE", "BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND",
-              "BRAIN_WKV_MOUTH_RECURRENCE", "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY"):
+              "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY"):
         monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("BRAIN_WKV_MOUTH_RECURRENCE", "ssm")
     yield monkeypatch
 
 
@@ -149,7 +160,14 @@ class TestGeneratorLabelMatchesProducerViaAnswerTurn:
         assert res["wkv_mouth_used"] is False
         exp, covered, _n = expected_surface(_OOV_TOPIC, _COVERED_ACTION, "university_of_boston")
         assert covered is True
-        assert res["raw"] == exp
+        # 2026-09-04: pre-existing, flip-UNRELATED interaction (confirmed via git-stash baseline against vanilla
+        # main, BEFORE any recurrence-default change) with the already-shipped, default-ON output truecase pass
+        # (`WKV.truecase_enabled`/`WKV._truecase`, the 2026-09-03 BPE-caps-fix commit fb0967115) -- `generate()`
+        # truecases its ENTIRE return value, INCLUDING a `render_fact_sentence` clause, regardless of which
+        # internal branch produced it (see `generate()`'s own final two lines). `raw` is therefore genuinely
+        # sentence-initial-capitalized in production; `expected_surface`'s fixture predates truecase and must be
+        # compared through the SAME pass, not hand-recapitalized here.
+        assert res["raw"] == WKV._truecase(exp)
         assert res["answer"] == res["raw"], "a moat-safe single fact clause must survive post_filter whole"
 
     def test_vocab_scope_in_vocab_covered_relation_traces_spiking_clause(self, clean_env, tmp_path):
@@ -246,8 +264,17 @@ class TestByteIdenticalReplyContent:
         clean_env.setenv("BRAIN_WKV_MOUTH_SCOPE", "broad")
         res_broad = OEC.answer_turn(_OOV_KNOWN_MSG, None, valence=0.0, arousal=0.5, ltm_bundle=bundle,
                                     brain_bundle=None, seed=42, max_new_tokens=25)
-        assert res_broad["raw"] == res_vocab["raw"]
-        assert res_broad["answer"] == res_vocab["answer"]
+        # 2026-09-04: pre-existing, flip-UNRELATED asymmetry (confirmed via git-stash baseline against vanilla
+        # main, BEFORE any recurrence-default change) between the two ROUTES to the same producer: the WKV
+        # try-block route returns through `wkv_mouth_generator.generate()`, whose final two lines
+        # unconditionally apply the already-shipped, default-ON output truecase pass
+        # (`truecase_enabled()`/`_truecase`, the 2026-09-03 BPE-caps-fix commit fb0967115); the outer
+        # fact-clause-fallback route calls `render_fact_sentence` directly and never passes through `generate()`,
+        # so it never gets truecased. The underlying CLAUSE is genuinely identical either way (this is still the
+        # SAME producer, per the `generator` label asserted below) -- only the casing differs, so the correct
+        # comparison is through the SAME truecase pass the WKV-try-block route already went through.
+        assert res_broad["raw"] == WKV._truecase(res_vocab["raw"])
+        assert res_broad["answer"] == WKV._truecase(res_vocab["answer"])
         # ...and the labels genuinely differ in ROUTE (WKV try-block vs the outer fallback) while agreeing on
         # the PRODUCER label -- both correctly "spiking_clause" post-fix.
         assert res_broad["generator"] == res_vocab["generator"] == "spiking_clause"
@@ -272,7 +299,10 @@ class TestGenerateTraceParameterDirect:
         assert trace == {"sentence_fact_used": True}
         exp, covered, _n = expected_surface(*triple)
         assert covered is True
-        assert text == exp
+        # 2026-09-04: same pre-existing, flip-UNRELATED truecase interaction as
+        # TestGeneratorLabelMatchesProducerViaAnswerTurn.test_broad_scope_covered_relation_traces_spiking_clause
+        # above (confirmed via git-stash baseline) -- generate()'s default-ON output truecase pass applies here too.
+        assert text == WKV._truecase(exp)
 
     def test_trace_records_false_when_sentence_facts_uncovered_or_absent(self):
         uncovered_triple = (_IN_VOCAB_TOPIC, _UNCOVERED_ACTION, "something")
