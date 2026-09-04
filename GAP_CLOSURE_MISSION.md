@@ -16,6 +16,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-03 (READ FIRST; LATEST anchor — supersedes 2026-09-02d below)
 **`main` = `a44d4436` (CLAUDE driving; owner engaged, steered the scaffold-retirement + hardware direction).**
 
+**⭐ LATEST (post-compaction ~23:35 — LIVE RESUME POINT; supersedes the flip-gate line further below). main now = `87d9954e` (merged: num/den design, one-brain roadmap, live verification).**
+**FLIP-GATE VERIFICATION = PARTIAL → FLIP HELD pending an affect-wiring fix.** The live verification (finding on main, `d7539ee38`) returned: FLUENT **PASS**; HONEST **PASS** under shipped defaults (fabrication byte-identical to the shipped ssm mouth; a leak only when the default-ON fact-routing flags are deliberately disabled — unreachable in prod); BRAIN-GROUNDED **SPLIT**.
+The SPLIT: facts ARE grounded (via the fact-clause routing) but AFFECT (valence/arousal) has **ZERO** effect on the mouth — byte-identical output under a valence sweep AND an affect-lesion. This affect-hollowness is a PRE-EXISTING WKV-mouth-family gap (the shipped ssm mouth has it too), NOT a linattn regression.
+**Per the owner's clean-pass condition (grounded + honest + moat), NOT auto-flipping** — closing the affect-hollowness first (the anti-hollow bar; the fix also improves the currently-shipped mouth).
+**3 AGENTS IN FLIGHT:** (1) affect-fix `a53f4d11` = CRITICAL PATH (make affect load-bearing on the mouth → re-verify → flip); (2) coverage-threshold `ade68245` (one-brain de-risk #1); (3) num/den Tier-1 shunt-gain read `a1979a3c` (fully-spiking closure).
+**ONE-BRAIN ROADMAP landed (`f943cc28`):** the mouth is the SINGLE blocker for **48/64** ledger rows (`BLOCKED:neural-render`) — flipping + retiring its Qwen roles unblocks the one-brain retirement at once. Staged path: flip → retire the open-ended Qwen fallback → retire Touchpoint-A open-prose recall (the 48-row stage) → merge surfaces → substrate consolidation → developmental/spike-native residuals; first de-risks + 5 owner-forks banked.
+**PRE-DECIDED NEXT ACTIONS (ordered):**
+1. AFFECT-FIX `a53f4d11` (CRITICAL PATH) — make affect load-bearing on the wkv/linattn mouth; when it lands, RE-VERIFY affect-grounding (vary→change, lesion→vanish).
+2. On a CLEAN re-verify (affect load-bearing + honest + moat) → FLIP `BRAIN_WKV_MOUTH_RECURRENCE=linattn` default-on AUTONOMOUSLY (owner-authorized), verify + commit + report. A still-hollow mouth = NO-GO → next affect lever.
+3. ONE-BRAIN de-risks: coverage-threshold `ade68245` → then per-touchpoint Qwen-call-share (blocked on trace-fix `c0a29f21`) → then Surface-A A/B vs Qwen-oracle → then the roadmap's Stage 1/2 retirements.
+4. num/den Tier-1 shunt-gain read `a1979a3c` (fully-spiking mouth closure) — harvest when it lands; Tier-2 on-bridge behind it.
+5. Keep BREADTH (owner: don't tunnel); EVERY sim-running agent MEMORY BUDGET RSS<4GB. Open task-chips: `c0a29f21` (trace) · `d734efe8` (device/SIM_BACKEND) · `b5d80fe3` (pool-provision) · `0ab782cb` (BPE-caps).
+
 **⭐ OWNER STEER 2026-09-03: run all three walls in parallel; make scaffold-retirement first-class; the sim is benchmarked around ACCESSIBLE CONSUMER HARDWARE (a single RTX 3090, 24GB/936GB/s) as the perf+runability reference (see memory `project_consumer_hardware_reference_principle`); the host training curriculum is a LEGITIMATE initial-education scaffold, NOT a cheat.**
 
 **ALL THREE FRONTIER WALLS ADVANCED + LANDED to main this session:**
