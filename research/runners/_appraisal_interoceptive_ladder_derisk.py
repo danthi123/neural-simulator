@@ -114,8 +114,14 @@ APPR_INTERO_W = 10.0                        # relay -> EVERY rung of its sign, u
 
 def appraisal_interoceptive_enabled() -> bool:
     """Mirrors `affect_production_organ.appraisal_interoceptive_enabled()` (imported from there in production;
-    kept here too so this module's own CLI/tests do not require importing the production module to check it)."""
-    return os.environ.get("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE", "0").strip().lower() in ("1", "true", "on", "yes")
+    kept here too so this module's own CLI/tests do not require importing the production module to check it).
+    PRODUCTION-DEFAULT-ON as of the 2026-09-05 flip (see `research/findings/
+    2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md`): unset -> True; explicit {0,false,no,off}
+    -> the escape hatch (False)."""
+    v = os.environ.get("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE")
+    if v is None:
+        return True
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
 # =============================================================================================================
@@ -265,15 +271,26 @@ class AppraisalInteroceptiveLadder:
                 "relay_rate_arousal": relay_rate["arousal"], "mechanism": "interoceptive_afferent"}
 
 
-_LADDER: "AppraisalInteroceptiveLadder | None" = None
+_LADDERS: "dict[int, AppraisalInteroceptiveLadder]" = {}
 
 
 def get_ladder(seed: int = 42) -> AppraisalInteroceptiveLadder:
-    """The process-shared adapted ladder (built once on first use, mirrors `affect_production_organ.get_organ`)."""
-    global _LADDER
-    if _LADDER is None:
-        _LADDER = AppraisalInteroceptiveLadder(seed=seed)
-    return _LADDER
+    """The process-shared adapted ladder, ONE PER SEED (built once per seed on first use, mirrors
+    `affect_production_organ.get_organ`). FIXED 2026-09-05 (production-flip verification, scaffold-retirement
+    backlog rank 5): the original single-slot cache (`_LADDER`, a bare Optional) silently returned the FIRST
+    seed's ladder for every later call with a DIFFERENT seed argument -- inert against today's production usage
+    (every production organ is a single-seed-per-process singleton, `get_organ(seed=42)` hardcoded throughout
+    `webapp/server.py`, so this call site is never asked for a second seed in one process), but exactly the
+    confound class `tests/test_determinism.py::TestSubstrateActuallySeeded` exists to catch for any same-process
+    multi-seed verification (a `get_ladder(43)` after `get_ladder(42)` would silently measure seed-42 neurons
+    under a seed-43 label). A dict keyed by seed costs nothing for the single-seed production case (still built
+    once per seed, still process-shared) and makes a same-process 6-seed loop safe -- see
+    `research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md`."""
+    lad = _LADDERS.get(int(seed))
+    if lad is None:
+        lad = AppraisalInteroceptiveLadder(seed=seed)
+        _LADDERS[int(seed)] = lad
+    return lad
 
 
 def _threshold_hash(seed):
@@ -310,11 +327,15 @@ _PRE_EDIT_LESION_0_7 = 0.0
 
 
 def run_byte_identical_off(seed: int = 42) -> dict:
-    """The empirical byte-identical-off proof: with the flag UNSET, `AffectProductionOrgan.read_differential` must
-    reproduce `_PRE_EDIT_BASELINE` EXACTLY (a hash/exact-float compare, not code inspection)."""
-    os.environ.pop("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE", None)
+    """The empirical byte-identical-OFF proof (the ESCAPE HATCH, post the 2026-09-05 production-default-ON flip
+    -- see `research/findings/2026-09-05-gateB-appraisal-interoceptive-production-flip-GO.md`): with the flag
+    EXPLICITLY set to '0', `AffectProductionOrgan.read_differential` must still reproduce `_PRE_EDIT_BASELINE`
+    EXACTLY (a hash/exact-float compare, not code inspection) -- i.e. rollback still reaches the untouched
+    original host-write code byte-for-byte. (Before the flip this asserted the UNSET state instead; unset now
+    means ON, so the explicit-off arm is what proves the escape hatch.)"""
+    os.environ["BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE"] = "0"
     from research.runners import affect_production_organ as AO
-    assert not AO.appraisal_interoceptive_enabled(), "flag must read as OFF when unset"
+    assert not AO.appraisal_interoceptive_enabled(), "flag must read as OFF when explicitly set to '0'"
     organ = AO.AffectProductionOrgan(seed=seed)   # a FRESH organ instance (not the process-shared singleton)
     rows = []
     all_match = True
@@ -368,8 +389,11 @@ def run_seed(seed, i_pa=APPR_INTERO_I_PA, w=APPR_INTERO_W, dens=APPR_INTERO_DENS
                                                        for r in intero_lesioned])
 
     # ---- HOST-WRITE reference (the REAL production organ, seed-matched) for the no-regression comparison. -------
+    # Post the 2026-09-05 production-default-ON flip, an UNSET flag now means ON (interoceptive) -- popping it
+    # here would silently turn this "host reference" into a self-comparison against the NEW mechanism. The
+    # escape hatch (explicit '0') is what still reaches the untouched original host-write code.
     from research.runners import affect_production_organ as AO
-    os.environ.pop("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE", None)
+    os.environ["BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE"] = "0"
     host = AO.AffectProductionOrgan(seed=seed)
     host_rows = [host.read_differential(a, lesion=False) for a in sweep]
     host_diffs = [r["differential"] for r in host_rows]
