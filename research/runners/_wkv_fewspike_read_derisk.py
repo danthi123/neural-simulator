@@ -342,7 +342,32 @@ class LinAttnReadout:
     transcription bug here would reproduce, and it loads without error, so the test -- not "it imports fine" --
     is what proves this class is not that bug)."""
 
-    def __init__(self, ckpt_path, phi="elu", norm=True):
+    def __init__(self, ckpt_path, phi="elu", norm=True, div_mode="exact", div_g_leak=1e-6, div_k=1.0,
+                 fI=None, quantize_levels=0, quantize_seed=0, quantize_den_scale=None):
+        """`div_mode`/`div_g_leak`/`div_k`/`fI`/`quantize_levels` (2026-09-03 Tier-1 de-risk, research/findings/
+        2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3e/4, research/runners/
+        _linattn_shunt_gain_tier1_derisk.py): the READ-SIDE swap this de-risk needs -- an ALREADY-TRAINED
+        checkpoint's division realized as `_divisive_read` (numpy transcription of `LinAttnLayer._divisive_read`,
+        `_emerge_wkv_lm_derisk.py`) instead of retraining. `div_mode="exact"` (default) is BYTE-IDENTICAL to
+        every call site that predates this flag (spelled identically: `num/(den+1e-6)`). `div_mode="shunt"`
+        applies the conductance-divisive-gain form `num/(g_leak+k*den)`, then the optional `fI` (a monotone
+        read-neuron f-I squash) and `quantize_levels>0` (a finite spike-count-like read, `_quantize_rate`) --
+        the two biophysical realities the design names as the actual Tier-1 test (at `g_leak=1e-6,k=1.0,fI=None,
+        quantize_levels=0` shunt is algebraically identical to exact, so those knobs are what makes this a
+        test). `quantize_seed` seeds the STOCHASTIC-ROUNDING RNG (host-side, diagnostic-only -- this class has
+        no `n_host_rng_draws` provenance contract the way `FewSpikeWordRead` does; quantization here is a
+        Tier-1 RATE-MODEL stand-in for a finite spike count, not a claim of an on-substrate read).
+
+        `quantize_den_scale`: `_quantize_rate`'s self-relative-peak normalization (dividing `x` by `|x|.max()`)
+        is meaningful for `num` (a [D] POPULATION -- other channels get quantized relative to the pool's own
+        peak, same convention `FewSpikeWordRead.drive_from_weights` uses) but is a NO-OP for `den` (a lone
+        SCALAR: normalizing a single value by its own peak always yields exactly +-1, which then quantizes back
+        to exactly the value it started from -- caught by this class's own Tier-1 runner, which measured a
+        catastrophic shunt-mode margin collapse traced to two compounding bugs, this being one). Passing an
+        externally-calibrated `quantize_den_scale` (e.g. a representative `den` magnitude from an exact-mode
+        pass) makes `den`'s quantization a genuine finite-count discretization against a FIXED range instead of
+        a trivial round-trip. `None` (default) skips `den` quantization (num-only) rather than silently applying
+        the meaningless self-peak version."""
         W = np.load(ckpt_path, allow_pickle=True)
         self.V = int(W["V"]); self.D = int(W["d_model"])
         self.words = list(W["words"])
@@ -372,6 +397,71 @@ class LinAttnReadout:
             )
         self.phi_kind = phi
         self.norm = bool(norm)
+        self.div_mode = div_mode; self.div_g_leak = float(div_g_leak); self.div_k = float(div_k)
+        self.fI = fI
+        self.quantize_levels = int(quantize_levels)
+        self.quantize_den_scale = (float(quantize_den_scale) if quantize_den_scale is not None else None)
+        self._qrng = np.random.default_rng(quantize_seed)
+        # opt-in instrumentation for the sigma-domination / divisive-vs-subtractive checks
+        # (research/runners/_linattn_shunt_gain_tier1_derisk.py): when diag_collect is True, advance() appends
+        # (layer_idx, num.copy(), den) to _diag, capped at diag_cap entries (MEMORY BUDGET: a [D]-float64 array
+        # per entry, ~1.5KB at D=192 -> 20000 entries is ~30MB, bounded regardless of how many positions the
+        # caller actually evaluates).
+        self.diag_collect = False
+        self._diag = []
+        self.diag_cap = 20000
+
+    @staticmethod
+    def _divisive_read(num, den, mode="exact", g_leak=1e-6, k=1.0, fI=None):
+        """numpy transcription of `LinAttnLayer._divisive_read` (`_emerge_wkv_lm_derisk.py`) -- see that
+        method's docstring + research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3e
+        for the full derivation. `den` here is a python float (this class's autoregressive per-position
+        `den = float(q @ zden)`), `num` a [D] array -- the torch version's `.unsqueeze(-1)` batch broadcasting
+        has no numpy analogue to replicate because there is no batch dimension here."""
+        g = num / (den + 1e-6) if mode == "exact" else num / (g_leak + k * den)
+        return fI(g) if fI is not None else g
+
+    @staticmethod
+    def _quantize_rate(x, n_levels, rng, scale=None):
+        """Tier-1 RATE-MODEL stand-in for a finite spike-count read (the design's rate-quantization robustness
+        axis, Sec 3c effect 3: 'finite spike counts per token add noise to den and num'). Splits `x` into
+        non-negative ON/OFF sub-populations (the design's own signed-value convention, Sec 3a: '[relu(num_i),
+        relu(-num_i)]'), quantizes each to `n_levels` via UNBIASED stochastic rounding (round to floor/ceil in
+        proportion to the fractional remainder -- an unbiased discretization of a continuous rate to a finite
+        spike-count-like bin, in expectation reproducing the un-quantized value), and rescales back.
+        `n_levels<=0` disables quantization (returns `x` unchanged -- Tier-1 default OFF, opt-in via
+        `quantize_levels`). This is an EXPLICIT APPROXIMATION named as such: the real substrate-level read is
+        Tier 2's job (an actual finite-window spike count off `cp_firing_states`, as `FewSpikeWordRead` already
+        does for the word-level read elsewhere in this file); this only tests whether the DIVISION is robust to
+        the KIND of noise a finite count would add, at the rate-model level.
+
+        `scale`: the quantization range `[-scale, scale]`. `None` (default) self-normalizes by `x`'s OWN current
+        peak |x| -- the same self-relative population-rate convention `FewSpikeWordRead.drive_from_weights`
+        already uses (`active*(base_pA+gain_pA*(w/peak))`), meaningful for a [D] POPULATION where other channels
+        get quantized relative to the pool's own peak. This self-normalization is a NO-OP for a lone SCALAR
+        (normalizing a single value by its own peak always yields exactly +-1, which quantizes back to exactly
+        where it started) -- callers quantizing a scalar (`den`) MUST pass an externally-calibrated `scale`, or
+        skip quantizing it entirely; `LinAttnReadout.advance` does exactly that (`quantize_den_scale`). Caught by
+        this class's own Tier-1 runner, which measured a catastrophic shunt-mode margin collapse traced in part
+        to this self-normalization silently no-op'ing on `den`."""
+        if n_levels <= 0:
+            return x
+        x = np.asarray(x, dtype=np.float64)
+        peak = float(scale) if scale is not None else float(np.abs(x).max())
+        if peak <= 1e-12:
+            return x
+        xn = np.clip(x / peak, -1.0, 1.0)
+        on = np.clip(xn, 0.0, None); off = np.clip(-xn, 0.0, None)
+        step = 1.0 / n_levels
+
+        def _q(v):
+            idx = v / step
+            lo = np.floor(idx)
+            frac = idx - lo
+            bump = (rng.random(v.shape) < frac).astype(v.dtype)
+            return np.clip(lo + bump, 0.0, n_levels) * step
+
+        return (_q(on) - _q(off)) * peak
 
     def init_state(self):
         """Fresh per-layer `(M, zden)` state -- all-zero, matching `WKV.forward`'s own `M = torch.zeros(B,D,D);
@@ -409,7 +499,7 @@ class LinAttnReadout:
         mean = v.mean(); var = v.var()
         return (v - mean) / np.sqrt(var + eps) * w + b
 
-    def advance(self, state, tid):
+    def advance(self, state, tid, memoryless=False):
         """ONE autoregressive step, BOTH halves at once (this recurrence's read needs a freshly-computed query
         `q_t` from the SAME z that produced this step's `k_t`/`v_t`, so write and read cannot be split into two
         independently-recomputable calls the way `WKVReadout`'s dual-nonneg `advance`/`logits` can -- see the
@@ -418,21 +508,42 @@ class LinAttnReadout:
         recomputes the update, which would double-apply `tid`'s own contribution (the bug this split exists to
         avoid: an earlier draft of this class called the equivalent of this method again inside `logits`, and a
         token's write was silently applied TWICE -- caught by this class's own parity test, which is exactly why
-        that test is the deliverable's correctness gate, not a formality)."""
+        that test is the deliverable's correctness gate, not a formality).
+
+        `memoryless` (ANTI-CHEAT, byte-for-byte the same semantics as `LinAttnLayer.forward`'s own memoryless
+        branch, `_emerge_wkv_lm_derisk.py`): when True, the READ uses ONLY this position's own `phi(k_t) (x) v_t`
+        / `phi(k_t)` (no carried state) and the returned `M`/`zden` are the UNTOUCHED (still all-zero, since
+        `init_state()` starts at zero and this branch never updates them) prior state -- so a caller that passes
+        `memoryless=True` on every step of a sequence gets exactly the torch model's `net.memoryless=True` eval
+        (no cross-position recall possible), not merely a per-call flag with no consequence for later steps."""
         h = self.emb[tid]
         hh = self._ln(h, self.ln_w, self.ln_b)              # WKV.forward: h = self.ln(self.emb(x)), ONCE up front
         new_layers = []
-        for lyr, st in zip(self.layers, state["layers"]):
+        for li, (lyr, st) in enumerate(zip(self.layers, state["layers"])):
             z = self._ln(hh, lyr["ln_w"], lyr["ln_b"])
             q = self._phi(lyr["Wq"] @ z, self.phi_kind)
             k = self._phi(lyr["Wk"] @ z, self.phi_kind)
             v = lyr["Wv"] @ z
             r = 1.0 / (1.0 + np.exp(-(lyr["Wr"] @ z)))
-            M = lyr["lam"][:, None] * st["M"] + np.outer(k, v)          # M += phi(k) (x) v  (Hebbian pre x post)
-            zden = lyr["lam"] * st["zden"] + k                          # running normalizer trace
-            num = q @ M                                                  # phi(q)^T M
-            den = float(q @ zden)                                        # phi(q)^T zden
-            read = num / (den + 1e-6) if self.norm else num             # the restored num/den normalization
+            if memoryless:                                               # ANTI-CHEAT: current token only
+                M_r = np.outer(k, v); zden_r = k
+                M, zden = st["M"], st["zden"]                             # NEVER updated -> stays zero throughout
+            else:
+                M = lyr["lam"][:, None] * st["M"] + np.outer(k, v)       # M += phi(k) (x) v  (Hebbian pre x post)
+                zden = lyr["lam"] * st["zden"] + k                       # running normalizer trace
+                M_r, zden_r = M, zden
+            num = q @ M_r                                                 # phi(q)^T M
+            den = float(q @ zden_r)                                       # phi(q)^T zden
+            if self.quantize_levels > 0:                                  # Tier-1 rate-quantization robustness axis
+                num = self._quantize_rate(num, self.quantize_levels, self._qrng)         # self-peak (a population)
+                if self.quantize_den_scale is not None:                                   # a lone scalar needs an
+                    den = float(self._quantize_rate(np.array([den]), self.quantize_levels,  # EXTERNAL scale (see
+                                                     self._qrng, scale=self.quantize_den_scale)[0])  # _quantize_rate)
+            if self.diag_collect and len(self._diag) < self.diag_cap:
+                self._diag.append((li, num.copy(), den))
+            read = (self._divisive_read(num, den, mode=self.div_mode, g_leak=self.div_g_leak, k=self.div_k,
+                                         fI=self.fI)
+                    if self.norm else num)                                # the restored num/den normalization
             if lyr["Wg"] is not None:
                 read = (1.0 / (1.0 + np.exp(-(lyr["Wg"] @ z + lyr["Wg_b"])))) * read    # --assoc-gate trust gate
             hh = hh + lyr["Wo"] @ (r * read)                            # pre-norm residual: h = h + delta

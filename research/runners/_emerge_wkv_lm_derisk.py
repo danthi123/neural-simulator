@@ -645,7 +645,8 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
         never instantiated, consuming ZERO init-RNG draws, so wkv/ssm/hippo/assoc/assoc_t are completely
         unaffected by this addition.
         """
-        def __init__(self, D, uniform_decay=False, phi="elu", gate=False, norm=True):
+        def __init__(self, D, uniform_decay=False, phi="elu", gate=False, norm=True,
+                     div_mode="exact", div_g_leak=1e-6, div_k=1.0):
             super().__init__()
             self.ln = nn.LayerNorm(D)
             self.Wq = nn.Linear(D, D, bias=False); self.Wk = nn.Linear(D, D, bias=False)
@@ -655,6 +656,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.phi = phi
             self.norm = norm            # --no-linattn-norm ablation: False -> raw unnormalized sum (num_t only)
             self.gate = gate
+            # --linattn-div {exact,shunt} (2026-09-03 Tier-1 de-risk, research/findings/2026-09-03-linattn-
+            # spike-native-normalization-DESIGN.md Sec 3e/4): DEFAULT "exact" is BYTE-IDENTICAL to the pre-
+            # existing `num/(den+eps)` division (see _divisive_read below -- mode="exact" is spelled identically
+            # to the formula this replaces). "shunt" swaps in the Carandini-Heeger conductance-divisive-gain
+            # rate-model form `num/(g_leak + k*den)` -- the spike-native realization this design specifies.
+            # Training-side plumbing only (this arc's own Tier-1 de-risk runs the READ-SIDE swap on an already-
+            # trained checkpoint via LinAttnReadout, research/runners/_wkv_fewspike_read_derisk.py, which needs
+            # no retrain); wired here too so a Tier-2 retrain-in-the-loop (DESIGN Sec 4, "if Tier 1 needs the
+            # read-in-the-loop retrain") has the identical flag/semantics available without another edit.
+            self.div_mode = div_mode; self.div_g_leak = float(div_g_leak); self.div_k = float(div_k)
             if gate:
                 self.Wg = nn.Linear(D, D, bias=True)
                 nn.init.zeros_(self.Wg.weight); nn.init.constant_(self.Wg.bias, 2.0)   # init-open, reuse assoc-gate
@@ -667,6 +678,20 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 kth = torch.topk(x, max(1, x.shape[-1] // 8), dim=-1).values[..., -1:]
                 return torch.relu(x - kth)
             raise ValueError(self.phi)
+
+        @staticmethod
+        def _divisive_read(num, den, mode="exact", g_leak=1e-6, k=1.0, fI=None):
+            """Spike-native num/den realization (DESIGN doc Sec 3e sketch, transcribed verbatim from the design's
+            own `divisive_read` pseudocode). `mode="exact"` -> `num/(den+1e-6)`, spelled IDENTICALLY to the
+            formula it replaces -- so div_mode="exact" (the default) is BYTE-IDENTICAL to every call site that
+            predates this flag. `mode="shunt"` -> `num/(g_leak + k*den)`, the Carandini-Heeger conductance-
+            divisive-gain rate-model form: `g_leak` (sigma) is the read neuron's leak conductance -- AT
+            `g_leak=1e-6, k=1.0` this is algebraically IDENTICAL to "exact" (both reduce to `num/(den+1e-6)`),
+            which is why the Tier-1 de-risk (no retrain) instead varies `fI`/quantization/`g_leak`/`k` around
+            that point to test robustness, not the bare formula. `fI`, if given, is the read neuron's own
+            monotone f-I transfer (rate saturation) applied AFTER the divisive gain (design Sec 3c effect 2)."""
+            g = num / (den + 1e-6) if mode == "exact" else num / (g_leak + k * den)
+            return fI(g) if fI is not None else g
 
         def forward(self, h, memoryless=False):        # h:[B,T,D] -> delta:[B,T,D] (pre-norm residual block)
             B, T, D = h.shape
@@ -686,7 +711,8 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                     M_r, zden_r = M, zden
                 num = torch.einsum("bd,bde->be", q[:, t], M_r)              # phi(q)^T M
                 den = torch.einsum("bd,bd->b", q[:, t], zden_r).unsqueeze(-1)   # phi(q)^T zden  (scalar/token)
-                read = num / (den + 1e-6) if self.norm else num            # --no-linattn-norm = raw sum ablation
+                read = (self._divisive_read(num, den, mode=self.div_mode, g_leak=self.div_g_leak, k=self.div_k)
+                        if self.norm else num)                             # --no-linattn-norm = raw sum ablation
                 if self.gate: read = torch.sigmoid(self.Wg(z[:, t])) * read
                 outs.append(self.Wo(r[:, t] * read))
             return torch.stack(outs, 1)
@@ -762,7 +788,10 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.linattn_layers = nn.ModuleList([
                 LinAttnLayer(D, uniform_decay=getattr(args, "uniform_decay", False),
                              phi=getattr(args, "linattn_phi", "elu"), gate=getattr(args, "assoc_gate", False),
-                             norm=getattr(args, "linattn_norm", True))
+                             norm=getattr(args, "linattn_norm", True),
+                             div_mode=getattr(args, "linattn_div", "exact"),
+                             div_g_leak=getattr(args, "linattn_div_gleak", 1e-6),
+                             div_k=getattr(args, "linattn_div_k", 1.0))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "linattn" else nn.ModuleList()
 
@@ -1308,6 +1337,26 @@ def main():
                          "is what is load-bearing (research/findings/2026-09-03-spiking-content-addressable-"
                          "read-DESIGN.md Sec 6, the cheapest decisive CPU experiment). Default (flag unset) = "
                          "normalization ON = args.linattn_norm=True = the design's primary arm.")
+    ap.add_argument("--linattn-div", dest="linattn_div", choices=["exact", "shunt"], default="exact",
+                    help="(--recurrence linattn only) SPIKE-NATIVE num/den REALIZATION (2026-09-03, research/"
+                         "findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3e/4). "
+                         "exact (default) = today's graded host divide num/(den+eps), BYTE-IDENTICAL to every "
+                         "run before this flag existed. shunt = the Carandini-Heeger conductance-divisive-gain "
+                         "rate-model form num/(g_leak + k*den) (--linattn-div-gleak/--linattn-div-k); at the "
+                         "default g_leak=1e-6, k=1.0 this is algebraically IDENTICAL to exact (both reduce to "
+                         "num/(den+1e-6)) -- the Tier-1 CPU de-risk (research/runners/"
+                         "_linattn_shunt_gain_tier1_derisk.py) instead swaps the READ of an ALREADY-TRAINED "
+                         "checkpoint (LinAttnReadout) and varies the f-I squash/quantization/g_leak/k around "
+                         "that point; this training-side flag exists so a Tier-2 read-in-the-loop retrain can "
+                         "reuse the identical mechanism without another edit.")
+    ap.add_argument("--linattn-div-gleak", dest="linattn_div_gleak", type=float, default=1e-6,
+                    help="(--linattn-div shunt only) g_leak (sigma): the read neuron's leak conductance -- the "
+                         "shunt read's own epsilon. Sweeping this UP tests sigma-domination (the 'the clamp "
+                         "owned 97%%' trap, CLAUDE.md): a den-driven divisor should track den, not sit at a "
+                         "g_leak-dominated fixed gain.")
+    ap.add_argument("--linattn-div-k", dest="linattn_div_k", type=float, default=1.0,
+                    help="(--linattn-div shunt only) k: the norm-neuron-rate -> shunt-conductance scale factor "
+                         "in num/(g_leak + k*den).")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,

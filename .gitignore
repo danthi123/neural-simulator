@@ -152,6 +152,18 @@ bridges/developed/
 bridges/lmtrain/*/tokens_train.npy
 bridges/lmtrain/*/tokens_val.npy
 
+# linattn 6-seed checkpoint family (2026-09-04, num/den Tier-1 shunt-gain de-risk). ~16 MB each, regenerable
+# via `research/runners/_emerge_wkv_lm_derisk.py --recurrence linattn --save-ssm ...` (see the milestone
+# finding's own repro command) -- not source. seed42 is ALREADY TRACKED (committed at the open-fluency
+# milestone) and this pattern does not untrack it; it only keeps the other 5 seeds' local copies (used by
+# research/findings/2026-09-04-linattn-shunt-gain-tier1-PARTIAL-5of6.md) from being accidentally staged by a
+# future broad `git add`.
+bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed43.npz
+bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed44.npz
+bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed100.npz
+bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed101.npz
+bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed102.npz
+
 # DEPLOY TREE (2.1 GB). Was ignored ONLY via .git/info/exclude, which is local and never shared -- so it
 # was unprotected on every other clone of this repo. Moved here so the guard travels with the repository.
 deploy/
