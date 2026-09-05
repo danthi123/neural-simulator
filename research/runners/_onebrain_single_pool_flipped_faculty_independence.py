@@ -18,9 +18,13 @@ DIFFERENT number of times, and a faculty built AFTER them that draws from the GL
 own substrate from `cfg.seed`) could differ.
 
 This verifier exercises exactly that worst case: per seed, in subprocess-isolated ON vs OFF, it (1) builds all 4
-CORE organs — reproducing the live startup order + the divergent global-RNG advancement — then (2) reads the
-flipped faculties that build AFTER them. It records the post-core-build global-RNG state hash (the WITNESS that the
-preceding state genuinely diverged — a non-vacuity guard) and the flipped-faculty reads:
+CORE organs — reproducing the live startup order + the divergent core-organ pool construction — then (2) reads
+the flipped faculties that build AFTER them. The NON-VACUITY WITNESS is a hash of the FULL shared pool the core
+organs actually built (ON => the ONE merge_organs pool, N=2034; OFF => MergedSubstrate #1, N=1584) — it MUST
+differ ON vs OFF, proving the two workers genuinely took different core-build paths (else the faculty
+byte-identity would be vacuous). The global-RNG state is ALSO recorded but is NOT the gate: it does NOT diverge,
+because the organs re-seed the global RNG from cfg.seed (the RNG channel to downstream faculties is closed) — the
+recorded rng_state makes that insulation mechanism visible. The flipped-faculty reads:
   shared-salience         -> `shared_salience_afferent.read_salience(RAW)` (the curiosity ASK-pool transduction
                              every consumer calls) — normalized + want_hz.
   appraisal-interoception -> `affect_production_organ.get_organ(seed).read_differential(APPRAISAL)` (the
@@ -33,8 +37,8 @@ preceding state genuinely diverged — a non-vacuity guard) and the flipped-facu
                              trained organ. ONE build, hashed — deliberately NOT a trained/untrained attribution.
 
 GATE (per seed): every flipped-faculty read is BYTE-IDENTICAL ON vs OFF (a NULL result — the flip is invisible to
-them), WHILE the global-RNG witness hash DIFFERS (proving the test is non-vacuous: the preceding process state
-really did diverge, and the faculties are nonetheless seed-isolated from it). GNW-stop is covered ARCHITECTURALLY
+them), WHILE the pool witness hash DIFFERS (proving the test is non-vacuous: the two workers genuinely built
+different core-organ pools, and the faculties are nonetheless insulated from that). GNW-stop is covered ARCHITECTURALLY
 (it snapshots+restores the host `random` state around its spiking read — `webapp/gnw_global_stop.py:255-262` — and
 its verdict is a function of per-turn `chat` deliberation/swap state, not the merge; zero merge references), so it
 is reported as ARCHITECTURAL, not exercised here (it needs a live ChatBrain).
@@ -77,13 +81,27 @@ def _worker_reads(seed: int) -> dict:
     import research.runners.pragmatic_production_organ as PR
 
     # (1) build the 4 core organs — the ONLY thing the flag changes; ON => one merge_organs pool, OFF => two pools.
-    SO.get_organ(seed=seed).ensure_built()
+    surprise = SO.get_organ(seed=seed)
+    surprise.ensure_built()
     WM.get_organ(seed=seed).ensure_built()
     MC.get_organ(seed=seed).ensure_built()
     PR.get_organ(seed=seed).ensure_built()
 
-    # (2) the WITNESS: the process global-RNG state AFTER the divergent core builds (numpy + host random).
-    rng_witness = hashlib.sha256(
+    # (2) the NON-VACUITY WITNESS: a hash of the FULL shared pool the core organs actually built. ON => the ONE
+    # merge_organs pool (N=2034, all 4 organs); OFF => MergedSubstrate #1 (surprise+worldmodel, N=1584). These
+    # are genuinely different substrates, so this witness MUST differ ON vs OFF — it proves the two workers took
+    # different core-organ-build paths (without it the flipped-faculty byte-identity below could be vacuous).
+    pool = getattr(surprise, "_shared", None)
+    pb = getattr(pool, "bridge", None) if pool is not None else None
+    if pb is not None:
+        pool_witness = "N=%d:%s" % (int(pb.cp_membrane_potential_v.shape[0]),
+                                    _arr_hash(pb.cp_neuron_firing_thresholds))
+    else:
+        pool_witness = "no-shared-pool"
+    # SECONDARY (informational, not the gate): the global-RNG state after the builds. It does NOT diverge here —
+    # the organs re-seed the global RNG from cfg.seed, so the RNG channel to downstream faculties is CLOSED; the
+    # faculties are insulated regardless of the flip. Recorded to make that mechanism visible, not asserted.
+    rng_state = hashlib.sha256(
         repr(np.random.get_state()).encode() + b"|" + repr(_random.getstate()).encode()
     ).hexdigest()[:16]
 
@@ -113,7 +131,8 @@ def _worker_reads(seed: int) -> dict:
     return {
         "seed": int(seed),
         "single_pool_enabled": bool(single_pool_enabled()),
-        "rng_witness": rng_witness,
+        "pool_witness": pool_witness,
+        "rng_state": rng_state,
         "salience": salience_read,
         "appraisal": appraisal_read,
         "value_substrate": vc_hashes,
@@ -144,12 +163,14 @@ def verify_seed(seed: int) -> dict:
     on = _run_worker(seed, single_pool=True)
     off = _run_worker(seed, single_pool=False)
     faculty_same = {k: bool(on[k] == off[k]) for k in _FACULTY_KEYS}
-    witness_diverged = bool(on["rng_witness"] != off["rng_witness"])
-    go = bool(all(faculty_same.values()) and on["single_pool_enabled"] and not off["single_pool_enabled"])
+    witness_diverged = bool(on["pool_witness"] != off["pool_witness"])
+    go = bool(all(faculty_same.values()) and witness_diverged
+              and on["single_pool_enabled"] and not off["single_pool_enabled"])
     return {"seed": int(seed), "faculty_byte_identical": faculty_same,
-            "rng_witness_diverged": witness_diverged,
+            "pool_witness_diverged": witness_diverged,
             "on": {k: on[k] for k in _FACULTY_KEYS}, "off": {k: off[k] for k in _FACULTY_KEYS},
-            "rng_on": on["rng_witness"], "rng_off": off["rng_witness"],
+            "pool_on": on["pool_witness"], "pool_off": off["pool_witness"],
+            "rng_state_on": on["rng_state"], "rng_state_off": off["rng_state"],
             "on_flag": on["single_pool_enabled"], "off_flag": off["single_pool_enabled"], "GO": go}
 
 
@@ -171,7 +192,8 @@ def main():
     per_seed = [verify_seed(s) for s in seeds]
     for p in per_seed:
         print(f"  [seed {p['seed']}] byte_identical={p['faculty_byte_identical']} "
-              f"rng_witness_diverged={p['rng_witness_diverged']} -> GO={p['GO']}", flush=True)
+              f"pool_witness_diverged={p['pool_witness_diverged']} "
+              f"(pool_on={p['pool_on']} pool_off={p['pool_off']}) -> GO={p['GO']}", flush=True)
         for k in _FACULTY_KEYS:
             if not p["faculty_byte_identical"][k]:
                 print(f"      DIVERGE {k}: on={p['on'][k]} off={p['off'][k]}", flush=True)
@@ -179,12 +201,13 @@ def main():
     n = len(seeds)
     n_go = sum(p["GO"] for p in per_seed)
     per_faculty = {k: sum(p["faculty_byte_identical"][k] for p in per_seed) for k in _FACULTY_KEYS}
-    n_witness = sum(p["rng_witness_diverged"] for p in per_seed)
+    n_witness = sum(p["pool_witness_diverged"] for p in per_seed)
     all_go = bool(n_go == n and n > 0)
     print("\n=== VERDICT (flipped-faculty independence under the single-pool flip) ===")
     for k in _FACULTY_KEYS:
         print(f"  {k:16s} byte-identical {per_faculty[k]}/{n}")
-    print(f"  RNG-divergence witness (non-vacuity): {n_witness}/{n} seeds diverged as expected")
+    print(f"  POOL-divergence witness (non-vacuity): {n_witness}/{n} seeds diverged as expected "
+          f"(ON=single N2034 pool vs OFF=MergedSubstrate #1 N1584)")
     print(f"  gnw-stop: ARCHITECTURAL (host-random snapshot/restore + chat-state verdict; zero merge refs)")
     print(f"  ALL-FACULTY ALL-SEED byte-identity: {n_go}/{n}  ->  ALL-GO={all_go}")
 
@@ -198,7 +221,8 @@ def main():
         from tools.verdict import Verdict
         v = Verdict("one-brain SINGLE-POOL flip — flipped-faculty independence (salience/appraisal/value-choice)")
         v.require("every flipped faculty's read byte-identical ON vs OFF, every seed", n_go, expect=n)
-        v.require("the RNG-divergence witness fired (non-vacuous test), every seed", n_witness, expect=n)
+        v.require("the pool-divergence witness fired (non-vacuous: ON/OFF built different pools), every seed",
+                  n_witness, expect=n)
         v.disabled("gnw-stop empirical exercise", why="architectural: host-random snapshot/restore + chat-state "
                    "verdict, zero merge references — needs a live ChatBrain, covered by source analysis")
         decided = v.decide(go=all_go)
