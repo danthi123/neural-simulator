@@ -13,7 +13,17 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~09:10 (SHIPPING CONTINUES; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~15:00 (HOST REBOOT RECOVERED; READ FIRST; LATEST anchor)
+
+**A host reboot interrupted the session ~11:03 (NOT a GPU fault — the 3090 came back clean, no Xid/fell-off-bus).** Root cause in the prior-boot kernel log: a process crashed and dumped a **~15 GB core**; `systemd-coredump` choking on it deadlocked tasks (Chrome/Bun/llvmpipe blocked >122s "Blocked by coredump") → reboot. No OOM-kill; RAM/swap healthy. **Mitigation PENDING OWNER APPROVAL (system setting):** cap coredump size in `/etc/systemd/coredump.conf` (e.g. `ProcessSizeMax=2G`/`ExternalSizeMax=2G` or `Storage=none`) so a giant core can't hang the box again.
+
+**RECOVERED (all committed, both remotes):**
+- ✅ **Composer FHRR recall-latency RETIRED** — `BRAIN_FACT_SHARD_RETRIEVAL` default-ON flip landed pre-crash (`361484d39`, GO 6/6 parity 720/720 recall 404/404 411x, `=0` reverts). SAFE.
+- ✅ **Affect-gate embodied-US BOUNDARY harvested** from the crashed agent (`93f47eb71`): even a PERFECT embodied-US oracle → 0.000 recall; the supervised separability CEILING over the text concept code is ~0 → the register confound is in the CONCEPT CODE (perception), not just the US. Surpass SHARPENED: an embodied US is NECESSARY BUT NOT SUFFICIENT — the concept code must ALSO be grounded (a grounded-perception teacher). rank-7 next mechanism reframed.
+- ✅ Board #192 reconcile stamp recovered (`e63745c6f`); heartbeat re-armed (bh2ryekmu).
+- ⚠️ **RE-QUEUED (lost with the crash — died mid-run/queued):** wt103 objective A/B (`--pred-aux-weight 1.0 --pred-aux-offsets 2`, the #1 mouth-lever test) → deltanet wt103 → one-brain rebaseline v2. GPU dispatcher auto-restarted (pid 2191); 3 jobs queued.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~09:10 (SHIPPING CONTINUES; earlier anchor)
 
 **Autonomous overnight, shipping continues.** The 4 faculty-flips + the ONE-BRAIN merge are LIVE on production-default (PI gate 0-problems this cycle: ledger consistent with flipped source). Mouth branch harvested to main (`cd06e61c4`). Now advancing the two shortest-path scaffold retirements + the #1 blocker in parallel:
 
