@@ -23,6 +23,13 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 - ✅ Board #192 reconcile stamp recovered (`e63745c6f`); heartbeat re-armed (bh2ryekmu).
 - ⚠️ **RE-QUEUED (lost with the crash — died mid-run/queued):** wt103 objective A/B (`--pred-aux-weight 1.0 --pred-aux-offsets 2`, the #1 mouth-lever test) → deltanet wt103 → one-brain rebaseline v2. GPU dispatcher auto-restarted (pid 2191); 3 jobs queued.
 
+**PRE-DECIDED NEXT ACTIONS (ordered; supersedes older blocks — the composer/affect/delta-rule agents are DONE + harvested):**
+1. Harvest the wt103 objective A/B (`_emerge_wkv_lm_linattn_wt103_predaux_s43.json`, RUNNING — the #1 mouth-lever test): does `--pred-aux-weight 1.0` lift `margin_vs_trigram` off linattn's -0.286..-0.57 broad-domain floor? If yes → 6-seed + stack capacity; if flat → the deltanet result (queued next) is the lever.
+2. Harvest deltanet wt103 (`_emerge_wkv_lm_deltanet_wt103_scale_s43.json`, QUEUED): does the erase-before-write lift the floor ≥+0.05? GO-bar in the delta-rule finding. Then one-brain rebaseline v2 (validates the shipped one-brain flip; the v1 was a false-alarm off-arm confound, now fixed).
+3. OWNER DECISION PENDING: cap coredump size (`/etc/systemd/coredump.conf`) to prevent another giant-core hang — apply on owner OK.
+4. Mouth is the #1 blocker. Affect gate reframed → needs a grounded-perception concept-code teacher (bigger arc, rank-7). Agent lane MEASURED post-crash (avoid many concurrent heavy procs until the coredump cap lands).
+5. Keep durable state + heartbeat (bh2ryekmu) fresh; 255 stale worktrees flagged (task chip); pool healthy-but-idle.
+
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~09:10 (SHIPPING CONTINUES; earlier anchor)
 
 **Autonomous overnight, shipping continues.** The 4 faculty-flips + the ONE-BRAIN merge are LIVE on production-default (PI gate 0-problems this cycle: ledger consistent with flipped source). Mouth branch harvested to main (`cd06e61c4`). Now advancing the two shortest-path scaffold retirements + the #1 blocker in parallel:
