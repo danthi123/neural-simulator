@@ -1,0 +1,28 @@
+{
+ "run_id": "1788596376-3891746",
+ "runner": "research/runners/_gnw_congruence_spiking_read_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-adfdaf8f34bbc9cd5/research/runners/_gnw_congruence_spiking_read_derisk.py",
+  "--calibrate",
+  "--seed",
+  "42"
+ ],
+ "git_sha": "ff19d5212",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:19:36",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_gnw_congruence_spiking_read.json"
+}

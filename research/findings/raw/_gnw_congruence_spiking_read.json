@@ -1,0 +1,33 @@
+{
+  "runner": "_gnw_congruence_spiking_read_derisk",
+  "mode": "calibrate",
+  "seed": 42,
+  "match": {
+    "congruent": true,
+    "mm_peak": 0.05555555555555555,
+    "swapped": false,
+    "held_flag": true,
+    "k_held": 0,
+    "k_proposed": 0,
+    "same_slot": true
+  },
+  "mismatch": {
+    "congruent": false,
+    "mm_peak": 0.3055555555555556,
+    "swapped": true,
+    "held_flag": false,
+    "k_held": 0,
+    "k_proposed": 1,
+    "same_slot": false
+  },
+  "mismatch_lesioned": {
+    "congruent": true,
+    "mm_peak": 0.011111111111111112,
+    "swapped": false,
+    "held_flag": true,
+    "k_held": 0,
+    "k_proposed": 1,
+    "same_slot": false
+  },
+  "primitive_ok": true
+}

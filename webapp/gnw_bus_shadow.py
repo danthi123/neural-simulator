@@ -108,12 +108,32 @@ def _extract_query(question: str, agents_set, actions_set):
     return a, v
 
 
-def _organ_reads(composer, agent, action):
+def _congruence_spiking_enabled() -> bool:
+    """rank-8 scaffold-retirement flag (env read only — NO import of `webapp.gnw_congruence_spiking` unless truthy,
+    so the default-off path costs nothing). See that module's docstring for the mechanism/contract."""
+    return os.environ.get("BRAIN_GNW_CONGRUENCE_SPIKING", "").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _spiking_congruent(held, proposed, *, seed: int) -> bool:
+    """Lazy-imported wrapper around `webapp.gnw_congruence_spiking.spiking_congruent` — only ever called from
+    `_organ_reads` when `_congruence_spiking_enabled()` is truthy."""
+    from webapp.gnw_congruence_spiking import spiking_congruent
+    return spiking_congruent(held, proposed, seed=seed)
+
+
+def _organ_reads(composer, agent, action, *, seed: int = 42):
     """The THREE REAL production organ reads `gate()` conceptually combines, all voting on the recalled PATIENT:
       organ A — spiking RECALL (forward):   query_patient(agent, action)          -> cand           [gate organ 1]
       organ B — VERIFY re-check:            cand iff query_patient(agent,action)==cand              [gate organ 3]
       organ C — reverse-binding VERIFY:     cand iff query_agent(action, cand)==agent  (distinct substrate read)
-    Returns (cand_A, [A, B, C]). When the forward recall misses, A is None -> the moat abstains (primary organ miss)."""
+    Returns (cand_A, [A, B, C]). When the forward recall misses, A is None -> the moat abstains (primary organ miss).
+
+    RANK-8 SCAFFOLD-RETIREMENT (additive, DEFAULT-OFF; see `webapp/gnw_congruence_spiking.py`). Organs B/C's `==`
+    congruence check above is the host string-id shortcut rank-8 targets: a genuinely spiking `pred_k->mm_k`
+    match-veto circuit (reusing the SAME ignition-workspace populations already load-bearing on the neural
+    thought-swap decision, 6/6-seed GO) can read "does this second read match the first" off neural competition
+    instead. `BRAIN_GNW_CONGRUENCE_SPIKING` unset/off (DEFAULT) -> the two `==` checks below run EXACTLY as
+    written -> byte-identical to pre-flip production; this module never imports `gnw_congruence_spiking`."""
     try:
         cand_A = composer.query_patient(agent, action)
     except Exception:
@@ -126,15 +146,24 @@ def _organ_reads(composer, agent, action):
     trace_A = getattr(composer, "last_trace", None)
     if cand_A is None:
         return None, [None, None, None], trace_A
+    congruence_spiking = _congruence_spiking_enabled()
     # organ B: the gate's own VERIFY re-read (the answer must be the spiking recall). Same call -> corroborates a
     # genuine recall; would diverge only if recall were nondeterministic (it is not) -> it withholds otherwise.
     try:
-        cand_B = cand_A if composer.query_patient(agent, action) == cand_A else None
+        raw_B = composer.query_patient(agent, action)
+        if congruence_spiking:
+            cand_B = cand_A if _spiking_congruent(cand_A, raw_B, seed=seed) else None
+        else:
+            cand_B = cand_A if raw_B == cand_A else None
     except Exception:
         cand_B = None
     # organ C: the reverse role-binding must recover the agent (a genuinely DIFFERENT substrate read).
     try:
-        cand_C = cand_A if composer.query_agent(action, cand_A) == agent else None
+        raw_C_agent = composer.query_agent(action, cand_A)
+        if congruence_spiking:
+            cand_C = cand_A if _spiking_congruent(agent, raw_C_agent, seed=seed) else None
+        else:
+            cand_C = cand_A if raw_C_agent == agent else None
     except Exception:
         cand_C = None
     return cand_A, [cand_A, cand_B, cand_C], trace_A
@@ -173,7 +202,7 @@ def bus_combine(composer, agent: str, action: str, all_concepts, *, seed: int = 
 
 def _bus_combine_inner(composer, agent: str, action: str, all_concepts, *, seed: int = 42,
                        lesion: bool = False, d_sub: Optional[float] = None) -> dict:
-    cand_A, candidates, trace_A = _organ_reads(composer, agent, action)
+    cand_A, candidates, trace_A = _organ_reads(composer, agent, action, seed=seed)
     # `_forward_trace` is popped by `bus_combine` before returning (never surfaces in the JSON info block); it carries
     # organ A's forward-recall trace so the retirement path can leave it as the surfaced "brain activity" (== host).
     info = {"organ_reads": list(candidates), "committed": None, "ignited": False, "n_ignited": 0,

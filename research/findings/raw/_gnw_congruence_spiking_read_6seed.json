@@ -1,0 +1,3048 @@
+{
+  "runner": "_gnw_congruence_spiking_read_derisk",
+  "mode": "six_seed",
+  "verdict": "GO",
+  "pooled_go": true,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "verdict_status": "GO",
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "100%% parity on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "trigger-lesion collapses discrimination on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "determinism on 6/6 seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "counts": {
+    "seed_go": 6,
+    "parity_ok": 6,
+    "lesion_collapses": 6,
+    "seed_deterministic": 6,
+    "n_seeds": 6
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.05173611111111111,
+      "mean_mismatch_mm_peak": 0.30520833333333336,
+      "mm_peak_margin": 0.25347222222222227,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.31666666666666665,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.06111111111111111,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.06111111111111111,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.32222222222222224,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.06666666666666667,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.31666666666666665,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.31666666666666665,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.03993055555555555,
+      "mean_mismatch_mm_peak": 0.27013888888888893,
+      "mm_peak_margin": 0.23020833333333338,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.23333333333333334,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2222222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2722222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.25555555555555554,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2722222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.25555555555555554,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.0006944444444444445,
+      "mean_mismatch_mm_peak": 0.2746527777777778,
+      "mm_peak_margin": 0.27395833333333336,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2611111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2722222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2722222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.0,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.0
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.019097222222222224,
+      "mean_mismatch_mm_peak": 0.3055555555555556,
+      "mm_peak_margin": 0.28645833333333337,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.027777777777777776,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.011111111111111112,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3277777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.016666666666666666,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.021527777777777778,
+      "mean_mismatch_mm_peak": 0.296875,
+      "mm_peak_margin": 0.27534722222222224,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03333333333333333,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.31666666666666665,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.03888888888888889,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.011111111111111112,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.011111111111111112,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.005555555555555556,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.022222222222222223,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.027777777777777776,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.011111111111111112
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.016666666666666666
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "seed_go": true,
+      "n_pairs": 32,
+      "n_correct": 32,
+      "parity": 1.0,
+      "n_mismatch_pairs": 16,
+      "intact_mismatch_acc": 1.0,
+      "lesioned_mismatch_acc": 0.0,
+      "lesion_collapses": true,
+      "attributable_fraction": 1.0,
+      "seed_deterministic": true,
+      "mean_match_mm_peak": 0.05451388888888889,
+      "mean_mismatch_mm_peak": 0.2791666666666667,
+      "mm_peak_margin": 0.22465277777777778,
+      "go_gate": {
+        "parity_ok": true,
+        "lesion_collapses": true,
+        "seed_deterministic": true,
+        "has_mismatch_arm": true
+      },
+      "rows": [
+        {
+          "label": "organB_match_dog",
+          "held": "cat",
+          "proposed": "cat",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_dog",
+          "held": "dog",
+          "proposed": "dog",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2722222222222222,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_lion",
+          "held": "deer",
+          "proposed": "deer",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_lion",
+          "held": "lion",
+          "proposed": "lion",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.29444444444444445,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_hawk",
+          "held": "snake",
+          "proposed": "snake",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_hawk",
+          "held": "hawk",
+          "proposed": "hawk",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3111111111111111,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_bear",
+          "held": "fish",
+          "proposed": "fish",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_bear",
+          "held": "bear",
+          "proposed": "bear",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.25555555555555554,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_wolf",
+          "held": "rabbit",
+          "proposed": "rabbit",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.044444444444444446,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.28888888888888886,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_wolf",
+          "held": "wolf",
+          "proposed": "wolf",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_owl",
+          "held": "vole",
+          "proposed": "vole",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_owl",
+          "held": "owl",
+          "proposed": "owl",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2833333333333333,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_shark",
+          "held": "tuna",
+          "proposed": "tuna",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.3055555555555556,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_shark",
+          "held": "shark",
+          "proposed": "shark",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.25555555555555554,
+          "same_slot": false
+        },
+        {
+          "label": "organB_match_eagle",
+          "held": "trout",
+          "proposed": "trout",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.2777777777777778,
+          "same_slot": false
+        },
+        {
+          "label": "organC_match_eagle",
+          "held": "eagle",
+          "proposed": "eagle",
+          "ground_truth": true,
+          "spiking_congruent": true,
+          "match": true,
+          "mm_peak": 0.05555555555555555,
+          "same_slot": true
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "ground_truth": false,
+          "spiking_congruent": false,
+          "match": true,
+          "mm_peak": 0.26666666666666666,
+          "same_slot": false
+        }
+      ],
+      "lesion_rows": [
+        {
+          "label": "organB_mismatch_dog",
+          "held": "cat",
+          "proposed": "deer",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_dog",
+          "held": "dog",
+          "proposed": "lion",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_lion",
+          "held": "deer",
+          "proposed": "snake",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_lion",
+          "held": "lion",
+          "proposed": "hawk",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_hawk",
+          "held": "snake",
+          "proposed": "fish",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_hawk",
+          "held": "hawk",
+          "proposed": "bear",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_bear",
+          "held": "fish",
+          "proposed": "rabbit",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_bear",
+          "held": "bear",
+          "proposed": "wolf",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_wolf",
+          "held": "rabbit",
+          "proposed": "vole",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_wolf",
+          "held": "wolf",
+          "proposed": "owl",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_owl",
+          "held": "vole",
+          "proposed": "tuna",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_owl",
+          "held": "owl",
+          "proposed": "shark",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_shark",
+          "held": "tuna",
+          "proposed": "trout",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_shark",
+          "held": "shark",
+          "proposed": "eagle",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organB_mismatch_eagle",
+          "held": "trout",
+          "proposed": "cat",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        },
+        {
+          "label": "organC_mismatch_eagle",
+          "held": "eagle",
+          "proposed": "dog",
+          "lesion_congruent": true,
+          "mm_peak": 0.005555555555555556
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "100%% PARITY vs the host `==` ground truth on a REAL organ-B/organ-C battery",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "32/32"
+        },
+        {
+          "kind": "require",
+          "name": "TRIGGER-LESION collapses discrimination: every genuine mismatch reads 'congruent' when mm is silenced",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": "16/16 mismatch pairs flipped"
+        },
+        {
+          "kind": "require",
+          "name": "determinism: build-twice hash",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "the battery contains a genuine mismatch arm (not a vacuous 100%% on an all-match battery)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; inherited from the reused swap-intention circuit"
+        },
+        {
+          "process": "native_short_term_plasticity",
+          "why": "inherited from the reused swap-intention circuit (STD targets only the incumbent E->E loop)"
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ]
+}
