@@ -5,27 +5,337 @@
   "n_facts": 404,
   "vocab": 788,
   "n_grounded_codes": 788,
-  "seeds": [42, 43, 44, 100, 101, 102],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
   "subset_k": 30,
   "composer_merge_env": "0",
   "sim_backend": "numpy",
   "note": "onebrain built as PLAIN OneBrainComposer (BRAIN_COMPOSER_MERGE=0); recall/moat byte-identical to the pool#1-bound production variant per 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO.",
-  "rf_oracle": {"n_cues": 21, "rf_ok": 21, "n_novel": 40, "rf_confab": 0, "note": "rf recall is host-FHRR, seed-independent -> built once, reused across seeds"},
+  "rf_oracle": {
+    "n_cues": 21,
+    "rf_ok": 21,
+    "n_novel": 40,
+    "rf_confab": 0,
+    "note": "rf recall is host-FHRR, seed-independent -> built once, reused across seeds"
+  },
   "mechanism": [
-    {"seed": 42, "k_max": 32, "n_stored": 30, "n_cues": 21,
-     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
-     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
-     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
-     "wall_s": 1458.3, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"},
-    {"seed": 43, "k_max": 32, "n_stored": 30, "n_cues": 21,
-     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
-     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
-     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
-     "wall_s": 813.8, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"},
-    {"seed": 44, "k_max": 32, "n_stored": 30, "n_cues": 21,
-     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
-     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
-     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
-     "wall_s": 681.3, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"}
-  ]
+    {
+      "seed": 42,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 1458.3,
+      "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"
+    },
+    {
+      "seed": 43,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 813.8,
+      "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"
+    },
+    {
+      "seed": 44,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 681.3,
+      "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"
+    },
+    {
+      "seed": 100,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "cue": [
+              "story",
+              "stick"
+            ],
+            "taught": "library",
+            "recalled": "library",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "cue": [
+              "dog",
+              "zzqnovelverb"
+            ],
+            "taught": "zzqnovelword",
+            "recalled": "zzqnovelword",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 433.8
+    },
+    {
+      "seed": 101,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "cue": [
+              "story",
+              "stick"
+            ],
+            "taught": "library",
+            "recalled": "library",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "cue": [
+              "dog",
+              "zzqnovelverb"
+            ],
+            "taught": "zzqnovelword",
+            "recalled": "zzqnovelword",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 684.3
+    },
+    {
+      "seed": 102,
+      "k_max": 32,
+      "n_stored": 30,
+      "n_cues": 21,
+      "recall": {
+        "rf_ok": 21,
+        "ob_ok": 21,
+        "agree": 21,
+        "n": 21,
+        "regressions": []
+      },
+      "abstain": {
+        "n": 40,
+        "rf_confab": 0,
+        "ob_confab": 0,
+        "ab_agree": 40,
+        "ob_confab_examples": []
+      },
+      "store": {
+        "probes": [
+          {
+            "kind": "invocab",
+            "cue": [
+              "story",
+              "stick"
+            ],
+            "taught": "library",
+            "recalled": "library",
+            "ok": true
+          },
+          {
+            "kind": "novel_recruit",
+            "cue": [
+              "dog",
+              "zzqnovelverb"
+            ],
+            "taught": "zzqnovelword",
+            "recalled": "zzqnovelword",
+            "ok": true
+          }
+        ],
+        "all_ok": true
+      },
+      "wall_s": 560.3
+    }
+  ],
+  "attribution": {
+    "recall_errors_rf_to_onebrain": null,
+    "moat_confabs_rf_to_onebrain": null,
+    "agg_ob_wrong": 0,
+    "agg_rf_wrong": 0,
+    "agg_ob_confab": 0,
+    "agg_rf_confab": 0,
+    "note": "treatment=onebrain, control=rf; None/0 => the composer flip introduces no recall/moat error where the facts FIT the k_max buffer (the mechanism is equivalent, not a lever with an effect)."
+  },
+  "feasibility": {
+    "n_facts": 404,
+    "budget_mib": 24576,
+    "latency_budget_s": 5.0,
+    "naive_full_flip": {
+      "ok": false,
+      "error": "RuntimeError: OneBrainComposer store full: k_max=32 reached (shard or raise k_max)"
+    },
+    "vram_scaling": [
+      {
+        "k_max": 32,
+        "n_total": 113052,
+        "vram_delta_mib": 60,
+        "cupy_delta_mib": 48.2,
+        "build_s": 24.3
+      },
+      {
+        "k_max": 64,
+        "n_total": 221564,
+        "vram_delta_mib": 88,
+        "cupy_delta_mib": 71.1,
+        "build_s": 25.1
+      },
+      {
+        "k_max": 128,
+        "n_total": 438588,
+        "vram_delta_mib": 126,
+        "cupy_delta_mib": 107.0,
+        "build_s": 26.2
+      }
+    ],
+    "predicted_vram_mib_at_nfacts": 275.0,
+    "predicted_fits_budget": true,
+    "vram_fit": {
+      "slope_mib_per_fact": 0.61,
+      "intercept_mib": 30.2
+    },
+    "full_kmax_build": {
+      "ok": true,
+      "k_max": 404,
+      "n_total": 1374504,
+      "vram_delta_mib": 294,
+      "build_s": 45.9,
+      "store_s": 28.3,
+      "per_query_s": 150.14,
+      "queries_timed": 3,
+      "latency_ok": false
+    }
+  },
+  "verdict": {
+    "verdict": "PARTIAL / MIS-SCOPED",
+    "mechanism_go": true,
+    "full_flip_feasible": false,
+    "vram_ok": true,
+    "latency_ok": false,
+    "per_query_s_full": 150.14,
+    "reasons": [
+      "The onebrain recall MECHANISM is correct + moat-intact vs rf across all seeds (at BUFFER scale). The full-404 flip is VRAM-FEASIBLE (k_max=404 -> 1374504 neurons but only ~hundreds of MiB -- the RF/phasor coresident bridge is sparse, NOT a dense Izhikevich net), but its PER-QUERY LATENCY is 150.14 s at full co-resident scale vs the 5.0 s interactive budget: the resonate-and-fire cleanup scans ALL k_max blocks (O(k_max)/query), which is WHY k_max defaults to 32. A ~2-minute recall per live turn is not a shippable flip. The scalable spiking-bulk path is a SHARDED spiking store (per-query O(K/shards)); the current LTM ShardedPhasorStore is host-FHRR, so that is a NEW mechanism, not the 'near-zero-risk config-flip' RANK-1 claimed. P3: the DEFAULT brain (tiny-demo) already runs onebrain since 2026-08-25. RE-SCOPE RANK-1."
+    ]
+  }
 }

@@ -48,6 +48,12 @@ os.environ.setdefault("BRAIN_COMPOSER_MERGE", "0")
 import numpy as np
 
 BUDGET_MIB = 24576  # RTX 3090 (the consumer-hardware reference principle)
+# A recall on a LIVE conversational turn must return in interactive time. The OneBrainComposer resonate-and-fire
+# cleanup scans ALL co-resident blocks (O(k_max)/query), so per-query latency scales with the co-resident count --
+# this is WHY k_max defaults to 32 (a small, fast buffer). "Speed is secondary" (the mission) is about the DEV loop,
+# not a live chat turn; a multi-second recall per turn is not a shippable production flip. Measured: ~6 s at 30
+# co-resident facts, ~114 s at 404. Budget the full-bundle flip against a generous interactive bound.
+LATENCY_BUDGET_S = 5.0
 
 
 def _gpu_used_mib():
@@ -189,9 +195,11 @@ def _onebrain_one_seed(seed, oracle, vocab, codes):
     }
 
 
-def _feasibility(bundle, vocab, n_facts, vram_kmax, attempt_full):
-    """P2 (naive same-bundle flip fails) + P4 (VRAM extrapolation to k_max>=n_facts vs the 24 GB budget)."""
-    out = {"n_facts": n_facts, "budget_mib": BUDGET_MIB}
+def _feasibility(bundle, vocab, facts, vram_kmax, attempt_full, latency_queries=3):
+    """P2 (naive same-bundle flip fails) + P4 (VRAM extrapolation to k_max>=n_facts vs the 24 GB budget) + (under
+    attempt_full) the DECISIVE full-scale build+store+per-query LATENCY at k_max=n_facts."""
+    n_facts = len(facts)
+    out = {"n_facts": n_facts, "budget_mib": BUDGET_MIB, "latency_budget_s": LATENCY_BUDGET_S}
 
     # P2: the naive load-override on the FULL bundle
     from research.runners.developed_brain_io import load_developed_brain
@@ -247,9 +255,22 @@ def _feasibility(bundle, vocab, n_facts, vram_kmax, attempt_full):
         t0 = time.time()
         try:
             c = OneBrainComposer(seed=42, D=128, vocab=vocab, k_max=n_facts, vocab_headroom=128)
+            build_s = round(time.time() - t0, 1)
             v1 = _gpu_used_mib()
+            # store ALL facts, then time real recall queries -- the DECISIVE per-query latency at full co-resident scale.
+            t0 = time.time()
+            for f in facts:
+                c.store(f["agent"], f["action"], f["patient"], polarity=f.get("polarity"))
+            store_s = round(time.time() - t0, 1)
+            cues = list({(f["agent"], f["action"]) for f in facts})[:latency_queries]
+            t0 = time.time()
+            for a, ac in cues:
+                c.query_patient(a, ac)
+            per_query_s = round((time.time() - t0) / max(1, len(cues)), 2)
             out["full_kmax_build"] = {"ok": True, "k_max": n_facts, "n_total": int(c.n_total),
-                                      "vram_delta_mib": v1 - v0, "build_s": round(time.time() - t0, 1)}
+                                      "vram_delta_mib": v1 - v0, "build_s": build_s, "store_s": store_s,
+                                      "per_query_s": per_query_s, "queries_timed": len(cues),
+                                      "latency_ok": bool(per_query_s <= LATENCY_BUDGET_S)}
             del c
             _free_gpu()
         except Exception as e:
@@ -275,30 +296,46 @@ def _verdict(mech, feas):
             mech_go = False
             reasons.append("seed %d: runtime store/recall failed" % m["seed"])
 
-    naive_ok = feas.get("naive_full_flip", {}).get("ok", False)
     fits = feas.get("predicted_fits_budget", None)
-    full_ok = feas.get("full_kmax_build", {}).get("ok", None)
+    fkb = feas.get("full_kmax_build", {})
+    full_built = fkb.get("ok", None)
+    per_q = fkb.get("per_query_s")
+    latency_ok = fkb.get("latency_ok")           # None if latency was not measured (no --attempt-full)
+    vram_ok = bool((full_built is True) or (fits is True))
 
-    full_flip_feasible = bool(naive_ok or (full_ok is True) or (full_ok is None and fits is True))
+    # The full-bundle flip needs BOTH: VRAM fits AND the per-query latency at full co-resident scale is interactive.
+    # The automated GO before this gate existed reported "GO" on mechanism + VRAM alone -- and MISSED that the
+    # O(k_max) resonate scan makes a 404-co-resident recall take ~114 s/query (measured). Latency is the real gate.
+    if latency_ok is False:
+        full_flip_feasible = False
+    else:
+        full_flip_feasible = vram_ok
 
     if mech_go and full_flip_feasible:
         v = "GO"
     elif mech_go and not full_flip_feasible:
         v = "PARTIAL / MIS-SCOPED"
-        reasons.append(
-            "The onebrain recall MECHANISM is correct + moat-intact vs rf across all seeds (WHERE IT FITS), but the "
-            "RANK-1-as-written flip -- rebuild the FULL 404-fact scale787 bundle onto a single OneBrainComposer -- is "
-            "NO-GO: OneBrainComposer's co-resident cap k_max=32 << 404 (naive flip raises 'store full'), and a "
-            "k_max>=n_facts rebuild does not fit the 24 GB 3090 reference. The production DEFAULT brain (tiny-demo) is "
-            "ALREADY onebrain (since 2026-08-25), so the spiking unbind+cleanup DO run on live default recall -- for "
-            "its <=32-fact buffer. The 404 facts architecturally belong in the routed cortical LTM (TieredFactStore + "
-            "ShardedPhasorStore) that serves the default brain's bulk knowledge -- BUT that tier is HOST FHRR "
-            "(RFPhasorComposer shards, enable_substrate_store=False), NOT spiking. So making 404-fact recall GENUINELY "
-            "SPIKING is a NEW mechanism (a spiking sharded fact store), a substantial build, NOT the 'config-flip + "
-            "rebuild, near-zero risk' RANK-1 claimed. RE-SCOPE RANK-1.")
+        if latency_ok is False:
+            reasons.append(
+                "The onebrain recall MECHANISM is correct + moat-intact vs rf across all seeds (at BUFFER scale). The "
+                "full-404 flip is VRAM-FEASIBLE (k_max=%s -> %s neurons but only ~hundreds of MiB -- the RF/phasor "
+                "coresident bridge is sparse, NOT a dense Izhikevich net), but its PER-QUERY LATENCY is %s s at full "
+                "co-resident scale vs the %s s interactive budget: the resonate-and-fire cleanup scans ALL k_max blocks "
+                "(O(k_max)/query), which is WHY k_max defaults to 32. A ~2-minute recall per live turn is not a "
+                "shippable flip. The scalable spiking-bulk path is a SHARDED spiking store (per-query O(K/shards)); the "
+                "current LTM ShardedPhasorStore is host-FHRR, so that is a NEW mechanism, not the 'near-zero-risk "
+                "config-flip' RANK-1 claimed. P3: the DEFAULT brain (tiny-demo) already runs onebrain since 2026-08-25. "
+                "RE-SCOPE RANK-1." % (feas.get("n_facts"), fkb.get("n_total"), per_q, feas.get("latency_budget_s")))
+        else:
+            reasons.append(
+                "The onebrain recall MECHANISM is correct + moat-intact vs rf across all seeds (at BUFFER scale), but "
+                "the full-404 flip's practicality is not established (full-scale latency unmeasured -- rerun with "
+                "--attempt-full). k_max=32 << 404 blocks the naive same-composer_kind flip; a k_max=n_facts rebuild is "
+                "needed. RE-SCOPE / re-measure before any owner flip.")
     else:
         v = "NO-GO"
-    return {"verdict": v, "mechanism_go": mech_go, "full_flip_feasible": full_flip_feasible, "reasons": reasons}
+    return {"verdict": v, "mechanism_go": mech_go, "full_flip_feasible": full_flip_feasible,
+            "vram_ok": vram_ok, "latency_ok": latency_ok, "per_query_s_full": per_q, "reasons": reasons}
 
 
 def main():
@@ -309,7 +346,9 @@ def main():
     ap.add_argument("--n-abstain", type=int, default=40)
     ap.add_argument("--vram-kmax", default="32,64,128")
     ap.add_argument("--attempt-full", action="store_true",
-                    help="also build k_max=n_facts (WARNING: ~1.37M neurons at 404 facts; may OOM the GPU)")
+                    help="build k_max=n_facts, store all facts, and TIME recall queries (the decisive full-scale "
+                         "latency; ~1.37M neurons at 404 facts but ~hundreds of MiB -- VRAM is not the limit, latency is)")
+    ap.add_argument("--latency-queries", type=int, default=3, help="queries to time at full k_max (--attempt-full)")
     ap.add_argument("--out", default="research/findings/raw/_rank1_composer_bundle_onebrain_derisk.json")
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",") if s.strip()]
@@ -391,7 +430,7 @@ def main():
     _write()
 
     if "feasibility" not in result:
-        feas = _feasibility(a.bundle, vocab, len(facts), vram_kmax, a.attempt_full)
+        feas = _feasibility(a.bundle, vocab, facts, vram_kmax, a.attempt_full, latency_queries=a.latency_queries)
         result["feasibility"] = feas
         _write()
         print("[feas] naive_full_flip=%s predicted_vram_at_nfacts=%s fits_budget=%s"
