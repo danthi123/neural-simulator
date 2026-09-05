@@ -88,6 +88,7 @@ if _REPO not in sys.path:
 
 from research.runners._sparse_indexed_retrieval_derisk import DGSparseIndex  # reuse-by-import (mandated)
 from tools.lab import attributable_to  # scramble-control attribution (anti-cheat c)
+from tools.verdict import Verdict       # the verdict must travel with its preconditions (gates/verdict_preconditions)
 
 MAIN_ROLES = ("agent", "action", "patient")
 
@@ -405,6 +406,35 @@ def run_seed(seed, n_facts, D, g, G, c, n_parity, n_moat, n_real_anchor, verbose
     return out
 
 
+def build_verdict(summary):
+    """Earn the verdict via tools.verdict.Verdict so it travels with its preconditions into the artifact
+    (gates/verdict_preconditions). Pure function of the already-measured per-seed results -> a re-decide on the
+    same JSON is identical (the --finalize path relies on this: it re-earns the verdict from a run's own
+    measurements without re-running the sims). Every precondition here is a HARD GO requirement."""
+    agg = summary["aggregate"]
+    per = summary["per_seed"]
+    v = Verdict("onebrain fact-block DG-CA3 sublinear spiking retrieval @ %d facts" % summary["n_facts"])
+    v.require("parity: sharded == full O(k_max) scan (all seeds, patient/agent/yes-no)",
+              bool(agg["parity_all_ok"]), expect=True)
+    v.require("moat: 0 new confabulation on out-of-store cues (all seeds)",
+              bool(agg["moat_all_ok"]), expect=True)
+    v.require("full recall == ground truth at scale (all seeds)",
+              bool(agg["full_recall_all_ok"]), expect=True)
+    v.require("real public-API anchor == full reference (query_patient/query_agent/ask_yes_no)",
+              bool(agg["anchor_ok_where_run"]), expect=True)
+    v.require("sublinear: shard mean << k_max (all seeds)",
+              bool(agg["sublinear_all_ok"]), expect=True)
+    real_rates = [p["scramble_control"]["real_rate"] for p in per if "scramble_control" in p]
+    scr_rates = [p["scramble_control"]["scrambled_rate"] for p in per if "scramble_control" in p]
+    if real_rates and scr_rates:
+        v.control("scramble control: content-derived routing vs scrambled routing recall",
+                  treatment=float(np.mean(real_rates)), control=float(np.mean(scr_rates)))
+    v.require("SIM_BACKEND == numpy (declared CPU de-risk backend)",
+              os.environ.get("SIM_BACKEND", "").lower() == "numpy", expect=True)
+    go = all(c.ok for c in v.checks)
+    return v.decide(go=go, verbose=False)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
@@ -418,7 +448,22 @@ def main():
     ap.add_argument("--n-real-anchor", type=int, default=1, help="REAL public-API calls (first seed only); expensive")
     ap.add_argument("--out", type=str, default=None)
     ap.add_argument("--smoke", action="store_true", help="tiny scale (fast mechanism check)")
+    ap.add_argument("--finalize", type=str, default=None,
+                    help="re-earn the verdict+preconditions from an existing results JSON (its own measurements) "
+                         "and rewrite it, WITHOUT re-running the sims (measurements are deterministic + preserved)")
     args = ap.parse_args()
+    if args.finalize:
+        with open(args.finalize) as f:
+            summary = json.load(f)
+        decided = build_verdict(summary)
+        summary["verdict"] = decided["status"]
+        summary["preconditions"] = decided["preconditions"]
+        summary["verdict_block"] = decided
+        outp = args.out or args.finalize
+        with open(outp, "w") as f:
+            json.dump(summary, f, indent=2)
+        print("finalized verdict=%s preconditions=%d -> %s" % (decided["status"], len(decided["preconditions"]), outp))
+        return 0 if decided["go"] else 1
     if args.smoke:
         args.n_facts = 40; args.seeds = [42, 43]; args.n_parity = 20; args.n_moat = 12; args.n_real_anchor = 1
 
@@ -455,6 +500,10 @@ def main():
             "bridge_shrink_ratio": float(np.median([r["bridge_shrink_ratio"] for r in results])),
         },
     }
+    decided = build_verdict(summary)                        # earn the verdict WITH its preconditions
+    summary["verdict"] = decided["status"]
+    summary["preconditions"] = decided["preconditions"]
+    summary["verdict_block"] = decided
     print("\n=== VERDICT ===")
     print(json.dumps(summary["aggregate"], indent=2))
     print(f"VERDICT: {summary['verdict']}  ({sum(r['go'] for r in results)}/{len(results)} seeds GO)")
