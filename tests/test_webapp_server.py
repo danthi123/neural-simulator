@@ -1985,6 +1985,76 @@ def test_brain_chat_xedge_curiosity_d6_session_isolated(client, monkeypatch):
     _xcd6._POOL = None
 
 
+def test_brain_chat_curiosity_graded_novelty_default_off_is_byte_identical(client, monkeypatch):
+    """Scaffold-retirement backlog rank-10 (2026-09-05): the graded per-topic novelty read is additive,
+    default-OFF. With `BRAIN_CURIOSITY_GRADED_NOVELTY` unset, `_curiosity_followup` must keep feeding the
+    curiosity judge the EXACT pre-existing host constant `NOVEL_SIGNAL` -- no `graded_novelty` trace key is
+    attached, and `curiosity.novelty` is unchanged from HEAD."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY", raising=False)
+    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+        import research.runners.curiosity_production_organ as _CU
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-curiosity-graded-novelty-off"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200, res.text
+    cu = res.json().get("curiosity") or {}
+    assert cu.get("curious") is True, "expected a genuine crave to fire (the established wombat probe)"
+    assert cu.get("novelty") == pytest.approx(_CU.NOVEL_SIGNAL), \
+        "flag OFF -> the judge must still be fed the exact pre-existing constant"
+    assert "graded_novelty" not in cu, "flag OFF -> no new trace key may be attached (byte-identical to HEAD)"
+
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+
+def test_brain_chat_curiosity_graded_novelty_on_attaches_trace_and_lesion_flips_it(client, monkeypatch):
+    """Flag ON: a `graded_novelty` trace is attached, its `value` is what actually reached the judge
+    (`curiosity.novelty == graded_novelty.value`), and `BRAIN_CURIOSITY_GRADED_NOVELTY_LESION=1` flips
+    `graded_novelty.lesioned` -- the wiring reaches the production endpoint and the lesion flag is read live.
+    The MAGNITUDE / discrimination claim (known vs. unrelated topics) is validated at scale by the dedicated
+    6-seed runner (`research/runners/_curiosity_graded_novelty_derisk.py`, GO 6/6); this test pins reachability
+    + shape, not a specific value (the topic-novelty gate is a process-shared, ever-growing-vocabulary singleton,
+    so an exact magnitude here would be test-order-dependent)."""
+    pytest.importorskip("numpy")
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    monkeypatch.setenv("BRAIN_CURIOSITY_GRADED_NOVELTY", "1")
+    monkeypatch.delenv("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION", raising=False)
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-curiosity-graded-novelty-on"
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res.status_code == 200, res.text
+    cu = res.json().get("curiosity") or {}
+    assert cu.get("curious") is True
+    gn = cu.get("graded_novelty")
+    assert gn is not None and gn.get("on") is True
+    assert 0.0 <= float(gn["value"]) <= 1.0
+    assert gn.get("lesioned") is False
+    assert cu.get("novelty") == pytest.approx(float(gn["value"])), \
+        "the judge must have been fed EXACTLY the graded value the trace reports"
+    client.post("/api/brain-chat/reset", json={"session": sess, "brain": "tiny-demo", "renderer": "stub"})
+
+    monkeypatch.setenv("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION", "1")
+    sess2 = "pytest-curiosity-graded-novelty-on-lesion"
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess2, "brain": "tiny-demo", "renderer": "stub", "message": "what does the wombat eat"})
+    assert res2.status_code == 200, res2.text
+    cu2 = res2.json().get("curiosity") or {}
+    gn2 = cu2.get("graded_novelty")
+    assert gn2 is not None and gn2.get("lesioned") is True, "the lesion env flag must be read live, per turn"
+    client.post("/api/brain-chat/reset", json={"session": sess2, "brain": "tiny-demo", "renderer": "stub"})
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
 # ─────────────────────────────────────────────────────────────────────────

@@ -57,6 +57,9 @@ from __future__ import annotations
 
 import os
 import re
+import zlib
+
+import numpy as np
 
 from research.runners._curiosity_seek_learn_onbridge_derisk import (
     build_curiosity_bridge,
@@ -70,6 +73,13 @@ from research.runners._curiosity_seek_learn_onbridge_derisk import (
     W_SETTLE,
     WANT_FLOOR_HZ,
 )
+# reuse-by-import (scaffold-retirement backlog rank-10, 2026-09-05): the SAME Bogacz-Brown anti-Hebbian
+# familiarity projector (catalog D.04) the v320 gate (2026-06-11-familiarity-gate-v320-GO.md) and INTEGRATION
+# #7's burn-down #2 (2026-08-10, spiking-familiarity-gate-moat-fully-spiking-6seed.md) already use, and the SAME
+# genuine time-stepped resonate-and-fire spike-phasor bind (`phase_sum_neuron`, Orchard Algorithm 1) that gate's
+# spiking realization uses to render its cue. Neither is reinvented here.
+from research.runners.cortex_learned_cleanup_derisk import AntiHebbianFamiliarity
+from research.runners.spiking_phasor_fhrr import phases_to_spikes, spikes_to_phases, phase_sum_neuron
 
 # ── the novelty operating points (the epistemic-gap scalar fed to the from_novelty drive) ────────────────────
 NOVEL_SIGNAL = 0.95     # an ABSTAIN: the brain holds NO answer -> a maximal epistemic gap (novel)
@@ -123,6 +133,155 @@ def extract_topic(text: str) -> str | None:
     if not content:
         return None
     return content[0]
+
+
+# ── GRADED novelty for the topic (scaffold-retirement backlog rank-10, 2026-09-05), additive / default-OFF ────
+# THE GAP THIS CLOSES. The production call (`webapp/server.py::_curiosity_followup`) always invokes
+# `judge(novelty=NOVEL_SIGNAL, ...)` — the SAME host constant (0.95) on EVERY abstain, whatever the topic. That is
+# a binary flag ("abstained -> maximally novel"), never a graded read of how novel THIS topic actually is. This
+# section retires the constant with a genuine familiarity/mismatch circuit: `TopicNoveltyGate` renders a topic
+# word's cue on the SAME genuine spike-phasor bind (`phase_sum_neuron`) the v320 gate uses, and reads its novelty
+# through the SAME learned Bogacz-Brown anti-Hebbian projector (`AntiHebbianFamiliarity`) — reuse-by-import, not
+# reinvented. A word the brain already holds (imprinted from `_brain_vocab(chat)`, the SAME known-vocabulary
+# source the comprehension organ already reads) renders inside the learned span -> LOW novelty; an unrelated word
+# renders far outside it -> HIGH novelty (near the old NOVEL_SIGNAL anchor); a noisy/partial cue of a known word
+# reads in between — a genuinely CONTINUOUS, topic-dependent value, not a constant.
+#
+# LESION-LOAD-BEARING: `TopicNoveltyGate.lesion()` clears the learned projector (fresh `AntiHebbianFamiliarity`,
+# W==0), so EVERY topic's cue renders at the SAME ceiling energy (‖x‖²=1 for the unit-normalized I/Q render,
+# regardless of content) — the gradation collapses. The graded read rides the LEARNED weights, not an artifact of
+# the render.
+#
+# BYTE-IDENTICAL OFF: `graded_novelty_enabled()` defaults OFF (`BRAIN_CURIOSITY_GRADED_NOVELTY` unset) -> the
+# production call keeps passing the constant `NOVEL_SIGNAL` exactly as before -> unchanged.
+#
+# HONEST SCOPE (declared, not hidden): the word->phase code is a FIXED per-word draw (a declared host boundary,
+# exactly like the v320 gate's percept->phase projection and the curiosity organ's own wh-frame scaffold) — it
+# carries no lexical-semantic structure of its own, so gradation among two DIFFERENT unrelated words is not
+# claimed; the validated gradation is FIDELITY-graded (a clean vs. a noisy/partial cue of the SAME word), the
+# same axis the v320 gate and the no-confab moat already validate on. The anti-Hebbian basis is also CAPACITY-
+# BOUNDED at `2*D` orthogonal directions (D=256 -> 512): production-vocabulary scale is a named next rung, not
+# claimed here.
+TOPIC_GATE_D = 256   # SAME dimension as the v320 spiking conjunctive familiarity gate
+
+
+def graded_novelty_enabled() -> bool:
+    """`BRAIN_CURIOSITY_GRADED_NOVELTY` truthy -> feed the curiosity judge a GRADED per-topic novelty (this
+    section) instead of the constant `NOVEL_SIGNAL`. Default OFF (unset) -> byte-identical to HEAD."""
+    v = os.environ.get("BRAIN_CURIOSITY_GRADED_NOVELTY")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def graded_novelty_lesioned() -> bool:
+    """`BRAIN_CURIOSITY_GRADED_NOVELTY_LESION` truthy -> read the weights-cleared twin (every topic reads the
+    same ceiling novelty, regardless of `known_vocab`) — the load-bearing anti-cheat: the graded dependence on
+    the brain's OWN vocabulary vanishes. Distinct from `BRAIN_CURIOSITY_LESION` (removes the ASK-pool drive
+    pathway) and `BRAIN_CURIOSITY_DA_LESION` (severs the DA->crave-threshold coupling)."""
+    v = os.environ.get("BRAIN_CURIOSITY_GRADED_NOVELTY_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _word_phase(word: str, seed: int, D: int = TOPIC_GATE_D) -> np.ndarray:
+    """A FIXED per-word phase code: seeded by a stable hash of `(seed, lowercased word)` so the SAME word always
+    renders the SAME clean prototype code within a process/seed, mirroring the project's established fixed-per-
+    concept phase-code pattern (`SpikingConjunctiveFamiliarityGate.act_phase`)."""
+    h = zlib.crc32(f"{int(seed)}:{str(word).strip().lower()}".encode("utf-8"))
+    rng = np.random.default_rng(h)
+    return rng.uniform(0.0, 1.0, int(D))
+
+
+class TopicNoveltyGate:
+    """A genuine Bogacz-Brown familiarity/mismatch read for an arbitrary chat TOPIC word. Reuse-by-import: the
+    cue is bound via the SAME genuine resonate-and-fire spike-phasor neuron (`phase_sum_neuron`) the v320 gate's
+    spiking realization uses; novelty is read by the SAME learned `AntiHebbianFamiliarity` projector (catalog
+    D.04). `imprint`/`imprint_vocab` mark words the brain already holds as familiar; `novelty(word)` returns a
+    graded [0,1] mismatch energy (0 == an exact imprinted cue, ~1 == unrelated to everything imprinted, or a
+    noisy/partial cue of an imprinted word in between). `lesion()` clears the learned weights (collapses the
+    gradation — the load-bearing anti-cheat)."""
+
+    def __init__(self, seed: int = 42, D: int = TOPIC_GATE_D):
+        self.seed = int(seed)
+        self.D = int(D)
+        # a FIXED bind partner (like a fixed per-action phase code) so a bare word cue still exercises the
+        # genuine spike-phasor bind, exactly as the v320 gate binds (referent_phase, action_phase).
+        self._topic_role = _word_phase("__topic_role__", self.seed, self.D)
+        self.gate = AntiHebbianFamiliarity(self.D)
+        self._imprinted: set[str] = set()
+
+    def _cue(self, word: str, noise: float = 0.0) -> np.ndarray:
+        wp = _word_phase(word, self.seed, self.D)
+        if noise > 0.0:
+            # a NOISY/partial perceptual draw of the word's own code (the project's established env.draw()-vs-
+            # env.proto() pattern) — deterministic per (word, noise) for reproducibility across seeds/reads.
+            jrng = np.random.default_rng(zlib.crc32(f"{self.seed}:{word}:jit:{noise}".encode("utf-8")))
+            wp = np.mod(wp + jrng.normal(0.0, float(noise), self.D), 1.0)
+        bound = phase_sum_neuron(phases_to_spikes(wp), phases_to_spikes(self._topic_role))
+        return spikes_to_phases(bound)
+
+    def imprint(self, word: str) -> bool:
+        """Imprint `word`'s clean prototype cue (mark it FAMILIAR). Idempotent — a word already imprinted is a
+        no-op (mirrors `AntiHebbianFamiliarity.imprint`'s own in-span guard). Returns True iff a NEW word was
+        actually imprinted."""
+        w = str(word).strip().lower()
+        if not w or w in self._imprinted:
+            return False
+        self.gate.imprint(self._cue(w))
+        self._imprinted.add(w)
+        return True
+
+    def imprint_vocab(self, words) -> int:
+        """Imprint every NEW word in `words` (e.g. `_brain_vocab(chat)`). Returns the count newly imprinted."""
+        return sum(1 for w in (words or ()) if self.imprint(w))
+
+    def novelty(self, word: str, noise: float = 0.0) -> float:
+        """The graded [0,1] mismatch energy for `word` (optionally a noisy/partial cue, `noise` = the per-
+        dimension phase-jitter std). Never raises on a non-string `word` (str()-coerced)."""
+        return float(self.gate.novelty(self._cue(str(word), noise)))
+
+    def lesion(self) -> None:
+        """FULLY clear the learned pool (a fresh `AntiHebbianFamiliarity`) so a subsequent imprint rebuilds W —
+        matches `SpikingConjunctiveFamiliarityGate.lesion()`'s own discipline (a pure zero-W lesion would leave
+        `_basis` populated and block a later re-imprint from actually rebuilding W)."""
+        self.gate = AntiHebbianFamiliarity(self.D)
+        self._imprinted = set()
+
+
+_TOPIC_GATE: dict[int, TopicNoveltyGate] = {}
+_TOPIC_GATE_LES: dict[int, TopicNoveltyGate] = {}
+
+
+def get_topic_gate(seed: int = 42, lesion: bool = False) -> TopicNoveltyGate:
+    """The process-shared `TopicNoveltyGate` for `seed` (built once; a SEPARATE, PERMANENTLY-empty lesioned twin
+    under `lesion=True` — mirroring `CuriosityProductionOrgan`'s own bridge/les split — never imprinted, so its
+    weights stay cleared for the life of the process)."""
+    store = _TOPIC_GATE_LES if lesion else _TOPIC_GATE
+    g = store.get(seed)
+    if g is None:
+        g = TopicNoveltyGate(seed=seed)
+        store[seed] = g
+    return g
+
+
+def topic_novelty(topic: str | None, known_vocab=(), seed: int = 42, lesion: bool = False) -> float:
+    """THE graded per-topic epistemic-gap read that replaces the `NOVEL_SIGNAL` constant. Imprints any word in
+    `known_vocab` (e.g. `_brain_vocab(chat)`) not yet imprinted into the process-shared gate, then reads
+    `topic`'s novelty. `topic` falsy (nothing extractable) -> the old constant `NOVEL_SIGNAL` (the declared
+    fallback). `lesion=True` reads the PERMANENTLY-unimprinted twin (`known_vocab` is never applied to it) — every
+    topic reads the same ceiling novelty, the load-bearing anti-cheat. Never raises (degrades to `NOVEL_SIGNAL` on
+    any error, so a bad vocab entry can never crash a turn or corrupt the moat)."""
+    if not topic:
+        return NOVEL_SIGNAL
+    try:
+        g = get_topic_gate(seed=seed, lesion=lesion)
+        if not lesion:
+            g.imprint_vocab(known_vocab)
+        return g.novelty(topic)
+    except Exception:
+        return NOVEL_SIGNAL
 
 
 class CuriosityProductionOrgan:

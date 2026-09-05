@@ -87,3 +87,17 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 10 (curiosity novelty binary host constant) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** The production
+  call fed `judge(novelty=NOVEL_SIGNAL)` — the SAME 0.95 constant on every abstain, whatever the topic. A new
+  `TopicNoveltyGate` (reuse-by-import: the SAME Bogacz-Brown `AntiHebbianFamiliarity` projector the v320 gate +
+  INTEGRATION #7 already use, cue bound via the SAME genuine spike-phasor `phase_sum_neuron`) reads a GRADED [0,1]
+  novelty for the SPECIFIC topic, imprinted with the brain's own known vocabulary (`_brain_vocab(chat)`). 6/6-seed
+  GO (reproduced across 3 independent runs): known < noisy-partial < wholly-unrelated, monotonically; the graded
+  read is load-bearing on the REAL on-bridge ASK-pool `want_hz`/`curious` decision (discriminates the old
+  always-curious constant); lesion (never-imprinted twin) collapses the gradation AND reverts the downstream
+  decision to the old undifferentiated behavior; a permuted-decoy control confirms the low reading rides the
+  actual imprint↔query correspondence. See
+  `research/findings/2026-09-05-rank10-curiosity-graded-novelty-familiarity-scaffold-derisk-GO.md`. Wired behind
+  `BRAIN_CURIOSITY_GRADED_NOVELTY` (default-off, byte-identical off — asserted via a real HTTP round trip, not
+  just a flag-function read). NOT flipped default-on; capacity-bounded at `2*D` imprints (a named next rung, not
+  a live risk while default-off).

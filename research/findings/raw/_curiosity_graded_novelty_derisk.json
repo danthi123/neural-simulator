@@ -1,0 +1,349 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "real": {
+        "novelty": {
+          "known": -2.7755575615628914e-17,
+          "noisy_lo": 0.035000443502446014,
+          "noisy_hi": 0.7646685402938648,
+          "novel": 0.978719693750619
+        },
+        "want_hz": {
+          "known": 4.701967592592592,
+          "noisy_lo": 5.729166666666665,
+          "noisy_hi": 91.16030092592591,
+          "novel": 131.71296296296293
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 65.88541666666666
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 126.25868055555554,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998753,
+          "noisy_lo": 0.9999999999998753,
+          "noisy_hi": 0.9999999999998753,
+          "novel": 0.9999999999998755
+        },
+        "spread": 2.220446049250313e-16,
+        "want_hz": 134.86689814814815,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9802535265022675,
+        "decoy_against_decoy_gate": 3.700743415417188e-17
+      },
+      "real_spread": 0.978719693750619,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "real": {
+        "novelty": {
+          "known": 1.850371707708594e-17,
+          "noisy_lo": 0.03279070907730094,
+          "noisy_hi": 0.7631412247636434,
+          "novel": 0.9810047225202095
+        },
+        "want_hz": {
+          "known": 6.481481481481481,
+          "noisy_lo": 7.306134259259257,
+          "noisy_hi": 104.15219907407408,
+          "novel": 144.14062499999997
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 73.69791666666666
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 138.00636574074073,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998755,
+          "noisy_lo": 0.9999999999998755,
+          "noisy_hi": 0.9999999999998755,
+          "novel": 0.9999999999998755
+        },
+        "spread": 0.0,
+        "want_hz": 145.97800925925924,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9799526691823365,
+        "decoy_against_decoy_gate": 0.0
+      },
+      "real_spread": 0.9810047225202095,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "real": {
+        "novelty": {
+          "known": -3.700743415417188e-17,
+          "noisy_lo": 0.0351675819922655,
+          "noisy_hi": 0.7763073059155099,
+          "novel": 0.9750789071933003
+        },
+        "want_hz": {
+          "known": 5.078124999999999,
+          "noisy_lo": 5.873842592592593,
+          "noisy_hi": 105.03472222222221,
+          "novel": 139.0190972222222
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 69.53125
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 134.7222222222222,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998755,
+          "noisy_lo": 0.9999999999998753,
+          "noisy_hi": 0.9999999999998753,
+          "novel": 0.9999999999998755
+        },
+        "spread": 2.220446049250313e-16,
+        "want_hz": 143.82233796296296,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9740518767209783,
+        "decoy_against_decoy_gate": -9.25185853854297e-18
+      },
+      "real_spread": 0.9750789071933003,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "real": {
+        "novelty": {
+          "known": -9.25185853854297e-18,
+          "noisy_lo": 0.03512334466123219,
+          "noisy_hi": 0.7633403341243015,
+          "novel": 0.9722145547238692
+        },
+        "want_hz": {
+          "known": 3.9207175925925917,
+          "noisy_lo": 4.7743055555555545,
+          "noisy_hi": 109.5630787037037,
+          "novel": 147.00520833333331
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 74.21874999999997
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 144.2997685185185,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998755,
+          "noisy_lo": 0.9999999999998755,
+          "noisy_hi": 0.9999999999998755,
+          "novel": 0.9999999999998755
+        },
+        "spread": 0.0,
+        "want_hz": 152.44502314814812,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9754097903804538,
+        "decoy_against_decoy_gate": 5.551115123125783e-17
+      },
+      "real_spread": 0.9722145547238692,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "real": {
+        "novelty": {
+          "known": 1.850371707708594e-17,
+          "noisy_lo": 0.033847322091240584,
+          "noisy_hi": 0.7633287860215798,
+          "novel": 0.9779574760634455
+        },
+        "want_hz": {
+          "known": 2.4884259259259256,
+          "noisy_lo": 3.0960648148148135,
+          "noisy_hi": 85.11284722222221,
+          "novel": 122.48263888888887
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 61.54513888888888
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 117.78067129629629,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998755,
+          "noisy_lo": 0.9999999999998755,
+          "noisy_hi": 0.9999999999998755,
+          "novel": 0.9999999999998753
+        },
+        "spread": 2.220446049250313e-16,
+        "want_hz": 126.01273148148145,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9706745836197909,
+        "decoy_against_decoy_gate": 5.551115123125783e-17
+      },
+      "real_spread": 0.9779574760634455,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "real": {
+        "novelty": {
+          "known": -1.850371707708594e-17,
+          "noisy_lo": 0.03349357700811024,
+          "noisy_hi": 0.7597422225557683,
+          "novel": 0.9763347714532893
+        },
+        "want_hz": {
+          "known": 4.325810185185184,
+          "noisy_lo": 5.52662037037037,
+          "noisy_hi": 94.84953703703702,
+          "novel": 132.14699074074073
+        },
+        "curious": {
+          "known": false,
+          "noisy_lo": false,
+          "noisy_hi": true,
+          "novel": true
+        },
+        "threshold_hz": 66.05902777777777
+      },
+      "old_constant": {
+        "novelty": 0.95,
+        "want_hz": 127.25694444444444,
+        "curious": true
+      },
+      "lesioned": {
+        "novelty": {
+          "known": 0.9999999999998755,
+          "noisy_lo": 0.9999999999998755,
+          "noisy_hi": 0.9999999999998755,
+          "novel": 0.9999999999998755
+        },
+        "spread": 0.0,
+        "want_hz": 135.87962962962965,
+        "curious": true
+      },
+      "permuted": {
+        "known_against_decoy_gate": 0.9801217784427468,
+        "decoy_against_decoy_gate": 8.326672684688674e-17
+      },
+      "real_spread": 0.9763347714532893,
+      "gates": {
+        "graded_order": true,
+        "want_tracks_novelty": true,
+        "novelty_range": true,
+        "want_range": true,
+        "discriminates_old_constant": true,
+        "lesion_collapses": true,
+        "lesion_reverts_to_old_behavior": true,
+        "permuted_collapses": true
+      },
+      "GO": true
+    }
+  ],
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ]
+}

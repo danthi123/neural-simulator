@@ -5923,9 +5923,27 @@ def brain_reply(chat, req, source, cache_key) -> JSONResponse:
             return "", None
         try:
             topic = _CU.extract_topic(msg)
-            j = _get_curiosity_organ().judge(novelty=_CU.NOVEL_SIGNAL, lesion=_CU.curiosity_lesioned())
+            # ── GRADED per-topic novelty (scaffold-retirement backlog rank-10, 2026-09-05), default-OFF ──────────
+            # The constant `NOVEL_SIGNAL` says every abstain is EQUALLY, maximally novel, whatever the topic. When
+            # enabled, read the SAME topic's novelty off a genuine familiarity/mismatch circuit instead (reuse-by-
+            # import `TopicNoveltyGate`, the Bogacz-Brown anti-Hebbian projector already reused by the v320 gate),
+            # imprinted with the brain's OWN known vocabulary (`_brain_vocab(chat)`, the comprehension organ's SAME
+            # source) -- a topic word the brain already holds reads LOW novelty; an unrelated one reads HIGH.
+            # Default-OFF (`BRAIN_CURIOSITY_GRADED_NOVELTY` unset): `novelty_val` stays the constant `NOVEL_SIGNAL`
+            # -> `judge()` call below is byte-identical to HEAD, and no `graded_novelty` trace key is attached.
+            novelty_val = _CU.NOVEL_SIGNAL
+            _gn_on = _CU.graded_novelty_enabled()
+            if _gn_on:
+                try:
+                    novelty_val = _CU.topic_novelty(topic, _brain_vocab(chat), lesion=_CU.graded_novelty_lesioned())
+                except Exception:
+                    novelty_val = _CU.NOVEL_SIGNAL   # never let the graded read crash or corrupt the turn
+            j = _get_curiosity_organ().judge(novelty=novelty_val, lesion=_CU.curiosity_lesioned())
             info = dict(j)
             info["topic"] = topic
+            if _gn_on:
+                info["graded_novelty"] = {"on": True, "value": float(novelty_val),
+                                           "lesioned": bool(_CU.graded_novelty_lesioned())}
             curious = bool(j["curious"])
             # ── DA/ENGAGEMENT-GATED crave-threshold (WAVE-0 Gap-4 coupling (b)), default-OFF ──────────────────────
             # When the brain is ENGAGED (self-produced tonic DA above baseline, read off chat._last_da_drives set by
