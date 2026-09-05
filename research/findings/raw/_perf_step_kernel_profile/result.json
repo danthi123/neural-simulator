@@ -1,0 +1,92 @@
+{
+  "backend_is_gpu": true,
+  "smoke": false,
+  "scale_sweep_inference_only": [
+    {
+      "n_neurons": 1000,
+      "connections_per_neuron": 100,
+      "nnz": 100000,
+      "python_ms_step": 0.4816898397014787,
+      "python_steps_sec": 2076.0246897043494,
+      "megakernel_v2_ms_step": 0.11351379643504818,
+      "megakernel_v2_steps_sec": 8809.50185268619,
+      "megakernel_v2_dispatched": true,
+      "speedup": 4.24344753527029
+    },
+    {
+      "n_neurons": 4000,
+      "connections_per_neuron": 100,
+      "nnz": 400000,
+      "python_ms_step": 0.5190917965956032,
+      "python_steps_sec": 1926.4415399325733,
+      "megakernel_v2_ms_step": 0.10838939653088649,
+      "megakernel_v2_steps_sec": 9225.99471909636,
+      "megakernel_v2_dispatched": true,
+      "speedup": 4.789138174117277
+    },
+    {
+      "n_neurons": 16000,
+      "connections_per_neuron": 100,
+      "nnz": 1600000,
+      "python_ms_step": 0.3862424466448526,
+      "python_steps_sec": 2589.0473941604187,
+      "megakernel_v2_ms_step": 0.09666790370829403,
+      "megakernel_v2_steps_sec": 10344.695205324917,
+      "megakernel_v2_dispatched": true,
+      "speedup": 3.9955603858999713
+    },
+    {
+      "n_neurons": 64324,
+      "connections_per_neuron": 100,
+      "nnz": 6432400,
+      "python_ms_step": 0.41977870316865545,
+      "python_steps_sec": 2382.207559486951,
+      "megakernel_v2_ms_step": 0.1698651199694723,
+      "megakernel_v2_steps_sec": 5887.023776156738,
+      "megakernel_v2_dispatched": true,
+      "speedup": 2.4712472062781163
+    }
+  ],
+  "ablation_at_composer_scale": {
+    "n_neurons": 64324,
+    "connections_per_neuron": 445,
+    "nnz": 28624180,
+    "dispatch": {
+      "A_inference_python": false,
+      "B_inference_megakernel_v2": true,
+      "C_stdp_compacting": false,
+      "D_stdp_branchless": false
+    },
+    "nonvacuous": {
+      "C_stdp_compacting": true,
+      "D_stdp_branchless": true
+    },
+    "A_inference_python_ms_step": 0.794640250193576,
+    "A_inference_python_steps_sec": 1258.4310947707443,
+    "B_inference_megakernel_v2_ms_step": 0.16888710631368062,
+    "B_inference_megakernel_v2_steps_sec": 5921.115127300844,
+    "C_stdp_compacting_ms_step": 1.6470390833759059,
+    "C_stdp_compacting_steps_sec": 607.1501338937983,
+    "D_stdp_branchless_ms_step": 0.9323853867438932,
+    "D_stdp_branchless_steps_sec": 1072.5178817873077,
+    "inference_fused_speedup_A_to_B": 4.705156406183309,
+    "stdp_marginal_cost_ms_C_minus_A": 0.8523988331823299,
+    "stdp_marginal_cost_pct_of_A": 107.26851968229445,
+    "branchless_speedup_on_stdp_path_C_to_D": 1.7664788689232356
+  },
+  "gpu_util_during_stdp_learning": {
+    "n_steps": 3000,
+    "wall_s": 4.000620817998424,
+    "n_samples": 22,
+    "avg_gpu_util_pct": 20.227272727272727,
+    "avg_mem_util_pct": 4.136363636363637
+  },
+  "gpu_util_during_fused_inference": {
+    "n_steps": 3000,
+    "wall_s": 0.3727487080032006,
+    "n_samples": 4,
+    "avg_gpu_util_pct": 34.5,
+    "avg_mem_util_pct": 8.0
+  },
+  "cprofile_config_C_top25_cumulative": "         41741 function calls in 0.245 seconds\n\n   Ordered by: cumulative time\n   List reduced from 124 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n      100    0.003    0.000    0.245    0.002 /home/dant123/Projects/sim/research/runners/_perf_step_kernel_profile.py:101(_step)\n      100    0.112    0.001    0.241    0.002 /home/dant123/Projects/sim/sim/bridge.py:8658(_run_one_simulation_step)\n      100    0.000    0.000    0.042    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupyx/scipy/sparse/_base.py:136(__matmul__)\n      100    0.004    0.000    0.041    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupyx/scipy/sparse/_csc.py:86(__mul__)\n      700    0.006    0.000    0.032    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_sorting/search.py:175(where)\n      200    0.000    0.000    0.025    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_sorting/search.py:122(nonzero)\n      200    0.019    0.000    0.025    0.000 {method 'nonzero' of 'cupy._core.core._ndarray_base' objects}\n      100    0.003    0.000    0.023    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupyx/cusparse.py:1859(spmm)\n      100    0.000    0.000    0.012    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_math/sumprod.py:13(sum)\n      100    0.012    0.000    0.012    0.000 {method 'sum' of 'cupy._core.core._ndarray_base' objects}\n      100    0.000    0.000    0.011    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_manipulation/join.py:147(stack)\n      100    0.000    0.000    0.008    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_manipulation/kind.py:50(asfortranarray)\n      100    0.008    0.000    0.008    0.000 {built-in method cupy._core.core.asfortranarray}\n      100    0.000    0.000    0.008    0.000 /home/dant123/Projects/sim/sim/bridge.py:4056(_draw_ou_noise_samples)\n     1900    0.005    0.000    0.007    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/numpy/_core/numeric.py:1975(isscalar)\n      100    0.000    0.000    0.007    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_manipulation/join.py:39(concatenate)\n      100    0.007    0.000    0.007    0.000 {built-in method cupy._core._routines_manipulation.concatenate_method}\n      200    0.000    0.000    0.006    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupyx/scipy/sparse/_base.py:233(T)\n      700    0.006    0.000    0.006    0.000 {method 'astype' of 'cupy._core.core._ndarray_base' objects}\n      100    0.000    0.000    0.006    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/random/_sample.py:49(randn)\n      100    0.006    0.000    0.006    0.000 {method 'any' of 'cupy._core.core._ndarray_base' objects}\n      700    0.006    0.000    0.006    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/_creation/basic.py:15(empty)\n      100    0.000    0.000    0.006    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/random/_distributions.py:484(normal)\n      700    0.002    0.000    0.006    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupyx/scipy/__init__.py:48(__getattr__)\n      100    0.000    0.000    0.005    0.000 /home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/cupy/random/_generator.py:476(normal)\n\n\n"
+}

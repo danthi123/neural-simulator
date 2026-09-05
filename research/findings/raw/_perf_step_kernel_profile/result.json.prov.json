@@ -1,0 +1,28 @@
+{
+ "run_id": "1788604742-4099045",
+ "runner": "research/runners/_perf_step_kernel_profile.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_perf_step_kernel_profile.py",
+  "--out",
+  "research/findings/raw/_perf_step_kernel_profile/result.json"
+ ],
+ "git_sha": "b94ab45ee",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T06:39:02",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10142.3,
+ "corpus_check_query": "curiosity novelty binary host constant spiking familiarity",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_perf_step_kernel_profile/result.json"
+}
