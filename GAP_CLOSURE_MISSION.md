@@ -26,9 +26,9 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 **PRE-DECIDED NEXT ACTIONS (ordered; supersedes older blocks — the composer/affect/delta-rule agents are DONE + harvested):**
 1. Harvest the wt103 objective A/B (`_emerge_wkv_lm_linattn_wt103_predaux_s43.json`, RUNNING — the #1 mouth-lever test): does `--pred-aux-weight 1.0` lift `margin_vs_trigram` off linattn's -0.286..-0.57 broad-domain floor? If yes → 6-seed + stack capacity; if flat → the deltanet result (queued next) is the lever.
 2. Harvest deltanet wt103 (`_emerge_wkv_lm_deltanet_wt103_scale_s43.json`, QUEUED): does the erase-before-write lift the floor ≥+0.05? GO-bar in the delta-rule finding. Then one-brain rebaseline v2 (validates the shipped one-brain flip; the v1 was a false-alarm off-arm confound, now fixed).
-3. OWNER DECISION PENDING: cap coredump size (`/etc/systemd/coredump.conf`) to prevent another giant-core hang — apply on owner OK.
+3. ✅ DONE (owner-approved): coredump 2G cap applied (`/etc/systemd/coredump.conf` ProcessSizeMax/ExternalSizeMax=2G) + memory-throttle heartbeat live (`cap=THROTTLE` verdict) + `flip_offarm_staleness` gate now always-corpus-scans (recurrence closed). Crash class prevented.
 4. Mouth is the #1 blocker. Affect gate reframed → needs a grounded-perception concept-code teacher (bigger arc, rank-7). Agent lane MEASURED post-crash (avoid many concurrent heavy procs until the coredump cap lands).
-5. Keep durable state + heartbeat (bh2ryekmu) fresh; 255 stale worktrees flagged (task chip); pool healthy-but-idle.
+5. Keep durable state + heartbeat (b5wwh3yyf) fresh; 255 stale worktrees flagged (task chip); pool healthy-but-idle.
 
 ## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~09:10 (SHIPPING CONTINUES; earlier anchor)
 
