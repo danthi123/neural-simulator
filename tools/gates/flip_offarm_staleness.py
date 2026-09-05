@@ -212,17 +212,19 @@ def _violations_in(path, root, _default_fn=None):
 
 def check(paths):
     root = _ROOT
-    if paths is None:
-        cand = []
-        for pat in ("research/runners/*.py", "tools/*.py"):
-            cand += glob.glob(os.path.join(root, pat))
-        cand = [p for p in cand if _SCOPE_BASENAME.search(os.path.basename(p))]
-    else:
-        cand = []
-        for p in paths:
-            ap = p if os.path.isabs(p) else os.path.join(root, p)
-            if _in_scope(p):
-                cand.append(ap)
+    # ALWAYS corpus-scan every in-scope runner, regardless of what THIS commit staged. The 2026-08-27 bug and its
+    # gate assumed the stale OFF arm lives in a STAGED file — but the recurrence (2026-09-05: the one-brain flip AND
+    # the composer flip, twice in one session) came the OTHER way: a default-flip landed in an OWNING MODULE
+    # (one_brain_composer.py / onebrain_single_pool_production.py) whose commit did NOT stage the dependent verify
+    # runner, so the staged-files scope never re-scanned the runner whose pop-based OFF arm the flip had just made
+    # stale. Because _violations_in resolves each flag's CURRENT default from its owning module, a corpus scan of
+    # every runner catches exactly that cross-file staleness. Cheap (regex over ~N small files); the current tree is
+    # clean, so this only fires on a genuinely-stale OFF arm (a flip that outran its verifier). `paths` kept for the
+    # gate contract but intentionally not used to narrow scope.
+    cand = []
+    for pat in ("research/runners/*.py", "tools/*.py"):
+        cand += glob.glob(os.path.join(root, pat))
+    cand = [p for p in cand if _SCOPE_BASENAME.search(os.path.basename(p))]
     problems = []
     for path in cand:
         if not os.path.exists(path):
