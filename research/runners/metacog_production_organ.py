@@ -142,6 +142,27 @@ SNR_HI = 7.273           # 15k CLEAN-recall reference winner_z   -> maps to ROLE
 # trace, fixed in `mean_role_confidence`'s own docstring above -- see
 # research/findings/2026-09-01-confidence-forthcomingness-margin-scale-recalibration.md.
 
+# SPIKING RECALL-MARGIN calibration (2026-09-05, scaffold-retirement backlog rank 9). `margin_spiking`
+# (`RFPhasorComposer._spiking_margin`) is the SAME normalized-decisiveness FORM as `margin`/`margin_norm`, off
+# SPIKE COUNTS instead of a host score comparison -- strongly correlated with the host read (measured: Pearson
+# r=0.964 over 25 real tiny-demo role reads, clean + 4 synaptic-noise levels, `research/findings/raw/
+# _metacog_spiking_recall_margin_derisk/calibrate_margin_output.json`) but NOT numerically identical -- raw
+# reuse of ROLE_CONF_LO/HI tracked well at the CLEAN/heavily-degraded extremes but misaligned the confident/
+# hedge THRESHOLD crossing in the ambiguous middle band. The 6-seed de-risk (`research/findings/raw/
+# _metacog_spiking_recall_margin_derisk/6seed_results.json`) measured, WITH this fit applied: 97.6% turn-level
+# confident/hedge agreement with the host on UNAMBIGUOUS cases (host margin outside ROLE_CONF_LO/HI), 50% on
+# genuinely AMBIGUOUS ones (a characterized precision residual, not resolved by a longer integration window --
+# see the finding), 83.3% overall (n=60, 6 seeds x 10 conditions). A linear fit
+# `margin_spiking ~= SPIKING_FIT_A*margin + SPIKING_FIT_B` over the 25 calibration points (Pearson r=0.964)
+# inverted onto the ROLE_CONF band -- the SAME anchor-remap methodology SNR_LO/HI already uses for
+# `margin_snr`, just fit by regression instead of two hand-picked reference arms because a genuinely different
+# substrate (spike counts, not cosine scores) has no single "the" clean/degraded reference recall to anchor by
+# hand. See research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md.
+SPIKING_FIT_A = 1.1080448437056127
+SPIKING_FIT_B = -0.08949965933225146
+SPIKING_MARGIN_LO = 0.24291379377943234   # a DEGRADED margin_spiking reference -> maps to ROLE_CONF_LO
+SPIKING_MARGIN_HI = 0.4645227625205549    # a CONFIDENT margin_spiking reference -> maps to ROLE_CONF_HI
+
 NORM_EPS = 1e-9          # divisive-normalization stabilizer for the nmda_norm confidence read
 
 
@@ -159,6 +180,18 @@ def metacog_lesioned() -> bool:
     if v is None:
         return False
     return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def spiking_recall_margin_enabled() -> bool:
+    """Default-OFF. `BRAIN_METACOG_SPIKING_MARGIN` in {1,true,on,yes} -> the recall composer (`OneBrainComposer`/
+    `RFPhasorComposer`) populates each role chip's `margin_spiking` field (a genuine spiking-competition read,
+    scaffold-retirement backlog rank 9) and `mean_role_confidence` prefers it over the host `margin`/`margin_norm`/
+    `margin_snr` chain. Reads the SAME env var the composer constructors check (`RFPhasorComposer.
+    spiking_recall_margin`) -- this accessor exists for callers (the de-risk runner, a lesion test) that want to
+    confirm the flag's state without constructing a composer. See research/runners/rf_phasor_composer.py and
+    research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md."""
+    v = os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "")
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 CONFIDENCE_READS = ("nmda_norm", "balance")
@@ -245,6 +278,16 @@ def mean_role_confidence(activity: dict | None) -> float | None:
     """Extract the mean per-role DECODE-CONFIDENCE from the composer's per-turn activity trace (the brain's own
     spiking parse certainty for the answer it is giving).
 
+    PREFERENCE ORDER (highest first): `margin_spiking` (a genuine spiking-competition read, opt-in, see below)
+    > `margin_snr` > `margin_norm` > `margin` > the legacy `confidence`. All four host fields remain HOST
+    ARITHMETIC over the matched-filter scores -- comparisons of numbers, not a read of any circuit's spiking.
+    `margin_spiking` (2026-09-05, scaffold-retirement backlog rank 9) is the one non-host member of this list:
+    `RFPhasorComposer._spiking_margin` reads a winner-vs-runner-up SPIKE-COUNT margin off the SAME Izhikevich
+    cleanup bank `_spiking_cleanup`/`OneBrainComposer._spiking_select` already drive for the on-substrate
+    winner-PICK. Default OFF (`BRAIN_METACOG_SPIKING_MARGIN` unset -> every chip's `margin_spiking` is None ->
+    byte-identical fall-through to the existing host chain below). See
+    research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md.
+
     ROOT CAUSE (issue #181, 2026-08-27): this used to average each role chip's `confidence` field
     (`one_brain_composer._winner`: `s[argmax(s)] / max(s)`) -- but `s[argmax(s)]` IS `max(s)` BY CONSTRUCTION, so
     that field is 1.0 for every non-degenerate decode and 0.0 only when literally nothing scored above zero. It
@@ -294,10 +337,27 @@ def mean_role_confidence(activity: dict | None) -> float | None:
     roles = activity.get("roles") or []
     vals = []
     for r in roles:
+        sp = r.get("margin_spiking")
         snr = r.get("margin_snr")
         mn = r.get("margin_norm")
         m = r.get("margin")
-        if snr is not None:
+        if sp is not None:
+            # SPIKING recall-margin (2026-09-05, scaffold-retirement backlog rank 9, opt-in via
+            # BRAIN_METACOG_SPIKING_MARGIN, default None -> unreached, byte-identical): a WTA winner-vs-runner-up
+            # SPIKE-COUNT margin off the recall circuit's OWN Izhikevich cleanup competition
+            # (`RFPhasorComposer._spiking_margin`), not host arithmetic over the matched-filter scores. TOP
+            # priority when present -- when the flag is on, every role chip a given composer traces carries this
+            # field, so a query's evidence is either ALL-spiking or ALL-host, never a silent per-role blend.
+            # Mapped through SPIKING_MARGIN_LO/HI (a regression fit against the host `margin`, the SAME
+            # anchor-remap methodology `margin_snr` uses via SNR_LO/HI) rather than reused raw: the two reads
+            # correlate strongly (Pearson r~0.96) but are not numerically identical, and raw reuse of
+            # ROLE_CONF_LO/HI tracked the CLEAN/heavily-degraded extremes while misaligning the confident/hedge
+            # threshold crossing in the ambiguous middle band (measured, see the constants' docstring above).
+            v = ROLE_CONF_LO + ((float(sp) - SPIKING_MARGIN_LO) / (SPIKING_MARGIN_HI - SPIKING_MARGIN_LO)) * (
+                ROLE_CONF_HI - ROLE_CONF_LO)
+            if v < 0.0:
+                v = 0.0
+        elif snr is not None:
             # SCALE-INVARIANT read (2026-09-02, board #94/#108 R3): map the winner-vs-bulk z-score linearly onto
             # the ROLE_CONF band via the 15k reference anchors (SNR_LO/SNR_HI). This reproduces the shipped 15k
             # operating point (winner_z there maps back to the old margin_norm at both the clean and degraded
