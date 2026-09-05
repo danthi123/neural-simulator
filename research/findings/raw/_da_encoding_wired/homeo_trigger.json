@@ -2,7 +2,7 @@
   "runner": "research/runners/_da_encoding_homeo_trigger.py",
   "A_fires_on_growth": {
     "rec": {
-      "t": 1787703355.7894306,
+      "t": 1788574336.4240866,
       "substrate_homeostasis": true,
       "n_engrams": 3,
       "trigger": "idle_tick",
@@ -18,7 +18,7 @@
   },
   "C_refires_after_new_fact": {
     "rec": {
-      "t": 1787703355.90074,
+      "t": 1788574336.7940829,
       "substrate_homeostasis": true,
       "n_engrams": 4,
       "trigger": "idle_tick",
