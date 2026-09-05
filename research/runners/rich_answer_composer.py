@@ -935,9 +935,17 @@ class RichAnswerComposer:
         # pre-existing Qwen/template renderer below, unchanged.
         if _touchpoint_a_fact_clause_enabled():
             try:
-                from webapp.wkv_mouth_generator import render_fact_sentence
+                from webapp.wkv_mouth_generator import _RNG, render_fact_sentence
                 fc_seed = int(getattr(self.chat.inner, "seed", 42))
-                fc_surface = render_fact_sentence([svo], seed=fc_seed)
+                # RNG ISOLATION FIX (2026-09-04, FAILURE_LOG.md row 112 / build_ahead_ready.md item #3):
+                # `render_fact_sentence`'s own docstring requires being called from inside `_RngIsolation.run`
+                # -- on a cache miss, `SpikingClauseProducer.__init__` builds a real `SimulationBridge` that
+                # reseeds the process-global numpy/cupy/random RNGs (the #77 footgun), which would otherwise
+                # silently perturb a LATER, unrelated turn's own RNG-dependent state (e.g. the affect-driven
+                # lead-in word) in the SAME session. Wrapped here exactly like `generate()`'s own `_run()`
+                # does it (`webapp/wkv_mouth_generator.py`: `text = _RNG.run(seed, _run)`) -- a private,
+                # per-seed timeline the host process-global RNG never observes.
+                fc_surface = _RNG.run(fc_seed, lambda: render_fact_sentence([svo], seed=fc_seed))
             except Exception:
                 fc_surface = None                         # never let this attempt crash a turn -- degrade below
             if fc_surface:
