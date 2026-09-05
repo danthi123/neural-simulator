@@ -1,0 +1,688 @@
+{
+  "runner": "_selfschema_authorship_neural_turnclass_derisk",
+  "target": "scaffold_retirement_backlog.md rank 15 -- self-schema authorship host is_hyp constant",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_per_class": 40,
+  "n_pairs": 8,
+  "backend": "numpy",
+  "thresholds": {
+    "accuracy": 0.85,
+    "chance_authorship": 0.65,
+    "min_switch_frac": 1.0
+  },
+  "verdict": "PARTIAL",
+  "n_go": 5,
+  "n_seeds": 6,
+  "aggregate": {
+    "mean_accuracy": 0.9541666666666667,
+    "mean_baseline_constant_accuracy": 0.5,
+    "mean_shuffle_accuracy": 0.49583333333333335,
+    "mean_signal_severed_accuracy": 0.5,
+    "mean_base_organ_lesion_accuracy": 0.5,
+    "all_switch_frac_1": false
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 80,
+      "n_abstain_tries": 0,
+      "n_pairs_evaluable": 4,
+      "novelty_self_mean": 0.14161216086232947,
+      "novelty_heard_mean": 2.7755575615628915e-18,
+      "draws_self_mean": 9.7,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.024248737373737374,
+      "accuracy": 0.9375,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.4625,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 4,
+      "switch_frac": 1.0,
+      "pairs": [
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "n_trials": 80,
+      "n_abstain_tries": 0,
+      "n_pairs_evaluable": 5,
+      "novelty_self_mean": 0.10803080316592692,
+      "novelty_heard_mean": 1.3877787807814457e-17,
+      "draws_self_mean": 6.35,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.020587121212121213,
+      "accuracy": 0.9625,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.5125,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 5,
+      "switch_frac": 1.0,
+      "pairs": [
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "eat",
+            "mouse"
+          ],
+          "generated": [
+            "cat",
+            "avoid",
+            "shadow"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "horse",
+          "removed_fact": [
+            "horse",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "horse",
+            "eat",
+            "cat"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "cat"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": true
+      },
+      "go": true
+    },
+    {
+      "seed": 44,
+      "n_trials": 80,
+      "n_abstain_tries": 0,
+      "n_pairs_evaluable": 5,
+      "novelty_self_mean": 0.1508727172263042,
+      "novelty_heard_mean": 2.2204460492503132e-17,
+      "draws_self_mean": 10.15,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.02248106060606061,
+      "accuracy": 0.9875,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.4875,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 5,
+      "switch_frac": 1.0,
+      "pairs": [
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "eat",
+            "mouse"
+          ],
+          "generated": [
+            "cat",
+            "avoid",
+            "shadow"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": true
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "n_trials": 80,
+      "n_abstain_tries": 0,
+      "n_pairs_evaluable": 5,
+      "novelty_self_mean": 0.13439144660369257,
+      "novelty_heard_mean": -3.8857805861880476e-17,
+      "draws_self_mean": 24.3,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.024911616161616162,
+      "accuracy": 0.9125,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.4875,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 4,
+      "switch_frac": 0.8,
+      "pairs": [
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "eat",
+            "mouse"
+          ],
+          "generated": [
+            "cat",
+            "avoid",
+            "shadow"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "horse",
+          "removed_fact": [
+            "horse",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "horse",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "heard",
+          "switched": false
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": false
+      },
+      "go": false
+    },
+    {
+      "seed": 101,
+      "n_trials": 80,
+      "n_abstain_tries": 3,
+      "n_pairs_evaluable": 6,
+      "novelty_self_mean": 0.15862715968750735,
+      "novelty_heard_mean": -6.938893903907228e-17,
+      "draws_self_mean": 29.6,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.025347222222222222,
+      "accuracy": 0.9875,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.5625,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 6,
+      "switch_frac": 1.0,
+      "pairs": [
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "eat",
+            "mouse"
+          ],
+          "generated": [
+            "cat",
+            "avoid",
+            "shadow"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "horse",
+          "removed_fact": [
+            "horse",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "horse",
+            "eat",
+            "bone"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "cat"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "water"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": true
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "n_trials": 80,
+      "n_abstain_tries": 0,
+      "n_pairs_evaluable": 5,
+      "novelty_self_mean": 0.10659479769954187,
+      "novelty_heard_mean": -1.0269562977782698e-16,
+      "draws_self_mean": 17.35,
+      "draws_heard_mean": 0.0,
+      "threshold": 0.02705808080808081,
+      "accuracy": 0.9375,
+      "baseline_constant_accuracy": 0.5,
+      "shuffle_accuracy": 0.4625,
+      "signal_severed_accuracy": 0.5,
+      "base_organ_lesion_accuracy": 0.5,
+      "n_switched": 5,
+      "switch_frac": 1.0,
+      "pairs": [
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "avoid",
+            "water"
+          ],
+          "generated": [
+            "cat",
+            "eat",
+            "worm"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "follow",
+            "shadow"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "worm"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "dog",
+          "removed_fact": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "generated": [
+            "dog",
+            "eat",
+            "mouse"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "bird",
+          "removed_fact": [
+            "bird",
+            "see",
+            "shadow"
+          ],
+          "generated": [
+            "bird",
+            "eat",
+            "cat"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        },
+        {
+          "agent": "cat",
+          "removed_fact": [
+            "cat",
+            "eat",
+            "mouse"
+          ],
+          "generated": [
+            "cat",
+            "avoid",
+            "shadow"
+          ],
+          "label_heard_arm": "heard",
+          "label_self_arm": "self",
+          "switched": true
+        }
+      ],
+      "attributable_frac_over_baseline": 1.0,
+      "go_components": {
+        "accuracy": true,
+        "shuffle_collapses": true,
+        "signal_severed_collapses": true,
+        "base_organ_lesion_collapses": true,
+        "load_bearing_switch": true
+      },
+      "go": true
+    }
+  ],
+  "honest_scope": "Targets ONLY the authorship ORGAN's hard-coded `authored=True` constant (server.py:6142-6143). The host regex ROUTING (_parse_open_ended -- whether a turn enters the generation branch at all) stays host, unchanged, and is NOT claimed retired here. A FUNCTIONAL turn-class correlate, never a claim of subjective experience."
+}
