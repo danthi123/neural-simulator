@@ -1141,6 +1141,30 @@ class CoreSimConfig:
     input_divisive_sigma_2: float = 1.0
     input_divisive_gain_2: float = 1.0
 
+    # ─── SHUNTING normalization pool sourced from an EXTERNAL region's firing rate (Tier-2 on-bridge
+    # realization of the linattn mouth's num/den division, 2026-09-04; DESIGN doc research/findings/
+    # 2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3/4). A THIRD, independent divisive-
+    # gain pool with the SAME r_i = x_i / (sigma + gain*pool) machinery as enable_input_divisive_norm
+    # above, but POOL is NOT the flagged (read) set's own current mean (that is the wrong axis -- the
+    # already-refuted --dual-nonneg-divnorm channel-pool NO-GO, DESIGN doc Sec 1/4). Instead the pool is
+    # a single shared scalar `den_ema` -- the FIRING-RATE EMA of a separate, externally-designated
+    # NORM-NEURON region (BrainRegion.shunt_norm_source=True) -- read by every READ-POOL region
+    # (BrainRegion.shunt_norm_read=True). This is Carandini-Heeger's single normalization pool, over the
+    # query's match-mass axis, not the channel population (DESIGN doc Sec 1-2): `sigma` plays the design's
+    # g_leak/epsilon role (a genuine biophysical leak floor, matching the exact read's eps=1e-6), `gain`
+    # is the design's `k` (norm-neuron-rate -> shunt-conductance scale), and `den_ema` is the settled
+    # GABA_A-shunt-conductance analogue in the fluctuation-driven regime (Chance, Abbott & Reyes 2002,
+    # Neuron 35:773-782, "Gain modulation from background synaptic input"; Silver 2010, Nat Rev Neurosci
+    # 11:474-489, "Neuronal arithmetic" -- both already in-repo anchors). GUARDED: unless
+    # enable_shunt_norm_pool AND a region sets shunt_norm_read=True AND a (different) region sets
+    # shunt_norm_source=True, cp_shunt_norm_read_mask stays None and the per-step block is unreached, so
+    # total_input_current_pA is byte-identical to today (mirrors enable_input_divisive_norm_2 /
+    # enable_dendritic_divisive_gain exactly).
+    enable_shunt_norm_pool: bool = False
+    shunt_norm_sigma: float = 1e-6           # g_leak / epsilon floor (matches the exact read's eps=1e-6)
+    shunt_norm_gain: float = 1.0             # k: den_ema (a firing-rate fraction) -> shunt-divisor scale
+    shunt_norm_rate_tau_ms: float = 8.0      # den_ema's decay tau (~5-10ms GABA_A-like settling, DESIGN Sec 3b)
+
     # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
     # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
     # alongside the monolithic cp_connections. Foundation for Phase 4
