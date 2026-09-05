@@ -114,9 +114,9 @@ import numpy as np
 import research.runners._neuromod_spiking_da_mode_derisk as _DA
 import research.runners._perturb_and_measure_derisk as _PM
 # reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
-# research/runners/shared_salience_afferent.py) -- default-OFF (BRAIN_SHARED_SALIENCE); see engagement_of()'s
-# docstring below for the coupling this retires at its root (da-mode-drives-response + da-gated-encoding +
-# da-gated-curiosity all read the SAME chat._last_da_drives["da_level"] this module produces).
+# research/runners/shared_salience_afferent.py) -- BRAIN_SHARED_SALIENCE, default-ON since 2026-09-05 (Track-1
+# flip); see engagement_of()'s docstring below for the coupling this retires at its root (da-mode-drives-response +
+# da-gated-encoding + da-gated-curiosity all read the SAME chat._last_da_drives["da_level"] this module produces).
 import research.runners.shared_salience_afferent as _SHARED
 
 _DEFAULT_SEED = 42

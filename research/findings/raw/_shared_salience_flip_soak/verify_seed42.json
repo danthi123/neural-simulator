@@ -1,0 +1,197 @@
+{
+  "seed": 42,
+  "composer": "onebrain",
+  "build_seconds": 201.9,
+  "ordinary_off": [
+    "the cat eats the fish",
+    "I don't know about that.",
+    "I don't know about that."
+  ],
+  "ordinary_on": [
+    "the cat eats the fish",
+    "I don't know about that.",
+    "I don't know about that."
+  ],
+  "ordinary_byte_identical": true,
+  "trigger_2cand": {
+    "off_ctx": [
+      0.0,
+      1.0
+    ],
+    "on_ctx": [
+      0.0,
+      1.0600858369098711
+    ],
+    "lesion_ctx": [
+      0.001430615164520748,
+      0.0
+    ],
+    "off_answer": "the bird eats the seed",
+    "on_answer": "the bird eats the seed",
+    "lesion_answer": "the bird eats the worm",
+    "off_chosen": "seed",
+    "on_chosen": "seed",
+    "lesion_chosen": null,
+    "off_meta": {
+      "V_hz": [
+        17.778,
+        28.194
+      ],
+      "fed_spread_hz": 10.417,
+      "wta_counts": [
+        79.0,
+        83.0
+      ],
+      "wta_margin": 4.0,
+      "wta_choice": 1,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "on_meta": {
+      "V_hz": [
+        16.25,
+        30.278
+      ],
+      "fed_spread_hz": 14.028,
+      "wta_counts": [
+        76.0,
+        86.0
+      ],
+      "wta_margin": 10.0,
+      "wta_choice": 1,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "lesion_meta": {
+      "V_hz": [
+        18.472,
+        18.056
+      ],
+      "fed_spread_hz": 0.417,
+      "wta_counts": [
+        80.0,
+        80.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 0,
+      "decisive": false,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    }
+  },
+  "trigger_4cand": {
+    "off_ctx": [
+      0.0,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "on_ctx": [
+      0.0,
+      0.31616595135908443,
+      0.6967095851216023,
+      1.0801144492131616
+    ],
+    "lesion_ctx": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "off_answer": "the dog chases the shoe",
+    "on_answer": "the dog chases the shoe",
+    "lesion_answer": "the dog chases the ball",
+    "off_chosen": "shoe",
+    "on_chosen": "shoe",
+    "lesion_chosen": "ball",
+    "off_meta": {
+      "V_hz": [
+        26.667,
+        29.583,
+        34.444,
+        34.167
+      ],
+      "fed_spread_hz": 7.778,
+      "wta_counts": [
+        80.0,
+        80.0,
+        82.0,
+        80.0
+      ],
+      "wta_margin": 2.0,
+      "wta_choice": 2,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "on_meta": {
+      "V_hz": [
+        16.528,
+        20.833,
+        35.694,
+        35.417
+      ],
+      "fed_spread_hz": 19.167,
+      "wta_counts": [
+        48.0,
+        48.0,
+        86.0,
+        81.0
+      ],
+      "wta_margin": 5.0,
+      "wta_choice": 2,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "lesion_meta": {
+      "V_hz": [
+        11.528,
+        18.056,
+        17.361,
+        17.917
+      ],
+      "fed_spread_hz": 6.528,
+      "wta_counts": [
+        76.0,
+        80.0,
+        80.0,
+        78.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 1,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    }
+  },
+  "diagnostics": {
+    "on_spread_2cand": 1.0600858369098711,
+    "lesion_spread_2cand": 0.001430615164520748,
+    "on_spread_4cand": 1.0801144492131616,
+    "lesion_spread_4cand": 0.0,
+    "spread_attributable_2cand": 0.9986504723346828,
+    "spread_attributable_4cand": 1.0,
+    "reorders_on_4cand": false
+  },
+  "c_ordinary_preserved": true,
+  "c_on_loadbearing": true,
+  "c_lesion_collapses": true,
+  "c_moat_holds": true,
+  "seed_pass": true,
+  "elapsed_s": 522.9
+}

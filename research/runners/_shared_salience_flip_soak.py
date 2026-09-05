@@ -260,44 +260,6 @@ def decide(rows):
                      "n_seeds_with_4cand_reorder": n_reorders}
 
 
-def run(a):
-    seeds = [int(s.strip()) for s in a.seeds.split(",")] if isinstance(a.seeds, str) else list(a.seeds)
-    t0 = time.time()
-    print(f"[shared-salience flip-soak] seeds={seeds} composer={a.composer}", flush=True)
-    rows = [run_seed(s, a) for s in seeds]
-    verdict, detail = decide(rows)
-    print(f"\n{'#'*90}\n  SHARED-SALIENCE FLIP SOAK (value-choice consumer, rank-20): {verdict}", flush=True)
-    print(f"  ordinary-preserved {detail['ordinary_preserved_pass']}/{detail['n_seeds']} | "
-          f"on-loadbearing {detail['on_loadbearing_pass']}/{detail['n_seeds']} | "
-          f"lesion-collapses {detail['lesion_collapses_pass']}/{detail['n_seeds']} | "
-          f"moat-holds {detail['moat_holds_pass']}/{detail['n_seeds']} | "
-          f"seed-pass {detail['seed_pass']}/{detail['n_seeds']} | "
-          f"4cand-reorders {detail['n_seeds_with_4cand_reorder']}/{detail['n_seeds']}", flush=True)
-    print(f"  elapsed {time.time()-t0:.1f}s\n{'#'*90}", flush=True)
-    V = Verdict("shared_salience_flip_soak")
-    V.require("ordinary turns byte-identical OFF-vs-ON (all seeds)",
-              detail["ordinary_preserved_pass"] == detail["n_seeds"])
-    V.require("on-loadbearing: fed engagement context measurably differs OFF-vs-ON on both trigger scenarios "
-              "(all seeds)", detail["on_loadbearing_pass"] == detail["n_seeds"])
-    V.require("lesion-collapses: BRAIN_SHARED_SALIENCE_LESION collapses the ON-arm spread on both scenarios "
-              "(all seeds)", detail["lesion_collapses_pass"] == detail["n_seeds"])
-    V.require("no-confab moat: every commit across every arm is None or a stored candidate (all seeds)",
-              detail["moat_holds_pass"] == detail["n_seeds"])
-    V.decide(go=(verdict == "GO"), verbose=False)
-    out = {"probe": "shared_salience_flip_soak", "verdict": verdict, "seeds": seeds,
-           "config": {"composer": a.composer, "ordinary_turns": ORDINARY_TURNS,
-                      "trigger_2cand": TRIGGER_2CAND, "cands_2": list(CANDS_2),
-                      "trigger_4cand": TRIGGER_4CAND, "cands_4": list(CANDS_4)},
-           "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
-           "preconditions": V.to_dict()["preconditions"],
-           "detail": detail, "per_seed": rows, "elapsed_total_s": time.time() - t0}
-    if a.out:
-        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.out).write_text(json.dumps(out, indent=2, default=str))
-        print(f"  [saved] {a.out}", flush=True)
-    return out
-
-
 def smoke():
     """Fast harness check (MOCK chat + MOCK organ; no bridge build): the panel logic + flag toggling + the
     diagnostic-context plumbing + the verdict aggregator are well-formed."""
@@ -416,14 +378,39 @@ def main():
             print(f"  seed {s}: seed_pass={per_seed[str(s)].get('seed_pass')} "
                   f"({per_seed[str(s)]['wall_seconds']}s)", flush=True)
         n = len(seeds)
-        n_pass = sum(1 for s in seeds if per_seed.get(str(s), {}).get("seed_pass"))
+
+        def _g(k):
+            return sum(1 for s in seeds if per_seed.get(str(s), {}).get(k))
+
+        n_pass = _g("seed_pass")
         all_pass = (n_pass == n)
+        n_ord = _g("c_ordinary_preserved")
+        n_lb = _g("c_on_loadbearing")
+        n_les = _g("c_lesion_collapses")
+        n_moat = _g("c_moat_holds")
         n_reorders = sum(1 for s in seeds
                          if per_seed.get(str(s), {}).get("diagnostics", {}).get("reorders_on_4cand"))
         verdict = "GO" if all_pass else "NO-GO"
-        result = {"mode": "controller", "probe": "shared_salience_flip_soak", "verdict": verdict, "seeds": seeds,
-                  "n_seeds": n, "n_pass": n_pass, "all_seeds_pass": bool(all_pass),
-                  "n_seeds_with_4cand_reorder": n_reorders, "per_seed": per_seed}
+        # a verdict must carry what earned it (tools/gates/verdict_preconditions.py) -- the four per-seed gates,
+        # checked at the CONTROLLER level across all seeds, become the artifact's `preconditions` block (mirrors
+        # _value_choice_neural_context_6seed_derisk.py's own controller-level Verdict).
+        V = Verdict("shared_salience_flip_soak")
+        V.require("ordinary turns byte-identical OFF-vs-ON (all seeds)", n_ord == n)
+        V.require("on-loadbearing: fed engagement context measurably differs OFF-vs-ON on both trigger "
+                  "scenarios (all seeds)", n_lb == n)
+        V.require("lesion-collapses: BRAIN_SHARED_SALIENCE_LESION collapses the ON-arm spread on both "
+                  "scenarios (all seeds)", n_les == n)
+        V.require("no-confab moat: every commit across every arm is None or a stored candidate (all seeds)",
+                  n_moat == n)
+        V.require("every subprocess worker returned a RESULT_JSON (none crashed/timed out)",
+                  all("error" not in per_seed.get(str(s), {}) for s in seeds))
+        decided = V.decide(go=(verdict == "GO"), verbose=False)
+        result = {"mode": "controller", "probe": "shared_salience_flip_soak", "verdict": decided["status"],
+                  "seeds": seeds, "n_seeds": n, "n_pass": n_pass, "all_seeds_pass": bool(all_pass),
+                  "ordinary_preserved_pass": n_ord, "on_loadbearing_pass": n_lb, "lesion_collapses_pass": n_les,
+                  "moat_holds_pass": n_moat, "n_seeds_with_4cand_reorder": n_reorders,
+                  "preconditions": decided["preconditions"], "undefined_reasons": decided["undefined_reasons"],
+                  "per_seed": per_seed}
     elif a.seed is not None:
         row = run_seed(a.seed, a)
         print("RESULT_JSON:" + json.dumps(row, default=str))

@@ -1,0 +1,31 @@
+{
+ "run_id": "1788598536-3955560",
+ "runner": "research/runners/_shared_salience_flip_soak.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_5ba45863-4fb-4/research/runners/_shared_salience_flip_soak.py",
+  "--seeds",
+  "43,44,100,101,102",
+  "--composer",
+  "onebrain",
+  "--out",
+  "research/findings/raw/_shared_salience_flip_soak/verify_seeds_43_44_100_101_102.json"
+ ],
+ "git_sha": "4bea03b3c",
+ "git_dirty": false,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:55:36",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_shared_salience_flip_soak/verify_seeds_43_44_100_101_102.json"
+}

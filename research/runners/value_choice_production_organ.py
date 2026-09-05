@@ -59,7 +59,8 @@ from research.runners._navcloseout_R5_value_driven_choice import (  # noqa: E402
     SpikingValueChoice, _drives, make_salience_bias,
 )
 # reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
-# research/runners/shared_salience_afferent.py) -- default-OFF (BRAIN_SHARED_SALIENCE); see default_context_fn().
+# research/runners/shared_salience_afferent.py) -- BRAIN_SHARED_SALIENCE, default-ON since 2026-09-05 (Track-1
+# flip, rank-20 verification); see default_context_fn() below and that module's own docstring.
 import research.runners.shared_salience_afferent as _SHARED  # noqa: E402
 
 # whose-the-difference attribution (the R5 non-circularity question, asked per COMMIT): what fraction of the winning
@@ -314,12 +315,15 @@ def default_context_fn(chat):
     a boost if the candidate is the current discourse-WM referent. A real, deterministic 'prior reward/engagement'
     signal (the DA/limbic context the value critic converts to a learned V).
 
-    SHARED SPIKING AFFERENT (rank-4, default-OFF `BRAIN_SHARED_SALIENCE`, research/runners/shared_salience_afferent.py).
+    SHARED SPIKING AFFERENT (rank-4, `BRAIN_SHARED_SALIENCE`, research/runners/shared_salience_afferent.py;
+    default-ON since 2026-09-05's Track-1 flip -- `_shared_salience_flip_soak.py` (rank-20) verifies this specific
+    critic through the real ChatBrain path; see that runner's own finding for the verdict).
     The RECENCY/referent bookkeeping above stays host (a legitimate environment/episodic-memory-provenance boundary --
     WHICH fact was stored when, and which is the live discourse referent, is not a cognitive computation); what
     changes is that the per-candidate scalar this function hands the critic is no longer that host ratio directly, but
     the shared curiosity-organ ASK-pool's spiking transduction of it (the SAME afferent da_mode_drives_chat and
-    bg_action_selection_production_organ read). OFF (unset) -> byte-identical to the bare recency ratio below."""
+    bg_action_selection_production_organ read). OFF (`BRAIN_SHARED_SALIENCE` explicitly `{0,false,no,off,''}`, the
+    byte-identical escape post-flip) -> byte-identical to the bare recency ratio below."""
     def ctx(a, v, cands):
         order = {}
         for i, (fa, fv, fp) in enumerate(getattr(chat, "stored_facts", [])):

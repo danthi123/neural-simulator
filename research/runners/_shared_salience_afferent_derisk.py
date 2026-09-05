@@ -1,7 +1,9 @@
 """SHARED SPIKING SALIENCE AFFERENT -- de-risk / verify (scaffold-retirement backlog rank-4, 2026-09-05).
 
 WHAT THIS VERIFIES. `research/runners/shared_salience_afferent.py` (+ `CuriosityProductionOrgan.salience_of`, added
-alongside it) is wired, default-OFF (`BRAIN_SHARED_SALIENCE`), into THREE consumer sites that each used to compute
+alongside it) is wired (`BRAIN_SHARED_SALIENCE`; default-OFF when this de-risk was written, FLIPPED DEFAULT-ON
+2026-09-05 -- see that module's own docstring for the current state and `_shared_salience_flip_soak.py` for the
+flip's own no-regression + anti-hollow verification) into THREE consumer sites that each used to compute
 their own host novelty/salience formula:
   (1) `webapp/da_mode_drives_chat.py::DaModeDrivesWorkspace.observe()` -- the engagement scalar that drives the
       spiking SNc afferent (the ROOT of 3 downstream default-on consumers: da-mode-drives-response's engagement

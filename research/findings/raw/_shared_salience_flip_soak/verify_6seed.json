@@ -1,0 +1,1270 @@
+{
+  "probe": "shared_salience_flip_soak",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "ordinary turns byte-identical OFF-vs-ON (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "on-loadbearing: fed engagement context measurably differs OFF-vs-ON on both trigger scenarios (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion-collapses: BRAIN_SHARED_SALIENCE_LESION collapses the ON-arm spread on both scenarios (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-confab moat: every commit across every arm is None or a stored candidate (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "every seed worker completed without error (none crashed/timed out)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "undefined_reasons": [],
+  "config": {
+    "composer": "onebrain",
+    "ordinary_turns": [
+      "what does cat eat",
+      "what does fox hunt",
+      "what do you know about it"
+    ],
+    "trigger_2cand": "what does bird eat",
+    "cands_2": [
+      "worm",
+      "seed"
+    ],
+    "trigger_4cand": "what does dog chase",
+    "cands_4": [
+      "cat",
+      "ball",
+      "shoe",
+      "stick"
+    ]
+  },
+  "sim_backend": "numpy",
+  "detail": {
+    "n_seeds": 6,
+    "ordinary_preserved_pass": 6,
+    "on_loadbearing_pass": 6,
+    "lesion_collapses_pass": 6,
+    "moat_holds_pass": 6,
+    "seed_pass": 6,
+    "n_seeds_with_4cand_reorder": 3
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "composer": "onebrain",
+      "build_seconds": 201.9,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            17.778,
+            28.194
+          ],
+          "fed_spread_hz": 10.417,
+          "wta_counts": [
+            79.0,
+            83.0
+          ],
+          "wta_margin": 4.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            16.25,
+            30.278
+          ],
+          "fed_spread_hz": 14.028,
+          "wta_counts": [
+            76.0,
+            86.0
+          ],
+          "wta_margin": 10.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            18.472,
+            18.056
+          ],
+          "fed_spread_hz": 0.417,
+          "wta_counts": [
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the shoe",
+        "on_answer": "the dog chases the shoe",
+        "lesion_answer": "the dog chases the ball",
+        "off_chosen": "shoe",
+        "on_chosen": "shoe",
+        "lesion_chosen": "ball",
+        "off_meta": {
+          "V_hz": [
+            26.667,
+            29.583,
+            34.444,
+            34.167
+          ],
+          "fed_spread_hz": 7.778,
+          "wta_counts": [
+            80.0,
+            80.0,
+            82.0,
+            80.0
+          ],
+          "wta_margin": 2.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            16.528,
+            20.833,
+            35.694,
+            35.417
+          ],
+          "fed_spread_hz": 19.167,
+          "wta_counts": [
+            48.0,
+            48.0,
+            86.0,
+            81.0
+          ],
+          "wta_margin": 5.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            11.528,
+            18.056,
+            17.361,
+            17.917
+          ],
+          "fed_spread_hz": 6.528,
+          "wta_counts": [
+            76.0,
+            80.0,
+            80.0,
+            78.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 1.0801144492131616,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": false
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 522.9
+    },
+    "43": {
+      "seed": 43,
+      "composer": "onebrain",
+      "build_seconds": 282.0,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            16.944,
+            29.167
+          ],
+          "fed_spread_hz": 12.222,
+          "wta_counts": [
+            79.0,
+            83.0
+          ],
+          "wta_margin": 4.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            15.694,
+            32.917
+          ],
+          "fed_spread_hz": 17.222,
+          "wta_counts": [
+            70.0,
+            87.0
+          ],
+          "wta_margin": 17.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            18.611,
+            19.306
+          ],
+          "fed_spread_hz": 0.694,
+          "wta_counts": [
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the shoe",
+        "on_answer": "the dog chases the stick",
+        "lesion_answer": "the dog chases the stick",
+        "off_chosen": "shoe",
+        "on_chosen": "stick",
+        "lesion_chosen": "stick",
+        "off_meta": {
+          "V_hz": [
+            26.389,
+            28.611,
+            37.083,
+            27.917
+          ],
+          "fed_spread_hz": 10.694,
+          "wta_counts": [
+            80.0,
+            79.0,
+            82.0,
+            80.0
+          ],
+          "wta_margin": 2.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            17.222,
+            21.25,
+            32.5,
+            32.778
+          ],
+          "fed_spread_hz": 15.556,
+          "wta_counts": [
+            54.0,
+            49.0,
+            80.0,
+            81.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 3,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            12.917,
+            18.611,
+            18.333,
+            18.194
+          ],
+          "fed_spread_hz": 5.694,
+          "wta_counts": [
+            77.0,
+            79.0,
+            79.0,
+            80.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 3,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 1.0801144492131616,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": true
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 722.0,
+      "wall_seconds": 722.84
+    },
+    "44": {
+      "seed": 44,
+      "composer": "onebrain",
+      "build_seconds": 228.0,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            11.667,
+            33.611
+          ],
+          "fed_spread_hz": 21.944,
+          "wta_counts": [
+            43.0,
+            87.0
+          ],
+          "wta_margin": 44.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            13.75,
+            32.639
+          ],
+          "fed_spread_hz": 18.889,
+          "wta_counts": [
+            60.0,
+            86.0
+          ],
+          "wta_margin": 26.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            16.389,
+            14.583
+          ],
+          "fed_spread_hz": 1.806,
+          "wta_counts": [
+            80.0,
+            64.0
+          ],
+          "wta_margin": 16.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the ball",
+        "on_answer": "the dog chases the stick",
+        "lesion_answer": "the dog chases the stick",
+        "off_chosen": "ball",
+        "on_chosen": "stick",
+        "lesion_chosen": "stick",
+        "off_meta": {
+          "V_hz": [
+            13.889,
+            33.194,
+            34.306,
+            33.75
+          ],
+          "fed_spread_hz": 20.417,
+          "wta_counts": [
+            15.0,
+            81.0,
+            80.0,
+            81.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            15.278,
+            19.306,
+            32.361,
+            32.083
+          ],
+          "fed_spread_hz": 17.083,
+          "wta_counts": [
+            42.0,
+            48.0,
+            81.0,
+            82.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 3,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            10.833,
+            15.417,
+            15.556,
+            14.583
+          ],
+          "fed_spread_hz": 4.722,
+          "wta_counts": [
+            57.0,
+            79.0,
+            79.0,
+            80.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 3,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 1.0801144492131616,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": true
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 629.1,
+      "wall_seconds": 629.68
+    },
+    "100": {
+      "seed": 100,
+      "composer": "onebrain",
+      "build_seconds": 238.8,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            14.722,
+            29.444
+          ],
+          "fed_spread_hz": 14.722,
+          "wta_counts": [
+            53.0,
+            84.0
+          ],
+          "wta_margin": 31.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            15.694,
+            28.889
+          ],
+          "fed_spread_hz": 13.194,
+          "wta_counts": [
+            61.0,
+            83.0
+          ],
+          "wta_margin": 22.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            19.028,
+            18.056
+          ],
+          "fed_spread_hz": 0.972,
+          "wta_counts": [
+            80.0,
+            78.0
+          ],
+          "wta_margin": 2.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.31616595135908443,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the shoe",
+        "on_answer": "the dog chases the stick",
+        "lesion_answer": "the dog chases the ball",
+        "off_chosen": "shoe",
+        "on_chosen": "stick",
+        "lesion_chosen": "ball",
+        "off_meta": {
+          "V_hz": [
+            24.722,
+            28.056,
+            35.556,
+            31.111
+          ],
+          "fed_spread_hz": 10.833,
+          "wta_counts": [
+            55.0,
+            79.0,
+            83.0,
+            81.0
+          ],
+          "wta_margin": 2.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            17.5,
+            21.806,
+            29.722,
+            29.583
+          ],
+          "fed_spread_hz": 12.222,
+          "wta_counts": [
+            41.0,
+            70.0,
+            80.0,
+            81.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 3,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            14.167,
+            17.778,
+            17.778,
+            18.75
+          ],
+          "fed_spread_hz": 4.583,
+          "wta_counts": [
+            45.0,
+            80.0,
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 0.7639484978540771,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": true
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 656.6,
+      "wall_seconds": 657.31
+    },
+    "101": {
+      "seed": 101,
+      "composer": "onebrain",
+      "build_seconds": 198.0,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            14.444,
+            25.972
+          ],
+          "fed_spread_hz": 11.528,
+          "wta_counts": [
+            37.0,
+            86.0
+          ],
+          "wta_margin": 49.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            15.694,
+            30.417
+          ],
+          "fed_spread_hz": 14.722,
+          "wta_counts": [
+            35.0,
+            93.0
+          ],
+          "wta_margin": 58.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            19.583,
+            18.889
+          ],
+          "fed_spread_hz": 0.694,
+          "wta_counts": [
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.31616595135908443,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the shoe",
+        "on_answer": "the dog chases the shoe",
+        "lesion_answer": "the dog chases the ball",
+        "off_chosen": "shoe",
+        "on_chosen": "shoe",
+        "lesion_chosen": "ball",
+        "off_meta": {
+          "V_hz": [
+            25.139,
+            27.222,
+            34.028,
+            30.417
+          ],
+          "fed_spread_hz": 8.889,
+          "wta_counts": [
+            80.0,
+            80.0,
+            81.0,
+            80.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            17.639,
+            20.694,
+            33.889,
+            32.361
+          ],
+          "fed_spread_hz": 16.25,
+          "wta_counts": [
+            48.0,
+            73.0,
+            81.0,
+            81.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            13.194,
+            19.583,
+            19.028,
+            18.611
+          ],
+          "fed_spread_hz": 6.389,
+          "wta_counts": [
+            62.0,
+            80.0,
+            80.0,
+            78.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 0.7639484978540771,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": false
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 515.0,
+      "wall_seconds": 515.47
+    },
+    "102": {
+      "seed": 102,
+      "composer": "onebrain",
+      "build_seconds": 189.7,
+      "ordinary_off": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_on": [
+        "the cat eats the fish",
+        "I don't know about that.",
+        "I don't know about that."
+      ],
+      "ordinary_byte_identical": true,
+      "trigger_2cand": {
+        "off_ctx": [
+          0.0,
+          1.0
+        ],
+        "on_ctx": [
+          0.0,
+          1.0600858369098711
+        ],
+        "lesion_ctx": [
+          0.001430615164520748,
+          0.0
+        ],
+        "off_answer": "the bird eats the seed",
+        "on_answer": "the bird eats the seed",
+        "lesion_answer": "the bird eats the worm",
+        "off_chosen": "seed",
+        "on_chosen": "seed",
+        "lesion_chosen": null,
+        "off_meta": {
+          "V_hz": [
+            14.444,
+            32.778
+          ],
+          "fed_spread_hz": 18.333,
+          "wta_counts": [
+            26.0,
+            95.0
+          ],
+          "wta_margin": 69.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            15.417,
+            30.556
+          ],
+          "fed_spread_hz": 15.139,
+          "wta_counts": [
+            38.0,
+            88.0
+          ],
+          "wta_margin": 50.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            18.611,
+            18.611
+          ],
+          "fed_spread_hz": 0.0,
+          "wta_counts": [
+            80.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 0,
+          "decisive": false,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "trigger_4cand": {
+        "off_ctx": [
+          0.0,
+          0.5,
+          0.75,
+          1.0
+        ],
+        "on_ctx": [
+          0.31616595135908443,
+          0.31616595135908443,
+          0.6967095851216023,
+          1.0801144492131616
+        ],
+        "lesion_ctx": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_answer": "the dog chases the shoe",
+        "on_answer": "the dog chases the shoe",
+        "lesion_answer": "the dog chases the ball",
+        "off_chosen": "shoe",
+        "on_chosen": "shoe",
+        "lesion_chosen": "ball",
+        "off_meta": {
+          "V_hz": [
+            27.778,
+            27.5,
+            34.861,
+            32.639
+          ],
+          "fed_spread_hz": 7.361,
+          "wta_counts": [
+            70.0,
+            80.0,
+            82.0,
+            81.0
+          ],
+          "wta_margin": 1.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "on_meta": {
+          "V_hz": [
+            17.5,
+            21.389,
+            33.056,
+            34.861
+          ],
+          "fed_spread_hz": 17.361,
+          "wta_counts": [
+            19.0,
+            73.0,
+            81.0,
+            81.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 2,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        },
+        "lesion_meta": {
+          "V_hz": [
+            11.806,
+            17.778,
+            16.667,
+            16.806
+          ],
+          "fed_spread_hz": 5.972,
+          "wta_counts": [
+            27.0,
+            80.0,
+            79.0,
+            80.0
+          ],
+          "wta_margin": 0.0,
+          "wta_choice": 1,
+          "decisive": true,
+          "lesion": false,
+          "untrained": false,
+          "v_margin_hz": 2.0,
+          "value_attribution_frac": null
+        }
+      },
+      "diagnostics": {
+        "on_spread_2cand": 1.0600858369098711,
+        "lesion_spread_2cand": 0.001430615164520748,
+        "on_spread_4cand": 0.7639484978540771,
+        "lesion_spread_4cand": 0.0,
+        "spread_attributable_2cand": 0.9986504723346828,
+        "spread_attributable_4cand": 1.0,
+        "reorders_on_4cand": false
+      },
+      "c_ordinary_preserved": true,
+      "c_on_loadbearing": true,
+      "c_lesion_collapses": true,
+      "c_moat_holds": true,
+      "seed_pass": true,
+      "elapsed_s": 534.7,
+      "wall_seconds": 535.4
+    }
+  },
+  "note": "seed 42 run standalone (research/findings/raw/_shared_salience_flip_soak/verify_seed42.json; no subprocess timeout needed on a since-uncontended machine); seeds 43/44/100/101/102 run via the --seeds controller in a separate process (same runner, same code, verify_seeds_43_44_100_101_102.json) once contention eased. Merged post-hoc into this canonical 6-seed artifact by tooling, not the runner itself, since the split was a wall-clock accommodation (a heavily loaded shared machine mid-campaign), not a methodology change -- each seed is still an independently subprocess-isolated worker. See research/FAILURE_LOG.md's 2026-09-05 _stable_seed entry: an EARLIER independent seed-42 run (before the canonical verify_seed42.json above) reproduced every gate identically but committed a DIFFERENT 4-candidate near-tie winner (stick vs shoe) due to a pre-existing, unrelated PYTHONHASHSEED-driven non-determinism in value_choice_production_organ._stable_seed -- the fed-context floats and all 4 gates were byte-identical across both runs; only the categorical near-tie winner (never gated on) moved. n_seeds_with_4cand_reorder above is therefore a snapshot of this process's hash seed, not a fixed per-seed property."
+}
