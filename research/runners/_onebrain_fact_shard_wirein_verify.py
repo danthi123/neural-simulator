@@ -93,7 +93,9 @@ def build_agent_composer(seed, vocab, k_max, fact_shard, merge=False):
     if fact_shard:
         os.environ[FS_ENV] = "1"
     else:
-        os.environ.pop(FS_ENV, None)
+        os.environ[FS_ENV] = "0"   # FORCE off: BRAIN_FACT_SHARD_RETRIEVAL flipped to default-ON (2026-09-05), so
+        # popping (relying on the default) would leave the OFF arm running the fast path -> vacuous ON-vs-ON compare
+        # (the flip_offarm_staleness pattern). The pre-flip GO 6/6 was valid; this keeps re-runs valid post-flip.
     os.environ[MERGE_ENV] = "1" if merge else "0"
     try:
         agent = BrainConversationalAgent(seed=seed, D=128, concepts=concepts, composer_kind="onebrain",

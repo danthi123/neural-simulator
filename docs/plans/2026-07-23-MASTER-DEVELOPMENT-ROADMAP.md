@@ -150,6 +150,18 @@ long-pole stays gated and honest, not faked with more templates.
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-09-05 (later) — COMPOSER FHRR RECALL-LATENCY WALL RETIRED (rank-1 shipped).** The DG-CA3 sublinear
+> spiking fact-shard retrieval is now WIRED into the production `OneBrainComposer` and FLIPPED to production-default
+> (`BRAIN_FACT_SHARD_RETRIEVAL` default-ON, `=0` reverts byte-identical), verified GO 6/6 through the real
+> `BrainConversationalAgent(composer_kind=onebrain)` path — parity 720/720, recall 404/404, moat 0 new-confab,
+> byte-identical-off, ~411× (185s→0.46s). The onebrain composer's recall is now FAST at scale, so the host `rf`
+> numpy-scan oracle's last remaining justification (speed) is gone (the recall MECHANISM was already retired
+> 2026-09-02; this closes its latency wall). Follow-on (safe, named): a `no_batched_region`-aware
+> `_onebrain_layout_span` to also reclaim the per-read bridge-shrink on the pool1-merged default path (correctness
+> unaffected; the win there is via fewer reads). Finding
+> `2026-09-05-onebrain-fact-shard-wirein-production-composer.md`. Also caught+fixed: the verify runner's OFF arm
+> popped the flag (now forces `=0`) — the same `flip_offarm_staleness` pattern the one-brain flip hit.
+>
 > **🗓️ 2026-09-05 — OVERNIGHT SHIPPING WAVE (autonomous, owner grant): de-risk → production-default.**
 > Four validated GO shortcuts FLIPPED to production-default + verified live (anti-hollow: vary→differs /
 > lesion→vanishes, no-regression, reversible via `=0`): rank-4 shared-salience afferent, rank-20 value-choice,

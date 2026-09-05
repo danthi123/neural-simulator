@@ -16,10 +16,13 @@ stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CUR
 - **The core thinking-organs now literally share ONE neural pool by default** (surprise, world-model,
   self-monitoring, and phrasing) — the "one brain" goal for these four, switched on after a safety check,
   with a full re-check running on the GPU.
-- **The meaning-composer's speed wall is SOLVED.** Recalling a fact from the brain's own memory used to
-  scan every stored fact (~2.5 minutes at 400 facts); a brain-based sharded lookup (hippocampus-style)
-  does it in ~0.4 seconds (~400x faster) with no loss of recall or the no-confabulation guarantee — so the
-  last big host shortcut on the live conversation path can now be retired. Wiring it in is in progress.
+- **The meaning-composer's speed wall is SOLVED and now SWITCHED ON.** Recalling a fact from the brain's own
+  memory used to scan every stored fact (~3 minutes at 400 facts); a brain-based sharded lookup
+  (hippocampus-style) does it in ~0.5 seconds (~400x faster) with no loss of recall or the no-confabulation
+  guarantee. It is now WIRED into the live conversation path and switched ON by default (verified through the
+  real chat agent on all 6 test seeds — every fact still recalled, no new fabrication, identical answers, just
+  fast), so the brain's own spiking memory no longer needs the fast host shortcut it used to fall back to for
+  speed. Reversible with one setting if any issue shows up.
 - **The brain's own voice (the #1 remaining blocker) was honestly re-aimed.** The owner-specified
   "better-memory-key" design was built and tested — it lost (a clean method dead-end, banked). A
   deep-research round then produced a ranked plan of what to try next: a better training objective

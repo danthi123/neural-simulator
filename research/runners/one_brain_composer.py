@@ -342,14 +342,18 @@ class OneBrainComposer:
         # BRAIN-BASED: the in-shard cleanup IS the composer's on-substrate op (unchanged, over fewer blocks); the DG
         # sparse PROJECTION is the SAME declared host-rate stand-in `enable_sparse_index` uses (research/biology/
         # dg-ca3-sparse-index.md; named spiking burn-down = the granule-cell WTA in the trisynaptic-loop probes).
-        # Env BRAIN_FACT_SHARD_RETRIEVAL=1 flips it on without a code change (owner reviews the default-on flip
-        # separately -- leave it OFF). GATED (like `enable_sparse_index`) to the host first-match regime
-        # (integrated_loop off) + confidence_gate==0 (shard-local margins out of scope) -> otherwise the full path
-        # runs, no regression. Determinism: the per-role indices seed from cfg.seed (self.seed). A fact-shard
-        # composer never batches, so enabling it ALSO right-sizes the bridge (no_batched_region below), reclaiming
-        # the k_max*(n_roles*D+cb) batched region so every per-block read runs at ~its small-store cost.
+        # Env BRAIN_FACT_SHARD_RETRIEVAL flips it; DEFAULT-ON as of 2026-09-05 (retire the FHRR recall-latency wall:
+        # integrated wire-in GO 6/6 through the real BrainConversationalAgent(onebrain) path -- parity 720/720,
+        # recall 404/404, moat 0, byte-identical-off, ~411x; BRAIN_FACT_SHARD_RETRIEVAL=0 reverts byte-identical).
+        # GATED (like `enable_sparse_index`) to the host first-match regime (integrated_loop off) + confidence_gate==0
+        # (shard-local margins out of scope) -> otherwise the full path runs, no regression. Determinism: the per-role
+        # indices seed from cfg.seed (self.seed). A fact-shard composer never batches, so enabling it ALSO right-sizes
+        # the bridge (no_batched_region below), reclaiming the k_max*(n_roles*D+cb) batched region.
+        _FACT_SHARD_DEFAULT_ON = True   # FLIPPED 2026-09-05 (flip campaign, owner autonomy grant); =0 reverts byte-identical
+        _fs_env = _os.environ.get("BRAIN_FACT_SHARD_RETRIEVAL")
         self.enable_fact_shard = bool(enable_fact_shard) or (
-            _os.environ.get("BRAIN_FACT_SHARD_RETRIEVAL", "").strip().lower() in ("1", "true", "on", "yes"))
+            _FACT_SHARD_DEFAULT_ON if _fs_env is None
+            else _fs_env.strip().lower() in ("1", "true", "on", "yes"))
         self._fs_g = int(fact_shard_g); self._fs_G = int(fact_shard_G); self._fs_c = int(fact_shard_c)
         self._fact_shard = None         # (per-role DGSparseIndex dict, per-role block-id map); lazy, reuse-by-import
         self._fact_shard_built_K = -1   # len(self.kb) the current fact-shard was built for (rebuild on a store change)
