@@ -8,3 +8,4 @@ Board reconciled 2026-09-03 ~22:50: #205 CONFIRMED — linattn deployable spikin
 2026-09-05 REAL reconcile: created board task #209 (plain-language) capturing the scaffold-retirement wave rank-7/9/12/15/20/24 verdicts (2 GO, 2 PARTIAL, 1 BOUNDARY, +rank24 flips); labeled Emotion/self-awareness + de-risked. Actual Vikunja board updated via tools/vikunja.sh, not just this marker.
 2026-09-05 overnight REAL reconcile: board #209 appended with wave-2 GOs (rank-8/10/16/23/2 + rank-11 already-shipped) + flip-campaign status; ROADMAP.md wave-2 entry added. Actual board updated via tools/vikunja.sh, not a bare marker.
 2026-09-05 overnight REAL reconcile: FIRST production-flip recorded on board #209 — rank-4 shared-salience → default-ON (3/3 GO). Actual board updated.
+2026-09-05 overnight REAL reconcile: rank-5 + rank-12 production-flips recorded on #209 (both GO 6/6; rank-20 covered by rank-4). Actual board updated.
