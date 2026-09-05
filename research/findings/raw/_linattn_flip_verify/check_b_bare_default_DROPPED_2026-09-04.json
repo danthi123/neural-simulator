@@ -1,0 +1,89 @@
+{
+ "runner": "linattn_flip_verify check_b (bare-default coherence + phase6-equivalent affect GO, hand-authored, scenario-identical to the committed phase4_..._rerun.py with all BRAIN_WKV_MOUTH_* env vars left UNSET)",
+ "seed": 42,
+ "backend": "numpy",
+ "verdict": {
+  "bare_default_resolved_linattn_bpe_broad": true,
+  "smoke_turn_used_wkv_mouth": true,
+  "Q1_affect_loadbearing_PASS": false,
+  "Q1_lesion0_fluent_not_salad": true,
+  "Q2_moat_with_affect_PASS": true,
+  "BARE_DEFAULT_FLIP_CONFIRM_GO": false
+ },
+ "rows": {
+  "resolved_defaults": {
+   "recurrence_mode": "linattn",
+   "tokenizer_mode": "bpe",
+   "scope_mode": "broad",
+   "ckpt_path_seed42": "/home/dant123/Projects/sim/.claude/worktrees/agent-a08638b256bb4795d/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed42.npz"
+  },
+  "smoke_turn": {
+   "msg": "Tell me about the ocean",
+   "generator": "wkv_mouth",
+   "wkv_mouth_used": true,
+   "raw": "Tell me about the ocean and is a very small town in the city of wales it lies between the river with its population density of inhabitants km east of the arrondissement of saint hilde department to the west by the roman authorities in france on january he became part of the french revolution at the time of his own life after being inducted into the s and s for the year old man who had come from the th century fox network she died on july as an american television series and movie director scureenwriter and"
+  },
+  "priming_turn": {
+   "msg": "I am absolutely thrilled and overjoyed today, everything is wonderful!",
+   "affect": {
+    "on": true,
+    "lesioned": false,
+    "composer": "onebrain",
+    "differential": 0.03916666666666667,
+    "valence_sign": "+",
+    "tone_level": 2,
+    "tone_token": "gladly",
+    "forthcomingness": {
+     "max_sentences": 4,
+     "max_elaborations": 3
+    },
+    "manner_template": "Keep the words {a}, {v}, {p} and the verb '{v}'. Write ONE short, warm, friendly sentence.",
+    "appraisal_valence": 0.47499999999999987,
+    "appraisal_arousal": 0.39999999999999997,
+    "appraisal_hits": [
+     "thrilled",
+     "overjoyed",
+     "wonderful"
+    ],
+    "pos_rate": 0.03916666666666667,
+    "neg_rate": 0.0
+   }
+  },
+  "Q1_affect_loadbearing": {
+   "topic": "Tell me about frank_lincoln_wright",
+   "wkv_used": {
+    "l0": true,
+    "l1": true
+   },
+   "generator": {
+    "l0": "wkv_mouth",
+    "l1": "wkv_mouth"
+   },
+   "raw": {
+    "l0": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+    "l1": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his father abbreviated to her mother she studied law school for children who worked in new york city university",
+    "l0_repeat": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his father abbreviated to her mother she studied law school for children who worked in a hospital in paris where"
+   },
+   "raw_differs_lesion0_vs_lesion1": true,
+   "raw_reproduces_lesion0_vs_lesion0_repeat": false,
+   "lesion0_salad_frac": 0.0410958904109589,
+   "lesion0_fluent_not_salad": true,
+   "PASS": false
+  },
+  "Q2_moat_with_affect": {
+   "topic": "Tell me about the zltrinqua dynasty of planet Vexcor-9",
+   "lesion0_affect_active": {
+    "known": false,
+    "abstained": null,
+    "raw": "Tell me about the zltrinqua dynasty of planet vexcor is an important part in the world it was created by the th century and has been made to be one of the most famous authors who have been published for many years he also had a number of books on his book it wrote that they are called the photos and other stories from the time of the same name as the first novel the word comes so after working together with her own movie this means 'n' meaning she would not play at home or the song I am basses were released"
+   },
+   "lesion1_affect_off": {
+    "known": false,
+    "abstained": null,
+    "raw": "Tell me about the zltrinqua dynasty of planet vexcor is an important part in the world it was created by the th century and has been made to be one of the most famous authors who have been published for many years he also had a very popular music video game show at the time of his own life on june he played wiedmonton died from pneumonia at the age of karnes krishna htman born november is an american singer songwriter she became known as her best known song of the album I am rica's first single from"
+   },
+   "PASS": true
+  }
+ },
+ "wall_seconds": 623.0
+}
