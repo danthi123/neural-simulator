@@ -1,0 +1,32 @@
+{
+  "phase": "smoke",
+  "seed": 42,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.0,
+  "smoke": {
+    "seed": 42,
+    "prompt": "the little girl was",
+    "lesion_text": "The little girl was very happy and thanked the bird for the bird and the bird",
+    "neg_unscaled_text": "The little girl was very sad and cried and cried for her mom for the little",
+    "neg_scaled_text": "The little girl was very sad and angry and sad dog cry him cry and cry",
+    "neg_scale_used": 2.0,
+    "neg_scale_moved_output": true,
+    "pos_instrumented_text": "The little girl was very happy and happy and thanked the bird for her friends and",
+    "pos_instrumented_totals": {
+      "sum_pA": 3207.125894761905,
+      "n_congruent": 72,
+      "n_steps": 12
+    },
+    "moat_off_text": "The Bounce Around the Ground is located in the United Kingom",
+    "moat_on_text": "The Bounce Around the Ground is located in the United Kingom",
+    "moat_identical": true,
+    "lesion_warriner_stats": {
+      "n": 1,
+      "mean_signed": 3.5,
+      "frac": 0.0625
+    },
+    "all_arms_nonempty": true,
+    "harness_ready": true
+  },
+  "elapsed_s": 6.6
+}
