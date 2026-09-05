@@ -1,8 +1,8 @@
 {
- "run_id": "1788598780-3962452",
- "runner": "research/runners/_gnw_global_stop_flip_soak.py",
+ "run_id": "1788600107-3999957",
+ "runner": "research/runners/_gnw_stop_trigger_production_flip_verify.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/wf_5ba45863-4fb-2/research/runners/_gnw_global_stop_flip_soak.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_5ba45863-4fb-2/research/runners/_gnw_stop_trigger_production_flip_verify.py",
   "--seeds",
   "42",
   "43",
@@ -10,8 +10,9 @@
   "100",
   "101",
   "102",
+  "--no-battery",
   "--json",
-  "research/findings/raw/_gnw_global_stop_flip_soak.json"
+  "research/findings/raw/_gnw_stop_trigger_production_flip_verify.json"
  ],
  "git_sha": "7a101095a",
  "git_dirty": true,
@@ -21,7 +22,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-05T04:59:40",
+ "started": "2026-09-05T05:21:47",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -30,5 +31,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_gnw_global_stop_flip_soak.json"
+ "artifact": "research/findings/raw/_gnw_stop_trigger_production_flip_verify.json"
 }
