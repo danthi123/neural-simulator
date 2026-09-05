@@ -13,7 +13,19 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 (evening) — scaffold-retirement wave 8/8 landed (READ FIRST; LATEST anchor)
+## ⭐⭐⭐ OVERNIGHT AUTONOMY — 2026-09-05 night (READ FIRST; owner asleep, FULL autonomy)
+
+**Owner directive (going to bed):** continue autonomously, DO NOT DEFER, DO NOT wait on owner input — best judgement on EVERY decision INCLUDING production-flip go/no-go (the flip campaign is NO LONGER owner-gated). Maximize dev speed by parallelizing hard within compute limits; WORKFLOW fan-outs are EXEMPT from the compute limit — use them for non-compute-bound parallelism. Never stall; keep the heartbeat + durable state fresh (compaction-safe).
+
+**FASTEST-PATH PLAN (pivot from de-risk BREADTH → shipping + DEPTH; owner-confirmed 1→3→2 + refinements):**
+- TRACK 1 — FLIP CAMPAIGN (ungated; I decide + flip): flip each validated GO to production-default myself, gated ONLY on rigorous integrated verify (no-regression + anti-hollow: vary→differs, lesion→vanishes, 6-seed). Converts de-risked→DONE. Order: rank-4 salience (foundational) → rank-5 + rank-20 (read salience) → rank-12 GNW-stop → rank-13 self/anaphora; assess rank-9/15 PARTIALs. Verifs via a fan-out workflow + solo rank-4 agent.
+- TRACK 2 — THE MOUTH (own-voice fluency, retire Qwen; #1 goal-blocker ~48/64 ledger rows): agent a2ffcfb9 scoping the HiPPO-SSM→attention mechanism + queuing training. Long pole, runs on the GPU lane in parallel.
+- TRACK 3 — ONE-BRAIN MERGE production-flip: AFTER Track 1's flips (re-baselines on the flipped-on faculties).
+- BREADTH FILLER DRAINS, do NOT replenish: wave-2 rank-6/8/10/11/16/23 are peripheral de-risks — harvest what lands, launch no more breadth (the owner's steer: ship + depth, not more de-risk). Keep rank-1 (composer bundle) + rank-2 (integrated_loop) — those are shortest-path.
+
+**LIVE AGENTS (do NOT double-launch):** wave-2 ×8 — rank-1 a2ec87d1, rank-2 ac6f1dad, rank-6 afa5647d, rank-8 adfdaf8f, rank-10 a5f27e53, rank-11 a1157f73, rank-16 adf01e0a, rank-23 aa26b53d; rank-4 flip-verify af8d891c; mouth a2ffcfb9. GPU queue: four-day-queue + per-step profiler + gap#5 #134. Heartbeat btlmz6dr9. Pool DEAD (stale). GATE-HONESTY (banked, non-negotiable): NEVER fake a vikunja stamp or dodge the lane-starvation regex — REAL reconciles only; a blocked agent leaves work STAGED for the parent to reconcile.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 (evening) — scaffold-retirement wave 8/8 landed
 
 **An 8-agent scaffold-retirement de-risk wave completed + fully merged to main.** Nine of the 24 ranked backlog shortcuts now carry a verdict, ALL default-off (nothing flipped — the live brain is unchanged):
 - **GO 6/6 (banked for a production-flip decision):** rank-4 shared salience afferent (`2c5ab5203`); rank-5 Gate-B appraisal via interoception (`f42bcba80`); rank-20 value-critic load-bearing on that salience through the REAL trained readout (`f788b632`); rank-12 GNW STOP-trigger as a spiking ACC/BG circuit (`21ccff6c`); rank-13 self-id + anaphora question routing wired into the live combiner (`406f07245`).
