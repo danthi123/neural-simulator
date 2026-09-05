@@ -1,0 +1,56 @@
+{
+  "seed": 102,
+  "fanout": 32,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    64,
+    178
+  ],
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 266.08315229415894,
+  "per_fact_query_latency": [
+    {
+      "fact_idx_in_corpus": 64,
+      "agent": "girl",
+      "action": "go",
+      "expected_patient": "beach",
+      "got_patient": "beach",
+      "hit": true,
+      "query_latency_s": 41.159016609191895
+    },
+    {
+      "fact_idx_in_corpus": 178,
+      "agent": "player",
+      "action": "use",
+      "expected_patient": "game",
+      "got_patient": "game",
+      "hit": true,
+      "query_latency_s": 56.48104476928711
+    }
+  ],
+  "moat_probe": {
+    "agent": "penis",
+    "action": "museum",
+    "abstained": true,
+    "query_latency_s": 52.554521322250366
+  },
+  "mismatch_probe": {
+    "agent": "girl",
+    "action_from_other_fact": "use",
+    "did_not_leak_fact0_patient": true,
+    "query_latency_s": 70.34633827209473
+  },
+  "recall_accuracy_query_patient": 1.0,
+  "moat_pass": true,
+  "mismatch_pass": true,
+  "mean_query_latency_s": 55.135230243206024,
+  "max_query_latency_s": 70.34633827209473,
+  "min_query_latency_s": 41.159016609191895,
+  "vs_fhrr_mean_ratio": 61.261366936895584,
+  "wall_clock_this_seed_s": 486.6263482570648,
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy"
+}

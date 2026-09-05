@@ -13,7 +13,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04e (READ FIRST; LATEST anchor — supersedes 2026-09-04d below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 (READ FIRST; LATEST anchor — supersedes 2026-09-04e below)
+
+**L3 SlotBinder wire-in: BUILT + VERIFIED, NO-GO on production readiness** (`91931809b`, corrected `748c114bb`
+after `verify-go` found + fixed 2 real gaps: a cross-family kb-composite silent-corruption risk in the fix
+itself, and an S2 wiring test that silently skipped the sparse code path production actually uses — see the
+finding's own §6a). `BRAIN_COMPOSER_KIND=slotbinder` now reaches `/api/brain-chat`'s developed-brain path
+(default-off, byte-identical-off, confirmed by construction + the full existing suite), and the L2-flagged
+O(KF) readout loop is fixed (vectorized, bit-exact, 4.53× on its own component). But the 6-seed measurement at
+the real 404-fact production scale gives mean query latency **68.5s (76× slower than FHRR's 0.9s)** plus a
+separately-measured **~14.4 CPU-hour** cost just to teach the full corpus — the dominant cost is the underlying
+per-step spiking-simulation cost (`n_neurons=64,324`, fixed by K/KF regardless of fanout), untouched by either
+this rung's fix or L2's sparsification. Does **NOT** flip the production default — FHRR/`rf` stays production.
+NEXT = a GPU/cupy re-verify of the per-step cost (the standard external fix per the Brian2CUDA/Brian2GeNN
+architecture pattern, recorded in this finding's own external-search citation), not a further readout-loop
+optimization and not a default flip while latency sits ~2 orders of magnitude over any interactive budget this
+project has used elsewhere. Finding:
+`research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-latency.md`. Vikunja #206
+updated to match (still open — the memory-fit half is done, the speed half is not).
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04e (supersedes 2026-09-04d below)
 
 **Plan-audit ran (ultracode workflow `wb11j4dxf`, owner-requested). VERDICT: the plan is WELL-DESIGNED IN EXECUTION, drift-heavy in the WRITTEN docs — hygiene, not strategy.** Execution follows the scaffold-retirement-first arc; no-defer is load-bearing; nothing has mis-executed. Fixed the #1 trap (the master roadmap STRATEGIC REFRAME § still told a fresh session continuous-learning-FIRST — banner-corrected, `c6adc42`). Remaining written-drift being cleaned this cycle: ROADMAP.md skim doc (pre-pivot), §8↔§7 SlotBinder contradiction, PRODUCTION_INTEGRATION_LEDGER.yaml (148 commits behind).
 **Tail landings (this cluster):** LC-NE adaptive-gain GNW eviction GO (`64e71517`, de-risk only, not yet wired); render-prose fix (`e0b28e05`, + surfaced 2 pre-existing Touchpoint-A blockers); vision held-out/scramble anti-cheat PARTIAL (`c6adc42` — crossing real but not position-robust: beat 3/6, learning-load-bearing 6/6); DA-gated encoding re-confirmed default-ON + unregressed (`634fbc48`).

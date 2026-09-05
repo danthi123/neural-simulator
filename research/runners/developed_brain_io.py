@@ -318,7 +318,7 @@ def _store_fact_dict_from_operand(a, v, p, polarity):
     return fact
 
 
-def _restore_facts(agent, facts, composites=None):
+def _restore_facts(agent, facts, composites=None, composer_kind_changed=False):
     """Re-store the saved facts into the agent's composer (so composer.kb matches the developed state). Handles a
     clause patient (the tagged dict) by reconstructing a Clause. Uses the bound polarity tag when present.
 
@@ -328,13 +328,33 @@ def _restore_facts(agent, facts, composites=None):
     -- SKIPPING the ~832-step per-fact RF resonate `store()` would run. The composite IS the deterministic resonate
     output, so recall is byte-identical. A fact with no persisted composite (absent index, onebrain on-substrate, or a
     substrate-store composer) falls back to `comp.store()` (re-resonate), so the path is always correct -- the speedup
-    is applied only where it is provably byte-identical."""
+    is applied only where it is provably byte-identical.
+
+    `composer_kind_changed`: True when the CALLER's resolved `composer_kind` differs from the bundle's OWN saved
+    `manifest['composer_kind']` (an explicit cross-family override -- see `load_developed_brain`). ROOT-CAUSE FIX
+    (2026-09-05, an adversarial skeptic on the L3 wire-in de-risk found this): a persisted `kb_composites.npz` is
+    only a valid direct-set source for the composer FAMILY it was saved under. `hasattr(comp, "kb")` alone is NOT
+    sufficient -- `CoreSimComposer` ('rate') ALSO has a `.kb` list, but each entry is a `(fact, (ON_array,
+    OFF_array))` 2-tuple, structurally incompatible with `RFPhasorComposer`'s flat `[D]` composite array. Loading
+    an 'rf'-saved bundle with `composer_kind` overridden to 'rate' would previously have hit
+    `hasattr(comp,'kb')==True` and silently appended an RF composite where `CoreSimComposer` expects an
+    `(ON,OFF)` pair -- no crash, just silently wrong drive currents on recall (worse than the SlotBinder
+    AttributeError this same check was built to catch, because it fails silently instead of loudly).
+    `composer_kind_changed=True` disables the fast path UNCONDITIONALLY (forces a full re-`store()`, always
+    correct, only slower) whenever composer_kind was explicitly changed away from the bundle's own -- this is the
+    general, family-agnostic guard; `hasattr(comp, "kb")` remains as defense-in-depth for the same-family case."""
     inner = _inner_agent(agent)
     comp = inner.composer
     composites = composites or {}
-    # the fast direct-set path applies only when the composer caches a NUMPY composite in kb (rf/rate, no substrate
-    # store). A substrate-store composer's handle is a bridge (not the composite), so a direct set would corrupt it.
-    can_direct = not bool(getattr(comp, "enable_substrate_store", False))
+    # the fast direct-set path applies only when (a) composer_kind was NOT changed from what this bundle's own
+    # composites were saved under (the root-cause guard above), AND (b) the composer caches a NUMPY composite in
+    # kb (rf/rate, no substrate store) -- a substrate-store composer's handle is a bridge (not the composite), so
+    # a direct set would corrupt it. `hasattr(comp, "kb")`: SlotBinderComposer has NO `.kb` list at all (facts
+    # live in `.facts`, taught into per-slot synapses, not cached composites) -- without this, loading a bundle
+    # with a persisted kb_composites.npz under a composer lacking `.kb` would hit `comp.kb.append(...)` below and
+    # raise AttributeError. `enable_substrate_store` alone does not catch either case.
+    can_direct = ((not composer_kind_changed) and hasattr(comp, "kb")
+                 and not bool(getattr(comp, "enable_substrate_store", False)))
     try:
         from research.runners.core_sim_composition import Clause
     except Exception:
@@ -402,12 +422,44 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     if manifest is None:
         raise FileNotFoundError(f"no brain.json manifest at {path!r} -- not a developed-brain bundle")
     seed = int(manifest.get("seed", 42)) if seed is None else int(seed)
-    composer_kind = composer_kind or manifest.get("composer_kind", "rf")
+    _manifest_composer_kind = manifest.get("composer_kind", "rf")
+    # ROOT-CAUSE GUARD (2026-09-05, adversarial skeptic finding on the L3 wire-in de-risk): a persisted
+    # kb_composites.npz is only valid for the composer FAMILY it was saved under (see _restore_facts's own
+    # docstring -- CoreSimComposer's `.kb` format is structurally incompatible with RFPhasorComposer's, and
+    # hasattr(comp,'kb') alone cannot tell them apart). Record whether this call is asking to load under a
+    # DIFFERENT composer_kind than the bundle's own, BEFORE resolving the `or` default below, so _restore_facts
+    # can unconditionally skip the composite fast-path on any such cross-family override.
+    _composer_kind_changed = bool(composer_kind) and composer_kind != _manifest_composer_kind
+    composer_kind = composer_kind or _manifest_composer_kind
     vocab = list(manifest.get("vocab") or [])
     codes = dict(_load_codes_npz(path))
     if grounded_codes_override:
         codes.update({w: np.asarray(v, dtype=float) for w, v in grounded_codes_override.items()})
     facts = _load_facts_json(path)
+    # L3 wire-in de-risk (2026-09-05, research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-
+    # dominates-latency.md): when the
+    # (possibly-overridden) composer_kind resolves to 'slotbinder', size + prewire it from THIS bundle's own
+    # facts -- the batch-consolidation scenario slotbinder_composer.py's docstring names (an already-known corpus
+    # migrating off FHRR), not a per-query lookahead. `BRAIN_SLOTBINDER_FANOUT` (default 32, the de-risked
+    # production recommendation -- research/findings/2026-09-04-slotbinder-L2-sparse-fanout-derisk-GO-fits-3090-
+    # and-composes.md) lets a caller tune/disable (0 or >=KF -> dense) without a code change. Embedded-clause
+    # facts cannot be wiring-time pre-registered (SlotBinderComposer._required_fillers_from_prewire raises on
+    # them by design -- a wrong required-filler set would defeat fanout's guarantee), so a bundle containing any
+    # falls back to BLIND sparsification (prewire_facts=None) rather than crashing; day_33 (this task's own
+    # de-risk target) is 100% flat SVO, so this fallback is untested live but kept for correctness on any other
+    # bundle. Every slotbinder_* value is None (or the composer's own default) unless composer_kind=='slotbinder'
+    # -- byte-identical to before for every other composer_kind.
+    _slotbinder_kwargs = {}
+    if composer_kind == "slotbinder":
+        _sb_fanout_env = os.environ.get("BRAIN_SLOTBINDER_FANOUT", "32")
+        _sb_fanout = None if _sb_fanout_env in ("", "none", "None", "dense") else int(_sb_fanout_env)
+        _sb_has_clause = any(isinstance(f.get("patient"), dict) and f["patient"].get("__clause__")
+                             for f in facts)
+        _slotbinder_kwargs = dict(
+            slotbinder_fanout=_sb_fanout,
+            slotbinder_max_facts=max(len(facts), 1),
+            slotbinder_prewire_facts=(None if _sb_has_clause else list(facts)),
+        )
     composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
     speak_value_Q = _load_speak_value_Q(path)   # (Stage B) the persisted learned-talkativeness Q (seeds CommunicableTurn)
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
@@ -443,7 +495,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                enable_biased_competition=_bc_enabled(), defer_parser=defer_parser,
                                defer_planner=defer_parser,
                                communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                               speak_value_Q=(speak_value_Q or None))
+                               speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
@@ -451,8 +503,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          enable_neural_render=enable_neural_render,
                                          defer_parser=defer_parser,
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                                         speak_value_Q=(speak_value_Q or None))
-    _restore_facts(agent, facts, composites=composites)
+                                         speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
+    _restore_facts(agent, facts, composites=composites, composer_kind_changed=_composer_kind_changed)
 
     # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
     # hold + query bulk KNOWLEDGE (100k-1M facts) beyond the small conversation working-set (the k_max=32 co-resident

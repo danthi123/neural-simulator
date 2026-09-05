@@ -184,7 +184,9 @@ class BrainConversationalAgent:
                  communicable_config=None, speak_value_Q=None, D=128,
                  enable_self_schema_honesty=False, self_schema_honesty_config=None,
                  enable_source_provenance_honesty=False, source_provenance_honesty_config=None,
-                 vocab_headroom=None):
+                 vocab_headroom=None,
+                 slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
+                 slotbinder_max_clauses=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -228,6 +230,18 @@ class BrainConversationalAgent:
         (FHRR capacity ~sqrt(D)). When an EXTERNAL `composer` is passed, that composer's own D wins and this is ignored.
         The default 128 reproduces the prior hardcoded literal exactly. See
         research/findings/2026-06-27-develop-knowledge-scaling-arc-scoping.md (§3 option a).
+
+        `slotbinder_fanout`/`slotbinder_prewire_facts`/`slotbinder_max_facts`/`slotbinder_max_clauses` (L3 wire-in
+        de-risk, 2026-09-04, all default None = byte-identical to before -- pass-through to `SlotBinderComposer`
+        only when `composer_kind='slotbinder'`; ignored otherwise): `slotbinder_fanout` selects L2's sparse
+        per-slot candidate-filler count (None = the original dense O(K*KF) wiring; the de-risked production
+        recommendation is 32 -- research/findings/2026-09-04-slotbinder-L2-sparse-fanout-derisk-GO-fits-3090-and-
+        composes.md); `slotbinder_prewire_facts` is the wiring-time fact pre-registration for a KNOWN corpus (see
+        slotbinder_composer.py's own docstring -- the batch-consolidation case, e.g. migrating a developed-brain
+        bundle); `slotbinder_max_facts`/`slotbinder_max_clauses` size the composer's slot/pointer-pool capacity to
+        that corpus. See research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-dominates-
+        latency.md for the readiness measurement this wiring was built to support (recall/moat/latency-vs-FHRR
+        at live scale) -- default OFF; this does NOT flip the production composer default.
         """
         # resolve the onebrain-aware spiking defaults (None = auto: ON for onebrain production, OFF for rf/rate oracle).
         _is_onebrain = (composer is None) and (composer_kind == "onebrain")
@@ -305,9 +319,19 @@ class BrainConversationalAgent:
             # associative store (6-seed GO, adversarially verified: no-teach->chance, scramble-teach->0.00). Flat SVO
             # facts (embedded-clause / attributed patients = a named follow-on). See
             # 2026-07-17-gap2-adversarial-verify-CONFIRMED-and-content-addressable-wire-in-GO.md.
+            # L3 wire-in de-risk (2026-09-04): slotbinder_fanout/_prewire_facts/_max_facts/_max_clauses default
+            # None -> SlotBinderComposer's OWN defaults (fanout=None dense, max_facts=16) -- byte-identical to
+            # before this kwarg existed. A caller sizing this composer to a real corpus (e.g.
+            # developed_brain_io.load_developed_brain) passes them explicitly; see this __init__'s docstring.
             from research.runners.slotbinder_composer import SlotBinderComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
-            self.composer = SlotBinderComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes)
+            _sb_kwargs = dict(fanout=slotbinder_fanout, prewire_facts=slotbinder_prewire_facts)
+            if slotbinder_max_facts is not None:
+                _sb_kwargs["max_facts"] = int(slotbinder_max_facts)
+            if slotbinder_max_clauses is not None:
+                _sb_kwargs["max_clauses"] = int(slotbinder_max_clauses)
+            self.composer = SlotBinderComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
+                                               **_sb_kwargs)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None

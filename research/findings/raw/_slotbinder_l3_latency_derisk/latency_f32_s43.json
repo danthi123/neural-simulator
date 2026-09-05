@@ -1,0 +1,56 @@
+{
+  "seed": 43,
+  "fanout": 32,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    203,
+    263
+  ],
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 255.7562038898468,
+  "per_fact_query_latency": [
+    {
+      "fact_idx_in_corpus": 203,
+      "agent": "people",
+      "action": "use",
+      "expected_patient": "history",
+      "got_patient": "history",
+      "hit": true,
+      "query_latency_s": 55.94168496131897
+    },
+    {
+      "fact_idx_in_corpus": 263,
+      "agent": "system",
+      "action": "base",
+      "expected_patient": "law",
+      "got_patient": "law",
+      "hit": true,
+      "query_latency_s": 78.67598080635071
+    }
+  ],
+  "moat_probe": {
+    "agent": "details",
+    "action": "monster",
+    "abstained": true,
+    "query_latency_s": 37.697792530059814
+  },
+  "mismatch_probe": {
+    "agent": "people",
+    "action_from_other_fact": "base",
+    "did_not_leak_fact0_patient": true,
+    "query_latency_s": 40.03784227371216
+  },
+  "recall_accuracy_query_patient": 1.0,
+  "moat_pass": true,
+  "mismatch_pass": true,
+  "mean_query_latency_s": 53.08832514286041,
+  "max_query_latency_s": 78.67598080635071,
+  "min_query_latency_s": 37.697792530059814,
+  "vs_fhrr_mean_ratio": 58.987027936511566,
+  "wall_clock_this_seed_s": 468.1212375164032,
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy"
+}

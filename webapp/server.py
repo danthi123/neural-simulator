@@ -3871,8 +3871,30 @@ def _build_chat_brain(brain: str, renderer: str):
         # SHIP DEFAULT (board #133): the curated 15k core is ON by default; BRAIN_LTM_SHIP_DEFAULT=off restores the
         # byte-identical no-LTM path. See _resolve_ltm_bundle() above and tiered_fact_store.py.
         _ltm_bundle = _resolve_ltm_bundle()
+        # L3 wire-in de-risk (2026-09-05, research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-
+        # cost-dominates-latency.md):
+        # BRAIN_COMPOSER_KIND already selects the composer for the tiny-demo brain (above, _COMPOSER_KIND_DEFAULT);
+        # this bundle-loading branch previously ignored it entirely -- a developed bundle ALWAYS reloaded under
+        # its OWN persisted manifest composer_kind (day_33 -> "rf"), ANY BRAIN_COMPOSER_KIND value notwithstanding.
+        # Reusing the SAME env var here (rather than a second, overlapping BRAIN_COMPOSER name) lets an operator
+        # opt a developed bundle into the L2-sparsified SlotBinderComposer (fanout=32 default, prewired from this
+        # bundle's own facts.json -- see load_developed_brain's own slotbinder_* wiring) for readiness testing.
+        # Default (unset) -> composer_kind=None -> load_developed_brain falls through to the manifest's own
+        # composer_kind, BYTE-IDENTICAL to before this flag existed. Does NOT flip the production default.
+        # NARROWED to 'slotbinder' ONLY (an adversarial skeptic finding, same session): forwarding an ARBITRARY
+        # BRAIN_COMPOSER_KIND value here (as a first draft of this change did) is a genuinely different, larger
+        # risk than intended -- e.g. 'rate' against an 'rf'-saved bundle hits developed_brain_io._restore_facts's
+        # composite fast-path with a composer (CoreSimComposer) whose `.kb` entries are a DIFFERENT, incompatible
+        # shape (an (ON,OFF) tuple vs RF's flat array), silently corrupting recall rather than crashing --
+        # data_io.py's own `composer_kind_changed` guard now also defends against this generically, but this
+        # call site has no reason to expose 'rate'/'onebrain' overrides here at all (only 'slotbinder' was ever
+        # the intent), so it is explicitly allowlisted rather than passed through.
+        _composer_kind_override = os.environ.get("BRAIN_COMPOSER_KIND")
+        if _composer_kind_override != "slotbinder":
+            _composer_kind_override = None
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
+                                               composer_kind=_composer_kind_override,
                                                ltm_bundle=_ltm_bundle,
                                                enable_codebook_cache=_ltm_codebook_cache_on(),
                                                enable_decode_escalation=_ltm_decode_escalation_on())
