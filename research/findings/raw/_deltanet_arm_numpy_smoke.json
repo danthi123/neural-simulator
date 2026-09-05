@@ -1,0 +1,87 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "d_model": 32,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "42": {
+      "V": 300,
+      "n_train": 350,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 75,
+          "wkv": 4.071,
+          "bigram": 4.072,
+          "trigram": 4.511,
+          "wkv_perm": 4.365,
+          "wkv_memoryless": 4.071,
+          "margin_vs_trigram": 0.44,
+          "margin_vs_bigram": 0.001
+        },
+        "2": {
+          "n": 75,
+          "wkv": 3.946,
+          "bigram": 4.005,
+          "trigram": 3.778,
+          "wkv_perm": 4.225,
+          "wkv_memoryless": 3.989,
+          "margin_vs_trigram": -0.168,
+          "margin_vs_bigram": 0.059
+        },
+        "3": {
+          "n": 75,
+          "wkv": 4.112,
+          "bigram": 3.943,
+          "trigram": 4.17,
+          "wkv_perm": 4.053,
+          "wkv_memoryless": 4.211,
+          "margin_vs_trigram": 0.058,
+          "margin_vs_bigram": -0.168
+        },
+        "4-5": {
+          "n": 150,
+          "wkv": 3.699,
+          "bigram": 3.656,
+          "trigram": 3.462,
+          "wkv_perm": 3.899,
+          "wkv_memoryless": 3.755,
+          "margin_vs_trigram": -0.237,
+          "margin_vs_bigram": -0.043
+        },
+        "6-9": {
+          "n": 300,
+          "wkv": 3.693,
+          "bigram": 3.836,
+          "trigram": 3.587,
+          "wkv_perm": 4.227,
+          "wkv_memoryless": 3.784,
+          "margin_vs_trigram": -0.106,
+          "margin_vs_bigram": 0.143
+        },
+        "10-99": {
+          "n": 1050,
+          "wkv": 3.894,
+          "bigram": 3.871,
+          "trigram": 3.613,
+          "wkv_perm": 4.054,
+          "wkv_memoryless": 3.954,
+          "margin_vs_trigram": -0.281,
+          "margin_vs_bigram": -0.023
+        }
+      }
+    }
+  },
+  "elapsed_s": 1.7
+}
