@@ -42,6 +42,9 @@ threshold (HIGH · partial: value-half GO, gate-half failed) · 8 GNW congruence
 start) · 11 topic-swap regex+host (HIGH · fresh, self-referential) · 12 GNW STOP host boolean-OR (HIGH · fresh) ·
 13 QuestionRouter self/identity+anaphora host (MED-HIGH · DE-RISKED 2026-09-05, both flags default-OFF, 6/6-seed
 GO on plain gate() AND the installed GNW-bus gate() — see `2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md`;
+PRODUCTION-FLIP attempted TWICE 2026-09-05, still NO-GO both times, flags STAY default-OFF — a seed=43 SELFID
+over-fire (missing `v=="isa"` guard) is fixed; the seed=44 regression is a discourse-WM referent-misidentification
+with no narrow fix, banked as the next lever — see `2026-09-05-rank13-selfid-anaphora-production-flip-CORRECTED-DIAGNOSIS.md`;
 residual is now flag-scoped not architecture-scoped) · 14 NL question-routing host comprehension
 (MED-HIGH · fresh) · 15 self-schema authorship host (LOW-actual/nominal-on · fresh) · 16 DA→write-magnitude host
 linear (MED · partial: homeostasis-half retired) · 17 pronoun detect/substitute host (MED · fresh) · 18 cross-turn

@@ -1,0 +1,26 @@
+{
+ "run_id": "1788599921-3996096",
+ "runner": "research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_5ba45863-4fb-3/research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
+  "--onebrain-only"
+ ],
+ "git_sha": "7a101095a",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T05:18:41",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_rank13_selfid_anaphora_prodflip/result.json"
+}

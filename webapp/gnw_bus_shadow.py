@@ -409,6 +409,16 @@ def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
         # Same MISS-ONLY, first-match-wins, host-router preference order (has/have/is/uses/use) -- no new
         # mechanism, a second call site for the identical recipe, reusing `bus_combine` AS-IS (no signature
         # change). On a hit, the RESOLVED action is what gets reported/committed.
+        #
+        # `action == "isa"` IS LOAD-BEARING (2026-09-05 finding): the plain-path sibling
+        # (`ChatBrain._substrate_recall`) shipped WITHOUT this check, so ANY miss with agent=='brain' fired the
+        # retry there -- including a query whose 'brain' came from `_resolve_anaphora` substituting an anaphoric
+        # 'it' with a WRONGLY-identified discourse referent that happened to equal the literal string 'brain'
+        # (seed=43's "...what does it fly?" -> misresolved to 'brain' -> this retry fabricated
+        # ['brain','use','spikes'] for a question never about the brain). This bus path never had that bug
+        # BECAUSE this `action == "isa"` guard was already here -- do not remove it to "match" the plain path;
+        # the plain path was fixed to match THIS. See research/findings/2026-09-05-rank13-selfid-anaphora-
+        # production-flip-CORRECTED-DIAGNOSIS.md.
         if committed is None and agent == "brain" and action == "isa" and _neural_selfid_enabled():
             for v_cand in ("has", "have", "is", "uses", "use"):
                 cand_info = bus_combine(composer, agent, v_cand, all_concepts, seed=seed, lesion=lesion,
