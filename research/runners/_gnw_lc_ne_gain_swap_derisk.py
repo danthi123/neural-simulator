@@ -88,7 +88,7 @@ from sim.enums import NeuronModel
 from sim.regions import BrainRegion
 from sim.backend import get_backend, to_host
 from tools.verdict import Verdict
-from tools.lab import attributable_to, void_if
+from tools.lab import attributable_to
 
 # ── reuse-by-import: the ENTIRE swap/eviction substrate, unmodified — the WTA-style single-content workspace
 # competition (disjoint supra-critical recurrence + divisive-norm pool + tonic thal), the neural vacancy-gate
@@ -98,17 +98,17 @@ from research.runners._gnw_active_overwrite_derisk import (
     _pattern_geometry, _rec_population_split, _ws_step, _drive,
     _read_private_rates, _instant_private_rate, _margin,
     N_PATTERNS, PATTERN_SIZE, WORKSPACE_N, NORM_N, THAL_N,
-    W_SHARED, WS_NORM_W, NORM_WS_W, THAL_TONIC_PA, THAL_WS_W, STRONG_PA, STD_TAU_D, OU_NOISE_PA,
+    WS_NORM_W, NORM_WS_W, THAL_TONIC_PA, THAL_WS_W, OU_NOISE_PA,
 )
 from research.runners._gnw_rung2c_salience_disinhibition_derisk import _dense_pop
 from research.runners._gnw_rung1_ignition_curve_derisk import DRIVE_STEPS, SETTLE_STEPS, WS_LOOP_GATE
-from research.runners._gnw_rung2_competitive_access_derisk import _ignited, IGNITE_FRAC, SOLO_PLATEAU
+from research.runners._gnw_rung2_competitive_access_derisk import _ignited
 from research.runners._p1_2_workspace_deliberation_loop_derisk import _full_snapshot, _full_restore
 from research.runners._gnw_recurrence_weaken_swap_derisk import MultiLoopSTD
 from research.runners._gnw_neural_vacancy_gate_derisk import OCC_N, GATE_PER, W_WS_OCC, W_OCC_GATE, W_GATE_WS
 from research.runners._gnw_neural_swap_intention_derisk import (
     MM_PER, PRED_PER, W_PAT_PRED, W_PRED_MM, W_MM_REC,
-    SALIENT_PA, NONSALIENT_PA, BOOST_GAIN, MAX_BOOST, BOOST_WINDOW,
+    SALIENT_PA, BOOST_GAIN, MAX_BOOST, BOOST_WINDOW,
     ESTABLISH_PA, EVICT_STEPS, REIGNITE_HOLD, W_REC, TIMING_WINDOW, IGNITE_THRESH,
     _pop_rate, _izh_hash,
 )
