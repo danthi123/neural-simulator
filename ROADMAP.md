@@ -4,10 +4,18 @@ This is the plain-language capability view of the simulator. It is downstream
 of the [2026-08-02 project charter](docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md),
 the [project handoff](HANDOFF.md), and the live state in
 [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md). The persistent execution
-board, when checked out, is `research/coordination/workboard.json`; it records
-active lanes, resources, blockers, and exact next actions.
+board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
+stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
-## 2026-09-04 (latest) — the own-voice breakthrough is CONFIRMED (6/6), and switching it on is gated on making the voice reflect the brain's feelings
+## 2026-09-04 (later) — PRIORITY PIVOT (owner) + the day's scaffold-retirement landings
+
+- **Priority (owner, 2026-09-04):** retire the host scaffolds/shortcuts — make each faculty EMERGENT + on the shared ONE-brain + properly implemented — FIRST, BEFORE continuous learning/growth-over-time. This REVERSES the earlier "continuous-substrate engine first" near-term order; the long-term north-star is unchanged.
+- **The own-voice mouth FLIPPED to default** (the "HELD" entry below is superseded — it landed): the from-scratch spiking voice is now the default. Affect-drives-the-voice was then made neural (a neuromodulator gain on the spiking read) — load-bearing but not yet default-on (its negative direction needs a learned word↔valence link, not a fixed lexicon).
+- **Scaffold-retirements this day:** the recall gate now reaches real long-term memory (grounded recall 0/4→4/4); the open-ended fallback to the language-model scaffold is now skippable (answer-preserving); a spiking divisive-normalization read for the voice is 5/6 (toward retiring the last host arithmetic in it); a noradrenaline reset lets the brain switch thoughts cleanly.
+- **Honest negatives (the deliverable, not a stop):** the fact-binding memory's leanest-wiring replacement does NOT yet fit a consumer GPU at full scale (a sparser wiring is the next test); the vision configural crossing is real but not fully position-robust. Both carry a named next mechanism.
+- **For anything same-day, read [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE** — this skim doc trails the live anchor.
+
+## 2026-09-04 (earlier) — the own-voice breakthrough is CONFIRMED (6/6), and switching it on is gated on making the voice reflect the brain's feelings
 
 - **Confirmed:** the brain's own from-scratch spiking voice beats the simple word-pair baseline on ALL SIX test runs (not just the first two) — the open-fluency crossing is real at a deployable size. Honest scope: it is trained with ordinary backprop and beats only a weak baseline on a small corpus, so it is a genuine PROJECT milestone, not a field-level discovery.
 - **Switching it on (to the default) is HELD — deliberately.** A live check found the voice fluent and honest but it did NOT reflect the brain's FEELINGS: in a positive vs negative mood it spoke the exact same words. That fails the "faculties must drive the conversation, not just observe it" bar, so the switch-on was refused.

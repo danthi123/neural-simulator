@@ -13,7 +13,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04d (READ FIRST; LATEST anchor — supersedes 2026-09-04c below)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04e (READ FIRST; LATEST anchor — supersedes 2026-09-04d below)
+
+**Plan-audit ran (ultracode workflow `wb11j4dxf`, owner-requested). VERDICT: the plan is WELL-DESIGNED IN EXECUTION, drift-heavy in the WRITTEN docs — hygiene, not strategy.** Execution follows the scaffold-retirement-first arc; no-defer is load-bearing; nothing has mis-executed. Fixed the #1 trap (the master roadmap STRATEGIC REFRAME § still told a fresh session continuous-learning-FIRST — banner-corrected, `c6adc42`). Remaining written-drift being cleaned this cycle: ROADMAP.md skim doc (pre-pivot), §8↔§7 SlotBinder contradiction, PRODUCTION_INTEGRATION_LEDGER.yaml (148 commits behind).
+**Tail landings (this cluster):** LC-NE adaptive-gain GNW eviction GO (`64e71517`, de-risk only, not yet wired); render-prose fix (`e0b28e05`, + surfaced 2 pre-existing Touchpoint-A blockers); vision held-out/scramble anti-cheat PARTIAL (`c6adc42` — crossing real but not position-robust: beat 3/6, learning-load-bearing 6/6); DA-gated encoding re-confirmed default-ON + unregressed (`634fbc48`).
+**Owner forks decided (2026-09-04):** (1) Touchpoint-A content_preserved gate → RELAX to "no fact LOST" (rescuing more grounded facts is correct) — relax-fix agent `ae3ab0f4` in flight, also fixes the RNG-isolation leak; (2) gap#5 self-ignition #134 → FIRE in parallel — QUEUED (`_gap5_dg_detonator_ignition_derisk` tau=10+chain_bdsp_widen, gpu_queue pos 14). Minor calls: retire workboard.json; defer the arc-order gate; composer Path A/B waits for L2.
+**L2-sparsify SlotBinder: fanout=32 6/6 seeds PERFECT** (sparsification preserves composition) — if it also fits the 3090 VRAM (harvest pending) it is the GO that unblocks retiring FHRR.
+**Corrected ordered plan (scaffold-retirement-first):** 0. finish the doc-drift sweep → 1. Touchpoint-A Stage-2 relax+RNG-fix [in flight] → 2. L2-sparsify wire if GO → 3. affect learned word↔valence → 4. num/den Tier-2 → 5. vision learned-conjunction → 6. wire LC-NE GO → 7. re-classify pattern-completion replay → 8. gap#5 #134 [queued, parallel] → 9. continuous-learning DEFERRED.
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-04d (supersedes 2026-09-04c below)
 
 **Full-force parallel session (owner: "parallelize hard, fast progress").** Landed to main this turn-cluster: one-brain Stage-1 (Qwen open-ended fallback retire, `f31bd923`); SlotBinder live-scale de-risk **NO-GO** (`1a48c1008`) — the DENSE all-to-all slot→filler wiring is 968M synapses at 404-fact scale (~463GB by the consumer-hardware gate), does NOT fit the 3090, while incumbent FHRR `RFPhasorComposer` measured 334MB/0.9s/correct at the same scale (~1000× lighter); banks the dense-wiring METHOD, not the capability; **composer's real next rung = L2 sparsify the slot→filler pathway then re-de-risk; FHRR stays the efficient+correct incumbent meanwhile**; + a drift-#12 doc-sync correcting the SlotBinder-as-FHRR-replacement over-claim in the composer roadmap + master binder row (`c8cd440f`).
 **BUILD-AHEAD WAVE 1 LANDED (workflow `wbs2wsm1y`, 6/6 agents, all runners merged to main `3e8d79ef`).**
