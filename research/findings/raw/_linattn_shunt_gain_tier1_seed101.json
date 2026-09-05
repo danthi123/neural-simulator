@@ -1,0 +1,108 @@
+{
+  "runner": "_linattn_shunt_gain_tier1_derisk",
+  "args": {
+    "seeds": "101",
+    "ckpt_pattern": "bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed{seed}.npz",
+    "ref_json": "research/findings/raw/_emerge_wkv_lm_linattn_depth2_contiguous_6seed.json",
+    "corpus": "data/corpus/simplewiki.txt",
+    "bpe_path": "bridges/wkv_ckpt/wkv_bpe8k.json",
+    "n_sentences": 1200000,
+    "max_len": 40,
+    "max_eval_sents": 600,
+    "linattn_div": "shunt",
+    "g_leak": 1e-06,
+    "k_gain": 1.0,
+    "fi": "saturating",
+    "fi_rmax_mult": 4.0,
+    "quantize_levels": 32,
+    "quantize_den": false,
+    "go_margin": 0.03,
+    "denquant_check": false,
+    "divisive_check": false,
+    "sigma_check": false,
+    "sigma_gleaks": "1e-6,1e-3,1e-2,1e-1,1,10",
+    "diag_seed": 42,
+    "diag_eval_sents": 300,
+    "json": "research/findings/raw/_linattn_shunt_gain_tier1_seed101.json"
+  },
+  "results": {
+    "101": {
+      "n_eval_stories": 600,
+      "n_count_mismatch_vs_reference": {
+        "1": {
+          "mine": 600,
+          "reference": 4000
+        },
+        "2": {
+          "mine": 600,
+          "reference": 4000
+        },
+        "3": {
+          "mine": 600,
+          "reference": 4000
+        },
+        "4-5": {
+          "mine": 1200,
+          "reference": 8000
+        },
+        "6-9": {
+          "mine": 2400,
+          "reference": 16000
+        },
+        "10-99": {
+          "mine": 28433,
+          "reference": 188570
+        }
+      },
+      "harness_selfcheck": {
+        "my_exact_margin_vs_trigram": 0.0946,
+        "reference_margin_vs_trigram": 0.06,
+        "abs_diff": 0.0346
+      },
+      "fI_calibration": {
+        "x50": 40.6147,
+        "r_max": 162.4588
+      },
+      "exact": {
+        "margin_vs_trigram": 0.0946,
+        "anti_cheats": {
+          "perm_collapse": 4.0826,
+          "memoryless_collapse": 1.4055
+        },
+        "deep": {
+          "n": 28433,
+          "wkv": 4.3193731112976375,
+          "wkv_perm": 8.401985118444376,
+          "wkv_memoryless": 5.7248774345
+        }
+      },
+      "shunt": {
+        "div_mode": "shunt",
+        "g_leak": 1e-06,
+        "k": 1.0,
+        "quantize_levels": 32,
+        "quantize_den": false,
+        "fi": "saturating",
+        "margin_vs_trigram": 0.0916,
+        "anti_cheats": {
+          "perm_collapse": 4.0817,
+          "memoryless_collapse": 1.4056
+        },
+        "deep": {
+          "n": 28433,
+          "wkv": 4.322359579219277,
+          "wkv_perm": 8.404064091583944,
+          "wkv_memoryless": 5.727982266075555
+        }
+      },
+      "go": true,
+      "elapsed_s": 972.1
+    }
+  },
+  "summary": {
+    "go_count": 1,
+    "n_seeds": 1,
+    "all_go": true
+  },
+  "elapsed_s": 981.8
+}
