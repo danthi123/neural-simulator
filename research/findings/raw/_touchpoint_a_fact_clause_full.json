@@ -12,7 +12,7 @@
  ],
  "n_probes": 16,
  "seed": 42,
- "ts": "2026-09-04T21:57:14",
+ "ts": "2026-09-04T23:42:29",
  "rows_off": [
   {
    "idx": 0,
@@ -46,8 +46,8 @@
    "render_calls": 3,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 14.16,
-   "rss_mb": 888.1
+   "gen_seconds": 14.27,
+   "rss_mb": 883.5
   },
   {
    "idx": 1,
@@ -91,8 +91,8 @@
    "render_calls": 5,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 8.8,
-   "rss_mb": 888.1
+   "gen_seconds": 10.03,
+   "rss_mb": 883.5
   },
   {
    "idx": 2,
@@ -132,7 +132,7 @@
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
    "gen_seconds": 14.05,
-   "rss_mb": 888.1
+   "rss_mb": 893.6
   },
   {
    "idx": 3,
@@ -171,8 +171,8 @@
    "render_calls": 6,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 7.71,
-   "rss_mb": 1053.8
+   "gen_seconds": 8.0,
+   "rss_mb": 1058.6
   },
   {
    "idx": 4,
@@ -190,8 +190,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 29.28,
-   "rss_mb": 1123.0
+   "gen_seconds": 30.93,
+   "rss_mb": 1128.0
   },
   {
    "idx": 5,
@@ -215,8 +215,8 @@
    "render_calls": 1,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 1.95,
-   "rss_mb": 1300.7
+   "gen_seconds": 2.27,
+   "rss_mb": 1298.2
   },
   {
    "idx": 6,
@@ -240,8 +240,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 10.07,
-   "rss_mb": 1303.7
+   "gen_seconds": 12.2,
+   "rss_mb": 1298.2
   },
   {
    "idx": 7,
@@ -265,8 +265,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 68.36,
-   "rss_mb": 1365.4
+   "gen_seconds": 69.59,
+   "rss_mb": 1298.2
   },
   {
    "idx": 8,
@@ -290,8 +290,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 11.66,
-   "rss_mb": 1365.4
+   "gen_seconds": 13.75,
+   "rss_mb": 1298.2
   },
   {
    "idx": 9,
@@ -315,8 +315,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 12.5,
-   "rss_mb": 1365.4
+   "gen_seconds": 14.77,
+   "rss_mb": 1298.2
   },
   {
    "idx": 10,
@@ -334,8 +334,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 3.72,
-   "rss_mb": 1365.4
+   "gen_seconds": 4.21,
+   "rss_mb": 1298.2
   },
   {
    "idx": 11,
@@ -353,8 +353,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 9.69,
-   "rss_mb": 1365.4
+   "gen_seconds": 10.64,
+   "rss_mb": 1298.2
   },
   {
    "idx": 12,
@@ -388,8 +388,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 16.23,
-   "rss_mb": 1365.4
+   "gen_seconds": 17.48,
+   "rss_mb": 1298.2
   },
   {
    "idx": 13,
@@ -407,8 +407,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 1.58,
-   "rss_mb": 1365.4
+   "gen_seconds": 1.68,
+   "rss_mb": 1298.2
   },
   {
    "idx": 14,
@@ -432,8 +432,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 7.14,
-   "rss_mb": 1365.4
+   "gen_seconds": 7.43,
+   "rss_mb": 1298.2
   },
   {
    "idx": 15,
@@ -451,8 +451,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 13.18,
-   "rss_mb": 1365.4
+   "gen_seconds": 14.15,
+   "rss_mb": 1298.2
   }
  ],
  "rows_on": [
@@ -488,8 +488,8 @@
    "render_calls": 0,
    "fact_clause_calls": 3,
    "fact_clause_hits": 3,
-   "gen_seconds": 7.88,
-   "rss_mb": 1365.4
+   "gen_seconds": 8.52,
+   "rss_mb": 1298.2
   },
   {
    "idx": 1,
@@ -497,7 +497,7 @@
    "topic": "college_for_interdisciplinary_studies",
    "prompt": "What do you know about college_for_interdisciplinary_studies?",
    "flag_on": true,
-   "answer": "the College for Interdisciplinary Studies is located in the Canada Portal. the Canada Portal shares a border with the U S of A. the U S of A shares a border with the Canada Portal. the College for Interdisciplinary Studies is a Higher General Education. the College for Interdisciplinary Studies is located in the Ecology of British Columbia. \u2014 worth going further here.",
+   "answer": "Sure \u2014 the College for Interdisciplinary Studies is located in the Canada Portal. the Canada Portal shares a border with the U S of A. the U S of A shares a border with the Canada Portal. the College for Interdisciplinary Studies is a Higher General Education. the College for Interdisciplinary Studies is located in the Ecology of British Columbia. \u2014 worth going further here.",
    "abstained": false,
    "n_sentences": 5,
    "renderer": "template-stub (GPU-free)",
@@ -533,8 +533,8 @@
    "render_calls": 0,
    "fact_clause_calls": 5,
    "fact_clause_hits": 5,
-   "gen_seconds": 7.27,
-   "rss_mb": 1365.4
+   "gen_seconds": 7.76,
+   "rss_mb": 1298.2
   },
   {
    "idx": 2,
@@ -574,7 +574,7 @@
    "fact_clause_calls": 4,
    "fact_clause_hits": 4,
    "gen_seconds": 13.19,
-   "rss_mb": 1365.4
+   "rss_mb": 1298.2
   },
   {
    "idx": 3,
@@ -582,7 +582,7 @@
    "topic": "l_quipe_de_france",
    "prompt": "What is l_quipe_de_france?",
    "flag_on": true,
-   "answer": "the L Quipe de France is associated with the sport of the Association Football Club. the Association Football Club originates from the England Uk. the England Uk is located in the United Kingom. the L Quipe de France is located in the Franzoesische Republik. the L Quipe de France participated in the World Championship Football 2010. \u2014 worth going further here.",
+   "answer": "Sure \u2014 the L Quipe de France is associated with the sport of the Association Football Club. the Association Football Club originates from the England Uk. the England Uk is located in the United Kingom. the L Quipe de France is located in the Franzoesische Republik. the L Quipe de France participated in the World Championship Football 2010. \u2014 worth going further here.",
    "abstained": false,
    "n_sentences": 5,
    "renderer": "template-stub (GPU-free)",
@@ -618,8 +618,8 @@
    "render_calls": 0,
    "fact_clause_calls": 5,
    "fact_clause_hits": 5,
-   "gen_seconds": 6.31,
-   "rss_mb": 1448.5
+   "gen_seconds": 6.52,
+   "rss_mb": 1354.5
   },
   {
    "idx": 4,
@@ -637,8 +637,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 30.63,
-   "rss_mb": 1518.3
+   "gen_seconds": 31.43,
+   "rss_mb": 1424.3
   },
   {
    "idx": 5,
@@ -656,8 +656,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 1.96,
-   "rss_mb": 1646.0
+   "gen_seconds": 1.65,
+   "rss_mb": 1517.2
   },
   {
    "idx": 6,
@@ -665,7 +665,7 @@
    "topic": "zorplaxian",
    "prompt": "Tell me about zorplaxian.",
    "flag_on": true,
-   "answer": "Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.",
+   "answer": "the tell abouts the zorplaxian \u2014 worth going further here.",
    "abstained": false,
    "n_sentences": 1,
    "renderer": "template-stub (GPU-free)",
@@ -681,8 +681,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 13.34,
-   "rss_mb": 1646.0
+   "gen_seconds": 10.97,
+   "rss_mb": 1517.2
   },
   {
    "idx": 7,
@@ -706,8 +706,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 15.68,
-   "rss_mb": 1646.0
+   "gen_seconds": 13.76,
+   "rss_mb": 1517.2
   },
   {
    "idx": 8,
@@ -731,8 +731,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 17.56,
-   "rss_mb": 1683.4
+   "gen_seconds": 13.93,
+   "rss_mb": 1535.0
   },
   {
    "idx": 9,
@@ -756,8 +756,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 16.87,
-   "rss_mb": 1693.4
+   "gen_seconds": 15.31,
+   "rss_mb": 1546.3
   },
   {
    "idx": 10,
@@ -775,8 +775,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 4.27,
-   "rss_mb": 1755.6
+   "gen_seconds": 4.29,
+   "rss_mb": 1570.3
   },
   {
    "idx": 11,
@@ -794,8 +794,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 9.61,
-   "rss_mb": 1755.6
+   "gen_seconds": 11.05,
+   "rss_mb": 1570.3
   },
   {
    "idx": 12,
@@ -829,8 +829,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 15.37,
-   "rss_mb": 1755.6
+   "gen_seconds": 17.8,
+   "rss_mb": 1570.3
   },
   {
    "idx": 13,
@@ -848,8 +848,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 1.42,
-   "rss_mb": 1766.6
+   "gen_seconds": 1.53,
+   "rss_mb": 1577.7
   },
   {
    "idx": 14,
@@ -873,8 +873,8 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 6.94,
-   "rss_mb": 1766.6
+   "gen_seconds": 7.32,
+   "rss_mb": 1577.7
   },
   {
    "idx": 15,
@@ -892,28 +892,26 @@
    "render_calls": 0,
    "fact_clause_calls": 0,
    "fact_clause_hits": 0,
-   "gen_seconds": 13.71,
-   "rss_mb": 1766.6
+   "gen_seconds": 14.67,
+   "rss_mb": 1577.7
   }
  ],
  "go_gate": {
   "n_rows_compared": 16,
-  "scope_untouched": false,
-  "scope_problems": [
-   "idx=6 class=unknown: answer text changed off->on ('the tell abouts the zorplaxian \u2014 worth going further here.' -> 'Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.')"
-  ],
-  "content_preserved": false,
-  "content_problems": [
-   "idx=3 class=known_factual: supporting_facts changed off->on ([['l_quipe_de_france', 'sport', 'association_football_club'], ['association_football_club', 'country_of_origin', 'england_uk'], ['england_uk', 'country', 'united_kingom'], ['l_quipe_de_france', 'country', 'franzoesische_republik']] -> [['l_quipe_de_france', 'sport', 'association_football_club'], ['association_football_club', 'country_of_origin', 'england_uk'], ['england_uk', 'country', 'united_kingom'], ['l_quipe_de_france', 'country', 'franzoesische_republik'], ['l_quipe_de_france', 'participant_of', 'world_championship_football_2010']])",
-   "idx=5 class=known_followup: supporting_facts changed off->on ([['l_quipe_de_france', 'participant_of', 'world_championship_football_2010']] -> [])"
-  ],
+  "scope_untouched": true,
+  "scope_problems": [],
+  "content_preserved": true,
+  "content_problems": [],
+  "facts_off_union_count": 17,
+  "facts_on_union_count": 17,
+  "facts_rescued": [],
   "flag_off_inert": true,
   "flag_off_problems": [],
-  "structural_checks_passed": false,
+  "structural_checks_passed": true,
   "touchpoint_a_render_calls_delta": -19,
   "fact_clause_engaged_on_known_rows": 4
  },
- "wall_seconds": 653.0,
- "peak_rss_mb": 1766.6,
+ "wall_seconds": 679.5,
+ "peak_rss_mb": 1577.7,
  "note": "Full battery -- see go_gate.touchpoint_a_render_calls_delta / fact_clause_engaged_on_known_rows for the actual retirement signal on this store."
 }
