@@ -78,6 +78,28 @@ HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see th
 being re-verified.
 
 ## STATUS UPDATES (per-rank, append-only — keep terse; do not rewrite the ranked list above)
+- **Rank 6 (78k-fact knowledge-core WRITE, closed-form host) — CHARACTERIZED (mixed), 2026-09-05.** Premise
+  confirmed WITH CORRECTION: the per-fact VSA bind is already genuinely neural (RF resonate-and-fire, `fast:
+  false` in `curation_report.json`, confirmed for both the shipped 15k default and the ~78,857-fact
+  `wikidata_100k` bundle) — the real host residual is DATA PERSISTENCE (`sharded_phasor_store.py` forces
+  `enable_substrate_store=False` at LTM scale) plus CURATION SELECTION (unaddressed, named as the deeper rung).
+  The already-validated synaptic-weight write (`enable_substrate_store=True`, Phase-2 GO 2026-06-05) is
+  re-confirmed **GO 6/6 seeds** for answer+moat parity against the numpy-kb path, now over 240 REAL curated
+  wikidata facts (not synthetic). MEASURED (not estimated) marginal memory cost: 50.26 KB/fact, projecting to
+  **3.78 GB at the full 78,857-fact core — affordable, not a blocker**. STRUCTURAL GAP found and confirmed
+  empirically: `ShardedPhasorStore.save()` FAILS (`TypeError: cannot pickle 'mappingproxy'`) under
+  `enable_substrate_store=True` — the concrete, previously-undocumented reason the LTM excludes this path.
+  Literature check (Crawford-Gingerich-Eliasmith 2016) shows the per-fact-cleanup-population ARCHITECTURE
+  already holds 117,659 facts in spiking neurons (more than our target) at ~1/6 the neurons/fact our generic
+  `SimulationBridge`-per-fact implementation spends — the residual is engineering efficiency, not architecture.
+  Also confirmed: `TieredFactStore.query_patient_source()` already exposes a genuine buffer-vs-ltm
+  tier-of-origin signal in production, UNCONSUMED by the shipped provenance-honesty framing (#129/#140) — the
+  cheapest "honest, provenance-neutral" next rung is wiring that EXISTING signal, not a new mechanism. Query-
+  time cost (loses the batched scan under `enable_substrate_store`) confirmed by code-reading, not separately
+  benchmarked (this run's own wall-clock timings were contention-inflated 2.7x-5x by concurrent box load,
+  cross-checked against the bundle's own uncontended build record — flagged explicitly, not papered over). See
+  `research/findings/2026-09-05-rank6-knowledge-core-substrate-write-scaled-derisk-mixed.md`. Default-off; the
+  production knowledge-core WRITE path is unchanged.
 - **Rank 12 (GNW STOP host boolean-OR) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** An ACC/BG hyperdirect circuit
   (two afferent relay pools → ACC → STN → GPi, reusing the STN-veto de-risk's chain shape) reads the SAME
   `n_ignited` / `mm_peak` afferents `detect_trigger`'s boolean-OR read, directly as synaptic input, and decides the

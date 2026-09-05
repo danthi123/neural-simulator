@@ -1,0 +1,315 @@
+{
+  "verdict": {
+    "label": "rank6 knowledge-core substrate-store write: recall+moat parity vs the shipped numpy-kb path",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "floor",
+        "name": "seed 42: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 42: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 42: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 43: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 43: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 43: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 44: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 44: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 44: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 100: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 100: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 100: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 101: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 101: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 101: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "floor",
+        "name": "seed 102: baseline actually recalls most stored facts",
+        "ok": true,
+        "detail": "1 vs floor 0.9",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 102: candidate answer-identical to baseline on stored facts",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed 102: candidate abstains identically to baseline on moat probes",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [
+      {
+        "process": "curation selection (which facts are worth learning)",
+        "why": "closed-form host frequency ranking, unchanged by this probe -- see module docstring point 4"
+      }
+    ],
+    "chance": null
+  },
+  "bundle": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_100k",
+  "n_facts_in_bundle": 78857,
+  "target_n": 78857,
+  "parity": {
+    "n_stored": 240,
+    "n_moat": 40,
+    "per_seed": [
+      {
+        "seed": 42,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.777,
+        "cand_build_s": 7.56,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 43,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 7.857,
+        "cand_build_s": 7.691,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 44,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 13.429,
+        "cand_build_s": 27.525,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 100,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 9.205,
+        "cand_build_s": 9.664,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 101,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 9.266,
+        "cand_build_s": 9.916,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      },
+      {
+        "seed": 102,
+        "n_stored": 240,
+        "n_moat": 40,
+        "base_build_s": 33.483,
+        "cand_build_s": 28.105,
+        "n_base_recalled": 240,
+        "n_agree": 240,
+        "base_moat_abstained": 40,
+        "moat_agree": 40
+      }
+    ]
+  },
+  "cost": [
+    {
+      "n": 500,
+      "substrate": false,
+      "elapsed_s": 38.138,
+      "rss0_kb": 230172,
+      "rss_kb": 230172,
+      "marginal_kb": 0
+    },
+    {
+      "n": 2000,
+      "substrate": false,
+      "elapsed_s": 309.949,
+      "rss0_kb": 230172,
+      "rss_kb": 230172,
+      "marginal_kb": 0
+    },
+    {
+      "n": 8000,
+      "substrate": false,
+      "elapsed_s": 946.377,
+      "rss0_kb": 230172,
+      "rss_kb": 230172,
+      "marginal_kb": 0
+    },
+    {
+      "n": 500,
+      "substrate": true,
+      "elapsed_s": 48.038,
+      "rss0_kb": 190252,
+      "rss_kb": 190252,
+      "marginal_kb": 0
+    },
+    {
+      "n": 2000,
+      "substrate": true,
+      "elapsed_s": 176.271,
+      "rss0_kb": 190252,
+      "rss_kb": 281136,
+      "marginal_kb": 90884
+    },
+    {
+      "n": 8000,
+      "substrate": true,
+      "elapsed_s": 547.573,
+      "rss0_kb": 190252,
+      "rss_kb": 567216,
+      "marginal_kb": 376964
+    }
+  ],
+  "projection": {
+    "label": "wikidata_100k(78857 facts)",
+    "target_n": 78857,
+    "substrate_slope": {
+      "per_fact_kb": 50.26186666666667,
+      "per_fact_s": 0.06660466666666666,
+      "n_lo": 500,
+      "n_hi": 8000
+    },
+    "proj_rss_gb": 3.7799,
+    "proj_build_s": 5252.2,
+    "numpy_kb_slope": {
+      "per_fact_kb": 0.0,
+      "per_fact_s": 0.12109853333333333,
+      "n_lo": 500,
+      "n_hi": 8000
+    },
+    "numpy_kb_proj_gb": 0.0
+  },
+  "save_reload_probe": {
+    "attempted": true,
+    "save_ok": false,
+    "save_error": "TypeError: cannot pickle 'mappingproxy' object",
+    "load_ok": null,
+    "load_error": null,
+    "reloaded_answers_match": null
+  },
+  "provenance_characterization": {
+    "tier_signal_exists": true,
+    "buffer_sourced_example": {
+      "cue": [
+        "buffer_taught_thing",
+        "is"
+      ],
+      "answer": "new",
+      "tier": "buffer"
+    },
+    "ltm_sourced_example": {
+      "cue": [
+        "frank_lincoln_wright",
+        "instance_of"
+      ],
+      "answer": "human_specie",
+      "tier": "ltm"
+    },
+    "tier_correctly_distinguishes_origin": true
+  }
+}
