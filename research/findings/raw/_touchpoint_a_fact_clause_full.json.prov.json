@@ -1,14 +1,14 @@
 {
- "run_id": "1788572781-3349542",
+ "run_id": "1788579069-3491285",
  "runner": "research/runners/_touchpoint_a_fact_clause_derisk.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-aeb172925c929f2b1/research/runners/_touchpoint_a_fact_clause_derisk.py",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ae3ab0f4058f77366/research/runners/_touchpoint_a_fact_clause_derisk.py",
   "--n-known",
   "4",
   "--out",
   "research/findings/raw/_touchpoint_a_fact_clause_full.json"
  ],
- "git_sha": "7f52d97e1",
+ "git_sha": "c6adc423a",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -16,7 +16,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-04T21:46:21",
+ "started": "2026-09-04T23:31:09",
  "env": {
   "CUDA_VISIBLE_DEVICES": "",
   "SIM_BACKEND": "numpy"

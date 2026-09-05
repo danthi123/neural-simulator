@@ -28,9 +28,24 @@ meaningful once the full battery runs):
   STRUCTURAL (anti-cheat; must hold on every probe, every run size):
     1. scope_untouched      -- unknown/dangerous/open_ended/greeting rows are answer-text BYTE-IDENTICAL
                                 flag-off vs flag-on, and the fact-clause path is called ZERO times on them.
-    2. content_preserved    -- every known-topic row's `supporting_facts` (the gate-sourced (a,v,p) triples
-                                webapp/server.py's `brain_chat` already surfaces) is IDENTICAL flag-off vs
-                                flag-on -- the wording engine may differ, the GROUNDED CONTENT never does.
+                                FIXED 2026-09-04 (FAILURE_LOG.md row 112): the Touchpoint-A render call in
+                                `rich_answer_composer.py::_render_one_verified` now runs inside
+                                `webapp.wkv_mouth_generator._RngIsolation.run` (matching `generate()`'s own
+                                `_run()`), so a known-topic turn earlier in the SAME session no longer
+                                perturbs a later unrelated turn's RNG-dependent state (e.g. the affect-driven
+                                lead-in word) via the #77 reseed footgun.
+    2. content_preserved    -- REDEFINED 2026-09-04 (OWNER DECISION -- see FAILURE_LOG.md row 113 and
+                                research/coordination/build_ahead_ready.md item #3): NOT "every known-topic
+                                row's `supporting_facts` is byte-identical flag-off vs flag-on" (the original
+                                definition) -- Touchpoint-A deliberately RESCUES a fact the pre-existing
+                                Qwen/template renderer failed to verify-render, and recovering MORE grounded
+                                facts is the explicit GOAL of this mechanism, not a regression to guard
+                                against. The gate now checks "no fact is LOST": flag-ON's UNION of
+                                `supporting_facts` across every known-topic row in the battery must be a
+                                SUPERSET of flag-OFF's union (a rescued fact appearing only flag-on is
+                                EXPECTED and does not fail the gate; a fact flag-off surfaced that is absent
+                                everywhere flag-on WOULD fail it). See `compute_go_gate`'s own docstring for
+                                why this must be a battery-wide union, not a per-row comparison.
     3. flag_off_inert       -- the fact-clause render is called ZERO times across every flag-OFF row (proves
                                 the flag genuinely gates the call, not merely its visible effect).
   READINESS (informational on a smoke; the actual retirement signal once N is large enough to matter):
@@ -163,6 +178,40 @@ def _install_fact_clause_counter():
     return counter, _restore
 
 
+def _reset_cross_process_affect_wta_cache():
+    """Clear a PROCESS-GLOBAL (not session-scoped) cache that would otherwise make the OFF and ON passes'
+    SCOPE-GUARDED rows incomparable for a reason that has NOTHING to do with Touchpoint-A.
+
+    DISCOVERED this session (see FAILURE_LOG.md 2026-09-04, the row logging this alongside the two Touchpoint-A
+    rows this runner was built to close): `research.runners._affect_marker_wta_derisk.get_reader` caches its
+    `AffectMarkerWTA` reader keyed ONLY by raw seed (`_READERS: dict`, module-level). Both passes build their
+    session with the SAME `chat.inner.seed`, so `webapp.affect_drives_chat.expression_lead`'s spiking
+    lateral-inhibition WTA circuit (board #86 -- the mechanism that picks the affective lead-in marker,
+    "Sure -- "/"Wonderful -- "/etc., default-ON in production) is WARM and SHARED across the two passes, and
+    its per-read "washout" (`_pool_rates`) is NOT sufficient to make the SAME continuous mood value always
+    yield the SAME discrete winner. Measured directly (a 7-probe two-pass trace, both flag-off and flag-on):
+    idx=6 (`unknown`, a scope-guarded row) reads the IDENTICAL mood=0.040375 in BOTH passes, but the WTA
+    reports "no clean winner" (empty lead) as the SHARED reader's 8th-ever call (the OFF pass, which ran
+    first) and "level=1 wins" (`"Sure -- "`) as the reader's 16th-ever call (the ON pass -- OFF's own 8 prior
+    calls already consumed the reader's history) -- a call-SEQUENCE-POSITION-dependent decision, not a
+    mood-dependent one. This is a genuine, PRE-EXISTING production defect (the SAME `_READERS` singleton is
+    shared by every concurrent/sequential live chat session too, since `webapp/server.py`'s own call site never
+    overrides `seed`), but fixing it AT THE SOURCE (session-scoping or fully RNG/state-isolating
+    `AffectMarkerWTA`, mirroring `webapp.wkv_mouth_generator._RngIsolation`/`affect_drives_chat.
+    AffectDrivesWorkspace._isolated`) is a separate, default-ON-production-facing task with its own blast
+    radius -- NOT attempted here (flagged as a follow-up).
+
+    For THIS runner's OWN purposes, resetting the reader immediately before EACH pass is a valid,
+    non-invasive, TEST-HARNESS-LEVEL isolation fix (no production code, no flag, no default touched): it makes
+    both passes' 8th call the reader's OWN 8th call since ITS OWN reset, restoring the apples-to-apples
+    comparison `scope_untouched` needs. Best-effort: a missing/renamed helper must never break the battery."""
+    try:
+        from research.runners._affect_marker_wta_derisk import reset_readers
+        reset_readers()
+    except Exception:
+        pass
+
+
 def run_pass(S, flag_on, probes, session_suffix, fc_counter, rss_abort=True, evict_after=False):
     """Run the full probe list through ONE fresh session (flag_on fixed for the whole pass), returning the
     per-turn rows. A fresh session + `reset=True` warm-up per pass (never reused across off/on) keeps the two
@@ -170,7 +219,10 @@ def run_pass(S, flag_on, probes, session_suffix, fc_counter, rss_abort=True, evi
     `evict_after=True` pops this pass's session out of `S._BRAIN_CHATS` before returning -- the off/on passes
     each build an independent tiny-demo ChatBrain and the cache keeps BOTH resident by design (different cache
     keys), so evicting the first pass before building the second bounds peak RSS to roughly one session's
-    worth instead of two stacking (the RSS-budget concern this whole file family already discloses)."""
+    worth instead of two stacking (the RSS-budget concern this whole file family already discloses).
+    Also resets the process-global affect-marker-WTA reader cache first -- see
+    `_reset_cross_process_affect_wta_cache`'s own docstring for why."""
+    _reset_cross_process_affect_wta_cache()
     os.environ["BRAIN_TOUCHPOINT_A_FACT_CLAUSE"] = "1" if flag_on else "0"
     session = f"touchpoint_a_fc_derisk_{session_suffix}_{'on' if flag_on else 'off'}"
     RENDERER = None
@@ -222,12 +274,36 @@ def run_pass(S, flag_on, probes, session_suffix, fc_counter, rss_abort=True, evi
 
 
 def compute_go_gate(rows_off, rows_on):
-    """See module docstring for the criteria. Compares rows_off[i] to rows_on[i] index-by-index (both passes
-    run the SAME probe list, in the SAME order)."""
+    """See module docstring for the criteria. `scope_untouched`/`flag_off_inert` compare rows_off[i] to
+    rows_on[i] index-by-index (both passes run the SAME probe list, in the SAME order).
+
+    `content_preserved` (REDEFINED 2026-09-04, OWNER DECISION -- see FAILURE_LOG.md row 113 and
+    research/coordination/build_ahead_ready.md item #3): the ORIGINAL definition ("every known-topic row's
+    `supporting_facts` is byte-identical flag-off vs flag-on") cannot pass while Touchpoint-A is doing its
+    job, because it deliberately RESCUES a fact the pre-existing Qwen/template renderer failed to
+    verify-render -- recovering MORE grounded facts is the explicit GOAL, not a regression. Concretely (the
+    exact case measured in `research/findings/raw/_touchpoint_a_fact_clause_full.json` before this fix): an
+    `--n-known 4` battery's idx=3 `known_factual` row gains a fact flag-on (the rescue); idx=5's
+    `known_followup` ("tell me more", SAME topic, SAME un-reset session -- see `run_pass`'s own docstring:
+    one session per pass, never reset across probes) then has ONE FEWER fact left to tell flag-on, because
+    the rescued fact was already told at idx=3 instead of surviving un-told until idx=5. The fact itself was
+    never LOST -- it moved to an EARLIER turn in the same conversation -- but a PER-ROW comparison reads
+    idx=5 as content flag-on dropped, which is exactly backwards.
+
+    NEW definition: "no fact is lost". Let `facts_off_all`/`facts_on_all` be the UNION of every
+    `supporting_facts` triple across every known-topic (non-scope-guard) row in the OFF/ON pass respectively
+    -- a battery-wide union, not per-row and not per-topic, because a `known_followup` row's own reach is
+    only meaningful relative to everything already told earlier in the SAME un-reset session. GO iff
+    `facts_off_all` is a SUBSET of `facts_on_all` (equivalently: flag-ON's total surfaced set is a SUPERSET
+    of flag-OFF's) -- every fact flag-OFF ever surfaced anywhere in the battery must also be surfaced
+    somewhere flag-ON, regardless of which turn tells it. A fact present only in `facts_on_all` (a genuine
+    rescue, reported as `facts_rescued` below) is EXPECTED and never fails the gate; a fact present only in
+    `facts_off_all` (a genuine loss) does."""
     problems_scope, problems_content, problems_inert = [], [], []
     n = min(len(rows_off), len(rows_on))
     known_delta = 0
     fc_engaged = 0
+    facts_off_all, facts_on_all = set(), set()
     for i in range(n):
         off, on = rows_off[i], rows_on[i]
         cls = off["class"]
@@ -242,17 +318,24 @@ def compute_go_gate(rows_off, rows_on):
                 problems_scope.append(f"idx={i} class={cls}: answer text changed off->on "
                                        f"({off.get('answer')!r} -> {on.get('answer')!r})")
         else:
-            sf_off, sf_on = off.get("supporting_facts"), on.get("supporting_facts")
-            if sf_off != sf_on:
-                problems_content.append(f"idx={i} class={cls}: supporting_facts changed off->on "
-                                         f"({sf_off!r} -> {sf_on!r})")
+            facts_off_all.update(tuple(f) for f in (off.get("supporting_facts") or []))
+            facts_on_all.update(tuple(f) for f in (on.get("supporting_facts") or []))
             known_delta += (on.get("render_calls") or 0) - (off.get("render_calls") or 0)
             if (on.get("fact_clause_calls") or 0) > 0:
                 fc_engaged += 1
+    lost_facts = facts_off_all - facts_on_all              # OFF surfaced it, ON never does anywhere -- a real loss
+    rescued_facts = facts_on_all - facts_off_all           # ON surfaced it, OFF never does anywhere -- the intended rescue
+    if lost_facts:
+        problems_content.append(
+            f"{len(lost_facts)} fact(s) flag-OFF surfaced somewhere in the battery are ABSENT from flag-ON's "
+            f"entire surfaced set (a genuine loss, not a rescue -- flag-on's set must be a SUPERSET of "
+            f"flag-off's): {sorted(lost_facts, key=repr)!r}")
     return {
         "n_rows_compared": n,
         "scope_untouched": not problems_scope, "scope_problems": problems_scope,
         "content_preserved": not problems_content, "content_problems": problems_content,
+        "facts_off_union_count": len(facts_off_all), "facts_on_union_count": len(facts_on_all),
+        "facts_rescued": sorted(rescued_facts, key=repr),   # informational: facts ONLY flag-on ever surfaces
         "flag_off_inert": not problems_inert, "flag_off_problems": problems_inert,
         "structural_checks_passed": not (problems_scope or problems_content or problems_inert),
         "touchpoint_a_render_calls_delta": known_delta,   # negative = fewer Qwen/template calls with flag ON
