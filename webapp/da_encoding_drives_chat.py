@@ -88,6 +88,22 @@ _G_MAX = 3.0
 # DA gate itself is a host proxy for DA-gated synaptic potentiation. The biology (Turrigiano multiplicative scaling) is
 # the DESIGN principle; the on-substrate synaptic-scaling realization is the tracked next target. It reads a
 # brain-derived signal (the running mean of the self-produced-DA gain), so it is grounded, not a free host knob.
+#
+# ---------------------------------------------------------------------------
+# LEVER-4 (2026-09-05, scaffold-retirement backlog rank-16): the remaining LEAF linear map, retired.
+# ---------------------------------------------------------------------------
+# LEVER-3 above retired the POPULATION-level homeostatic regulation onto the substrate (a genuine synaptic-scaling
+# rule read from measured neural activity). What it left untouched is the PER-WRITE leaf itself: "given the live
+# DA, how much gain does THIS fact get" was still `_gain_map()`'s closed-form `g = clip(g_min, g_max, 1 +
+# k_DA*(DA-baseline))` -- host arithmetic on a scalar. `da_encoding_spiking_gain_enabled()` (`BRAIN_DA_ENCODING_
+# SPIKING_GAIN`, DEFAULT OFF) swaps that ONE leaf for `research.runners._da_write_gain_spiking_derisk.
+# spiking_write_gain`: a small excitatory population (IZH2007_HIPPO_PYRAMIDAL -- the SAME hippocampal cell class
+# this coupling's own Lisman-Grace citation names) whose excitability is modulated by the SAME live DA through the
+# neuromodulator subsystem's `excitability_drive` target (the identical target_type/scope idiom
+# `_neuromod_spiking_da_mode_derisk` already uses for DA->str_D1/D2); the gain is read from that population's OWN
+# firing rate, not a python formula. 6/6-seed GO (load-bearing, monotonic, lesion-collapses, parity corr>=0.99
+# with the host map, deterministic): see `research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md`. A
+# DE-RISK, not a flip -- `BRAIN_DA_ENCODING_SPIKING_GAIN` unset keeps `_gain_map()` running exactly as before.
 _A_STAR = 1.0        # the homeostatic activity set-point == the recall-safe unit-magnitude (tonic) write
 _G_FLOOR_HOMEO = 1.0 # the recall-safe floor: a low-DA fact is written at unit magnitude, never below (Turrigiano floor)
 _EMA_BETA = 0.25     # the homeostatic integration rate for the running mean of the raw salience (slow self-tuning)
@@ -163,6 +179,43 @@ def da_encoding_lesioned() -> bool:
     return os.environ.get("BRAIN_DA_ENCODING_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
 
 
+def da_encoding_spiking_gain_enabled() -> bool:
+    """LEVER-4 (2026-09-05, scaffold-retirement rank-16): retire the remaining LEAF host linear map. Even with
+    LEVER-3's on-substrate homeostat (`da_encoding_substrate_enabled`) doing the POPULATION-level regulation, the
+    PER-WRITE computation "how strongly does THIS DA level drive the gain" was still `_gain_map()`'s closed-form
+    `g = clip(g_min, g_max, 1 + k_DA*(DA - DA_baseline))` -- host arithmetic on a scalar, not a neuron or synapse.
+    `BRAIN_DA_ENCODING_SPIKING_GAIN` truthy (DEFAULT OFF) swaps that leaf for
+    `research.runners._da_write_gain_spiking_derisk.spiking_write_gain`: a small excitatory population
+    (IZH2007_HIPPO_PYRAMIDAL, the SAME cell class this coupling's own Lisman-Grace citation names) whose
+    excitability is modulated by the SAME live DA via the neuromodulator `excitability_drive` target (the exact
+    target_type/scope idiom `_neuromod_spiking_da_mode_derisk` already uses for str_D1/D2); the population's OWN
+    firing rate -- not a python formula -- is what the gain is read from. Unset/0/false/off/no -> `_gain_map()`
+    runs exactly as before (byte-identical; the new module is never even imported)."""
+    return os.environ.get("BRAIN_DA_ENCODING_SPIKING_GAIN", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def da_encoding_spiking_gain_lesioned() -> bool:
+    """This mechanism's OWN lesion (distinct from `da_encoding_lesioned()`, which pins g=1.0 outright upstream of
+    either implementation, and from `da_drives_lesioned()`, which silences the SNc nucleus that sets the DA LEVEL
+    itself). `BRAIN_DA_ENCODING_SPIKING_GAIN_LESION` truthy severs JUST the excitability_drive target that lets DA
+    reach the write_gain population (built with sensitivity pinned to 0.0) -- a structural severance of THIS
+    mechanism's own DA->population link, proving the population's rate-derived gain (not merely its input) is
+    what rides the live DA read. No effect while `da_encoding_spiking_gain_enabled()` is False."""
+    return os.environ.get("BRAIN_DA_ENCODING_SPIKING_GAIN_LESION", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
+def _leaf_gain(da: float, g_min: float, g_max: float) -> float:
+    """The single leaf computation both `encoding_gain_for()` branches below call: given the live DA and this
+    branch's (g_min, g_max), return the write-magnitude gain. Dispatches to the spiking read (LEVER-4) only when
+    explicitly armed; the default path is `_gain_map()`, UNCHANGED, so this function is byte-identical to a bare
+    inlined `_gain_map()` call whenever the new flag is off (the import only happens on the ON branch)."""
+    if da_encoding_spiking_gain_enabled():
+        from research.runners._da_write_gain_spiking_derisk import spiking_write_gain
+        return spiking_write_gain(da, _DA_TONIC_BASELINE, g_min=g_min, g_max=g_max,
+                                  lesion=da_encoding_spiking_gain_lesioned())
+    return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, g_min, g_max))
+
+
 def da_encoding_homeostasis_enabled() -> bool:
     """The lever-2 homeostatic companion (Turrigiano multiplicative scaling + recall-safe floor). DEFAULT ON whenever
     the encoding coupling is on: `BRAIN_DA_ENCODING_HOMEOSTASIS` unset/truthy -> homeostasis ON; set to 0/false/off/no
@@ -221,9 +274,11 @@ def encoding_gain_for(chat, advance: bool = False) -> float:
         # the genuine population REGULATION (down-scaling over-strong engrams toward the set-point) -- the part that
         # needs the whole population, run offline. The NET consolidated store (low->1.0, high->regulated) equals the
         # flip-gate soak's validated state. (Do NOT also run the host per-write EMA homeostat here -> double homeostasis.)
-        return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_FLOOR_HOMEO, _G_MAX))
+        # LEVER-4 (default OFF, `BRAIN_DA_ENCODING_SPIKING_GAIN`): `_leaf_gain` swaps this leaf for a spiking read
+        # of the SAME (da, floor, ceiling) instead of `_gain_map()`'s closed form -- see `_leaf_gain`'s docstring.
+        return _leaf_gain(da, _G_FLOOR_HOMEO, _G_MAX)
     if not da_encoding_homeostasis_enabled():
-        return float(_gain_map()(da, _DA_TONIC_BASELINE, _K_DA, _G_MIN, _G_MAX))
+        return _leaf_gain(da, _G_MIN, _G_MAX)
     r = 1.0 + _K_DA * (da - _DA_TONIC_BASELINE)                       # raw salience (UNCLAMPED); the homeostat floors it
     mu = float(getattr(chat, "_da_encoding_mu", _MU_INIT))
     g, mu_next = homeostatic_step(mu, r)

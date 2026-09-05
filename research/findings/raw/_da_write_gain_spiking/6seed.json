@@ -1,0 +1,404 @@
+{
+  "runner": "_da_write_gain_spiking_derisk",
+  "go": true,
+  "status": "GO",
+  "mechanism": "DA (already-neural) -> write_gain population (IZH2007_HIPPO_PYRAMIDAL, D1/D5-like excitability_drive) -> firing rate -> calibrated write-magnitude gain",
+  "constants": {
+    "n_write_gain": 80,
+    "bg_current_pa": 260.0,
+    "k_gain_pa": 260.0,
+    "da_cal_lo": 0.05,
+    "da_cal_hi": 1.24,
+    "raw_g_lo": 0.09999999999999998,
+    "raw_g_hi": 2.48
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "da_sweep": [
+        0.05,
+        0.49284685116833205,
+        0.5,
+        0.5519438027671012,
+        0.6038876055342024,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.49284685116833205,
+        "da_high": 0.6038876055342024,
+        "da_baseline": 0.5,
+        "rate_low_hz": 9.75,
+        "rate_high_hz": 123.75
+      },
+      "g_spike": [
+        1.0,
+        1.0103667160006577,
+        1.0,
+        1.1132905772076958,
+        1.1121164282190428,
+        2.4717809570794276
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.1038876055342024,
+        1.2077752110684048,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.4717809570794276,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.9975891836279179,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "c3743274fb7969da",
+      "threshold_hash_build2": "c3743274fb7969da",
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "da_sweep": [
+        0.05,
+        0.49348445553825143,
+        0.5,
+        0.5603017002859667,
+        0.6206034005719334,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.49348445553825143,
+        "da_high": 0.6206034005719334,
+        "da_baseline": 0.5,
+        "rate_low_hz": 10.583333333333332,
+        "rate_high_hz": 141.16666666666666
+      },
+      "g_spike": [
+        1.0,
+        1.0032886762360445,
+        1.0283413078149921,
+        1.112354066985646,
+        1.2649473684210524,
+        2.518717703349282
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.1206034005719334,
+        1.2412068011438668,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.518717703349282,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.9997270112742029,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "ff3e7b21c82e2bb3",
+      "threshold_hash_build2": "ff3e7b21c82e2bb3",
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "da_sweep": [
+        0.05,
+        0.4933183496750852,
+        0.5,
+        0.5562391178987851,
+        0.6124782357975702,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.4933183496750852,
+        "da_high": 0.6124782357975702,
+        "da_baseline": 0.5,
+        "rate_low_hz": 10.416666666666666,
+        "rate_high_hz": 132.41666666666666
+      },
+      "g_spike": [
+        1.0,
+        1.0,
+        1.006184210526316,
+        1.1222368421052638,
+        1.2206578947368423,
+        2.3525
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.1124782357975702,
+        1.2249564715951404,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.3525,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.9998791416829345,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "c62c433110f64ffa",
+      "threshold_hash_build2": "c62c433110f64ffa",
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "da_sweep": [
+        0.05,
+        0.4916357130493626,
+        0.5,
+        0.5534131527550175,
+        0.6068263055100349,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.4916357130493626,
+        "da_high": 0.6068263055100349,
+        "da_baseline": 0.5,
+        "rate_low_hz": 8.666666666666666,
+        "rate_high_hz": 127.41666666666667
+      },
+      "g_spike": [
+        1.0,
+        1.0121784776902882,
+        1.000232939632546,
+        1.0976804461942258,
+        1.0955708661417318,
+        2.5104527559055128
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.106826305510035,
+        1.2136526110200698,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.5104527559055128,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.9964641851801321,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "600a2b1ceaed6048",
+      "threshold_hash_build2": "600a2b1ceaed6048",
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "da_sweep": [
+        0.05,
+        0.4929892505846779,
+        0.5,
+        0.5570391533744026,
+        0.6140783067488053,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.4929892505846779,
+        "da_high": 0.6140783067488053,
+        "da_baseline": 0.5,
+        "rate_low_hz": 10.0,
+        "rate_high_hz": 134.0
+      },
+      "g_spike": [
+        1.0,
+        1.0128542914171657,
+        1.1199999999999999,
+        1.1271257485029937,
+        1.32562874251497,
+        2.4810179640718566
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.1140783067488051,
+        1.2281566134976105,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.4810179640718566,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.9960149471275527,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "4df6c404a490dff7",
+      "threshold_hash_build2": "4df6c404a490dff7",
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "da_sweep": [
+        0.05,
+        0.4932159716529148,
+        0.5,
+        0.5604696413801039,
+        0.6209392827602078,
+        1.24
+      ],
+      "da_real_reference": {
+        "da_low": 0.4932159716529148,
+        "da_high": 0.6209392827602078,
+        "da_baseline": 0.5,
+        "rate_low_hz": 10.333333333333334,
+        "rate_high_hz": 141.66666666666666
+      },
+      "g_spike": [
+        1.0,
+        1.126307692307692,
+        1.0781025641025639,
+        1.1252307692307684,
+        1.34276923076923,
+        2.4832307692307682
+      ],
+      "g_host": [
+        1.0,
+        1.0,
+        1.0,
+        1.1209392827602078,
+        1.2418785655204156,
+        2.48
+      ],
+      "g_lesion": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "span_intact": 1.4832307692307682,
+      "span_lesion": 0.0,
+      "load_bearing": true,
+      "lesion_collapses": true,
+      "lesion_near_floor": "True",
+      "monotonic_intact": true,
+      "parity_corr_spike_vs_host": 0.995766314420268,
+      "determinism_seeded_ok": true,
+      "threshold_hash_build1": "144f5f3d7edee5ff",
+      "threshold_hash_build2": "144f5f3d7edee5ff",
+      "GO": true
+    }
+  ],
+  "verdict": {
+    "GO": true,
+    "load_bearing_all_seeds": true,
+    "monotonic_all_seeds": true,
+    "lesion_collapses_all_seeds": true,
+    "determinism_seeded_all_seeds": true,
+    "parity_corr_range": [
+      0.9975891836279179,
+      0.9997270112742029,
+      0.9998791416829345,
+      0.9964641851801321,
+      0.9960149471275527,
+      0.995766314420268
+    ],
+    "mean_span_intact": 1.4696166916061413,
+    "mean_span_lesion": 0.0,
+    "lesion_attribution": 1.0
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "load-bearing on every seed (intact gain span > 0.15)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "spans=[1.4718, 1.5187, 1.3525, 1.5105, 1.481, 1.4832]"
+    },
+    {
+      "kind": "require",
+      "name": "monotonic (DA-tolerant) on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "lesion collapses the span to the floor on every seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "lesion spans=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]"
+    },
+    {
+      "kind": "require",
+      "name": "cfg.seed determinism confirmed on every seed (threshold hash, build x2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "parity with the host formula (corr > 0.85) on every evaluable seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "corr=[0.9976, 0.9997, 0.9999, 0.9965, 0.996, 0.9958]"
+    },
+    {
+      "kind": "control",
+      "name": "the write-gain span rides the live DA->write_gain link (intact) and is severed by ITS OWN build-time lesion",
+      "ok": true,
+      "detail": "treatment=1.46962 control=0 |sep|=1.46962 > 0.1",
+      "note": "pooled across 6 seeds; attribution=1.0"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "the substrate-homeostat's LEVER-3 population-level regulation (apply_substrate_homeostasis)",
+      "why": "already 6-seed GO'd (2026-08-25-da-encoding-substrate-turrigiano-scaling-FLIP.md) and UNMODIFIED by this mechanism -- this gate is scoped to the ONE remaining per-write LEAF"
+    }
+  ],
+  "undefined_reasons": []
+}
