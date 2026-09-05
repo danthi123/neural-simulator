@@ -7,6 +7,12 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-05 (overnight) — wave-2 + the pivot to shipping: more shortcuts retired, the mouth's real mechanism built, and the production-flip campaign begun
+
+- **Wave-2 (a second parallel sweep, all default-off GO):** spiking/neural replacements tested + built for more host helper-formulas — the "does this match?" check in the global-workspace bus (rank-8), curiosity's novelty signal (rank-10), how strongly dopamine sets a memory's write-strength (rank-16), the vision grouping decision (rank-23), and the missing production→composer path for the spiking cue-match selection (rank-2, plumbing built + verified). The topic-change detector (rank-11) was found already shipped and running. All banked for production-flip decisions.
+- **The mouth (#1 goal-blocker) got its real mechanism.** The own-voice fluency arc found the owner-specified design (a HiPPO multi-timescale memory feeding content-addressable attention) had been quietly substituted earlier and never actually built — so it built the real one (`hippokey`, bio-anchored to entorhinal-context→CA3) and queued its training. Honest ceiling on record: the current voice beats a trigram on simple text but not on broad/arbitrary topics — the exact gap that must close to retire the language-model scaffold.
+- **The production-flip campaign began** — turning the validated wins from "de-risked" into on-by-default (the actual goal bar), each gated on rigorous integrated verification (no-regression + genuinely load-bearing, not hollow). rank-4 (shared salience) verified load-bearing + correct; final integrated check in flight.
+
 ## 2026-09-05 — a scaffold-retirement de-risk wave: nine host shortcuts ruled on in one parallel sweep
 
 - **On the #1 priority (retire host shortcuts → spiking on the shared brain):** eight parallel agents each tested whether a hand-written helper the brain leans on can be replaced by a genuine neural circuit. Nine of the twenty-four ranked shortcuts now carry a verdict.
