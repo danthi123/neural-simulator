@@ -13,7 +13,15 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ OVERNIGHT AUTONOMY — 2026-09-05 night (READ FIRST; owner asleep, FULL autonomy)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~06:20 (OVERNIGHT DELIVERED; READ FIRST; LATEST anchor)
+
+**Overnight (autonomous per owner grant) delivered the pivot from de-risk to SHIPPING.**
+- **4 host shortcuts FLIPPED to production-default + verified live** (each 6/6 GO through real production entry points, anti-hollow: vary→differs / lesion→vanishes, no-regression, reversible via the `=0` escape): rank-4 shared-salience afferent (`5cc1da241`); rank-20 value-choice (same flag, verified via rank-4's shoe→cat critic test); rank-5 Gate-B appraisal-via-interoception (`0c4e068eb`); rank-12 GNW STOP-trigger (`911ac1249`). The live brain now runs these 4 faculties SPIKING, not host-shortcut.
+- **HELD as honest residuals (default-OFF, NOT abandoned):** rank-13 (a genuine seed-44 anaphora regression — a stale-referent self-alias misroute; narrow fix identified → bank + re-verify); rank-9 (a reproduced one-directional overconfidence = the honesty-boundary worst case → stays off); rank-15 (PARTIAL 5/6, no production flag to flip).
+- **Also overnight:** 8 wave-2 de-risks banked to main; the own-voice MOUTH got its real mechanism built (`hippokey` = HiPPO multi-timescale SSM → content-addressable attention — the owner-specified design that had been quietly substituted before; training queued on the GPU); composer (rank-1) memory-blocker REFUTED (measured 563 MiB, not the feared ~20 GB) — its real wall is per-query LATENCY (per-step profiler running to decide it).
+- **NEXT:** (1) per-step verdict → rank-1 composer latency hinge; (2) hippokey training → mouth fluency; (3) ledger rows for the 4 flipped faculties; (4) the held-3 follow-ups; (5) Track-3 one-brain merge (Track-1 flips now landed).
+
+## ⭐⭐⭐ OVERNIGHT AUTONOMY — 2026-09-05 night (owner asleep, FULL autonomy)
 
 **Owner directive (going to bed):** continue autonomously, DO NOT DEFER, DO NOT wait on owner input — best judgement on EVERY decision INCLUDING production-flip go/no-go (the flip campaign is NO LONGER owner-gated). Maximize dev speed by parallelizing hard within compute limits; WORKFLOW fan-outs are EXEMPT from the compute limit — use them for non-compute-bound parallelism. Never stall; keep the heartbeat + durable state fresh (compaction-safe).
 
