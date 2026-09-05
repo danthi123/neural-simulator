@@ -42,8 +42,12 @@ verification: |
     -> through the REAL `webapp.server.brain_chat` handler, part (A)'s 7-turn conversation reproduces the exact
     swapped/held_topic/lead triad the 2026-08-19 finding tabulated (change->True/brain, hold->False, change->True/
     cat, hold->False, change->True/dog, with leads 'On brain, then -- '/'On cat, then -- '/'On dog, then -- ').
-    See "What actually changed since 2026-08-19" below for why this script's own PASS/FAIL summary now prints FAIL
-    despite every swap-drives field being correct.
+    With the script's isolation list extended to cover faculties flipped default-ON after 2026-08-19
+    (BRAIN_GNW_STOP/BRAIN_AFFECTIVE_TOM/BRAIN_DA_DRIVES/BRAIN_SILENT_WM/BRAIN_BG_SELECT/BRAIN_CG_DRIVES/
+    BRAIN_VISION_IDENTITY=0), the script's OWN verdict is confirmed: `VERDICT (A) tracks=True (B) drives+lesion=True
+    (C) no-regression=True => GO`, all five checks [PASS] -- see "What actually changed since 2026-08-19" below for
+    why the unmodified script prints FAIL today (test staleness) and the confirmation that restoring its assumed
+    isolation reproduces its original clean GO.
 ---
 
 # Backlog rank-11 ("topic-swap regex+host") describes a capability that is ALREADY neural, wired, and on-by-default — re-verified against TODAY's code, not just re-cited from the old finding. The backlog entry is mis-scoped.
@@ -136,14 +140,22 @@ the `'As for it — '` prefix now observed wrapping the swap lead) and `BRAIN_DA
 2026-08-26/2026-09-01 waves, per `_DEFAULT_ON = True` anchors in `webapp/server.py`). These faculties add their
 OWN unrelated leads/suffixes to the SAME answer string, so the script's exact-whole-string equality checks (which
 assume ONLY the swap lead can appear) now legitimately fail even though every `swap_drives`-specific field is
-correct. Re-running with those newer flags ALSO forced to 0 (`BRAIN_GNW_STOP=0 BRAIN_AFFECTIVE_TOM=0
-BRAIN_DA_DRIVES=0 BRAIN_SILENT_WM=0 BRAIN_BG_SELECT=0 BRAIN_CG_DRIVES=0 BRAIN_VISION_IDENTITY=0` added on top of
-the script's own list) was started to confirm the ORIGINAL exact-string checks pass again once isolation is
-restored; see the companion note in the commit for whether it finished before this finding was recorded. This is
-recorded here as a small, separate, NOT-GATEABLE-by-this-task item: `verify_swap_drives.py`'s hardcoded isolation
-list should be extended to cover every `_..._DEFAULT_ON` flag added after 2026-08-19, or (better) derive its
-isolation set from `webapp/server.py`'s own `_DEFAULT_ON` anchors so it cannot go stale again. Flagged, not fixed
-here (out of rank-11's scope, and fixing a verify script is not itself a scaffold-retirement).
+correct. **Confirmed, not just diagnosed:** re-running the SAME unmodified script with those newer flags ALSO
+forced to 0 (`BRAIN_GNW_STOP=0 BRAIN_AFFECTIVE_TOM=0 BRAIN_DA_DRIVES=0 BRAIN_SILENT_WM=0 BRAIN_BG_SELECT=0
+BRAIN_CG_DRIVES=0 BRAIN_VISION_IDENTITY=0` added on top of the script's own list, writing to the tracked default
+artifact path `research/findings/raw/_swap_drives_chat/verify.json`) reproduces the ORIGINAL clean verdict
+exactly: `VERDICT (A) tracks=True (B) drives+lesion=True (C) no-regression=True => GO`, all five named checks
+`[PASS]` — part (B)'s INTACT probe shows `swapped=True lead='On dog, then — '`, the SAME probe with
+`trigger_lesion` shows `swapped=False lead=''` reverting the answer to the un-led base, and part (C)'s no-swap
+content-md5 is identical across {off, swap, hold} on every turn. The refreshed `verify.json` differs from the
+2026-08-19 file ONLY in surface grammar (e.g. `"The dog chases cat."` -> `"the dog chases the cat"` — an
+intervening, unrelated article/capitalization change in the recall-render surface) and the run timestamp; every
+`mm_peak`/`boost_max`/`reason`/`swapped` value per turn is UNCHANGED. So this is not merely a diagnosis of why
+the old script misfires today — restoring its assumed isolation makes it pass exactly as it did on 2026-08-19.
+This is recorded here as a small, separate, NOT-GATEABLE-by-this-task item: `verify_swap_drives.py`'s hardcoded
+isolation list should be extended to cover every `_..._DEFAULT_ON` flag added after 2026-08-19, or (better)
+derive its isolation set from `webapp/server.py`'s own `_DEFAULT_ON` anchors so it cannot go stale again.
+Flagged, not fixed here (out of rank-11's scope, and fixing a verify script is not itself a scaffold-retirement).
 
 ## The ledger already tracks this, and already names the true residual precisely
 

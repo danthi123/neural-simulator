@@ -1,7 +1,7 @@
 {
   "runner": "verify_swap_drives (in-process /api/brain-chat)",
   "backend": "numpy",
-  "ts": "2026-08-19T08:25:21",
+  "ts": "2026-09-05T04:31:33",
   "part_a": {
     "pass": true,
     "topic_change_swap_rate": 1.0,
@@ -23,7 +23,7 @@
         "reason": "first_thought",
         "mm_peak": 0.05555555555555555,
         "boost_max": 0.027777777777777776,
-        "answer": "The dog chases cat.",
+        "answer": "the dog chases the cat",
         "row_ok": true
       },
       {
@@ -37,7 +37,7 @@
         "reason": "same_topic_hold",
         "mm_peak": 0.06666666666666667,
         "boost_max": 0.03333333333333333,
-        "answer": "The dog chases cat.",
+        "answer": "the dog chases the cat",
         "row_ok": true
       },
       {
@@ -51,7 +51,7 @@
         "reason": "topic_change_swap",
         "mm_peak": 0.3277777777777778,
         "boost_max": 0.16,
-        "answer": "On brain, then \u2014 The brain uses spikes.",
+        "answer": "On brain, then \u2014 the brain uses the spikes",
         "row_ok": true
       },
       {
@@ -65,7 +65,7 @@
         "reason": "same_topic_hold",
         "mm_peak": 0.03333333333333333,
         "boost_max": 0.016666666666666666,
-        "answer": "The brain stores memory.",
+        "answer": "the brain stores the memory",
         "row_ok": true
       },
       {
@@ -79,7 +79,7 @@
         "reason": "topic_change_swap",
         "mm_peak": 0.29444444444444445,
         "boost_max": 0.15666666666666668,
-        "answer": "On cat, then \u2014 The cat eats fish.",
+        "answer": "On cat, then \u2014 the cat eats the fish",
         "row_ok": true
       },
       {
@@ -93,7 +93,7 @@
         "reason": "no_topic_hold",
         "mm_peak": null,
         "boost_max": null,
-        "answer": "The tell mes more.",
+        "answer": "the tell mes the more",
         "row_ok": true
       },
       {
@@ -107,7 +107,7 @@
         "reason": "topic_change_swap",
         "mm_peak": 0.26666666666666666,
         "boost_max": 0.16,
-        "answer": "On dog, then \u2014 The dog chases cat.",
+        "answer": "On dog, then \u2014 the dog chases the cat",
         "row_ok": true
       }
     ]
@@ -117,8 +117,8 @@
     "intact_diff": true,
     "lead_swap": "On dog, then \u2014 ",
     "lead_hold": "",
-    "ans_swap": "On dog, then \u2014 The dog chases cat.",
-    "ans_hold": "The dog chases cat.",
+    "ans_swap": "On dog, then \u2014 the dog chases the cat",
+    "ans_hold": "the dog chases the cat",
     "swapped_swap_ctx": true,
     "swapped_hold_ctx": false,
     "swap_lead_ok": true,
@@ -141,32 +141,32 @@
       {
         "i": 0,
         "msg": "what does the dog chase?",
-        "off_md5": "194897f833e5ae1e2ccd91aa765bc829",
-        "on_stripped_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "off_md5": "cb6c2daebbe4667d7ea55a6ddfdbad61",
+        "on_stripped_md5": "cb6c2daebbe4667d7ea55a6ddfdbad61",
         "byte_ok": true,
         "off_has_key": false,
         "on_has_key": true,
         "on_lead": "",
-        "off_answer": "The dog chases cat.",
-        "on_answer": "The dog chases cat."
+        "off_answer": "the dog chases the cat",
+        "on_answer": "the dog chases the cat"
       },
       {
         "i": 1,
         "msg": "what does the dog chase?",
-        "off_md5": "194897f833e5ae1e2ccd91aa765bc829",
-        "on_stripped_md5": "194897f833e5ae1e2ccd91aa765bc829",
+        "off_md5": "cb6c2daebbe4667d7ea55a6ddfdbad61",
+        "on_stripped_md5": "cb6c2daebbe4667d7ea55a6ddfdbad61",
         "byte_ok": true,
         "off_has_key": false,
         "on_has_key": true,
         "on_lead": "",
-        "off_answer": "The dog chases cat.",
-        "on_answer": "The dog chases cat."
+        "off_answer": "the dog chases the cat",
+        "on_answer": "the dog chases the cat"
       },
       {
         "i": 2,
         "msg": "what does a unicorn fly?",
-        "off_md5": "7f15f54177fdc350804b64472afcb605",
-        "on_stripped_md5": "7f15f54177fdc350804b64472afcb605",
+        "off_md5": "e75affb9a0f222738695b8c55109184c",
+        "on_stripped_md5": "e75affb9a0f222738695b8c55109184c",
         "byte_ok": true,
         "off_has_key": false,
         "on_has_key": true,
@@ -178,17 +178,17 @@
     "c2_rows": [
       {
         "msg": "what does the dog chase?",
-        "content_md5": "350812dd8c839400dd103c4663302447",
+        "content_md5": "88f4bf5a1179504aebc2a948b5d91e44",
         "content_invariant": true,
-        "off_answer": "The dog chases cat.",
-        "swap_answer": "On dog, then \u2014 The dog chases cat.",
-        "hold_answer": "The dog chases cat.",
+        "off_answer": "the dog chases the cat",
+        "swap_answer": "On dog, then \u2014 the dog chases the cat",
+        "hold_answer": "the dog chases the cat",
         "swap_lead": "On dog, then \u2014 ",
         "hold_lead": ""
       }
     ]
   },
-  "git_sha": "f572ccf0c1bac81408b0198627562ad34a5aa5ed",
+  "git_sha": "ff19d5212028a96292055a1e50e45eb86e5835c4",
   "preconditions": [
     {
       "name": "(A) the swap tracks the conversation (change swap-rate 1.00, hold 0.00, lead iff swap)",

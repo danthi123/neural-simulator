@@ -1,10 +1,10 @@
 {
- "run_id": "1787142322-3094861",
+ "run_id": "1788597095-3910402",
  "runner": "research/findings/raw/_swap_drives_chat/verify_swap_drives.py",
  "argv": [
   "research/findings/raw/_swap_drives_chat/verify_swap_drives.py"
  ],
- "git_sha": "f572ccf0c",
+ "git_sha": "ff19d5212",
  "git_dirty": true,
  "source_kind": null,
  "source_manifest_sha256": null,
@@ -12,14 +12,15 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-08-19T08:25:22",
+ "started": "2026-09-05T04:31:35",
  "env": {
   "SIM_BACKEND": "numpy"
  },
  "sim_backend": "numpy",
  "sim_backend_requested": "numpy",
  "sim_backend_cupy_importable": true,
- "corpus_check_age_s": null,
- "corpus_check_query": null,
+ "corpus_check_age_s": 4385.6,
+ "corpus_check_query": "topic-swap regex host neural mismatch detector",
+ "corpus_check_fresh": true,
  "artifact": "research/findings/raw/_swap_drives_chat/verify.json"
 }
