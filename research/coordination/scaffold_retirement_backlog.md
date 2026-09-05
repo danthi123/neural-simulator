@@ -60,3 +60,14 @@ flip (linattn mouth) · recall-gate→LTM · affect→neural (WKV) · Stage-1 Qw
 (SlotBinder) · LC-NE eviction · num/den (satdiv/Tier-1) · Touchpoint-A Stage-2 (structural GO). ⚠️ Several had
 HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see the anchor; the flip "clean default" is
 being re-verified.
+
+## STATUS UPDATES (per-rank, append-only — keep terse; do not rewrite the ranked list above)
+- **Rank 12 (GNW STOP host boolean-OR) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** An ACC/BG hyperdirect circuit
+  (two afferent relay pools → ACC → STN → GPi, reusing the STN-veto de-risk's chain shape) reads the SAME
+  `n_ignited` / `mm_peak` afferents `detect_trigger`'s boolean-OR read, directly as synaptic input, and decides the
+  STOP trigger via spiking integration (GPi rate crossing a fixed threshold) instead of a host comparison. 6/6-seed
+  GO on parity with the host decision (18/18 turn-classes), both afferents independently load-bearing, full
+  afferent-lesion reverts to no-stop on all 6 seeds; a second 6/6-seed check confirms the production dispatch
+  (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
+  when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
+  (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).

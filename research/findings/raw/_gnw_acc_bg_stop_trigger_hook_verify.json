@@ -1,0 +1,477 @@
+{
+  "runner": "_gnw_acc_bg_stop_trigger_hook_verify",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "all_go": true,
+  "n_go": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    },
+    {
+      "seed": 43,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    },
+    {
+      "seed": 44,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    },
+    {
+      "seed": 100,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    },
+    {
+      "seed": 101,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    },
+    {
+      "seed": 102,
+      "seed_go": true,
+      "flag_off_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": {
+          "got": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "want": [
+            true,
+            "delib_sustained_coignition",
+            2,
+            null
+          ],
+          "match": true
+        },
+        "swap_only": {
+          "got": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "want": [
+            true,
+            "swap_topic_break",
+            2,
+            "weather"
+          ],
+          "match": true
+        },
+        "no_trigger": {
+          "got": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "want": [
+            false,
+            null,
+            2,
+            null
+          ],
+          "match": true
+        }
+      },
+      "dispatch_ok": true,
+      "dispatch_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "real_matches": {
+        "delib_conflict": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "swap_only": {
+          "triggered": true,
+          "host_expect": true,
+          "match": true
+        },
+        "no_trigger": {
+          "triggered": false,
+          "host_expect": false,
+          "match": true
+        }
+      },
+      "n_real_match": 3,
+      "lesion_reverts": true
+    }
+  ]
+}
