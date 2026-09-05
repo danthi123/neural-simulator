@@ -691,6 +691,142 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 outs.append(self.Wo(r[:, t] * read))
             return torch.stack(outs, 1)
 
+    class LearnKeyLayer(nn.Module):
+        """FIXED-CAPACITY LEARNED-KEY CONTENT-ADDRESSABLE MEMORY (--recurrence learnkey, 2026-09-04). Build-ahead
+        fallback: gap#1's NAMED next mechanism CLASS after `linattn` in the roadmap's own fluency lineage
+        ("structured HiPPO SSM -> content-addressable learned-key attention", MEMORY
+        project_own_voice_fluency_pursue_fully_2026_09_03) -- prepared and smoke-tested, held in reserve for if
+        the linattn PRODUCTION-SCALE sweep plateaus, per owner instruction. NOT a re-run of `assoc`/`assoc_t`
+        under a new flag: those two ALREADY instantiated "content-addressable learned-key attention" in this
+        file and both LOST to the -0.125 ssm/dual-nonneg floor (bag -0.347, ordered -0.147; see
+        research/findings/2026-09-03-OPEN-FLUENCY-BREAKTHROUGH-linattn-deployable-spiking-mouth-beats-trigram-
+        6of6.md's comparison table) -- re-adding the identical mechanism under `learnkey` would be a hollow
+        duplicate of an already-adjudicated NO-GO. This class is a STRUCTURALLY DISTINCT member of the same
+        bio-anchored family, chosen specifically to fix the property diagnosed as disqualifying about
+        assoc/assoc_t (unbounded, per-token, O(T^2) keys -- NOT spiking-realizable) while staying genuinely
+        content-addressable+learned-key (unlike linattn's continuous, keyless kernel trace):
+
+          - `assoc`/`assoc_t`: keys are DERIVED per past TOKEN (Wk(z_s), one new key for every position ever
+            seen) -- the key SET grows with T, so the read is an O(T^2) softmax over an ever-growing population.
+            No fixed spiking substrate can host an unboundedly growing set of key-selective units.
+          - `linattn`: normalization restored, O(T) recurrent, spike-deployable -- but its "key" is a continuous
+            D x D outer-product trace with no discrete addressable slots; there is no inspectable set of
+            "keys" a downstream reader (or a biologist) could point to.
+          - `learnkey` (this class): a FIXED, SMALL bank of M LEARNED key prototypes (`self.Kmem`, an
+            nn.Parameter[M,D] -- genuinely learned by gradient descent over the whole corpus, like a real
+            synaptic weight matrix shaped by experience, but INDEPENDENT of any single position's content,
+            unlike assoc's per-token Wk(z_s)). M is fixed at construction time (--learnkey-slots, default 64)
+            and never grows with T, so the read is O(T*M*D) -- linear in sequence length, exactly like linattn,
+            but through a DISCRETE, addressable, inspectable codebook instead of a continuous compressed trace.
+
+        BIOLOGICAL ANCHOR: a bounded population of memory-index units whose afferent weights (the M key
+        prototypes) are shaped by experience, holding content written/retrieved by competitive similarity -- the
+        classical associative-net formulation (Willshaw, Buneman & Longuet-Higgins 1969, "Non-holographic
+        associative memory", Nature 222:960-962; Kanerva 1988, "Sparse Distributed Memory", MIT Press) and
+        Marr's (1971) CA3 autoassociative-net theory realized with the BOUNDED cell population real CA3 and
+        Kanerva's model both actually have (a fixed number of pyramidal cells / hard locations, not one per
+        experienced token -- the property assoc/assoc_t's per-token key set lacks). Ramsauer et al. 2020
+        ("Hopfield Networks is All You Need", ICLR 2021) frames competitive softmax retrieval against a FIXED,
+        LEARNED set of stored patterns as the canonical modern-Hopfield network -- the textbook case this class
+        implements directly, whereas `assoc`'s per-token keys are Ramsauer's DEGENERATE limit (one stored
+        pattern per token, unbounded pattern count). `self.Kmem` is the literal "keys learned from experience"
+        the roadmap names -- persistent across every position and every training example, not a per-token
+        projection.
+
+        Mechanism per position t (causal; M FIXED key prototypes shared across ALL positions/timesteps/layers-
+        of-this-block; D = model width):
+          z_t = LN(h_t)
+          q_t = Wq(z_t)                        -- READ probe (what does the current prediction need)
+          k_t = Wk(z_t)                        -- WRITE probe (which slot(s) does this token's content address)
+          v_t = Wv(z_t)                        -- the value to be filed
+          addr_w_t = softmax_m(k_t . Kmem_m / sqrt(D))     -- WRITE competition over the M FIXED prototypes
+          addr_r_t = softmax_m(q_t . Kmem_m / sqrt(D))     -- READ competition over the SAME M prototypes
+          S_t[m] = lam_m * S_{t-1}[m] + addr_w_t[m] * v_t          -- per-slot decayed Hebbian content trace
+          Z_t[m] = lam_m * Z_{t-1}[m] + addr_w_t[m]                -- per-slot normalizer
+          read_t = sum_m addr_r_t[m] * (S_t[m] / (Z_t[m] + eps))   -- content-addressable recall from the codebook
+          delta_t = Wo(r_t * read_t), r_t = sigmoid(Wr(z_t))       -- caller adds this to the residual stream
+        Genuine softmax (not a kernel feature map like linattn's phi): M is fixed and small, so a real
+        normalized competition over M alternatives is cheap -- the property that makes M unbounded (assoc)
+        expensive does not apply here. `lam = exp(-softplus(w))` is a PER-SLOT leak (one decay per memory slot,
+        not per channel as in wkv/linattn -- a deliberate reading of --uniform-decay as "one shared consolidation
+        rate across memory slots" rather than across channels, since decay here multiplies a per-slot trace).
+
+        SPIKING-REALIZABLE (the property this class restores over assoc/assoc_t): M fixed populations under
+        lateral-inhibition-style competition (softmax over a SMALL, CONSTANT set) is a standing, bounded cortical
+        motif -- unlike an attention matrix that would need a new competing unit for every token ever seen. The
+        division S/Z is shunting-inhibition-style divisive normalization, the SAME honest caveat already on
+        record for linattn/dual-nonneg (Holt & Koch 1997, Neural Comput. 9:1001: pure somatic shunting measures
+        SUBTRACTIVE not divisive on firing rate) -- the on-substrate realization of the division is a later rung,
+        not claimed solved here.
+
+        MEMORYLESS anti-cheat (shared convention, identical semantics to Assoc/LinAttn): when True, S/Z are
+        NEVER accumulated across positions -- each position's read uses ONLY that position's own
+        addr_w_t(*)v_t / addr_w_t as its slot trace, so no PAST position can be recalled. The generic
+        sequence-level --permute anti-cheat (eval_perdepth's permute=True) also applies unmodified.
+        NOT INCLUDED (honest scope): a "shuffle slot identity" structural control analogous to
+        --hippo-permute-a is NOT meaningful here the way it is for HippoLayer -- HippoLayer's tau values carry a
+        principled fast->slow ORDERING that permutation can meaningfully scramble, whereas `learnkey`'s M slots
+        have no a-priori identity before training (an unordered learned set), so permuting their storage order
+        post-training changes nothing about what any given slot has learned to represent.
+
+        `--assoc-gate` (reused, same init-open convention as Assoc/LinAttn: Wg.weight=0, Wg.bias=+2.0 ->
+        g~0.88 at init): gates read_t before Wo, identical wiring to AssocLayer's LEARNED RETRIEVAL GATE.
+
+        Pre-norm residual block, `forward(h, memoryless=False) -> delta`, IDENTICAL contract to every other
+        --recurrence class in this file, so it stacks under --n-layers and composes with --contiguous/
+        --tokenizer bpe unchanged.
+
+        HONEST SCOPE (this is UNTESTED at the time this class was written -- a prepared fallback, not a
+        result): no numeric expectation is claimed. The GO gate this fallback is judged against (see --recurrence
+        help + the main() report) is TWO-PART: (1) the universal per-arm bar every mechanism in this file must
+        clear (margin_vs_trigram > 0.02 at deep context, AND both anti-cheats collapse), (2) SPECIFIC to this
+        fallback's purpose -- mean margin_vs_trigram >= the already-measured linattn 6-seed baseline
+        (+0.0505, --linattn-baseline-margin), because a fallback that merely re-clears the trigram bar without
+        matching the current best deployable mechanism is not a reason to switch off linattn.
+
+        BYTE-IDENTICAL WHEN OFF: this class and `self.learnkey_layers` are constructed ONLY when `--recurrence
+        learnkey` is selected -- when not selected, defined but never instantiated, consuming ZERO init-RNG
+        draws, so wkv/ssm/hippo/assoc/assoc_t/linattn are completely unaffected by this addition.
+        """
+        def __init__(self, D, M=64, uniform_decay=False, gate=False):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wq = nn.Linear(D, D, bias=False); self.Wk = nn.Linear(D, D, bias=False)
+            self.Wv = nn.Linear(D, D, bias=False); self.Wr = nn.Linear(D, D, bias=False)
+            self.Wo = nn.Linear(D, D, bias=False)
+            self.Kmem = nn.Parameter(torch.randn(M, D) / math.sqrt(D))   # FIXED-COUNT learned key codebook
+            self.w = nn.Parameter(torch.zeros(1 if uniform_decay else M))  # PER-SLOT leak (see docstring)
+            self.scale = 1.0 / math.sqrt(D)
+            self.M = M
+            self.gate = gate
+            if gate:
+                self.Wg = nn.Linear(D, D, bias=True)
+                nn.init.zeros_(self.Wg.weight); nn.init.constant_(self.Wg.bias, 2.0)   # init-open, reuse assoc-gate
+
+        def forward(self, h, memoryless=False):        # h:[B,T,D] -> delta:[B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            M = self.M
+            z = self.ln(h)
+            q = self.Wq(z); k = self.Wk(z); v = self.Wv(z); r = torch.sigmoid(self.Wr(z))
+            addr_w_all = torch.softmax(torch.einsum("btd,md->btm", k, self.Kmem) * self.scale, dim=-1)  # [B,T,M]
+            addr_r_all = torch.softmax(torch.einsum("btd,md->btm", q, self.Kmem) * self.scale, dim=-1)  # [B,T,M]
+            lam = torch.exp(-torch.nn.functional.softplus(self.w))       # (M,) or (1,) per-slot decay
+            S = torch.zeros(B, M, D, device=h.device); Z = torch.zeros(B, M, device=h.device)
+            outs = []
+            for t in range(T):
+                aw = addr_w_all[:, t]                                     # [B,M] WRITE competition at t
+                if memoryless:                                            # ANTI-CHEAT: current token only
+                    S_r = torch.einsum("bm,bd->bmd", aw, v[:, t]); Z_r = aw
+                else:
+                    S = lam.unsqueeze(-1) * S + torch.einsum("bm,bd->bmd", aw, v[:, t])
+                    Z = lam * Z + aw
+                    S_r, Z_r = S, Z
+                read = torch.einsum("bm,bmd->bd", addr_r_all[:, t], S_r / (Z_r.unsqueeze(-1) + 1e-6))
+                if self.gate:
+                    read = torch.sigmoid(self.Wg(z[:, t])) * read
+                outs.append(self.Wo(r[:, t] * read))
+            return torch.stack(outs, 1)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -765,6 +901,21 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                              norm=getattr(args, "linattn_norm", True))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "linattn" else nn.ModuleList()
+
+            # --recurrence learnkey (2026-09-04, build-ahead fallback -- see LearnKeyLayer's docstring for the
+            # full mechanism + why this is NOT a re-run of the already-NO-GO assoc/assoc_t): FIXED-CAPACITY
+            # LEARNED-KEY content-addressable memory, gap#1's next mechanism class after linattn. Composed with
+            # --n-layers depth exactly like hippo_layers/assoc_layers/linattn_layers above (ALL n_layers blocks
+            # are uniform LearnKeyLayer instances in ONE list). `gate=getattr(args, "assoc_gate", False)` reuses
+            # the SAME learned-retrieval-gate flag Assoc/LinAttn use. Built ONLY when RECUR=="learnkey" (else an
+            # empty ModuleList, consuming ZERO extra RNG draws) so the wkv/ssm/hippo/assoc/assoc_t/linattn paths'
+            # parameter-init RNG order -- hence their outputs -- is UNCHANGED by this addition at any --n-layers.
+            self.learnkey_layers = nn.ModuleList([
+                LearnKeyLayer(D, M=getattr(args, "learnkey_slots", 64),
+                              uniform_decay=getattr(args, "uniform_decay", False),
+                              gate=getattr(args, "assoc_gate", False))
+                for _ in range(max(n_layers, 1))
+            ]) if RECUR == "learnkey" else nn.ModuleList()
 
             # PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, --pred-aux-weight, own-voice-fluency arc). WHY:
             # the bound-investigation of the fluency arc (research/findings/2026-09-03-spiking-depth-tokens-
@@ -870,6 +1021,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # byte-identically to before this addition.
                 hh = h
                 for blk in self.linattn_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self._out(hh, aux)
+            if RECUR == "learnkey":
+                # FIXED-CAPACITY LEARNED-KEY CONTENT-ADDRESSABLE MEMORY (see LearnKeyLayer's docstring). Self-
+                # contained: does NOT touch self.Wk/Wv/Wr/w/u below (unused on this branch, no gradient reaches
+                # them). Inserted BEFORE any wkv/ssm-specific line, mirroring the hippo/assoc/linattn insertions
+                # above, so when RECUR != "learnkey" this is one skipped comparison and every line below runs
+                # byte-identically to before this addition.
+                hh = h
+                for blk in self.learnkey_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self._out(hh, aux)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
@@ -1259,7 +1420,7 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn", "learnkey"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
@@ -1281,7 +1442,15 @@ def main():
                          "DESIGN.md) -- an O(T) recurrent real-valued D x D outer-product KV trace + running "
                          "denominator, read by phi(q)^T M / phi(q)^T zden (content-weighted, softmax-free); "
                          "the deployable-spiking successor to ssm/dual-nonneg, and a strict generalization of "
-                         "wkv (restrict M to its diagonal, phi=exp, Wq=Wk=I -> degenerates to wkv's num/den).")
+                         "wkv (restrict M to its diagonal, phi=exp, Wq=Wk=I -> degenerates to wkv's num/den). "
+                         "learnkey = FIXED-CAPACITY LEARNED-KEY content-addressable memory (see LearnKeyLayer + "
+                         "2026-09-04 build-ahead) -- a small FIXED bank of M learned key prototypes (a real "
+                         "inspectable codebook, --learnkey-slots) queried by genuine softmax competition (O(T*M), "
+                         "M constant, unlike assoc's O(T^2) per-token keys) and written via a decayed per-slot "
+                         "Hebbian trace; the modern-Hopfield-with-FIXED-LEARNED-patterns case Ramsauer et al. "
+                         "2020 describes, distinct from assoc/assoc_t's already-NO-GO per-token-key degenerate "
+                         "case. Prepared as the NEXT mechanism class after linattn -- a ready-to-fire fallback "
+                         "if the linattn production-scale sweep plateaus, not yet run at scale.")
     ap.add_argument("--assoc-gate", dest="assoc_gate", action="store_true",
                     help="(--recurrence assoc / assoc_t only) LEARNED RETRIEVAL GATE (2026-09-03, default OFF, "
                          "see AssocLayer's LEARNED RETRIEVAL GATE docstring section): a per-channel, input-"
@@ -1308,6 +1477,20 @@ def main():
                          "is what is load-bearing (research/findings/2026-09-03-spiking-content-addressable-"
                          "read-DESIGN.md Sec 6, the cheapest decisive CPU experiment). Default (flag unset) = "
                          "normalization ON = args.linattn_norm=True = the design's primary arm.")
+    ap.add_argument("--learnkey-slots", dest="learnkey_slots", type=int, default=64,
+                    help="(--recurrence learnkey only) M, the FIXED number of learned key/memory-slot "
+                         "prototypes in the codebook (see LearnKeyLayer). Independent of sequence length T and "
+                         "of --d-model D -- this is the whole point (spiking-realizable = a bounded population, "
+                         "unlike assoc's per-token O(T) key count). Default 64.")
+    ap.add_argument("--linattn-baseline-margin", dest="linattn_baseline_margin", type=float, default=0.0505,
+                    help="(--recurrence learnkey only, REPORTING) the already-measured linattn 6-seed mean "
+                         "deep-context margin_vs_trigram (research/findings/2026-09-03-OPEN-FLUENCY-"
+                         "BREAKTHROUGH-linattn-deployable-spiking-mouth-beats-trigram-6of6.md: mean +0.0505, "
+                         "min +0.039, max +0.060). Printed alongside each learnkey seed's own margin so the "
+                         "report answers the actual question this fallback exists for -- not just 'does it beat "
+                         "trigram' but 'is it AT LEAST AS GOOD AS the mechanism already in production candidacy' "
+                         "-- without requiring a fresh linattn run in the same invocation. Purely a report-time "
+                         "comparison constant; does not affect training or any other --recurrence choice.")
     ap.add_argument("--hippo-tau-lo", dest="hippo_tau_lo", type=float, default=1.5,
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
@@ -1502,6 +1685,20 @@ def main():
             go = (deep["margin_vs_trigram"] > 0.02) and (deep["wkv_perm"] - deep["wkv"] > 0.05) and (deep["wkv_memoryless"] - deep["wkv"] > 0.05)
             print(f"    [seed {seed}] DEEP (d10-99): WKV-beats-trigram {deep['margin_vs_trigram']:+.3f}, perm-collapse {deep['wkv_perm']-deep['wkv']:+.3f}, "
                   f"mless-collapse {deep['wkv_memoryless']-deep['wkv']:+.3f} -> {'GO' if go else 'no-go'}", flush=True)
+            if args.recurrence == "learnkey":
+                # BUILD-AHEAD FALLBACK GO GATE (2026-09-04, see LearnKeyLayer's HONEST SCOPE docstring section):
+                # the universal per-arm bar above (>0.02 margin + anti-cheat collapse) is necessary but not
+                # sufficient for THIS mechanism's purpose -- it exists as a candidate REPLACEMENT for linattn,
+                # so it must also at least match linattn's own measured 6-seed deep-context margin
+                # (--linattn-baseline-margin, default the recorded +0.0505 mean), not merely re-clear the same
+                # bar assoc/assoc_t already failed. This is a REPORT-TIME comparison against a constant supplied
+                # on the command line (not a fresh linattn run in this invocation) -- the 6-seed verdict is the
+                # mean of this per-seed comparison across all --seeds, computed the same way the linattn
+                # breakthrough finding itself was (per-seed margin_vs_trigram at d10-99 -> mean/min/max).
+                go_vs_linattn = deep["margin_vs_trigram"] >= args.linattn_baseline_margin
+                print(f"    [seed {seed}] vs-linattn-baseline: learnkey {deep['margin_vs_trigram']:+.3f} vs linattn "
+                      f"{args.linattn_baseline_margin:+.3f} (Δ{deep['margin_vs_trigram']-args.linattn_baseline_margin:+.3f}) "
+                      f"-> {'GO (matches/beats linattn)' if go_vs_linattn else 'short of linattn'}", flush=True)
 
     out = {"runner": "_emerge_wkv_lm_derisk", "corpus": args.corpus, "seeds": args.seeds, "d_model": args.d_model,
            "pred_aux_weight": args.pred_aux_weight, "pred_aux_offsets": args.pred_aux_offsets,
