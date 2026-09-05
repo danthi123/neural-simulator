@@ -3881,7 +3881,17 @@ def _build_chat_brain(brain: str, renderer: str):
         # bundle's own facts.json -- see load_developed_brain's own slotbinder_* wiring) for readiness testing.
         # Default (unset) -> composer_kind=None -> load_developed_brain falls through to the manifest's own
         # composer_kind, BYTE-IDENTICAL to before this flag existed. Does NOT flip the production default.
-        _composer_kind_override = os.environ.get("BRAIN_COMPOSER_KIND") or None
+        # NARROWED to 'slotbinder' ONLY (an adversarial skeptic finding, same session): forwarding an ARBITRARY
+        # BRAIN_COMPOSER_KIND value here (as a first draft of this change did) is a genuinely different, larger
+        # risk than intended -- e.g. 'rate' against an 'rf'-saved bundle hits developed_brain_io._restore_facts's
+        # composite fast-path with a composer (CoreSimComposer) whose `.kb` entries are a DIFFERENT, incompatible
+        # shape (an (ON,OFF) tuple vs RF's flat array), silently corrupting recall rather than crashing --
+        # data_io.py's own `composer_kind_changed` guard now also defends against this generically, but this
+        # call site has no reason to expose 'rate'/'onebrain' overrides here at all (only 'slotbinder' was ever
+        # the intent), so it is explicitly allowlisted rather than passed through.
+        _composer_kind_override = os.environ.get("BRAIN_COMPOSER_KIND")
+        if _composer_kind_override != "slotbinder":
+            _composer_kind_override = None
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                composer_kind=_composer_kind_override,

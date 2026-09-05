@@ -100,39 +100,71 @@ behavior exactly:
       embedded-clause fact falls back to blind sparsification (`prewire_facts=None`) rather than crashing, since
       `SlotBinderComposer._required_fillers_from_prewire` deliberately raises on clause patients (day_33 is 100%
       flat SVO, so this fallback path is untested live here -- an honest gap, not a claim).
-   b. `_restore_facts()`: **the real bug fix.** `can_direct = not bool(getattr(comp, "enable_substrate_store",
-      False))` is now `can_direct = hasattr(comp, "kb") and not bool(getattr(comp, "enable_substrate_store",
-      False))`. Without this, `comp.kb.append(...)` on a `SlotBinderComposer` (which has no `.kb` -- its facts
-      live in `.facts`, taught into per-slot synapses) raises `AttributeError` whenever a bundle has a persisted
-      `kb_composites.npz` -- true of `bridges/developed/scale787/day_33`, confirmed by direct listing
-      (`kb_composites.npz` present, 241,796 bytes). This was a LATENT bug (`composer_kind='slotbinder'` was never
-      reachable from the developed-brain loader before this session, so the combination never occurred in
-      production); it strictly widens a pre-existing crash-avoidance check and changes nothing for any composer
-      that DOES have `.kb` (`RFPhasorComposer`, `OneBrainComposer`, `Pool1BoundComposer` all do -- checked
-      directly in `one_brain_composer.py`).
+   b. `_restore_facts()`: **the real bug fix, TWICE over (the second round found by adversarial verification --
+      see S2a).** First pass: `can_direct = not bool(getattr(comp, "enable_substrate_store", False))` became
+      `can_direct = hasattr(comp, "kb") and not bool(...)`. Without this, `comp.kb.append(...)` on a
+      `SlotBinderComposer` (which has no `.kb` -- its facts live in `.facts`, taught into per-slot synapses)
+      raises `AttributeError` whenever a bundle has a persisted `kb_composites.npz` -- true of
+      `bridges/developed/scale787/day_33`, confirmed by direct listing (`kb_composites.npz` present, 241,796
+      bytes). This was a LATENT bug (`composer_kind='slotbinder'` was never reachable from the developed-brain
+      loader before this session, so the combination never occurred in production). **But `hasattr(comp,'kb')`
+      alone was NOT sufficient** -- `CoreSimComposer` ('rate') ALSO has a `.kb` list, in a STRUCTURALLY
+      INCOMPATIBLE format (`(fact, (ON_array, OFF_array))` 2-tuples, vs `RFPhasorComposer`'s flat `[D]`
+      composite), so loading an 'rf'-saved bundle under `composer_kind='rate'` would have hit
+      `hasattr==True` and SILENTLY corrupted recall (wrong drive currents, no exception) rather than crashing --
+      worse than the SlotBinder case, and newly REACHABLE because of change (5) below. Second pass adds a
+      general, family-agnostic guard: `_restore_facts` now also takes `composer_kind_changed` (True whenever the
+      resolved `composer_kind` differs from the bundle's OWN saved `manifest['composer_kind']`) and
+      unconditionally disables the fast path whenever true -- forcing a full, always-correct re-`store()`
+      regardless of which two composer families are involved. `hasattr(comp,'kb')` remains as defense-in-depth
+      for the same-family case. Verified: a direct unit-level reconstruction of `CoreSimComposer`'s exact `.kb`
+      shape confirms the OLD logic would have taken the fast path (`can_direct=True`) and the NEW logic correctly
+      forces re-store (`composer_kind_changed=True` short-circuits it) -- `CoreSimComposer` itself cannot be
+      constructed end-to-end in this sandbox (a separate, pre-existing "denoise64 cache" dependency unrelated to
+      this fix), so the unit-level reconstruction is the verification, not a full agent-level round-trip.
 5. **`webapp/server.py`** -- `_build_chat_brain`'s developed-brain branch now reads `BRAIN_COMPOSER_KIND` (the
-   SAME env var that already selects the tiny-demo composer, `_COMPOSER_KIND_DEFAULT` above) and passes it as an
+   SAME env var that already selects the tiny-demo composer, `_COMPOSER_KIND_DEFAULT` above), **NARROWED to
+   forward ONLY the literal value `"slotbinder"`** (any other value, including unset, resolves to `None` --
+   an adversarial-verification correction: an earlier draft of this change forwarded ANY `BRAIN_COMPOSER_KIND`
+   value, which is exactly the new reachability the cross-family bug above needed; only `slotbinder` was ever
+   the actual intent) and passes it as an
    explicit `composer_kind=` override to `load_developed_brain`. Unset (`None`) is passed through explicitly,
    which is structurally identical to the pre-existing call (which passed nothing, defaulting to `None` inside
    `load_developed_brain` regardless) -- **byte-identical by construction, not merely by empirical luck.**
    *Naming note:* the task named `BRAIN_COMPOSER` as an example flag; this reuses the ALREADY-ESTABLISHED
    `BRAIN_COMPOSER_KIND` (wired for the tiny-demo path since before this session) rather than introducing a
-   second, overlapping name -- a documented judgment call, not a deviation from intent. One side effect of this
-   choice, flagged for honesty: `BRAIN_COMPOSER_KIND=onebrain`/`rate` now ALSO reaches the developed-brain path
-   for the first time (previously silently ignored there); untested in this session beyond the `slotbinder` case.
+   second, overlapping name -- a documented judgment call, not a deviation from intent. `BRAIN_COMPOSER_KIND=
+   onebrain`/`rate` do NOT reach the developed-brain path (the allowlist narrowing above keeps that branch's
+   behavior for every value other than `slotbinder` exactly as it was before this session, for every composer
+   family, not just the one this task asked for).
 
 Plus one new runner, `research/runners/_slotbinder_l3_latency_derisk.py`, built for S4's measurement (reuses
 L2's own `_slotbinder_l2_sparse_derisk.py` loader/sampler rather than duplicating it).
 
-## 2. Wiring verification (a deterministic check, 1 seed, mirrors L1/L2 precedent -- see frontmatter seed-waiver)
+## 2. Wiring verification (a deterministic check, 1 seed, mirrors L1/L2 precedent -- see frontmatter seed-waiver) -- CORRECTED after adversarial verification (see S2a)
 
 <!--derived: this section's PASS/FAIL judgments are read directly from the verification script's own printed
 comparisons; no number here is computed from another number-->
 
+**S2a -- what the FIRST verification pass got wrong, and why this section is the corrected one.** An
+independent adversarial skeptic (per this project's `verify-go` discipline, run before this finding's numbers
+were treated as settled) refuted the first pass's own test setup: it used `SlotBinderComposer`'s default
+10-word vocabulary + `max_facts=3`, giving `KF=16` -- and with `fanout=32 >= KF=16`,
+`build_binder_bridge`'s own `sparse = fanout is not None and int(fanout) < KF` evaluates **False**, so the test
+silently took the DENSE fallback path (byte-identical to `fanout=None`) and never exercised the sparse
+fanout/`required_fillers` pre-registration logic AT ALL -- the real day_33 scale has `KF=1195 >> fanout=32`, a
+qualitatively different branch. The table below is from a REBUILT test (a 53-word vocab, still 3 facts, giving
+`KF=59 > 32`) that explicitly asserts `sparse=True` was taken by inspecting the built bridge's own `_fanout`/
+`_filler_candidates` attributes directly (not inferred from KF arithmetic) before trusting any answer it gives.
+The SAME adversarial round independently found a second, more serious bug in the S1.4b fix itself (the
+cross-family `.kb`-format corruption -- see S1.4b's own updated text) and confirmed the S4/S6 6-seed
+production-scale NO-GO verdict is robust (see S7).
+
 Built a tiny synthetic developed-brain bundle with the EXACT structure `save_developed_brain(composer_kind="rf")`
 produces (including its own `kb_composites.npz` -- the file whose presence is what makes the bug in S1.4b real,
-not hypothetical), taught it 3 facts (`dog chase cat`, `cat eat fish` [negated], `bird see dog`), then reloaded
-it via `load_developed_brain(path, use_multiturn=True, composer_kind="slotbinder")` -- the exact call shape
+not hypothetical), a 53-word vocabulary (so `KF=59` genuinely exceeds `fanout=32`), taught it 3 facts
+(`dog chase cat`, `cat eat fish` [negated], `bird see mouse`), then reloaded it via
+`load_developed_brain(path, use_multiturn=True, composer_kind="slotbinder")` -- the exact call shape
 `webapp/server.py`'s new code path makes when `BRAIN_COMPOSER_KIND=slotbinder` is set.
 
 | check | result |
@@ -140,14 +172,16 @@ it via `load_developed_brain(path, use_multiturn=True, composer_kind="slotbinder
 | reload crashes on the kb-composite fast path? | NO (confirms the S1.4b fix is both necessary and sufficient -- the crash was reproduced on the pre-fix code path first, then fixed) |
 | reloaded composer class | `SlotBinderComposer` |
 | `composer.fanout` / `max_facts` / prewired fact count | `32` / `3` / `3` (all correctly sized/fanned-out to the bundle) |
-| `what_does("dog","chase")`, `what_does("cat","eat")`, `who_does("see","dog")` | `cat`, `fish`, `bird` -- all correct |
+| **sparse path genuinely taken** (`b._fanout is not None` AND `b._filler_candidates` non-empty, checked directly on the built bridge, not inferred) | YES -- `b._fanout=32`, 15 of 15 slots carry a candidate set |
+| `what_does("dog","chase")`, `what_does("cat","eat")`, `who_does("see","mouse")` | `cat`, `fish`, `bird` -- all correct |
 | `is_it_true("dog","chase","cat")` / `is_it_true("cat","eat","fish")` (negated) | `yes` / `no` -- polarity slot correct |
 | MOAT: `what_does("fish","north")` (never taught) | `None` -- abstains correctly |
 | **byte-identical-off**: reload with `BRAIN_SLOTBINDER_FANOUT`/`composer_kind` override both absent | resolves to the manifest's own persisted `composer_kind` (`rf`-family), `what_does("dog","chase")=="cat"` -- unperturbed |
-| existing regression suites | `tests/test_slotbinder_composer.py` 8/8, `test_developed_brain_io_codes_roundtrip.py` 3/3, `test_multi_turn_agent.py` 3/3 -- all pass unmodified |
+| existing regression suites | `tests/test_slotbinder_composer.py` 8/8, `test_developed_brain_io_codes_roundtrip.py` 3/3, `test_multi_turn_agent.py` 3/3 -- all pass unmodified (re-run after S1.4b's second-pass fix too) |
 
-**The wire-in mechanism operates exactly as designed, end to end, through the SAME code path the webapp calls.**
-(Two PRE-EXISTING, unrelated test failures were noticed and diagnosed while checking for regressions --
+**The wire-in mechanism operates exactly as designed, end to end, through the SAME code path the webapp calls,
+and this time the test actually exercises the sparse regime production uses.** (Two PRE-EXISTING, unrelated
+test failures were noticed and diagnosed while checking for regressions --
 `test_render_hypothesis_fluent_flagged_guess_stub`/`_template_fallback_without_mouth` in
 `tests/test_open_ended_generation_fluent.py`, an unrelated "maybe" vs "perhaps" hypothesis-phrasing mismatch --
 confirmed present identically on a `git stash`-clean checkout of this same commit, i.e. NOT caused by this
@@ -217,13 +251,22 @@ NOW-VECTORIZED code (no regression from S3's fix). Mean query latency across all
 24 timed queries: 146.5s (seed 100). Min across all 24: 34.5s (seed 42) -- even the SINGLE FASTEST query observed
 anywhere in this sweep is ~38x slower than FHRR's own MEAN. Mean build+store (2 facts): 288.5s.**
 
-**Machine-load caveat (matching L1/L2's own precedent):** this shared dev machine ran load average 7.5-12.9
-throughout the sweep (concurrent unrelated jobs: a 60-day longitudinal develop-loop, an `lm_train_run`
-compile-heavy training run, a RAG index rebuild) -- absolute latencies are plausibly inflated versus a quiescent
-machine, and per-seed variance (53-90s means) likely reflects fluctuating contention as much as any
-seed-dependent effect. The qualitative verdict is robust to this: even a generous 5x contention-adjustment (68.5s
--> ~13.7s) leaves SlotBinder over an order of magnitude slower than FHRR and still outside the "not yet a
-live-turn budget" bar this project has applied elsewhere.
+**Machine-load caveat (matching L1/L2's own precedent), adversarially checked, not merely asserted:** this
+shared dev machine ran load average 7.5-12.9 throughout the sweep (concurrent unrelated jobs: a 60-day
+longitudinal develop-loop, an `lm_train_run` compile-heavy training run, a RAG index rebuild). An independent
+skeptic (per `verify-go`) reconstructed the exact simulation-step count each of the 24 timed queries requires
+from `_match()`/`read_slot()`'s own source (80/120/160 steps depending on match position) and divided out an
+implied per-step cost for every query: **0.33-1.22s/step across all 24 -- only a ~3.7x spread**, far tighter
+than a 10-50x contention hypothesis would predict, and consistent with the L1 finding's own DIRECT (not
+extrapolated) 0.113s/step measurement at a comparable synapse count on this SAME busy machine. Applying the
+SINGLE LOWEST observed per-step rate uniformly to the mean 120-step query gives ~40s -- a ~1.7x improvement over
+the raw 68.5s mean, not the 5x this section originally (and un-conservatively) assumed -- and that 40s floor is
+still **~44x slower than FHRR's 0.9s**. Structurally, FHRR reuses one small, fixed, ~D=128-scale neuron
+population regardless of corpus size, time-multiplexed across every operation; SlotBinder simulates a dedicated
+`n_neurons=64,324`/`~28.6M`-synapse network on every single query -- no plausible amount of reduced contention
+closes that architectural gap on CPU/numpy. The qualitative NO-GO verdict holds, and holds MORE decisively than
+this finding's own first-pass "5x" framing assumed (SURVIVED an adversarial check aimed specifically at finding
+a contention-driven reversal).
 
 ## 5. The full-corpus teach/boot-cost extrapolation -- a second, independent, even more decisive residual
 
@@ -266,6 +309,25 @@ here, not re-derived from L1's dense-topology fit.
 failure fails the whole gate). **The wire-in MECHANISM itself is a genuine, verified success and is real,
 reusable infrastructure** for whenever the latency residual is addressed -- it is not thrown away by this
 verdict.
+
+## 6a. Adversarial verification (`verify-go`) -- run before this finding's numbers were treated as settled
+
+Per this project's `verify-go` discipline, three independent skeptics were dispatched against this finding's
+draft, each a distinct lens, each told to default to REFUTED if uncertain. **Two REFUTED a real claim; one
+SURVIVED under adversarial pressure.** All three are reflected in the corrected text above, not set aside.
+
+| lens | target claim | verdict | what changed as a result |
+|---|---|---|---|
+| gate-cheat / correctness audit | "the widened `hasattr(comp,'kb')` check changes nothing for any composer that has `.kb`" | **REFUTED** | found `CoreSimComposer` ('rate') has `.kb` in an INCOMPATIBLE 2-tuple format -- silent cross-family composite corruption, newly reachable via this session's own webapp change. Fixed: the `composer_kind_changed` root-cause guard (S1.4b) + narrowing the webapp override to `slotbinder` only (S1.5) |
+| small-scale-to-production generalization | "the wire-in verification (S2) is verified end-to-end through the same code path the webapp calls" | **REFUTED** | found the S2 test's tiny 10-word vocab made `fanout=32 >= KF=16`, so it silently took the DENSE fallback and never exercised the sparse `required_fillers` mechanism the production `fanout=32` config actually uses. Fixed: rebuilt S2 with a vocab sized so `KF=59>32`, and added a direct assertion (`b._fanout`/`b._filler_candidates`) that the sparse branch was genuinely taken, not inferred |
+| reproducibility / contention-confound | "the 6-seed NO-GO verdict is robust... even a generous 5x contention-adjustment" | **SURVIVES** (with a correction: "5x" was asserted, not measured) | independent per-step reconstruction from the raw JSONs found only a ~3.7x spread in implied per-step cost across all 24 queries (0.33-1.22s/step) -- TIGHTER than "5x", and the worst-case floor (~40s) is still ~44x slower than FHRR. Section 4's contention-caveat text was rewritten to cite this reconstruction instead of an assumed multiplier |
+| instrument-trust (self-check, not a separate skeptic) | the raw arithmetic in S4/S5 | **SURVIVES** | the reproducibility-lens skeptic independently recomputed every mean/min/max/CPU-hour figure directly from the 7 raw JSONs and found no discrepancy (exact match to the stated 68.5s mean, 146.5s max, ~14.4 CPU-hour extrapolation) |
+
+**Two real gaps were found and fixed before this finding's verdict was treated as final** -- this is exactly
+what the discipline is for: a clean-looking S2 table and a clean-looking contention caveat both concealed real
+problems that only independent adversarial pressure surfaced. Neither fix changes the OVERALL verdict (still
+NO-GO on latency; the wire-in mechanism still stands, now on firmer ground); both fixes are additive,
+default-off, and re-verified against the full existing test suite (14/14 pass) after landing.
 
 ## 7. Honest scope / residual before any default flip
 
