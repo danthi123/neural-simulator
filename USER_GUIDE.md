@@ -11,10 +11,15 @@ working, episodic, and prospective memory, colors its reply with a functional
 affect signal, runs inner-state monitors (a surprise notice, a confidence
 hedge), asks a curiosity follow-up when it hits a novel topic, and can
 volunteer a novel, clearly-flagged guess on an open-ended prompt. It is NOT yet
-a fluid, fully open-ended conversational system: its fluent prose surface still
-uses an external language-model "mouth" (Qwen2.5-0.5B), much of the
-load-bearing cognition still runs in host Python rather than on neurons, and no
-host scaffold has been fully retired yet. Every self-report it gives (for
+a fluid, fully open-ended conversational system: as of 2026-09-04 its fluent
+prose surface is produced by default by the brain's own spiking "mouth", but
+that mouth is not yet fluent enough on broad, arbitrary-topic conversation to
+fully retire the external language-model scaffold it graduated from
+(Qwen2.5-0.5B), which still stands in for it there. Much of the load-bearing
+cognition still runs in host Python rather than on neurons, and so far only one
+host scaffold has been fully retired onto the spiking substrate: the recall
+composer's own mechanism (its host full-scan / NumPy recall path is now an
+opt-out oracle, the spiking store being the default). Every self-report it gives (for
 example "my familiarity monitor reads this as novel") is an honest functional
 read-out of an internal spiking signal, never a claim of felt or subjective
 experience. See [Current State](docs/CURRENT-STATE.md) for the present
@@ -141,7 +146,7 @@ was never taught the answer, it declines instead of guessing.
 # GPU-free smoke chat on a tiny built-in brain
 SIM_BACKEND=numpy python -m research.runners.brain_chat_tui --stub-renderer --tiny-demo
 
-# talk to a developed-brain bundle (fluent Qwen mouth, needs a GPU)
+# talk to a developed-brain bundle (brain's own spiking mouth by default, needs a GPU)
 SIM_BACKEND=cupy python -m research.runners.brain_chat_tui --load <bundle-or-codes.json>
 ```
 
@@ -155,10 +160,13 @@ with abstentions shown distinctly, a renderer selector, and toggles to reveal
 the recalled fact and what the brain did on the turn. Start the dashboard as
 described below.
 
-The fluent prose you read is produced by an external language-model renderer,
-not by the brain's neurons. The brain supplies and verifies the *content* of
-every reply, and that verification (the moat) is what keeps it from making
-things up. Read [Current State](docs/CURRENT-STATE.md) and the
+The fluent prose you read is produced by default by the brain's own spiking
+"mouth", not an external model — though on broad or arbitrary topics that mouth
+is not yet fluent enough to stand alone, and the external Qwen2.5-0.5B
+language-model scaffold it graduated from still renders those replies instead.
+Whichever renderer phrases the reply, the brain supplies and verifies the
+*content* of every reply, and that verification (the moat) is what keeps it
+from making things up. Read [Current State](docs/CURRENT-STATE.md) and the
 [Chat Demo Guide](docs/CHAT-DEMO-GUIDE.md) before interpreting a conversation:
 much of the load-bearing cognition still runs in host code, and no capability
 should be read as complete from a single demo.

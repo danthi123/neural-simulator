@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-09-05 — One shared neural pool for core cognition; the fact-recall speed wall solved; more host shortcuts retired; own-voice fluency re-aimed
+
+### One-brain substrate consolidation and a production speed fix
+
+- **Surprise, world-model, self-monitoring and phrasing now share one literal neural pool by default (2026-09-05).** These four organs — previously co-resident but separate networks — were merged onto a single shared spiking substrate and verified safe before the flip; this is the "one-brain" step, not just organs sitting side by side. Finding: `2026-09-05-onebrain-single-pool-production-flip-derisk-GO.md`.
+- **The meaning-composer's fact-recall speed wall is solved and shipped on by default (2026-09-05).** A hippocampus-style sharded lookup (DG-CA3-inspired sublinear spiking retrieval) replaces the prior full-scan recall, running roughly 400x faster with no loss of recall accuracy and no weakening of the no-confabulation guarantee. Finding: `2026-09-05-onebrain-fact-shard-dg-ca3-sublinear-spiking-retrieval-derisk-GO.md`.
+- **Four more host shortcuts flipped on by default after lesion verification (2026-09-05):** the salience/attention signal, the value-driven action-choice circuit, body-state-driven affective appraisal, and the "halt a shaky thought" stop mechanism are now load-bearing, default-on spiking circuits in the live chat rather than host computation standing in for them.
+
+### Own-voice fluency: two candidate mechanisms tested and banked, not shipped
+
+- **The brain's own from-scratch spiking "mouth" remains the default generation path (flipped 2026-09-04)** — it beats a simple word-pair baseline on simple text at a deployable size, but is honestly not yet fluent enough on broad, arbitrary-topic text to retire the Qwen2.5-0.5B language-model scaffold, which remains the tracked #1 blocker.
+- **Two candidate memory-write mechanisms for that fluency wall were built and tested this week, and both fell short of the bar.** An erase-before-write "delta-rule" memory write showed only a modest lift on the decisive wikitext-103 test, below the bar for shipping; a HiPPO/content-addressable-attention "hippokey" memory was a clear NO-GO. Both are banked (recorded, not deployed) rather than discarded, and a ranked next-step plan was produced via deep external research rather than another ad hoc lever.
+
+### Same-cycle: full knowledge base defaulted on, and a measurement bug caught and fixed (2026-09-02)
+
+- **The brain's full ~79,000-fact knowledge base is now the default it talks from**, replacing the earlier 15,000-fact core, with the prior blockers to that scale-up cleared.
+- **An organ-merge safety-checker was built** to guard future one-brain consolidation steps like the 2026-09-05 pool merge above.
+- **A widespread measurement bug (a stale reset between test reads) was found and fixed across 14 similar tests.** Correcting it flipped one on-by-default capability — curiosity steering working memory — from a passing verdict to failing, and it was switched off as a result; the earlier "pass" is superseded by this corrected read.
+- **The first real cross-organ influence landed on the shared substrate** (surprise updates the world-model), wired into the live chat but off by default pending further verification.
+
+### Honest state of the whole (do not read the wins as more than they are)
+
+As of the production-integration ledger head (`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`, 2026-09-05): 64 faculties are tracked in total, 29 run as genuinely load-bearing, lesion-verified spiking circuits in the default production chat turn, and only 1 is fully scaffold-retired onto the one-brain substrate — the ledger's own note states that most of the live chat's load-bearing cognition is still host, NumPy, or off-bridge.
+
+A mechanical production-integration gate (`tools/gates/production_integration.py`) now cross-checks every ledger row's claimed state against live source-code anchors before a doc can claim more than the code does. Affect, self-model and metacognitive read-outs remain **functional read-outs only** ("my familiarity monitor reads this as novel, so I'm uncertain") — never a claim of feeling or phenomenal experience.
+
 ## [Unreleased] — 2026-08-19 — The brain's own signals now steer the live conversation; a production correctness fix; and an honest observe-vs-drive audit
 
 ### The frontier moved from "wire it in" to "make it load-bearing"
