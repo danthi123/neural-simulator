@@ -1,0 +1,58 @@
+{
+  "mode": "smoke",
+  "wall_s": 0.58,
+  "one_pair_probe": {
+    "on_bridge_read_sample": [
+      0.1,
+      -0.1,
+      0.0
+    ],
+    "exact_read_sample": [
+      0.251459939266908,
+      -0.26420919816420746,
+      1.2808427392010857
+    ],
+    "den_ema_settled": 0.08201415836811066
+  },
+  "divisive_vs_subtractive": {
+    "den_probe_scalars": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "den_measured": [
+      0.0,
+      0.08201415836811066,
+      0.0789392739534378
+    ],
+    "num_probe_scale": [
+      1.0,
+      2.0,
+      3.0
+    ],
+    "slopes": [
+      0.09999999999999994,
+      0.049999999999999975,
+      -0.05000000000000003
+    ],
+    "intercepts": [
+      8.272047610686e-17,
+      -0.0333333333333333,
+      0.1666666666666667
+    ],
+    "linear_fit_r2_1_over_slope_vs_den": 0.060233179191759856,
+    "offset_range_across_den": 0.2,
+    "verdict": "SUBTRACTIVE_OR_MIXED"
+  },
+  "sigma_domination": {
+    "sigma_sweep": [
+      0.05,
+      1000000.0
+    ],
+    "driven_over_silent_ratio": [
+      0.0,
+      NaN
+    ]
+  },
+  "note": "SMOKE SCALE (D=8, ~20 settle steps) -- plumbing check only, not the full de-risk's GO gate."
+}

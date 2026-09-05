@@ -283,6 +283,20 @@ class BrainRegion:
     # unless BOTH this flag and cfg.enable_input_divisive_norm_2 are set (cp_input_divisive_mask_2 stays
     # None otherwise). See research/findings/2026-06-20-shortcut6-FIXA-divnorm-accumulator.md.
     input_divisive_norm_2: bool = False
+    # SHUNT-NORM READ POOL (Tier-2 linattn on-bridge divisive normalization, 2026-09-04; DESIGN doc
+    # research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3). When True AND
+    # cfg.enable_shunt_norm_pool, this region's neurons divide their pre-threshold input by
+    # (shunt_norm_sigma + shunt_norm_gain*den_ema), where den_ema is the firing-rate EMA of the
+    # region(s) flagged shunt_norm_source below -- an EXTERNAL scalar divisor (unlike input_divisive_
+    # norm/_2, whose pool is the flagged set's OWN current mean; that is the wrong axis for this use,
+    # DESIGN doc Sec 1). Guarded no-op unless BOTH this flag and cfg.enable_shunt_norm_pool are set, and
+    # at least one OTHER region sets shunt_norm_source (cp_shunt_norm_read_mask stays None otherwise).
+    shunt_norm_read: bool = False
+    # SHUNT-NORM SOURCE / NORM NEURON(S): this region's mean firing rate (a slow EMA, tau=shunt_norm_
+    # rate_tau_ms) supplies the shared divisor den_ema for every shunt_norm_read region -- the
+    # Carandini-Heeger normalization pool realized as a designated neuron population (DESIGN doc Sec 2-3).
+    # Guarded no-op unless cfg.enable_shunt_norm_pool and >=1 region sets shunt_norm_read.
+    shunt_norm_source: bool = False
 
     def __post_init__(self) -> None:
         positive_hh_fields = (

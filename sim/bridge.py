@@ -571,6 +571,9 @@ class SimulationBridge:
         self.cp_rf_store_dense = None
         self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
         self.cp_input_divisive_mask_2 = None              # bool per-neuron: SECOND independent divisive-norm pool (FIX A, sel_X; None unless flagged region)
+        self.cp_shunt_norm_read_mask = None               # bool per-neuron: shunt_norm_read neurons (Tier-2 linattn on-bridge divisive norm; None unless flagged region)
+        self.cp_shunt_norm_source_mask = None             # bool per-neuron: shunt_norm_source (norm-neuron) pool supplying den_ema (None unless flagged region)
+        self.cp_shunt_norm_den_ema = None                 # scalar (len-1 array): the shared external divisor's firing-rate EMA (den); None unless both masks above are set
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -2290,6 +2293,43 @@ class SimulationBridge:
                             f"Input-divisive-norm pool-2 per-region mask: {len(idn2_regions)} regions enabled "
                             f"({sum(int(r.n_neurons) for r in idn2_regions)} neurons)",
                         )
+
+                # SHUNT-NORM pool masks (Tier-2 linattn on-bridge divisive normalization, 2026-09-04;
+                # DESIGN doc research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md
+                # Sec 3-4). Unlike the two pools above (whose divisor is the flagged set's OWN current
+                # mean), this pool's divisor is an EXTERNAL scalar `den_ema` -- the firing-rate EMA of a
+                # SEPARATE region flagged shunt_norm_source (the norm-neuron pool). Built ONLY if
+                # cfg.enable_shunt_norm_pool AND >=1 region sets shunt_norm_read AND >=1 (other) region
+                # sets shunt_norm_source; otherwise cp_shunt_norm_read_mask/_source_mask/_den_ema all stay
+                # None so default configs are byte-identical (the per-step apply + EMA-update blocks are
+                # unreached). den_ema starts at 0.0 (matches the exact recursion's zden_0=0 -- no
+                # match-mass has accumulated yet).
+                if getattr(cfg, "enable_shunt_norm_pool", False):
+                    sn_read_regions = [r for r in self.region_manager.regions()
+                                       if getattr(r, "shunt_norm_read", False)]
+                    sn_source_regions = [r for r in self.region_manager.regions()
+                                         if getattr(r, "shunt_norm_source", False)]
+                    if sn_read_regions and sn_source_regions:
+                        sn_read_mask = cp.zeros(n, dtype=cp.bool_)
+                        for r in sn_read_regions:
+                            idx = list(self.region_manager.indices(r.name))
+                            if idx:
+                                sn_read_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                        sn_source_mask = cp.zeros(n, dtype=cp.bool_)
+                        for r in sn_source_regions:
+                            idx = list(self.region_manager.indices(r.name))
+                            if idx:
+                                sn_source_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                        if cp.any(sn_read_mask) and cp.any(sn_source_mask):
+                            self.cp_shunt_norm_read_mask = sn_read_mask
+                            self.cp_shunt_norm_source_mask = sn_source_mask
+                            self.cp_shunt_norm_den_ema = cp.zeros(1, dtype=cp.float32)
+                            self._log_console(
+                                f"Shunt-norm pool: {len(sn_read_regions)} read region(s) "
+                                f"({int(cp.sum(sn_read_mask))} neurons) shunted by "
+                                f"{len(sn_source_regions)} source region(s) "
+                                f"({int(cp.sum(sn_source_mask))} neurons)",
+                            )
 
             # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
             # pattern inverted: a second inhibitory conductance with its own slow
@@ -9063,6 +9103,25 @@ class SimulationBridge:
                     total_input_current_pA * (1.0 - _idn2_mask_f)
                     + _idn2_mask_f * total_input_current_pA / _idn2_divisor)
 
+            # ── SHUNT-NORM pool (Tier-2 linattn on-bridge divisive normalization, 2026-09-04; DESIGN doc
+            # research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md Sec 3-4). A THIRD
+            # divisive pool, structurally identical to the two above (r_i = x_i / (sigma + gain*pool)),
+            # but `pool` is READ, not computed here -- it is `cp_shunt_norm_den_ema`, the EXTERNAL scalar
+            # firing-rate EMA of the shunt_norm_source region, updated in the homeostatic step below from
+            # THIS step's spikes (so this read uses the value settled by all PRIOR steps -- the causal
+            # GABA_A-shunt-settling the design names, Sec 3b). sigma plays the design's g_leak/epsilon
+            # role; gain is the design's k. GUARDED NO-OP: cp_shunt_norm_read_mask is None unless
+            # cfg.enable_shunt_norm_pool + a read region + a source region are all set, so this block is
+            # unreached and total_input_current_pA is byte-identical when off.
+            if self.cp_shunt_norm_read_mask is not None:
+                _sn_sigma = cp.float32(getattr(cfg, "shunt_norm_sigma", 1e-6))
+                _sn_gain = cp.float32(getattr(cfg, "shunt_norm_gain", 1.0))
+                _sn_mask_f = self.cp_shunt_norm_read_mask.astype(cp.float32)
+                _sn_divisor = _sn_sigma + _sn_gain * self.cp_shunt_norm_den_ema[0]
+                total_input_current_pA = (
+                    total_input_current_pA * (1.0 - _sn_mask_f)
+                    + _sn_mask_f * total_input_current_pA / _sn_divisor)
+
             # ── Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15;
             # subtractive spike-frequency adaptation / point-neuron predictive coding). For each
             # FLAGGED neuron, subtract a SLOW running mean of its OWN pre-threshold input drive
@@ -11126,6 +11185,25 @@ class SimulationBridge:
                 self.cp_dendritic_source_activity = (
                     (cp.float32(1.0) - _dga) * self.cp_dendritic_source_activity
                     + _dga * fired_this_step.astype(cp.float32))
+
+            # Shunt-norm pool (Tier-2 linattn on-bridge divisive normalization, 2026-09-04): update the
+            # shared den_ema from the shunt_norm_source region's mean firing THIS step, decoupled from
+            # homeostasis exactly like the dendritic EMA above. den_ema <- (1-alpha)*den_ema +
+            # alpha*mean_i(fired_i) over the source-masked neurons; alpha = dt_ms/tau (a GABA_A-like
+            # ~5-10ms settling time constant, DESIGN doc Sec 3b). The apply block above reads this value
+            # from BEFORE this step's update (last step's settled den) -- the same causal ordering as
+            # cp_dendritic_source_activity. GUARDED: cp_shunt_norm_source_mask is None unless
+            # enable_shunt_norm_pool + both a read and a source region are set, so this is skipped and
+            # byte-identical when off.
+            if self.cp_shunt_norm_source_mask is not None:
+                _sn_tau = max(float(getattr(cfg, "shunt_norm_rate_tau_ms", 8.0)), float(cfg.dt_ms))
+                _sn_alpha = cp.float32(float(cfg.dt_ms) / _sn_tau)
+                _sn_src_mask_f = self.cp_shunt_norm_source_mask.astype(cp.float32)
+                _sn_src_n = cp.maximum(cp.sum(_sn_src_mask_f), cp.float32(1.0))
+                _sn_rate_now = cp.sum(_sn_src_mask_f * fired_this_step.astype(cp.float32)) / _sn_src_n
+                self.cp_shunt_norm_den_ema = (
+                    (cp.float32(1.0) - _sn_alpha) * self.cp_shunt_norm_den_ema
+                    + _sn_alpha * _sn_rate_now)
 
             _homeostasis_active = (cfg.enable_homeostasis
                                    or self.cp_homeostasis_neuron_mask is not None)
