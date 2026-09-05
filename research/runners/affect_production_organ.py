@@ -161,8 +161,21 @@ class AffectProductionOrgan:
                           read_ms: int = SA.LAD_READ_MS) -> dict:
         """SIGN-AWARE neural ladder read. Mirrors SA.read_affect_ladder but drives the V+ ladder for a positive
         appraisal and the V- ladder for a negative one, so the held differential is genuinely signed. `lesion`
-        clamps affect_out=0 -> the readout collapses (the load-bearing proof). Returns the differential + rates."""
+        clamps affect_out=0 -> the readout collapses (the load-bearing proof). Returns the differential + rates.
+
+        BOARD-#84 ADAPTATION (2026-09-05, default-OFF de-risk; scaffold-retirement backlog rank 5):
+        `appraisal_interoceptive_enabled()` routes this call through `research.runners.
+        _appraisal_interoceptive_ladder_derisk.AppraisalInteroceptiveLadder` -- the SAME ladder spec (reused by
+        import) driven by a real interoceptive-relay CURRENT afferent (the board #49/#81 pattern) instead of the
+        `nm.set_concentration(...)` write below. Default (env var unset) -> this method's body below is
+        COMPLETELY UNCHANGED -- byte-identical-off by construction (a distinct code path, not a shared one with
+        new parameters). See `research/findings/` for the de-risk verdict."""
         self.ensure_built()
+        if appraisal_interoceptive_enabled():
+            from research.runners._appraisal_interoceptive_ladder_derisk import get_ladder
+            return get_ladder(self.seed).read_differential(
+                appraisal, lesion=lesion, intero_lesion=appraisal_interoceptive_lesioned(),
+                ramp_ms=ramp_ms, drive_off_ms=drive_off_ms, read_ms=read_ms)
         b, xp, idx, snap = self.bridge, self.xp, self.idx, self.snap
         lad = idx["ladder"]
         _restore_state(b, snap)
@@ -223,6 +236,31 @@ def affect_enabled() -> bool:
 def affect_lesioned() -> bool:
     """`BRAIN_AFFECT_LESION` in {1,true,yes,on} -> clamp affect_out=0 for the load-bearing lesion verify."""
     v = os.environ.get("BRAIN_AFFECT_LESION")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def appraisal_interoceptive_enabled() -> bool:
+    """Default-OFF de-risk flag (board-#84 adaptation, scaffold-retirement backlog rank 5).
+    `BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE` truthy (1/true/on/yes) routes the Gate-B appraisal through the
+    interoceptive-relay CURRENT afferent (`research.runners._appraisal_interoceptive_ladder_derisk.
+    AppraisalInteroceptiveLadder`) instead of the direct host `nm.set_concentration(...)` write in
+    `AffectProductionOrgan.read_differential`. Unset/0/false/no/off -> the ORIGINAL, byte-unchanged host-write
+    path (the current production default)."""
+    v = os.environ.get("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE")
+    if v is None:
+        return False
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
+
+def appraisal_interoceptive_lesioned() -> bool:
+    """`BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE_LESION` truthy -> (only meaningful when the flag above is on) cut the
+    relay->ladder SYNAPSES (the `appraisal_intero_out` transmission gate = 0) so the appraisal can no longer reach
+    the ladder even though the relay pools still fire -- the load-bearing dissociation proof for THIS adaptation,
+    distinct from `lesion=True` (which cuts the ladder's OWN `affect_out` readout gate, identical semantics to the
+    pre-existing host-write path)."""
+    v = os.environ.get("BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE_LESION")
     if v is None:
         return False
     return v.strip().lower() in ("1", "true", "yes", "on")
