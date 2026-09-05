@@ -64,6 +64,22 @@ ANTI-CHEATS (they ARE the result):
      (every RNG derived from the `seed` arg; a re-run byte-compares). This runner uses a standalone numpy
      LIF (lif_spike_read), NOT the CoreSimConfig bridge, so cfg.seed/actual_seed_used do not apply --
      determinism is by explicit per-op seeds + a byte-compare check.
+  5. HELD-OUT-POSITION ROBUSTNESS (--heldout-position, 2026-09-04 build-ahead from the open Q1 named by
+     research/findings/2026-09-03-vision-configural-binding-crossing-is-mostly-capacity-anticheat-caught-
+     it.md: "does the flat-z-norm-capacity crossing hold under...held-out position...or is it partly an
+     ELM-overfit at high width"). The default split above is INTERLEAVED -- every held position is
+     bracketed by trained neighbours on both sides, an INTERPOLATION test a high-capacity readout (large
+     --n-s2/--conj-n under z-norm) can pass by curve-fitting between nearby training positions without any
+     genuine translation-invariant capability. This flag swaps in a CONTIGUOUS-BLOCK split instead (train
+     = first half of position indices, held = second half) -- true spatial EXTRAPOLATION, never bracketed
+     on both sides. Every held-based metric, capability_go included, is recomputed under the harder split.
+  6. LEARNED-READOUT SCRAMBLE-NULL (--scramble-null, same open Q1). Anti-cheat 4's pixel-scramble check
+     only probes the OLD nearest-centroid instrument (scramble_centroid_held below) -- never the LEARNED
+     signed-linear spiking readout capability_go is actually built on, so a high-capacity readout could in
+     principle fit some scramble-surviving statistic (e.g. per-template energy) a plain centroid on the
+     same features would not exploit. This flag ALSO requires the LEARNED readout's own held accuracy on
+     the pixel-scrambled images (scramble_learned_held) to fall to chance+decode_margin as part of
+     capability_go. scramble_learned_held is always computed and reported (a free diagnostic) either way.
 
 BRAIN-BASED status. Somata genuinely SPIKE (LIF: leak, hard threshold, reset, absolute refractory,
 per-step membrane noise) at S1, S2 AND the readout class populations. Common-mode rejection = feedforward
@@ -91,6 +107,20 @@ BCM S2-TEMPLATE-LEARNING smoke (2026-09-01, this de-risk; --s2-learn none is the
       --seeds 42 --s2-learn bcm --s2-bcm-gain 2 --s2-bcm-theta-alpha 0.02 --s2-bcm-pre-floor 0.02 \
       --s2-bcm-epochs 5 --s2-bcm-competitive-frac 0.25 \
       --out research/findings/raw/lanes/perception/vlin_bcm_smoke.json
+
+HELD-OUT-POSITION + SCRAMBLE-NULL robustness smoke (2026-09-04, this de-risk; anti-cheats 5-6 above; both
+flags default OFF -> byte-identical to every prior run of this file when omitted). The DECISIVE full-scale
+robustness re-run is the flat-capacity width-matched control the open Q1 names (n_s2=1152, no binding) vs
+its configural-binding pair, both from the 2026-09-03 finding's own reproduce recipe, now with the two
+anti-cheats added (6 seeds, ready to queue -- NOT run at this scale here):
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --ridge 0.5 --conj-bind none --n-s2 1152 --heldout-position --scramble-null \
+      --seeds 42 43 44 100 101 102 \
+      --out research/findings/raw/lanes/perception/conjbind_widthctrl_n1152_heldoutpos_scramblenull_6seed.json
+This tiny smoke instead only confirms the flags parse + run a single fast seed end-to-end:
+  SIM_BACKEND=numpy python -u -m research.runners._vision_lindiscrim_readout_derisk \
+      --seeds 42 --n-s2 24 --n-pos-total 4 --n-ex 2 --n-glimpses 1 --heldout-position --scramble-null \
+      --out research/findings/raw/lanes/perception/vlin_heldoutpos_scramblenull_smoke.json
 """
 from __future__ import annotations
 
@@ -558,8 +588,16 @@ def _lin_score_pred(r, V, b, mu, sd):
 # ============================================================================================
 def run_seed(seed, a, code):
     positions = _positions(a.n_pos_total, a.image_size, a.pos_span)
-    held_pi = list(range(1, a.n_pos_total, 2))
-    train_pi = [pi for pi in range(a.n_pos_total) if pi not in held_pi]
+    if getattr(a, "heldout_position", False):
+        # ANTI-CHEAT 5 (--heldout-position): CONTIGUOUS-BLOCK split -- train on the first half of position
+        # indices (left half of the retina), held-out = the second half (right half). True spatial
+        # EXTRAPOLATION (never bracketed by training on both sides), unlike the interleaved default below.
+        half = max(1, a.n_pos_total // 2)
+        train_pi = list(range(0, half))
+        held_pi = list(range(half, a.n_pos_total))
+    else:
+        held_pi = list(range(1, a.n_pos_total, 2))
+        train_pi = [pi for pi in range(a.n_pos_total) if pi not in held_pi]
     train_positions = [positions[pi] for pi in train_pi]
     held_positions = [positions[pi] for pi in held_pi]
     thetas = [(k / a.n_slots) * math.pi for k in range(a.n_slots)]
@@ -634,6 +672,13 @@ def run_seed(seed, a, code):
     learn_spkwta_train = float((pred_tr_spk == tr_cls).mean())
     learn_linscore_held = float((_lin_score_pred(r_he, V, b, mu, sd) == he_cls).mean())
 
+    # ---- ANTI-CHEAT 6 (--scramble-null): the SAME LEARNED readout (not the old centroid instrument
+    # below) evaluated on PIXEL-SCRAMBLED held images -- must collapse to chance. sc_c1/r_sc are already
+    # built from he_imgs (same labels he_cls), so this is a like-for-like readout-vs-readout comparison.
+    # Always computed (free diagnostic); only GATES capability_go when --scramble-null is set.
+    pred_sc_spk, _ = _spiking_class_read(r_sc, V, b, mu, sd, a, code, seed * 773 + 41)
+    scramble_learned_held = float((pred_sc_spk == he_cls).mean())
+
     # ---- RANDOM control: identical spike-ported architecture, V untrained (random signed) ----
     rngV = np.random.default_rng(seed * 131 + 7)
     # D = V.shape[1], NOT a.n_s2 -- when the S2.5 binding stage is on, the C2 feature count is n_conj,
@@ -664,6 +709,9 @@ def run_seed(seed, a, code):
     pred_shuf, _ = _spiking_class_read(r_he, Vs, bs, mus, sds, a, code, seed * 773 + 31)
     lbl_shuffle_null = float((pred_shuf == he_cls).mean())
 
+    # ---- anti-cheat 6 verdict: the LEARNED readout itself must fall to chance on scrambled images ----
+    scramble_null_pass = bool(scramble_learned_held <= chance + a.decode_margin)
+
     # ---- verdicts ----
     learning_load_bearing = bool(learn_spkwta_held - rnd_spkwta_held >= a.beat_margin)
     beats_nogo = bool(learn_spkwta_held >= a.nogo_floor + a.beat_margin)      # strict (+margin)
@@ -677,6 +725,10 @@ def run_seed(seed, a, code):
         and position_pooled_out
         and (scr_centroid_held <= chance + a.decode_margin)
         and (lbl_shuffle_null <= chance + a.decode_margin)
+        # ANTI-CHEAT 6 (--scramble-null): only GATES capability_go when explicitly requested -- default
+        # off keeps capability_go byte-identical to every prior run of this file (scramble_null_pass is
+        # still computed + reported above regardless).
+        and (scramble_null_pass or not getattr(a, "scramble_null", False))
     )
     architecture_load_bearing = bool(learn_spkwta_held - H_held >= a.beat_margin)
 
@@ -693,6 +745,7 @@ def run_seed(seed, a, code):
             "RATE_lin_ceiling_held": round(rate_lin_held, 4),
             "centroid_spk_held_NOGO_repro": round(centroid_spk_held, 4),
             "scramble_centroid_held": round(scr_centroid_held, 4),
+            "scramble_learned_held": round(scramble_learned_held, 4),
         },
         "reframe": {
             "learned_minus_random_spkwta": round(learn_spkwta_held - rnd_spkwta_held, 4),
@@ -712,6 +765,7 @@ def run_seed(seed, a, code):
             "beats_config_c_nogo_raw": beats_nogo_raw,
             "learning_load_bearing": learning_load_bearing,
             "architecture_load_bearing": architecture_load_bearing,
+            "scramble_null_pass": scramble_null_pass,
         },
     }
     if bcm_diag is not None:
@@ -946,6 +1000,25 @@ def main():
     p.add_argument("--s1-gain", type=float, default=1.2)
     p.add_argument("--s2-gain", type=float, default=2.0)
     p.add_argument("--kwta-frac", type=float, default=0.15)
+    # GLOBAL held-out robustness anti-cheats (2026-09-04 build-ahead; the open Q1 named by research/
+    # findings/2026-09-03-vision-configural-binding-crossing-is-mostly-capacity-anticheat-caught-it.md:
+    # "does the flat-z-norm-capacity crossing hold under...held-out position, scramble nulls...or is it
+    # partly an ELM-overfit at high width"). Both default OFF -> byte-identical held-split/capability_go
+    # to every prior run of this file. See ANTI-CHEATS 5-6 in the module docstring.
+    p.add_argument("--heldout-position", dest="heldout_position", action="store_true",
+                   help="ANTI-CHEAT 5: swap the default INTERLEAVED held-position split (train=even "
+                        "position indices, held=odd -- every held position bracketed by trained "
+                        "neighbours, an INTERPOLATION test) for a CONTIGUOUS-BLOCK split (train=first "
+                        "half of position indices, held=second half -- true spatial EXTRAPOLATION, never "
+                        "bracketed). Every held-based metric, including capability_go, is recomputed "
+                        "under this harder split. Off by default.")
+    p.add_argument("--scramble-null", dest="scramble_null", action="store_true",
+                   help="ANTI-CHEAT 6: the existing pixel-scramble check (scramble_centroid_held) only "
+                        "probes the OLD nearest-centroid instrument, never the LEARNED signed-linear "
+                        "spiking readout capability_go is actually built on. When set, ALSO requires the "
+                        "LEARNED readout's accuracy on pixel-scrambled held images (scramble_learned_held) "
+                        "to fall to chance+decode_margin as part of capability_go. scramble_learned_held "
+                        "is always computed and reported (a free diagnostic) regardless of this flag.")
     # gate thresholds
     p.add_argument("--decode-margin", type=float, default=0.15)
     p.add_argument("--beat-margin", type=float, default=0.10)
@@ -971,8 +1044,9 @@ def main():
                   f"| RATE-ceil {d['RATE_lin_ceiling_held']:.2f} centNOGO {d['centroid_spk_held_NOGO_repro']:.2f} "
                   f"| dLEARN {rf['learned_minus_random_spkwta']:+.2f} qgap {rf['quantization_gap_rate_minus_spk']:+.2f} "
                   f"| obj/pos {di['object_decode_heldsplit']:.2f}/{di['position_decode_heldsplit']:.2f} "
-                  f"lblshuf {di['label_shuffle_null']:.2f} "
-                  f"| GO={v['capability_go']} lb={v['learning_load_bearing']} beat={v['beats_config_c_nogo']}",
+                  f"lblshuf {di['label_shuffle_null']:.2f} scrLearn {d['scramble_learned_held']:.2f} "
+                  f"| GO={v['capability_go']} lb={v['learning_load_bearing']} beat={v['beats_config_c_nogo']} "
+                  f"scrNullOK={v['scramble_null_pass']}",
                   flush=True)
             if "bcm" in r:
                 bd = r["bcm"]
