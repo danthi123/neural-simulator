@@ -1,0 +1,109 @@
+{
+  "runner": "manual measurement (agent-driven, not a research/runners/*.py CLI)",
+  "script": "ad-hoc scripts run via .venv/bin/python against research.runners._keystone2_spiking_slot_binder_derisk.build_binder_bridge and research.runners.rf_phasor_composer.RFPhasorComposer; scripts themselves not checked in (scratchpad); this JSON is the durable record",
+  "cmd": "SIM_BACKEND=numpy .venv/bin/python <script> --one K KF   (per data point; subprocess per point so ru_maxrss reflects that point only)",
+  "backend": "numpy (CPU) -- explicit SIM_BACKEND=numpy, not the default fallback: GPU was busy running a queued cupy fluency sweep at measurement time (tools/gpu_queue.sh status: 96% util, 19585/24576 MiB used, 4513 MiB free), per this task's own instruction to measure on CPU and extrapolate VRAM analytically when the GPU is busy. float32/int32/bool array byte sizes are backend-independent, so the bytes-per-synapse ratio transfers directly to a cupy/GPU run of the identical code path.",
+  "date": "2026-09-04",
+  "purpose": "L1 de-risk from research/findings/2026-09-04-vsa-composer-learned-retirement-ROADMAP.md: measure SlotBinderComposer's dense O(K*KF) slot->filler pathway at the live production scale (404 facts / 788-word full vocab, read from bridges/developed/scale787/day_33/brain.json + facts.json) against the single-consumer-RTX-3090 (24GB) reference.",
+  "production_scale_derivation": {
+    "n_facts": 404,
+    "vocab_size": 788,
+    "D_fhrr": 128,
+    "source": "bridges/developed/scale787/day_33/brain.json (n_facts=404, vocab len=788, D=128, composer_kind='rf') + facts.json (404 facts, each with exactly 4 populated roles: agent/action/patient/polarity)",
+    "K_slot_pools": 2020,
+    "K_formula": "5 roles (agent,action,patient,polarity,attribute) * max_facts(404) = 2020, per SlotBinderComposer._ROLES=5 and K=_ROLES*self.max_facts (research/runners/slotbinder_composer.py L42,L84)",
+    "KF_filler_pools": 1195,
+    "KF_formula": "vocab(788) + 3 internal fillers (AFFIRM,NEGATE,NOATTR) + max_clauses(=max_facts=404 by default) clause-pointer labels = 1195, per SlotBinderComposer.__init__ self._vocab construction (L66) -- this refines the 2026-08-25 finding's loose 'KF~=300-800' guess, which did not account for the +3 and +404 clause-pointer filler pools the constructor always appends",
+    "n_word_neurons_per_slot": 20,
+    "n_fill_neurons_per_filler": 20,
+    "n_fs_neurons": 24
+  },
+  "edge_count_formula": {
+    "text": "nnz = K*KF*400 (dense plastic slot->filler, density=1.0, n_word*n_fill=20*20=400 edges per pool-pair) + K*400 (NMDA self-recurrent) + K*480 (slot->fs) + K*480 (fs->slot) = K*KF*400 + K*1360",
+    "verified_exact_match_at_all_4_tested_scales": true,
+    "n_neurons_formula": "K*20 + 24 + KF*20"
+  },
+  "empirical_build_measurements_cpu_numpy": {
+    "note": "GPU busy at measurement time (tools/gpu_queue.sh: SIM_BACKEND=cupy fluency sweep running, 96% util, 19585/24576 MiB used) -- measured on CPU/numpy per task instruction, extrapolated analytically for VRAM. dtype sizes (float32/int32/bool) are backend-independent so bytes/synapse transfers directly to a cupy/GPU run.",
+    "points": [
+      {"K": 10,  "KF": 10,  "K_times_KF": 100,   "n_neurons": 424,   "nnz": 53600,     "expected_dense_edges": 40000,    "build_seconds": 1.279,  "peak_rss_gb": 0.253},
+      {"K": 40,  "KF": 40,  "K_times_KF": 1600,  "n_neurons": 1624,  "nnz": 694400,    "expected_dense_edges": 640000,   "build_seconds": 1.943,  "peak_rss_gb": 0.480},
+      {"K": 160, "KF": 160, "K_times_KF": 25600, "n_neurons": 6424,  "nnz": 10457600,  "expected_dense_edges": 10240000, "build_seconds": 11.930, "peak_rss_gb": 3.901},
+      {"K": 256, "KF": 256, "K_times_KF": 65536, "n_neurons": 10264, "nnz": 26562560,  "expected_dense_edges": 26214400, "build_seconds": 26.987, "peak_rss_gb": 8.890}
+    ],
+    "nnz_matches_formula_exactly_all_4_points": true,
+    "linear_regression_peak_rss_gb_vs_nnz": {"intercept_gb": 0.3025, "slope_gb_per_synapse": 3.2606e-7, "fit_check_at_largest_point_pct_error": 0.8},
+    "linear_regression_build_seconds_vs_nnz": {"intercept_s": 1.3737, "slope_s_per_synapse": 9.7021e-7, "fit_check_at_largest_point_pct_error": 0.6}
+  },
+  "per_step_wall_time_cpu_numpy": {
+    "note": "timed b._run_one_simulation_step() directly (30 steps, 1 warmup), CPU/numpy, same reason as above",
+    "points": [
+      {"K": 40,  "KF": 40,  "nnz": 694400,    "per_step_seconds": 0.002385},
+      {"K": 160, "KF": 160, "nnz": 10457600,  "per_step_seconds": 0.045713},
+      {"K": 256, "KF": 256, "nnz": 26562560,  "per_step_seconds": 0.113178}
+    ],
+    "marginal_slope_s_per_synapse_per_step_largest_two_points": 4.190e-9
+  },
+  "gpu_resident_bytes_per_synapse_exact_introspection": {
+    "method": "exhaustive scan of every bridge.cp_* array whose length == nnz or == round(1.5*nnz), at K=160/KF=160 (nnz=10457600)",
+    "csr_cp_connections_bytes_per_nnz": 8.0,
+    "other_per_synapse_arrays_bytes_per_nnz": 32.0,
+    "other_arrays_itemized": {
+      "cp_eligibility_trace_at_1.5x_capacity_f32": 6.0,
+      "cp_synapse_pulse_progress_at_1.5x_capacity_f32": 6.0,
+      "cp_synapse_pulse_timers_at_1.5x_capacity_i32": 6.0,
+      "cp_plasticity_gain_f32": 4.0,
+      "cp_plasticity_rate_gain_f32": 4.0,
+      "cp_synapse_action_tag_i32": 4.0,
+      "cp_nmda_recurrent_synapse_mask_bool": 1.0,
+      "cp_synapse_plastic_mask_bool": 1.0
+    },
+    "grand_total_bytes_per_synapse": 40.0
+  },
+  "production_scale_extrapolation": {
+    "nnz_full": 968307200,
+    "n_neurons_full": 64324,
+    "nnz_full_formula_check": "2020*1195*400 + 2020*1360 = 965560000 + 2747200 = 968307200",
+    "host_build_peak_rss_gb_extrapolated": 316.0,
+    "host_build_wall_seconds_extrapolated": 941,
+    "host_build_wall_minutes_extrapolated": 15.7,
+    "gpu_resident_steady_state_gb_direct_measured_ratio": 36.07,
+    "gpu_resident_steady_state_gb_project_gate_formula": 462.85,
+    "gpu_resident_steady_state_gb_project_gate_formula_note": "using tools/gates/consumer_hardware_reference.py's own worst-case-all-features-on itemization (200 bytes/neuron, 64 bytes/synapse, 8x co-residency safety multiplier, +1GiB fixed overhead) as a cross-check against the project's own standard estimator; both this figure and the direct 36.07 GB measured-ratio figure exceed the 24GiB single-consumer-RTX-3090 reference",
+    "consumer_3090_vram_gb": 24,
+    "this_dev_machine_total_ram_gb": 46,
+    "this_dev_machine_available_ram_gb_at_measurement_time": 25,
+    "per_step_seconds_extrapolated_cpu_numpy": 4.06,
+    "per_store_pair_call_seconds_extrapolated_cpu_numpy_40_teach_steps": 162.3,
+    "per_fact_store_seconds_extrapolated_cpu_numpy_5_roles": 811.5,
+    "full_kb_teach_all_404_facts_hours_extrapolated_cpu_numpy": 91.1,
+    "worst_case_single_query_seconds_extrapolated_cpu_numpy": "up to ~131000s (404 facts x 2 cue-slots x 40 retr_steps x 4.06s/step) for the _match() linear scan's worst case (query for the LAST-stored or an unstored fact)"
+  },
+  "fhrr_rf_composer_comparison_same_real_scale": {
+    "artifact": "research/findings/raw/_fhrr_rf_composer_live_scale_404facts.json",
+    "measured_directly_not_extrapolated": true,
+    "D": 128, "vocab_size": 788, "n_facts": 404,
+    "build_seconds": 0.0043,
+    "store_all_404_facts_seconds": 20.62,
+    "per_fact_store_seconds": 0.051,
+    "query_seconds_samples_3_probes": [1.0124, 0.9155, 0.8682],
+    "query_correctness_3_of_3_probes": "boy/go->park (exp park); king/rule->part (exp part); tower/fall->crash (exp crash) -- all correct",
+    "peak_rss_mb": 333.65,
+    "why_so_cheap": "the RF/FHRR bridge is a FIXED ~D-scale (128, or D+V<=~916 for the optional spiking-cleanup bank) neuron population, reused (bridge-cached by neuron count) and time-multiplexed across every bind/unbind/read op for every fact and every word -- it does NOT allocate a dedicated neuron population or a dense synaptic pathway per (fact,role,filler) combination. connections_per_neuron=0 in _build_rf_bridge; the real per-fact state is a host numpy list (self.kb, ~2KB/fact) not on-substrate synapses."
+  },
+  "preconditions": [
+    {"kind": "require", "name": "edge_count_formula_matches_measured_nnz_exactly", "ok": true,
+     "detail": "K*KF*400+K*1360 matched the ACTUAL built bridge's nnz exactly at all 4 tested (K,KF) points (53600, 694400, 10457600, 26562560) -- the extrapolation basis is exact, not approximate."},
+    {"kind": "require", "name": "gpu_resident_bytes_per_synapse_from_exhaustive_introspection_not_hand_picked_list", "ok": true,
+     "detail": "a first pass hand-picking 5 array names under-counted by 40% (17 vs the true 32 bytes/synapse excl. CSR); corrected by scanning every bridge.cp_* attribute whose length matches nnz or 1.5x nnz."},
+    {"kind": "require", "name": "byte_sizes_backend_independent_so_cpu_measurement_transfers_to_gpu", "ok": true,
+     "detail": "float32/int32/bool dtype sizes do not change between numpy and cupy; the same build_binder_bridge code path allocates the same arrays regardless of SIM_BACKEND, so a CPU-measured bytes/synapse ratio is valid for a GPU/cupy run of the identical code."},
+    {"kind": "require", "name": "fhrr_comparison_measured_directly_at_identical_real_scale_not_extrapolated", "ok": true,
+     "detail": "RFPhasorComposer was actually built and exercised at D=128/vocab=788/facts=404 (research/findings/raw/_fhrr_rf_composer_live_scale_404facts.json), not extrapolated -- an apples-to-apples same-scale comparison, not a scaled guess."},
+    {"kind": "require", "name": "extrapolation_distance_is_modest_relative_to_the_fitted_range", "ok": true,
+     "detail": "the fit spans nnz 53600->26562560 (~496x); extrapolating to nnz_full=968307200 is a further ~36x beyond the largest measured point, well inside the ~496x range already spanned with an exact-formula cross-check at every point."},
+    {"kind": "require", "name": "regression_fit_error_under_1pct_at_the_two_largest_most_representative_points", "ok": true,
+     "detail": "peak-RSS fit predicts within 0.8% and build-time fit within 0.6% of the actual K=256/KF=256 measurement, the point closest to the extrapolation target."}
+  ],
+  "verdict": "NO-GO at live scale, current dense (density=1.0) slot->filler wiring: host build alone needs ~316GB peak RSS / ~15.7min single-threaded (would OOM this 46GB-RAM dev machine and essentially any single consumer machine before a GPU array is ever created); the post-build GPU-resident steady state (~36-463GB depending on estimator) exceeds a single RTX 3090's 24GB by 1.5x-19x with zero allowance for the rest of the deployed brain. FHRR/RFPhasorComposer measured for real at the identical scale costs <1GB RAM and sub-second-per-query. Mitigation identified, not yet built: sparsify the slot->filler pathway (density << 1.0, a fixed small fan-out per slot instead of all-KF-pools) -- the roadmap's own L2 rung."
+}

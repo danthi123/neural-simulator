@@ -1,0 +1,26 @@
+{
+  "runner": "manual measurement (agent-driven, not a research/runners/*.py CLI)",
+  "script": "ad-hoc script run via .venv/bin/python against research.runners.rf_phasor_composer.RFPhasorComposer, loading bridges/developed/scale787/day_33/{brain.json,facts.json} directly (script itself not checked in; this JSON is the durable record)",
+  "cmd": "SIM_BACKEND=numpy .venv/bin/python <script>",
+  "backend": "numpy (CPU) -- explicit SIM_BACKEND=numpy, not the default fallback: GPU was busy running a queued cupy fluency sweep at measurement time (tools/gpu_queue.sh status), and this composer is cheap enough to build for real at production scale on CPU alone.",
+  "date": "2026-09-04",
+  "purpose": "FHRR/RFPhasorComposer comparison point for the SlotBinderComposer live-scale de-risk (research/findings/2026-09-04-vsa-composer-learned-retirement-ROADMAP.md L1): the SAME real 404-fact / 788-word production scale, measured directly (not extrapolated) because the RF bridge is cheap enough to build for real at this scale.",
+  "D": 128,
+  "vocab_size": 788,
+  "n_facts": 404,
+  "n_stored_ok_raw_return_value_count": 0,
+  "store_return_value_note": "RFPhasorComposer.store() does not return a truthy success flag the way SlotBinderComposer.store() does (a harness-counting quirk, not a functional failure) -- storage correctness is instead demonstrated directly by the 3/3 correct query_patient recalls below.",
+  "build_seconds": 0.004303693771362305,
+  "store_all_facts_seconds": 20.62467312812805,
+  "per_fact_store_seconds": 0.05105117110922785,
+  "query_probes": [
+    {"agent": "boy", "action": "go", "expected_patient": "park", "got": "park", "seconds": 1.0123987197875977},
+    {"agent": "king", "action": "rule", "expected_patient": "part", "got": "part", "seconds": 0.9155387878417969},
+    {"agent": "tower", "action": "fall", "expected_patient": "crash", "got": "crash", "seconds": 0.8682382106781006}
+  ],
+  "query_seconds_samples": [1.0123987197875977, 0.9155387878417969, 0.8682382106781006],
+  "mean_query_seconds": 0.932058572769165,
+  "query_correctness": "3/3 correct",
+  "peak_rss_kb": 341660,
+  "peak_rss_mb": 333.65234375
+}
