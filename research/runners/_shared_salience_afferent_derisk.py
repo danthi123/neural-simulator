@@ -82,14 +82,23 @@ _MSG_CONTENT = "what does the dog chase around the yard today"
 
 
 def _clear_flags():
-    for k in ("BRAIN_SHARED_SALIENCE", "BRAIN_SHARED_SALIENCE_LESION"):
-        os.environ.pop(k, None)
+    """Reset to the OFF arm (the pre-flip host-arithmetic baseline).
+
+    2026-09-05 fix (Track-1 flip-soak verification, `_shared_salience_flip_soak.py`): `BRAIN_SHARED_SALIENCE` was
+    flipped DEFAULT-ON (`shared_salience_afferent._SHARED_SALIENCE_DEFAULT_ON=True`), so *unsetting* the var no
+    longer means OFF -- it now means ACTIVE. Every OFF-arm call site in this file (and in
+    `_value_choice_neural_context_6seed_derisk.py`, which imports this exact helper) relied on `_clear_flags()` to
+    produce the OFF arm; left as a bare `pop()`, both the "off" and "on" arms of every existing 6-seed gate would
+    silently become ON post-flip (caught here BEFORE it corrupted a re-run -- `g_off_identical` would have failed
+    loudly rather than passed wrongly, since the OFF arm would stop matching the independently-computed host
+    formula, but the fix belongs at the source, not as a per-caller workaround). Mirrors the identical
+    `BRAIN_VALUE_CHOICE` fix in `_value_choice_flip_soak.py`'s own `_set_flags()` (2026-08-27 comment)."""
+    os.environ["BRAIN_SHARED_SALIENCE"] = "0"
+    os.environ.pop("BRAIN_SHARED_SALIENCE_LESION", None)
 
 
 def _set_flags(*, on: bool, lesion: bool = False):
     os.environ["BRAIN_SHARED_SALIENCE"] = "1" if on else "0"
-    if not on:
-        os.environ.pop("BRAIN_SHARED_SALIENCE", None)
     if lesion:
         os.environ["BRAIN_SHARED_SALIENCE_LESION"] = "1"
     else:

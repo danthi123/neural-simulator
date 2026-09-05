@@ -30,10 +30,13 @@ signal on its way from sensory read to consumer decision, retiring the "host ari
 shortcut at its single root (da_mode_drives_chat.engagement_of) and at the two sibling host formulas (bg-action-
 selection's regex/token-count salience, value-choice's recency-ratio engagement context) in ONE move.
 
-CONTRACT (additive, reversible, byte-identical-off). `BRAIN_SHARED_SALIENCE` unset (default) -> every consumer site's
-existing host-arithmetic code path is UNCHANGED (this module is imported but its gate is never entered) -> byte-
-identical to pre-wiring. `BRAIN_SHARED_SALIENCE=1` arms the shared afferent at all three sites simultaneously (ONE
-flag, matching the rank-4 backlog's "wire ONE shared afferent ... in one move").
+CONTRACT (additive, reversible, byte-identical-off). 2026-09-05 FLIPPED DEFAULT-ON (Track-1 flip campaign, after the
+6-seed rank-4 wiring gate + the rank-20 real-critic 6-seed gate + a dedicated integrated flip-soak through the REAL
+`ChatBrain`/production `/api/brain-chat` path -- see `research/findings/2026-09-05-shared-salience-value-choice-
+flip-soak-6seed-GO.md`): `BRAIN_SHARED_SALIENCE` UNSET now means ACTIVE -- the shared afferent is armed at all three
+consumer sites simultaneously by default. `BRAIN_SHARED_SALIENCE` explicitly set to `{0,false,no,off,''}` is the
+byte-identical escape back to each consumer's pre-wiring host-arithmetic code path (this module's gate is then never
+entered) -- the same escape-hatch idiom `BRAIN_VALUE_CHOICE`'s 2026-08-26 flip uses.
 
 LESION (the load-bearing proof, reused verbatim from the curiosity organ's OWN anti-cheat). `BRAIN_SHARED_SALIENCE_
 LESION=1` reads `CuriosityProductionOrgan`'s drive-removed twin (`curiosity_excit_sensitivity=0`, judge()'s own
@@ -58,12 +61,27 @@ from research.runners.curiosity_production_organ import CuriosityProductionOrgan
 
 _DEFAULT_SEED = 42
 
+# 2026-09-05 FLIPPED DEFAULT-ON (Track-1 flip campaign, rank-4/rank-5/rank-20 GOs; verification:
+# research/findings/2026-09-05-shared-salience-value-choice-flip-soak-6seed-GO.md). Mirrors the
+# `_VALUE_CHOICE_DEFAULT_ON` idiom (research/runners/value_choice_production_organ.py) so an explicit
+# {0,false,no,off,''} stays the byte-identical escape back to the pre-flip host arithmetic at all 3 consumer
+# sites, rather than removing that escape hatch.
+_SHARED_SALIENCE_DEFAULT_ON = True
+
+
+def _falsy_explicit(v) -> bool:
+    return v is not None and str(v).strip().lower() in ("0", "false", "no", "off", "")
+
 
 def shared_salience_enabled() -> bool:
-    """The master flag. `BRAIN_SHARED_SALIENCE` truthy (1/true/on/yes) arms the shared spiking afferent at every
-    consumer site; the default (UNSET) is OFF -> every consumer's pre-existing host-arithmetic path is byte-
-    identical to pre-wiring (this module's read is never called)."""
-    return os.environ.get("BRAIN_SHARED_SALIENCE", "0").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag. DEFAULT-ON (post 2026-09-05 flip): unset -> ACTIVE -> the shared spiking afferent is armed
+    at every consumer site. `BRAIN_SHARED_SALIENCE` in {0,false,no,off,''} (explicitly set) is the byte-identical
+    escape back to each consumer's pre-wiring host-arithmetic path (this module's read is then never called).
+    {1,true,on,yes} (explicit) stays ACTIVE, redundant now."""
+    v = os.environ.get("BRAIN_SHARED_SALIENCE")
+    if _SHARED_SALIENCE_DEFAULT_ON:
+        return not _falsy_explicit(v)
+    return str(v or "0").strip().lower() in ("1", "true", "on", "yes")
 
 
 def shared_salience_lesioned() -> bool:
