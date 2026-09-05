@@ -1,0 +1,87 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/wikitext103.txt",
+  "seeds": [
+    43
+  ],
+  "d_model": 192,
+  "pred_aux_weight": 1.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "43": {
+      "V": 8001,
+      "n_train": 1781187,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.494,
+          "bigram": 5.302,
+          "trigram": 6.478,
+          "wkv_perm": 8.749,
+          "wkv_memoryless": 5.494,
+          "margin_vs_trigram": 0.984,
+          "margin_vs_bigram": -0.192
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 4.973,
+          "bigram": 5.278,
+          "trigram": 4.392,
+          "wkv_perm": 8.709,
+          "wkv_memoryless": 5.754,
+          "margin_vs_trigram": -0.582,
+          "margin_vs_bigram": 0.305
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 4.796,
+          "bigram": 5.285,
+          "trigram": 4.342,
+          "wkv_perm": 8.746,
+          "wkv_memoryless": 5.809,
+          "margin_vs_trigram": -0.454,
+          "margin_vs_bigram": 0.489
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.916,
+          "bigram": 5.374,
+          "trigram": 4.504,
+          "wkv_perm": 8.553,
+          "wkv_memoryless": 5.862,
+          "margin_vs_trigram": -0.412,
+          "margin_vs_bigram": 0.457
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.825,
+          "bigram": 5.35,
+          "trigram": 4.462,
+          "wkv_perm": 8.517,
+          "wkv_memoryless": 5.836,
+          "margin_vs_trigram": -0.363,
+          "margin_vs_bigram": 0.525
+        },
+        "10-99": {
+          "n": 183709,
+          "wkv": 4.744,
+          "bigram": 5.361,
+          "trigram": 4.463,
+          "wkv_perm": 8.446,
+          "wkv_memoryless": 5.867,
+          "margin_vs_trigram": -0.281,
+          "margin_vs_bigram": 0.617
+        }
+      }
+    }
+  },
+  "elapsed_s": 11724.8
+}
