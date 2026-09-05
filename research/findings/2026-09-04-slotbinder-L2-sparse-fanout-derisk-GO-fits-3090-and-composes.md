@@ -34,6 +34,20 @@ artifacts:
 
 # SlotBinderComposer L2 sparse fan-out de-risk: GO — a fixed small per-slot fan-out (fanout=32) fits a single consumer RTX 3090 AND composes correctly, 6-seed, at the real 404-fact production scale
 
+> **⚠️ CORRECTION (2026-09-05, adversarial-verify `w3qhweujd`).** The title and TL;DR below overclaim scope on
+> two points; the underlying numbers and mechanism are sound, this is a HEADLINE/framing fix. **(1) Composition
+> was SPOT-CHECKED on 2 real facts/seed** (`n_facts_sampled=2` in every `compose_f32_s*.json`, ~3% of the 404-fact
+> corpus) — the SUBSTRATE built (§2) is the true 404-fact/`K=2020`/`KF=1195` production topology, real and
+> unreduced, but the WORKLOAD exercised on it per seed is a small bounded sample, not the full corpus (already
+> disclosed honestly in §3/§6, just not in the title/TL;DR). **(2) "14.73 GiB fits the 3090" is the
+> `consumer_hardware_reference` gate's own worst-case FORMULA estimate from a `sim_backend=numpy` (CPU-only) build
+> — GPU-UNVERIFIED.** No CuPy/GPU build or `nvidia-smi` reading was taken (`compose_f32_s42.json.prov.json`:
+> `"sim_backend": "numpy"`); §5 already defers that re-verify to L3. Corrected headline: the substrate was BUILT
+> at the real 404-fact scale; composition was SPOT-CHECKED on 2 facts/seed (6/6 clean); VRAM is the gate-formula
+> worst-case estimate, ~14.7 GiB, GPU-unverified pending L3's `nvidia-smi` check. Sparsification itself is real
+> (measured `nnz` matches the formula exactly, §2) and the not-`wired`/not-`integrated` scoping in §5/§6
+> (`docs/TERMS.md`) already HOLDS and is unchanged by this correction — do not over-correct past it.
+
 **Board/lane: rung L2 of `research/findings/2026-09-04-vsa-composer-learned-retirement-ROADMAP.md`**, spawned
 directly by the L1 NO-GO
 (`research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md`): the DENSE

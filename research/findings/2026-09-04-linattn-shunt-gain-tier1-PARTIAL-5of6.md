@@ -22,6 +22,19 @@ artifacts:
 
 # Tier-1 de-risk: linattn's num/den shunt-gain read is PARTIAL, 5/6 (one boundary miss, quantified)
 
+> **⚠️ CORRECTION (2026-09-05, adversarial-verify `w3qhweujd`): this finding likely UNDER-claims.** Applying the
+> harness's OWN correctness self-check (`harness_selfcheck`, present in every per-seed artifact — see "Honest
+> residual" §1 below) as a per-seed bias-correction to the shunt margin puts **all 6 seeds above the +0.03 gate**
+> (corrected margins +0.036 to +0.057), because the shunt-vs-exact delta is small and uniform across seeds (see
+> "Result" below) while the N=600 sampling shortfall that `harness_selfcheck` measures is NOT uniform and happens
+> to run in the direction that hurts seed 102 specifically. Per `docs/TERMS.md` (GO is the gate's OWN verdict, not
+> a metric lifted from a corrected re-analysis), **the "PARTIAL, 5/6" headline above is the literal AS-RUN N=600
+> gate result and is kept for the record** — but the corrected read says the TRUE capability is very likely
+> **6/6**, and seed 102's raw miss is a sampling-noise artifact of the reduced eval N, not a mechanism or
+> capability boundary. A direct re-run at the milestone's full N=4000 (or several fresh N=600 draws) for seed 102
+> would confirm this cleanly; not attempted here. This correction also downgrades the "Holt & Koch 1997 direct
+> test" framing in Anti-cheat 1 below — see that section.
+
 **Status:** near-free CPU rate-model test of `research/findings/2026-09-03-linattn-spike-native-normalization-DESIGN.md` Sec 4 Tier 1: swap the linattn mouth's read `num/(den+eps)` for the Carandini-Heeger conductance-divisive-gain form `num/(g_leak+k*den)` on the already-trained 6-seed checkpoints, with the default arm's own robustness axes active (a tanh read-neuron f-I squash, 32-level stochastic-rounding rate quantization on `num`), re-measured against the SAME seed's own exact-division run. **5 of 6 seeds clear the design's own bar (margin_vs_trigram >= +0.03, anti-cheats clean); seed 102 misses by <!--derived-->0.0021 nats** — a boundary case fully explained by that seed already having the smallest margin of the six, not by the shunt mechanism behaving differently there (its shunt-vs-exact cost is the same size as every other seed's). The design-specific divisive-vs-subtractive anti-cheat and the sigma-domination sweep are both clean.
 
 ## Result: shunt vs exact, per seed (N=600 held-out stories, not the milestone's 4000 — see "Honest residual" §2)
@@ -57,7 +70,17 @@ shunt-vs-exact delta at the identical N, seed, checkpoint and trigram baseline (
 delta is the stable, small, one-directional (shunt always slightly BELOW exact, never above) number reported
 above.
 
-## Anti-cheat 1 (the design-specific one): divisive, not subtractive (Holt & Koch 1997 direct test)
+## Anti-cheat 1 (the design-specific one): divisive, not subtractive (Tier-1 rate-model consistency check, seed 42 only — NOT a Holt & Koch test)
+
+> **⚠️ Correction (2026-09-05, adversarial-verify `w3qhweujd`):** the header below originally read "Holt & Koch
+> 1997 direct test" — too strong. At `g_leak=1e-6` the no-fI arm's "0.0 exact match" is TAUTOLOGICAL (a bare
+> division matches a divisive prediction by construction; this is already named honestly two paragraphs down).
+> The substantive with-fI check is **seed-42-only** and evaluated at **one fixed calibration point**
+> (`x50_percentile=90`, `fi_rmax_mult=4.0`, both defaults, auto-set from seed 42's own exact-mode read
+> distribution — not swept across calibration choices, and not repeated on the other 5 seeds' checkpoints). It is
+> a Tier-1 RATE-MODEL consistency check, not a direct test of Holt & Koch's conductance-based shunt claim — the
+> body text already said as much ("a RATE-MODEL analog... Tier 2, on-bridge, is the only test that can directly
+> settle Holt & Koch"); the header is retitled here to match.
 
 <!--derived-->
 From seed 42's `_diagnostics.divisive_vs_subtractive[_no_fI]` (`_linattn_shunt_gain_tier1_seed42.json`): 12
@@ -162,10 +185,44 @@ this project asks for.
 
 ## Honest residual — what Tier 2 (on-bridge) still needs
 
-1. **The seed-102 boundary miss is quantified, not dismissed.** <!--derived--> See the Result table: the shunt-vs-exact delta is uniform (−0.0025 to −0.0053) across all six seeds; seed 102 simply started closest to the +0.03 line (in BOTH the milestone's own 4000-story number, +0.039, and my own 600-story reconstruction, +0.0312). A
-   read-in-the-loop retrain (design Sec 3c effect 2 — training the checkpoint with the read-neuron f-I already
-   in the read path) is the design's own named next step if this margin needs to be recovered rather than
-   merely explained; not attempted here (Tier 1 is explicitly no-retrain).
+1. **The seed-102 boundary miss is quantified, not dismissed — and a bias correction likely resolves it.**
+   <!--derived--> See the Result table: the shunt-vs-exact delta is uniform (−0.0025 to −0.0053) across all six
+   seeds; seed 102 simply started closest to the +0.03 line (in BOTH the milestone's own 4000-story number,
+   +0.039, and my own 600-story reconstruction, +0.0312). A read-in-the-loop retrain (design Sec 3c effect 2 —
+   training the checkpoint with the read-neuron f-I already in the read path) is the design's own named next step
+   if this margin needs to be recovered rather than merely explained; not attempted here (Tier 1 is explicitly
+   no-retrain).
+
+   **⚠️ Correction (2026-09-05, adversarial-verify `w3qhweujd`): bias-correcting via the harness's own self-check
+   puts all 6 seeds above +0.03.** Every per-seed artifact carries `harness_selfcheck` — my own N=600 exact-mode
+   margin (`my_exact_margin_vs_trigram`) checked against that seed's true margin from the milestone's N=4000
+   reference run (`reference_margin_vs_trigram`). The gap between them is sampling noise from the 7x-smaller N,
+   and (unlike the shunt-vs-exact delta, which the Result table shows is stable) it does NOT run one direction:
+   my N=600 reconstruction OVER-estimates the N=4000 truth on 5 of 6 seeds and UNDER-estimates it on exactly the
+   one seed that misses the gate (102). Treating each seed's own gap as a control variate — add
+   `(reference_margin_vs_trigram − my_exact_margin_vs_trigram)` to that seed's SHUNT margin, projecting what the
+   shunt arm would likely read at N=4000 — gives:
+
+   <!--derived: every column below is either a direct harness_selfcheck/Result-table field or this one signed
+   correction (reference exact − my exact) added to that seed's own shunt margin; the seeds share the underlying
+   N=600 sample between exact and shunt, so the same draw's noise is expected to affect both readings similarly-->
+
+   | seed | my exact (N=600) | reference exact (N=4000) | correction (ref−mine) | shunt (N=600) | corrected shunt (~N=4000-equiv) | clears +0.03? |
+   |---|---|---|---|---|---|---|
+   | 42 | +0.0539 | +0.049 | −0.0049 | +0.0507 | **+0.0458** | yes |
+   | 43 | +0.0900 | +0.053 | −0.0370 | +0.0847 | **+0.0477** | yes |
+   | 44 | +0.1008 | +0.051 | −0.0498 | +0.0983 | **+0.0485** | yes |
+   | 100 | +0.0526 | +0.051 | −0.0016 | +0.0493 | **+0.0477** | yes |
+   | 101 | +0.0946 | +0.060 | −0.0346 | +0.0916 | **+0.0570** | yes |
+   | 102 | +0.0312 | +0.039 | **+0.0078** | +0.0279 | **+0.0357** | **yes** |
+
+   All 6 corrected margins clear +0.03, seed 102 included (+0.0357, now comfortably above the line instead of
+   0.0021 below it). This is a DERIVED projection, not a re-run gate — the true test is a real N=4000 (or repeated
+   N=600) shunt-mode run for seed 102, not attempted here — but it is the finding's OWN instrument telling us its
+   N=600 sub-sample is noisy in a way that happens to be unlucky for exactly the seed that misses, which is
+   evidence FOR "sampling-noise artifact" and against "a real capability boundary at seed 102." Read together with
+   the uniform shunt-vs-exact delta, the honest summary is: **the raw N=600 gate reads PARTIAL 5/6 (kept as the
+   as-run headline above); the corrected read says the mechanism very likely clears 6/6.**
 2. **This is a rate-model CPU probe, not a spiking substrate.** No neuron, no conductance, no GABA_A shunt was
    instantiated; `_divisive_read`'s `num/(g_leak+k*den)` is a numpy formula standing in for what a real
    shunting-inhibition circuit would compute. The design's own R-fluct/R-dend/R-net routes (fluctuation-driven
