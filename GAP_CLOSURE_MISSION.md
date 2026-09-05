@@ -13,7 +13,26 @@ operating rules are in [docs/AUTONOMOUS-EXECUTION.md](docs/AUTONOMOUS-EXECUTION.
 
 ---
 
-## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~06:20 (OVERNIGHT DELIVERED; READ FIRST; LATEST anchor)
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~09:10 (SHIPPING CONTINUES; READ FIRST; LATEST anchor)
+
+**Autonomous overnight, shipping continues.** The 4 faculty-flips + the ONE-BRAIN merge are LIVE on production-default (PI gate 0-problems this cycle: ledger consistent with flipped source). Mouth branch harvested to main (`cd06e61c4`). Now advancing the two shortest-path scaffold retirements + the #1 blocker in parallel:
+
+- **Composer FHRR-retirement — IN FLIGHT (agent af5c190f, own worktree):** wiring the DG-CA3 sublinear spiking retrieval (`enable_fact_shard`+`no_batched_region`; 402x GO 6/6) into the production OneBrainComposer → integrated no-regression verify → GO to retire the host FHRR composer (the biggest live-path shortcut). Controller executes the flip on GO.
+- **MOUTH (#1 blocker) re-aim run QUEUED (gpu_queue):** `linattn --pred-aux-weight 0.5 --pred-aux-offsets 2 4` 6-seed simplewiki (predictive-coding OBJECTIVE lever, Rao&Ballard 1999; the record's strongest same-budget datapoint — causal+masked hybrid BLiMP 0.794 vs n-gram 0.633). Harvest → if margin lifts, escalate to wt103 + capacity; if flat, pivot to the capacity lever. Content-addressing banked EXHAUSTED (hippokey NO-GO 6/6; do NOT propose another attention variant).
+- **GPU pipeline (single-3090, sequential):** rank-2 Part B integrated_loop at-scale RUNNING → flip-6seed one-brain rebaseline QUEUED → mouth pred-aux QUEUED.
+- **⛔ COMPUTE-ROUTING (durable decision):** the 60-day `_longitudinal_develop_loop_gpu` learning-over-time batch was PAUSED+killed (~12min in, trivial loss) to free the slot for critical-path scaffold-retirement, per owner priority (RETIRE scaffolds BEFORE learning/growth-over-time). It is OUT of the queue — REQUEUE at the BACK only after the scaffold-retirement GPU work (composer verify, mouth pred-aux + capacity) drains. Cmd: `SIM_BACKEND=cupy .venv/bin/python -u -m research.runners._longitudinal_develop_loop_gpu --n-days 60 --seed 2870 --out research/findings/raw/four_day/longi_nd60_s2870.json` (cwd sim-worktrees/four-day-queue).
+- **Pool DEAD (surfaced, off critical path):** dispatcher only logs "SKIPPING 6 stale entries >12h" — not processing. Scaffold-retirement is GPU+agent work, so this does NOT block the critical path; fix when convenient.
+
+**PRE-DECIDED NEXT ACTIONS (ordered; supersedes the older blocks below):**
+1. Harvest composer wire-in (agent af5c190f) → if GO, FLIP the production composer to the fast sharded spiking path (retire FHRR — the biggest live-path host shortcut). The #1 shortest-path item.
+2. Harvest rank-2 Part B (integrated one-brain at-scale) + flip-6seed one-brain rebaseline as they clear the GPU → confirm shipped one-brain work sound; if either fails, `BRAIN_ONEBRAIN_SINGLE_POOL=0` reverts.
+3. Harvest mouth pred-aux (#1 blocker) → if margin lifts, escalate wt103 + capacity sweep; else pivot to the capacity lever (depth/width on linattn).
+4. After critical-path GPU drains: requeue the four-day learning-over-time batch at the back. If agent-lane headroom + load<25, launch a genuine build agent for rank-7 (experience-bound opponent appraisal population — the affect-gate boundary's named next mechanism).
+5. Keep durable state + heartbeat fresh (compaction-safe); board already reconciled (#209); pool fix optional.
+
+---
+
+## ⭐⭐⭐ STATE OF THE PROJECT — 2026-09-05 ~06:20 (OVERNIGHT DELIVERED; history — see ~09:10 above)
 
 **Overnight (autonomous per owner grant) delivered the pivot from de-risk to SHIPPING.**
 - **4 host shortcuts FLIPPED to production-default + verified live** (each 6/6 GO through real production entry points, anti-hollow: vary→differs / lesion→vanishes, no-regression, reversible via the `=0` escape): rank-4 shared-salience afferent (`5cc1da241`); rank-20 value-choice (same flag, verified via rank-4's shoe→cat critic test); rank-5 Gate-B appraisal-via-interoception (`0c4e068eb`); rank-12 GNW STOP-trigger (`911ac1249`). The live brain now runs these 4 faculties SPIKING, not host-shortcut.
