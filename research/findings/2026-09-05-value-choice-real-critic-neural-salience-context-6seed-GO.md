@@ -155,8 +155,8 @@ of the question this finding asks, and was not counted toward `all_gates_pass`.
   a non-regression check the rank-4 single-seed proof did not run.
 - **Whose-the-difference, every pair.** `tools.lab.attributable_to` is called once per (seed, scenario) --
   24 calls, never a bare treatment/control pair banked unattributed (the gap#5 lesson) -- and the resulting
-  fraction is reported alongside the RAW Hz spreads for both arms (not a ratio alone), per `docs/TERMS.md`'s
-  "selective" discipline.
+  fraction is reported alongside the RAW Hz spreads for both arms, never as a ratio alone (the Result
+  table above carries both).
 - **Six genuinely distinct substrates, not six labels.** The mean OFF-arm spread varies from 10.49 to 17.67
   Hz <!--derived--> across the 6 seeds -- clearly different trained critics, not six reruns of one cached
   build (the process-isolated subprocess-per-seed design the sibling rank-4 de-risk also uses, for the
