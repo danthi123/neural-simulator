@@ -98,7 +98,10 @@ def _run_worker(seed: int, single_pool: bool) -> dict:
     if single_pool:
         env["BRAIN_ONEBRAIN_SINGLE_POOL"] = "1"
     else:
-        env.pop("BRAIN_ONEBRAIN_SINGLE_POOL", None)   # the two-pool production default
+        env["BRAIN_ONEBRAIN_SINGLE_POOL"] = "0"   # FORCE two-pool. The single-pool flag flipped to default-ON
+        # (2026-09-05, c1343b238), so popping the env no longer disables it — the off arm MUST set 0 explicitly or
+        # the A/B is confounded (both arms single-pool => trivially all_same, meaningless). The `not off_flag`
+        # guard in verify_seed() correctly reports GO=False when this is wrong, which is how the confound was caught.
     cmd = [sys.executable, "-m", "research.runners._onebrain_single_pool_flip_regression",
            "--worker", "--seed", str(seed)]
     proc = subprocess.run(cmd, env=env, capture_output=True, text=True,
