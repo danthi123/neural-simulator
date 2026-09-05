@@ -1,0 +1,155 @@
+{
+ "runner": "_touchpoint_a_fact_clause_derisk",
+ "smoke": true,
+ "complete": true,
+ "backend": "numpy",
+ "ltm_bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+ "known_topics": [
+  "angora_turkey",
+  "college_for_interdisciplinary_studies",
+  "imperial_roman",
+  "l_quipe_de_france"
+ ],
+ "n_probes": 2,
+ "seed": 42,
+ "ts": "2026-09-04T20:51:10",
+ "rows_off": [
+  {
+   "idx": 0,
+   "class": "known_factual",
+   "topic": "angora_turkey",
+   "prompt": "Tell me about angora_turkey.",
+   "flag_on": false,
+   "answer": "Sure \u2014 The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "angora_turkey",
+     "located_in_time_zone",
+     "kaliningrad_time"
+    ],
+    [
+     "angora_turkey",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "angora_turkey",
+     "country",
+     "the_republic_of_turkey"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 3,
+   "render_calls": 3,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 21.29,
+   "rss_mb": 877.5
+  },
+  {
+   "idx": 1,
+   "class": "unknown",
+   "topic": "zorplaxian",
+   "prompt": "Tell me about zorplaxian.",
+   "flag_on": false,
+   "answer": "Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "zorplaxian"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 17.49,
+   "rss_mb": 877.5
+  }
+ ],
+ "rows_on": [
+  {
+   "idx": 0,
+   "class": "known_factual",
+   "topic": "angora_turkey",
+   "prompt": "Tell me about angora_turkey.",
+   "flag_on": true,
+   "answer": "Sure \u2014 the Angora Turkey is located in the time zone of the Kaliningrad Time the Angora Turkey is a City Work the Angora Turkey is located in the The Republic of Turkey \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "angora_turkey",
+     "located_in_time_zone",
+     "kaliningrad_time"
+    ],
+    [
+     "angora_turkey",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "angora_turkey",
+     "country",
+     "the_republic_of_turkey"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 3,
+   "render_calls": 0,
+   "fact_clause_calls": 3,
+   "fact_clause_hits": 3,
+   "gen_seconds": 9.74,
+   "rss_mb": 1330.4
+  },
+  {
+   "idx": 1,
+   "class": "unknown",
+   "topic": "zorplaxian",
+   "prompt": "Tell me about zorplaxian.",
+   "flag_on": true,
+   "answer": "Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "zorplaxian"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 12.05,
+   "rss_mb": 1330.4
+  }
+ ],
+ "go_gate": {
+  "n_rows_compared": 2,
+  "scope_untouched": true,
+  "scope_problems": [],
+  "content_preserved": true,
+  "content_problems": [],
+  "flag_off_inert": true,
+  "flag_off_problems": [],
+  "structural_checks_passed": true,
+  "touchpoint_a_render_calls_delta": -3,
+  "fact_clause_engaged_on_known_rows": 1
+ },
+ "wall_seconds": 404.1,
+ "peak_rss_mb": 1330.4,
+ "note": "TINY SMOKE -- confirms the wiring imports/parses/executes real turns and the structural anti-cheat invariants hold; NOT the full de-risk battery (deferred to compute-availability, see module docstring)."
+}

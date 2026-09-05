@@ -133,6 +133,59 @@ def _direct_ltm_topic_fallback_enabled():
     return v is not None and v.strip().lower() in ("1", "true", "on", "yes")
 
 
+# ONE-BRAIN STAGE-2 BUILD-AHEAD (2026-09-04, `BRAIN_TOUCHPOINT_A_FACT_CLAUSE`, default OFF; the roadmap's own
+# Stage 2 -- research/findings/2026-09-03-one-brain-mouth-integration-ROADMAP.md SS4: "retire 'Touchpoint A':
+# the Surface-A open-prose recall fallback"). THE MEASURED CONTEXT this flag targets (re-read, not re-run, from
+# the already-committed AFTER artifact this session -- research/findings/raw/
+# _per_touchpoint_qwen_share_shipped_default_AFTER_recall_gate_fix.json, landed by
+# research/findings/2026-09-04-recall-gate-reaches-real-ltm-GO.md, bbff50765): now that the direct-recall gate
+# reaches the real LTM shard, EVERY known-topic row that newly returns a grounded, multi-fact answer does so
+# with `spiking_hit_count=0` and `render_calls>0` on all 5/6 known-topic rows (idx 0-3, 5; only the disclosed
+# `known_multi_sentence` coverage gap at idx 4 still abstains) -- i.e. the bounded transitive-SVO spiking Broca
+# mouth (`chat.spiking_recall_surface`) NEVER covers this newly-reachable content, so `_render_one_verified`
+# falls through to `chat.renderer.render_svo` (Qwen on a CUDA host / the template-stub under SIM_BACKEND=numpy)
+# for 100% of it -- "Touchpoint A", exactly as the roadmap named it, now carrying the FULL weight of the
+# recall-gate fix's own headline win.
+#
+# THE CANDIDATE FIX, reusing an ALREADY-6-seed-GO mechanism rather than building a new one: Surface B's fact-
+# clause fallback (`webapp.wkv_mouth_generator.render_fact_sentence`, `RELATION_LEXICON` + `slug_to_np` driving
+# the UNMODIFIED `SpikingClauseProducer`) is "moat-safe by construction" (that function's own docstring) and
+# the recall-gate finding's own SS5 already found `RELATION_LEXICON` covers 34/34 live relation types in the
+# SAME sampled `wikidata_core_15k` store this flag would run against -- i.e. the coverage this fix would need
+# was independently measured to already exist, though NOT yet exercised against Touchpoint A's own probe set
+# (a distinct, not-yet-run check; see the paired de-risk runner
+# research/runners/_touchpoint_a_fact_clause_derisk.py). Unlike Stage 1 (`no_qwen_fallback_enabled`, which
+# retires a call that always collapses to one fixed abstain STRING regardless of generator), this residual is
+# GENUINE content -- multi-fact grounded prose -- so "answer-preserving" here means the rendered sentence's
+# (agent, action, patient) stays IDENTICAL to what Touchpoint A would have asserted (content/grounding
+# preserved, VERIFY-checked exactly as today), NOT that the wording is byte-identical text (a different mouth
+# necessarily words it differently) -- a narrower, honestly-distinguished claim from Stage 1's.
+#
+# SCOPE, by construction: `render_fact_sentence` is called with a ONE-ITEM list, `[svo]` -- never the composer's
+# full gathered set -- so its own `pick_covered_fact` can only ever return THIS svo or None; it cannot introduce
+# a different fact than the one already gathered + gate-approved. A None (relation not in `RELATION_LEXICON`,
+# or the bridge did not genuinely spike) falls straight through to the PRE-EXISTING `chat.renderer.render_svo`
+# call below, UNCHANGED -- this is a pure ADDITIVE safety net between the spiking-Broca miss and the Qwen/
+# template fallback, never a replacement of it. Default OFF (unset/0/false/off/no): `_render_one_verified` runs
+# EXACTLY as before this flag existed. NOT YET VALIDATED beyond a tiny CPU smoke (a handful of probes, imports/
+# parses/executes a turn) -- the full measure+retire de-risk (a real before/after comparison against the
+# project's own per-touchpoint probe battery, GO-gated on content-preservation + the moat holding on unknown/
+# dangerous/open-ended turns) is DEFERRED to when compute frees, per this task's own instruction; see that
+# runner's module docstring for the exact GO criteria. Only the sequential render path (`_render_one_verified`)
+# is wired -- the batched sibling (`_render_paragraph_batched`) is UNTOUCHED and stays out of this flag's scope
+# (production runs `BRAIN_RICH_BATCH_RENDER=0` by default, the sequential path, per the per-touchpoint
+# measurement's own disclosed scope note), a named residual, not a hidden gap.
+_TOUCHPOINT_A_FACT_CLAUSE_DEFAULT_ON = False
+
+
+def _touchpoint_a_fact_clause_enabled():
+    """`BRAIN_TOUCHPOINT_A_FACT_CLAUSE` truthy -> try the brain-based fact-clause render (see the block above)
+    on a Touchpoint-A miss (the bounded transitive-SVO spiking Broca mouth did not cover this SVO) BEFORE
+    falling through to the Qwen/template renderer. Default OFF (unset/0/false/off/no): pre-existing behaviour,
+    byte-identical -- the standard truthy/falsy env-parsing contract this module's other flags use."""
+    return os.environ.get("BRAIN_TOUCHPOINT_A_FACT_CLAUSE", "0").strip().lower() in ("1", "true", "on", "yes")
+
+
 def _batch_render_enabled():
     """ADDITIVE, DEFAULT-OFF (`BRAIN_RICH_BATCH_RENDER`). When truthy, `RichAnswerComposer.render_paragraph`
     batches the common-case fluent render of every gathered SVO that needs the faculty into ONE
@@ -875,6 +928,20 @@ class RichAnswerComposer:
         spk = self.chat.spiking_recall_surface(a, v, p)
         if spk is not None:
             return spk, True
+        # ONE-BRAIN STAGE-2 BUILD-AHEAD (BRAIN_TOUCHPOINT_A_FACT_CLAUSE, default OFF -- see the flag block
+        # above `_touchpoint_a_fact_clause_enabled`): one more brain-based attempt on a Touchpoint-A miss,
+        # reusing Surface B's already-6-seed-GO fact-clause render (moat-safe by construction: the ONE-item
+        # list means it can only ever render THIS svo or return None). A None falls straight through to the
+        # pre-existing Qwen/template renderer below, unchanged.
+        if _touchpoint_a_fact_clause_enabled():
+            try:
+                from webapp.wkv_mouth_generator import render_fact_sentence
+                fc_seed = int(getattr(self.chat.inner, "seed", 42))
+                fc_surface = render_fact_sentence([svo], seed=fc_seed)
+            except Exception:
+                fc_surface = None                         # never let this attempt crash a turn -- degrade below
+            if fc_surface:
+                return fc_surface, True
         surface, asserted = self.chat.renderer.render_svo(a, v, p)
         if self._verify_rendered(surface, asserted, svo, gated):
             return surface, True
