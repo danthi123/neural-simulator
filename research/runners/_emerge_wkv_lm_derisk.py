@@ -1715,6 +1715,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories_train.txt")
+    ap.add_argument("--eval-corpus", dest="eval_corpus", type=str, default=None,
+                    help="ADDITIVE, default-OFF single-variable de-risk (2026-09-05): when set, the held-out EVAL "
+                         "set is drawn from THIS corpus (using the SAME rng/permutation/cut/truncate arithmetic as "
+                         "--corpus, so at a shared seed the eval set is BYTE-IDENTICAL to a standalone run on "
+                         "--eval-corpus) instead of from --corpus, while TRAINING stays on --corpus. Train passages "
+                         "whose word tokens exactly match an eval passage are DROPPED from the training pool "
+                         "(content-based decontamination) so the extra-token training never sees the held-out eval. "
+                         "Purpose: HOLD THE EVAL FIXED while scaling the TRAINING-token supply via a bigger/combined "
+                         "--corpus (e.g. train wt103+simplewiki, eval wt103 held-out -> directly comparable to the "
+                         "wt103-train/wt103-eval baseline). When UNSET (default None) EVERY path below is "
+                         "byte-identical to today.")
     ap.add_argument("--vocab", type=int, default=2000)
     ap.add_argument("--tokenizer", choices=["word", "bpe"], default="word",
                     help="word (default) = per-word top-K vocab, byte-identical to pre-swap behavior. bpe = load a "
@@ -1973,6 +1984,17 @@ def main():
         args.corpus = "data/corpus/tinystories.txt"
     sents = (load_stories(args.corpus, args.n_sentences, max_len=args.max_len)
              if getattr(args, "contiguous", False) else load_sentences(args.corpus, args.n_sentences))
+    # --eval-corpus (ADDITIVE, default-OFF): load the corpus the held-out EVAL set will be drawn from, ONCE, with
+    # the SAME loader/args as --corpus above (so at a shared seed the eval slice below is byte-identical to a
+    # standalone run on --eval-corpus). When None the whole feature is inert -> every path below is unchanged.
+    eval_sents = None
+    if getattr(args, "eval_corpus", None):
+        if not Path(args.eval_corpus).exists():
+            raise SystemExit(f"--eval-corpus not found: {args.eval_corpus}")
+        eval_sents = (load_stories(args.eval_corpus, args.n_sentences, max_len=args.max_len)
+                      if getattr(args, "contiguous", False) else load_sentences(args.eval_corpus, args.n_sentences))
+        print(f"    [eval-corpus] {args.eval_corpus}: {len(eval_sents)} passages loaded "
+              f"(held-out eval drawn from here; training stays on --corpus={args.corpus})", flush=True)
     t0 = time.time(); per_seed = {}
     # SPEED (additive, result-preserving): the BPE adapter is seed-INDEPENDENT (it just wraps the loaded tokenizer),
     # so build it ONCE and reuse across seeds -> its per-word tokenization cache persists, making seeds 2..N tokenize
@@ -2027,6 +2049,29 @@ def main():
             dev_ids = tr_ids[-min(2000, len(tr_ids)//5):]
         else:
             tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]; dev_ids = [vocab.ids(s) for s in dev]
+
+        if eval_sents is not None:
+            # --eval-corpus OVERRIDE (ADDITIVE): replace the held-out EVAL set with one drawn from --eval-corpus,
+            # using the SAME rng/permutation(0.85 cut)/truncate arithmetic used for --corpus above -> at a shared
+            # seed the eval set is byte-identical to a standalone --corpus=--eval-corpus run (SINGLE VARIABLE: only
+            # the TRAINING token supply changes; the eval is held fixed and comparable to the baseline). tr/tr_ids
+            # stay from --corpus (the combined pool). DECONTAMINATE (silent-failure discipline): drop any train
+            # passage whose word tokens exactly match an eval passage, so the extra-token training never sees the
+            # held-out eval (contamination would spuriously inflate the lift). tr[j] <-> tr_ids[j] align in BOTH
+            # the tok-cache and non-cache branches above, so the two lists are filtered by the same indices.
+            e_rng = np.random.default_rng(seed)
+            e_idx = e_rng.permutation(len(eval_sents)); e_cut = int(0.85 * len(eval_sents))
+            ev = [eval_sents[i] for i in e_idx[e_cut:]][:args.max_eval_sents]
+            ev_ids = [vocab.ids(s) for s in ev]
+            _eval_keys = {" ".join(s) for s in ev}
+            _keep = [j for j in range(len(tr)) if " ".join(tr[j]) not in _eval_keys]
+            _dropped = len(tr) - len(_keep)
+            if _dropped:
+                tr = [tr[j] for j in _keep]
+                tr_ids = [tr_ids[j] for j in _keep]
+            dev_ids = tr_ids[-min(2000, len(tr_ids) // 5):]   # dev is a suffix of the (decontaminated) train ids
+            print(f"    [eval-corpus] seed {seed}: eval<-{args.eval_corpus} ({len(ev)} passages); "
+                  f"train<-{args.corpus} ({len(tr)} passages after decontaminating {_dropped} eval-overlap)", flush=True)
 
         P_bi = fit_bigram(tr_ids, V)
         tri, lambdas = fit_interp_trigram(tr_ids, V, dev_ids)
@@ -2105,6 +2150,8 @@ def main():
     out = {"runner": "_emerge_wkv_lm_derisk", "corpus": args.corpus, "seeds": args.seeds, "d_model": args.d_model,
            "pred_aux_weight": args.pred_aux_weight, "pred_aux_offsets": args.pred_aux_offsets,
            "per_seed": per_seed, "elapsed_s": round(time.time() - t0, 1)}
+    if getattr(args, "eval_corpus", None):    # --eval-corpus: record it ONLY when set (byte-identical output when off)
+        out["eval_corpus"] = args.eval_corpus
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json} ({out['elapsed_s']}s)", flush=True)
 
