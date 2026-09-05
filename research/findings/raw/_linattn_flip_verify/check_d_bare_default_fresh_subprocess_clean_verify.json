@@ -1,0 +1,94 @@
+{
+ "runner": "check_d_bare_default_fresh_subprocess_clean_verify (hand-authored orchestrator, fresh-subprocess-per-arm via research/findings/raw/_linattn_flip_verify/_check_d_run_one_arm.py, replaces check_b/phase6's same-process session/RNG-timeline isolation with the project's own _wkv_mouth_affect_neural_verify.py-precedent subprocess isolation, through the FULL webapp.server.brain_chat pipeline at the bare/unset BRAIN_WKV_MOUTH_* production defaults)",
+ "seed_scope_note": "webapp/server.py hardcodes seed=42 at every organ construction site (grep-confirmed); there is no seed axis in the deployed brain_chat pipeline to sweep. Diversity is instead added on the PROMPT axis (2 independent unknown topics for the moat gate, vs check_b/phase6's 1); the known-topic prompt matches established precedent for direct comparability.",
+ "verdict": {
+  "resolution_pass": true,
+  "determinism_pass_fresh_subprocess": true,
+  "affect_loadbearing_pass_fresh_subprocess": true,
+  "moat_pass_both_unknown_topics": true,
+  "fluency_pass_salad_frac_lt_0p3": true,
+  "lesion0_salad_frac": 0.0410958904109589,
+  "FRESH_SUBPROCESS_BARE_DEFAULT_CLEAN_GO": true
+ },
+ "rows": {
+  "resolved_defaults": {
+   "recurrence_mode": "linattn",
+   "tokenizer_mode": "bpe",
+   "scope_mode": "broad",
+   "ckpt_path_seed42": "/home/dant123/Projects/sim/.claude/worktrees/agent-a0763d0ebf80a119e/bridges/wkv_ckpt/wkv_linattn_depth2_contiguous_seed42.npz",
+   "ckpt_exists": true
+  },
+  "Q1_known_topic": {
+   "topic": "Tell me about frank_lincoln_wright",
+   "A_lesion0": {
+    "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "known": true,
+    "abstained": null,
+    "wall_s": 231.5
+   },
+   "B_lesion1": {
+    "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his father abbreviated to her mother she studied law school for children who worked in new york city university",
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "known": true,
+    "abstained": null,
+    "wall_s": 273.6
+   },
+   "C_lesion0_repeat": {
+    "raw": "Tell me about franklincolnwright and the song is a american romantic drama movie directed by John sharp it stars j sandy warner bros br n e g griffenheim khail davy fallout in he was born on february at age of tyler died from pneumonia italy aged giovanni april june wambier lagustashed his home in new york city to the united states secretary of state for the national assembly of california berkeley has been",
+    "generator": "wkv_mouth",
+    "wkv_mouth_used": true,
+    "known": true,
+    "abstained": null,
+    "wall_s": 236.4
+   }
+  },
+  "Q2_moat": [
+   {
+    "topic": "Tell me about the zltrinqua dynasty of planet Vexcor-9",
+    "lesion0": {
+     "raw": "Tell me about the zltrinqua dynasty of planet vexcor is an important part in the world it was created by the th century and has been made to be one of the most famous authors who have been published for many years he also had a number of books on his book it wrote that they are called the photos and other stories from the time of the same name as the first novel the word comes so after working together with her own movie this means 'n' meaning she would not play at home or the song I am basses were released",
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "known": false,
+     "abstained": null,
+     "wall_s": 269.1
+    },
+    "lesion1": {
+     "raw": "Tell me about the zltrinqua dynasty of planet vexcor is an important part in the world it was created by the th century and has been made to be one of the most famous authors who have been published for many years he also had a very popular music video game show at the time of his own life on june he played wiedmonton died from pneumonia at the age of karnes krishna htman born november is an american singer songwriter she became known as her best known song of the album I am rica's first single from",
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "known": false,
+     "abstained": null,
+     "wall_s": 234.3
+    },
+    "PASS": true
+   },
+   {
+    "topic": "Tell me about the fictional glorbaxian empire of nebula-7",
+    "lesion0": {
+     "raw": "Tell me about the fictional glorbaxian empire of nebula and was a member of the house of representatives from to he served in the th district of illinois for serving at least two years later on february he became part of the united states secretary of state senate since then he has changed against his leadership with the national assembly of india after being formed by the government of pakistan it is also known as karnato paulo which are now present in the indian ocean this means that the city had been made into the province of south korea the capital city wearing the population of the",
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "known": false,
+     "abstained": null,
+     "wall_s": 258.6
+    },
+    "lesion1": {
+     "raw": "Tell me about the fictional glorbaxian empire of nebula and was a member of the house of representatives from to he served in the th district of illinois for serving at least two years later on february he became part of the united states secretary of state senate since then he has changed another term by president george w bush she is also known as chief justice of the supreme court of india after being elected into the u s representative of australia during his time with a new zeher party was born in kentucky he studied at harvard university he worked in the national assembly of",
+     "generator": "wkv_mouth",
+     "wkv_mouth_used": true,
+     "known": false,
+     "abstained": null,
+     "wall_s": 209.1
+    },
+    "PASS": true
+   }
+  ]
+ },
+ "wall_seconds": 1713.5,
+ "seed": 42,
+ "backend": "numpy"
+}

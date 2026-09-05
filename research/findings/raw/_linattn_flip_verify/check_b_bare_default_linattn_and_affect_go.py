@@ -12,6 +12,19 @@ honest note). This script is scenario-identical to the EXISTING, committed `phas
 message, same known/unknown topics, same Q1/Q2 structure, same CPU-forced backend) with exactly ONE change:
 every `BRAIN_WKV_MOUTH_*` env var is left UNSET instead of pinned, so what is actually under test is "does the
 bare post-flip DEFAULT reproduce the pinned-explicit GO" -- the flip's own central claim.
+
+CORRECTION (2026-09-05, added after this file's own NO-GO result was recovered from an abandoned worktree and
+found never to have been committed -- see `research/findings/2026-09-05-linattn-check-b-dropped-nogo-recovered-
+and-reproduced.md`): running THIS file (as committed, smoke-turn-free) still returns `BARE_DEFAULT_FLIP_CONFIRM_
+GO: false` -- byte-identical raw text and the identical determinism-control failure as the smoke-turn-containing
+revision the "self-correcting" note below blames. The smoke turn was NEVER the cause; removing it changed
+nothing. The real confound is the one `phase6_linattn_clean_isolation.py`'s own docstring names for the ORIGINAL
+`phase4` script: this file still runs `prime -> turn1(lesion0) -> turn2(lesion1) -> turn3(lesion0-repeat)` as ONE
+shared session in ONE process, so mood-EMA/habituation state evolves across turns exactly like phase4 did --
+`phase6`'s fresh-session-per-arm fix (and this project's own stronger fresh-SUBPROCESS-per-arm precedent,
+`research/runners/_wkv_mouth_affect_neural_verify.py::_run_arm`) was never back-ported here. See
+`check_d_bare_default_fresh_subprocess_clean_verify.py` (same directory) for the corrected re-verification.
+Original text below preserved unedited, per this project's no-silent-rewrite convention.
 """
 import json
 import os
