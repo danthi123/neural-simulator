@@ -316,7 +316,20 @@ def main():
     vram_kmax = [int(s) for s in a.vram_kmax.split(",") if s.strip()]
 
     facts, vocab, codes, manifest = _load_bundle(a.bundle)
-    result = {
+
+    # RESUME (kill-resilient): the environment's controller kills lower-priority GPU jobs, and each onebrain seed is
+    # slow (~11-24 min). Load any prior --out, keep its completed seeds + feasibility, and only run what is missing;
+    # write the JSON after the oracle, after EACH seed, and after feasibility -- so a kill never loses a done seed.
+    os.makedirs(os.path.dirname(a.out), exist_ok=True)
+    result = {}
+    if os.path.exists(a.out):
+        try:
+            result = json.load(open(a.out))
+            print("[resume] loaded prior %s (mechanism seeds done: %s)"
+                  % (a.out, [m["seed"] for m in result.get("mechanism", [])]), flush=True)
+        except Exception:
+            result = {}
+    result.update({
         "runner": "research/runners/_rank1_composer_bundle_onebrain_derisk.py",
         "bundle": a.bundle,
         "bundle_composer_kind": manifest.get("composer_kind"),
@@ -326,26 +339,38 @@ def main():
         "sim_backend": os.environ.get("SIM_BACKEND", "numpy"),
         "note": ("onebrain built as PLAIN OneBrainComposer (BRAIN_COMPOSER_MERGE=0); recall/moat byte-identical to "
                  "the pool#1-bound production variant per 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO."),
-    }
+    })
 
-    t0 = time.time()
-    oracle = _rf_oracle(seeds[0], facts, vocab, codes, a.subset_k, a.n_abstain)
-    print("[rf-oracle] built once (seed-independent): n_cues=%d rf_ok=%d n_novel=%d rf_confab=%d (%.1fs)"
-          % (oracle["n_cues"], oracle["rf_ok"], oracle["n_novel"], oracle["rf_confab"], time.time() - t0), flush=True)
-    result["rf_oracle"] = {"n_cues": oracle["n_cues"], "rf_ok": oracle["rf_ok"],
-                           "n_novel": oracle["n_novel"], "rf_confab": oracle["rf_confab"],
-                           "note": "rf recall is host-FHRR, seed-independent -> built once, reused across seeds"}
+    def _write():
+        with open(a.out, "w") as fh:
+            json.dump(result, fh, indent=2)
 
-    mech = []
-    for s in seeds:
+    mech = list(result.get("mechanism", []))
+    done_seeds = {m["seed"] for m in mech}
+    todo = [s for s in seeds if s not in done_seeds]
+
+    oracle = None
+    if todo:
+        t0 = time.time()
+        oracle = _rf_oracle(seeds[0], facts, vocab, codes, a.subset_k, a.n_abstain)
+        print("[rf-oracle] built once (seed-independent): n_cues=%d rf_ok=%d n_novel=%d rf_confab=%d (%.1fs)"
+              % (oracle["n_cues"], oracle["rf_ok"], oracle["n_novel"], oracle["rf_confab"], time.time() - t0), flush=True)
+        result["rf_oracle"] = {"n_cues": oracle["n_cues"], "rf_ok": oracle["rf_ok"],
+                               "n_novel": oracle["n_novel"], "rf_confab": oracle["rf_confab"],
+                               "note": "rf recall is host-FHRR, seed-independent -> built once, reused across seeds"}
+        result["mechanism"] = mech
+        _write()
+
+    for s in todo:
         t0 = time.time()
         m = _onebrain_one_seed(s, oracle, vocab, codes)
         m["wall_s"] = round(time.time() - t0, 1)
         mech.append(m)
+        result["mechanism"] = mech
+        _write()                                              # checkpoint after every seed (kill-resilient)
         print("[mech] seed=%d recall ob_ok=%d/%d (rf_ok=%d) agree=%d moat ob_confab=%d (rf=%d) store_ok=%s (%.1fs)"
               % (s, m["recall"]["ob_ok"], m["recall"]["n"], m["recall"]["rf_ok"], m["recall"]["agree"],
                  m["abstain"]["ob_confab"], m["abstain"]["rf_confab"], m["store"]["all_ok"], m["wall_s"]), flush=True)
-    result["mechanism"] = mech
 
     # ATTRIBUTION (tools.lab) — this de-risk is an EQUIVALENCE claim: swapping the composer (rf -> onebrain) must
     # NOT regress recall or the moat. attributable_to(treatment=onebrain, control=rf) asks whose the difference is.
@@ -363,19 +388,19 @@ def main():
         "note": ("treatment=onebrain, control=rf; None/0 => the composer flip introduces no recall/moat error "
                  "where the facts FIT the k_max buffer (the mechanism is equivalent, not a lever with an effect)."),
     }
+    _write()
 
-    feas = _feasibility(a.bundle, vocab, len(facts), vram_kmax, a.attempt_full)
-    result["feasibility"] = feas
-    print("[feas] naive_full_flip=%s predicted_vram_at_nfacts=%s fits_budget=%s"
-          % (feas.get("naive_full_flip"), feas.get("predicted_vram_mib_at_nfacts"),
-             feas.get("predicted_fits_budget")), flush=True)
+    if "feasibility" not in result:
+        feas = _feasibility(a.bundle, vocab, len(facts), vram_kmax, a.attempt_full)
+        result["feasibility"] = feas
+        _write()
+        print("[feas] naive_full_flip=%s predicted_vram_at_nfacts=%s fits_budget=%s"
+              % (feas.get("naive_full_flip"), feas.get("predicted_vram_mib_at_nfacts"),
+                 feas.get("predicted_fits_budget")), flush=True)
 
-    result["verdict"] = _verdict(mech, feas)
+    result["verdict"] = _verdict(mech, result["feasibility"])
+    _write()
     print("[verdict]", json.dumps(result["verdict"], indent=2), flush=True)
-
-    os.makedirs(os.path.dirname(a.out), exist_ok=True)
-    with open(a.out, "w") as fh:
-        json.dump(result, fh, indent=2)
     print("wrote", a.out, flush=True)
 
 

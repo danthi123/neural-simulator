@@ -1,0 +1,31 @@
+{
+  "runner": "research/runners/_rank1_composer_bundle_onebrain_derisk.py",
+  "bundle": "/home/dant123/Projects/sim/bridges/developed/scale787/day_33",
+  "bundle_composer_kind": "rf",
+  "n_facts": 404,
+  "vocab": 788,
+  "n_grounded_codes": 788,
+  "seeds": [42, 43, 44, 100, 101, 102],
+  "subset_k": 30,
+  "composer_merge_env": "0",
+  "sim_backend": "numpy",
+  "note": "onebrain built as PLAIN OneBrainComposer (BRAIN_COMPOSER_MERGE=0); recall/moat byte-identical to the pool#1-bound production variant per 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO.",
+  "rf_oracle": {"n_cues": 21, "rf_ok": 21, "n_novel": 40, "rf_confab": 0, "note": "rf recall is host-FHRR, seed-independent -> built once, reused across seeds"},
+  "mechanism": [
+    {"seed": 42, "k_max": 32, "n_stored": 30, "n_cues": 21,
+     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
+     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
+     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
+     "wall_s": 1458.3, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"},
+    {"seed": 43, "k_max": 32, "n_stored": 30, "n_cues": 21,
+     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
+     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
+     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
+     "wall_s": 813.8, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"},
+    {"seed": 44, "k_max": 32, "n_stored": 30, "n_cues": 21,
+     "recall": {"rf_ok": 21, "ob_ok": 21, "agree": 21, "n": 21, "regressions": []},
+     "abstain": {"n": 40, "rf_confab": 0, "ob_confab": 0, "ab_agree": 40, "ob_confab_examples": []},
+     "store": {"probes": [{"kind": "invocab", "ok": true}, {"kind": "novel_recruit", "ok": true}], "all_ok": true},
+     "wall_s": 681.3, "captured_from": "stdout (JSON write killed by controller before completion; re-run resumes the rest)"}
+  ]
+}

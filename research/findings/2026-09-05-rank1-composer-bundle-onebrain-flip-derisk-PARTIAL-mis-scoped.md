@@ -9,6 +9,7 @@ verdict: PARTIAL / MIS-SCOPED. NO-GO for RANK-1 as written (rebuild the FULL 404
 artifacts:
   - research/runners/_rank1_composer_bundle_onebrain_derisk.py
   - research/findings/raw/_rank1_composer_bundle_onebrain_derisk_smoke.json
+  - research/findings/raw/_rank1_composer_bundle_onebrain_derisk.json
 verification: |
   BRAIN_COMPOSER_MERGE=0 python -m research.runners._rank1_composer_bundle_onebrain_derisk
     --bundle bridges/developed/scale787/day_33 --seeds 42,43,44,100,101,102
@@ -64,11 +65,13 @@ On a FITTING subset (30 of the bundle's own facts, its real vocab + grounded cod
 (`BRAIN_COMPOSER_MERGE=0`; recall/moat byte-identical to the pool#1-bound production variant per
 2026-08-14-onebrain-composer-pool1-DEFAULT-FLIP-GO) vs the rf oracle:
 
-- seed 42 (artifact `research/findings/raw/_rank1_composer_bundle_onebrain_derisk_smoke.json`): recall 21/21 cues
-  match rf (`rf_ok=21`, `ob_ok=21`, agreement 21/21, 0 mismatches). Runtime store
-  (fresh-cue + a NOVEL word via the vocab_headroom recruit path) and the no-confab moat (unstored cues abstain) are
-  measured in the same runner. The full 6-seed run (42/43/44/100/101/102) adds these + VRAM scaling to the
-  `.json` artifact (running at commit time — the ARCHITECTURAL verdict above does not depend on it).
+- seeds 42/43/44 (of 42/43/44/100/101/102) each: recall 21/21 cues match rf (`rf_ok=21`, `ob_ok=21`, agreement
+  21/21, 0 mismatches); the no-confab moat holds (`rf_confab=0`, `ob_confab=0` on 40 unstored cues); runtime store
+  (fresh-cue + a NOVEL word via the vocab_headroom recruit path) recalls correctly. IDENTICAL across all three
+  seeds — see `research/findings/raw/_rank1_composer_bundle_onebrain_derisk.json` (the seed-42 cross-check is also
+  in `research/findings/raw/_rank1_composer_bundle_onebrain_derisk_smoke.json`). The remaining seeds 100/101/102 +
+  the VRAM-scaling feasibility measurement are completing (the runner checkpoints per seed and resumes; the
+  ARCHITECTURAL verdict above does not depend on them).
 
 So where onebrain applies (the co-resident buffer), it is correct — and it is already the shipped default for
 tiny-demo.
