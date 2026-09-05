@@ -184,7 +184,7 @@ class BrainConversationalAgent:
                  communicable_config=None, speak_value_Q=None, D=128,
                  enable_self_schema_honesty=False, self_schema_honesty_config=None,
                  enable_source_provenance_honesty=False, source_provenance_honesty_config=None,
-                 vocab_headroom=None,
+                 vocab_headroom=None, onebrain_k_max=None,
                  slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
                  slotbinder_max_clauses=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
@@ -283,6 +283,13 @@ class BrainConversationalAgent:
             # codebook is blind to it, so the taught fact stores but never recalls (2026-08-12 wrap-vs-inner bug). The
             # numpy/test-oracle onebrain path can pass 0 for byte-identical layout.
             _ob_vh = 128 if vocab_headroom is None else int(vocab_headroom)
+            # onebrain_k_max (SUBLINEAR-RETRIEVAL wire-in, default None = 32 = byte-identical to before): the number of
+            # CO-RESIDENT fact blocks the OneBrainComposer sizes its store for. The default 32 is why the O(k_max) linear
+            # scan was tolerable; to move the LLM-scale knowledge (hundreds of facts) OFF the host FHRR (rf) composer ONTO
+            # the spiking one-brain composer, k_max must scale -- which is exactly what the DG-CA3 fact-shard fast path
+            # (`enable_fact_shard` / env BRAIN_FACT_SHARD_RETRIEVAL, on the composer) makes tractable (O(shard) recall).
+            # None -> 32 reproduces the prior hardcoded default (the composer's own k_max default) exactly.
+            _ob_kmax = 32 if onebrain_k_max is None else int(onebrain_k_max)
             # COMPOSER-IN-POOL#1 (the b-closer, opt-in DEFAULT-OFF -> byte-identical): when BRAIN_COMPOSER_MERGE is ON,
             # the production-DEFAULT OneBrainComposer's RF recall/store ops run on pool #1's SHARED spiking bridge (its
             # onebrain_composer slice) -- ONE cp_membrane_potential_v with the surprise + world-model organs -- while its
@@ -301,12 +308,13 @@ class BrainConversationalAgent:
             if _ob_pool1:
                 from research.runners.onebrain_merge_production import make_pool1_onebrain_composer
                 self.composer = make_pool1_onebrain_composer(
-                    seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
+                    seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes, k_max=_ob_kmax,
                     enable_attributed=enable_attributed, enable_multiframe=enable_multiframe,
                     enable_spiking_cleanup=enable_spiking_cleanup, integrated_loop=integrated_loop,
                     vocab_headroom=_ob_vh)
             else:
                 self.composer = OneBrainComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
+                                                 k_max=_ob_kmax,
                                                  enable_attributed=enable_attributed,
                                                  enable_multiframe=enable_multiframe,
                                                  enable_spiking_cleanup=enable_spiking_cleanup,

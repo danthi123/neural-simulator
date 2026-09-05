@@ -58,6 +58,10 @@ def _seq_imports():
 
 ROLES3 = ["agent", "action", "patient"]
 
+# Sentinel for the fact-shard fast path: "this cue cannot be routed by the index -> the caller uses the full scan"
+# (distinct from None, which the fast path uses for an honest ABSTAIN). See `_fact_shard_first_match`.
+_FS_ESCALATE = object()
+
 
 def _build_complex_csr(n_total, connections):
     """Build the (cp_rf_w_re, cp_rf_w_im) device CSR pair from a `(post, pre, complex_w)` connection list -- the SAME
@@ -120,7 +124,8 @@ class OneBrainComposer:
                  vocab_headroom=0, homeostatic_scaling=False, homeo_beta_down=0.25,
                  homeo_s_min=0.34, homeo_s_max=4.0,
                  enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
-                 sparse_index_c=8, sparse_index_conf_floor=0.5, no_batched_region=False):
+                 sparse_index_c=8, sparse_index_conf_floor=0.5, no_batched_region=False,
+                 enable_fact_shard=False, fact_shard_g=2, fact_shard_G=4, fact_shard_c=8):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
         # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
@@ -316,6 +321,40 @@ class OneBrainComposer:
         self._dg_index = None          # the DGSparseIndex over the concept codebook (lazy; reuse-by-import)
         self._dg_codebook = None       # (V, D) concept phase-matrix aligned to self.words (fractional-cycle phases)
         self._dg_built_V = -1          # len(self.words) the current index/codebook were built for (rebuild on change)
+        # enable_fact_shard (SUBLINEAR RETRIEVAL over the FACT-COUNT axis k_max; board rank-1 composer-latency
+        # residual; ADDITIVE + DEFAULT-OFF = BYTE-IDENTICAL to today when off, incl. the numpy-CPU + test-oracle
+        # path): route the who/what recall's (agent,action)/(action,patient) cue-match-and-first-match through a
+        # DG-CA3 sparse index over the stored FACT BLOCKS, so a query decodes O(shard) blocks instead of O(k_max)
+        # -- the missing axis `enable_sparse_index` does NOT close (that index shards the VOCABULARY axis V; its
+        # `_read_blocks_indexed` STILL loops every fact block). This is the lever that retires the O(k_max) linear
+        # scan (~149 s / recall @ 404 co-resident facts, why k_max was pinned at 32). MECHANISM (de-risked GO 6/6
+        # @ 404 facts, 2026-09-05-onebrain-fact-shard-dg-ca3-sublinear-spiking-retrieval-derisk-GO.md): a per-role
+        # DGSparseIndex over the CONCEPT CODES of the blocks' role fillers (encoding-time role knowledge -- the
+        # fact's roles are known when stored). A query routes each asserted cue role's CLEAN word code to its DG
+        # shard of candidate blocks and INTERSECTS the per-role shards (conjunctive cue); the intersection tightens
+        # the shard to ~1 even with reused fillers AND gives the moat for free (an out-of-store valid-word combo
+        # intersects to the empty set -> abstain). Only the shard blocks are decoded, via the composer's EXISTING
+        # per-block spiking read (`_read_one_block` -> `_read_block`/`_read_block_indexed`: reconstruct + unbind +
+        # cleanup on FIRING NEURONS -- the CA3 completion, restricted to the routed ensemble), first-match ascending
+        # (== the full scan's first-match), answer read OFF the spiking decode (never off `kb`). The SHARD is a
+        # SUPERSET of the true matches BY CONSTRUCTION (block i with the cued filler in role r routes to the SAME
+        # bucket its filler was stored in), so parity with the full O(k_max) scan is exact (measured 6/6, 540/540).
+        # BRAIN-BASED: the in-shard cleanup IS the composer's on-substrate op (unchanged, over fewer blocks); the DG
+        # sparse PROJECTION is the SAME declared host-rate stand-in `enable_sparse_index` uses (research/biology/
+        # dg-ca3-sparse-index.md; named spiking burn-down = the granule-cell WTA in the trisynaptic-loop probes).
+        # Env BRAIN_FACT_SHARD_RETRIEVAL=1 flips it on without a code change (owner reviews the default-on flip
+        # separately -- leave it OFF). GATED (like `enable_sparse_index`) to the host first-match regime
+        # (integrated_loop off) + confidence_gate==0 (shard-local margins out of scope) -> otherwise the full path
+        # runs, no regression. Determinism: the per-role indices seed from cfg.seed (self.seed). A fact-shard
+        # composer never batches, so enabling it ALSO right-sizes the bridge (no_batched_region below), reclaiming
+        # the k_max*(n_roles*D+cb) batched region so every per-block read runs at ~its small-store cost.
+        self.enable_fact_shard = bool(enable_fact_shard) or (
+            _os.environ.get("BRAIN_FACT_SHARD_RETRIEVAL", "").strip().lower() in ("1", "true", "on", "yes"))
+        self._fs_g = int(fact_shard_g); self._fs_G = int(fact_shard_G); self._fs_c = int(fact_shard_c)
+        self._fact_shard = None         # (per-role DGSparseIndex dict, per-role block-id map); lazy, reuse-by-import
+        self._fact_shard_built_K = -1   # len(self.kb) the current fact-shard was built for (rebuild on a store change)
+        if self.enable_fact_shard:
+            no_batched_region = True    # a fact-shard composer never batches -> drop the dead batched region
         # enable_multiframe (richer-syntax #2, default OFF = byte-identical): build a FrameParser (verb-position ->
         # frame selection + position x frame -> role, both neural) so `hear_multiframe(sentence, verbs)` comprehends a
         # sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV). The default `hear` (the on-bridge SVO/passive
@@ -1218,6 +1257,99 @@ class OneBrainComposer:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
 
+    # --- (FACT-COUNT-axis sparse retrieval) DG-CA3 shard over the stored fact blocks; default OFF = byte-identical ---
+    def _fact_shard_active(self):
+        """True when the FACT-COUNT-axis sharded fast path should serve a cue-known recall: enabled, in the host
+        first-match regime (integrated_loop off -- the de-risk's validated envelope; the spiking K-way sequencer is
+        a separate, orthogonal selection mechanism), confidence_gate off (its shard-local margins are out of scope,
+        the `enable_sparse_index` precedent), and a non-empty store. Default-off -> always False -> byte-identical."""
+        return (self.enable_fact_shard and not self.integrated_loop
+                and self.confidence_gate == 0.0 and len(self.kb) > 0)
+
+    def _ensure_fact_shard(self):
+        """Build (lazily, once per store mutation) a per-role DG-CA3 sparse index over the stored FACT BLOCKS: for
+        each main role r in (agent, action, patient), a `DGSparseIndex` over the concept codes of the blocks whose
+        role-r filler is a stored WORD (a clause / non-word filler is SKIPPED for that role -- it can never match a
+        word cue, so skipping it changes no answer). The bucket-member id maps back to the block index via a per-role
+        id list. Reuse-by-import of the validated `DGSparseIndex` (the SAME class + math `enable_sparse_index` and
+        the `FactShardIndex` de-risk use, 6-seed GO); on the flat-SVO store the de-risk validated (every block has a
+        word filler in each role) this is BYTE-IDENTICAL to `FactShardIndex` (same m, radians convention, per-role
+        seed offset, intersection), so its 6/6 parity/moat transfers. m ~ K^(1/g) keeps bucket occupancy O(1) -> the
+        shard stays ~constant as the store grows. Rebuilt only when len(self.kb) changed. Seeds from self.seed."""
+        K = len(self.kb)
+        if self._fact_shard is not None and self._fact_shard_built_K == K:
+            return
+        from research.runners._sparse_indexed_retrieval_derisk import DGSparseIndex   # reuse-by-import (deferred)
+        roles = tuple(r for r in ("agent", "action", "patient") if r in self.main_roles)
+        m = max(2, int(np.ceil(max(1, K) ** (1.0 / self._fs_g))))
+        idxs, blockids = {}, {}
+        for ri, r in enumerate(roles):
+            codes, bids = [], []
+            for i in range(K):
+                filler = self.kb[i][0].get(r)
+                if isinstance(filler, str) and filler in self.comp.concepts:      # word filler only (skip clauses)
+                    codes.append(np.asarray(self.comp.concepts[filler], dtype=float))
+                    bids.append(i)
+            if not codes:
+                idxs[r] = None; blockids[r] = []
+                continue
+            idx = DGSparseIndex(D=self.D, m=m, g=self._fs_g, G=self._fs_G, c=self._fs_c,
+                                seed=self.seed + 101 * (ri + 1))                   # == FactShardIndex's per-role seed
+            idx.build(np.stack(codes) * (2.0 * np.pi))                            # radians convention (== the de-risk)
+            idxs[r] = idx; blockids[r] = bids
+        self._fact_shard = (idxs, blockids)
+        self._fact_shard_built_K = K
+
+    def _fact_shard_candidates(self, cue_roles):
+        """Route a CLEAN cue {role: word} to the intersected shard of candidate block indices (ascending). Returns
+        [] for an absent cue word or an empty per-role index (moat: no block -> abstain), and None to signal 'cannot
+        route -> escalate to the full scan' (an unindexed cue role). Content-addressable: the key is the cue WORD's
+        concept code, never an answer id. == the `FactShardIndex` de-risk's `candidates`, block-id-mapped."""
+        self._ensure_fact_shard()
+        idxs, blockids = self._fact_shard
+        sets = []
+        for r, w in cue_roles.items():
+            if r not in idxs:
+                return None                                        # cue role not indexed (typed/attribute) -> escalate
+            if w not in self.comp.concepts:
+                return []                                          # absent cue word -> empty shard -> abstain (moat)
+            idx = idxs[r]
+            if idx is None:
+                return []                                          # no block has a word filler in this role -> abstain
+            code = np.asarray(self.comp.concepts[w], dtype=float)
+            cand = idx.query(code * (2.0 * np.pi))
+            bids = blockids[r]
+            sets.append(set(int(bids[int(x)]) for x in cand.tolist()))
+        if not sets:
+            return None
+        shard = set.intersection(*sets) if len(sets) > 1 else sets[0]
+        return sorted(shard)
+
+    def _read_one_block(self, i):
+        """Decode ONE block by the SAME per-block method the full read path uses, so a sharded read is parity-exact
+        with the full scan under every flag combo: the DG vocab-shard per-block decode when `enable_sparse_index`
+        (+ confidence_gate==0, the two indices compose), else the plain per-block spiking decode `_read_block`
+        (== the de-risk's `comp._read_block`)."""
+        if self.enable_sparse_index and self.confidence_gate == 0.0:
+            return self._read_block_indexed(i)
+        return self._read_block(i)
+
+    def _fact_shard_first_match(self, cue_roles):
+        """(idx, got) for the FIRST shard block (ascending == the full scan's first-match) whose DECODED cue roles
+        all match `cue_roles` (a {role: clean_word} cue); (None, None) to ABSTAIN (empty shard or no shard block
+        matches); the sentinel (_FS_ESCALATE, None) when the cue cannot be routed -> the caller uses the full path.
+        Decodes ONLY the shard blocks via `_read_one_block` (the on-substrate CA3 completion, restricted to the
+        routed ensemble) and reads the answer OFF the spiking decode -- the de-risk's `sharded_query_*` consolidated
+        (a fast-but-wrong index is caught: parity vs the full scan was the de-risk's hard GO gate)."""
+        shard = self._fact_shard_candidates(cue_roles)
+        if shard is None:
+            return _FS_ESCALATE, None
+        for i in shard:
+            got = self._read_one_block(i)
+            if all(got.get(r) == w for r, w in cue_roles.items()):
+                return i, got
+        return None, None
+
     # --- (B3) READ-ONLY per-turn trace helpers (only invoked on the trace path; default OFF = byte-identical) ---
     def _rf_gauge(self):
         """A scalar RF activity gauge over the rf SLICE of the shared bridge (read after the last query's resonate):
@@ -1517,15 +1649,28 @@ class OneBrainComposer:
         clause sentence; an attributed patient ('big apple') prepends the decoded attribute. The (agent, action)
         cue-match-and-first-match SELECTION routes through `_seq_block` (the spiking K-way sequencer when
         integrated_loop, else the host first-match -- byte-identical); the downstream patient-type routing + decode read
-        the SAME block on both paths (only WHICH block is selected moves from host to spikes)."""
+        the SAME block on both paths (only WHICH block is selected moves from host to spikes). When
+        `enable_fact_shard` (default-off), the (agent, action) selection routes through the DG-CA3 fact-block shard
+        (O(shard) blocks decoded, not O(k_max)); the SAME tail runs on the selected block -> answer-identical."""
         if self.trace:
             self.last_trace = None
-        idx = self._seq_block(agent, action)
+        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
+            idx, got = self._fact_shard_first_match({"agent": agent, "action": action})
+            if idx is not _FS_ESCALATE:
+                return self._finish_query_patient(agent, action, idx, got, order_fn)
+        idx = self._seq_block(agent, action)                   # full path (byte-identical when the fast path is off)
+        got = self._read_blocks()[idx] if idx is not None else None
+        return self._finish_query_patient(agent, action, idx, got, order_fn)
+
+    def _finish_query_patient(self, agent, action, idx, got, order_fn):
+        """Shared tail for `query_patient`: patient-type routing (embedded-clause / attributed / plain word) + trace,
+        over the already-selected (idx, got). Called by BOTH the fact-shard fast path and the full path with the same
+        (idx, got), so the answer is identical -- the ONLY thing the fast path changes is WHICH blocks were decoded to
+        select idx (a shard vs the full k_max scan)."""
         if idx is None:
             if self.trace:
                 self._trace_query({"agent": agent, "action": action}, None)
             return None
-        got = self._read_blocks()[idx]                         # the decoded {role: word} row for the selected block
         stored = self.kb[idx][0].get("patient") if idx < len(self.kb) else None
         if _is_clause(stored):
             ans = self._decode_clause(idx, order_fn=order_fn)
@@ -1541,6 +1686,13 @@ class OneBrainComposer:
     def query_agent(self, action, patient):
         if self.trace:
             self.last_trace = None
+        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
+            idx, got = self._fact_shard_first_match({"action": action, "patient": patient})
+            if idx is not _FS_ESCALATE:                        # reverse lookup: cue = (action, patient) -> agent
+                ans = got.get("agent") if idx is not None else None
+                if self.trace:
+                    self._trace_query({"action": action, "patient": patient}, idx)
+                return ans
         ans = self._scan({"action": action, "patient": patient}, "agent")
         if self.trace:
             # find the block index (the first matching), for the trace's matched-engram line
@@ -1559,15 +1711,27 @@ class OneBrainComposer:
         on both paths). NOTE: the host first-match scans for the first block matching the FULL SVO, whereas the
         sequencer matches (agent, action) then checks patient on the selected block -- equivalent for the production
         unique-(agent, action) store (each (agent, action) selects one block, and the patient check then decides
-        yes/no/unknown); a degenerate same-(agent, action) different-patient pair is outside the production regime."""
+        yes/no/unknown); a degenerate same-(agent, action) different-patient pair is outside the production regime.
+        When `enable_fact_shard` (default-off), the (agent, action) selection routes through the DG-CA3 fact-block
+        shard (O(shard) not O(k_max)); the patient-equality + polarity tail is identical -> answer-identical."""
         if self.trace:
             self.last_trace = None
-        idx = self._seq_block(agent, action)
+        if self._fact_shard_active():                          # FACT-COUNT-axis sublinear fast path (default-off)
+            idx, got = self._fact_shard_first_match({"agent": agent, "action": action})
+            if idx is not _FS_ESCALATE:
+                return self._finish_ask_yes_no(agent, action, patient, idx, got)
+        idx = self._seq_block(agent, action)                   # full path (byte-identical when the fast path is off)
+        got = self._read_blocks()[idx] if idx is not None else None
+        return self._finish_ask_yes_no(agent, action, patient, idx, got)
+
+    def _finish_ask_yes_no(self, agent, action, patient, idx, got):
+        """Shared tail for `ask_yes_no`: patient-equality + polarity read over the already-selected (idx, got).
+        Called by BOTH the fact-shard fast path and the full path with the same (idx, got) -> yes/no/unknown is
+        identical; the fast path only changes WHICH blocks were decoded to select idx."""
         if idx is None:
             if self.trace:
                 self._trace_query({"agent": agent, "action": action, "patient": patient}, None)
             return "unknown"
-        got = self._read_blocks()[idx]
         if got.get("patient") != patient:
             if self.trace:
                 self._trace_query({"agent": agent, "action": action, "patient": patient}, None)
