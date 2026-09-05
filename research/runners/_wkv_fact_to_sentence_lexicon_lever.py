@@ -133,6 +133,18 @@ _NP_LOWER_CONNECTORS = {"of", "the", "and", "in", "on", "for", "de", "la", "van"
 
 def slug_to_np(slug: str) -> str:
     words = [w for w in slug.split("_") if w]
+    # A slug whose OWN first word is "the" (e.g. "the_republic_of_turkey", a real store entry -- the formal
+    # name's determiner got baked into the slug) is a DIFFERENT case from a mid-slug "the" like
+    # "bounce_around_the_ground": every caller that places this NP into a clause (`_dctx_and_slots`/
+    # `_slots_for`) already prepends its OWN fixed DET("the") immediately before the SUBJ/OBJ slot, so keeping
+    # the slug's leading "the" doubles the determiner -- "the The Republic of Turkey" (one-brain Stage-2
+    # Touchpoint-A build-ahead smoke finding, 2026-09-04, research/coordination/build_ahead_ready.md). A
+    # mid-slug "the" is unaffected (i > 0 below already lowercases it as an ordinary connector). Drop the
+    # leading one here rather than merely lowering it -- lowering alone would still leave "the the ..." (the
+    # SAME word twice); a bare one-word slug of "the" (degenerate; no real store entry) is left untouched so
+    # this can never reduce a one-word slug to nothing.
+    if len(words) > 1 and words[0].lower() == "the":
+        words = words[1:]
     out = []
     for i, w in enumerate(words):
         if i > 0 and w.lower() in _NP_LOWER_CONNECTORS:
@@ -228,7 +240,14 @@ def parse_and_score(surface: str, agent: str, action: str, patient: str) -> dict
     allowed = set((slug_to_np(agent) + " " + (RELATION_LEXICON.get(action, (emerge_v3(action), ""))[0])
                   + " " + slug_to_np(patient)).lower().split()) | {"the", "a", "an", agent, patient,
                                                                     emerge_v3(action)}
-    moat_safe = all(t.lower() in allowed for t in toks)
+    # `.rstrip(".!?")` on each token: `webapp.wkv_mouth_generator.render_fact_sentence` (2026-09-04 Touchpoint-A
+    # Stage-2 prose fix) now appends a sentence-final "." directly onto the last word (proper typography -- no
+    # preceding space), so a genuinely moat-safe surface's LAST token can legitimately be e.g. "boston." rather
+    # than "boston". Stripping a trailing terminator before the membership check recognizes these as the SAME
+    # word; it cannot let a fabricated token through (a token failing membership before the strip still fails
+    # after it unless the trim exposes an allowed word, which only ever happens for this exact sentence-final-
+    # punctuation case) and is a no-op for every pre-existing caller whose tokens never carried one.
+    moat_safe = all(t.lower().rstrip(".!?") in allowed for t in toks)
     return {"well_formed": bool(well_formed), "faithful": bool(faithful), "readable": readable,
             "covered": covered, "moat_safe": bool(moat_safe), "expected": exp}
 

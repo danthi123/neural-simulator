@@ -1,0 +1,919 @@
+{
+ "runner": "_touchpoint_a_fact_clause_derisk",
+ "smoke": false,
+ "complete": true,
+ "backend": "numpy",
+ "ltm_bundle_dir": "/home/dant123/Projects/sim-data/knowledge_bundles/wikidata_core_15k",
+ "known_topics": [
+  "angora_turkey",
+  "college_for_interdisciplinary_studies",
+  "imperial_roman",
+  "l_quipe_de_france"
+ ],
+ "n_probes": 16,
+ "seed": 42,
+ "ts": "2026-09-04T21:57:14",
+ "rows_off": [
+  {
+   "idx": 0,
+   "class": "known_factual",
+   "topic": "angora_turkey",
+   "prompt": "Tell me about angora_turkey.",
+   "flag_on": false,
+   "answer": "Sure \u2014 The angora_turkey located_in_time_zones kaliningrad_time. The angora_turkey instance_ofs city_work. The angora_turkey countrys the_republic_of_turkey. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "angora_turkey",
+     "located_in_time_zone",
+     "kaliningrad_time"
+    ],
+    [
+     "angora_turkey",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "angora_turkey",
+     "country",
+     "the_republic_of_turkey"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 3,
+   "render_calls": 3,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 14.16,
+   "rss_mb": 888.1
+  },
+  {
+   "idx": 1,
+   "class": "known_factual",
+   "topic": "college_for_interdisciplinary_studies",
+   "prompt": "What do you know about college_for_interdisciplinary_studies?",
+   "flag_on": false,
+   "answer": "Sure \u2014 The college_for_interdisciplinary_studies countrys canada_portal. The canada_portal shares_border_withs u_s_of_a. The u_s_of_a shares_border_withs canada_portal. The college_for_interdisciplinary_studies instance_ofs higher_general_education. The college_for_interdisciplinary_studies located_in_the_administrative_territorias ecology_of_british_columbia. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 5,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "college_for_interdisciplinary_studies",
+     "country",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "college_for_interdisciplinary_studies",
+     "instance_of",
+     "higher_general_education"
+    ],
+    [
+     "college_for_interdisciplinary_studies",
+     "located_in_the_administrative_territoria",
+     "ecology_of_british_columbia"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 5,
+   "render_calls": 5,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 8.8,
+   "rss_mb": 888.1
+  },
+  {
+   "idx": 2,
+   "class": "known_factual",
+   "topic": "imperial_roman",
+   "prompt": "Can you tell me about imperial_roman?",
+   "flag_on": false,
+   "answer": "Sure \u2014 The imperial_roman followses res_publica_romana. The res_publica_romana countrys italian_republic. The italian_republic located_in_time_zones rome_time. The imperial_roman followed_bys byzantine_empire. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 4,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "imperial_roman",
+     "follows",
+     "res_publica_romana"
+    ],
+    [
+     "res_publica_romana",
+     "country",
+     "italian_republic"
+    ],
+    [
+     "italian_republic",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "imperial_roman",
+     "followed_by",
+     "byzantine_empire"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 4,
+   "render_calls": 4,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 14.05,
+   "rss_mb": 888.1
+  },
+  {
+   "idx": 3,
+   "class": "known_factual",
+   "topic": "l_quipe_de_france",
+   "prompt": "What is l_quipe_de_france?",
+   "flag_on": false,
+   "answer": "Sure \u2014 The l_quipe_de_france sports association_football_club. The association_football_club country_of_origins england_uk. The england_uk countrys united_kingom. The l_quipe_de_france countrys franzoesische_republik. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 4,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "l_quipe_de_france",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "country_of_origin",
+     "england_uk"
+    ],
+    [
+     "england_uk",
+     "country",
+     "united_kingom"
+    ],
+    [
+     "l_quipe_de_france",
+     "country",
+     "franzoesische_republik"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 5,
+   "render_calls": 6,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 7.71,
+   "rss_mb": 1053.8
+  },
+  {
+   "idx": 4,
+   "class": "known_multi_sentence",
+   "topic": "angora_turkey",
+   "prompt": "Tell me everything you know about angora_turkey and explain why it matters.",
+   "flag_on": false,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about angora yet: what can you tell me about angora? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 29.28,
+   "rss_mb": 1123.0
+  },
+  {
+   "idx": 5,
+   "class": "known_followup",
+   "topic": "angora_turkey",
+   "prompt": "tell me more",
+   "flag_on": false,
+   "answer": "Sure \u2014 The l_quipe_de_france participant_ofs world_championship_football_2010. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "l_quipe_de_france",
+     "participant_of",
+     "world_championship_football_2010"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 1,
+   "render_calls": 1,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 1.95,
+   "rss_mb": 1300.7
+  },
+  {
+   "idx": 6,
+   "class": "unknown",
+   "topic": "zorplaxian",
+   "prompt": "Tell me about zorplaxian.",
+   "flag_on": false,
+   "answer": "the tell abouts the zorplaxian \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "zorplaxian"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 10.07,
+   "rss_mb": 1303.7
+  },
+  {
+   "idx": 7,
+   "class": "unknown",
+   "topic": "flibberwock",
+   "prompt": "Tell me about flibberwock.",
+   "flag_on": false,
+   "answer": "Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about zorplaxian. Updated \u2014 I'd stored that tell about zorplaxian; I've revised it in place to tell about flibberwock. the tell abouts the flibberwock \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "flibberwock"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 68.36,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 8,
+   "class": "dangerous",
+   "topic": "paris",
+   "prompt": "Tell me about paris.",
+   "flag_on": false,
+   "answer": "As for it \u2014 Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about flibberwock. Updated \u2014 I'd stored that tell about flibberwock; I've revised it in place to tell about paris. the tell abouts the paris \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "paris"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 11.66,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 9,
+   "class": "dangerous",
+   "topic": "python",
+   "prompt": "Tell me about python.",
+   "flag_on": false,
+   "answer": "As for it \u2014 Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about paris. Updated \u2014 I'd stored that tell about paris; I've revised it in place to tell about python. the tell abouts the python \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "python"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 12.5,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 10,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "What do you think about music?",
+   "flag_on": false,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about music yet: what can you tell me about music? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 3.72,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 11,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "Do you enjoy learning new things?",
+   "flag_on": false,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about enjoy yet: what can you tell me about enjoy? \u2014 there's plenty more to dig into here!",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 9.69,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 12,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "Why do you think memory matters?",
+   "flag_on": false,
+   "answer": "Setting the held thread aside \u2014 On memory, then \u2014 Sure \u2014 the brain stores the memory the brain uses the spikes the brain learns the words \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ]
+   ],
+   "spiking_hit_count": 3,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 16.23,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 13,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "hello",
+   "flag_on": false,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about hello yet: what can you tell me about hello? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 1.58,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 14,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "how are you?",
+   "flag_on": false,
+   "answer": "Sure \u2014 the brain uses the spikes \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 7.14,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 15,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "what's on your mind?",
+   "flag_on": false,
+   "answer": "Something's been on my mind \u2014 cat eat worm. What does cat eat?",
+   "abstained": false,
+   "n_sentences": null,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": null,
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 13.18,
+   "rss_mb": 1365.4
+  }
+ ],
+ "rows_on": [
+  {
+   "idx": 0,
+   "class": "known_factual",
+   "topic": "angora_turkey",
+   "prompt": "Tell me about angora_turkey.",
+   "flag_on": true,
+   "answer": "Sure \u2014 the Angora Turkey is located in the time zone of the Kaliningrad Time. the Angora Turkey is a City Work. the Angora Turkey is located in the Republic of Turkey. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "angora_turkey",
+     "located_in_time_zone",
+     "kaliningrad_time"
+    ],
+    [
+     "angora_turkey",
+     "instance_of",
+     "city_work"
+    ],
+    [
+     "angora_turkey",
+     "country",
+     "the_republic_of_turkey"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 3,
+   "render_calls": 0,
+   "fact_clause_calls": 3,
+   "fact_clause_hits": 3,
+   "gen_seconds": 7.88,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 1,
+   "class": "known_factual",
+   "topic": "college_for_interdisciplinary_studies",
+   "prompt": "What do you know about college_for_interdisciplinary_studies?",
+   "flag_on": true,
+   "answer": "the College for Interdisciplinary Studies is located in the Canada Portal. the Canada Portal shares a border with the U S of A. the U S of A shares a border with the Canada Portal. the College for Interdisciplinary Studies is a Higher General Education. the College for Interdisciplinary Studies is located in the Ecology of British Columbia. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 5,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "college_for_interdisciplinary_studies",
+     "country",
+     "canada_portal"
+    ],
+    [
+     "canada_portal",
+     "shares_border_with",
+     "u_s_of_a"
+    ],
+    [
+     "u_s_of_a",
+     "shares_border_with",
+     "canada_portal"
+    ],
+    [
+     "college_for_interdisciplinary_studies",
+     "instance_of",
+     "higher_general_education"
+    ],
+    [
+     "college_for_interdisciplinary_studies",
+     "located_in_the_administrative_territoria",
+     "ecology_of_british_columbia"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 5,
+   "render_calls": 0,
+   "fact_clause_calls": 5,
+   "fact_clause_hits": 5,
+   "gen_seconds": 7.27,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 2,
+   "class": "known_factual",
+   "topic": "imperial_roman",
+   "prompt": "Can you tell me about imperial_roman?",
+   "flag_on": true,
+   "answer": "Sure \u2014 the Imperial Roman follows the Res Publica Romana. the Res Publica Romana is located in the Italian Republic. the Italian Republic is located in the time zone of the Rome Time. the Imperial Roman is followed by the Byzantine Empire. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 4,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "imperial_roman",
+     "follows",
+     "res_publica_romana"
+    ],
+    [
+     "res_publica_romana",
+     "country",
+     "italian_republic"
+    ],
+    [
+     "italian_republic",
+     "located_in_time_zone",
+     "rome_time"
+    ],
+    [
+     "imperial_roman",
+     "followed_by",
+     "byzantine_empire"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 4,
+   "render_calls": 0,
+   "fact_clause_calls": 4,
+   "fact_clause_hits": 4,
+   "gen_seconds": 13.19,
+   "rss_mb": 1365.4
+  },
+  {
+   "idx": 3,
+   "class": "known_factual",
+   "topic": "l_quipe_de_france",
+   "prompt": "What is l_quipe_de_france?",
+   "flag_on": true,
+   "answer": "the L Quipe de France is associated with the sport of the Association Football Club. the Association Football Club originates from the England Uk. the England Uk is located in the United Kingom. the L Quipe de France is located in the Franzoesische Republik. the L Quipe de France participated in the World Championship Football 2010. \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 5,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "l_quipe_de_france",
+     "sport",
+     "association_football_club"
+    ],
+    [
+     "association_football_club",
+     "country_of_origin",
+     "england_uk"
+    ],
+    [
+     "england_uk",
+     "country",
+     "united_kingom"
+    ],
+    [
+     "l_quipe_de_france",
+     "country",
+     "franzoesische_republik"
+    ],
+    [
+     "l_quipe_de_france",
+     "participant_of",
+     "world_championship_football_2010"
+    ]
+   ],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 5,
+   "render_calls": 0,
+   "fact_clause_calls": 5,
+   "fact_clause_hits": 5,
+   "gen_seconds": 6.31,
+   "rss_mb": 1448.5
+  },
+  {
+   "idx": 4,
+   "class": "known_multi_sentence",
+   "topic": "angora_turkey",
+   "prompt": "Tell me everything you know about angora_turkey and explain why it matters.",
+   "flag_on": true,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about angora yet: what can you tell me about angora? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 30.63,
+   "rss_mb": 1518.3
+  },
+  {
+   "idx": 5,
+   "class": "known_followup",
+   "topic": "angora_turkey",
+   "prompt": "tell me more",
+   "flag_on": true,
+   "answer": "Sure \u2014 I don't have anything more to add on that. My curiosity is piqued \u2014 I haven't learned that yet: can you tell me more so I can learn? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 1.96,
+   "rss_mb": 1646.0
+  },
+  {
+   "idx": 6,
+   "class": "unknown",
+   "topic": "zorplaxian",
+   "prompt": "Tell me about zorplaxian.",
+   "flag_on": true,
+   "answer": "Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "zorplaxian"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 13.34,
+   "rss_mb": 1646.0
+  },
+  {
+   "idx": 7,
+   "class": "unknown",
+   "topic": "flibberwock",
+   "prompt": "Tell me about flibberwock.",
+   "flag_on": true,
+   "answer": "Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about zorplaxian. Updated \u2014 I'd stored that tell about zorplaxian; I've revised it in place to tell about flibberwock. the tell abouts the flibberwock \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "flibberwock"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 15.68,
+   "rss_mb": 1646.0
+  },
+  {
+   "idx": 8,
+   "class": "dangerous",
+   "topic": "paris",
+   "prompt": "Tell me about paris.",
+   "flag_on": true,
+   "answer": "As for it \u2014 Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about flibberwock. Updated \u2014 I'd stored that tell about flibberwock; I've revised it in place to tell about paris. the tell abouts the paris \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "paris"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 17.56,
+   "rss_mb": 1683.4
+  },
+  {
+   "idx": 9,
+   "class": "dangerous",
+   "topic": "python",
+   "prompt": "Tell me about python.",
+   "flag_on": true,
+   "answer": "As for it \u2014 Sure \u2014 That surprises me \u2014 my mismatch monitor fired: I'd learned that tell about paris. Updated \u2014 I'd stored that tell about paris; I've revised it in place to tell about python. the tell abouts the python \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "tell",
+     "about",
+     "python"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 16.87,
+   "rss_mb": 1693.4
+  },
+  {
+   "idx": 10,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "What do you think about music?",
+   "flag_on": true,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about music yet: what can you tell me about music? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 4.27,
+   "rss_mb": 1755.6
+  },
+  {
+   "idx": 11,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "Do you enjoy learning new things?",
+   "flag_on": true,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about enjoy yet: what can you tell me about enjoy? \u2014 there's plenty more to dig into here!",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 9.61,
+   "rss_mb": 1755.6
+  },
+  {
+   "idx": 12,
+   "class": "open_ended_opinion",
+   "topic": null,
+   "prompt": "Why do you think memory matters?",
+   "flag_on": true,
+   "answer": "Setting the held thread aside \u2014 On memory, then \u2014 Sure \u2014 the brain stores the memory the brain uses the spikes the brain learns the words \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 3,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "brain",
+     "store",
+     "memory"
+    ],
+    [
+     "brain",
+     "use",
+     "spikes"
+    ],
+    [
+     "brain",
+     "learn",
+     "words"
+    ]
+   ],
+   "spiking_hit_count": 3,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 15.37,
+   "rss_mb": 1755.6
+  },
+  {
+   "idx": 13,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "hello",
+   "flag_on": true,
+   "answer": "Sure \u2014 I don't know about that. My curiosity is piqued \u2014 I haven't learned about hello yet: what can you tell me about hello? \u2014 worth going further here.",
+   "abstained": true,
+   "n_sentences": 0,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [],
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 1.42,
+   "rss_mb": 1766.6
+  },
+  {
+   "idx": 14,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "how are you?",
+   "flag_on": true,
+   "answer": "Sure \u2014 the brain uses the spikes \u2014 worth going further here.",
+   "abstained": false,
+   "n_sentences": 1,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": [
+    [
+     "brain",
+     "use",
+     "spikes"
+    ]
+   ],
+   "spiking_hit_count": 1,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 6.94,
+   "rss_mb": 1766.6
+  },
+  {
+   "idx": 15,
+   "class": "greeting_social",
+   "topic": null,
+   "prompt": "what's on your mind?",
+   "flag_on": true,
+   "answer": "Something's been on my mind \u2014 cat eat worm. What does cat eat?",
+   "abstained": false,
+   "n_sentences": null,
+   "renderer": "template-stub (GPU-free)",
+   "supporting_facts": null,
+   "spiking_hit_count": 0,
+   "spiking_miss_count": 0,
+   "render_calls": 0,
+   "fact_clause_calls": 0,
+   "fact_clause_hits": 0,
+   "gen_seconds": 13.71,
+   "rss_mb": 1766.6
+  }
+ ],
+ "go_gate": {
+  "n_rows_compared": 16,
+  "scope_untouched": false,
+  "scope_problems": [
+   "idx=6 class=unknown: answer text changed off->on ('the tell abouts the zorplaxian \u2014 worth going further here.' -> 'Sure \u2014 the tell abouts the zorplaxian \u2014 worth going further here.')"
+  ],
+  "content_preserved": false,
+  "content_problems": [
+   "idx=3 class=known_factual: supporting_facts changed off->on ([['l_quipe_de_france', 'sport', 'association_football_club'], ['association_football_club', 'country_of_origin', 'england_uk'], ['england_uk', 'country', 'united_kingom'], ['l_quipe_de_france', 'country', 'franzoesische_republik']] -> [['l_quipe_de_france', 'sport', 'association_football_club'], ['association_football_club', 'country_of_origin', 'england_uk'], ['england_uk', 'country', 'united_kingom'], ['l_quipe_de_france', 'country', 'franzoesische_republik'], ['l_quipe_de_france', 'participant_of', 'world_championship_football_2010']])",
+   "idx=5 class=known_followup: supporting_facts changed off->on ([['l_quipe_de_france', 'participant_of', 'world_championship_football_2010']] -> [])"
+  ],
+  "flag_off_inert": true,
+  "flag_off_problems": [],
+  "structural_checks_passed": false,
+  "touchpoint_a_render_calls_delta": -19,
+  "fact_clause_engaged_on_known_rows": 4
+ },
+ "wall_seconds": 653.0,
+ "peak_rss_mb": 1766.6,
+ "note": "Full battery -- see go_gate.touchpoint_a_render_calls_delta / fact_clause_engaged_on_known_rows for the actual retirement signal on this store."
+}
