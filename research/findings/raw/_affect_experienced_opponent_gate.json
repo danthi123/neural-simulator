@@ -1,0 +1,170 @@
+{
+  "probe": "affect_experienced_opponent_gate_derisk (D1's named next rung: experience-bound spiking opponent)",
+  "verdict": "BOUNDARY (SMOKE(1-seed), build-informative) -- the fully-spiking EXPERIENCE-BOUND opponent V+/V- population (weights conditioned on ~10 innate primaries, Warriner-FREE) ALSO fails to retire the gate. STEELMANNED across three biologically-motivated held-out reads (total opponent DRIVE, valence |differential|, relatedness-residualized drive), the BEST (total_drive) recovers worst-case recall=0.000 at joint FP=0 -- BELOW the 0.5 bar AND below the refuted co-occurrence-magnitude negative control (0.085) on the same words. The no-conditioning lesion reads 0.000 (the read IS experience-driven, but the experience doesn't separate). DECISIVE: the conditioning channel itself (no bridge) separates at only 0.141 recall@FP0 at its BEST pairing window (1-4 swept) -- so this is NOT a spiking operating-point artifact. DIAGNOSIS: the ~10 innate primaries (hug/hurt/cry/warm) live INSIDE the same TinyStories narrative register as the neutral words (cat/day/moon co-occur with warm/cozy in emotionally-resolved scenes), so conditioning-to-primaries is STILL a co-occurrence statistic inheriting the SAME register confound -- because in a TEXT-ONLY stream the 'experienced affect' IS the text co-occurrence. The genuinely different channel needs a NON-TEXTUAL experience source (an embodied/interoceptive US from the world+body, the way amygdala conditioning binds to real reinforcement delivery, not narrative company). FAILED: ['G1_recall>=0.5', 'G2_surpass_negctrl']. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
+  "GO": false,
+  "G1_recall_bar": false,
+  "G2_surpass_negctrl": false,
+  "G3_lesion_collapses": true,
+  "gate_worst_case_recall": 0.0,
+  "gate_best_read_variant": "total_drive",
+  "gate_threshold_norm": 1.4469854479378281,
+  "read_variant_worst_case_recall": {
+    "total_drive": 0.0,
+    "diff_abs": 0.0,
+    "drive_resid_rel": 0.0
+  },
+  "negctrl_worst_case_recall": 0.08490566037735849,
+  "diffproxy_worst_case_recall": 0.0,
+  "nocond_lesion_worst_case_recall": 0.0,
+  "conditioning_window_sweep": [
+    {
+      "window": 1,
+      "best_recall_at_fp0": 0.1415,
+      "best_statistic": "tot_per_freq"
+    },
+    {
+      "window": 2,
+      "best_recall_at_fp0": 0.1132,
+      "best_statistic": "onesided_per_freq"
+    },
+    {
+      "window": 3,
+      "best_recall_at_fp0": 0.1038,
+      "best_statistic": "onesided_per_freq"
+    },
+    {
+      "window": 4,
+      "best_recall_at_fp0": 0.0755,
+      "best_statistic": "tot_per_freq"
+    }
+  ],
+  "recall_go_bar": 0.5,
+  "no_cond_max_recall": 0.15,
+  "input_lesion_floor_max": 0.0,
+  "mean_drive": 0.07418526785714287,
+  "emergent_ignition_per_seed": [
+    {
+      "seed": 42,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.0
+    }
+  ],
+  "gate_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    ],
+    "n_pos": 106
+  },
+  "negctrl_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0849,
+        "tp": 9
+      }
+    ],
+    "n_pos": 106
+  },
+  "nocond_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    ],
+    "n_pos": 106
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "input-lesion floor is ~silent (pools fire ONLY from the code FF)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "partition non-degenerate (affect + neutral both present)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "a joint-FP=0 threshold exists to calibrate the gate against",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the conditioning acquires honest valence (mean corr(s_c,Warriner) > 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "the opponent read is EXPERIENCE-driven (no-conditioning lesion collapses the drive)",
+      "ok": true,
+      "detail": "treatment=0.0741853 control=0 |sep|=0.0741853 > 0.0370926",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "NO-GO",
+  "verdict_undefined_reasons": [],
+  "n_pos_raw_gated": 106,
+  "n_neg_raw_excluded": 62,
+  "n_partition_words": 168,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 168,
+      "code_dim": 64,
+      "n_reinforced": 139,
+      "primaries": [
+        "sweet",
+        "cake",
+        "treat",
+        "hug",
+        "candy",
+        "hungry",
+        "hurt",
+        "cry",
+        "fall",
+        "cold"
+      ],
+      "floor": 0.0,
+      "corr_s_c_warriner": 0.41047345951167347
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "resample_frac": 0.8,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 2,
+    "n_each": 5,
+    "min_events": 2,
+    "backend": "numpy"
+  },
+  "mechanism": "spiking opponent V+/V- (build_bridge: code_in -> appr_vplus/appr_vminus with xinh cross-inhibition); weights = selforg_opponent_weights (three-factor Hebbian over the learned code, anchored by ~10 innate primaries; Warriner-FREE); GATE = pos_rate+neg_rate (total opponent drive through mutual inhibition), read HELD-OUT via 2-fold cross-fit, per-seed label-free median gain-control, joint-FP=0 calibrated. VALUE=differential is the distinct (reported) read.",
+  "sources": [
+    "Namburi, Tye et al. (2015, Nature) -- opposing valence-coding BLA populations (the V+/V- opponent + the salience-vs-valence distinction: total drive vs differential).",
+    "Rescorla & Wagner (1972) -- the associative-strength asymptote (s_c conditioning).",
+    "2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md -- the co-occurrence-graph channel is register-confounded; the surpass is a DIFFERENT channel (reproduced here as the negative control).",
+    "2026-08-13-affect-appraisal-origin-self-organizes-from-reinforcement-6seed-GO.md (DR-2b) -- the experience-bound conditioning map this reuses."
+  ],
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; this is a standalone research probe (reuse-by-import only).",
+  "elapsed_seconds": 5.0
+}

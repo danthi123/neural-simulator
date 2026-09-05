@@ -1,0 +1,26 @@
+{
+ "run_id": "1788616048-107021",
+ "runner": "research/runners/_affect_experienced_opponent_gate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a1acf15ad04f1f7d6/research/runners/_affect_experienced_opponent_gate_derisk.py",
+  "--smoke"
+ ],
+ "git_sha": "151f65f39",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T09:47:28",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_affect_experienced_opponent_gate.json"
+}
