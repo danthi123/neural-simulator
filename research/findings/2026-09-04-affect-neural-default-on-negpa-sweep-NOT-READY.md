@@ -22,6 +22,14 @@ verdict: >
 
 # affect→neural default-on: the neg_pa_scale knob can't close the negative direction cleanly
 
+> **⚠️ CORRECTION (2026-09-05, adversarial-verify `w3qhweujd`).** §3 point 1 below originally quoted the scale-2.5
+> illustrative output from the HOST arm, not the NEURAL mechanism actually being validated for promotion
+> (`neg_pa_scale` does not touch the host arm at all — see `_wkv_mouth_affect_neural_promote_directional_scale2.5_s42.json`,
+> which carries separate `host`/`neural` lists). The NEURAL arm's own text is also repetitive but shows NO
+> positive-drift; the "TinyStories positivity prior reasserts" narrative was illustrated with the wrong arm. Fixed
+> below. The NOT-READY verdict is unaffected — it stands on the 5/6 pass-count and the ceiling-below-baseline
+> fact, neither of which depended on which arm was quoted.
+
 ## What ran
 The build-ahead-prepared validation runner (`_wkv_mouth_affect_neural_promote_validate.py`, on main) run locally
 (webapp/torch deps — the mini-PC pool can't host it), CPU-forced, 6 seeds x 3 prompts per (phase, scale). Positive
@@ -50,13 +58,26 @@ only reaches 6/6 at scale ≥2.5, exactly where the output turns repetitive.
 ## Why a single knob can't win
 Two facts make neg_pa_scale insufficient:
 1. **The objectives conflict.** Lifting the weak negative direction to ≥5/6 requires scale ≥2.5, which pushes the
-   affect-word fraction to 0.346-0.442 <!--derived-->. Reading the scale-2.5 output directly: "very sad and cried and cried for
-   her mom ... very sad and cried" — recognisably negative but REPETITIVE; and on one prompt it drifts back
-   positive mid-sentence ("very sad and angry at the bird and the bird became best friends ... lots of fun") — the
-   TinyStories positivity prior reasserts itself against the gain. This is not natural strong-negative prose.
+   affect-word fraction to 0.346-0.442 <!--derived-->. Reading the NEURAL arm's own scale-2.5 output directly (the
+   mechanism actually being validated for promotion; `_wkv_mouth_affect_neural_promote_directional_scale2.5_s42.json`,
+   `directional.neural[*].B_neg`): *"The little girl was sad and cried and cried for her sad dog him and cry him
+   cry and said I cry and cry cry sad Tim and asked why are you sad Tim..."* and *"Tom and his dog were sad cry
+   and cry and cry why cry and cry and cry why are you sad Tim and cry why are cry and cry and cry why are you sad
+   sad Tim..."* — recognisably negative and REPETITIVE, but the repetition is a lexical LOOP (the same word —
+   "cry", "sad" — cycling) with **no positive-drift** back toward TinyStories' positivity prior anywhere in either
+   continuation. (The HOST arm's OWN scale-2.5 output does drift positive mid-sentence — e.g. "...the bird became
+   best friends and played together every day and had lots of fun..." — but that is a host-only failure mode,
+   irrelevant to the neural mechanism `neg_pa_scale` actually drives, and is NOT the text quoted here.) This is
+   not natural strong-negative prose either way, but the neural arm's actual failure mode is lexical-loop
+   repetition, not a reasserting positivity prior.
 2. **The ceiling is exceeded at baseline.** The negative affect-word fraction is already 0.25 at scale 1.0 (no
-   fix), above the runner's 0.20 gate ceiling. So the gate's naturalness criterion never passes on this knob — the
-   over-affective tendency is inherent to a fixed-lexicon logit/gain nudge, not introduced by the fix.
+   fix), above the runner's 0.20 gate ceiling — an ABSOLUTE ceiling set below its own no-fix baseline fails by
+   construction regardless of the fix. A RELATIVE-regression criterion (negative affect-word fraction vs. ITS OWN
+   scale-1.0 baseline, rather than a fixed absolute number) would instead discriminate a genuinely-degraded output
+   from the baseline's pre-existing over-affective tendency — worth adopting if this knob or the learned-valence
+   mechanism below is revisited. So the gate's naturalness criterion never passes on this knob as currently
+   written — the over-affective tendency is inherent to a fixed-lexicon logit/gain nudge, not introduced by the
+   fix.
 
 ## The next mechanism (no-defer — the method is banked, the capability is not)
 The residual the original affect→neural finding named is now the load-bearing one: convert the **congruence source

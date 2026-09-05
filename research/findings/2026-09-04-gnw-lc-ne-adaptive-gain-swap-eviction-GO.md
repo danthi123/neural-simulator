@@ -10,7 +10,16 @@ date: 2026-09-04
 **Date:** 2026-09-04
 **Runner:** `research/runners/_gnw_lc_ne_gain_swap_derisk.py` (reuse-by-import of the ENTIRE swap/eviction substrate from `_gnw_neural_swap_intention_derisk.py` / `_gnw_active_overwrite_derisk.py` / `_gnw_recurrence_weaken_swap_derisk.py` / `_gnw_neural_vacancy_gate_derisk.py`; **NO `sim/` edit**; additive; the ONE new mechanism is a `lc` region + a `mm_ALL -> lc` synapse).
 **Backend:** CPU (numpy), cost-routed per the WAVE-1 plan (no GPU). **Seeds:** 42/43/44/100/101/102.
-**Verdict:** seed-level **GO on 5/6** (seed 44 lands `UNDEFINED`, not a negative — see below); **pooled GO** — every one of the ten pooled preconditions holds at >=5/6 or 6/6 (`tools.verdict.Verdict`, earned not asserted).
+**Verdict:** seed-level **GO on 5/6** — seed 44's `UNDEFINED` is a genuine MEASURED miss on the `graded_cleanliness`
+precondition (BASE old_residual_post=0.0033 vs HIGH=0.0047, the wrong direction — see the Result section), not an
+unmeasured or ambiguous case. ⚠️ **Correction (2026-09-05, adversarial-verify `w3qhweujd`):** the original "not a
+negative" phrasing overstated neutrality — `tools.verdict.Verdict.decide()` (`tools/verdict.py`) makes a clean
+per-seed `NO-GO` structurally impossible here (every precondition is a `require(expect=True)`, and ANY one that
+reads `measured=False` forces status `UNDEFINED`, exactly like an unmeasured check), so "`UNDEFINED`, not a
+negative" is the gate's FORCED output on every miss, not evidence that this particular miss carries no
+information — it is a real, quantified 1/6 miss on one named criterion, banked as such. **Pooled GO** — every one
+of the ten pooled preconditions holds at >=5/6 or 6/6 (`tools.verdict.Verdict`, earned not asserted); this
+conclusion is unaffected by the correction above.
 **Artifacts:** `research/findings/raw/_gnw_lc_ne_gain_swap_6seed.json` (+ `.prov.json` sidecar), calibration `research/findings/raw/_gnw_lc_ne_gain_swap.json`.
 **Reproduce:**
 ```
@@ -114,13 +123,22 @@ the gradient that IS robust — and the one this de-risk's core claim rests on �
   complete comfortably in (3/6: seeds 43/100/101) — the task's own hedge ("sluggish/sticky") is not a hedge here,
   it is a real split the substrate itself produces across seeds.
 - **Readout-load-bearing, the NON-CIRCULAR control (6/6):** a `readout_off` arm receives the SAME strong tonic
-  drive as HIGH (`ne_tonic_pa=1400`, so `lc` fires just as much — verified: `lc_peak` in readout_off is
-  comparable to or EXCEEDS HIGH's on every seed) but `ne_gain_span=0` zeroes lc's CONTRIBUTION to the gain
-  (`boost_gain_eff` pinned at `GAIN_FLOOR`, verified exactly on all 6). `readout_off` reproduces the LESION-like
-  slow/stuck outcome DESPITE lc firing — on 3/6 seeds it does not even complete the swap (43/100/101, matching the
-  exact seeds where LESION itself is stuck). This rules out "lc firing incidentally helps via some other route":
-  `lc` has NO outgoing projection besides the (host-arithmetic) gain read; the only path from its activity to the
-  outcome is the coefficient this control zeroes.
+  drive as HIGH (`ne_tonic_pa=1400`, so `lc` fires comparably) but `ne_gain_span=0` zeroes lc's CONTRIBUTION to the
+  gain (`boost_gain_eff` pinned at `GAIN_FLOOR`, verified exactly on all 6). `readout_off` reproduces the
+  LESION-like slow/stuck outcome DESPITE lc firing — on 3/6 seeds it does not even complete the swap (43/100/101,
+  matching the exact seeds where LESION itself is stuck). This rules out "lc firing incidentally helps via some
+  other route": `lc` has NO outgoing projection besides the (host-arithmetic) gain read; the only path from its
+  activity to the outcome is the coefficient this control zeroes.
+  ⚠️ **Correction (2026-09-05, adversarial-verify `w3qhweujd`):** the original text claimed `lc_peak` in
+  readout_off is "comparable to or EXCEEDS HIGH's on every seed" — false for 2 of 6. The measured comparison
+  (`_gnw_lc_ne_gain_swap_6seed.json`, `per_seed[*].arms.{high,readout_off}.lc_peak`) is **4/6** at-or-above HIGH's
+  own `lc_peak` (seeds 42 +9.7%, 43 +6.9%, 100 +0.0%, 101 +3.3% <!--derived: % differences computed from the two
+  directly-reported lc_peak fields per seed-->); **seeds 44 and 102 sit ~6% BELOW HIGH's** (44: 0.550 vs 0.583,
+  ~-5.7%; 102: 0.533 vs 0.567, ~-5.9% <!--derived, same basis-->) — still comfortably above the LESION arm's
+  near-zero `lc_peak` (genuine firing, not silence), just not quite at-or-above HIGH's own level on these two
+  seeds. `lc` firing "just as much" was an overstatement on 2/6 seeds; `lc` firing SUBSTANTIALLY (never near-zero)
+  on all 6 is the part the control's logic actually needs, and that part holds — the readout-load-bearing verdict
+  itself is unaffected (still 6/6, per the swap-completion evidence above).
 - **No host workspace reset (6/6)** in the CONTINUOUS demonstration — its own freshly-built, untouched substrate
   (mirroring how the base finding's own headline is the first operation on ITS substrate), `isolate=False`,
   `host_workspace_reset_calls==0`, and it swaps (BASE operating point).

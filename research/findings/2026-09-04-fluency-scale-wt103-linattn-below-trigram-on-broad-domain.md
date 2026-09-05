@@ -11,7 +11,10 @@ artifacts:
 verdict: >
   At wikitext103 scale (1.78M training sentences, d_model=192, 3.6 GPU-h, seed 43) the linattn own-voice mouth
   GENUINELY USES CONTEXT (permutation NLL collapses 4.7-5.5 -> 8.7-9.0; memoryless is strictly worse) and BEATS
-  the bigram at every context depth (+0.32 to +0.61), but it LOSES to the TRIGRAM at every depth >= 2
+  the bigram at every depth >= 2 (+0.32 to +0.61), LOSING to the bigram only at depth 1 (margin_vs_bigram -0.187,
+  where the bigram itself is strongest and the trigram is weakest) — corrected 2026-09-05, adversarial-verify
+  w3qhweujd, from an earlier "beats the bigram at every context depth" overstatement. It LOSES to the TRIGRAM at
+  every depth >= 2
   (margin_vs_trigram -0.29 to -0.57), beating trigram only at depth 1 where the trigram is weakest. So MORE +
   HARDER data did NOT bring the current mouth to fluency on a broad domain — a direct contrast with the simplewiki
   6/6 GO that cleared trigram. This is a verdict on THIS mechanism+capacity at broad scale, not the capability:
@@ -20,6 +23,12 @@ verdict: >
 ---
 
 # Fluency at wikitext103 scale: the linattn mouth falls below trigram on a broad domain
+
+> **⚠️ CORRECTION (2026-09-05, adversarial-verify `w3qhweujd`):** the frontmatter verdict and the "Reading it
+> honestly" section below originally said the mouth "BEATS the bigram at every context depth" / "beats the bigram
+> everywhere." False at depth 1: the table shows `margin_vs_bigram = -0.187` there (a LOSS), matching the
+> depth-1 exception already carved out for the trigram clause in the same sentence. Corrected to "every depth >=
+> 2," losing to bigram only at depth 1. The core result (loses to trigram at every depth >= 2) is unaffected.
 
 ## What ran
 The owner-prioritized fluency-scale sweep: `_emerge_wkv_lm_derisk --recurrence linattn` on `data/corpus/wikitext103.txt`,
@@ -40,8 +49,9 @@ queue is now empty).
 
 ## Reading it honestly
 - **The mouth is genuinely context-using, not a lookup:** permutation collapses the NLL from ~4.7-5.5 to ~8.7-9.0
-  at every depth, and the memoryless variant is strictly worse. Both anti-cheats pass. It also beats the bigram
-  everywhere. So it learned real sequential structure.
+  at every depth, and the memoryless variant is strictly worse. Both anti-cheats pass. It also beats the bigram at
+  every depth except depth 1 (a real loss there, margin_vs_bigram -0.187 — the bigram is not beaten everywhere).
+  So it learned real sequential structure.
 - **But on the broad wt103 domain it does not clear the trigram** at any depth >= 2 — the exact bar the simplewiki
   run cleared 6/6. The depth-1 win is not fluency (the trigram is degenerate at depth 1).
 - **So scale alone did not deliver fluency here.** The Vikunja-#193 framing ("the ceiling was token-starvation,
