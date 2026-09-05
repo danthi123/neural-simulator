@@ -1,0 +1,70 @@
+{
+  "part_a_mechanical": {
+    "label": "rank2-mechanical-thread-check",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "off_is_onebrain_family_composer",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "class=Pool1BoundOneBrainComposer"
+      },
+      {
+        "kind": "require",
+        "name": "off_integrated_loop_is_False",
+        "ok": true,
+        "detail": "measured=False expect=False",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "off_answers_correct",
+        "ok": true,
+        "detail": "measured={'brain_use': 'spikes', 'brain_learn': 'words', 'brain_store': 'memory', 'dog_chase': 'cat', 'cat_eat': 'fish', 'dog_eat_moat': None} expect=<function part_a_mechanical_thread_check.<locals>.<lambda> at 0x7f63b050e8e0>",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "on_is_onebrain_family_composer",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "class=Pool1BoundOneBrainComposer"
+      },
+      {
+        "kind": "require",
+        "name": "on_integrated_loop_is_True",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "on_moat_holds",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": "query_patient(dog,eat)=None"
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null,
+    "off_answers": {
+      "brain_use": "spikes",
+      "brain_learn": "words",
+      "brain_store": "memory",
+      "dog_chase": "cat",
+      "cat_eat": "fish",
+      "dog_eat_moat": null
+    },
+    "on_moat_probe": null,
+    "on_present_probe": {
+      "brain_use": "spikes",
+      "dog_chase": "cat"
+    },
+    "source_off": "tiny-demo",
+    "source_on": "tiny-demo"
+  },
+  "overall_go": true
+}

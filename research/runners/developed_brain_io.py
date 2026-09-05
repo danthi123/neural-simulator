@@ -388,7 +388,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                          communicable_mode=False, communicable_draw="spiking",
                          ltm_bundle=None, ltm_n_shards=None, ltm_seed=None, ltm_D=128,
                          ltm_composer_kwargs=None, enable_codebook_cache=False,
-                         enable_decode_escalation=False, decode_escalate_margin=None):
+                         enable_decode_escalation=False, decode_escalate_margin=None,
+                         integrated_loop=False):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -417,6 +418,14 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
         grounded_codes_override: optional {word: phases} to override the saved codes (rare; e.g. a re-developed run).
         defer_parser: defer the comprehension-parser training to the first runtime teach (default True for the load
             path -- a loaded brain Q&As without ever needing the parser).
+        integrated_loop (scaffold-retirement backlog rank-2, default False = byte-identical): pass-through to
+            MultiTurnAgent/BrainConversationalAgent -> OneBrainComposer's spiking K-way cue-match SEQUENCER
+            (replaces the host first-match `_scan` SELECTION with the validated spiking decision, GO 4/4 at the
+            production V=320 tier -- 2026-06-21-shortcut3-fold-integrated-loop-BUILD.md). A no-op unless the
+            (possibly-overridden) `composer_kind` resolves to 'onebrain' -- every other composer_kind (including
+            this bundle's own saved default, 'rf') ignores it exactly like `BrainConversationalAgent.__init__`
+            does. This is the seam webapp/server.py's BRAIN_INTEGRATED_LOOP env flag threads through
+            (_build_chat_brain -> here -> MultiTurnAgent/BrainConversationalAgent -> OneBrainComposer).
     """
     manifest = _read_manifest(path)
     if manifest is None:
@@ -492,6 +501,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                grounded_codes=codes if codes else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=wm_pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
+                               integrated_loop=bool(integrated_loop),
                                enable_biased_competition=_bc_enabled(), defer_parser=defer_parser,
                                defer_planner=defer_parser,
                                communicable_mode=communicable_mode, communicable_draw=communicable_draw,
@@ -500,6 +510,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
                                          composer_kind=composer_kind,
+                                         integrated_loop=bool(integrated_loop),
                                          enable_neural_render=enable_neural_render,
                                          defer_parser=defer_parser,
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
