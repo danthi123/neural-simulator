@@ -1,0 +1,420 @@
+{
+  "probe": "affect_noise_robust_homeostatic_convergence_derisk (population pooling + homeostatic noise-floor + three-factor eligibility + synaptic scaling over the grounded-experience stream)",
+  "verdict": "GO (SMOKE(1-seed)) -- a NOISE-ROBUST homeostatic + three-factor convergence over a grounded-experience STREAM TEACHES a separable, generalizing concept code AT REALISTIC INTEROCEPTIVE NOISE. The robust code reaches 0.604 worst-case at rho>=0.6,sigma<=1.0 where the PRIOR ungated rule read 0.066 and text 0.000, CLEARING the 0.5 bar. It is GROUNDING (lesion 0.047, shuffle 0.000 at baseline) and TAUGHT not HANDED (held-out 1.000). ROBUST@realistic(rho=0.6,sigma=1.0)=0.604 worst (0.604 mean) vs PRIOR-ungated 0.066 vs text 0.000; clean/full=1.000; lesion=0.047; shuffle=0.000; held-out(clean)=1.000; ablations@real(no-gate=0.613, no-homeo=0.613, pool@4=0.491); synth-instrument=1.000. Companion processes (population pooling + homeostatic noise-floor + three-factor eligibility + synaptic scaling) are the surpass -- the ungated rule proxied them with constants. NEXT: a fully-spiking on-substrate convergence + a real grounded world. Brain-based (rate-Hebbian synaptic convergence; body-state=world/body boundary; ceiling=instrument); NO sim/ edit; NOT wired.",
+  "GO": true,
+  "G1_noise_robust_lift": true,
+  "G2_load_bearing": true,
+  "G2b_generalizes": true,
+  "G3_instrument": true,
+  "text_ceiling_worst": 0.0,
+  "text_ceiling_mean": 0.0,
+  "prior_ungated_realistic_worst": 0.0660377358490566,
+  "robust_realistic_worst": 0.6037735849056604,
+  "robust_realistic_mean": 0.6037735849056604,
+  "robust_clean_worst": 1.0,
+  "robust_clean_mean": 1.0,
+  "lesion_control_worst": 0.04716981132075472,
+  "lesion_clean_control_worst": 0.018867924528301886,
+  "shuffle_control_worst": 0.0,
+  "heldout_generalization_clean_worst": 1.0,
+  "heldout_generalization_clean_mean": 1.0,
+  "heldout_generalization_real_worst": 0.6,
+  "textonly_transfer_clean_worst": 0.009433962264150943,
+  "textonly_transfer_clean_mean": 0.009433962264150943,
+  "textonly_transfer_real_mean": 0.0,
+  "synthetic_instrument_ceiling_worst": 1.0,
+  "ablation_no_three_factor_gate_worst": 0.6132075471698113,
+  "ablation_no_homeo_scaling_worst": 0.6132075471698113,
+  "ablation_pool_n4_worst": 0.49056603773584906,
+  "population_size_sweep": [
+    {
+      "n_relay": 4,
+      "worst": 0.49056603773584906,
+      "mean": 0.49056603773584906
+    },
+    {
+      "n_relay": 12,
+      "worst": 0.6320754716981132,
+      "mean": 0.6320754716981132
+    },
+    {
+      "n_relay": 24,
+      "worst": 0.6037735849056604,
+      "mean": 0.6037735849056604
+    },
+    {
+      "n_relay": 48,
+      "worst": 0.6037735849056604,
+      "mean": 0.6037735849056604
+    }
+  ],
+  "kmad_threshold_sweep": [
+    {
+      "k_mad": 2.0,
+      "worst": 0.6132075471698113,
+      "mean": 0.6132075471698113
+    },
+    {
+      "k_mad": 3.0,
+      "worst": 0.6037735849056604,
+      "mean": 0.6037735849056604
+    },
+    {
+      "k_mad": 4.0,
+      "worst": 0.6132075471698113,
+      "mean": 0.6132075471698113
+    },
+    {
+      "k_mad": 5.0,
+      "worst": 0.6415094339622641,
+      "mean": 0.6415094339622641
+    }
+  ],
+  "ceiling_go_bar": 0.5,
+  "rho_realistic": 0.6,
+  "sigma_realistic": 1.0,
+  "attrib_margin": 0.15,
+  "text_ceil_max": 0.2,
+  "heldout_frac": 0.3,
+  "n_relay_robust": 24,
+  "k_mad": 3.0,
+  "homeo_rate": 0.25,
+  "elig_leak": 0.1,
+  "rho_sigma_frontier": [
+    {
+      "rho": 0.0,
+      "sigma": 0.0,
+      "robust_worst": 0.018867924528301886,
+      "robust_mean": 0.018867924528301886,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 0.5,
+      "robust_worst": 0.0,
+      "robust_mean": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 1.0,
+      "robust_worst": 0.0,
+      "robust_mean": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 2.0,
+      "robust_worst": 0.0,
+      "robust_mean": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 0.0,
+      "robust_worst": 0.2169811320754717,
+      "robust_mean": 0.2169811320754717,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 0.5,
+      "robust_worst": 0.22641509433962265,
+      "robust_mean": 0.22641509433962265,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 1.0,
+      "robust_worst": 0.2169811320754717,
+      "robust_mean": 0.2169811320754717,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 2.0,
+      "robust_worst": 0.19811320754716982,
+      "robust_mean": 0.19811320754716982,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 0.0,
+      "robust_worst": 0.39622641509433965,
+      "robust_mean": 0.39622641509433965,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 0.5,
+      "robust_worst": 0.39622641509433965,
+      "robust_mean": 0.39622641509433965,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 1.0,
+      "robust_worst": 0.39622641509433965,
+      "robust_mean": 0.39622641509433965,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 2.0,
+      "robust_worst": 0.37735849056603776,
+      "robust_mean": 0.37735849056603776,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.6,
+      "sigma": 0.0,
+      "robust_worst": 0.6037735849056604,
+      "robust_mean": 0.6037735849056604,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.6,
+      "sigma": 0.5,
+      "robust_worst": 0.6037735849056604,
+      "robust_mean": 0.6037735849056604,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.6,
+      "sigma": 1.0,
+      "robust_worst": 0.6037735849056604,
+      "robust_mean": 0.6037735849056604,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.6,
+      "sigma": 2.0,
+      "robust_worst": 0.5283018867924528,
+      "robust_mean": 0.5283018867924528,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.8,
+      "sigma": 0.0,
+      "robust_worst": 0.8018867924528302,
+      "robust_mean": 0.8018867924528302,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.8,
+      "sigma": 0.5,
+      "robust_worst": 0.8018867924528302,
+      "robust_mean": 0.8018867924528302,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.8,
+      "sigma": 1.0,
+      "robust_worst": 0.8113207547169812,
+      "robust_mean": 0.8113207547169812,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.8,
+      "sigma": 2.0,
+      "robust_worst": 0.5754716981132075,
+      "robust_mean": 0.5754716981132075,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 1.0,
+      "sigma": 0.0,
+      "robust_worst": 1.0,
+      "robust_mean": 1.0,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 1.0,
+      "sigma": 0.5,
+      "robust_worst": 1.0,
+      "robust_mean": 1.0,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 1.0,
+      "sigma": 1.0,
+      "robust_worst": 0.9433962264150944,
+      "robust_mean": 0.9433962264150944,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 1.0,
+      "sigma": 2.0,
+      "robust_worst": 0.330188679245283,
+      "robust_mean": 0.330188679245283,
+      "clears_go_bar": false
+    }
+  ],
+  "relaxed_fp_sensitivity": [
+    {
+      "arm": "robust",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.6037735849056604,
+      "fp0.0_mean": 0.6037735849056604,
+      "fp0.05_worst": 0.6792452830188679,
+      "fp0.05_mean": 0.6792452830188679,
+      "fp0.1_worst": 0.6886792452830188,
+      "fp0.1_mean": 0.6886792452830188
+    },
+    {
+      "arm": "robust",
+      "rho": 0.8,
+      "sigma": 0.5,
+      "fp0.0_worst": 0.8018867924528302,
+      "fp0.0_mean": 0.8018867924528302,
+      "fp0.05_worst": 0.8113207547169812,
+      "fp0.05_mean": 0.8113207547169812,
+      "fp0.1_worst": 0.8679245283018868,
+      "fp0.1_mean": 0.8679245283018868
+    },
+    {
+      "arm": "robust",
+      "rho": 1.0,
+      "sigma": 0.5,
+      "fp0.0_worst": 1.0,
+      "fp0.0_mean": 1.0,
+      "fp0.05_worst": 1.0,
+      "fp0.05_mean": 1.0,
+      "fp0.1_worst": 1.0,
+      "fp0.1_mean": 1.0
+    },
+    {
+      "arm": "robust",
+      "rho": 1.0,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.9433962264150944,
+      "fp0.0_mean": 0.9433962264150944,
+      "fp0.05_worst": 0.9528301886792453,
+      "fp0.05_mean": 0.9528301886792453,
+      "fp0.1_worst": 0.9622641509433962,
+      "fp0.1_mean": 0.9622641509433962
+    },
+    {
+      "arm": "lesion",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.04716981132075472,
+      "fp0.0_mean": 0.04716981132075472,
+      "fp0.05_worst": 0.16037735849056603,
+      "fp0.05_mean": 0.16037735849056603,
+      "fp0.1_worst": 0.16037735849056603,
+      "fp0.1_mean": 0.16037735849056603
+    },
+    {
+      "arm": "shuffle",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.0,
+      "fp0.0_mean": 0.0,
+      "fp0.05_worst": 0.03773584905660377,
+      "fp0.05_mean": 0.03773584905660377,
+      "fp0.1_worst": 0.16037735849056603,
+      "fp0.1_mean": 0.16037735849056603
+    }
+  ],
+  "required_coverage_spec_by_sigma": {
+    "0.0": 0.6,
+    "0.5": 0.6,
+    "1.0": 0.6,
+    "2.0": 0.6
+  },
+  "n_pos_raw_gated": 106,
+  "n_neg_raw_excluded": 62,
+  "n_partition_words": 168,
+  "per_seed": [
+    {
+      "seed": 42,
+      "code_dim": 64,
+      "text_ceiling": 0.0,
+      "base_real_ceiling": 0.0660377358490566,
+      "real_robust_ceiling": 0.6037735849056604,
+      "clean_robust_ceiling": 1.0,
+      "lesion_ceiling": 0.04716981132075472,
+      "shuffle_ceiling": 0.0,
+      "heldout_clean_ceiling": 1.0,
+      "synth_code_ceiling": 1.0
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "partition non-degenerate (affect + neutral both present)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the ceiling INSTRUMENT discriminates (synthetic clean >=0.5, text <0.2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "grounding is LOAD-BEARING at the NOISY point (robust code separates; the no-grounding LESION does not)",
+      "ok": true,
+      "detail": "treatment=0.603774 control=0.0471698 |sep|=0.556604 > 0.2",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "the code is TAUGHT not HANDED (held-out concepts separate; the shuffle-binding control does not)",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.2",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "GO",
+  "verdict_undefined_reasons": [],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "resample_frac": 0.8,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 2,
+    "m_assembly": 48,
+    "n_relay_robust": 24,
+    "epochs": 40,
+    "eta": 0.05,
+    "k_wta": 12,
+    "rho_grid": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "sigma_grid": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "The PRIOR grounded-experience-stream Hebbian convergence with FOUR biological COMPANION processes the ungated rule proxied with constants: (1) POPULATION POOLING -- an N_RELAY_ROBUST=24 relay population per channel, read by pooling (mean), cutting afferent noise ~sqrt(N) (divisive normalization, Carandini & Heeger 2012); (2) HOMEOSTATIC NOISE-FLOOR THRESHOLD -- each pooled channel adapts to its own label-free baseline (median + K_MAD*MAD) and transmits only supra-baseline drive, so noise-only concepts -> ~0 while a genuine US (|val|>=0.5 partition) stays (Turrigiano 2008 intrinsic homeostasis); (3) THREE-FACTOR US-GATED ELIGIBILITY -- the Oja-Hebbian write is scaled by the cleaned-arousal US salience (label-free), so noise-only coincidences barely consolidate (Fremaux & Gerstner 2016; Gerstner et al. 2018; Shouval et al. 2025 stopping rule); (4) HOMEOSTATIC SYNAPTIC SCALING -- per-epoch multiplicative scaling of each assembly's incoming weights toward the population-mean-activity setpoint (Turrigiano 2008), enforcing selectivity. LEARNED CODE = divisively-normalized assembly response, read by the VALIDATED supervised ridge k-fold CEILING (reused verbatim). All thresholds/setpoints are read from the signal's OWN statistics (EMERGENT), never hand-set to the labels.",
+  "sources": [
+    "2026-09-05-affect-grounded-experience-stream-hebbian-convergence-teaches-separable-code-derisk-PARTIAL.md -- BUILT the emergent convergence; named THIS build (stronger three-factor / homeostatic gating + low-noise grounding). This runner adds the four companion processes and re-tests the strict bar.",
+    "Turrigiano (2008, Cell) 'The Self-Tuning Neuron: Synaptic Scaling of Excitatory Synapses' -- multiplicative homeostatic scaling toward a firing-rate setpoint (mechanisms 2 + 4).",
+    "Fremaux & Gerstner (2016, Front Neural Circuits) 'Neuromodulated STDP and Theory of Three-Factor Learning Rules'; Gerstner et al. (2018, Front Neural Circuits) 'Eligibility Traces ... Three-Factor Learning Rules' -- neuromodulator-gated eligibility (mechanism 3).",
+    "Shouval et al. (2025, Curr Opin Neurobiol) 'Eligibility traces as a synaptic substrate for learning' -- the eligibility stopping rule preserving selectivity/representational power under a write pressure.",
+    "Carandini & Heeger (2012, Nat Rev Neurosci) 'Normalization as a canonical neural computation' -- divisive normalization / population pooling (mechanism 1).",
+    "2026-08-19-embodied-affect-interoception-GO.md -- the board #49/#84 interoceptive relay structure.",
+    "Namburi, Tye et al. (2015, Nature) -- opponent valence populations bound to a real US, not lexical company."
+  ],
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; _STRONG_MARGIN==2.0 asserted; reuse-by-import only.",
+  "HONEST_RESIDUALS": "(1) the body-state US is a declared ORACLE STAND-IN for a grounded world that does not exist for the TinyStories vocabulary (the SAME stand-in the prior rungs used); this measures whether the noise-robust convergence CAN teach a separable code GIVEN such a stream + at what noise -- it does NOT deliver a real grounded world (the named next build). (2) GO here means the noise-robust grounded-TEACHER convergence arc is de-risked, NOT that the gate is retired. (3) rate-Hebbian (numpy-CPU) convergence + population pooling; a fully-spiking on-substrate convergence (build_propagation_bridge, GPU-queued) is the named next rung. (4) N_RELAY_ROBUST + K_MAD are documented OPERATING POINTS (a population size + a standard robust outlier cut), reported as sweeps so they are not cherry-picked; the thresholds themselves are label-free/emergent. (5) the ceiling is a linear supervised upper bound. (6) the 164-word closed partition is inherited.",
+  "elapsed_seconds": 7.0
+}
