@@ -1,0 +1,783 @@
+{
+  "probe": "appraisal_interoceptive_ladder (scaffold-retirement backlog rank 5 / board #84 adaptation)",
+  "verdict": "GO (6-seed) -- the Gate-B appraisal, routed through a board-#49/#81-style interoceptive-relay CURRENT afferent onto Gate-B's OWN SEAM-C ladder spec, is BYTE-IDENTICAL-OFF (the default host-write path is untouched, exact-float verified against the pre-adaptation baseline) and LOAD-BEARING: sweeping the appraisal moves the ladder differential with the correct sign (corr +0.97, range 0.1623) and the downstream tone_level/content_plan/manner_for genuinely change, 6/6 seeds. Cutting the relay->ladder SYNAPSE (APPR_INTERO_GATE=0) collapses the coupling (range -> 0.0000, 100% of the range owned by the synapse) while the relay pools still encode the appraisal (corr +0.96) -- a genuine dissociation, not silence. NO-REGRESSION vs the real production host-write path (corr +1.00, range 0.1422, seed-matched): sign-for-sign agreement and comparable ordered tracking on every seed IN THE PRODUCTION-REALISTIC BAND (|appraisal|>=0.5, what the salience gate actually emits for any single matched word). CHARACTERIZED RESIDUAL: 12 of 48 nonzero-appraisal sub-threshold reads (all in |appraisal|<0.5, an honest relay-rheobase threshold the direct host write does not have) across the 6 seeds -- see HONEST_NOTE. numpy-CPU; NO sim/ edit; the production dispatch is a completely separate default-off code path (research/runners/affect_production_organ.py).",
+  "GO": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "substrate_seeded(cfg.seed; identical thresholds on rebuild)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "all_requested_seeds_ran(n==6)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "differential_read_is_neural(rate off cp_firing_states, not a host formula)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "ladder_reaches_only_via_synapses(runtime assert held every step)",
+      "ok": true
+    },
+    {
+      "kind": "require",
+      "name": "numpy_spiking_backend",
+      "ok": true
+    }
+  ],
+  "aggregate_checks": {
+    "byte_identical_off": true,
+    "all_seeds_signs_correct(no inversion)": true,
+    "all_seeds_signs_correct_realistic_band(|appraisal|>=0.5)": true,
+    "all_seeds_ordered_tracking(corr>=0.8)": true,
+    "all_seeds_readout_lesion_collapses": true,
+    "all_seeds_intero_lesion_collapses_range": true,
+    "all_seeds_relay_encodes_under_lesion(corr>=0.8)": true,
+    "all_seeds_downstream_varies": true,
+    "all_seeds_no_regression_vs_host": true
+  },
+  "byte_identical_off_detail": {
+    "byte_identical_off": true,
+    "rows": [
+      {
+        "appraisal": -1.0,
+        "expected": -0.06638888888888889,
+        "got": -0.06638888888888889,
+        "exact_match": true
+      },
+      {
+        "appraisal": -0.5,
+        "expected": -0.035277777777777776,
+        "got": -0.035277777777777776,
+        "exact_match": true
+      },
+      {
+        "appraisal": 0.0,
+        "expected": 0.0,
+        "got": 0.0,
+        "exact_match": true
+      },
+      {
+        "appraisal": 0.5,
+        "expected": 0.03972222222222222,
+        "got": 0.03972222222222222,
+        "exact_match": true
+      },
+      {
+        "appraisal": 1.0,
+        "expected": 0.07083333333333333,
+        "got": 0.07083333333333333,
+        "exact_match": true
+      },
+      {
+        "appraisal": 0.7,
+        "lesion": true,
+        "expected": 0.0,
+        "got": 0.0,
+        "exact_match": true
+      }
+    ]
+  },
+  "n_seeds_go": 6,
+  "n_seeds": 6,
+  "means": {
+    "new_corr": 0.973783913491879,
+    "new_range": 0.1623148148148148,
+    "new_range_intero_lesioned": 0.0,
+    "host_corr": 0.9963463254765713,
+    "host_range": 0.14222222222222222,
+    "relay_enc_intact": 0.9599377679166353,
+    "relay_enc_under_intero_lesion": 0.9599377679166353,
+    "intero_synapse_owns_range_frac": 1.0
+  },
+  "total_subthreshold_reads": 12,
+  "per_seed": [
+    {
+      "seed": 42,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.08333333333333333,
+        -0.059166666666666666,
+        -0.03888888888888889,
+        0.0,
+        0.0,
+        0.0,
+        0.03777777777777778,
+        0.059722222222222225,
+        0.08638888888888889
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9744278784448785,
+      "new_range": 0.16972222222222222,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.9592845981529566,
+      "relay_enc_under_intero_lesion": 0.9592845981529566,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.06638888888888889,
+        -0.058611111111111114,
+        -0.035833333333333335,
+        -0.020277777777777777,
+        0.0,
+        0.021944444444444444,
+        0.03944444444444444,
+        0.06138888888888889,
+        0.07944444444444444
+      ],
+      "host_corr": 0.9962007531617524,
+      "host_range": 0.14583333333333331,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 48.0
+    },
+    {
+      "seed": 43,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.07833333333333334,
+        -0.06305555555555556,
+        -0.03805555555555556,
+        0.0,
+        0.0,
+        0.0,
+        0.0375,
+        0.06194444444444445,
+        0.08555555555555555
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9732373943548993,
+      "new_range": 0.1638888888888889,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.9598672312214653,
+      "relay_enc_under_intero_lesion": 0.9598672312214653,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.07055555555555555,
+        -0.06027777777777778,
+        -0.03722222222222222,
+        -0.021666666666666667,
+        0.0,
+        0.022222222222222223,
+        0.03777777777777778,
+        0.059444444444444446,
+        0.06861111111111111
+      ],
+      "host_corr": 0.9958780953165269,
+      "host_range": 0.13916666666666666,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 26.1
+    },
+    {
+      "seed": 44,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.09277777777777778,
+        -0.06861111111111111,
+        -0.044444444444444446,
+        0.0,
+        0.0,
+        0.0,
+        0.03861111111111111,
+        0.0625,
+        0.0775
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9727534957017424,
+      "new_range": 0.17027777777777778,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.96011789707475,
+      "relay_enc_under_intero_lesion": 0.96011789707475,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.0811111111111111,
+        -0.06222222222222222,
+        -0.0375,
+        -0.022222222222222223,
+        0.0,
+        0.023333333333333334,
+        0.03888888888888889,
+        0.049444444444444444,
+        0.06944444444444445
+      ],
+      "host_corr": 0.9974262826235786,
+      "host_range": 0.15055555555555555,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 20.3
+    },
+    {
+      "seed": 100,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.07583333333333334,
+        -0.058888888888888886,
+        -0.03638888888888889,
+        0.0,
+        0.0,
+        0.0,
+        0.04138888888888889,
+        0.05305555555555556,
+        0.07861111111111112
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9742291021939115,
+      "new_range": 0.15444444444444444,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.9598382401777849,
+      "relay_enc_under_intero_lesion": 0.9598382401777849,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.06944444444444445,
+        -0.050277777777777775,
+        -0.03888888888888889,
+        -0.02361111111111111,
+        0.0,
+        0.019166666666666665,
+        0.03361111111111111,
+        0.05694444444444444,
+        0.06583333333333333
+      ],
+      "host_corr": 0.9972409717376441,
+      "host_range": 0.13527777777777777,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 21.0
+    },
+    {
+      "seed": 101,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.08194444444444444,
+        -0.05416666666666667,
+        -0.041666666666666664,
+        0.0,
+        0.0,
+        0.0,
+        0.035,
+        0.04861111111111111,
+        0.07472222222222222
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9742045950332303,
+      "new_range": 0.15666666666666668,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.959452364811305,
+      "relay_enc_under_intero_lesion": 0.959452364811305,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.075,
+        -0.0575,
+        -0.03722222222222222,
+        -0.020277777777777777,
+        0.0,
+        0.021111111111111112,
+        0.035277777777777776,
+        0.058888888888888886,
+        0.06722222222222222
+      ],
+      "host_corr": 0.9967913378991631,
+      "host_range": 0.14222222222222222,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 25.4
+    },
+    {
+      "seed": 102,
+      "GO": true,
+      "i_pa": 220.0,
+      "w": 10.0,
+      "dens": 0.6,
+      "checks": {
+        "new_signs_correct(no inversion; sub-threshold zero tolerated)": true,
+        "new_signs_correct_in_production_realistic_band(|appraisal|>=0.5, strict)": true,
+        "new_neutral_near_zero(<0.01)": true,
+        "new_ordered_tracking(corr>=0.8)": true,
+        "new_readout_lesion_collapses(affect_out=0 -> 0.0)": true,
+        "intero_lesion_collapses_range(<=0.25x)": true,
+        "relay_still_encodes_under_intero_lesion(corr>=0.8)": true,
+        "relay_encodes_intact(corr>=0.8)": true,
+        "downstream_content_and_manner_vary": true,
+        "host_write_signs_correct(reference)": true,
+        "no_regression_signs(realistic band matches host sign-for-sign)": true,
+        "no_regression_ordered_tracking(new corr>=0.8 given host corr>=0.8)": true
+      },
+      "sweep": [
+        -1.0,
+        -0.7,
+        -0.5,
+        -0.3,
+        0.0,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "new_diffs": [
+        -0.07916666666666666,
+        -0.06,
+        -0.03611111111111111,
+        0.0,
+        0.0,
+        0.0,
+        0.03777777777777778,
+        0.060833333333333336,
+        0.07972222222222222
+      ],
+      "new_diffs_intero_lesioned": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "new_corr": 0.9738510152226113,
+      "new_range": 0.15888888888888889,
+      "new_range_intero_lesioned": 0.0,
+      "subthreshold_reads": [
+        {
+          "appraisal": -0.3,
+          "differential": 0.0
+        },
+        {
+          "appraisal": 0.3,
+          "differential": 0.0
+        }
+      ],
+      "n_subthreshold": 2,
+      "new_readout_lesion_differential": 0.0,
+      "relay_enc_intact": 0.9610662760615503,
+      "relay_enc_under_intero_lesion": 0.9610662760615503,
+      "intero_synapse_owns_range_frac": 1.0,
+      "host_diffs": [
+        -0.06888888888888889,
+        -0.06166666666666667,
+        -0.03666666666666667,
+        -0.021111111111111112,
+        0.0,
+        0.02388888888888889,
+        0.04027777777777778,
+        0.06277777777777778,
+        0.07138888888888889
+      ],
+      "host_corr": 0.9945405121207626,
+      "host_range": 0.14027777777777778,
+      "host_readout_lesion_differential": 0.0,
+      "downstream_n_sentences": [
+        1,
+        1,
+        1,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "downstream_manners": [
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, blunt, matter-of-fact sentence.",
+        "",
+        "",
+        "",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence.",
+        "Keep the words cat, sat, mat and the verb 'sat'. Write ONE short, warm, friendly sentence."
+      ],
+      "elapsed_seconds": 22.1
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "i_pa": 220.0,
+    "w": 10.0,
+    "dens": 0.6,
+    "sweep": [
+      -1.0,
+      -0.7,
+      -0.5,
+      -0.3,
+      0.0,
+      0.3,
+      0.5,
+      0.7,
+      1.0
+    ],
+    "gate": "appraisal_intero_out",
+    "n_relay": 40
+  },
+  "mechanism": "3 interoceptive-relay pools (Izhikevich RS, no recurrence; board #49/#81 intero_* pattern) carry the Gate-B appraisal as a real afferent CURRENT and project SYNAPTICALLY (AMPA, gated by appraisal_intero_out) onto EVERY rung of Gate-B's OWN SEAM-C ladder (aff_vplus/vminus/arousal_L1..8, reused by import from _stageA_full_integration_derisk), replacing the direct host nm.set_concentration(appraisal_lad_*) write. The per-rung staggered recruitment is UNCHANGED (still each rung's own pre-existing intrinsic-current offset); only the injection mechanism moves from a diffuse neuromodulator broadcast to a synapse.",
+  "HONEST_NOTE": "numpy-CPU (real spiking Izhikevich bridge). This is a DE-RISK: the production flag (BRAIN_AFFECT_APPRAISAL_INTEROCEPTIVE) defaults OFF -- the host-write mechanism remains the production default. The comparison bridge is a DEDICATED standalone build (ladder + relay pools only, no composer/arbiter/honesty), not literally the same Python object as the co-resident one-brain's ladder -- it is the SAME ARCHITECTURE/SPEC reused by import, seeded independently, so exact per-neuron thresholds differ from the co-resident build even at the same cfg.seed (different RNG draw order/context); the aggregate population-level behavior (sign, ordered tracking, lesion dissociation) is what is compared, not per-neuron identity. The operating point (i_pa, w) is smoke-calibrated, not first-principles-derived from the original 240 pA/concentration excitability_drive sensitivity. CHARACTERIZED RESIDUAL (an honest boundary, not hidden): the interoceptive relay pool has its OWN rheobase -- below it, the relay fires at 0 Hz and the ladder reads an EXACT 0.0 differential, rather than a small same-signed value. The direct host write has no such stage (the diffuse neuromodulator broadcasts straight onto the ladder's own L1 rung, which sits only 40pA below its intrinsic threshold, so even a tiny appraisal moves it a little). This shows up as sub-threshold silence for |appraisal|<~0.5 at the calibrated operating point (i_pa=220pA); `appraise_text`'s salience gate (_STRONG_MARGIN=2.0 on a 1-9 Warriner scale) forces |valence|>=0.5 for any SINGLE matched word, so this band is uncommon in production (it can still occur from AVERAGING multiple gated words of mixed sign). The no-regression comparison is therefore reported on the full sweep (tolerant of this sub-threshold silence, never of a genuine sign INVERSION) and, strictly, on the |appraisal|>=0.5 realistic band. A follow-on could add a small tonic bias current to the relay pools to close this residual; not done here to keep the de-risk to the minimal adaptation.",
+  "elapsed_seconds": 184.2
+}
