@@ -1,0 +1,3062 @@
+{
+  "mode": "controller",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_pass": 6,
+  "verdict": "GO",
+  "all_seeds_pass": true,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "value_train_trials": 40,
+      "build_seconds": 162.68,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              19.861,
+              25.556,
+              28.056
+            ],
+            "fed_spread_hz": 8.194,
+            "wta_counts": [
+              79.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.972,
+              26.667,
+              27.083
+            ],
+            "fed_spread_hz": 11.111,
+            "wta_counts": [
+              75.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.639,
+              21.528,
+              18.472
+            ],
+            "fed_spread_hz": 3.889,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              15.556,
+              24.167,
+              32.917
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 8.194,
+          "on_spread_hz": 11.111,
+          "shared_lesion_spread_hz": 3.889,
+          "spread_attributable_to_shared_pathway": 0.6499864998649987,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": null,
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              15.0,
+              25.972,
+              28.333
+            ],
+            "fed_spread_hz": 13.333,
+            "wta_counts": [
+              69.0,
+              80.0,
+              82.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.278,
+              19.444,
+              30.972
+            ],
+            "fed_spread_hz": 15.694,
+            "wta_counts": [
+              68.0,
+              60.0,
+              86.0
+            ],
+            "wta_margin": 18.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.333,
+              19.167,
+              17.639
+            ],
+            "fed_spread_hz": 1.528,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              14.861,
+              20.556,
+              31.25
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 13.333,
+          "on_spread_hz": 15.694,
+          "shared_lesion_spread_hz": 1.528,
+          "spread_attributable_to_shared_pathway": 0.9026379508092265,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              18.472,
+              30.278,
+              36.944
+            ],
+            "fed_spread_hz": 18.472,
+            "wta_counts": [
+              62.0,
+              80.0,
+              88.0
+            ],
+            "wta_margin": 8.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              16.667,
+              33.472,
+              33.889
+            ],
+            "fed_spread_hz": 17.222,
+            "wta_counts": [
+              57.0,
+              81.0,
+              83.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              21.25,
+              21.25,
+              14.028
+            ],
+            "fed_spread_hz": 7.222,
+            "wta_counts": [
+              80.0,
+              80.0,
+              65.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.917,
+              28.472,
+              31.111
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 18.472,
+          "on_spread_hz": 17.222,
+          "shared_lesion_spread_hz": 7.222,
+          "spread_attributable_to_shared_pathway": 0.5806526535826269,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              16.667,
+              19.167,
+              32.639,
+              30.139
+            ],
+            "fed_spread_hz": 15.972,
+            "wta_counts": [
+              56.0,
+              45.0,
+              83.0,
+              81.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.972,
+              27.5,
+              21.528,
+              28.75
+            ],
+            "fed_spread_hz": 12.778,
+            "wta_counts": [
+              65.0,
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.361,
+              21.111,
+              22.639,
+              20.0
+            ],
+            "fed_spread_hz": 5.278,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              21.25,
+              22.5,
+              26.389,
+              35.972
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 15.972,
+          "on_spread_hz": 12.778,
+          "shared_lesion_spread_hz": 5.278,
+          "spread_attributable_to_shared_pathway": 0.5869463139771482,
+          "match": false,
+          "improves_over_off": false,
+          "matches_or_improves": false,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 3,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 262.95
+    },
+    "43": {
+      "seed": 43,
+      "value_train_trials": 40,
+      "build_seconds": 168.67,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              21.389,
+              22.917,
+              28.056
+            ],
+            "fed_spread_hz": 6.667,
+            "wta_counts": [
+              80.0,
+              76.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              16.25,
+              25.139,
+              30.556
+            ],
+            "fed_spread_hz": 14.306,
+            "wta_counts": [
+              71.0,
+              79.0,
+              85.0
+            ],
+            "wta_margin": 6.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.056,
+              21.111,
+              19.444
+            ],
+            "fed_spread_hz": 3.056,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              16.528,
+              23.056,
+              30.972
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 6.667,
+          "on_spread_hz": 14.306,
+          "shared_lesion_spread_hz": 3.056,
+          "spread_attributable_to_shared_pathway": 0.786383335663358,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": null,
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              16.667,
+              25.972,
+              30.139
+            ],
+            "fed_spread_hz": 13.472,
+            "wta_counts": [
+              74.0,
+              80.0,
+              83.0
+            ],
+            "wta_margin": 3.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.556,
+              19.306,
+              30.278
+            ],
+            "fed_spread_hz": 14.722,
+            "wta_counts": [
+              73.0,
+              61.0,
+              86.0
+            ],
+            "wta_margin": 13.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.472,
+              19.167,
+              18.75
+            ],
+            "fed_spread_hz": 0.694,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.083,
+              20.139,
+              30.278
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 13.472,
+          "on_spread_hz": 14.722,
+          "shared_lesion_spread_hz": 0.694,
+          "spread_attributable_to_shared_pathway": 0.9528596658062762,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              18.75,
+              32.917,
+              37.917
+            ],
+            "fed_spread_hz": 19.167,
+            "wta_counts": [
+              58.0,
+              81.0,
+              89.0
+            ],
+            "wta_margin": 8.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              17.5,
+              35.417,
+              36.944
+            ],
+            "fed_spread_hz": 19.444,
+            "wta_counts": [
+              52.0,
+              81.0,
+              87.0
+            ],
+            "wta_margin": 6.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.889,
+              20.694,
+              14.444
+            ],
+            "fed_spread_hz": 6.25,
+            "wta_counts": [
+              80.0,
+              80.0,
+              75.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              19.444,
+              29.444,
+              33.75
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 19.167,
+          "on_spread_hz": 19.444,
+          "shared_lesion_spread_hz": 6.25,
+          "spread_attributable_to_shared_pathway": 0.6785640814647191,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "stick",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              17.917,
+              20.139,
+              27.361,
+              29.861
+            ],
+            "fed_spread_hz": 11.944,
+            "wta_counts": [
+              76.0,
+              58.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              17.361,
+              26.806,
+              18.194,
+              32.917
+            ],
+            "fed_spread_hz": 15.556,
+            "wta_counts": [
+              69.0,
+              80.0,
+              63.0,
+              82.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.917,
+              21.528,
+              23.194,
+              21.111
+            ],
+            "fed_spread_hz": 5.278,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              20.694,
+              21.806,
+              22.361,
+              33.472
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 11.944,
+          "on_spread_hz": 15.556,
+          "shared_lesion_spread_hz": 5.278,
+          "spread_attributable_to_shared_pathway": 0.6607096940087426,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 4,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 274.41
+    },
+    "44": {
+      "seed": 44,
+      "value_train_trials": 40,
+      "build_seconds": 170.75,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              17.5,
+              23.611,
+              30.556
+            ],
+            "fed_spread_hz": 13.056,
+            "wta_counts": [
+              77.0,
+              76.0,
+              84.0
+            ],
+            "wta_margin": 7.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              13.889,
+              23.75,
+              32.5
+            ],
+            "fed_spread_hz": 18.611,
+            "wta_counts": [
+              53.0,
+              74.0,
+              87.0
+            ],
+            "wta_margin": 13.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.361,
+              18.75,
+              15.694
+            ],
+            "fed_spread_hz": 3.056,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              12.917,
+              21.111,
+              30.833
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              78.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 13.056,
+          "on_spread_hz": 18.611,
+          "shared_lesion_spread_hz": 3.056,
+          "spread_attributable_to_shared_pathway": 0.8357960346031916,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": null,
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              14.028,
+              22.917,
+              34.028
+            ],
+            "fed_spread_hz": 20.0,
+            "wta_counts": [
+              49.0,
+              68.0,
+              88.0
+            ],
+            "wta_margin": 20.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              14.306,
+              17.361,
+              32.222
+            ],
+            "fed_spread_hz": 17.917,
+            "wta_counts": [
+              61.0,
+              48.0,
+              87.0
+            ],
+            "wta_margin": 26.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              16.944,
+              15.833,
+              15.556
+            ],
+            "fed_spread_hz": 1.389,
+            "wta_counts": [
+              80.0,
+              67.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              14.583,
+              18.75,
+              32.5
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 20.0,
+          "on_spread_hz": 17.917,
+          "shared_lesion_spread_hz": 1.389,
+          "spread_attributable_to_shared_pathway": 0.9224758609142156,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              16.111,
+              34.167,
+              38.611
+            ],
+            "fed_spread_hz": 22.5,
+            "wta_counts": [
+              46.0,
+              81.0,
+              88.0
+            ],
+            "wta_margin": 7.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.972,
+              36.111,
+              36.667
+            ],
+            "fed_spread_hz": 20.694,
+            "wta_counts": [
+              45.0,
+              81.0,
+              87.0
+            ],
+            "wta_margin": 6.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.917,
+              18.889,
+              12.361
+            ],
+            "fed_spread_hz": 6.528,
+            "wta_counts": [
+              80.0,
+              80.0,
+              65.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              16.389,
+              27.917,
+              34.306
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 22.5,
+          "on_spread_hz": 20.694,
+          "shared_lesion_spread_hz": 6.528,
+          "spread_attributable_to_shared_pathway": 0.6845462452884895,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "stick",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              15.0,
+              17.5,
+              28.472,
+              30.139
+            ],
+            "fed_spread_hz": 15.139,
+            "wta_counts": [
+              54.0,
+              44.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              13.472,
+              23.75,
+              16.806,
+              32.778
+            ],
+            "fed_spread_hz": 19.306,
+            "wta_counts": [
+              51.0,
+              76.0,
+              59.0,
+              82.0
+            ],
+            "wta_margin": 6.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              16.111,
+              19.861,
+              20.694,
+              17.639
+            ],
+            "fed_spread_hz": 4.583,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              79.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.917,
+              19.306,
+              18.889,
+              36.806
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 15.139,
+          "on_spread_hz": 19.306,
+          "shared_lesion_spread_hz": 4.583,
+          "spread_attributable_to_shared_pathway": 0.7626126592769087,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 4,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 266.04
+    },
+    "100": {
+      "seed": 100,
+      "value_train_trials": 40,
+      "build_seconds": 170.41,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              20.833,
+              22.917,
+              26.111
+            ],
+            "fed_spread_hz": 5.278,
+            "wta_counts": [
+              80.0,
+              79.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.694,
+              26.528,
+              28.194
+            ],
+            "fed_spread_hz": 12.5,
+            "wta_counts": [
+              73.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.611,
+              22.222,
+              19.861
+            ],
+            "fed_spread_hz": 3.611,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.361,
+              22.222,
+              28.333
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 5.278,
+          "on_spread_hz": 12.5,
+          "shared_lesion_spread_hz": 3.611,
+          "spread_attributable_to_shared_pathway": 0.71112,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": null,
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              15.556,
+              27.778,
+              26.944
+            ],
+            "fed_spread_hz": 12.222,
+            "wta_counts": [
+              73.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.833,
+              19.306,
+              30.0
+            ],
+            "fed_spread_hz": 14.167,
+            "wta_counts": [
+              75.0,
+              61.0,
+              86.0
+            ],
+            "wta_margin": 11.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.889,
+              19.306,
+              17.639
+            ],
+            "fed_spread_hz": 1.667,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              16.667,
+              21.806,
+              29.306
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 12.222,
+          "on_spread_hz": 14.167,
+          "shared_lesion_spread_hz": 1.667,
+          "spread_attributable_to_shared_pathway": 0.8823321804192843,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              18.75,
+              28.889,
+              35.0
+            ],
+            "fed_spread_hz": 16.25,
+            "wta_counts": [
+              71.0,
+              80.0,
+              87.0
+            ],
+            "wta_margin": 7.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              18.472,
+              29.167,
+              33.056
+            ],
+            "fed_spread_hz": 14.583,
+            "wta_counts": [
+              71.0,
+              80.0,
+              83.0
+            ],
+            "wta_margin": 3.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              20.972,
+              22.361,
+              14.722
+            ],
+            "fed_spread_hz": 7.639,
+            "wta_counts": [
+              80.0,
+              80.0,
+              66.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              19.583,
+              27.222,
+              29.167
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 16.25,
+          "on_spread_hz": 14.583,
+          "shared_lesion_spread_hz": 7.639,
+          "spread_attributable_to_shared_pathway": 0.47617088390591783,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "stick",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              17.083,
+              19.167,
+              26.806,
+              28.611
+            ],
+            "fed_spread_hz": 11.528,
+            "wta_counts": [
+              74.0,
+              55.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              16.944,
+              29.028,
+              14.444,
+              28.194
+            ],
+            "fed_spread_hz": 14.583,
+            "wta_counts": [
+              75.0,
+              80.0,
+              50.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.75,
+              22.917,
+              24.722,
+              22.361
+            ],
+            "fed_spread_hz": 5.972,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              21.806,
+              23.194,
+              20.417,
+              31.528
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 11.528,
+          "on_spread_hz": 14.583,
+          "shared_lesion_spread_hz": 5.972,
+          "spread_attributable_to_shared_pathway": 0.590482068161558,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 4,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 272.91
+    },
+    "101": {
+      "seed": 101,
+      "value_train_trials": 40,
+      "build_seconds": 175.22,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              20.694,
+              23.889,
+              25.417
+            ],
+            "fed_spread_hz": 4.722,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              17.5,
+              24.861,
+              29.167
+            ],
+            "fed_spread_hz": 11.667,
+            "wta_counts": [
+              78.0,
+              80.0,
+              82.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.611,
+              20.833,
+              19.306
+            ],
+            "fed_spread_hz": 2.222,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.083,
+              22.917,
+              30.278
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 4.722,
+          "on_spread_hz": 11.667,
+          "shared_lesion_spread_hz": 2.222,
+          "spread_attributable_to_shared_pathway": 0.8095482986200395,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              16.528,
+              25.972,
+              26.528
+            ],
+            "fed_spread_hz": 10.0,
+            "wta_counts": [
+              78.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              17.083,
+              20.417,
+              30.417
+            ],
+            "fed_spread_hz": 13.333,
+            "wta_counts": [
+              76.0,
+              62.0,
+              86.0
+            ],
+            "wta_margin": 10.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.333,
+              20.417,
+              18.889
+            ],
+            "fed_spread_hz": 2.083,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              16.806,
+              20.694,
+              32.361
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 10.0,
+          "on_spread_hz": 13.333,
+          "shared_lesion_spread_hz": 2.083,
+          "spread_attributable_to_shared_pathway": 0.843771094277357,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              18.611,
+              29.722,
+              31.25
+            ],
+            "fed_spread_hz": 12.639,
+            "wta_counts": [
+              75.0,
+              80.0,
+              82.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              18.333,
+              34.583,
+              33.333
+            ],
+            "fed_spread_hz": 16.25,
+            "wta_counts": [
+              62.0,
+              81.0,
+              83.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              20.139,
+              21.667,
+              14.583
+            ],
+            "fed_spread_hz": 7.083,
+            "wta_counts": [
+              80.0,
+              80.0,
+              68.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              19.583,
+              28.889,
+              36.389
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 12.639,
+          "on_spread_hz": 16.25,
+          "shared_lesion_spread_hz": 7.083,
+          "spread_attributable_to_shared_pathway": 0.564123076923077,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              17.5,
+              19.167,
+              32.083,
+              26.667
+            ],
+            "fed_spread_hz": 14.583,
+            "wta_counts": [
+              70.0,
+              47.0,
+              83.0,
+              80.0
+            ],
+            "wta_margin": 3.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              16.667,
+              26.25,
+              17.5,
+              28.056
+            ],
+            "fed_spread_hz": 11.389,
+            "wta_counts": [
+              76.0,
+              80.0,
+              75.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              19.583,
+              23.472,
+              24.583,
+              21.528
+            ],
+            "fed_spread_hz": 5.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              22.361,
+              21.111,
+              21.806,
+              30.694
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 14.583,
+          "on_spread_hz": 11.389,
+          "shared_lesion_spread_hz": 5.0,
+          "spread_attributable_to_shared_pathway": 0.5609798928790939,
+          "match": false,
+          "improves_over_off": false,
+          "matches_or_improves": false,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 3,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 279.9
+    },
+    "102": {
+      "seed": 102,
+      "value_train_trials": 40,
+      "build_seconds": 225.38,
+      "scenarios": [
+        {
+          "name": "S1_baseline",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.5,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.30615164520743915,
+            1.0486409155937053
+          ],
+          "shared_lesion_eng": [
+            0.001430615164520748,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              20.417,
+              27.778,
+              28.056
+            ],
+            "fed_spread_hz": 7.639,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              14.028,
+              27.361,
+              31.25
+            ],
+            "fed_spread_hz": 17.222,
+            "wta_counts": [
+              55.0,
+              80.0,
+              83.0
+            ],
+            "wta_margin": 3.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.056,
+              20.833,
+              18.472
+            ],
+            "fed_spread_hz": 2.778,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              17.083,
+              23.472,
+              31.111
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 7.639,
+          "on_spread_hz": 17.222,
+          "shared_lesion_spread_hz": 2.778,
+          "spread_attributable_to_shared_pathway": 0.8386946928347463,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S2_near_tie_low",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            0.1111111111111111,
+            1.0
+          ],
+          "on_eng": [
+            0.001430615164520748,
+            0.03862660944206009,
+            1.044349070100143
+          ],
+          "shared_lesion_eng": [
+            0.017167381974248934,
+            0.004291845493562237,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": null,
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              15.139,
+              25.972,
+              31.528
+            ],
+            "fed_spread_hz": 16.389,
+            "wta_counts": [
+              63.0,
+              80.0,
+              86.0
+            ],
+            "wta_margin": 6.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.278,
+              19.167,
+              31.667
+            ],
+            "fed_spread_hz": 16.389,
+            "wta_counts": [
+              67.0,
+              54.0,
+              87.0
+            ],
+            "wta_margin": 20.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              18.333,
+              17.639,
+              18.611
+            ],
+            "fed_spread_hz": 0.972,
+            "wta_counts": [
+              80.0,
+              70.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              15.556,
+              20.694,
+              33.889
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 16.389,
+          "on_spread_hz": 16.389,
+          "shared_lesion_spread_hz": 0.972,
+          "spread_attributable_to_shared_pathway": 0.9406919275123559,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S3_referent_tie",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe"
+          ],
+          "off_eng": [
+            0.0,
+            1.0,
+            1.0
+          ],
+          "on_eng": [
+            0.0014306151645207554,
+            1.1030042918454936,
+            1.054363376251788
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.0,
+            0.004291845493562237
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "shoe",
+          "chosen_on": "shoe",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              18.056,
+              35.833,
+              38.889
+            ],
+            "fed_spread_hz": 20.833,
+            "wta_counts": [
+              52.0,
+              81.0,
+              88.0
+            ],
+            "wta_margin": 7.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              17.917,
+              34.306,
+              39.444
+            ],
+            "fed_spread_hz": 21.528,
+            "wta_counts": [
+              50.0,
+              81.0,
+              89.0
+            ],
+            "wta_margin": 8.0,
+            "wta_choice": 2,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              20.0,
+              21.528,
+              13.472
+            ],
+            "fed_spread_hz": 8.056,
+            "wta_counts": [
+              80.0,
+              80.0,
+              62.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              19.306,
+              30.972,
+              34.444
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 2,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 20.833,
+          "on_spread_hz": 21.528,
+          "shared_lesion_spread_hz": 8.056,
+          "spread_attributable_to_shared_pathway": 0.6257896692679301,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        },
+        {
+          "name": "S4_four_candidate",
+          "candidates": [
+            "cat",
+            "ball",
+            "shoe",
+            "stick"
+          ],
+          "off_eng": [
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666,
+            1.0
+          ],
+          "on_eng": [
+            0.0,
+            0.1602288984263233,
+            0.5593705293276109,
+            1.0643776824034332
+          ],
+          "shared_lesion_eng": [
+            0.0,
+            0.005722460658082977,
+            0.0,
+            0.0
+          ],
+          "off_eng_matches_independent_host_formula": true,
+          "on_eng_differs_from_off": true,
+          "chosen_off": "stick",
+          "chosen_on": "stick",
+          "chosen_on_shared_lesion": "cat",
+          "chosen_on_critic_lesion (sanity, not gated)": null,
+          "meta_off": {
+            "V_hz": [
+              16.944,
+              19.861,
+              28.194,
+              34.444
+            ],
+            "fed_spread_hz": 17.5,
+            "wta_counts": [
+              57.0,
+              45.0,
+              80.0,
+              81.0
+            ],
+            "wta_margin": 1.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on": {
+            "V_hz": [
+              15.139,
+              27.639,
+              16.667,
+              34.028
+            ],
+            "fed_spread_hz": 18.889,
+            "wta_counts": [
+              55.0,
+              80.0,
+              54.0,
+              82.0
+            ],
+            "wta_margin": 2.0,
+            "wta_choice": 3,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_shared_lesion": {
+            "V_hz": [
+              17.361,
+              22.361,
+              24.028,
+              20.972
+            ],
+            "fed_spread_hz": 6.667,
+            "wta_counts": [
+              80.0,
+              80.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": true,
+            "lesion": false,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "meta_on_critic_lesion (sanity, not gated)": {
+            "V_hz": [
+              20.972,
+              22.917,
+              21.944,
+              34.167
+            ],
+            "fed_spread_hz": 0.0,
+            "wta_counts": [
+              80.0,
+              79.0,
+              80.0,
+              80.0
+            ],
+            "wta_margin": 0.0,
+            "wta_choice": 0,
+            "decisive": false,
+            "lesion": true,
+            "untrained": false,
+            "v_margin_hz": 2.0,
+            "value_attribution_frac": null
+          },
+          "off_spread_hz": 17.5,
+          "on_spread_hz": 18.889,
+          "shared_lesion_spread_hz": 6.667,
+          "spread_attributable_to_shared_pathway": 0.6470432526867489,
+          "match": true,
+          "improves_over_off": false,
+          "matches_or_improves": true,
+          "lesion_reverts": true,
+          "critic_lesion_sanity_collapses (expected trivially True)": true
+        }
+      ],
+      "n_scenarios": 4,
+      "n_matches_or_improves": 4,
+      "n_lesion_reverts": 4,
+      "g_off_identical": true,
+      "g_on_loadbearing": true,
+      "g_matches_or_improves": true,
+      "g_lesion_loadbearing": true,
+      "all_gates_pass": true,
+      "wall_seconds": 356.89
+    }
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6_project_standard_seeds_requested",
+      "ok": true,
+      "detail": "measured=6 expect=<function <lambda> at 0x7f292c9984a0>",
+      "note": "the project's own 42/43/44/100/101/102 standard"
+    },
+    {
+      "kind": "require",
+      "name": "no_worker_errored",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "every subprocess worker returned a RESULT_JSON, none crashed/timed out"
+    },
+    {
+      "kind": "require",
+      "name": "g_off_identical_all_seeds",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "count of seeds passing this gate, out of 6 ok seeds"
+    },
+    {
+      "kind": "require",
+      "name": "g_on_loadbearing_all_seeds",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "count of seeds passing this gate, out of 6 ok seeds"
+    },
+    {
+      "kind": "require",
+      "name": "g_matches_or_improves_all_seeds",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "count of seeds passing this gate, out of 6 ok seeds"
+    },
+    {
+      "kind": "require",
+      "name": "g_lesion_loadbearing_all_seeds",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "count of seeds passing this gate, out of 6 ok seeds"
+    }
+  ],
+  "undefined_reasons": []
+}

@@ -1,0 +1,40 @@
+{
+  "purpose": "verify-go 'seeding' lens: build the seed-42 worker twice in independent fresh subprocesses and confirm the trained critic's V_hz reads are byte-identical, per CLAUDE.md's prescribed check ('build twice at one seed and hash ...; identical => actually seeded').",
+  "cmd": ["python", "-m", "research.runners._value_choice_neural_context_6seed_derisk", "--seed", "42"],
+  "backend": "numpy",
+  "seed": 42,
+  "orig_build_seconds": 162.68,
+  "rerun_build_seconds": 312.87,
+  "note_on_build_seconds_difference": "wall-clock build time differs (CPU contention from the concurrent 6-seed controller run still finishing other seeds at the time of the rerun); this does not affect the deterministic RNG-derived quantities compared below.",
+  "scenarios": [
+    {
+      "name": "S1_baseline",
+      "off_V_hz_orig": [19.861, 25.556, 28.056], "off_V_hz_rerun": [19.861, 25.556, 28.056], "off_identical": true,
+      "on_V_hz_orig": [15.972, 26.667, 27.083], "on_V_hz_rerun": [15.972, 26.667, 27.083], "on_identical": true,
+      "chosen_off_orig": "shoe", "chosen_off_rerun": "shoe",
+      "chosen_on_orig": "shoe", "chosen_on_rerun": "shoe"
+    },
+    {
+      "name": "S2_near_tie_low",
+      "off_V_hz_orig": [15.0, 25.972, 28.333], "off_V_hz_rerun": [15.0, 25.972, 28.333], "off_identical": true,
+      "on_V_hz_orig": [15.278, 19.444, 30.972], "on_V_hz_rerun": [15.278, 19.444, 30.972], "on_identical": true,
+      "chosen_off_orig": "shoe", "chosen_off_rerun": "shoe",
+      "chosen_on_orig": "shoe", "chosen_on_rerun": "shoe"
+    },
+    {
+      "name": "S3_referent_tie",
+      "off_V_hz_orig": [18.472, 30.278, 36.944], "off_V_hz_rerun": [18.472, 30.278, 36.944], "off_identical": true,
+      "on_V_hz_orig": [16.667, 33.472, 33.889], "on_V_hz_rerun": [16.667, 33.472, 33.889], "on_identical": true,
+      "chosen_off_orig": "shoe", "chosen_off_rerun": "shoe",
+      "chosen_on_orig": "shoe", "chosen_on_rerun": "shoe"
+    },
+    {
+      "name": "S4_four_candidate",
+      "off_V_hz_orig": [16.667, 19.167, 32.639, 30.139], "off_V_hz_rerun": [16.667, 19.167, 32.639, 30.139], "off_identical": true,
+      "on_V_hz_orig": [15.972, 27.5, 21.528, 28.75], "on_V_hz_rerun": [15.972, 27.5, 21.528, 28.75], "on_identical": true,
+      "chosen_off_orig": "shoe", "chosen_off_rerun": "shoe",
+      "chosen_on_orig": "stick", "chosen_on_rerun": "stick"
+    }
+  ],
+  "fully_byte_identical_across_rerun": true
+}
