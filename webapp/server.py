@@ -3695,6 +3695,25 @@ def _ltm_ship_default_on() -> bool:
 _COMPOSER_KIND_DEFAULT = "onebrain"
 _CONTINUOUS_DRIVES_DEFAULT = "1"
 
+# _INTEGRATED_LOOP_DEFAULT_ON (scaffold-retirement backlog rank-2, DE-RISK ONLY — kept False, NOT flipped by this
+# change): when True, OneBrainComposer's spiking K-way SEQUENCER decides the (agent, action) cue-match SELECTION
+# (which stored fact answers a who/what query, and answer-vs-abstain) instead of the host first-match `_scan`
+# for-loop — GO 4/4 at the production V=320 tier (2026-06-21-shortcut3-fold-integrated-loop-BUILD.md) but a
+# characterized over-abstention at the tiny-demo's small (~15-word) vocab (safe direction, moat 0-FA —
+# `_burndown_1A_c2_smallvocab_derisk.json`), so this stays OFF pending an owner decision, mirroring
+# _COMPOSER_KIND_DEFAULT's own convention. BRAIN_INTEGRATED_LOOP overrides (1/true/on/yes -> True).
+_INTEGRATED_LOOP_DEFAULT_ON = False
+
+
+def _integrated_loop_enabled() -> bool:
+    """The (agent, action) cue-match SELECTION substrate knob. Unset -> _INTEGRATED_LOOP_DEFAULT_ON (False, the
+    byte-identical host `_scan` oracle). Set BRAIN_INTEGRATED_LOOP to 1/true/on/yes to opt a chat brain into the
+    validated spiking K-way sequencer (composer_kind='onebrain' only; a no-op for 'rf'/'rate'/'slotbinder')."""
+    env = os.environ.get("BRAIN_INTEGRATED_LOOP")
+    if env is None:
+        return _INTEGRATED_LOOP_DEFAULT_ON
+    return env.strip().lower() in ("1", "true", "on", "yes")
+
 # LTM-STORE DECODE LEVERS (board #108 cluster, 2026-09-02): the #66 seed-44 recall-hole arc
 # (research/FAILURE_LOG.md row 93, finding 2026-09-01-seed44-recall-hole-ROOT-CAUSED-phase-quantization-
 # decode-escalation-fix.md) root-caused a genuine, seed-INDEPENDENT RF phase-readout quantization miss at
@@ -3832,8 +3851,16 @@ def _build_chat_brain(brain: str, renderer: str):
         # onebrain path). The onebrain build is ~180s (speed secondary); it is the brain-based-only recall the
         # mission requires. Env-gated so BRAIN_COMPOSER_KIND=rf reverts to the pre-flip numpy fast path.
         _ck = os.environ.get("BRAIN_COMPOSER_KIND", _COMPOSER_KIND_DEFAULT)
+        # integrated_loop (scaffold-retirement backlog rank-2, default OFF -- see _integrated_loop_enabled above):
+        # thread BRAIN_INTEGRATED_LOOP through to OneBrainComposer's spiking K-way cue-match sequencer. A no-op
+        # unless _ck resolves to 'onebrain' (the tiny-demo's default). Honest scope: this fixture's vocab is well
+        # below the validated production margin (see _build_tiny_demo's docstring) -- the knob is threaded here so
+        # the SAME code path also serves a real (large-vocab) brain, not because flipping it for tiny-demo itself
+        # is expected to help.
+        _il = _integrated_loop_enabled()
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
-                                              enable_neural_render=False, composer_kind=_ck)
+                                              enable_neural_render=False, composer_kind=_ck,
+                                              integrated_loop=_il)
         source = "tiny-demo"
         # KNOWLEDGE-SCALE ON THE DEFAULT BRAIN (reasoning-frontier, 2026-08-25 -- board #133 extension). The
         # 2026-08-25 integrated-conversational-state diagnostic found the shipped 15k curated core attached ONLY
@@ -3892,9 +3919,17 @@ def _build_chat_brain(brain: str, renderer: str):
         _composer_kind_override = os.environ.get("BRAIN_COMPOSER_KIND")
         if _composer_kind_override != "slotbinder":
             _composer_kind_override = None
+        # integrated_loop (scaffold-retirement backlog rank-2, default OFF): the SAME BRAIN_INTEGRATED_LOOP knob
+        # the tiny-demo branch reads above. A no-op TODAY for every bundle on disk (this branch's composer_kind
+        # override stays narrowed to 'slotbinder' only, per the comment above, so a developed bundle currently
+        # reloads under its OWN saved manifest composer_kind -- e.g. scale787's day_33 is 'rf' -- and
+        # BrainConversationalAgent only reads integrated_loop on the 'onebrain' branch); threaded here so a bundle
+        # whose OWN manifest composer_kind is (or becomes, e.g. after a rank-1 bundle rebuild) 'onebrain' picks it
+        # up with no further code change.
         agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False,
                                                composer_kind=_composer_kind_override,
+                                               integrated_loop=_integrated_loop_enabled(),
                                                ltm_bundle=_ltm_bundle,
                                                enable_codebook_cache=_ltm_codebook_cache_on(),
                                                enable_decode_escalation=_ltm_decode_escalation_on())

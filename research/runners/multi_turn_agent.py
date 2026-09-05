@@ -60,7 +60,7 @@ class MultiTurnAgent:
 
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
                  wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
-                 composer_kind="rf", enable_biased_competition=True,
+                 composer_kind="rf", integrated_loop=False, enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
                  biased_competition_window=20, graded_bias=False, graded_bias_gain=1.0,
                  graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
@@ -88,9 +88,18 @@ class MultiTurnAgent:
         # inner agent, which itself only forwards them to SlotBinderComposer when composer_kind=='slotbinder'
         # (see BrainConversationalAgent.__init__'s docstring). Lets load_developed_brain size/prewire a
         # SlotBinderComposer through the SAME MultiTurnAgent path the webapp's developed-brain loader always uses.
+        # integrated_loop (scaffold-retirement backlog rank-2, default OFF = byte-identical): pass-through to the
+        # inner BrainConversationalAgent, which itself only reads it when composer_kind=='onebrain' (the spiking
+        # K-way sequencer routing the (agent, action) cue-match SELECTION, replacing the host first-match `_scan`
+        # -- see BrainConversationalAgent.__init__'s docstring + the #3 fold, 2026-06-21-shortcut3-fold-integrated-
+        # loop-BUILD.md). A no-op for every other composer_kind. This is the seam webapp/server.py's
+        # BRAIN_INTEGRATED_LOOP env flag threads through (_build_chat_brain -> _build_tiny_demo / load_developed_
+        # brain -> MultiTurnAgent -> here), so the webapp's multi-turn production agent can opt the cue-match
+        # SELECTION onto the substrate without constructing a bare BrainConversationalAgent by hand.
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
                                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                               enable_learned_assoc=(composer_kind == "onebrain"),
+                                              integrated_loop=integrated_loop,
                                               defer_parser=defer_parser, communicable_mode=communicable_mode,
                                               communicable_draw=communicable_draw,
                                               communicable_config=communicable_config, speak_value_Q=speak_value_Q,

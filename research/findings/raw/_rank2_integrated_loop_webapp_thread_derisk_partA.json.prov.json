@@ -1,0 +1,29 @@
+{
+ "run_id": "1788596767-3901230",
+ "runner": "research/runners/_rank2_integrated_loop_webapp_thread_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ac6f1dad60b737dbe/research/runners/_rank2_integrated_loop_webapp_thread_derisk.py",
+  "--skip-production",
+  "--out",
+  "research/findings/raw/_rank2_integrated_loop_webapp_thread_derisk_partA.json"
+ ],
+ "git_sha": "ff19d5212",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:26:07",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2596.8,
+ "corpus_check_query": "integrated_loop spiking cue-match selection thread",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_rank2_integrated_loop_webapp_thread_derisk_partA.json"
+}

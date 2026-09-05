@@ -1848,14 +1848,24 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
     return agent, aliases, n
 
 
-def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="rf"):
+def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="rf", integrated_loop=False):
     """A tiny CPU brain for the GPU-FREE smoke: a handful of self-facts + a couple of object facts. Mirrors the
     self-knowledge shape so the smoke exercises self-reference + the moat + multi-turn anaphora.
 
     `composer_kind` (default 'rf' = the numpy fast-path recall, byte-identical to before): pass 'onebrain' for the
     GENUINELY-SPIKING recall (resonate-and-fire per query + the on-substrate cleanup/store; runtime new-word LEARN
     works via the vocab_headroom recruit-an-assembly path). The onebrain build is much slower (~180s) but is the
-    brain-based-only recall the mission requires; speed is secondary."""
+    brain-based-only recall the mission requires; speed is secondary.
+
+    `integrated_loop` (scaffold-retirement backlog rank-2, default False = byte-identical): pass-through to
+    MultiTurnAgent/BrainConversationalAgent -> OneBrainComposer's spiking K-way cue-match SEQUENCER, a no-op unless
+    `composer_kind='onebrain'`. Honest scope: this tiny fixture's vocab (~15 words) is BELOW the validated
+    production margin -- the divnorm-WTA agent-line decode over-abstains at this scale (the SAFE direction, moat
+    0-FA, never a false-accept -- `research/findings/raw/_burndown_1A_c2_smallvocab_derisk.json`), so turning this
+    on for the tiny-demo brain specifically is expected to lose some who/what answers it would otherwise give. The
+    validated GO regime is the production vocab tier (V=320, `2026-06-21-shortcut3-fold-integrated-loop-BUILD.md`);
+    this parameter exists here so the SAME webapp/brain_chat_tui code path also serves a real (large-vocab)
+    developed brain, not so the small tiny-demo fixture should be run with it on."""
     from research.runners.brain_conversational_agent import BrainConversationalAgent
     # base-form verbs so the template-stub's 3rd-person inflection reads cleanly (use->uses, learn->learns).
     # 'cat' is the OBJECT of (dog chase cat) AND the SUBJECT of (cat eat fish) -- the validated chainable-referent
@@ -1891,9 +1901,11 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render, composer_kind="r
         from research.runners.biased_competition_prod import biased_competition_enabled as _bc_enabled
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
+                               integrated_loop=integrated_loop,
                                enable_biased_competition=_bc_enabled(), defer_planner=True, event_register=ev_reg)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind=composer_kind,
+                                         integrated_loop=integrated_loop,
                                          enable_neural_render=enable_neural_render)
     inner = getattr(agent, "agent", agent)
     for a, v, p in facts:
@@ -1914,13 +1926,26 @@ def _resolve_composer_kind(args):
     return os.environ.get("BRAIN_COMPOSER_KIND", "onebrain")
 
 
+def _resolve_integrated_loop(args):
+    """The (agent, action) cue-match SELECTION substrate (scaffold-retirement backlog rank-2). Default OFF
+    (byte-identical to before this flag existed -- the host first-match `_scan`): unlike `_resolve_composer_kind`,
+    there is no interactive-default flip here, because the validated GO regime is the production vocab tier
+    (V=320), not this TUI's small fixtures. Resolution order: explicit --integrated-loop/--no-integrated-loop wins;
+    else the BRAIN_INTEGRATED_LOOP env (shared with the webapp's `_build_chat_brain`); else OFF."""
+    if getattr(args, "integrated_loop", None) is not None:
+        return bool(args.integrated_loop)
+    return os.environ.get("BRAIN_INTEGRATED_LOOP", "").strip().lower() in ("1", "true", "yes", "on")
+
+
 def load_brain(args):
     """Resolve --load / --self-knowledge / --tiny-demo into (agent, self_aliases, n_facts, source_desc)."""
     use_mt = not args.no_multiturn
     nr = args.neural_render
+    il = _resolve_integrated_loop(args)
     # explicit developed-brain bundle directory
     if args.load and is_developed_brain_bundle(args.load):
-        agent, manifest = load_developed_brain(args.load, use_multiturn=use_mt, enable_neural_render=nr)
+        agent, manifest = load_developed_brain(args.load, use_multiturn=use_mt, enable_neural_render=nr,
+                                               integrated_loop=il)
         aliases = set(manifest.get("self_aliases") or []) | DEFAULT_SELF_ALIASES
         n = manifest.get("n_facts", len(getattr(agent, "agent", agent).composer.kb))
         return agent, aliases, n, f"developed-brain bundle: {args.load}"
@@ -1928,12 +1953,15 @@ def load_brain(args):
     if args.self_knowledge or (args.load and str(args.load).endswith(".json")):
         codes = args.load if (args.load and str(args.load).endswith(".json")) else _SK_CODES
         curriculum = args.curriculum or _SK_CURRICULUM
+        # NOT threaded here: _load_self_knowledge hard-codes composer_kind="rf" (integrated_loop only reads on
+        # 'onebrain'), so it would be a silent no-op -- out of this rank's scope (composer_kind selection, not the
+        # cue-match SELECTION this flag targets).
         agent, aliases, n = _load_self_knowledge(codes, curriculum, args.seed, use_mt, nr)
         return agent, aliases, n, f"self-knowledge brain (codes={os.path.relpath(codes, _REPO) if os.path.exists(codes) else 'seed-codes'})"
     # tiny CPU demo — interactive default is the genuinely-SPIKING onebrain recall (the --smoke path stays 'rf' fast)
     if args.tiny_demo or not args.load:
         ck = _resolve_composer_kind(args)
-        agent, aliases, n = _build_tiny_demo(args.seed, use_mt, nr, composer_kind=ck)
+        agent, aliases, n = _build_tiny_demo(args.seed, use_mt, nr, composer_kind=ck, integrated_loop=il)
         return agent, aliases, n, f"tiny CPU demo brain (composer={ck})"
     raise FileNotFoundError(f"--load {args.load!r} is neither a developed-brain bundle nor a codes .json")
 
@@ -2204,6 +2232,14 @@ def main():
                     help="tiny-demo recall substrate: 'onebrain' (GENUINELY SPIKING, resonate-and-fire, the interactive "
                          "default) or 'rf' (numpy fast path). Default: onebrain interactively, rf under --smoke; the "
                          "BRAIN_COMPOSER_KIND env is honored when this is unset. The onebrain build is ~180s (speed secondary).")
+    ap.add_argument("--integrated-loop", dest="integrated_loop", action="store_true", default=None,
+                    help="route the (agent, action) cue-match SELECTION through the validated spiking K-way "
+                         "sequencer instead of the host first-match scan (composer_kind='onebrain' only; a no-op "
+                         "otherwise). Default OFF; the BRAIN_INTEGRATED_LOOP env is honored when neither flag is "
+                         "passed. GO at production vocab (V=320); this TUI's tiny/self-knowledge fixtures are "
+                         "smaller than the validated margin (see _build_tiny_demo's docstring).")
+    ap.add_argument("--no-integrated-loop", dest="integrated_loop", action="store_false",
+                    help="force the host first-match scan (the byte-identical default).")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--no-multiturn", action="store_true",
                     help="use the bare BrainConversationalAgent (no discourse WM / anaphora).")
