@@ -120,7 +120,7 @@ class OneBrainComposer:
                  vocab_headroom=0, homeostatic_scaling=False, homeo_beta_down=0.25,
                  homeo_s_min=0.34, homeo_s_max=4.0,
                  enable_sparse_index=False, sparse_index_g=3, sparse_index_G=16,
-                 sparse_index_c=8, sparse_index_conf_floor=0.5):
+                 sparse_index_c=8, sparse_index_conf_floor=0.5, no_batched_region=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
         # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
@@ -412,9 +412,25 @@ class OneBrainComposer:
         self.cb = self.n_main * self.V + self.NP                    # cleanup neurons per block (main roles + polarity)
         # BATCHED region (A5 lever 1): K_max x (n_roles Q regs + cb cleanup) so all blocks read in one pass (additive --
         # the per-block region above is unchanged = the correctness oracle).
-        self.bat_q_base = self.c_base + self.cb
-        self.bat_c_base = self.bat_q_base + self.k_max * self.n_roles * D
-        self.n_total = self.bat_c_base + self.k_max * self.cb
+        # no_batched_region (SUBLINEAR-RETRIEVAL de-risk, ADDITIVE + DEFAULT-OFF = byte-identical layout when False):
+        # skip SIZING the k_max*(n_roles*D + cb) batched region entirely. That region exists ONLY for `_read_all_blocks`
+        # (the batched O(k_max) full scan); a SHARDED / sparse-index retrieval that only ever decodes a small candidate
+        # shard PER-BLOCK never touches it -- yet its ~k_max*cb neurons dominate n_total (~1.3M @ k_max=420/V=250),
+        # inflating the per-step resonate cost of EVERY per-block read (and every store) O(n_total). Dropping it shrinks
+        # the bridge to the store region + one per-block op region (~57k @ the same scale, ~23x smaller), so per-block
+        # reads run at ~their small-store cost -> a shard of a few blocks recalls in ~FHRR's ~0.9s. When True, the
+        # batched read is UNAVAILABLE (enable_batched is forced off below) and `_read_blocks` uses the per-block loop /
+        # the sparse-index path; the per-block region [q_base:c_base+cb] is BYTE-UNCHANGED, so every per-block read
+        # (`_read_block`, `_read_block_indexed`, `_decode_clause`, `_block_role_scores`) is bit-for-bit identical.
+        self.no_batched_region = bool(no_batched_region)
+        if self.no_batched_region:
+            self.enable_batched = False                              # the batched region is not built -> never batch
+            self.bat_q_base = self.bat_c_base = self.c_base + self.cb  # (defined for reference; no batched neurons follow)
+            self.n_total = self.c_base + self.cb
+        else:
+            self.bat_q_base = self.c_base + self.cb
+            self.bat_c_base = self.bat_q_base + self.k_max * self.n_roles * D
+            self.n_total = self.bat_c_base + self.k_max * self.cb
         self.b = build_coresident_bridge(seed, self.n_total, enable_rf_cudagraph=self.enable_rf_cudagraph)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
         self.rf_mask = np.zeros(self.n_total, dtype=bool); self.rf_mask[self.P:self.n_total] = True
