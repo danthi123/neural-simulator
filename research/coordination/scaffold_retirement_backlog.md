@@ -40,7 +40,9 @@ written by closed-form host (HIGH-provenance/behavior-neutral · fresh research)
 threshold (HIGH · partial: value-half GO, gate-half failed) · 8 GNW congruence host string-id (HIGH · fresh) ·
 9 metacog confidence host formula (HIGH · fresh) · 10 curiosity novelty binary host constant (HIGH · de-risked
 start) · 11 topic-swap regex+host (HIGH · fresh, self-referential) · 12 GNW STOP host boolean-OR (HIGH · fresh) ·
-13 QuestionRouter self/identity+anaphora host (MED-HIGH · recipe proven) · 14 NL question-routing host comprehension
+13 QuestionRouter self/identity+anaphora host (MED-HIGH · DE-RISKED 2026-09-05, both flags default-OFF, 6/6-seed
+GO on plain gate() AND the installed GNW-bus gate() — see `2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md`;
+residual is now flag-scoped not architecture-scoped) · 14 NL question-routing host comprehension
 (MED-HIGH · fresh) · 15 self-schema authorship host (LOW-actual/nominal-on · fresh) · 16 DA→write-magnitude host
 linear (MED · partial: homeostasis-half retired) · 17 pronoun detect/substitute host (MED · fresh) · 18 cross-turn
 persistence host state (MED · architecture change) · 19 per-turn fact WRITE host closed-form (MED · SlotBinder
@@ -70,7 +72,8 @@ Rank-24 quick flips packaged (d5 depth_hold direct-read etc.) · Rank-15 self-sc
 
 ## ALREADY IN FLIGHT / DONE (this session)
 flip (linattn mouth) · recall-gate→LTM · affect→neural (WKV) · Stage-1 Qwen-fallback retire · composer L2/L3
-(SlotBinder) · LC-NE eviction · num/den (satdiv/Tier-1) · Touchpoint-A Stage-2 (structural GO). ⚠️ Several had
+(SlotBinder) · LC-NE eviction · num/den (satdiv/Tier-1) · Touchpoint-A Stage-2 (structural GO) · Rank-13
+QuestionRouter self/identity+anaphora DE-RISKED (both flags default-OFF; 6/6-seed GO, see the finding). ⚠️ Several had
 HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see the anchor; the flip "clean default" is
 being re-verified.
 

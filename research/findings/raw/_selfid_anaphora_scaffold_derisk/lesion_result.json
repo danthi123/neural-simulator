@@ -1,0 +1,128 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    },
+    {
+      "seed": 43,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    },
+    {
+      "seed": 44,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    },
+    {
+      "seed": 100,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    },
+    {
+      "seed": 101,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    },
+    {
+      "seed": 102,
+      "q": "what do you use?",
+      "want": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "intact": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "lesioned": null,
+      "reflex": "spikes",
+      "intact_correct": true,
+      "lesion_collapses": true,
+      "reflex_survives": true,
+      "attribution_to_parser": 1.0
+    }
+  ],
+  "n_seeds": 6,
+  "all_intact_correct": true,
+  "all_lesion_collapses": true,
+  "all_reflex_survives": true
+}

@@ -456,6 +456,66 @@ def _spiking_plausibility_enabled():
 
 
 # ============================================================================================================
+# SELF/IDENTITY + ANAPHORA-MISS scaffold-retirement DE-RISK (scaffold-retirement-backlog rank-13, 2026-09-05).
+# The 2026-08-12 CHOOSE-1 integration made the (agent, action) COMPREHENSION of a factual-SVO question NEURAL
+# (`_neural_question_parse`, the on-brain `BridgeParser.role_of`) and AUTHORITATIVE — a comprehended parse feeds
+# the substrate recall (+, when installed, the GNW ignition-bus combiner); a DECLINED parse honestly ABSTAINS
+# instead of falling to `QuestionRouter.match_fact`'s role-blind keyword bag-of-words. That finding's own "Honest
+# scope" named the residual verbatim: "the router... still owns self/identity + the anaphora-fallback" (also
+# `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s content-selection row: "still the self/identity + noisy-anaphora
+# fallback"). These two flags extend the SAME already-proven recipe to that residual — reuse, not a new
+# mechanism — and default OFF (byte-identical) pending the de-risk in
+# `research/runners/_selfid_anaphora_scaffold_derisk.py`:
+#
+#   BRAIN_NEURAL_SELFID  — self/identity comprehension:
+#     (a) a self-referential FACTUAL SVO ('what do you eat?'): `_extract_route` today hard-blocks ANY self-alias-
+#         bearing content from reaching `_neural_question_parse`, even with a genuine 2nd content word (the
+#         action) present — so it ALWAYS falls to the host router, never the parser. Resolving the self-alias to
+#         'brain' (mirroring `QuestionRouter._resolve_self`) BEFORE that block lets it flow through the IDENTICAL
+#         on-brain-parser + substrate-recall path any other factual-SVO question already uses.
+#     (b) a bare identity question ('what are you?' / 'who are you?'): no 2nd content word exists at all (the
+#         predicate IS what's being asked), so there is no (agent, action) for the parser to comprehend — this is
+#         NOT the neural-parser recipe, it is the SAME host regex/preference-list comprehension-HELPER convention
+#         `_definitional_copula_route` already uses for 'what is X?' ('what/who is/are <subject>' -> [subject,
+#         'isa']), extended to a self-alias subject (-> ['brain', 'isa']), plus a MISS-ONLY candidate-relation
+#         retry in `_substrate_recall` mirroring the host router's OWN has/have/is/uses/use preference order —
+#         the SAME shape as the existing alias-hop `v_candidates` fallback there, new candidate values only.
+#         Recall stays entirely on the substrate (`what_does`) either way — this can only ADD a resolution, never
+#         invent a fact (the moat is untouched). Class (a) reaches the genuinely-neural BridgeParser; class (b)
+#         does not (be precise about which, in any report — see docs/TERMS.md "fully spiking").
+#
+#   BRAIN_NEURAL_ANAPHORA_ABSTAIN — the anaphora-miss: today, when the anaphora-resolved question's substrate
+#     recall declines or finds no fact, `gate()` (and the installed GNW-bus `gate_via_bus`) fall to the host
+#     router ("the WM referent may be noisy, so let the host router try"). This flag makes that ABSTAIN instead —
+#     the SAME honesty already applied to the direct-query abstain (no host bag-of-words "rescue" of a possibly-
+#     wrong referent, e.g. the "what does it fly?" -> wrong-referent -> keyword-confab shape).
+#
+# Both default OFF: unset behaves byte-identical to before this block existed.
+# ============================================================================================================
+
+_NEURAL_SELFID_DEFAULT_ON = False
+_NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = False
+
+
+def _neural_selfid_enabled():
+    """BRAIN_NEURAL_SELFID=1 -> the self/identity comprehension extension above (a)+(b). Default OFF -> today's
+    host-router-only self/identity path (byte-identical)."""
+    v = os.environ.get("BRAIN_NEURAL_SELFID")
+    if v is None:
+        return _NEURAL_SELFID_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+def _neural_anaphora_abstain_enabled():
+    """BRAIN_NEURAL_ANAPHORA_ABSTAIN=1 -> an anaphora-resolved question the substrate can't confirm ABSTAINS
+    instead of falling to the host router. Default OFF -> today's host-router rescue (byte-identical)."""
+    v = os.environ.get("BRAIN_NEURAL_ANAPHORA_ABSTAIN")
+    if v is None:
+        return _NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON
+    return v.strip().lower() not in ("0", "false", "off", "no", "")
+
+
+# ============================================================================================================
 # Self-reference + a free-text question -> a (kind, cue) the brain answers against its stored SVO facts.
 # (The keyword->fact matcher is faithful: it routes a question to the stored fact whose WORDS the question
 # mentions, synonym-resolved; an unmatched question ABSTAINS -- the no-confab moat. Ported from the
@@ -692,6 +752,13 @@ class ChatBrain:
         if sub == "__ABSTAIN__" and not anaphora_used:
             return None                          # DIRECT well-formed query, substrate has no fact -> honest abstain
                                                  # (fixes the host-router keyword CONFAB, e.g. "what does fish fly?").
+        if sub == "__ABSTAIN__" and anaphora_used and _neural_anaphora_abstain_enabled():
+            return None                          # ANAPHORA-MISS EXTENSION (rank-13 de-risk, default OFF): the SAME
+                                                 # honest abstain as the direct-query case above, applied to an
+                                                 # anaphora-resolved query the substrate can't confirm -- retires the
+                                                 # host router's "rescue" (its keyword match can confab off a
+                                                 # possibly-wrong WM referent, e.g. "what does it fly?" -> wrong
+                                                 # referent -> "cat eat fish"). Flag OFF: unchanged (falls through).
         if sub not in (None, "__ABSTAIN__"):     # anaphora abstain falls through: the WM referent may be noisy, so let
             return sub                           # the host router try (its keyword match masks a bad WM pick).
         # (host router fallback + spiking VERIFY combination) — factored into `_gate_router_combine`; reached ONLY for
@@ -1141,7 +1208,17 @@ class ChatBrain:
         if not subj or " of " in (" %s " % subj):
             return None
         if subj in self.router.self_aliases:
-            return None
+            # SELF/IDENTITY EXTENSION (rank-13 de-risk, BRAIN_NEURAL_SELFID, default OFF -- see the module-level
+            # block above _neural_selfid_enabled): 'what are you?' / 'who are you?' fit this EXACT copula shape
+            # ('what/who is/are <subject>') with subject = a self-alias. Reuse the SAME 'isa' comprehension-helper
+            # recipe already proven for 'what is X?' below instead of ceding the turn outright to the host router
+            # -- resolve the self-alias to 'brain' (mirroring `QuestionRouter._resolve_self`) and let
+            # `_substrate_recall`'s candidate-relation retry (see there) try the SAME has/have/is/uses/use
+            # preference order the host router uses, over the substrate. Flag OFF (default): unchanged, the host
+            # router's job (byte-identical).
+            if not _neural_selfid_enabled():
+                return None
+            return ["brain", "isa"]
         # KNOWLEDGE GROUNDING: collapse a multi-word Wikidata-style entity phrase ('chelsea fc') to its
         # canonical underscore token via the alias-hop -- `min_span=1` is safe HERE (unlike the generic
         # `_extract_route` pass) because this route only fires on an explicit 'what is X'/'who is X'/'define X'
@@ -1220,6 +1297,16 @@ class ChatBrain:
         # substrate + LESION-LOAD-BEARING: lesion the parser -> role_of returns junk -> the factual CHOOSE abstains. A
         # self/identity/short question (or the rf escape — NO parser) keeps the host heuristic (prefer a KNOWN
         # agent/action, else STRUCTURAL position) + the router fallback in gate().
+        # SELF-REFERENTIAL FACTUAL SVO EXTENSION (rank-13 de-risk, BRAIN_NEURAL_SELFID, default OFF): a question
+        # like 'what do you eat?' carries a genuine 2nd content word (the action) alongside the self-reference --
+        # the SAME shape as any other factual-SVO query, just with the agent self-named. Resolve a self-alias
+        # token to 'brain' (mirroring `QuestionRouter._resolve_self`, the host router's OWN resolution) BEFORE the
+        # has_self_alias gate below, so this reaches the SAME on-brain `_neural_question_parse` -- and, via the
+        # installed GNW bus, the SAME substrate-ignition combiner -- every other factual-SVO question already
+        # uses. Not a new mechanism: the identical recipe with 'brain' as a known agent. Flag OFF (default):
+        # `content` is untouched -- byte-identical (a bare self-alias keeps blocking the parser, as today).
+        if _neural_selfid_enabled():
+            content = [self.router._resolve_self(t) for t in content]
         has_self_alias = any(t in self.router.self_aliases for t in content)
         parser_present = getattr(getattr(self.inner, "composer", None), "parser", None) is not None
         if parser_present and len(content) >= 2 and not has_self_alias:
@@ -1305,6 +1392,26 @@ class ChatBrain:
                         p_alias = self.inner.what_does(a_alias, v)
                         if p_alias:
                             p, a = p_alias, a_alias
+            # SELF/IDENTITY candidate-relation retry (rank-13 de-risk, BRAIN_NEURAL_SELFID, default OFF): reached
+            # ONLY for a bare identity query on the self ('what are you?' -> `_definitional_copula_route`'s
+            # self-branch above returns ['brain', 'isa']; a literal 'what is brain?'/'what is the brain?' reaches
+            # the SAME ('brain', 'isa') pair through the ordinary copula path with no flag involved). Scoped
+            # tightly to agent=='brain' so it can NEVER fire for any other entity's 'isa'/definitional miss.
+            # MISS-ONLY (never runs while `p` is already truthy -- can only rescue, never override, exactly the
+            # same shape as the alias-hop v_candidates loop above): try the HOST router's OWN defining-relation
+            # preference order (`QuestionRouter.match_fact`'s is_identity_q branch: has/have/is/uses/use, first
+            # match wins) against `what_does('brain', ·)` -- reproducing the host's answer through the substrate
+            # recall instead of the router's bag-of-words scan. This is a comprehension-helper retry (matching the
+            # existing v_candidates convention), not a claim of a neural BridgeParser parse for this bare-identity
+            # shape -- see the module-level comment above `_neural_selfid_enabled`.
+            if not p and a == "brain" and _neural_selfid_enabled():
+                for v_cand in ("has", "have", "is", "uses", "use"):
+                    if v_cand in (v, v_lemma):
+                        continue
+                    p_cand = self.inner.what_does(a, v_cand)
+                    if p_cand:
+                        p, v = p_cand, v_cand
+                        break
         except Exception:
             return None
         if not p:

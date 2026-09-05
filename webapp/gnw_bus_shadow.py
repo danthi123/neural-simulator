@@ -59,6 +59,10 @@ from research.runners._gnw_norgan_bus_derisk import (
 )
 from research.runners._p1_2_workspace_deliberation_loop_derisk import build_workspace_bridge
 from research.runners._gnw_coincidence_integrator_derisk import _pick_decoy
+# rank-13 scaffold-retirement de-risk flags (both default OFF; see the module-level comment in brain_chat_tui.py
+# above `_neural_selfid_enabled`) — imported here so the BUS combiner path can mirror the SAME two extensions
+# `ChatBrain.gate()` / `_substrate_recall` carry, rather than silently diverging from them under the flag.
+from research.runners.brain_chat_tui import _neural_selfid_enabled, _neural_anaphora_abstain_enabled
 
 # one warm workspace per (seed, lesion), built lazily on the first enabled turn and kept warm across turns (the
 # other production organs are process-cached the same way). Guarded by a lock so two concurrent first-turns build once.
@@ -368,6 +372,21 @@ def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
         # OWN forward-recall trace (organ A) as the surfaced "brain activity" -> byte-identical to the host path.
         info = bus_combine(composer, agent, action, all_concepts, seed=seed, lesion=lesion, surface_forward_trace=True)
         committed = info.get("committed")
+        # SELF/IDENTITY candidate-relation retry (rank-13 de-risk, BRAIN_NEURAL_SELFID, default OFF): mirrors
+        # `ChatBrain._substrate_recall`'s OWN candidate-relation retry for the IDENTICAL bare-identity shape
+        # ('brain', 'isa') -- needed HERE too because this bus combiner reads `composer.query_patient` directly
+        # (never calling `_substrate_recall`), so that retry would otherwise be invisible on THIS path, which is
+        # the actual production default (`webapp/server.py::brain_reply` installs this combiner unconditionally).
+        # Same MISS-ONLY, first-match-wins, host-router preference order (has/have/is/uses/use) -- no new
+        # mechanism, a second call site for the identical recipe, reusing `bus_combine` AS-IS (no signature
+        # change). On a hit, the RESOLVED action is what gets reported/committed.
+        if committed is None and agent == "brain" and action == "isa" and _neural_selfid_enabled():
+            for v_cand in ("has", "have", "is", "uses", "use"):
+                cand_info = bus_combine(composer, agent, v_cand, all_concepts, seed=seed, lesion=lesion,
+                                        surface_forward_trace=True)
+                if cand_info.get("committed") is not None:
+                    action, info, committed = v_cand, cand_info, cand_info.get("committed")
+                    break
         if committed is not None:
             # THE SUBSTRATE AUTHORS THE COMMIT: the ignited patient IS the answer. Preserve gate()'s anaphora WM write
             # (a concrete patient that is itself an agent becomes the next-turn pronoun referent) — the ONLY side effect
@@ -386,6 +405,13 @@ def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
             info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": False,
                          "authored_by": "bus", "host_combination_computed": False, "bus_svo": None})
             return None, info
+        if _neural_anaphora_abstain_enabled():
+            # ANAPHORA-MISS EXTENSION (rank-13 de-risk, default OFF): mirrors `gate()`'s SAME extension (see
+            # brain_chat_tui.py) -- an anaphora-resolved query the substrate/bus can't confirm ABSTAINS instead of
+            # falling to the host router's keyword "rescue" of a possibly-wrong WM referent.
+            info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
+                         "authored_by": "bus_veto_abstain", "host_combination_computed": False, "bus_svo": None})
+            return None, info
         svo = chat._gate_router_combine(q)                   # anaphora-abstain fall-through -> host router (out of scope)
         info.update({"routable": True, "agent": agent, "action": action, "anaphora_used": True,
                      "authored_by": "bus_veto_then_host_router", "host_combination_computed": True,
@@ -396,6 +422,10 @@ def gate_via_bus(chat, question: str, *, seed: int = 42, lesion: bool = False):
         _, q, anaphora_used = mode_tuple
         if not anaphora_used:
             return None, {"routable": False, "reason": "parser_decline_abstain", "agrees": None,
+                          "authored_by": "host_abstain", "host_combination_computed": False,
+                          "host_svo": None, "bus_svo": None}
+        if _neural_anaphora_abstain_enabled():
+            return None, {"routable": False, "reason": "parser_decline_anaphora_abstain", "agrees": None,
                           "authored_by": "host_abstain", "host_combination_computed": False,
                           "host_svo": None, "bus_svo": None}
         svo = chat._gate_router_combine(q)

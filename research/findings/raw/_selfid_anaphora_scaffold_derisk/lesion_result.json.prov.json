@@ -1,0 +1,26 @@
+{
+ "run_id": "1788592237-3799212",
+ "runner": "../../../../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/run_lesion_only.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/run_lesion_only.py"
+ ],
+ "git_sha": "947d0fa79",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T03:10:37",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4311.5,
+ "corpus_check_query": "host QuestionRouter still owns self/identity questions and the anaphora-parse-miss fallback instead of the on-brain BridgeParser/GNW bus",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_selfid_anaphora_scaffold_derisk/lesion_result.json"
+}
