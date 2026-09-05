@@ -1,0 +1,56 @@
+{
+  "seed": 44,
+  "fanout": 32,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    49,
+    268
+  ],
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 188.37484645843506,
+  "per_fact_query_latency": [
+    {
+      "fact_idx_in_corpus": 49,
+      "agent": "bird",
+      "action": "think",
+      "expected_patient": "moment",
+      "got_patient": "moment",
+      "hit": true,
+      "query_latency_s": 95.64001369476318
+    },
+    {
+      "fact_idx_in_corpus": 268,
+      "agent": "boy",
+      "action": "go",
+      "expected_patient": "time",
+      "got_patient": "time",
+      "hit": true,
+      "query_latency_s": 120.00023937225342
+    }
+  ],
+  "moat_probe": {
+    "agent": "throw",
+    "action": "nature",
+    "abstained": true,
+    "query_latency_s": 55.390280961990356
+  },
+  "mismatch_probe": {
+    "agent": "bird",
+    "action_from_other_fact": "go",
+    "did_not_leak_fact0_patient": true,
+    "query_latency_s": 90.890296459198
+  },
+  "recall_accuracy_query_patient": 1.0,
+  "moat_pass": true,
+  "mismatch_pass": true,
+  "mean_query_latency_s": 90.48020762205124,
+  "max_query_latency_s": 120.00023937225342,
+  "min_query_latency_s": 55.390280961990356,
+  "vs_fhrr_mean_ratio": 100.53356402450137,
+  "wall_clock_this_seed_s": 550.3003046512604,
+  "sim_backend": "numpy",
+  "sim_backend_requested": "numpy"
+}

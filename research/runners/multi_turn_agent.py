@@ -66,7 +66,9 @@ class MultiTurnAgent:
                  graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
                  speak_value_Q=None, D=128, focus_bias_source=None, event_register=None,
-                 feat_compat_source=None):
+                 feat_compat_source=None,
+                 slotbinder_fanout=None, slotbinder_prewire_facts=None, slotbinder_max_facts=None,
+                 slotbinder_max_clauses=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -82,13 +84,21 @@ class MultiTurnAgent:
         # = the inner agent never constructs the orchestrator (the existing multi-turn tests pass verbatim).
         # D (default 128 = byte-identical) passes through to the inner agent's composer phasor dimension (the
         # develop loop raises it to lift the recall/abstention margin at 100s of concepts; FHRR capacity ~sqrt(D)).
+        # slotbinder_* (L3 wire-in de-risk, 2026-09-04, all default None = byte-identical): pass-through to the
+        # inner agent, which itself only forwards them to SlotBinderComposer when composer_kind=='slotbinder'
+        # (see BrainConversationalAgent.__init__'s docstring). Lets load_developed_brain size/prewire a
+        # SlotBinderComposer through the SAME MultiTurnAgent path the webapp's developed-brain loader always uses.
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
                                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                               enable_learned_assoc=(composer_kind == "onebrain"),
                                               defer_parser=defer_parser, communicable_mode=communicable_mode,
                                               communicable_draw=communicable_draw,
                                               communicable_config=communicable_config, speak_value_Q=speak_value_Q,
-                                              D=D)
+                                              D=D,
+                                              slotbinder_fanout=slotbinder_fanout,
+                                              slotbinder_prewire_facts=slotbinder_prewire_facts,
+                                              slotbinder_max_facts=slotbinder_max_facts,
+                                              slotbinder_max_clauses=slotbinder_max_clauses)
         self.referents = list(referent_concepts)
         # BRAIN-LOAD SPEEDUP (defer_planner, default OFF = byte-identical): the persistent discourse working-memory
         # loop (a SpikingLoopContextBuffer holding one attractor per referent) is the dominant LOAD cost -- building

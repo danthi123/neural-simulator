@@ -130,6 +130,20 @@ class SlotBinderComposer:
         n = b.core_config.num_neurons
         slot_idx = [_idx(b, f"w{k}") for k in range(b._K_slots)]
         fill_idx = [_idx(b, f"f{f}") for f in range(KF)]
+        # L3 wire-in latency de-risk (2026-09-05, research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-
+        # perstep-cost-dominates-latency.md):
+        # read_slot's per-step readout used to be a Python `for f in range(KF): rate[f] += fir[fill_idx[f]].mean()`
+        # -- an O(KF) PYTHON-LEVEL loop every retrieval step, unchanged by L2's fanout sparsification (flagged by
+        # the L2 finding's own S4 as "the real gate on production-viability": fanout shrinks wired SYNAPSES, not
+        # this readout's KF-iteration count). Every filler pool has the SAME neuron count (`n_fill`, fixed by
+        # `build_binder_bridge`), so `fill_idx` stacks into one rectangular (KF, n_fill) index matrix and the whole
+        # per-step readout becomes ONE vectorized numpy reduction (`fir[fill_idx_mat].mean(axis=1)`) instead of KF
+        # separate Python-dispatched `.mean()` calls -- identical arithmetic (same elements, same axis-wise mean),
+        # verified numerically equivalent against the original loop before this replaced it. Falls back to the
+        # original loop if a future caller ever builds non-uniform filler pools (not reachable via this module's
+        # own `build_binder_bridge`, kept defensive rather than assumed).
+        _fill_pool_sizes = {len(x) for x in fill_idx}
+        fill_idx_mat = np.stack(fill_idx) if len(_fill_pool_sizes) == 1 else None
 
         def _reset():
             if getattr(b, "cp_izh_c_reset", None) is not None:
@@ -162,8 +176,11 @@ class SlotBinderComposer:
             for _ in range(self.retr_steps):
                 b.cp_external_input_current[:] = dev; b._run_one_simulation_step()
                 fir = np.asarray(to_host(b.cp_firing_states)).astype(float)
-                for f in range(KF):
-                    rate[f] += fir[fill_idx[f]].mean()
+                if fill_idx_mat is not None:
+                    rate += fir[fill_idx_mat].mean(axis=1)      # vectorized -- one numpy reduction, not KF Python calls
+                else:
+                    for f in range(KF):
+                        rate[f] += fir[fill_idx[f]].mean()
             return int(np.argmax(rate)), float(rate.max())
 
         self._b, self._store_pair, self._read_slot = b, store_pair, read_slot

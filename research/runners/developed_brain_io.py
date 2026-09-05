@@ -334,7 +334,13 @@ def _restore_facts(agent, facts, composites=None):
     composites = composites or {}
     # the fast direct-set path applies only when the composer caches a NUMPY composite in kb (rf/rate, no substrate
     # store). A substrate-store composer's handle is a bridge (not the composite), so a direct set would corrupt it.
-    can_direct = not bool(getattr(comp, "enable_substrate_store", False))
+    # `hasattr(comp, "kb")` (L3 wire-in de-risk, 2026-09-04): SlotBinderComposer has NO `.kb` list at all (facts
+    # live in `.facts`, taught into per-slot synapses, not cached composites) -- without this check, loading a
+    # bundle that HAS a persisted kb_composites.npz (e.g. bridges/developed/scale787/day_33, built under
+    # composer_kind='rf') with composer_kind overridden to 'slotbinder' would hit `comp.kb.append(...)` below and
+    # raise AttributeError. `enable_substrate_store` alone does not catch this -- SlotBinderComposer simply lacks
+    # the attribute, so the old `getattr(..., False)` silently defaulted to "direct-settable".
+    can_direct = hasattr(comp, "kb") and not bool(getattr(comp, "enable_substrate_store", False))
     try:
         from research.runners.core_sim_composition import Clause
     except Exception:
@@ -408,6 +414,30 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     if grounded_codes_override:
         codes.update({w: np.asarray(v, dtype=float) for w, v in grounded_codes_override.items()})
     facts = _load_facts_json(path)
+    # L3 wire-in de-risk (2026-09-05, research/findings/2026-09-05-slotbinder-L3-wirein-derisk-NOGO-perstep-cost-
+    # dominates-latency.md): when the
+    # (possibly-overridden) composer_kind resolves to 'slotbinder', size + prewire it from THIS bundle's own
+    # facts -- the batch-consolidation scenario slotbinder_composer.py's docstring names (an already-known corpus
+    # migrating off FHRR), not a per-query lookahead. `BRAIN_SLOTBINDER_FANOUT` (default 32, the de-risked
+    # production recommendation -- research/findings/2026-09-04-slotbinder-L2-sparse-fanout-derisk-GO-fits-3090-
+    # and-composes.md) lets a caller tune/disable (0 or >=KF -> dense) without a code change. Embedded-clause
+    # facts cannot be wiring-time pre-registered (SlotBinderComposer._required_fillers_from_prewire raises on
+    # them by design -- a wrong required-filler set would defeat fanout's guarantee), so a bundle containing any
+    # falls back to BLIND sparsification (prewire_facts=None) rather than crashing; day_33 (this task's own
+    # de-risk target) is 100% flat SVO, so this fallback is untested live but kept for correctness on any other
+    # bundle. Every slotbinder_* value is None (or the composer's own default) unless composer_kind=='slotbinder'
+    # -- byte-identical to before for every other composer_kind.
+    _slotbinder_kwargs = {}
+    if composer_kind == "slotbinder":
+        _sb_fanout_env = os.environ.get("BRAIN_SLOTBINDER_FANOUT", "32")
+        _sb_fanout = None if _sb_fanout_env in ("", "none", "None", "dense") else int(_sb_fanout_env)
+        _sb_has_clause = any(isinstance(f.get("patient"), dict) and f["patient"].get("__clause__")
+                             for f in facts)
+        _slotbinder_kwargs = dict(
+            slotbinder_fanout=_sb_fanout,
+            slotbinder_max_facts=max(len(facts), 1),
+            slotbinder_prewire_facts=(None if _sb_has_clause else list(facts)),
+        )
     composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
     speak_value_Q = _load_speak_value_Q(path)   # (Stage B) the persisted learned-talkativeness Q (seeds CommunicableTurn)
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
@@ -443,7 +473,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                enable_biased_competition=_bc_enabled(), defer_parser=defer_parser,
                                defer_planner=defer_parser,
                                communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                               speak_value_Q=(speak_value_Q or None))
+                               speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
@@ -451,7 +481,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                          enable_neural_render=enable_neural_render,
                                          defer_parser=defer_parser,
                                          communicable_mode=communicable_mode, communicable_draw=communicable_draw,
-                                         speak_value_Q=(speak_value_Q or None))
+                                         speak_value_Q=(speak_value_Q or None), **_slotbinder_kwargs)
     _restore_facts(agent, facts, composites=composites)
 
     # (KNOWLEDGE-SCALE, opt-in, DEFAULT-OFF = byte-identical) install a cortical LONG-TERM store so the brain can
