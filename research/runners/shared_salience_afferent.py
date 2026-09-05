@@ -30,10 +30,12 @@ signal on its way from sensory read to consumer decision, retiring the "host ari
 shortcut at its single root (da_mode_drives_chat.engagement_of) and at the two sibling host formulas (bg-action-
 selection's regex/token-count salience, value-choice's recency-ratio engagement context) in ONE move.
 
-CONTRACT (additive, reversible, byte-identical-off). `BRAIN_SHARED_SALIENCE` unset (default) -> every consumer site's
-existing host-arithmetic code path is UNCHANGED (this module is imported but its gate is never entered) -> byte-
-identical to pre-wiring. `BRAIN_SHARED_SALIENCE=1` arms the shared afferent at all three sites simultaneously (ONE
-flag, matching the rank-4 backlog's "wire ONE shared afferent ... in one move").
+CONTRACT (additive, reversible). 2026-09-05 FLIPPED DEFAULT-ON (wave-4; the 6-seed de-risk GO + the integrated
+production-flip verify GO, `research/runners/_shared_salience_afferent_prodflip_verify.py`): `BRAIN_SHARED_SALIENCE`
+UNSET (the new default) arms the shared afferent at all three sites simultaneously (ONE flag, matching the rank-4
+backlog's "wire ONE shared afferent ... in one move"). `BRAIN_SHARED_SALIENCE=0` (explicit) is the BYTE-IDENTICAL
+escape back to the pre-flip oracle -> every consumer site's existing host-arithmetic code path is UNCHANGED (this
+module is imported but its gate is never entered) -> byte-identical to pre-wiring.
 
 LESION (the load-bearing proof, reused verbatim from the curiosity organ's OWN anti-cheat). `BRAIN_SHARED_SALIENCE_
 LESION=1` reads `CuriosityProductionOrgan`'s drive-removed twin (`curiosity_excit_sensitivity=0`, judge()'s own
@@ -60,10 +62,18 @@ _DEFAULT_SEED = 42
 
 
 def shared_salience_enabled() -> bool:
-    """The master flag. `BRAIN_SHARED_SALIENCE` truthy (1/true/on/yes) arms the shared spiking afferent at every
-    consumer site; the default (UNSET) is OFF -> every consumer's pre-existing host-arithmetic path is byte-
-    identical to pre-wiring (this module's read is never called)."""
-    return os.environ.get("BRAIN_SHARED_SALIENCE", "0").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag = the DEFAULT-ON production anchor combined with the env override (2026-09-05 FLIP, wave-4:
+    the shared spiking afferent ships as the production default after the 6-seed de-risk GO -- verified byte-identical
+    to the explicit-ON de-risk arm + integrated no-regression, `research/runners/_shared_salience_afferent_prodflip_
+    verify.py`). UNSET (the new default) -> ON: the shared ASK-pool afferent mediates every consumer's raw scalar.
+    `BRAIN_SHARED_SALIENCE` in {0,false,no,off,''} (explicitly set) is the BYTE-IDENTICAL escape back to the pre-flip
+    oracle (every consumer's pre-existing host-arithmetic path, this module's read never called); any other explicit
+    value stays ON. The env var reaches every consumer site ONLY through this one boolean -- so default-ON (unset) and
+    explicit `=1` take the IDENTICAL code branch, byte-identical by construction."""
+    v = os.environ.get("BRAIN_SHARED_SALIENCE")
+    if v is None:
+        return True   # DEFAULT-ON anchor (wave-4 flip, 2026-09-05)
+    return v.strip().lower() not in ("0", "false", "no", "off", "")
 
 
 def shared_salience_lesioned() -> bool:

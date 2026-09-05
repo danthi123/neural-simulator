@@ -82,14 +82,16 @@ _MSG_CONTENT = "what does the dog chase around the yard today"
 
 
 def _clear_flags():
-    for k in ("BRAIN_SHARED_SALIENCE", "BRAIN_SHARED_SALIENCE_LESION"):
-        os.environ.pop(k, None)
+    # 2026-09-05 FLIP-AWARE (wave-4 default-ON): `BRAIN_SHARED_SALIENCE` UNSET now means ON, so an OFF/baseline arm
+    # must set it EXPLICITLY to "0" (the byte-identical escape) -- popping it would silently arm the afferent (the
+    # exact BG-soak precedent, 2026-08-27: "pop no longer means OFF"). The lesion flag is still cleared by popping.
+    os.environ["BRAIN_SHARED_SALIENCE"] = "0"
+    os.environ.pop("BRAIN_SHARED_SALIENCE_LESION", None)
 
 
 def _set_flags(*, on: bool, lesion: bool = False):
+    # explicit "1" (ON) / "0" (OFF, the byte-identical escape). Never pop BRAIN_SHARED_SALIENCE (post-flip, unset==ON).
     os.environ["BRAIN_SHARED_SALIENCE"] = "1" if on else "0"
-    if not on:
-        os.environ.pop("BRAIN_SHARED_SALIENCE", None)
     if lesion:
         os.environ["BRAIN_SHARED_SALIENCE_LESION"] = "1"
     else:
