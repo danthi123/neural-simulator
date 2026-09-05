@@ -1,0 +1,138 @@
+{
+  "checks": [
+    "d5-direct-read"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_s": 1130.4,
+  "results": {
+    "d5-direct-read": {
+      "check": "d5-direct-read",
+      "seeds": [
+        42,
+        43,
+        44,
+        100,
+        101,
+        102
+      ],
+      "GO": false,
+      "n_per_seed_threshold_exists": 1,
+      "n_seeds": 6,
+      "max_bird_baseline_never_consolidated": 30.8676,
+      "min_dog_consolidated": 27.4374,
+      "global_threshold_exists": false,
+      "verdict": "NO-GO -- the never-consolidated bird baseline (max 30.868 mV across seeds) meets or EXCEEDS the consolidated dog value (min 27.437 mV across seeds); no single global threshold can separate 'this topic was consolidated' from 'that topic's own baseline is just high' using the raw depth_hold read alone",
+      "per_seed": [
+        {
+          "seed": 42,
+          "dog_baseline": 29.96325,
+          "dog_consolidated": 30.90916,
+          "bird_baseline": 30.55857,
+          "dog_rise": 0.94591,
+          "per_seed_threshold_exists": true,
+          "per_seed_threshold_window": [
+            30.55857,
+            30.90916
+          ],
+          "assembly_sizes": [
+            33,
+            16,
+            23
+          ]
+        },
+        {
+          "seed": 43,
+          "dog_baseline": 29.31519,
+          "dog_consolidated": 29.63008,
+          "bird_baseline": 30.39362,
+          "dog_rise": 0.31489,
+          "per_seed_threshold_exists": false,
+          "per_seed_threshold_window": [
+            30.39362,
+            29.63008
+          ],
+          "assembly_sizes": [
+            29,
+            26,
+            17
+          ]
+        },
+        {
+          "seed": 44,
+          "dog_baseline": 29.74124,
+          "dog_consolidated": 30.2397,
+          "bird_baseline": 30.81287,
+          "dog_rise": 0.49846,
+          "per_seed_threshold_exists": false,
+          "per_seed_threshold_window": [
+            30.81287,
+            30.2397
+          ],
+          "assembly_sizes": [
+            28,
+            13,
+            16
+          ]
+        },
+        {
+          "seed": 100,
+          "dog_baseline": 27.02925,
+          "dog_consolidated": 27.45562,
+          "bird_baseline": 29.95494,
+          "dog_rise": 0.42637,
+          "per_seed_threshold_exists": false,
+          "per_seed_threshold_window": [
+            29.95494,
+            27.45562
+          ],
+          "assembly_sizes": [
+            18,
+            24,
+            21
+          ]
+        },
+        {
+          "seed": 101,
+          "dog_baseline": 30.01795,
+          "dog_consolidated": 30.34362,
+          "bird_baseline": 30.40684,
+          "dog_rise": 0.32567,
+          "per_seed_threshold_exists": false,
+          "per_seed_threshold_window": [
+            30.40684,
+            30.34362
+          ],
+          "assembly_sizes": [
+            25,
+            25,
+            21
+          ]
+        },
+        {
+          "seed": 102,
+          "dog_baseline": 27.15269,
+          "dog_consolidated": 27.4374,
+          "bird_baseline": 30.8676,
+          "dog_rise": 0.28471,
+          "per_seed_threshold_exists": false,
+          "per_seed_threshold_window": [
+            30.8676,
+            27.4374
+          ],
+          "assembly_sizes": [
+            30,
+            25,
+            20
+          ]
+        }
+      ]
+    }
+  }
+}

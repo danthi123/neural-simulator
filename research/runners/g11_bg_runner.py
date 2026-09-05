@@ -949,6 +949,17 @@ def build_bg_brain_regions(
     # produces the orienting cardinal as cortex_{N,E,S,W} firing — the spiking
     # replacement for the host sc_orienting_cardinal_from_image reflex (N1). Requires
     # enable_visual_cortex (uses the retina). De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md.
+    # NOT flipped to default-True 2026-09-05 (scaffold-retirement backlog rank 24 considered it, tried it, then
+    # reverted it): the scaffold-map's own premise for this flip does not hold (the host reflex it claims to
+    # retire is actually gated by the INDEPENDENT `sc_orienting_reflex` flag, default False regardless of this
+    # one), a repo-wide audit found 7+ existing research probes (_closure1_optionA_gate3[.+_fast], _optionA_*,
+    # _homeostatic_g11bg_reuse_probe, _merged_spiking_readout_navcmp, _tier3_spiking_living_loop_derisk) call
+    # run_moving_goal_episode(enable_visual_cortex=True, ...) with no explicit enable_spiking_sc and would be
+    # silently affected, and a fresh co-residence measurement (SC + the full default BG cascade + visual cortex,
+    # not the isolated standalone config the 2026-06-10 GO used) found the directional read-out only 4/6-seed
+    # reliable — a real instance of the already-documented "co-residence operating-point risk". See
+    # research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md for the full evidence and the (separate,
+    # kept) sc_orienting_production_organ.py BRAIN_SPIKING_SC_ORIENT flip this same investigation landed.
     enable_spiking_sc: bool = False,
     n_spiking_sc_fs: int = 12,
     # N5 Option C (2026-06-10): the neural approach-reward. A slow-channel temporal-difference
@@ -3893,7 +3904,11 @@ def run_moving_goal_episode(
     visual_n_v2: int = 256,
     visual_n_it: int = 64,
     visual_drive_max_pA: float = 200.0,
-    # Spiking superior colliculus (N1 orienting; 2026-06-10)
+    # Spiking superior colliculus (N1 orienting; 2026-06-10). Considered for a default-True flip 2026-09-05
+    # (scaffold-retirement backlog rank 24) and REVERTED after measurement — see build_bg_brain_regions's
+    # enable_spiking_sc comment above for the full reasoning (a repo-wide audit found 7+ affected research
+    # probes + a fresh co-residence measurement showing only 4/6-seed directional reliability) and
+    # research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md
     enable_spiking_sc: bool = False,
     n_spiking_sc_fs: int = 12,
     enable_spiking_sc_approach: bool = False,   # N5 Option C (neural approach-reward)

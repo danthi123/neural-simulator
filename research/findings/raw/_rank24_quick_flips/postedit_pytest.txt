@@ -1,0 +1,1884 @@
+........................................................................ [ 44%]
+..F..................................................................... [ 89%]
+......F.......F..                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_protected_byte_untouched_across_td_critic_range _____________
+
+    def test_protected_byte_untouched_across_td_critic_range():
+        diff = subprocess.run(
+            ["git", "diff", "--name-only", "%s..HEAD" % _TD_BASE, "--"]
+            + PROTECTED, capture_output=True, text=True, cwd=ROOT)
+>       assert diff.stdout.strip() == "", (
+            "PROTECTED MODIFIED:\n" + diff.stdout + diff.stderr)
+E       AssertionError: PROTECTED MODIFIED:
+E         research/runners/g11_bg_runner.py
+E         sim/backend.py
+E         sim/bridge.py
+E         sim/kernels.py
+E         sim/neuromodulators.py
+E         
+E       assert 'research/run...modulators.py' == ''
+E         
+E         + research/runners/g11_bg_runner.py
+E         + sim/backend.py
+E         + sim/bridge.py
+E         + sim/kernels.py
+E         + sim/neuromodulators.py
+
+tests/test_td_critic_no_harm.py:28: AssertionError
+___________________ test_compartmentalized_da_kwarg_accepted ___________________
+
+tmp_out_path = '/tmp/pytest-of-dant123/pytest-101/test_compartmentalized_da_kwar0/g11_smoke.json'
+
+    def test_compartmentalized_da_kwarg_accepted(tmp_out_path):
+        """20-step smoke: runner accepts --enable-compartmentalized-da without
+        TypeError, registers 4 per-action DA modulators, and produces a valid result."""
+        pytest.importorskip("cupy")
+        from research.runners.g11_bg_runner import run_moving_goal_episode
+    
+>       run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+            enable_compartmentalized_da=True,
+        )
+
+tests/test_g11_bg_runner_flags.py:1296: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out_path = '/tmp/pytest-of-dant123/pytest-101/test_compartmentalized_da_kwar0/g11_smoke.json'
+seed = 42, n_steps = 20, grid_size = 8, start_pos = (1, 1), goal_pos = (6, 6)
+goal_schedule = [(0, (6, 6))], n_hippocampus_per_layer = 64
+sensory_to_cortex_weight = 10.0, hippocampus_to_cortex_weight = 10.0
+enable_pfc = False, n_pfc = 60, pfc_internal_density = 0.2
+goal_to_pfc_weight = 8.0, pfc_to_cortex_weight = 8.0, enable_pfc_nmda = False
+enable_bg_cross_projections = False, cross_projection_weight = 5.0
+cross_projection_density = 1.0, cross_projection_topology_seed = 0
+enable_bg_lateral_inhibition = False, lateral_inhibition_density = 0.3
+lateral_inhibition_weight = 2.0, interactive_control_file = None
+progress_print_interval = 100, trial_sleep_ms = 0.0
+enable_beacon_perception = False, n_beacon_sensors = 8
+beacon_to_goal_weight = 8.0, beacon_max_intensity = 600.0, beacon_falloff = 1.0
+beacon_replaces_goal = False, enable_landmarks = False, n_landmark_sensors = 8
+landmark_to_place_weight = 8.0, landmark_position = None
+landmark_max_intensity = 600.0, landmark_falloff = 1.0
+landmarks_replace_place = False, enable_sensed_reward = False
+perceived_approach_reward = True, homeostatic_hook = None, hidden_goal = False
+lesion_reward = False, enable_cue_reflex = False, cue_reflex_strength = 800.0
+cue_reflex_replaces_heuristic = False, sc_orienting_reflex = False
+sc_reflex_strength = 800.0, learned_perception_from_vision = False
+sc_reflex_wean_start = -1, sc_reflex_wean_steps = 1500
+sensory_cortex_teacher_pA = 0.0, learning_rate = 0.01
+reward_eligibility_tau_ms = 500.0, reward_hold_steps = 10, verbose = False
+enable_motor_lateral_inhibition = False
+enable_cortex_lateral_inhibition = False, n_cortex_fs_per_action = 5
+cortex_to_fs_weight = 20.0, fs_to_cortex_weight = 8.0
+enable_per_action_da_targeting = False, enable_adaptive_per_action_da = False
+adaptive_da_ema_decay = 0.9, adaptive_da_ema_decay_negative = None
+enable_learned_perception = False, sensory_drive_max_pA = 600.0
+sensory_drive_sigma = 1.5, enable_hippocampus = False
+hippocampus_drive_max_pA = 600.0, hippocampus_drive_sigma = 0.5
+enable_learned_perception_informed_init = False, informed_init_alpha = 8.0
+enable_da_gated_wta = False, enable_rpe_scaled_reward = False
+rpe_scale_alpha = 1.0, rpe_dopamine = False, spiking_snc = True
+snc_tonic_pa = 220.0, snc_reward_gain = 400.0, snc_value_gain = 400.0
+snc_da_sensitivity = 8.0, enable_neural_critic = True, spiking_reward_us = True
+n_reward_us = 40, reward_us_to_snc_weight = 50.0, reward_us_to_snc_density = 0.6
+reward_us_drive_pa = 250.0, critic_neuron_type = None
+critic_afferent_weight = 3.0, critic_afferent_density = 0.6
+enable_critic_homeostasis = True, n_vs_place_context = 200
+vs_place_to_value_weight = 0.2, vs_place_to_value_density = 0.5
+dendrite_critic = False, dendrite_critic_coincidence_k = 50.0
+dendrite_critic_graded_center = 1.5, dendrite_critic_graded_slope = 1.0
+dendrite_critic_graded_strength = 80.0, enable_convergent_upstate = False
+vs_place_drive_to_value_weight = 28.0, vs_place_drive_to_value_density = 0.8
+neural_place_selforg = False, deterministic_selforg = False
+deterministic_read = False, n_place = 200, n_place_fs = 24
+place_sensors_to_place_weight = 28.0, place_sensors_to_place_density = 0.5
+place_sensors_to_place_jitter = 0.6, enable_critic_fs_inhibition = False
+critic_fs_weight = 16.0, critic_fs_density = 0.6, place_fs_weight = 16.0
+place_fs_density = 0.4, fs_to_place_weight = 8.0, fs_to_place_density = 0.4
+coincidence_threshold = 12, coincidence_train_k = 4.0
+coincidence_plateau = 80.0, n_place_bearing = 12, n_place_dist = 8
+nav_critic_grid_frontend = False, grid_n_modules = 6, grid_n_per_module = 33
+grid_lambda_min = 2.0, grid_lambda_max = 24.0, grid_drive_scale = 2.5
+selforg_steps = 2000, selforg_n_positions = 40, reward_delay_steps = 8
+place_sensor_max_intensity = 450.0, place_sensor_falloff = 0.03
+place_sensor_dist_sigma = 4.0, place_sensor_bexp = 4.0, stage_a_smoke = False
+value_train_trials = 0, value_train_pair_steps = 100
+value_train_hold_steps = 40, critic_teacher_pa = 300.0
+value_train_stdp_w_max = 0.0, stage_b_smoke = False, critic_warmup_trials = 0
+critic_warmup_hold_steps = 40, critic_warmup_all_goals = True
+trial_reset_steps = 0, trial_reset_seed = 12345, enable_critic_window = False
+critic_lead_steps = 120, critic_gabab_propagation = 0.0, critic_gabab_max = 0.0
+enable_surprise_lr_boost = False, surprise_lr_alpha = 2.0
+enable_curriculum = False, curriculum_warmup_steps = 600
+curriculum_ramp_steps = 0, curriculum_phase2_cortex_gain = 0.0
+curriculum_phase2_hippo_gain = 1.0, bg_cross_thaw_step = -1
+bg_cross_phase3_gain = 0.5, enable_developmental_pretraining = False
+pretraining_n_goals = 10, pretraining_steps_per_goal = 3000
+enable_structural_pruning = False, enable_d1_d2_asymmetry = False
+enable_striatal_fsis = False, enable_tans = False
+enable_bg_neuropeptides = False, enable_cluster_a_closed_loop = False
+enable_tonic_da = False, enable_compartmentalized_da = True
+enable_cluster_d_hippocampus = False, enable_cluster_d_v2_swr = False
+enable_cluster_e_topography = False, cluster_e_distance_sigma = 0.3
+enable_cluster_f_cerebellum = False, n_granule = 250
+enable_visual_cortex = False, visual_n_orientations = 8
+visual_n_frequencies = 2, visual_n_positions_per_dim = 8, visual_image_size = 32
+visual_n_v2 = 256, visual_n_it = 64, visual_drive_max_pA = 200.0
+enable_spiking_sc = False, n_spiking_sc_fs = 12
+enable_spiking_sc_approach = False, sc_popvector_readout = False
+sc_popvector_divnorm_sigma = 1.0, sc_popvector_divnorm_gain = 1.0
+sc_opponent_decode = False, sc_opponent_fs_weight = 14.0
+log_polar_retina = True, log_polar_d0 = 1.0, sc_tie_break_stochastic = False
+sc_tie_break_eps = 0, sc_sel_homeostasis = False, sc_opponent_axis = False
+sc_opponent_axis_eps = 0, sc_sel_divnorm = False, sc_sel_divnorm_sigma = 1.0
+sc_sel_divnorm_gain = 1.0, visual_receptive_field_radius = 4
+visual_v1_weight_scale = 10.0, visual_it_to_cortex_density = 0.5
+visual_cortex_action_warmup_steps = 600, enable_text_io = False
+text_n_input_neurons = 256, text_n_output_neurons = 256
+text_input_to_pfc_density = 0.2, text_input_to_pfc_weight = 2.0
+text_input_to_cortex_density = 0.2, text_it_to_output_density = 0.2
+embodied_language = False, embodied_language_drive_pA = 80.0
+embodied_language_goal_radius = 3, embodied_language_every_n_steps = 5
+embodied_language_warmup_steps = 600, enable_cluster_f_v2 = False
+pruning_alpha = None, pruning_threshold = None, pruning_weight_floor = None
+heuristic_strength = 1.0, heuristic_decay_after_step = -1
+post_curriculum_heuristic_strength = 0.0, heuristic_wean_start = -1
+heuristic_wean_steps = 1500, heuristic_wean_adaptive = False
+wean_probe_every = 500, wean_probe_window = 200, wean_probe_threshold = 2.5
+sleep_replay_after_step = -1, sleep_replay_steps = 300
+sleep_replay_rate_hz = 200.0, sleep_nrem_rem_alternate = False
+enable_reverse_replay = False, enable_her = False
+enable_recency_weighted_replay = False, heuristic_single_pool = False
+goal_silence_after_step = -1, goal_silence_duration = 0
+genuine_thal_disinhibition = False, genuine_gpi_tonic_pA = 1000.0
+genuine_thal_tonic_pA = 900.0, readout_source = 'spiking_wta'
+enable_thal_lateral_inhibition = False, n_thal_fs_per_action = 5
+thal_to_fs_weight = 50.0, n_sel_per_action = 40, n_sel_fs_per_action = 10
+thal_to_sel_weight = 30.0, sel_to_sel_fs_weight = 20.0
+sel_fs_to_sel_weight = 5.0, enable_sel_opponent_pair = False
+sel_opponent_weight = 12.0, sel_crossaxis_weight = 0.0
+sel_recurrent_density = 0.5, sel_recurrent_weight = 0.3
+enable_commit_burst = True, n_commit_per_action = 40, n_commit_opn = 20
+sel_to_commit_weight = 22.0, commit_recurrent_density = 0.5
+commit_recurrent_weight = 0.6, opn_to_commit_weight = 10.0
+commit_opn_tonic_pA = 0.0, reset_accumulator_each_trial = False
+reset_losers_only = False, urgency_max_pA = 180.0, thal_fs_to_thal_weight = 20.0
+emit_activity = False, emit_activity_every = 5, stdp_w_max_override = None
+extra_regions = None, extra_pathways = None, prebuilt_post_init_hook = None
+build_with_ou = False
+
+    def run_moving_goal_episode(
+        out_path: str,
+        seed: int = 42,
+        n_steps: int = 1800,
+        grid_size: int = 8,
+        start_pos=(1, 1),
+        goal_pos=(6, 6),
+        goal_schedule=None,
+        n_hippocampus_per_layer: int = 64,  # default 8×8 grid; should be roughly grid_size²
+        sensory_to_cortex_weight: float = 10.0,
+        hippocampus_to_cortex_weight: float = 10.0,
+        enable_pfc: bool = False,
+        n_pfc: int = 60,
+        pfc_internal_density: float = 0.2,
+        goal_to_pfc_weight: float = 8.0,
+        pfc_to_cortex_weight: float = 8.0,
+        # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
+        # When True, enables global NMDA with elevated 0.5 NMDA:AMPA ratio
+        # (Wang 2002 calibration for PFC pyramidals). Combined with --enable-pfc,
+        # gives the dlpfc_wm region true persistent activity for delayed-
+        # response tasks. NOTE: NMDA is currently a global cfg flag, so this
+        # affects all regions, not just PFC. Future work: per-region NMDA
+        # ratio override. See docs/plans/2026-05-01-cluster-g-pfc-wm-wang2002.md.
+        enable_pfc_nmda: bool = False,
+        enable_bg_cross_projections: bool = False,
+        cross_projection_weight: float = 5.0,
+        cross_projection_density: float = 1.0,
+        cross_projection_topology_seed: int = 0,
+        # v3 (2026-04-28) — see build_bg_brain_regions docstring.
+        enable_bg_lateral_inhibition: bool = False,
+        lateral_inhibition_density: float = 0.3,
+        lateral_inhibition_weight: float = 2.0,
+        # Interactive runtime control (2026-04-28). When set to a writable JSON
+        # file path, the runner polls the file at the start of each trial and
+        # applies the contents:
+        #   { "paused": bool, "goal": [gx, gy] | null, "inject_reward": float | null }
+        # - paused: blocks the trial loop until cleared
+        # - goal: overrides the scheduled goal (persistent until set again)
+        # - inject_reward: one-shot additive reward applied this trial; runner
+        #   clears it back to null after consuming
+        # Used by the webapp's World-tab live mode for click-to-teleport-goal,
+        # pause/resume, and reward-injection. Default None = no polling, no
+        # behavior change (ie. fully backwards compatible).
+        interactive_control_file: str = None,
+        # Progress print frequency (steps). Default 100 keeps validation runs
+        # quiet; webapp interactive runs override to 1 so the dashboard's live
+        # mode can animate per-step instead of jumping every 100 steps.
+        progress_print_interval: int = 100,
+        # Optional throttle (ms) between trials. Lets a human watch the agent
+        # learn in real time without GPU saturation outpacing the eye. Default
+        # 0 = full speed.
+        trial_sleep_ms: float = 0.0,
+        enable_beacon_perception: bool = False,
+        n_beacon_sensors: int = 8,
+        beacon_to_goal_weight: float = 8.0,
+        beacon_max_intensity: float = 600.0,  # peak sensor drive (pA) when on top of beacon
+        beacon_falloff: float = 1.0,           # intensity = peak / (1 + falloff*distance)
+        beacon_replaces_goal: bool = False,    # if True, beacon→goal_cells is the ONLY goal info (true Stage 1 test)
+        # Landmark perception (Item 1 Stage 2, 2026-04-27).
+        enable_landmarks: bool = False,
+        n_landmark_sensors: int = 8,
+        landmark_to_place_weight: float = 8.0,
+        landmark_position: tuple = None,  # default to grid center
+        landmark_max_intensity: float = 600.0,
+        landmark_falloff: float = 1.0,
+        landmarks_replace_place: bool = False,
+        # Cheat #4: sensed reward (2026-04-27).
+        # Default reward = +1 if Manhattan distance decreased, -1 if increased.
+        # This computes from raw (gx, gy, x, y) coordinates — a cheat. Sensed
+        # reward instead computes reward from beacon-intensity GRADIENT
+        # (intensity_after - intensity_before): the agent "feels warmer" as it
+        # approaches and "cooler" as it retreats. Same information content as
+        # distance-based, but operates on the agent's perceptual signal.
+        enable_sensed_reward: bool = False,
+        # N5 (2026-06-08): coordinate-FREE perceived-approach reward. reward = sign of
+        # the DECREASE in the goal's retinal eccentricity (the image-sourced offset
+        # magnitude the reflex already reads from pixels) — appetitive/incentive-
+        # salience approach reward (Schultz reward-fn-2; Berridge wanting; phototaxis).
+        # Use with --enable-visual-cortex. Takes precedence over sensed/Manhattan reward.
+        # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B — the NAV LIMBIC-CORE PURITY
+        # FLIP): the deployed merged "one brain" nav episode sources its reward COORD-FREE from the
+        # goal's retinal eccentricity (pixels), not the host sign(Manhattan) coordinate formula. The
+        # reward LOGIC reads only sc_salience_offset_from_image (the world's visible-goal render is the
+        # legitimate environment-side sensory input; coords never enter the reward). Self-contained
+        # (uses render_gridworld_to_image directly; does NOT require the enable_visual_cortex region).
+        # The CLI `--perceived-approach-reward` default stays False (action="store_true") so every
+        # documented standalone benchmark reproduces unchanged — the host Manhattan reward is the
+        # opt-out oracle (and the CLI passes args.perceived_approach_reward explicitly, so this function
+        # default never leaks into the CLI path). Mirrors the roadmap-#4 spiking-decision default flip
+        # pattern (flip the function default the merged brain inherits; keep CLI host for reproduction).
+        perceived_approach_reward: bool = True,
+        # Homeostatic agent hook (2026-06-17). Default None = byte-identical (no
+        # behavior change for any existing caller; guarded below). When set to a
+        # callable, it is invoked once per trial AFTER the natural reward is
+        # finalized, as: gated_reward, new_goal = homeostatic_hook(reward, x, y,
+        # gx, gy, step, dist_after). The hook lets a drive (e.g. a self-generated
+        # hunger signal) GATE the reward (reward *= hunger) and relocate the goal
+        # (food) on an "eat" event (dist_after == 0), so the validated BG-cascade +
+        # value-critic learner can be reused for a homeostatic agent WITHOUT a fork
+        # or any re-derivation of the tuned drive/readout/reward loop. Returning
+        # new_goal != None reassigns (gx, gy) and logs a goal change. See
+        # research/runners/_homeostatic_g11bg_reuse_probe.py.
+        homeostatic_hook=None,
+        # Hidden-goal (Morris-water-maze analogue) diagnostic (2026-06-19). Default
+        # False = byte-identical to every existing caller. When True, the goal's
+        # coordinates are NOT fed into the brain anywhere: the ppc_goal_input goal
+        # drive (gx,gy → goal cells) is zeroed each step (the place drive (x,y →
+        # sensor_place_readout) stays — own-position self-knowledge is legitimate).
+        # Combined with --heuristic-strength 0 (no goal-direction teacher) and no
+        # cue-reflex / SC-orienting / learned-perception, the ONLY goal-related
+        # signal reaching the agent is the SCALAR reward (distance-decreased → +1).
+        # The agent must therefore learn the goal's location via reward → value →
+        # dopamine → corticostriatal STDP — i.e. the spiking reward/value/dopamine
+        # limbic core must be BEHAVIORALLY LOAD-BEARING. This is the harder task the
+        # 2026-06-19 scoping flagged: on the visible/orient-solvable gridworld the
+        # limbic core is GREEN_INERT (validated but inert). See the load-bearing
+        # diagnostic finding. NO sim/ edit; suppression is a runner-side drive zero.
+        hidden_goal: bool = False,
+        # Reward lesion (the load-bearing anti-cheat, 2026-06-19). Default False =
+        # byte-identical. When True, the natural reward is FORCED to 0 every step
+        # (after the natural computation), so NO learning signal reaches dopamine /
+        # the value critic / corticostriatal plasticity. The owner standard
+        # (validate_signal_by_its_function): the reward lesion must collapse the
+        # BEHAVIOR (the nav score), not merely the SNc/reward-pop firing. If the
+        # agent still solves the hidden goal with reward lesioned, the task is not
+        # reward-load-bearing. Applied AFTER manual_reward_injection / the
+        # homeostatic hook so it is an unconditional clamp.
+        lesion_reward: bool = False,
+        # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
+        # Replaces the heuristic with a hand-tuned innate reflex that computes
+        # cortex drive from beacon sensor activations. Models a real animal's
+        # "approach attractive cue" reflex (e.g., phototaxis). The reflex is
+        # non-plastic — it represents innate sensorimotor wiring like vestibular
+        # reflexes or looming detection. Plastic layers (sensory, hippo, beacon
+        # → goal_cells) layer on top to refine the behavior.
+        enable_cue_reflex: bool = False,
+        cue_reflex_strength: float = 800.0,  # peak reflex drive matching heuristic
+        cue_reflex_replaces_heuristic: bool = False,  # if True, heuristic disabled when reflex on
+        # N1 de-risk (2026-06-07): innate SC orienting reflex — image-sourced (NO
+        # coords), the biological replacement for the coordinate heuristic-teacher.
+        sc_orienting_reflex: bool = False,
+        sc_reflex_strength: float = 800.0,  # SC orienting push (pA), matches heuristic
+        # Rank 2 (2026-06-07): the DURABLE learned dorsal/PPC read-out — drive the
+        # learned sensory population from the IMAGE salience offset (position-
+        # preserving, NO coords); the innate SC reflex teaches then weans.
+        learned_perception_from_vision: bool = False,
+        sc_reflex_wean_start: int = -1,   # step to begin weaning the reflex (-1 = never)
+        sc_reflex_wean_steps: int = 1500,  # linear ramp-to-zero window
+        # Rank 2 tuning (2026-06-07): supervised motor-teacher (feedback-error-
+        # learning). When > 0, the reflex drives its chosen target cortex pool at
+        # THIS strength (a clean supervised label for the sensory→cortex STDP)
+        # instead of the movement-reflex strength. 0 = off (plain reflex).
+        sensory_cortex_teacher_pA: float = 0.0,
+        learning_rate: float = 0.01,
+        reward_eligibility_tau_ms: float = 500.0,
+        reward_hold_steps: int = 10,
+        verbose: bool = True,
+        enable_motor_lateral_inhibition: bool = False,
+        enable_cortex_lateral_inhibition: bool = False,
+        # Cortex-WTA strength knobs (exposed for the #6 R1 escalation: a STRONGER inter-cardinal
+        # cortex FS competition to overcome the cascade N-bias swamping). Defaults == the builder
+        # defaults so this is byte-identical when enable_cortex_lateral_inhibition is off.
+        n_cortex_fs_per_action: int = 5,
+        cortex_to_fs_weight: float = 20.0,
+        fs_to_cortex_weight: float = 8.0,
+        enable_per_action_da_targeting: bool = False,
+        enable_adaptive_per_action_da: bool = False,
+        adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials (used for positive reward)
+        adaptive_da_ema_decay_negative: float = None,  # if set, separate decay for negative reward (faster = quicker exploration trigger)
+        enable_learned_perception: bool = False,
+        sensory_drive_max_pA: float = 600.0,
+        sensory_drive_sigma: float = 1.5,
+        enable_hippocampus: bool = False,
+        hippocampus_drive_max_pA: float = 600.0,
+        hippocampus_drive_sigma: float = 0.5,  # narrower → sparser firing → 1-3 cells per position
+        # Informed init for learned perception: bias initial sensory->cortex_X weights
+        # by alignment between sensor's preferred (dx,dy) and action X's direction
+        # vector. Solves cold-start failure (random init produces no asymmetry, no
+        # learning signal). Plasticity then refines the prior rather than discovers.
+        enable_learned_perception_informed_init: bool = False,
+        informed_init_alpha: float = 8.0,  # sharper positive-only prior; aligned ~ 24.5 weight (heuristic-equivalent)
+        # DA-gated WTA: when both --motor-lateral-inhibition and adaptive DA are on,
+        # scale FS→motor inhibition weight per-trial by gating_strength (reward EMA).
+        # Implements the user's "DA gate" concept: when winning, WTA strong (commit);
+        # when losing, WTA relaxes (explore via reduced inhibition).
+        enable_da_gated_wta: bool = False,
+        # RPE-scaled reward (NE-like surprise amplification):
+        # delivered_reward = reward + alpha * (reward - reward_ema)
+        # When reward is unexpectedly negative (after positive EMA), the prediction
+        # error is large and amplified — fast adaptation. Expected outcomes get
+        # muted. Real biology: DA encodes RPE not raw reward (Schultz 1997).
+        enable_rpe_scaled_reward: bool = False,
+        rpe_scale_alpha: float = 1.0,  # 1.0 means: delivered = 2*reward - ema
+        # N9 step 1 (2026-06-08): the dopamine signal IS the reward-PREDICTION-ERROR
+        # delta = r - V (V = reward_ema, the learned Rescorla-Wagner critic). Converts
+        # the actor-only / raw-reward DA into an actor-CRITIC RPE (Schultz 1998).
+        # With --perceived-approach-reward (N5) the whole RPE loop is coordinate-free.
+        rpe_dopamine: bool = False,
+        # ── Spiking-SNc actor-critic Stage A (2026-06-08) ──────────────────────
+        # docs/plans/2026-06-08-spiking-snc-actor-critic-design.md.
+        # When True, the dopamine reward-prediction error is computed by the
+        # FIRING of the spiking `snc` pool (IZH2007_DOPAMINE, the previously-silent
+        # placeholder region), NOT a host formula. Each reward step the SNc pool is
+        # driven by three additive external currents:
+        #   I_snc = snc_tonic_pa + snc_reward_gain*max(0, r) - snc_value_gain*V
+        # so its windowed firing rate encodes delta = r - V (burst above tonic on
+        # +RPE, tonic at 0, DIP below tonic on -RPE). The DA broadcast is then
+        # produced FROM that firing via the new `from_region_firing_signed`
+        # neuromodulator rule (the only protected sim/ edit) -> the bridge's existing
+        # da_signal = get_concentration("dopamine") - baseline path consumes it.
+        # STAGE A: value V is the host reward_ema scaffold (the inhibitory drive is
+        # proportional to the host R̄). Stage B's neural critic is NOT in this runner.
+        # Supersedes --rpe-dopamine (host formula) and owns the `dopamine` modulator
+        # vs --enable-tonic-da (precedence guard).
+        # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the spiking SNc is the master
+        # gate for the deployed nav limbic core — it registers the `dopamine` neuromodulator
+        # (from_region_firing_signed over the snc pool) so the RPE = the SNc FIRING (a neuron), not a
+        # host scalar. With enable_neural_critic + spiking_reward_us (also flipped on below), the whole
+        # δ=r−V is synaptic (r = reward_us excitation, V = striosome_value GABA_B subtraction). The CLI
+        # `--spiking-snc` default stays False (action="store_true"); the CLI passes args.spiking_snc
+        # explicitly, so this function default never reaches the CLI benchmarks (they reproduce
+        # unchanged with the host snc_reward_gain write). GREEN_INERT (B-5): behaviorally inert on the
+        # orient-solvable gridworld → this is a brain-based-PURITY default, validated by the signal's
+        # FUNCTION (the Schultz RPE battery), not a navigation behavior win.
+        spiking_snc: bool = True,
+        snc_tonic_pa: float = 220.0,       # tonic pacemaker drive -> mid-range SNc rate (headroom to dip)
+        snc_reward_gain: float = 400.0,    # k_r: excitatory reward afferent gain (pA per unit r)
+        snc_value_gain: float = 400.0,     # k_v: inhibitory value (striosome) drive gain (pA per unit V)
+        snc_da_sensitivity: float = 8.0,   # signed-rule sensitivity (firing-rate deviation -> DA conc)
+        # ── Spiking-SNc actor-critic Stage B (2026-06-08): NEURAL value critic ──
+        # Only meaningful with spiking_snc=True. When True, a dedicated GABAergic
+        # `striosome_value` critic (built in build_bg_brain_regions) learns V(s) from
+        # the perceived state (cortex_it) via the SNc-derived dopamine delta, and
+        # SUBTRACTS V at the SNc membrane through the slow GABA_B/GIRK K+ conductance
+        # (cfg.enable_gabab; the critic->snc pathway is receptor="gaba_b"). The host
+        # _V_scaffold term in the reward block is then DROPPED — the r-V subtraction
+        # is NEURAL, not host arithmetic (the BRAIN-BASED-ONLY completion of Stage B).
+        # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
+        # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
+        # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the deployed nav VALUE/critic is
+        # NEURAL — the striosome_value MSN-D1 critic learns V via the SNc-derived dopamine δ and
+        # SUBTRACTS V at the SNc membrane through the GABA_B/GIRK conductance; the host _V_scaffold
+        # reward_ema subtraction is DROPPED (the brain-based-only completion of Stage B). Paired with
+        # enable_critic_homeostasis=True (below) so the critic fires from the place afferent (the
+        # cold-start operating point). This mirrors the production MergedNavConvAgent, which already
+        # resolves co_resident_nav_critic ON via its None-sentinel; this flip makes the LOW-LEVEL
+        # run_moving_goal_episode episode loop drive that critic NEURALLY by default (the episode loop
+        # previously inherited the host default even on the production agent — the N-1/N-2 residual).
+        # The CLI `--enable-neural-critic` default stays False (passed explicitly as args.* → CLI
+        # benchmarks reproduce the host critic). Validated by function: the Schultz RPE battery δ=r−V.
+        enable_neural_critic: bool = True,
+        # ── 2026-06-10 spiking US/reward -> SNc (drops the host SNc reward write) ──
+        # With spiking_reward_us, a PPN-like `reward_us` population receives the PERCEIVED reward (N5's
+        # coord-free approach signal, a sensory drive) and FIRES into the SNc, so the reward burst is a
+        # NEURON's synapse (US->VTA), not a host current write. STRONGLY recommend --perceived-approach-
+        # reward so the US rides on pixels (coord-free); else a WARN (the reward is the coord default).
+        # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the deployed nav reward DELIVERY
+        # is a SPIKE — the PPN-like reward_us population FIRES into the SNc (the US→VTA glutamatergic
+        # afferent), retiring the host `snc += snc_reward_gain·max(0,reward)` direct DA-current write.
+        # Paired with perceived_approach_reward=True (above), reward_us rides on the coord-free pixel
+        # eccentricity reward (the coord-free guard at ~:4260 then passes silently). The CLI
+        # `--spiking-reward-us` default stays False (passed explicitly as args.* → CLI benchmarks keep
+        # the host write). The fully coord-free SYNAPTIC reward SOURCE (sc_rostral→reward_us, the SC
+        # proximity) stays opt-in via nav_critic_spiking_sc / enable_spiking_sc_approach (it builds the
+        # SC vision chain; not defaulted here to keep the region build minimal — mirrors the production
+        # agent, which also leaves nav_critic_spiking_sc opt-in). Validated: the deployed-config RPE
+        # battery (corr(ecc, reward_us) ≤ −0.5, SNc burst, lesion-collapse) in _merged_neural_reward_*.
+        spiking_reward_us: bool = True,
+        n_reward_us: int = 40,
+        reward_us_to_snc_weight: float = 50.0,
+        reward_us_to_snc_density: float = 0.6,
+        reward_us_drive_pa: float = 250.0,      # US-afferent drive (Pavlovian de-risk: reward_us ~66Hz, SNc burst 266 vs tonic 57, V subtracts 266->86)
+        # ── Critic drive calibration (2026-06-08, runner-side; diagnosed by
+        #    research/findings/raw/g11_bg/_placecritic_diag*.py). The smoke found the
+        #    MSN-D1 striosome_value critic NEVER FIRED in nav. Root cause (decisive):
+        #    (1) the MSN-D1 preset's depolarized rheobase (~700 pA) is built for the
+        #        cortically-driven up-state; the SPARSE sensor_place_readout place code
+        #        (HIPPO_PYRAMIDAL, ~3-8 Hz) cannot supply that convergent current, so the
+        #        afferent route can't fire it at ANY weight (verified to w=25) — and even
+        #        a 600 pA teacher gave 0.4 Hz. A more EXCITABLE critic type
+        #        (IZH2007_RS_CORTICAL_PYRAMIDAL) DOES fire from the place code (5-20 Hz,
+        #        graded by drive x weight) — diag4.
+        #    (2) a reward-window TEACHER current on the critic is COUNTER-productive: it
+        #        drives post >> pre so STDP sees post-before-pre LTD and the place->value
+        #        weight COLLAPSES (diag6). The place-driven RS critic gives clean LTP.
+        #    (3) at grid_size=32 the default place sigma=0.5 (tuned for the 8x8 grid,
+        #        cell spacing 1) is far narrower than the 4.43 cell spacing -> the place
+        #        code is near-silent at most positions. A modest widening makes it a real
+        #        population bump so a value-of-LOCATION can be carved (diag6: sigma>=1.5 +
+        #        RS critic + afferent w>=8 -> V rises, V(near)>V(far), location-selective
+        #        weight growth, teacher-FREE).
+        #    Calibration = RS critic + raised afferent weight + NO teacher (+ the place
+        #    sigma widened via --hippocampus-drive-sigma at the run level). All runner-
+        #    side; the MSN-D1 default is preserved when the override is None.
+        critic_neuron_type: str = None,            # override striosome_value izh type (None=keep MSN-D1)
+        critic_afferent_weight: float = 3.0,       # (legacy 2026-06-08) sensor_place_readout->value weight
+        critic_afferent_density: float = 0.6,
+        # ── 2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-homeostasis PASS) ──
+        # The critic afferent is now the DEDICATED DENSE `vs_place_context` (grid-32 place code,
+        # 30-80 cells/location), fired into a useful range by per-region homeostasis on BOTH the
+        # afferent AND the MSN-D1 critic (GLOBAL homeostasis stays OFF). This SUPERSEDES the
+        # 2026-06-08 RS-critic-type + raised-sensor-afferent-weight calibration above (which the
+        # de-risk arc showed could not, on its own, fire the MSN critic from the SPARSE actor place
+        # code under the deterministic regime). With this on, --critic-neuron-type stays None (the
+        # critic keeps its MSN-D1 default; homeostasis — not the type swap — fires it).
+        # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): paired with enable_neural_critic
+        # so the deployed nav critic actually FIRES from the place afferent (the cold-start operating
+        # point — the RPE-battery finding's root-cause #1: at the default critic weight the MSN-D1
+        # never crosses rheobase → never learns V; per-region homeostasis fires it). This is the
+        # validated deployed config (_merged_neural_reward_validate.py:99). The CLI
+        # `--enable-critic-homeostasis` default stays False (passed explicitly as args.*).
+        enable_critic_homeostasis: bool = True,    # per-region homeostasis on vs_place_context + critic
+        n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
+        vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
+        vs_place_to_value_density: float = 0.5,
+        # ── 2026-06-20 DENDRITE VALUE CRITIC (shortcut #9 host-RETIRED deploy) ──
+        # When True (with --enable-neural-critic, NOT --neural-place-selforg), the critic's value-of-
+        # location V is computed by the VALIDATED graded dendritic plateau instead of the point-neuron
+        # MSN-D1 rate (2026-06-20-dendrite-stage1-snc-calibration.md). The neural GABA_B->SNc value
+        # subtraction is unchanged. Default False = byte-identical point-neuron critic. The graded
+        # knobs are the validated calibration (NO sim/ edit).
+        dendrite_critic: bool = False,
+        dendrite_critic_coincidence_k: float = 50.0,   # high => all-or-none plateau OFF, GRADED form active
+        dendrite_critic_graded_center: float = 1.5,    # validated logistic center (c_w units)
+        dendrite_critic_graded_slope: float = 1.0,     # validated smooth (non-saturating) slope
+        dendrite_critic_graded_strength: float = 80.0, # validated per-step plateau conductance scale
+        # ── 2026-06-09 CONVERGENT-EXCITATION UP-STATE (homeostasis-free critic firing; Option A). ──
+        # Adds a DISTINCT dense NON-plastic `vs_place_drive` afferent (the B.02 up-state arm) alongside
+        # `vs_place_context` (the plastic value learner). When on, the runner injects the SAME grid-32
+        # place code into BOTH each nav step. CuPy 3-seed de-risk: FIRE/LEARNS/ACTOR pass but PLACE-
+        # GRADED FAILS (the dense up-state is position-blind) — HONEST NEGATIVE; shipped default-OFF as
+        # documented infrastructure (byte-identical when off). See build_bg_brain_regions + the finding
+        # 2026-06-09-N9-convergent-upstate-derisk.md.
+        enable_convergent_upstate: bool = False,
+        vs_place_drive_to_value_weight: float = 28.0,
+        vs_place_drive_to_value_density: float = 0.8,
+        # ── 2026-06-09 N9 NEURAL PLACE-CODE SELF-ORG (nav deployment of the validated de-risk
+        #    n9_place_graded_critic_stage2_derisk; design docs/plans/2026-06-09-N9-nav-deployment-
+        #    design.md). When True (only meaningful WITH enable_neural_critic), the host-Gaussian
+        #    vs_place_context place code is REPLACED by a SELF-ORGANIZED spiking place code
+        #    (place_sensors -> place [+ FS-PING place_fs] -> striosome_value coincidence critic).
+        #    The STEP-1 self-org runs in _run_critic_warmup; the per-step host Gaussian injection is
+        #    NOT used in this path (place_sensors egocentric render is the only place input). HARD-
+        #    GATES enable_convergent_upstate OFF (the position-blind A1 floor caps grading ~1.2x).
+        #    Default OFF => the enable_neural_critic path is byte-identical (host vs_place_context).
+        neural_place_selforg: bool = False,
+        deterministic_selforg: bool = False,  # toggle cfg.deterministic_transpose_matvec during STEP-1 self-org (reproducible place code)
+        # deterministic_read (2026-06-21, production-wiring nav chunk item 3, the #5b determinism 1b
+        # deploy scope per research/findings/2026-06-22-shortcut5b-determinism-deltabar-close.md): hold
+        # cfg.deterministic_transpose_matvec ON THROUGH the value-train + the graded-plateau δ-read
+        # (instead of restoring it OFF after STEP-1 self-org). The deterministic-scatter SpMV already
+        # ships at the 5 critic-path matvec sites in sim/bridge.py (gated on the flag, numerically
+        # allclose), so this is a runner-side scope-widening only -- NO sim/ edit. It pins the read-time
+        # Wᵀ@prev_firing scatter ORDER so each seed's critic rate is reproducible run-to-run -> a
+        # seed-stable place->value volley -> the SNc-burst δ holds under ONE config (2/3 with
+        # determinism alone; 3/3 with the volley-normalization). Default False => the documented
+        # STEP-1-only determinism is byte-identical (the read window restores to _saved_detmv).
+        deterministic_read: bool = False,
+        n_place: int = 200,
+        n_place_fs: int = 24,
+        place_sensors_to_place_weight: float = 28.0,
+        place_sensors_to_place_density: float = 0.5,
+        place_sensors_to_place_jitter: float = 0.6,
+        enable_critic_fs_inhibition: bool = False,  # place_fs->striosome_value GABA_A: spiking critic rate-clamp (root fix vs GIRK cap masking)
+        critic_fs_weight: float = 16.0,
+        critic_fs_density: float = 0.6,
+        place_fs_weight: float = 16.0,
+        place_fs_density: float = 0.4,
+        fs_to_place_weight: float = 8.0,
+        fs_to_place_density: float = 0.4,
+        coincidence_threshold: int = 12,    # Route-D readout K (de-risk readout_weighted_k ~12)
+        coincidence_train_k: float = 4.0,   # Route-D TRAIN count K (de-risk coincidence_k)
+        coincidence_plateau: float = 80.0,  # Route-D plateau strength (de-risk value)
+        n_place_bearing: int = 12,          # bearing sensors/landmark (de-risk n_bearing)
+        n_place_dist: int = 8,              # distance sensors/landmark (de-risk n_dist)
+        # #5b R1 SURPASS grid-cell front end (nav chunk item 2): the DECORRELATED spatial-phase grid metric
+        # as the place_sensors afferent (selective place value 4.5-12.3x). This episode-level default STAYS
+        # OFF = the landmark render so the standalone CLI benchmarks reproduce; the PRODUCTION default-ON lives
+        # in MergedNavConvAgent. #5b CLOSED on R1 grounds (2026-06-22-shortcut5b-td-read-derisk.md); the
+        # value-READ structural/learned separation is the characterized dendritic frontier (a point-neuron
+        # limit, NOT a host shortcut). grid_drive_scale = the operating-point gain on the grid code's [0,1]
+        # activations (the de-risk's validated 2.5: the grid is sparse so the place pool + critic need ~2.5x).
+        nav_critic_grid_frontend: bool = False,
+        grid_n_modules: int = 6,
+        grid_n_per_module: int = 33,
+        grid_lambda_min: float = 2.0,
+        grid_lambda_max: float = 24.0,
+        grid_drive_scale: float = 2.5,
+        selforg_steps: int = 2000,          # total STEP-1 self-org sweep steps (de-risk validated)
+        selforg_n_positions: int = 40,      # # agent positions swept during self-org
+        reward_delay_steps: int = 8,        # online: hold place active before the SNc burst (Yagishita)
+        place_sensor_max_intensity: float = 450.0,  # de-risk max_intensity
+        place_sensor_falloff: float = 0.03,         # de-risk falloff
+        place_sensor_dist_sigma: float = 4.0,       # de-risk dist_sigma
+        place_sensor_bexp: float = 4.0,             # de-risk bexp
+        stage_a_smoke: bool = False,        # N9 Stage-A cheap-first probe (FIRE/GRADED/ACTOR), exit pre-nav
+        # ----- N9 Phase 3 STEP-2 value-training (pair-then-reward warm-up) + Stage-B smoke -----
+        # (2026-06-10) Mirrors the VALIDATED de-risk STEP-2 (n9_place_graded_critic_stage2_derisk
+        # run_seed, --pair-then-reward): on the FROZEN self-organized place fields, open the critic
+        # arm (gate `value_input`) and run de-risk-style pair_then_reward trials at the scheduled
+        # goal(s) so DA-gated STDP grows the NEAR place->striosome_value synapses (V learns). Each
+        # trial: ITI floor (SNc tonic, no place, zero eligibility) -> PAIR (place + SNc TONIC,
+        # pair_steps -> up-state + SILENT eligibility) -> REWARD (place + SNc BURST after
+        # reward_delay_steps -> DA AFTER the pairing -> converts eligibility, the Yagishita timing)
+        # -> reset g_gabab + SNc membrane. A sub-threshold phase-locked critic TEACHER
+        # (critic_teacher_pa, de-risk --critic-teacher-pa 300) on striosome_value during the PAIR
+        # phase ONLY (removed after) makes the weak-drive place volley fire the critic phase-locked.
+        # Then `value_input` is frozen for the read-out / nav. Default value_train_trials=0 => OFF
+        # (byte-equivalent; the place fields self-organize but V is never trained). Only meaningful
+        # WITH neural_place_selforg; the legacy vs_place_context warm-up is unchanged.
+        value_train_trials: int = 0,        # N9 STEP-2: pair-then-reward value-training trials per goal (de-risk 40)
+        value_train_pair_steps: int = 100,  # PAIR-phase length (de-risk pair_steps; >= the up-state warm-up)
+        value_train_hold_steps: int = 40,   # ITI / REWARD sub-phase length (de-risk hold_steps)
+        critic_teacher_pa: float = 300.0,   # sub-threshold phase-locked teacher on striosome_value during PAIR (de-risk 300)
+        value_train_stdp_w_max: float = 0.0,  # critic soft-bound ceiling DURING value-train (de-risk 40; 0=no override, keep nav's 150)
+        stage_b_smoke: bool = False,        # N9 Stage-B probe (LEARNS-V / CRITIC FIRE+GRADE / GABA_B gap+lesion), exit pre-nav
+        # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
+        # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
+        # frozen at 0.20). Forensic root cause (NOT the brief's "homeostasis too slow"): a
+        # LTP-bootstrap DEADLOCK. At the init weight 0.20 the afferent fires ~12 Hz but the
+        # critic cannot cross MSN-D1 threshold at ANY threshold value (threshold-sweep: 0 Hz
+        # down to -54 mV; the per-region homeostasis lowers the threshold ~1 mV in 1800 steps,
+        # nowhere near enough). With no critic spike there is no STDP post-event -> eligibility
+        # stays exactly 0 -> reward cannot grow the weight -> the critic stays silent forever.
+        # The de-risk PASSES only because it runs 40 CONCENTRATED reward-paired drives at ONE
+        # location (the value-leads-reward protocol), which fires the critic enough to seed LTP
+        # and grow the weight 0.20->0.58; a free-moving agent never gets that concentration.
+        # Speeding up homeostasis (brief option 1) is NEGATIVE: a faster afferent adapt-rate
+        # HOMOGENIZES the place code (place-selectivity ratio collapses to ~0.4, the gate-5
+        # failure mode). Raising the init weight (option 2) gives a FLAT, non-graded V.
+        # The faithful fix (brief option 3) is this WARM-UP: before the nav loop, run
+        # `critic_warmup_trials` de-risk-style reward-paired drives at the scheduled goal
+        # location(s) at the BASELINE homeostasis rate (which preserves place-selectivity, as
+        # the de-risk's gate-5 PASS shows). This is the value system maturing on the rewarding
+        # locations before the test (latent learning / pre-exposure) — the LTP, the critic
+        # firing, the GABA_B subtraction are ALL neural; only the agent placement + reward
+        # delivery is environment/body scaffolding (BRAIN-BASED-ONLY compliant). Validated in
+        # isolation: 20 trials -> V_goal 2.08 Hz > V_far 1.25 Hz (place-graded, deadlock broken).
+        # Default 0 => OFF (byte-equivalent to the pre-warmup runner; the smoke's silent critic).
+        critic_warmup_trials: int = 0,
+        critic_warmup_hold_steps: int = 40,        # steps per warm-up sub-phase (de-risk used 40)
+        critic_warmup_all_goals: bool = True,      # warm up at EVERY scheduled goal (multi-goal)
+                                                   # vs only the first goal
+        # Trial-structured protocol (2026-06-19, the F-S-G water-maze de-risk). Default 0 =
+        # OFF (byte-identical: a single continuous episode from start_pos, the legacy path).
+        # When > 0, the agent is RESET to a fresh RANDOM start every `trial_reset_steps`
+        # steps WHILE the learned weights persist across trials (no plasticity reset). This
+        # makes the single persistent bridge run the Fremaux-Sprekeler-Gerstner (2013) spiking
+        # actor-critic's proper training: the place->action map is learned over MANY reset
+        # trials at the SAME hidden goal, and the learning curve = per-trial final distance.
+        # The reset positions are drawn from `trial_reset_seed` (independent of the main seed
+        # so the start sequence is controllable + reproducible) with Manhattan >= 3 from the
+        # goal (a non-trivial trial). The per-trial final distance is recorded in
+        # results["trial_final_distances"]. NO sim/ edit; purely a runner-side position reset.
+        trial_reset_steps: int = 0,
+        trial_reset_seed: int = 12345,
+        # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
+        # GABA_B current to a bounded LEAD window into each reward evaluation so the
+        # slow conductance pre-builds ~1 tau before reward but does NOT integrate
+        # across a long dwell (the de-risk's >=200 ms over-suppression boundary,
+        # d0416fc3). Default False => Stage 1: gate held OPEN continuously (isolate
+        # "does it run + learn" before adding windowing).
+        enable_critic_window: bool = False,
+        critic_lead_steps: int = 120,        # bounded OPEN-window length (steps; dt=1ms)
+        # GABA_B (GIRK) propagation strength onto the SNc (2026-06-10). The default 0.02 was tuned for a
+        # ~20-30 Hz critic (seed 42); seeds 43/44 draw STRONGER place fields -> the critic fires 120 Hz ->
+        # the slow GIRK over-accumulates and CLAMPS the SNc to 0 at BOTH near AND far (the differential
+        # delta=r-V is hidden by saturation; the lesion still shows near<far). Lowering the propagation
+        # de-saturates the GABA_B so the graded near<far subtraction is VISIBLE across the seed range
+        # (Eshel-2015 arithmetic shift, not the all-or-none clamp). 0=keep the cfg default (0.02).
+        critic_gabab_propagation: float = 0.0,
+        critic_gabab_max: float = 0.0,   # cap g_gabab (finite GIRK channels) so a hot critic can't fully clamp the SNc (graded δ); 0=no cap
+        # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
+        # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
+        enable_surprise_lr_boost: bool = False,
+        surprise_lr_alpha: float = 2.0,  # max boost factor: 1 + alpha * |RPE|
+        # Curriculum learning (Option B from plastic-input-layer arc):
+        # In phase 1 (steps 0..curriculum_warmup_steps), suppress hippocampus drive
+        # so the heuristic+WTA builds up cortex→D1 selectivity in isolation. Then
+        # in phase 2, enable hippo drive — hippo plastic weights learn given that
+        # cortex→D1 is already mature.
+        #
+        # Stage 3 (2026-04-27): real curriculum uses bridge plasticity_gate
+        # infrastructure — cortex→D1 frozen at warmup, hippo→cortex thawed.
+        # Stage 5 (2026-04-27): ramp_steps>0 enables smooth critical-period
+        # closure: gate values interpolate linearly from phase-1 to phase-2
+        # values over `ramp_steps` centered on warmup_steps. Biologically
+        # grounded: real critical periods close gradually via PV interneuron
+        # maturation (~weeks), not as instantaneous step functions. Smoother
+        # transition reduces variance from abrupt cascade disruption.
+        enable_curriculum: bool = False,
+        curriculum_warmup_steps: int = 600,  # phase 1 length: cortex→D1 builds without hippo noise
+        curriculum_ramp_steps: int = 0,      # 0 = abrupt step; >0 = smooth ramp window
+        # Stage 5 (2026-04-27): partial freeze allows cortex→D1 to keep
+        # adapting at reduced rate during phase 2. 0.0 = full freeze (default,
+        # cortex locked); 1.0 = no freeze (combo A). Intermediate values let
+        # cortex slowly track changing reward landscape while hippo learns
+        # primary input mapping. Biologically: cortical plasticity doesn't
+        # halt absolutely with maturation — it slows but persists, especially
+        # under top-down attention or unexpected reward (DA-modulated).
+        curriculum_phase2_cortex_gain: float = 0.0,
+        curriculum_phase2_hippo_gain: float = 1.0,
+        # Cheat #5 closure (2026-04-28): cross-projections (cortex_X → str_D1_Y / str_D2_Y
+        # for X != Y) are tagged with a separate plasticity gate "corticostriatal_cross"
+        # so the curriculum can stage them later than same-action pathways. The
+        # naive approach (cross-projections on same gate as same-action) failed
+        # 2026-04-27 because phase-0 motor activations reinforced cross-projections
+        # to all D1 pools, locking in N/E motor bias before goal change.
+        # Phase 3 thaws cross-projections AFTER goal change, when the agent has
+        # experienced both regimes and STDP+reward can shape cross-action routing
+        # symmetrically. -1 = stay frozen forever (default for safety).
+        bg_cross_thaw_step: int = -1,
+        # Plasticity gain for bg_cross_projections in phase 3. 1.0 = full plastic,
+        # 0.5 = half-rate (slower than same-action), 0.0 = stay frozen.
+        bg_cross_phase3_gain: float = 0.5,
+        # ─── v4 (2026-04-28): developmental pretraining ────────────────────
+        # Run a critical-period analog before the standard eval: N random
+        # goals × M trials per goal with all plasticity gates open. At the
+        # transition, the existing curriculum init naturally freezes
+        # bg_cross_projections (line 1220 of this file). See
+        # docs/plans/2026-04-28-cheat5-v4-design.md.
+        enable_developmental_pretraining: bool = False,
+        pretraining_n_goals: int = 10,
+        pretraining_steps_per_goal: int = 3000,
+        enable_structural_pruning: bool = False,
+        # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry — D2-targeting
+        # synapses' weight updates flip sign vs D1. Default off.
+        enable_d1_d2_asymmetry: bool = False,
+        # Cluster B.2 (2026-04-28): striatal fast-spiking interneurons —
+        # 4 str_PV_FSI_X pools providing broadcast inhibition to all D1/D2 MSN
+        # pools. Default off. See
+        # docs/plans/2026-04-28-cluster-b2-striatal-fsis-implementation.md.
+        enable_striatal_fsis: bool = False,
+        # Cluster B.3 (2026-04-28): cholinergic interneurons (TANs). Adds an
+        # acetylcholine neuromodulator with the `pause_on_reward` rule that
+        # transiently drops corticostriatal plasticity_window_gate on salient
+        # reward events. Default off. See
+        # docs/plans/2026-04-28-cluster-b3-tans-implementation.md.
+        enable_tans: bool = False,
+        enable_bg_neuropeptides: bool = False,  # R3.6: D1/D2 neuropeptide arms
+        enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
+        enable_tonic_da: bool = False,  # Cluster C v1: dopamine as a real neuromodulator
+        enable_compartmentalized_da: bool = False,  # Cluster C v2: per-action DA channels
+        enable_cluster_d_hippocampus: bool = False,  # Cluster D v1: trisynaptic loop (ec+dg+ca3+ca1)
+        enable_cluster_d_v2_swr: bool = False,  # Cluster D v2: SWR-gated CA3 plasticity (REQUIRES v1)
+        enable_cluster_e_topography: bool = False,  # Cluster E v1: 2D coords + Gaussian-weighted cortex->striatum
+        cluster_e_distance_sigma: float = 0.3,
+        enable_cluster_f_cerebellum: bool = False,  # Cluster F v1: Marr-Albus cerebellar microcircuit
+        n_granule: int = 250,  # Cerebellar granule cells (scaling test for F v2)
+        # Cluster K v1 (2026-05-01): visual cortex hierarchy.
+        # Adds retina (32x32 ON/OFF) → V1_simple → V1_complex → V2 → IT regions.
+        # When True, the env step loop renders the gridworld as a 32x32 image and
+        # drives the retina each step (before the stim window). v1 does NOT yet
+        # wire IT → cortex_X for action selection — visual stream runs alongside
+        # existing perception (heuristic / beacon / hippocampus / etc.) without
+        # affecting motor output. Future v2: gated IT → cortex_X with curriculum.
+        enable_visual_cortex: bool = False,
+        visual_n_orientations: int = 8,
+        visual_n_frequencies: int = 2,
+        visual_n_positions_per_dim: int = 8,
+        visual_image_size: int = 32,
+        visual_n_v2: int = 256,
+        visual_n_it: int = 64,
+        visual_drive_max_pA: float = 200.0,
+        # Spiking superior colliculus (N1 orienting; 2026-06-10). Considered for a default-True flip 2026-09-05
+        # (scaffold-retirement backlog rank 24) and REVERTED after measurement — see build_bg_brain_regions's
+        # enable_spiking_sc comment above for the full reasoning (a repo-wide audit found 7+ affected research
+        # probes + a fresh co-residence measurement showing only 4/6-seed directional reliability) and
+        # research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md
+        enable_spiking_sc: bool = False,
+        n_spiking_sc_fs: int = 12,
+        enable_spiking_sc_approach: bool = False,   # N5 Option C (neural approach-reward)
+        # #6 SC orienting read-out fix (2026-06-20). When True (only meaningful WITH enable_spiking_sc),
+        # the sc_map -> cortex_X read-out uses the population-VECTOR (cosine preferred-direction) decode
+        # instead of the half-plane LINEAR RAMP, AND the four cortex_X pools are flagged
+        # input_divisive_norm=True (bump-mass normalization). Together these turn the position-INVARIANT
+        # weighted-mass read-out (the 2026-06-20 stuck-N NEGATIVE) into a position decode that TRACKS the
+        # goal's retinal bearing -> the actor re-orients after a goal change. Default OFF => the deployed
+        # ramp read-out is byte-identical (the documented SC op-point reproduces unchanged). Env-var
+        # SC_POPVECTOR=1 also enables it (parallels SC_CORTEX_W / SC_SCRAMBLE). PURE POINT-NEURON, NO
+        # sim/ edit (a runner read-out-weight formula + the existing Carandini-Heeger divisive primitive).
+        # research/findings/2026-06-20-nav-readout-geometry-deep-research.md (Option A) + -burndown-6-*.
+        sc_popvector_readout: bool = False,
+        sc_popvector_divnorm_sigma: float = 1.0,   # Carandini-Heeger semi-saturation sigma on cortex_X
+        sc_popvector_divnorm_gain: float = 1.0,    # divisive strength on the four-cardinal mean term
+        # R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE -- the margin-SNR remedy that shrinks
+        # the R1-a 1.91x spiking-SC cost. When True (only meaningful WITH enable_spiking_sc AND the cortex_FS
+        # pools, i.e. enable_cortex_lateral_inhibition), the opposing-half-plane sc_map sites are wired into
+        # the cardinal's cortex_FS interneuron so a W-bump INHIBITS cortex_E (and each axis), making each
+        # cardinal's net SC drive the E-minus-W / N-minus-S opponent CONTRAST (common mode cancels; eccentric
+        # bump => a sharp single winner => higher orienting margin-SNR). Spiking inhibition via the existing
+        # FS pool, NO negative weights, NO sim/ edit. UPSTREAM of the Wang-2002 sel accumulator (the locus the
+        # FIX-3 read-out NEGATIVE prescribed for the differential remedy); COMPLEMENTARY to FIX B
+        # (enable_sel_opponent_pair). Env-var SC_OPPONENT_DECODE=1 also enables it. Default False =>
+        # byte-identical (no opponent edges installed). research/findings/2026-06-27-navcloseout-R2-...md.
+        sc_opponent_decode: bool = False,
+        sc_opponent_fs_weight: float = 14.0,       # per-edge sc_map->cortex_FS opponent drive (GPU-calibrated)
+        # #6 SURPASS (2026-06-22): biology-faithful LOG-POLAR / foveal-magnified egocentric SC retina.
+        # The default linear render_egocentric_goal map clips every eccentric (>~4-cell) goal off the
+        # 32-pixel sc_retina, so at grid-32 the schedule's far-corner goals render ENTIRELY off-image
+        # (sc_retina mass 0.0, the SC bump ABSENT) and NO selection/decode/projection op can act on an
+        # absent signal -- the deep-research-confirmed upstream residual of #6
+        # (research/findings/2026-06-22-shortcut6-upstream-orienting-residual-surpass.md). When True,
+        # the egocentric SC eye-drive render uses the SC's canonical log-polar map (preserve bearing,
+        # compress eccentricity) so a 30-cell goal lands on a compressed-but-PRESENT peripheral sc_map
+        # site -- restoring the very signal the prior NEGATIVE convergence proved was missing. This is
+        # the ENVIRONMENT sensory render (host-LEGITIMATE, channel-1 of the BRAIN-BASED-ONLY bar -- a
+        # compressive *visual* mapping, NOT a coordinate read-out; the brain still sees only the
+        # rendered retina image, never (gx,gy)); the cognition (SC bump -> pop-vector decode -> WTA
+        # selection) stays fully spiking and just gets a non-truncated input. Default False =>
+        # byte-identical (the linear render reproduces unchanged). NO sim/ edit (the render is in this
+        # runner). Env-var SC_LOG_POLAR=1 also enables it (parallels SC_POPVECTOR / SC_CORTEX_W).
+        #
+        # PRODUCTION DEFAULT = True (2026-06-21, production-wiring nav chunk item 1, after the #6 5/6-GO
+        # confirmation `research/findings/2026-06-22-shortcut6-log-polar-render-derisk.md`): the
+        # biology-faithful log-polar SC retina is now the library default. This is BYTE-INERT for the
+        # host-argmax read-out (the `--readout-source motor`/`thal` ORACLE) and for every standalone run
+        # that does not enable the spiking SC, because the egocentric SC eye-drive render that consumes
+        # this flag is GATED on `enable_spiking_sc and "sc_retina" in region_indices_cp`
+        # (g11_bg_runner.py:~7104) -- and `enable_spiking_sc` itself defaults False. So flipping this
+        # default regresses NO documented standalone benchmark (none enable the spiking SC by default);
+        # it only takes effect on the spiking-SC orienting path (the merged-nav default, where
+        # `nav_critic_spiking_sc=True` builds the SC), making the biology-faithful render the default
+        # there. The `--log-polar-retina` / `--no-log-polar-retina` CLI flags + the SC_LOG_POLAR env var
+        # give explicit override (`--no-log-polar-retina` reproduces the linear render byte-identically =>
+        # revertible).
+        log_polar_retina: bool = True,
+        log_polar_d0: float = 1.0,                  # foveal scale (cells): smaller -> more foveal magnification
+        # Cascade North-bias FIX 1 (2026-06-20): tie-aware STOCHASTIC action read-out. The host reads the
+        # spiking decision with `max(range(N), key=...)` (:7073), and Python's max returns the FIRST index
+        # on ties, so with ACTION_NAMES=["N","E","S","W"] every K-way tie deterministically resolves to N
+        # (index 0). The #6 trace showed the sel_X/commit_X accumulators SATURATE TOGETHER at the ceiling
+        # ([40,40,40,40]) nearly every step -> the N-first tie-break becomes the de-facto policy, swamping
+        # the SC orienting signal (a structural North-bias). When True, a K-way tie (>=2 actions within
+        # `sc_tie_break_eps` counts of the leader) is broken by a UNIFORM draw among the tied set using the
+        # persistent per-episode action_rng (Wang-2002 finite-size decision noise breaks genuine ties;
+        # 2026-06-19-spiking-decision-default-on-GO.md), NOT the N-first ordering. This is a host READ of a
+        # genuine spiking tie -> a fair read is the correct, non-cheating thing to do (not a new mechanism).
+        # Default OFF => byte-identical (the N-first max() reproduces unchanged). Env-var SC_TIE_BREAK=1 also
+        # enables it. PURE READ-OUT, NO sim/ edit. Reported: the fraction of decisions resolved by the tie
+        # draw (an anti-cheat: a GO needs the decision driven by the SC MARGIN, few ties, not lucky draws on
+        # full [40,40,40,40] ties). research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 1).
+        sc_tie_break_stochastic: bool = False,
+        sc_tie_break_eps: int = 0,                 # tie tolerance (counts): tied = count >= leader - eps
+        # Cascade North-bias FIX 2 (2026-06-20): per-pool baseline EQUALIZATION at the selection stage. The
+        # all-saturate-at-40 ties (the source of the FIX-1-relevant tie regime) arise because the four sel_X
+        # accumulators have no mechanism driving their baseline firing toward a common target -- they all pin
+        # at the ceiling. When True, flag the four sel_{N,E,S,W} pools BrainRegion.enable_homeostasis=True so
+        # each independently regulates its baseline firing rate toward a common target (per-region threshold-
+        # adapt, sim/bridge.py:1254-1266; Turrigiano scaling / homeostatic AIS plasticity, catalog I.01).
+        # Distinct from the global cfg.enable_homeostasis (held OFF for the deterministic regime) -- this is
+        # the per-region mask, which fires independently of the global flag (bridge.py:6464). Stacks on FIX 1
+        # to convert "unbiased" into "selective" when FIX 1 alone leaves residual bias. Default OFF =>
+        # byte-identical (no region opts in, the per-region homeostasis mask is None, the step is unchanged).
+        # Env-var SC_SEL_HOMEO=1 also enables it. Existing primitive, NO sim/ edit (a region flag set BEFORE
+        # the bridge is built). research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 2b).
+        sc_sel_homeostasis: bool = False,
+        # Cascade North-bias FIX 3 (2026-06-20): OPPONENT-AXIS push-pull read-out. The four cardinals form
+        # two natural opponent axes (N<->S, E<->W). Instead of a flat 4-way argmax among near-tied pools (where
+        # a faint position-correct SC margin on ONE axis is a sub-threshold contributor lost in the global race
+        # and the N-first ordering decides), the decision is a SIGNED push-pull per axis: axis_NS = count[N] -
+        # count[S], axis_EW = count[E] - count[W]; pick the axis with the larger |signed margin|, then the sign
+        # within that axis. A faint W-over-E surplus (far-W goal) becomes a DECISIVE axis winner rather than a
+        # weak 4-way contender. Biology: the superior-colliculus motor map's opponent/push-pull organization
+        # (distinct populations encode OPPOSING movement directions with balanced E/I preventing a directional
+        # bias; Nature Comms 2023, Comms Biol 2025; catalog H.25) + the project's E-cluster ON/OFF opponency.
+        # When BOTH axes' |margin| <= sc_opponent_axis_eps (a genuine tie), fall through to the FIX-1 tie-break
+        # draw if on (else the N-first ordering) -- so FIX 3 sharpens the weak-but-nonzero per-axis margins that
+        # FIX 1's whole-set tie-break could not resolve. Default OFF => byte-identical (the flat argmax path is
+        # unchanged). Env-var SC_OPPONENT_AXIS=1 also enables it. PURE READ-OUT, NO sim/ edit (it reads the same
+        # sel_X/commit_X counts the flat argmax reads). Reported: the fraction of decisions decided by an axis
+        # margin vs falling through to the tie-break (an anti-cheat: a GO needs the axis margin load-bearing).
+        # research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 3).
+        sc_opponent_axis: bool = False,
+        sc_opponent_axis_eps: int = 0,             # axis tie tolerance (counts): tie if |axis margin| <= eps
+        # Cascade-accumulator FIX A (2026-06-20): DIVISIVE NORMALIZATION at the sel_X accumulator INPUT
+        # (the mechanistically-matched remedy for the residual North bias the FIX-1/2/3 read-out fixes could
+        # not remove at the source). The source probe localized a small thalamic N-over-S common-mode lead
+        # (~+11%) that the Wang-2002 sel_X NMDA-recurrent accumulators amplify (~12x absolute, to ~+26%);
+        # because the race integrates each ABSOLUTE drive, a common-mode additive offset is integrated like
+        # signal (Bogacz et al. 2006). When True, flag the four sel_{N,E,S,W} pools input_divisive_norm_2=True
+        # and enable cfg.enable_input_divisive_norm_2 (the SECOND, independent divisive pool added 2026-06-20),
+        # so each sel_X's input is divided by (sigma + gain*mean over the four sel pools) -- the common
+        # N+E+S+W drive is divided out BEFORE the accumulators amplify it, leaving the position-bearing
+        # differential (Carandini-Heeger canonical normalization; catalog E.05/E.16/E.17). A SEPARATE pool
+        # from the cortex_X bump-mass pool (input_divisive_norm/pool-1) so the two never mix currents. Master
+        # switch = the sc_sel_divnorm kwarg OR the SC_SEL_DIVNORM env var. Default OFF => byte-identical (no
+        # sel pool opts in; cp_input_divisive_mask_2 is None; the second per-step block is unreached).
+        # MINIMAL guarded sim/ edit (the second pool); FLAGGED for byte-review.
+        # research/findings/2026-06-20-shortcut6-FIXA-divnorm-accumulator.md (FIX A).
+        sc_sel_divnorm: bool = False,
+        sc_sel_divnorm_sigma: float = 1.0,         # Carandini-Heeger semi-saturation sigma on the sel_X pool
+        sc_sel_divnorm_gain: float = 1.0,          # divisive strength on the four-sel mean term
+        # Cluster K v2 (2026-05-01)
+        visual_receptive_field_radius: int = 4,
+        visual_v1_weight_scale: float = 10.0,
+        visual_it_to_cortex_density: float = 0.5,
+        # Steps before IT -> cortex_X gate opens. Mimics critical-period
+        # closure: V1/V2/IT mature first, then visuomotor wiring follows.
+        # 0 = open from start (no critical period); -1 = stay closed forever
+        # (visual cortex passive observer).
+        visual_cortex_action_warmup_steps: int = 600,
+        # Text I/O (2026-05-01): language_input + language_output regions for
+        # bidirectional text training and dialogue. Driven externally via
+        # bridge.set_token_drive() and read via bridge.read_language_output().
+        # See sim/text_embeddings.py and docs/plans/2026-05-01-text-interaction-design.md.
+        enable_text_io: bool = False,
+        text_n_input_neurons: int = 256,
+        text_n_output_neurons: int = 256,
+        text_input_to_pfc_density: float = 0.20,
+        text_input_to_pfc_weight: float = 2.0,
+        text_input_to_cortex_density: float = 0.20,
+        text_it_to_output_density: float = 0.20,
+        # Tier 2.2 (2026-05-06): embodied-language during navigation.
+        # Pulvermüller somatotopic semantics applied to the navigating
+        # agent. When agent executes action a, drive language_input[word(a)] +
+        # language_output[word(a)] simultaneously → STDP at lang↔motor
+        # pathways binds word to action via embodied co-firing. When
+        # agent perceives goal (within N cells), drive language_input["goal"] +
+        # language_output["goal"] → STDP at lang↔IT pathways binds word
+        # to visual concept. Same paradigm as Tier 1+2.1 but applied to
+        # the navigating agent's perception/action stream. Requires
+        # enable_text_io=True for the language regions.
+        embodied_language: bool = False,
+        embodied_language_drive_pA: float = 80.0,  # Lower than Tier 1's 200pA
+                                                    # because nav has competing
+                                                    # retina+BG drives. 200 was
+                                                    # disruptive (smoke result).
+        embodied_language_goal_radius: int = 3,
+        embodied_language_every_n_steps: int = 5,  # Sporadic drive (not every
+                                                    # step) — real biology pairs
+                                                    # language with experience
+                                                    # episodically, not at every
+                                                    # microsecond. Drive once
+                                                    # per N steps.
+        embodied_language_warmup_steps: int = 600,  # Skip language drive until
+                                                    # nav has converged. Real
+                                                    # children hear words during
+                                                    # intentional action, not
+                                                    # random flailing. Bind only
+                                                    # to "successful" actions.
+        # Cluster F v2 (2026-04-30): CF-gated anti-Hebbian LTD per Albus 1971
+        # §IV.C eq.4. v1 used the global reward signal for PF→PC plasticity
+        # (cerebellum and BG learned redundantly from the same signal). v2
+        # decouples: cerebellum_pf_pc synapses see -1.0 only when IO is active
+        # (CF event), 0.0 otherwise — global reward propagates only to non-
+        # cerebellum synapses. Per Albus, cerebellum should ONLY weaken on
+        # CF events, never strengthen on positive reward. Requires
+        # enable_cluster_f_cerebellum=True. Default OFF.
+        enable_cluster_f_v2: bool = False,
+        # Structural-pruning hyperparameters (cheat-5 option-1, 2026-04-28).
+        # Defaults match CoreSimConfig but can be overridden from the runner's
+        # CLI / kwargs to tune the pruning aggressiveness for short pretraining
+        # windows (e.g. smoke tests). None preserves the cfg default.
+        pruning_alpha: float = None,
+        pruning_threshold: float = None,
+        pruning_weight_floor: float = None,
+        # Heuristic decay (Stage 6, 2026-04-27): scales the heuristic cortex
+        # drive (800 pA per aligned pool) by this factor. Default 1.0 keeps
+        # full heuristic. Set to 0.0 to disable heuristic entirely (tests
+        # whether learned hippo weights alone can navigate). Useful for
+        # validating that hippo actually learned something vs. just being
+        # along for the ride.
+        heuristic_strength: float = 1.0,
+        # Step at which heuristic_strength changes from heuristic_strength to
+        # post_curriculum_heuristic_strength. -1 = no change (default).
+        heuristic_decay_after_step: int = -1,
+        post_curriculum_heuristic_strength: float = 0.0,
+        # Critical-period developmental scaffold (N1, 2026-06-06). Instead of the
+        # abrupt step-down of heuristic_decay_after_step, this LINEARLY ramps the
+        # effective heuristic_strength from its base value down to 0 over the
+        # window [heuristic_wean_start, heuristic_wean_start + heuristic_wean_steps],
+        # then holds at 0. Biology: an innate scaffold (the heuristic teacher)
+        # bootstraps the learned IT->cortex_X mapping during an early critical
+        # period, then fades — the deployed weaned agent navigates from genuinely-
+        # learned perception with NO heuristic. heuristic_wean_start = -1 (default)
+        # disables the wean (unchanged behavior). When enabled, it takes precedence
+        # over heuristic_decay_after_step.
+        heuristic_wean_start: int = -1,
+        heuristic_wean_steps: int = 1500,
+        # ADAPTIVE / activity-gated weaning (N1, 2026-06-06). A FIXED critical-period
+        # clock (heuristic_wean_start) is NOT robust across seeds — the post-wean hold
+        # is seed-dependent and non-monotonic (more teaching can HURT; see
+        # research/findings/2026-06-06-N1-critical-period-scaffold-TRACTABLE.md). Real
+        # critical periods close when the circuit is READY (Hensch — activity/
+        # maturation-gated), not on a clock. With heuristic_wean_adaptive=True the
+        # runner PROBES readiness online: every wean_probe_every steps it turns the
+        # heuristic OFF for a short probe window (wean_probe_window steps) and measures
+        # the agent's mean distance to goal during the probe. If the learned mapping
+        # navigates self-sufficiently (mean probe distance <= wean_probe_threshold),
+        # it COMMITS — weans the heuristic off permanently by ramping to 0 over
+        # heuristic_wean_steps from the commit step. Otherwise the heuristic turns back
+        # ON (keep teaching) until the next probe. This adapts to each seed's sweet
+        # spot and avoids over-training. Takes precedence over the fixed-clock wean
+        # (heuristic_wean_start) when both are set. Default OFF (unchanged behavior).
+        heuristic_wean_adaptive: bool = False,
+        wean_probe_every: int = 500,
+        wean_probe_window: int = 200,
+        wean_probe_threshold: float = 2.5,
+        # Sleep-replay memory consolidation (Stage 7, 2026-04-27).
+        # During sleep phases: no external goal, hippo cells fire in random
+        # replay patterns (modeling NREM sharp-wave ripples), corticostriatal
+        # is thawed (consolidation), hippo_to_cortex is frozen (preserve
+        # learned weights). The replayed hippo signal drives cortex pools
+        # via the learned hippo→cortex weights, and STDP between cortex_X
+        # and D1_X consolidates the pattern into the cortex→D1 cascade.
+        # After sleep, the cortex→D1 weights should encode hippo's learned
+        # mapping, enabling navigation with reduced hippo dependency.
+        # Biologically: episodic→semantic memory consolidation during NREM.
+        # -1 = no sleep replay (default).
+        sleep_replay_after_step: int = -1,
+        sleep_replay_steps: int = 300,
+        sleep_replay_rate_hz: float = 200.0,  # high rate (sharp-wave ripples)
+        # NREM/REM stages (Item 7, 2026-04-27). When sleep_nrem_rem_alternate=True,
+        # the sleep period alternates between NREM (trajectory replay, slow ripples)
+        # and REM (random replay, faster). NREM cycle dominates first half, REM
+        # second half, modeling sleep-stage progression.
+        sleep_nrem_rem_alternate: bool = False,
+        # Reverse-order trajectory replay during NREM (2026-04-30). Real CA1/CA3
+        # ripples replay trajectories in reverse time order during NREM (Foster
+        # & Wilson 2006, Diba & Buzsaki 2007). When enabled, the runner indexes
+        # the successful_trajectories buffer from newest-to-oldest by sleep step
+        # index instead of random sampling. Biologically grounded as TD-style
+        # backward credit assignment. Default off — backward compatible.
+        enable_reverse_replay: bool = False,
+        # Hindsight Experience Replay (Andrychowicz 2017). Logs
+        # (old_pos, current_pos) tuples to successful_trajectories every
+        # `her_lag_steps`, treating the achieved position as if it had been
+        # the goal. Provides hindsight credit assignment for sparse-goal
+        # generalization. Default off.
+        enable_her: bool = False,
+        # Recency-weighted replay (2026-04-30): exponential bias toward newest
+        # successful_trajectories during NREM. Addresses the "stale replay"
+        # bottleneck flagged in SCIENCE_ROADMAP §4.7 (older entries are from
+        # goals that no longer apply). Default off.
+        enable_recency_weighted_replay: bool = False,
+        # 2026-04-30 probe: when True, heuristic drives only ONE cortex pool
+        # (random choice among manhattan-reducing directions) instead of all
+        # valid directions. Matches g11_bg_replicated_runner's heuristic.
+        # Investigating whether this is the source of the replicated-vs-single
+        # discrepancy.
+        heuristic_single_pool: bool = False,
+        # PFC Stage 2: delayed-response test. Silence goal_cells during a delay
+        # window to test whether PFC maintains goal info via persistent activity.
+        # If PFC works as working memory, agent should still navigate toward goal
+        # during the silence period (PFC remembers). Without PFC, agent should
+        # drift (no goal info available).
+        goal_silence_after_step: int = -1,
+        goal_silence_duration: int = 0,
+        # N8 cheat conversion (2026-06-06): genuine GPi->thalamus disinhibition.
+        # The default tonic regime drives thal_X with a direct 300 pA current (N8)
+        # and gpi_X with only 110 pA — the thalamic relay is externally PACED, so
+        # the BG cascade's output gate is short-circuited (selection happens
+        # upstream but the thalamus it should gate is paced regardless). When
+        # genuine_thal_disinhibition=True, the thalamic relay is RELEASED by a real
+        # direct-pathway cascade instead: GPi is a strong tonic pacemaker
+        # (genuine_gpi_tonic_pA) that silences thal_X by default; the selected
+        # action's cortex drive -> D1 -> (GABA) GPi silence -> thal_X DISINHIBITED.
+        # thal_X carries only a tonic excitation (genuine_thal_tonic_pA) it can
+        # express ONLY when its GPi is released. The cortex->D1->gpi->thal->motor
+        # pathways already exist at the validated weight scale (D1->GPi=15,
+        # GPi->thal=8); this flag only changes the gpi/thal DRIVES and removes the
+        # direct thal pacing. Ported from gated_compose_bg_genuine_demo.py
+        # (Logiaco-Abbott-Escola 2021; Kandel ch 38 direct-pathway "go").
+        # Default OFF = the tonic-drive cheat stays runnable as the CONTROL.
+        genuine_thal_disinhibition: bool = False,
+        genuine_gpi_tonic_pA: float = 1000.0,   # tonic GPi pacemaker drive (silences thal by default)
+        genuine_thal_tonic_pA: float = 900.0,   # tonic thalamic excitation (expressed only when GPi releases)
+        # N6 readout-source (2026-06-06): which spiking pool the host argmax reads
+        # for action selection. "motor" = legacy (host argmax over motor_X spike
+        # counts; the N6 cheat). "thal" = read the cleanly-selective THALAMUS
+        # (argmax over thal_X spike counts). Under genuine GPi->thal disinhibition
+        # the thalamus is the cleanest, strongest selection signal (only the
+        # released action's thal fires, others ~0); the thal->motor labeled-line
+        # amplification is too weak for a reliable motor-count argmax over a noisy
+        # multi-goal run. Reading thal is the combined N8+N6 fix's cheap test:
+        # "is the weak motor SIGNAL the whole problem?". Default "motor"
+        # (backward-compatible). See research/findings/2026-06-06-N8N6-*.
+        # DEFAULT-ON 2026-06-19 (CYCLE 235): the fully-spiking commit-burst decision is now the LIBRARY default
+        # (the merged "one brain" navigates fully-spiking) — validated 6-seed grid-32 at 1.16x host with 100%
+        # commit-burst (2026-06-19-spiking-decision-default-on-GO.md). "motor"/"thal" = the opt-in host-argmax
+        # ORACLE; the CLI --readout-source still defaults to "motor" so the documented standalone benchmarks
+        # reproduce unchanged. The tuned levers below (sel_recurrent_weight 0.3 + n_sel/n_commit 40) are the
+        # cost-reduction winners and are inert under "motor"/"thal" (the sel/commit layer is only built for spiking_wta).
+        readout_source: str = "spiking_wta",
+        # TRN-style thalamic lateral inhibition (2026-06-06, N8+N6) — a biological
+        # WTA on the thalamic relay (the clean genuine-disinhibition signal). See
+        # build_bg_brain_regions for the mechanism. Combine with readout_source="thal".
+        enable_thal_lateral_inhibition: bool = False,
+        n_thal_fs_per_action: int = 5,
+        thal_to_fs_weight: float = 50.0,
+        # Spiking action-selection WTA readout (2026-06-06, N6 biologization). A
+        # dedicated read-only sel_X / sel_FS_X selection layer driven by the clean
+        # thalamus; the action decision EMERGES from the spiking competition rather
+        # than a host argmax. Built when readout_source="spiking_wta". See
+        # build_bg_brain_regions for the mechanism + why it differs from the prior
+        # (failed) motor/TRN WTAs.
+        n_sel_per_action: int = 40,   # DEFAULT-ON 2026-06-19: N-scaled accumulator pool (finite-size-noise lever, 20->40 -> 1.16x host)
+        n_sel_fs_per_action: int = 10,
+        thal_to_sel_weight: float = 30.0,
+        sel_to_sel_fs_weight: float = 20.0,
+        sel_fs_to_sel_weight: float = 5.0,
+        # Cascade-accumulator FIX B (2026-06-20): opponent-pair the sel accumulators (see
+        # build_bg_brain_regions). Default OFF => byte-identical (the all-to-all sel_FS cross-inhibition).
+        enable_sel_opponent_pair: bool = False,
+        sel_opponent_weight: float = 12.0,
+        sel_crossaxis_weight: float = 0.0,
+        # Accumulate-then-commit readout (2026-06-06, N6 fix). See
+        # build_bg_brain_regions for the full mechanism (Wang-2002 NMDA recurrent
+        # accumulator on sel_X + Lo-Wang/SC commit_X burst stage). These tune the
+        # recurrent gain (alpha<1 soft-WTA), the commit threshold, and the OPN
+        # tonic inhibition. Active only when readout_source="spiking_wta".
+        sel_recurrent_density: float = 0.5,
+        sel_recurrent_weight: float = 0.3,   # DEFAULT-ON 2026-06-19: leak/forgetting (Usher-McClelland; 1.0->0.3 cuts the cross-trial NMDA hysteresis = the dominant cost)
+        enable_commit_burst: bool = True,
+        n_commit_per_action: int = 40,   # DEFAULT-ON 2026-06-19: N-scaled commit pool (grown in lockstep with n_sel_per_action)
+        n_commit_opn: int = 20,
+        sel_to_commit_weight: float = 22.0,
+        commit_recurrent_density: float = 0.5,
+        commit_recurrent_weight: float = 0.6,
+        opn_to_commit_weight: float = 10.0,
+        commit_opn_tonic_pA: float = 0.0,
+        # Reset the accumulator (sel_X + commit_X NMDA + fast conductances) at the
+        # START of each trial. Motivation: the NMDA-slow accumulator (tau_decay=100ms)
+        # persists ~one full inter-trial, so at goal-change boundaries the previous
+        # trial's winner lingers (working-memory hysteresis). HOWEVER, empirically
+        # (grid-8 multi-goal seed 42) the reset is NET NEGATIVE: zeroing the NMDA
+        # state each trial removes the carried-over drive that helps the burst fire,
+        # so commit goes silent on ~55% of trials (vs ~34% un-reset) and the score
+        # WORSENS (6.93 reset vs 4.71 un-reset). The cross-trial persistence is a
+        # smaller cost than the lost ramp. So default FALSE; the persistence (a
+        # working-memory latch, biologically real) is kept. Opt in with
+        # --reset-accumulator for the goal-change-hysteresis ablation. NO sim/ edit.
+        reset_accumulator_each_trial: bool = False,
+        # N6 refinement 1 (2026-06-06): LOSER-ONLY accumulator reset. Zero the NMDA +
+        # fast conductances on every sel_X (+commit_X) pool EXCEPT the previous trial's
+        # selected action each trial. Surgical hysteresis removal: the winner's
+        # working-memory latch persists (fast re-ramp when the goal is stable) while the
+        # three losers integrate fresh evidence, so at a goal change the stale old winner
+        # decays naturally instead of out-competing the new thal evidence. Unlike the
+        # naive ALL-reset (reset_accumulator_each_trial, NET NEGATIVE → 6.93) the eventual
+        # winner is only ever reset while it is a loser, so its eventual ramp is never
+        # zeroed. Mutually exclusive with reset_accumulator_each_trial (the all-reset
+        # takes precedence if both set). Active only under readout_source="spiking_wta".
+        # NO sim/ edit. (Cisek trial-wise re-baselining of the losing options.)
+        # EMPIRICAL (grid-8 multi-goal seed 42, 2026-06-06): NET NEGATIVE alone (SUM
+        # 5.58 vs 4.71 baseline — it preserves the PREVIOUS-decision winner's latch, so
+        # at a goal change the stale winner is kept while the new winner — among the
+        # freshly-reset losers — integrates slower; random fallback jumps to 25.7%) and
+        # adds no net lift combined with urgency (4.35 combined vs 4.08 urgency-alone:
+        # phase 2 regresses 1.43→2.02). Kept opt-in; NOT recommended.
+        reset_losers_only: bool = False,
+        # N6 refinement 2 (2026-06-06): CISEK URGENCY / collapsing decision bound. Peak
+        # (pA) of a ramping action-INDEPENDENT urgency current injected into all sel_X
+        # over the readout window (0 at readout_start → urgency_max_pA at readout_end).
+        # The effective commit bound collapses with elapsed time so even a weak
+        # late-phase release crosses within the 100ms window → the commit bursts
+        # (eliminates the silent-commit → host-argmax-residual fallback). Same drive for
+        # every pool → no action bias; only the time-to-cross shrinks (Cisek 2009;
+        # Thura-Cisek 2014; Lo-Wang 2006 DA-modulated bound). Default 0 = OFF. Active
+        # only under readout_source="spiking_wta". NO sim/ edit.
+        # EMPIRICAL (grid-8 multi-goal seed 42, 2026-06-06): the BEST refinement. At
+        # urgency_max_pA=180 the cheat-5 SUM improves 4.71→4.08, the random fallback is
+        # nearly eliminated (25%→1.4%), thal-winner alignment jumps 80%→94.8% and commit
+        # separation 15×→49× (the decision is MORE decisive + accurate, not a quiet
+        # argmax lean). Phases 0-1 reach the host-argmax reference (0.60/0.50); the
+        # residual cost stays in the goal-change phases 2-3 (cross-trial NMDA hysteresis,
+        # which the loser-only reset does not fix). RECOMMENDED value: 180.
+        urgency_max_pA: float = 180.0,   # DEFAULT-ON 2026-06-19: the Cisek collapsing bound (REQUIRED for spiking_wta -> 100% commit-burst, no silent-commit fallback)
+        thal_fs_to_thal_weight: float = 20.0,
+        # ── Live brain-activity streaming (frontend-revamp Phase 1, 2026-06-08) ──
+        # docs/plans/2026-06-08-frontend-revamp-design.md §3.4. Default OFF: when
+        # emit_activity is False, the RegionActivityProbe is never constructed and
+        # emit_activity() is never called, so the step loop is byte-identical and
+        # every multi-seed / determinism / science run is unaffected (zero overhead).
+        # When True, build the probe ONCE and emit a throttled [ACTIVITY] {json}
+        # line every `emit_activity_every` steps (fire-and-forget to stdout -> the
+        # run's .log; the webapp tails it). The probe is a tiny host-side per-region
+        # mean-firing reduction (~30 floats), NOT per-neuron, so it never bottlenecks
+        # the sim. Requires the brain-region framework (region_manager) — always on
+        # for the BG nav cascade.
+        emit_activity: bool = False,
+        emit_activity_every: int = 5,
+        # ── STEP 2a merge integration: additive override for the STDP soft-bound
+        # ceiling (cfg.stdp_w_max). Default None = the existing computed value
+        # (max(30, 25/0.20*1.2) = 150), so the standalone nav path is BYTE-EQUIVALENT
+        # when this is unused. The merge passes 400 (the 5a clip mitigation — raised
+        # above the ~300 frozen parser role-route so the ungated reward clip cannot
+        # move it). The nav-gate (a) check verifies the soft-bound nav actor
+        # (cortex->D1) does NOT over-grow when the ceiling is raised. NO sim/ edit.
+        stdp_w_max_override=None,
+        # STEP 2a merge integration (additive; ALL default no-op => standalone nav BYTE-EQUIVALENT).
+        # extra_regions/extra_pathways: conversational regions/pathways appended to the nav lists so they share
+        #   ONE bridge. build_with_ou: build with OU on so the parser train pass's OU per-neuron state is allocated
+        #   at init (a runtime toggle does NOT allocate it). prebuilt_post_init_hook(bridge): called AFTER the
+        #   Gabor/SC post-init wiring (which rebuilds the CSR) and BEFORE the episode loop, to train+freeze the
+        #   conversational populations on the merged bridge. See research/runners/nav_conv_merged_bridge.py.
+        extra_regions=None,
+        extra_pathways=None,
+        prebuilt_post_init_hook=None,
+        build_with_ou=False,
+    ):
+        """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
+    
+        If the BG architecture dissolves the silent-motor trap (which V1-V7
+        runner-side interventions all failed to do), phase 1 finalQ should
+        drop substantially below the G9 baseline of 6.74.
+        """
+        # v4 (2026-04-28): conflict check. v4 keeps cross-projections frozen
+        # during eval; v3.1 thaws them at bg_cross_thaw_step. Both at once is
+        # meaningless. Fail loud instead of silent priority resolution.
+        if enable_developmental_pretraining and bg_cross_thaw_step >= 0:
+            raise ValueError(
+                "--developmental-pretraining (v4) is incompatible with "
+                "--bg-cross-thaw-step (v3.1). v4 keeps cross-projections frozen "
+                "throughout eval; v3.1 thaws them mid-eval. Use one or the other, "
+                f"not both. Got bg_cross_thaw_step={bg_cross_thaw_step}."
+            )
+        if enable_developmental_pretraining and not enable_bg_cross_projections:
+            print(
+                "[g11 warning] --developmental-pretraining without "
+                "--enable-corticostriatal-cross: pretraining will run but won't shape any "
+                "corticostriatal_cross gate (no cross pathways exist). Did you "
+                "mean to also pass --enable-corticostriatal-cross "
+                "(or its legacy alias --bg-cross-projections)?",
+                flush=True,
+            )
+        import cupy as cp
+        from sim import (
+            SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig,
+        )
+        from sim.enums import NeuronModel
+    
+        if goal_schedule is None:
+            goal_schedule = [(0, tuple(goal_pos))]
+        goal_schedule_sorted = sorted(
+            [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
+        )
+    
+        # N6 readout-source normalization. Validated up-front (before wiring) so
+        # the builder can conditionally add the spiking-WTA selection layer.
+        _readout_source = str(readout_source).lower()
+        if _readout_source not in ("motor", "thal", "spiking_wta"):
+            raise ValueError(
+                "readout_source must be 'motor', 'thal', or 'spiking_wta', "
+                f"got {readout_source!r}")
+    
+        # N9 nav-deployment HARD-GATE (design §4 BRAIN-BASED-ONLY audit): when the neural place-code
+        # self-org path is active, the position-blind convergent up-state (A1 floor) is DROPPED — the
+        # de-risk found it caps value-grading ~1.2x. enable_convergent_upstate is forced OFF for the
+        # rest of run_g11 (build + warm-up + nav drive) when neural_place_selforg is on.
+        _neural_place_selforg = bool(neural_place_selforg and enable_neural_critic)
+        if _neural_place_selforg and enable_convergent_upstate:
+            enable_convergent_upstate = False
+            if verbose:
+                print("[g11] N9 neural_place_selforg ON -> enable_convergent_upstate HARD-GATED OFF "
+                      "(the position-blind A1 floor caps grading ~1.2x).", flush=True)
+        # #5b R1 grid front end requires the self-org place pool (it is the place_sensors afferent). If
+        # requested without neural_place_selforg, disable it (the landmark/host afferent is the only place
+        # input otherwise) -> default-OFF safety.
+        if nav_critic_grid_frontend and not _neural_place_selforg:
+            nav_critic_grid_frontend = False
+            if verbose:
+                print("[g11] nav_critic_grid_frontend requested without neural_place_selforg -> DISABLED "
+                      "(the grid front end is the self-org place_sensors afferent; needs the place pool).",
+                      flush=True)
+        # Spiking US -> SNc coord-free guard: the reward_us afferent rides on the PERCEIVED reward.
+        # WITHOUT --perceived-approach-reward, `reward` is the coord-touched default -> the spiking US is
+        # then driven by a coordinate-derived signal (a documented residual shortcut, NOT coord-free).
+        if spiking_reward_us and not perceived_approach_reward and verbose:
+            print("[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides "
+                  "on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the "
+                  "fully-biologized (coord-free) reward chain.", flush=True)
+    
+        regions, pathways = build_bg_brain_regions(
+            n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
+            enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
+            enable_thal_lateral_inhibition=enable_thal_lateral_inhibition,
+            n_thal_fs_per_action=n_thal_fs_per_action,
+            thal_to_fs_weight=thal_to_fs_weight,
+            thal_fs_to_thal_weight=thal_fs_to_thal_weight,
+            enable_spiking_wta_readout=(_readout_source == "spiking_wta"),
+            n_sel_per_action=n_sel_per_action,
+            n_sel_fs_per_action=n_sel_fs_per_action,
+            thal_to_sel_weight=thal_to_sel_weight,
+            sel_to_sel_fs_weight=sel_to_sel_fs_weight,
+            sel_fs_to_sel_weight=sel_fs_to_sel_weight,
+            enable_sel_opponent_pair=enable_sel_opponent_pair,
+            sel_opponent_weight=sel_opponent_weight,
+            sel_crossaxis_weight=sel_crossaxis_weight,
+            sel_recurrent_density=sel_recurrent_density,
+            sel_recurrent_weight=sel_recurrent_weight,
+            enable_commit_burst=enable_commit_burst,
+            n_commit_per_action=n_commit_per_action,
+            n_commit_opn=n_commit_opn,
+            sel_to_commit_weight=sel_to_commit_weight,
+            commit_recurrent_density=commit_recurrent_density,
+            commit_recurrent_weight=commit_recurrent_weight,
+            opn_to_commit_weight=opn_to_commit_weight,
+            enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
+            n_cortex_fs_per_action=n_cortex_fs_per_action,
+            cortex_to_fs_weight=cortex_to_fs_weight,
+            fs_to_cortex_weight=fs_to_cortex_weight,
+            enable_learned_perception=enable_learned_perception,
+            enable_hippocampus=enable_hippocampus,
+            n_hippocampus_per_layer=n_hippocampus_per_layer,
+            sensory_to_cortex_weight=sensory_to_cortex_weight,
+            hippocampus_to_cortex_weight=hippocampus_to_cortex_weight,
+            enable_pfc=enable_pfc,
+            n_pfc=n_pfc,
+            pfc_internal_density=pfc_internal_density,
+            goal_to_pfc_weight=goal_to_pfc_weight,
+            pfc_to_cortex_weight=pfc_to_cortex_weight,
+            pfc_enable_nmda=enable_pfc_nmda,
+            enable_bg_cross_projections=enable_bg_cross_projections,
+            cross_projection_weight=cross_projection_weight,
+            cross_projection_density=cross_projection_density,
+            cross_projection_topology_seed=cross_projection_topology_seed,
+            enable_bg_lateral_inhibition=enable_bg_lateral_inhibition,
+            lateral_inhibition_density=lateral_inhibition_density,
+            lateral_inhibition_weight=lateral_inhibition_weight,
+            enable_striatal_fsis=enable_striatal_fsis,
+            enable_cluster_a_closed_loop=enable_cluster_a_closed_loop,
+            enable_cluster_d_hippocampus=enable_cluster_d_hippocampus,
+            enable_cluster_d_v2_swr=enable_cluster_d_v2_swr,
+            enable_cluster_e_topography=enable_cluster_e_topography,
+            cluster_e_distance_sigma=cluster_e_distance_sigma,
+            enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
+            n_granule=n_granule,
+            enable_visual_cortex=enable_visual_cortex,
+            enable_spiking_sc=enable_spiking_sc,
+            n_spiking_sc_fs=n_spiking_sc_fs,
+            enable_spiking_sc_approach=enable_spiking_sc_approach,
+            # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
+            enable_neural_critic=enable_neural_critic,
+            spiking_reward_us=spiking_reward_us,
+            n_reward_us=n_reward_us,
+            reward_us_to_snc_weight=reward_us_to_snc_weight,
+            reward_us_to_snc_density=reward_us_to_snc_density,
+            # N9 NEURAL PLACE-CODE SELF-ORG (2026-06-09 nav deployment) — the self-organized spiking
+            # place code afferent + FS-PING + coincidence critic (replaces the host vs_place_context).
+            neural_place_selforg=_neural_place_selforg,
+            n_place=n_place,
+            n_place_fs=n_place_fs,
+            place_sensors_to_place_weight=place_sensors_to_place_weight,
+            place_sensors_to_place_density=place_sensors_to_place_density,
+            place_sensors_to_place_jitter=place_sensors_to_place_jitter,
+            enable_critic_fs_inhibition=enable_critic_fs_inhibition,
+            critic_fs_weight=critic_fs_weight,
+            critic_fs_density=critic_fs_density,
+            place_fs_weight=place_fs_weight,
+            place_fs_density=place_fs_density,
+            fs_to_place_weight=fs_to_place_weight,
+            fs_to_place_density=fs_to_place_density,
+            coincidence_threshold=coincidence_threshold,
+            coincidence_train_k=coincidence_train_k,
+            coincidence_plateau=coincidence_plateau,
+            n_place_bearing=n_place_bearing,
+            n_place_dist=n_place_dist,
+            nav_critic_grid_frontend=nav_critic_grid_frontend,
+            grid_n_modules=grid_n_modules,
+            grid_n_per_module=grid_n_per_module,
+            grid_lambda_min=grid_lambda_min,
+            grid_lambda_max=grid_lambda_max,
+            # Critic drive calibration (2026-06-08): raised place-afferent weight so the
+            # learned value-of-location is well-graded (the MSN-D1->RS type swap is applied
+            # to the returned region below, after build, to keep the build signature stable).
+            critic_cortex_it_to_value_weight=critic_afferent_weight,
+            critic_cortex_it_to_value_density=critic_afferent_density,
+            # 2026-06-09 VALIDATED redesign: the dense dedicated afferent + per-region homeostasis.
+            enable_critic_homeostasis=enable_critic_homeostasis,
+            n_vs_place_context=n_vs_place_context,
+            vs_place_to_value_weight=vs_place_to_value_weight,
+            vs_place_to_value_density=vs_place_to_value_density,
+            dendrite_critic=bool(dendrite_critic),   # shortcut #9 host-RETIRED: graded dendrite value
+            enable_convergent_upstate=enable_convergent_upstate,
+            vs_place_drive_to_value_weight=vs_place_drive_to_value_weight,
+            vs_place_drive_to_value_density=vs_place_drive_to_value_density,
+            visual_n_orientations=visual_n_orientations,
+            visual_n_frequencies=visual_n_frequencies,
+            visual_n_positions_per_dim=visual_n_positions_per_dim,
+            visual_image_size=visual_image_size,
+            visual_n_v2=visual_n_v2,
+            visual_n_it=visual_n_it,
+            visual_it_to_cortex_density=visual_it_to_cortex_density,
+            enable_beacon_perception=enable_beacon_perception,
+            n_beacon_sensors=n_beacon_sensors,
+            beacon_to_goal_weight=beacon_to_goal_weight,
+            enable_landmarks=enable_landmarks,
+            n_landmark_sensors=n_landmark_sensors,
+            landmark_to_place_weight=landmark_to_place_weight,
+            enable_text_io=enable_text_io,
+            text_n_input_neurons=text_n_input_neurons,
+            text_n_output_neurons=text_n_output_neurons,
+            text_input_to_pfc_density=text_input_to_pfc_density,
+            text_input_to_pfc_weight=text_input_to_pfc_weight,
+            text_input_to_cortex_density=text_input_to_cortex_density,
+            text_it_to_output_density=text_it_to_output_density,
+        )
+    
+        # Critic neuron-type calibration (2026-06-08, runner-side; NO sim/ edit). The
+        # smoke found the MSN-D1 striosome_value critic silent in nav: its depolarized
+        # rheobase (~700 pA) is built for the cortical up-state and the sparse place
+        # code (sensor_place_readout, ~3-8 Hz) can't reach it through the afferent at
+        # ANY weight. A more excitable type fires from the place code (diag4: RS gives
+        # 5-20 Hz, graded by drive x weight) and carves a teacher-free value-of-location
+        # (diag6). Applied by mutating the returned BrainRegion BEFORE the bridge is
+        # built (the build signature is untouched). None => keep the MSN-D1 default
+        # (byte-equivalent to the prior behavior).
+        if enable_neural_critic and critic_neuron_type:
+            for _r in regions:
+                if _r.name == "striosome_value":
+                    _r.izh_neuron_type = str(critic_neuron_type)
+                    break
+    
+        # #6 SC orienting read-out fix (2026-06-20): bump-mass normalization half. Master switch =
+        # the sc_popvector_readout kwarg OR the SC_POPVECTOR env var (parallels SC_CORTEX_W/SC_SCRAMBLE).
+        # When ON, flag the four cortex_{N,E,S,W} pools input_divisive_norm=True so each cardinal's drive
+        # is divided by (sigma + gain * mean over the four cardinals) — the Carandini-Heeger divisive-gain
+        # primitive (sim/bridge.py:6048, GUARDED NO-OP when cfg.enable_input_divisive_norm is off). The
+        # cortex_X pools are the ONLY flagged neurons in this runner, so the divisive pool == the union of
+        # the four cardinal pools == the total SC-driven cardinal drive (exactly the bump mass). Combined
+        # with the population-vector cosine read-out (install_spiking_sc_wiring popvector=True), this turns
+        # the position-INVARIANT weighted-mass read-out into a position decode. NO sim/ edit (a region flag
+        # + an existing cfg flag, both mutated BEFORE the bridge is built, the build signature untouched).
+        _sc_popvector = bool(sc_popvector_readout) or (os.environ.get("SC_POPVECTOR", "0") == "1")
+        if enable_spiking_sc and _sc_popvector:
+            for _r in regions:
+                if _r.name in ("cortex_N", "cortex_E", "cortex_S", "cortex_W"):
+                    _r.input_divisive_norm = True
+    
+        # R2 (2026-06-27): OPPONENT-AXIS push-pull at the SC decode. Master switch = the sc_opponent_decode
+        # kwarg OR the SC_OPPONENT_DECODE env var. Consumed by install_spiking_sc_wiring below (wires the
+        # opposing-half sc_map -> cortex_FS opponent inhibition). Only meaningful WITH enable_spiking_sc AND
+        # the cortex_FS pools (enable_cortex_lateral_inhibition). Default OFF => byte-identical (no edges).
+        _sc_opponent_decode = bool(sc_opponent_decode) or (os.environ.get("SC_OPPONENT_DECODE", "0") == "1")
+    
+        # #6 SURPASS (2026-06-22): biology-faithful log-polar SC retina. Master switch = the
+        # log_polar_retina kwarg OR the SC_LOG_POLAR env var. Consumed by the egocentric SC eye-drive
+        # render (render_egocentric_goal log_polar=...) in the trial loop; only meaningful WITH
+        # enable_spiking_sc. Pure render geometry, NO sim/ edit; default OFF => byte-identical.
+        _log_polar_retina = bool(log_polar_retina) or (os.environ.get("SC_LOG_POLAR", "0") == "1")
+    
+        # Cascade North-bias FIX 2 (2026-06-20): per-pool baseline equalization at the SELECTION stage.
+        # Flag the four sel_{N,E,S,W} accumulators BrainRegion.enable_homeostasis=True so each independently
+        # regulates its baseline firing rate toward a common target (per-region threshold-adapt; not pooled
+        # like the divisive norm, so it composes with the cortex_X bump-mass norm above). This equalizes the
+        # all-saturate-at-40 ties at their source -> the winner is decided by SC evidence, not a structural
+        # advantage. Master switch = the sc_sel_homeostasis kwarg OR the SC_SEL_HOMEO env var. The per-region
+        # mask fires independently of the global cfg.enable_homeostasis (held OFF for the deterministic
+        # regime). Default OFF => byte-identical (no sel pool opts in, the homeostasis mask is None). NO sim/
+        # edit (an existing region flag set BEFORE the bridge is built).
+        _sc_sel_homeo = bool(sc_sel_homeostasis) or (os.environ.get("SC_SEL_HOMEO", "0") == "1")
+        if _sc_sel_homeo:
+            _sel_names = {f"sel_{a}" for a in ACTION_NAMES}
+            _n_flagged = 0
+            for _r in regions:
+                if _r.name in _sel_names:
+                    _r.enable_homeostasis = True
+                    _n_flagged += 1
+            if verbose:
+                print(f"[g11 seed={seed}] FIX 2: per-region homeostasis on {_n_flagged} sel_X pools "
+                      f"(baseline equalization at the selection stage)", flush=True)
+    
+        # Cascade-accumulator FIX A (2026-06-20): DIVISIVE NORMALIZATION at the sel_X accumulator INPUT.
+        # Flag the four sel_{N,E,S,W} pools BrainRegion.input_divisive_norm_2=True (the SECOND, independent
+        # divisive pool); the cfg.enable_input_divisive_norm_2 + sigma_2/gain_2 are set below (with the
+        # cortex_X pool-1 enable) BEFORE the bridge is built. Divides each sel_X input by (sigma_2 + gain_2*
+        # mean over the four sel pools) -> the common N+E+S+W drive is divided out at the INPUT, before the
+        # Wang-2002 accumulators amplify it. Master switch = the sc_sel_divnorm kwarg OR the SC_SEL_DIVNORM
+        # env var. Default OFF => byte-identical (no sel pool opts in; the second mask is None).
+        _sc_sel_divnorm = bool(sc_sel_divnorm) or (os.environ.get("SC_SEL_DIVNORM", "0") == "1")
+        if _sc_sel_divnorm:
+            _sel_names = {f"sel_{a}" for a in ACTION_NAMES}
+            _n_flagged_dn = 0
+            for _r in regions:
+                if _r.name in _sel_names:
+                    _r.input_divisive_norm_2 = True
+                    _n_flagged_dn += 1
+            if verbose:
+                print(f"[g11 seed={seed}] FIX A: divisive-norm pool-2 on {_n_flagged_dn} sel_X pools "
+                      f"(sigma={sc_sel_divnorm_sigma}, gain={sc_sel_divnorm_gain}) — common-mode rejection "
+                      f"at the accumulator input", flush=True)
+    
+        # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
+        if enable_learned_perception:
+            sensory_pref = []
+            for iy in range(7):
+                for ix in range(7):
+                    sensory_pref.append((ix - 3, iy - 3))  # dx, dy ∈ [-3, 3]
+            sensory_pref_dx = np.array([p[0] for p in sensory_pref], dtype=np.float32)
+            sensory_pref_dy = np.array([p[1] for p in sensory_pref], dtype=np.float32)
+        else:
+            sensory_pref_dx = None
+            sensory_pref_dy = None
+    
+        # Pre-compute hippocampal cell preferred (x, y) — covering full grid.
+        # Layout: square grid of side = ceil(sqrt(n_hippocampus_per_layer)) with
+        # cells spaced to span the full grid range. For 8×8 grid with 64 cells,
+        # one cell per position. For 16×16 grid with 256 cells, also one per
+        # position. For mismatched cases, cells space out uniformly.
+        if enable_hippocampus:
+            side = int(round(n_hippocampus_per_layer ** 0.5))
+            scale = (grid_size - 1) / max(1, side - 1) if side > 1 else 1.0
+            hippo_pref_x = np.array([(i % side) * scale for i in range(n_hippocampus_per_layer)], dtype=np.float32)
+            hippo_pref_y = np.array([(i // side) * scale for i in range(n_hippocampus_per_layer)], dtype=np.float32)
+        else:
+            hippo_pref_x = None
+            hippo_pref_y = None
+    
+        # Pre-compute the DEDICATED DENSE `vs_place_context` afferent's preferred (x,y) tiling +
+        # its wide place-code sigma (2026-06-09 VALIDATED redesign). Mirrors the de-risk probe's
+        # _grid_prefs: a near-square sub-grid of side=round(sqrt(N)) tiling [0,grid_size)^2,
+        # padded/truncated to exactly N cells. The wide sigma (grid_size/8 => 4.0 at grid-32, the
+        # de-risk's validated value) makes 30-80 cells fire per location (the convergent-excitation
+        # up-state), UNLIKE the actor's narrow hippocampus_drive_sigma=0.5 (~1-3 cells). Drive-
+        # injected each nav step (see the nav loop). Built only when the neural critic is on.
+        if enable_neural_critic:
+            _vs_side = int(round(n_vs_place_context ** 0.5))
+            _vs_xs = np.linspace(0.0, grid_size - 1.0, _vs_side, dtype=np.float32)
+            _vs_ys = np.linspace(0.0, grid_size - 1.0, _vs_side, dtype=np.float32)
+            _vs_gx, _vs_gy = np.meshgrid(_vs_xs, _vs_ys)
+            _vs_px = _vs_gx.ravel(); _vs_py = _vs_gy.ravel()
+            if _vs_px.size < n_vs_place_context:
+                _reps = int(np.ceil(n_vs_place_context / max(_vs_px.size, 1)))
+                _vs_px = np.tile(_vs_px, _reps)[:n_vs_place_context]
+                _vs_py = np.tile(_vs_py, _reps)[:n_vs_place_context]
+            vs_place_pref_x = _vs_px[:n_vs_place_context].copy()
+            vs_place_pref_y = _vs_py[:n_vs_place_context].copy()
+            vs_place_sigma = float(grid_size) / 8.0       # 4.0 at grid-32 (de-risk validated)
+            vs_place_drive_max_pA = 800.0                 # de-risk validated drive
+        else:
+            vs_place_pref_x = None
+            vs_place_pref_y = None
+            vs_place_sigma = None
+            vs_place_drive_max_pA = None
+    
+        # ── N9 place-sensor egocentric render precompute (the legitimate body-sensing channel). The 3
+        #    fixed landmarks + dist_max are grid-tuned; the per-step render is _n9_place_sensor_act
+        #    (VERBATIM the de-risk landmark_sensor_act). (x,y) enters the brain ONLY through this. ──
+        if _neural_place_selforg and nav_critic_grid_frontend:
+            # #5b R1 grid front end (nav chunk item 2): the place_sensors afferent is the DECORRELATED
+            # spatial-phase grid metric at (x,y) (sized to the place_sensors dim), scaled to the
+            # operating-point drive (grid_drive_scale * place_sensor_max_intensity) so the place pool +
+            # critic see drive comparable to the landmark render. The grid code is a fixed developmental
+            # draw (seeded) -> deterministic sensory transform of (x,y); reads ONLY (x,y) (anti-cheat).
+            _n9_landmarks = None
+            _n9_dist_max = None
+            _n9_grid_code, _n9_n_grid = _n9_make_grid_code(
+                grid_size, n_modules=int(grid_n_modules), n_per_module=int(grid_n_per_module),
+                lambda_min=float(grid_lambda_min), lambda_max=float(grid_lambda_max), seed=int(seed))
+            _n9_grid_gain = float(grid_drive_scale) * float(place_sensor_max_intensity)
+    
+            def _n9_render(px, py):
+                raw = _n9_grid_code(float(px), float(py)).astype(np.float32)   # [0,1] grid activations
+                return (raw * _n9_grid_gain).astype(np.float32)
+        elif _neural_place_selforg:
+            _n9_landmarks = _n9_place_landmarks(grid_size)
+            _n9_dist_max = float(grid_size) * 1.42        # de-risk dist_max (diag of the grid)
+    
+            def _n9_render(px, py):
+                return _n9_place_sensor_act(
+                    px, py, _n9_landmarks, int(n_place_bearing), int(n_place_dist),
+                    float(place_sensor_max_intensity), float(place_sensor_falloff),
+                    float(place_sensor_dist_sigma), _n9_dist_max, float(place_sensor_bexp))
+        else:
+            _n9_landmarks = None
+            _n9_dist_max = None
+            _n9_render = None
+    
+        # Pre-compute beacon sensor preferred directions (Item 1 Stage 1).
+        # Sensors evenly distributed in 2D — for n=8: N, NE, E, SE, S, SW, W, NW.
+        # Each sensor responds maximally when beacon is in its preferred direction
+        # (cosine alignment), with intensity falling off with distance.
+        # Models biological directional cue detection (e.g., bilateral hearing
+        # estimating sound source direction from intensity differences).
+        if enable_beacon_perception:
+            beacon_pref_x = np.zeros(n_beacon_sensors, dtype=np.float32)
+            beacon_pref_y = np.zeros(n_beacon_sensors, dtype=np.float32)
+            for i in range(n_beacon_sensors):
+                angle = 2.0 * np.pi * i / n_beacon_sensors
+                beacon_pref_x[i] = np.cos(angle)
+                beacon_pref_y[i] = np.sin(angle)
+        else:
+            beacon_pref_x = None
+            beacon_pref_y = None
+    
+        # Pre-compute landmark sensor preferred directions (Item 1 Stage 2).
+        # Same structure as beacon sensors; landmark is at fixed position.
+        if enable_landmarks:
+            landmark_pref_x = np.zeros(n_landmark_sensors, dtype=np.float32)
+            landmark_pref_y = np.zeros(n_landmark_sensors, dtype=np.float32)
+            for i in range(n_landmark_sensors):
+                angle = 2.0 * np.pi * i / n_landmark_sensors
+                landmark_pref_x[i] = np.cos(angle)
+                landmark_pref_y[i] = np.sin(angle)
+            # Default landmark position: grid center
+            if landmark_position is None:
+                landmark_position = (grid_size / 2.0, grid_size / 2.0)
+        else:
+            landmark_pref_x = None
+            landmark_pref_y = None
+    
+        cfg = CoreSimConfig()
+        cfg.num_neurons = 0
+        cfg.dt_ms = 1.0
+        cfg.seed = int(seed)
+        cfg.num_traits = 1
+        cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+        cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+        cfg.connections_per_neuron = 0
+        cfg.enable_brain_region_framework = True
+        cfg.brain_regions = regions
+        cfg.region_pathways = pathways
+        cfg.enable_stdp = True
+        cfg.enable_reward_modulation = True
+        cfg.reward_learning_rate = float(learning_rate)
+        cfg.reward_eligibility_tau_ms = float(reward_eligibility_tau_ms)
+        # cortex->D1 weight_mean needs w_max above that or soft-bound STDP collapses it.
+        # When R3.5's density reduction triggers weight scaling (e.g. weight=125 at
+        # density=0.20), w_max must be ABOVE that — otherwise LTP events drive weights
+        # negative, collapsing the cascade silently. Recompute the post-R3.5 weight
+        # locally (mirrors build_bg_brain_regions logic).
+        _ctx_msn_density = 0.20  # R3.5 default
+        _ctx_msn_weight = (25.0 / _ctx_msn_density) if _ctx_msn_density < 1.0 else 25.0
+        cfg.stdp_w_max = max(30.0, _ctx_msn_weight * 1.2)
+        # STEP 2a merge integration: optional additive override of the STDP soft-bound
+        # ceiling. Default None => keep the computed value above (byte-equivalent
+        # standalone). The merge passes 400 (5a clip mitigation); the nav-gate (a)
+        # check uses --stdp-w-max 400 to verify the soft-bound actor does not over-grow.
+        if stdp_w_max_override is not None:
+            cfg.stdp_w_max = float(stdp_w_max_override)
+        # STEP 2a merge: append the conversational regions/pathways (defaults None => no-op; standalone unchanged).
+        # Mutate IN PLACE so cfg.brain_regions / cfg.region_pathways (already bound to these list objects above)
+        # see the additions before _initialize_simulation_data reads them.
+        if extra_regions:
+            regions.extend(extra_regions)
+        if extra_pathways:
+            pathways.extend(extra_pathways)
+        cfg.enable_hebbian_learning = False
+        cfg.enable_homeostasis = False
+        cfg.enable_short_term_plasticity = False
+        # #6 SC orienting read-out fix (2026-06-20): enable the Carandini-Heeger divisive primitive when
+        # the population-vector read-out is on (a cortex_X region was flagged input_divisive_norm=True
+        # above). GUARDED: cp_input_divisive_mask is built ONLY if cfg.enable_input_divisive_norm AND >=1
+        # region sets input_divisive_norm=True (sim/bridge.py:1313), so when _sc_popvector is off this
+        # whole path is byte-identical to today. sigma/gain are the bump-mass normalization op-point.
+        if enable_spiking_sc and _sc_popvector:
+            cfg.enable_input_divisive_norm = True
+            cfg.input_divisive_sigma = float(sc_popvector_divnorm_sigma)
+            cfg.input_divisive_gain = float(sc_popvector_divnorm_gain)
+        # Cascade-accumulator FIX A (2026-06-20): enable the SECOND, independent divisive pool when the
+        # sel_X divisive norm is on (the sel_X regions were flagged input_divisive_norm_2=True above).
+        # GUARDED: cp_input_divisive_mask_2 is built ONLY if cfg.enable_input_divisive_norm_2 AND >=1 region
+        # sets input_divisive_norm_2=True (sim/bridge.py), so when _sc_sel_divnorm is off this is byte-
+        # identical. Independent of pool 1: its divisor mean is over the sel_X set only.
+        if _sc_sel_divnorm:
+            cfg.enable_input_divisive_norm_2 = True
+            cfg.input_divisive_sigma_2 = float(sc_sel_divnorm_sigma)
+            cfg.input_divisive_gain_2 = float(sc_sel_divnorm_gain)
+        # STEP 2a merge: build with OU on so the parser train pass's OU per-neuron state is ALLOCATED at init
+        # (a runtime toggle does not allocate it). The post-init hook sets OU off for the nav episode after the
+        # parser pass. Default False => standalone nav byte-equivalent (OU stays off).
+        cfg.enable_ou_process = bool(build_with_ou)
+        cfg.ou_std_current_pA = 20.0 if build_with_ou else cfg.ou_std_current_pA
+        cfg.enable_conductance_noise = False
+        cfg.enable_parameter_heterogeneity = False
+        cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
+        # Spiking-SNc actor-critic Stage B (2026-06-08): the neural value critic's
+        # critic->SNc projection (built with receptor="gaba_b") subtracts V via the
+        # slow GABA_B/GIRK K+ conductance (E_K=-90mV) — strong + sign-correct on the
+        # KCC2-lacking depolarized SNc, where weak GABA_A failed. Default OFF =>
+        # byte-identical when the critic is not enabled (the protected sim/ GABA_B
+        # support, commit a7370d49, is inert unless cfg.enable_gabab is set AND a
+        # pathway is tagged receptor="gaba_b"). Note: cfg.stdp_w_max above (=150) is
+        # already far above the critic's working weight range, so the soft-bound STDP
+        # collapse (CLAUDE.md gotcha) cannot clip V — no extra calibration needed.
+        if enable_neural_critic:
+            cfg.enable_gabab = True
+            cfg.gabab_reversal_potential = -90.0
+            cfg.gabab_tau_decay = 150.0
+            # PHYSIOLOGICAL operating point 0.02 (NOT the 0.105 default), per the
+            # de-risk PASS (commit d0416fc3): at 0.105 the slow GABA_B conductance
+            # over-accumulates to g~50-170 nS and FLATLINES the SNc at -87mV / 0 Hz
+            # -> no live burst to discriminate (the prior smoke's "SNc silenced"
+            # failure mode). 0.02 settles g~10-20, restoring baseline 1-3 Hz +
+            # burst 50-80 Hz so the value subtraction is visible, not annihilating.
+            cfg.gabab_propagation_strength = (float(critic_gabab_propagation)
+                                              if critic_gabab_propagation and critic_gabab_propagation > 0
+                                              else 0.02)
+            # Brain-based GIRK saturation cap (finite channels) so a hot critic can't fully clamp the
+            # SNc -> graded online δ at any critic rate (the nav-A/B honest-negative fix). 0 = no cap.
+            cfg.gabab_conductance_max = float(critic_gabab_max)
+        # (N5 now uses a plain proximity reward sc_rostral->reward_us; no slow channels needed --
+        #  the temporal-difference is the dopamine RPE's job. enable_gabab is set by the neural
+        #  critic above when present.)
+        if _neural_place_selforg:
+            # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
+            # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
+            # synchronized packet fires the MSN critic the sparse-async code cannot. Mirrors the de-risk
+            # _build (volley arm). NMDA ON (the per-region mask restricts the Mg2+-block kernel to the
+            # critic slice, which carries enable_nmda=True; the actor regions are NMDA-free). At BUILD
+            # the plateau is the strong COUNT form (coincidence_k_threshold in COUNT units = the train
+            # K) so it bootstraps the post-spike that drives DA-gated LTP; cfg.coincidence_weighted_drive
+            # stays False (the WEIGHTED Poirazi-Mel readout that GRADES with the learned weight is a
+            # READ-OUT-only toggle, applied in Phase 3 value-learning, not here).
+            cfg.enable_coincidence_detection = True
+            cfg.coincidence_k_threshold = float(coincidence_train_k)
+            cfg.coincidence_gain = 2.0
+            cfg.coincidence_plateau_strength = float(coincidence_plateau)
+            cfg.coincidence_weighted_drive = False
+            cfg.enable_nmda = True   # per-region mask -> NMDA only on the critic (enable_nmda=True there)
+        if dendrite_critic and enable_neural_critic and not _neural_place_selforg:
+            # SHORTCUT #9 host-RETIRED deploy (2026-06-20): the critic's value-of-location V is now
+            # computed by the VALIDATED graded dendritic plateau (2026-06-20-dendrite-stage1-snc-
+            # calibration.md, δ=1.33 = host 1.30, 6/6 seeds, V graded, all anti-cheats green) instead
+            # of the point-neuron MSN-D1 rate. The vs_place_context->striosome_value pathway was tagged
+            # coincidence_detector=True (build_bg_brain_regions), routing its synapses into the
+            # coincidence mask; the graded plateau then reads that WEIGHTED coincident drive (the
+            # Poirazi-Mel analog read-out that grades with the LEARNED value weight) and adds a graded
+            # plateau current onto striosome_value. The downstream neural GABA_B->SNc subtraction is
+            # UNCHANGED, so the brain still does r-V; only the V *computation* moved from a point-neuron
+            # rate to the dendritic plateau. Calibrated knobs from the validated de-risk (NO sim/ edit;
+            # the params already exist from d69cc0ab). A high coincidence_k_threshold keeps the
+            # ALL-OR-NONE plateau OFF so the GRADED form is the active value read-out (the de-risk
+            # pattern: coincidence_weighted_drive=True reads the same weighted drive).
+            cfg.enable_coincidence_detection = True
+            cfg.coincidence_k_threshold = float(dendrite_critic_coincidence_k)
+            cfg.coincidence_gain = 2.0
+            cfg.coincidence_weighted_drive = True
+            cfg.coincidence_plateau_strength = 0.0   # all-or-none plateau OFF; graded form carries V
+            cfg.enable_graded_dendritic_plateau = True
+            cfg.graded_plateau_center = float(dendrite_critic_graded_center)
+            cfg.graded_plateau_slope = float(dendrite_critic_graded_slope)
+            cfg.graded_plateau_strength = float(dendrite_critic_graded_strength)
+            cfg.graded_plateau_tau_decay_ms = 80.0
+            cfg.graded_plateau_tau_rise_ms = 2.0
+            cfg.enable_nmda = True   # per-region mask -> NMDA only on the critic slice (Mg2+ block)
+        cfg.enable_structural_pruning = enable_structural_pruning
+        cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
+        # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
+        # NMDA is global (affects all regions); ratio elevated to PFC-typical 0.5
+        # per Wang 2002. Future work: per-region NMDA ratio override for
+        # biologically-correct PFC-only NMDA dominance.
+        if enable_pfc_nmda:
+            cfg.enable_nmda = True
+            cfg.nmda_ratio = 0.5  # Wang 2002 PFC calibration (default 0.4)
+            # nmda_tau_decay (100 ms) and nmda_tau_rise (3 ms) keep their
+            # CoreSimConfig defaults — already match Wang 2002.
+        # N6 accumulate-then-commit (2026-06-06): the sel_X accumulator pools carry
+        # BrainRegion.enable_nmda=True (set in build_bg_brain_regions). Turning on
+        # global cfg.enable_nmda activates the dual-exponential NMDA conductance; the
+        # bridge's per-region cp_nmda_neuron_mask then restricts the NMDA CURRENT to
+        # the sel_X slice only (and dlpfc/cortex too if --enable-pfc-nmda is also on).
+        # This gives the recurrent self-excitation the slow Wang-2002 integration
+        # time constant (nmda_tau_decay=100ms) needed to ramp the weak thalamic drive
+        # to a committed bound. Without this the sel_X recurrence would be AMPA-fast.
+        if _readout_source == "spiking_wta":
+            cfg.enable_nmda = True
+            if not enable_pfc_nmda:
+                cfg.nmda_ratio = 0.5  # PFC-typical NMDA dominance for the accumulator
+        # Cluster B.3 (2026-04-28): cholinergic TANs. Turn the neuromod
+        # subsystem ON cumulatively (no other flag in this runner enables it
+        # today, but `|=` keeps it future-proof if one starts to) and append
+        # the default acetylcholine config to whatever the cfg already has.
+        if enable_tans:
+            from sim.neuromodulators import _default_acetylcholine_tan_config
+            cfg.enable_neuromodulator_subsystem = True
+            cfg.neuromodulators = list(cfg.neuromodulators) + [
+                _default_acetylcholine_tan_config()
+            ]
+        # R3.6 (2026-04-29): D1/D2 neuropeptide arms — dynorphin (D1, KOR
+        # plasticity-rate brake), substance P (D1, NK-1 ACh boost), enkephalin
+        # (D2, DOR plasticity-rate boost). All three opt-in together.
+        if enable_bg_neuropeptides:
+            from sim.neuromodulators import (
+                _default_dynorphin_config,
+                _default_substance_p_config,
+                _default_enkephalin_config,
+            )
+            cfg.enable_neuromodulator_subsystem = True
+            cfg.neuromodulators = list(cfg.neuromodulators) + [
+                _default_dynorphin_config(),
+                _default_substance_p_config(),
+                _default_enkephalin_config(),
+            ]
+        # Cluster C v1 (2026-04-29): tonic dopamine via neuromodulator framework.
+        # Replaces signed-scalar reward modulation with a real DA concentration
+        # (tonic baseline + phasic activation/depression). Unlocks B.3 ACh
+        # window-gating (which is otherwise a no-op without tonic DA-driven
+        # plasticity to gate). Composes with --enable-tans and
+        # --enable-bg-neuropeptides.
+        #
+        # Spiking-SNc actor-critic Stage A (2026-06-08): the `dopamine` modulator's
+        # production rule reads the SNc pool's FIRING (from_region_firing_signed),
+        # so the DA broadcast IS the spiking reward-prediction error. It OWNS the
+        # `dopamine` modulator: --enable-tonic-da (which registers the from_reward
+        # `_default_dopamine_config`) is skipped when spiking_snc is set (two
+        # `dopamine` modulators would be a config error), exactly mirroring the
+        # existing tonic-vs-compartmentalized precedence below. Mutually exclusive
+        # with --enable-compartmentalized-da (per-action channels are a different DA
+        # decomposition; combining them is undefined in v1).
+        if spiking_snc and enable_compartmentalized_da:
+>           raise ValueError(
+                "--spiking-snc and --enable-compartmentalized-da are mutually "
+                "exclusive: the spiking SNc owns a single global `dopamine` "
+                "modulator (from_region_firing_signed over the snc pool), while "
+                "compartmentalized DA registers 4 per-action channels. Pick one."
+            )
+E           ValueError: --spiking-snc and --enable-compartmentalized-da are mutually exclusive: the spiking SNc owns a single global `dopamine` modulator (from_region_firing_signed over the snc pool), while compartmentalized DA registers 4 per-action channels. Pick one.
+
+research/runners/g11_bg_runner.py:4946: ValueError
+_______________________ test_spiking_snc_kwarg_accepted ________________________
+
+tmp_out_path = '/tmp/pytest-of-dant123/pytest-101/test_spiking_snc_kwarg_accepte0/g11_smoke.json'
+
+    def test_spiking_snc_kwarg_accepted(tmp_out_path):
+        """20-step GPU smoke: runner accepts --spiking-snc without TypeError,
+        produces a valid result with the snc_rate_log surfaced (the spiking RPE
+        readout), and honestly labels V as the host scaffold."""
+        pytest.importorskip("cupy")
+        from research.runners.g11_bg_runner import run_moving_goal_episode
+        run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+            spiking_snc=True,
+        )
+        with open(tmp_out_path) as f:
+            result = json.load(f)
+        assert "phase_stats" in result
+        assert result["spiking_snc"] is True
+>       assert result["snc_value_source"] == "host_reward_ema_scaffold", (
+            "Stage A must honestly report V is the host EMA scaffold, not a neural critic")
+E       AssertionError: Stage A must honestly report V is the host EMA scaffold, not a neural critic
+E       assert 'neural_striosome_gabab' == 'host_reward_ema_scaffold'
+E         
+E         - host_reward_ema_scaffold
+E         + neural_striosome_gabab
+
+tests/test_g11_bg_runner_flags.py:1515: AssertionError
+----------------------------- Captured stdout call -----------------------------
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Brain-region framework: 54 regions, 1438 total neurons, 83 pathways.
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: NMDA per-region mask: 4 regions enabled (160 neurons)
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (280 neurons)
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1438 neurons...
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_FS_N' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'commit_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_FS_E' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'commit_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_FS_S' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'commit_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'sel_FS_W' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'commit_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Region 'commit_OPN' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1438 neurons...
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 39949 synapses across 91 populations.
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Initializing eligibility traces for 39949 synapses (capacity: 59923, dtype: float32)...
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Initializing STDP state for 1438 neurons...
+[2026-09-05 03:03:47][INFO] SIM_BRIDGE: Simulation data initialized for 1438 neurons (3D). Synapses: 39949. GPU memory: 4.4GB/25.3GB (17.6%)
+=========================== short test summary info ============================
+FAILED tests/test_td_critic_no_harm.py::test_protected_byte_untouched_across_td_critic_range
+FAILED tests/test_g11_bg_runner_flags.py::test_compartmentalized_da_kwarg_accepted
+FAILED tests/test_g11_bg_runner_flags.py::test_spiking_snc_kwarg_accepted - A...
+3 failed, 158 passed in 570.00s (0:09:29)
+[provenance] stamped 1 artifact(s) | run_id 1788591264-3778728

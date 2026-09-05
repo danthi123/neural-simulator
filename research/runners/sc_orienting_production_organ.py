@@ -31,11 +31,18 @@ the retinal image the neural retina receives) and (2) the BODY (the agent moving
 cortex pool fired). The `sc_map` firing-peak SITE is also reported as a saliency INSTRUMENT (a "where"
 read-out), but it is NOT the decision — the cardinal is the cortex-pool firing (the load-bearing read).
 
-ADDITIVE + DEFAULT-OFF: gated behind `BRAIN_SPIKING_SC_ORIENT` (default OFF for now; the parent flips it
-after the pool soak). This is a NEW standalone module + a NEW embodied consumer — it wires into NO
-existing production path, so nothing existing changes when the flag is OFF. There is NO chat coupling
-(the faculty is embodied), so flag-OFF byte-identical is N-A for chat; the OFF path is the host reflex
-`sc_orienting_cardinal_from_image` (the scaffold the spiking SC replaces).
+ADDITIVE + DEFAULT-ON (flipped 2026-09-05, scaffold-retirement backlog rank 24): gated behind
+`BRAIN_SPIKING_SC_ORIENT`, default ON now that the 6-seed flip-soak GATE passes fresh
+(`research/runners/_sc_orienting_flip_soak.py`: INTACT correct-cardinal min 1.000 >= 0.80, LESION max
+0.333 <= 0.45; INTACT embodied reach min 1.000 >= 0.80, LESION max 0.125 <= 0.50 — see
+research/findings/2026-09-05-enable-spiking-sc-split-verdict-organ-flag-GO-library-default-reverted.md).
+`sc_orient_enabled()` currently has
+NO caller anywhere in the tree (this organ + its verify/soak scripts read `lesion=` directly, not this
+flag) — it wires into NO existing production path either way, so flipping the default changes NOTHING
+observable TODAY; it sets the correct default for whenever a future consumer is built, so it inherits the
+spiking SC rather than silently defaulting to the host-reflex scaffold. `BRAIN_SPIKING_SC_ORIENT=0` is the
+explicit escape back to the host reflex `sc_orienting_cardinal_from_image` (the scaffold the spiking SC
+replaces) for any future caller that wants the oracle/comparator arm.
 
 LESION-LOAD-BEARING (the faculty's OWN oracle): `SC_SCRAMBLE=1` permutes the `sc_retina -> sc_map`
 retinotopic target assignment (the de-risk's decisive anti-cheat). The image-only afferent (the

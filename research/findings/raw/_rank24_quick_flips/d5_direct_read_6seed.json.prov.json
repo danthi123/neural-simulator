@@ -1,0 +1,36 @@
+{
+ "run_id": "1788589595-3735781",
+ "runner": "research/runners/_rank24_quick_flips_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a1a1b796a237bf79d/research/runners/_rank24_quick_flips_verify.py",
+  "--check",
+  "d5-direct-read",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a1a1b796a237bf79d/research/findings/raw/_rank24_quick_flips/d5_direct_read_6seed.json"
+ ],
+ "git_sha": "947d0fa79",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T02:26:35",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_rank24_quick_flips/d5_direct_read_6seed.json"
+}

@@ -1,0 +1,154 @@
+{
+  "checks": [
+    "enable-spiking-sc"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_s": 17.8,
+  "results": {
+    "enable-spiking-sc": {
+      "check": "enable-spiking-sc",
+      "seeds": [
+        42,
+        43,
+        44,
+        100,
+        101,
+        102
+      ],
+      "GO": false,
+      "byte_identical_off": {
+        "check": "enable-spiking-sc-byte-identical-off",
+        "GO": true,
+        "n_regions_sc_false": 38,
+        "n_regions_sc_true": 38,
+        "n_pathways_sc_false": 52,
+        "n_pathways_sc_true": 52
+      },
+      "load_bearing_on": [
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 42,
+          "GO": true,
+          "east_counts": {
+            "cortex_N": 8,
+            "cortex_E": 17,
+            "cortex_S": 6,
+            "cortex_W": 9
+          },
+          "north_counts": {
+            "cortex_N": 28,
+            "cortex_E": 14,
+            "cortex_S": 6,
+            "cortex_W": 9
+          },
+          "east_argmax": "cortex_E",
+          "north_argmax": "cortex_N"
+        },
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 43,
+          "GO": false,
+          "east_counts": {
+            "cortex_N": 6,
+            "cortex_E": 19,
+            "cortex_S": 13,
+            "cortex_W": 27
+          },
+          "north_counts": {
+            "cortex_N": 8,
+            "cortex_E": 13,
+            "cortex_S": 4,
+            "cortex_W": 15
+          },
+          "east_argmax": "cortex_W",
+          "north_argmax": "cortex_W"
+        },
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 44,
+          "GO": true,
+          "east_counts": {
+            "cortex_N": 1,
+            "cortex_E": 11,
+            "cortex_S": 14,
+            "cortex_W": 11
+          },
+          "north_counts": {
+            "cortex_N": 7,
+            "cortex_E": 9,
+            "cortex_S": 4,
+            "cortex_W": 22
+          },
+          "east_argmax": "cortex_S",
+          "north_argmax": "cortex_W"
+        },
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 100,
+          "GO": true,
+          "east_counts": {
+            "cortex_N": 15,
+            "cortex_E": 31,
+            "cortex_S": 10,
+            "cortex_W": 14
+          },
+          "north_counts": {
+            "cortex_N": 18,
+            "cortex_E": 8,
+            "cortex_S": 12,
+            "cortex_W": 2
+          },
+          "east_argmax": "cortex_E",
+          "north_argmax": "cortex_N"
+        },
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 101,
+          "GO": false,
+          "east_counts": {
+            "cortex_N": 16,
+            "cortex_E": 6,
+            "cortex_S": 20,
+            "cortex_W": 8
+          },
+          "north_counts": {
+            "cortex_N": 6,
+            "cortex_E": 9,
+            "cortex_S": 13,
+            "cortex_W": 8
+          },
+          "east_argmax": "cortex_S",
+          "north_argmax": "cortex_S"
+        },
+        {
+          "check": "enable-spiking-sc-load-bearing",
+          "seed": 102,
+          "GO": true,
+          "east_counts": {
+            "cortex_N": 17,
+            "cortex_E": 8,
+            "cortex_S": 7,
+            "cortex_W": 9
+          },
+          "north_counts": {
+            "cortex_N": 1,
+            "cortex_E": 3,
+            "cortex_S": 21,
+            "cortex_W": 7
+          },
+          "east_argmax": "cortex_N",
+          "north_argmax": "cortex_S"
+        }
+      ],
+      "n_directional": 4,
+      "n_seeds": 6
+    }
+  }
+}
