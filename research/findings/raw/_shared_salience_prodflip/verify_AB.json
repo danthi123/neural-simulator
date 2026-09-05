@@ -1,0 +1,701 @@
+{
+  "runner": "research/runners/_shared_salience_afferent_prodflip_verify.py",
+  "flip": "BRAIN_SHARED_SALIENCE default-OFF -> default-ON (wave-4, 2026-09-05)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "part_a_n_pass": 6,
+  "part_a_go": true,
+  "VERDICT": "GO",
+  "status": "GO",
+  "critic": {
+    "seed": 42,
+    "value_choice_full": {
+      "build_seconds": 490.38,
+      "candidates": [
+        "cat",
+        "ball",
+        "shoe"
+      ],
+      "baseline_eng": [
+        0.0,
+        0.5,
+        1.0
+      ],
+      "default_eng": [
+        0.0,
+        0.30615164520743915,
+        1.0486409155937053
+      ],
+      "lesion_eng": [
+        0.001430615164520748,
+        0.0,
+        0.0
+      ],
+      "baseline_fed_spread": 1.0,
+      "default_fed_spread": 1.0486409155937053,
+      "lesion_fed_spread": 0.001430615164520748,
+      "chosen_baseline": "shoe",
+      "chosen_default": "shoe",
+      "chosen_lesion": "cat",
+      "meta_baseline": {
+        "V_hz": [
+          17.778,
+          28.75,
+          32.5
+        ],
+        "fed_spread_hz": 14.722,
+        "wta_counts": [
+          68.0,
+          80.0,
+          84.0
+        ],
+        "wta_margin": 4.0,
+        "wta_choice": 2,
+        "decisive": true,
+        "lesion": false,
+        "untrained": false,
+        "v_margin_hz": 2.0,
+        "value_attribution_frac": null
+      },
+      "meta_default": {
+        "V_hz": [
+          15.972,
+          21.944,
+          29.583
+        ],
+        "fed_spread_hz": 13.611,
+        "wta_counts": [
+          74.0,
+          71.0,
+          85.0
+        ],
+        "wta_margin": 11.0,
+        "wta_choice": 2,
+        "decisive": true,
+        "lesion": false,
+        "untrained": false,
+        "v_margin_hz": 2.0,
+        "value_attribution_frac": null
+      },
+      "meta_lesion": {
+        "V_hz": [
+          19.861,
+          15.417,
+          16.806
+        ],
+        "fed_spread_hz": 4.444,
+        "wta_counts": [
+          80.0,
+          59.0,
+          80.0
+        ],
+        "wta_margin": 0.0,
+        "wta_choice": 0,
+        "decisive": true,
+        "lesion": false,
+        "untrained": false,
+        "v_margin_hz": 2.0,
+        "value_attribution_frac": null
+      },
+      "fed_spread_attributable_to_afferent": 0.9986357435197818,
+      "c_default_gradient_decisive": true,
+      "c_lesion_gradient_collapses": true,
+      "c_lesion_flips_commit": true,
+      "reaches_the_real_critic": true
+    }
+  },
+  "handler": null,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PART A: default-change correctness + load-bearing-not-hollow at the new default, all 6 seeds",
+      "ok": true,
+      "detail": "measured=6 expect=6",
+      "note": "unset==explicit-ON branch, =0 reproduces the oracle exactly, vary->differs, lesion->vanishes"
+    },
+    {
+      "kind": "require",
+      "name": "PART B: real trained critic gradient is decisive at the new default (fed-spread > 0.3)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B: lesioning the shared afferent collapses the critic's fed gradient",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART B: lesion FLIPS the real critic's commit (load-bearing on the real readout, not cosmetic)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "default commit=shoe lesion commit=cat"
+    }
+  ],
+  "disabled_processes": [],
+  "elapsed_s": 574.5,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7905688460684012,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7908647185513825,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7889001620317079,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7476449495123725,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0600858369098711,
+          0.0
+        ],
+        "explicit_on": [
+          1.0486409155937053,
+          0.0
+        ],
+        "lesion": [
+          0.0,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.0,
+          0.3133047210300429,
+          1.0600858369098711
+        ],
+        "explicit_on": [
+          0.0014306151645207554,
+          0.3347639484978541,
+          1.0801144492131616
+        ],
+        "lesion": [
+          0.0,
+          0.008583690987124474,
+          0.0
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0600858369098711,
+        "explicit_on_spread": 1.0786838340486409,
+        "lesion_spread": 0.008583690987124474,
+        "spread_attributable_to_afferent": 0.9919028340080972,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 6.31
+    },
+    "43": {
+      "seed": 43,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7898481238877886,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.790421130409591,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7888469873066869,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7436851883267654,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0296010296010296,
+          0.0
+        ],
+        "explicit_on": [
+          1.0102960102960103,
+          0.0
+        ],
+        "lesion": [
+          0.0051480051480051435,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.007722007722007719,
+          0.35135135135135137,
+          1.018018018018018
+        ],
+        "explicit_on": [
+          6.5841797908271844e-18,
+          0.36164736164736166,
+          1.0553410553410554
+        ],
+        "lesion": [
+          0.0,
+          0.006435006435006435,
+          0.0038610038610038594
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0102960102960103,
+        "explicit_on_spread": 1.0553410553410554,
+        "lesion_spread": 0.006435006435006435,
+        "spread_attributable_to_afferent": 0.9936305732484075,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 3.45
+    },
+    "44": {
+      "seed": 44,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7901346053995126,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7936776292118501,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7911423043740747,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7500232229500984,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.052562417871222,
+          0.0
+        ],
+        "explicit_on": [
+          1.0578186596583443,
+          0.0
+        ],
+        "lesion": [
+          0.0052562417871222025,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.038107752956635994,
+          0.38107752956636004,
+          1.0722733245729303
+        ],
+        "explicit_on": [
+          0.014454664914586066,
+          0.37319316688567666,
+          1.081471747700394
+        ],
+        "lesion": [
+          0.007884362680683307,
+          0.0,
+          0.019710906701708275
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0341655716162943,
+        "explicit_on_spread": 1.0670170827858079,
+        "lesion_spread": 0.019710906701708275,
+        "spread_attributable_to_afferent": 0.9809402795425667,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 3.95
+    },
+    "100": {
+      "seed": 100,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7911516953454193,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7965297275061676,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7963739869864745,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7520162293131681,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0470879801734823,
+          0.0
+        ],
+        "explicit_on": [
+          1.0570012391573733,
+          0.0
+        ],
+        "lesion": [
+          0.0,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.0,
+          0.3630731102850063,
+          1.0508054522924415
+        ],
+        "explicit_on": [
+          0.0,
+          0.3692688971499381,
+          1.0508054522924413
+        ],
+        "lesion": [
+          0.006195786864931847,
+          0.0012391573729863732,
+          0.0
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0508054522924415,
+        "explicit_on_spread": 1.0508054522924413,
+        "lesion_spread": 0.006195786864931847,
+        "spread_attributable_to_afferent": 0.9941037735849056,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 5.87
+    },
+    "101": {
+      "seed": 101,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7901346053995126,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7898481238877886,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7862106887542383,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7407417650450253,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0452554744525546,
+          0.0
+        ],
+        "explicit_on": [
+          1.0613138686131387,
+          0.0
+        ],
+        "lesion": [
+          0.0014598540145985407,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.0072992700729927,
+          0.3167883211678832,
+          1.0277372262773723
+        ],
+        "explicit_on": [
+          0.0,
+          0.3357664233576642,
+          1.0394160583941605
+        ],
+        "lesion": [
+          0.0029197080291970814,
+          0.0014598540145985407,
+          0.0
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0204379562043795,
+        "explicit_on_spread": 1.0394160583941605,
+        "lesion_spread": 0.0029197080291970814,
+        "spread_attributable_to_afferent": 0.9971387696709584,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 7.39
+    },
+    "102": {
+      "seed": 102,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7907170135799801,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7905782371195631,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7786912252296723,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7451854697763323,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0223776223776224,
+          0.0
+        ],
+        "explicit_on": [
+          1.0657342657342659,
+          0.0
+        ],
+        "lesion": [
+          0.0,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.0027972027972027907,
+          0.3356643356643356,
+          1.0433566433566435
+        ],
+        "explicit_on": [
+          0.0013986013986013953,
+          0.34545454545454546,
+          1.0811188811188812
+        ],
+        "lesion": [
+          0.0,
+          0.009790209790209782,
+          0.006993006993006984
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0405594405594407,
+        "explicit_on_spread": 1.0797202797202798,
+        "lesion_spread": 0.009790209790209782,
+        "spread_attributable_to_afferent": 0.9905913978494624,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 6.73
+    }
+  }
+}

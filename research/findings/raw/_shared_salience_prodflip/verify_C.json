@@ -1,0 +1,162 @@
+{
+  "runner": "research/runners/_shared_salience_afferent_prodflip_verify.py",
+  "flip": "BRAIN_SHARED_SALIENCE default-OFF -> default-ON (wave-4, 2026-09-05)",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "part_a_n_pass": 1,
+  "part_a_go": true,
+  "VERDICT": "GO",
+  "status": "GO",
+  "critic": null,
+  "handler": {
+    "skipped": null,
+    "build_deterministic": true,
+    "no_crash": true,
+    "content_identical_off_vs_on": true,
+    "da_trace_present_both_arms": true,
+    "n_battery": 3,
+    "n_answer_differs": 1,
+    "novel_default_da": 0.7911606238977652,
+    "novel_default_mode": "focus",
+    "novel_default_lead": " \u2014 worth going further here.",
+    "novel_lesion_da": 0.04616293556102311,
+    "novel_lesion_mode": "rest",
+    "novel_lesion_lead": "",
+    "low_default_da": 0.04616293556102311,
+    "low_lesion_da": 0.04616293556102311,
+    "da_vary_intact": 0.7449976883367421,
+    "da_vary_lesion": 0.0,
+    "c_no_regression": true,
+    "c_handler_loadbearing": true,
+    "c_handler_vary": true,
+    "no_regression": true
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "PART A: default-change correctness + load-bearing-not-hollow at the new default, all 1 seeds",
+      "ok": true,
+      "detail": "measured=1 expect=1",
+      "note": "unset==explicit-ON branch, =0 reproduces the oracle exactly, vary->differs, lesion->vanishes"
+    },
+    {
+      "kind": "require",
+      "name": "PART C: no crash + substantive answer content byte-identical baseline vs new default (no regression)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART C: every other faculty stays live (da_drives trace present on both arms)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "PART C: load-bearing at the handler (novel msg engages; lesion collapses to REST, suffix vanishes)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "elapsed_s": 2809.7,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "flag": {
+        "enabled_when_unset": true,
+        "enabled_when_explicit_1": true,
+        "disabled_when_explicit_0": true,
+        "lesion_active_at_default": true,
+        "g_flip_correct": true
+      },
+      "da_mode": {
+        "baseline_da": 0.7905688460684012,
+        "baseline_mode": "focus",
+        "baseline_has_shared_key": false,
+        "default_da": 0.7908647185513825,
+        "default_mode": "focus",
+        "default_has_shared_key": true,
+        "explicit_on_da": 0.7889001620317079,
+        "explicit_on_mode": "focus",
+        "lesion_da": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "da_vary_intact": 0.7476449495123725,
+        "da_vary_lesion": 0.0,
+        "da_vary_attributable_to_afferent": 1.0,
+        "c_baseline_is_oracle": true,
+        "c_default_is_on": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true,
+        "c_vary_intact": true,
+        "c_vary_vanishes_under_lesion": true
+      },
+      "bg_action_selection": {
+        "n_content_tokens": 3,
+        "host_expect": [
+          1.0,
+          0.0
+        ],
+        "baseline": [
+          1.0,
+          0.0
+        ],
+        "default": [
+          1.0600858369098711,
+          0.0
+        ],
+        "explicit_on": [
+          1.0486409155937053,
+          0.0
+        ],
+        "lesion": [
+          0.0,
+          0.0
+        ],
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "value_choice_context": {
+        "baseline": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "default": [
+          0.0,
+          0.3133047210300429,
+          1.0600858369098711
+        ],
+        "explicit_on": [
+          0.0014306151645207554,
+          0.3347639484978541,
+          1.0801144492131616
+        ],
+        "lesion": [
+          0.0,
+          0.008583690987124474,
+          0.0
+        ],
+        "baseline_spread": 1.0,
+        "default_spread": 1.0600858369098711,
+        "explicit_on_spread": 1.0786838340486409,
+        "lesion_spread": 0.008583690987124474,
+        "spread_attributable_to_afferent": 0.9919028340080972,
+        "c_baseline_is_oracle": true,
+        "c_default_matches_explicit_on": true,
+        "c_loadbearing_in_path": true,
+        "c_lesion_collapses": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 3.98
+    }
+  }
+}

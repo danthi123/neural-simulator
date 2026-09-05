@@ -1,0 +1,33 @@
+{
+ "run_id": "1788597672-3929908",
+ "runner": "research/runners/_shared_salience_afferent_prodflip_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af8d891c257bfcfba/research/runners/_shared_salience_afferent_prodflip_verify.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--critic",
+  "--out",
+  "research/findings/raw/_shared_salience_prodflip/verify_AB.json"
+ ],
+ "git_sha": "04cbd1bec",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:41:12",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_shared_salience_prodflip/verify_AB.json"
+}
