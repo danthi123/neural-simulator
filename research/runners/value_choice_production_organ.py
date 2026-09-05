@@ -58,6 +58,9 @@ from research.runners import _merged_navcritic_valuetrain as VT  # noqa: E402
 from research.runners._navcloseout_R5_value_driven_choice import (  # noqa: E402
     SpikingValueChoice, _drives, make_salience_bias,
 )
+# reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
+# research/runners/shared_salience_afferent.py) -- default-OFF (BRAIN_SHARED_SALIENCE); see default_context_fn().
+import research.runners.shared_salience_afferent as _SHARED  # noqa: E402
 
 # whose-the-difference attribution (the R5 non-circularity question, asked per COMMIT): what fraction of the winning
 # pool's DRIVE is the LEARNED VALUE vs the value-INDEPENDENT salience baseline? A choice that is a relabeled salience
@@ -309,7 +312,14 @@ def candidate_patients(chat, a: str, v: str) -> list[str]:
 def default_context_fn(chat):
     """Build the per-candidate ENGAGEMENT context from the ChatBrain: fact recency (later-stored -> more engaged) +
     a boost if the candidate is the current discourse-WM referent. A real, deterministic 'prior reward/engagement'
-    signal (the DA/limbic context the value critic converts to a learned V)."""
+    signal (the DA/limbic context the value critic converts to a learned V).
+
+    SHARED SPIKING AFFERENT (rank-4, default-OFF `BRAIN_SHARED_SALIENCE`, research/runners/shared_salience_afferent.py).
+    The RECENCY/referent bookkeeping above stays host (a legitimate environment/episodic-memory-provenance boundary --
+    WHICH fact was stored when, and which is the live discourse referent, is not a cognitive computation); what
+    changes is that the per-candidate scalar this function hands the critic is no longer that host ratio directly, but
+    the shared curiosity-organ ASK-pool's spiking transduction of it (the SAME afferent da_mode_drives_chat and
+    bg_action_selection_production_organ read). OFF (unset) -> byte-identical to the bare recency ratio below."""
     def ctx(a, v, cands):
         order = {}
         for i, (fa, fv, fp) in enumerate(getattr(chat, "stored_facts", [])):
@@ -325,6 +335,8 @@ def default_context_fn(chat):
         except Exception:
             ref = None
         eng = [min(1.0, e + (0.5 if p == ref else 0.0)) for e, p in zip(eng, cands)]
+        if _SHARED.shared_salience_enabled():
+            eng = [float(max(0.0, _SHARED.read_salience(e)["normalized"])) for e in eng]
         return eng
     return ctx
 
