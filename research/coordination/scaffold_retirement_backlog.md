@@ -78,6 +78,25 @@ HEADLINE overclaims corrected by the adversarial-verify (`w3qhweujd`) — see th
 being re-verified.
 
 ## STATUS UPDATES (per-rank, append-only — keep terse; do not rewrite the ranked list above)
+- **Rank 20 (value-choice reward-context host recency) — FLIPPED DEFAULT-ON, 2026-09-05 (Track-1 flip campaign).**
+  `BRAIN_SHARED_SALIENCE` (rank-4's own flag; the ONE shared afferent feeding all 3 consumers, including this
+  rank's value-choice context) is flipped default-ON in `research/runners/shared_salience_afferent.py`
+  (`_SHARED_SALIENCE_DEFAULT_ON = True`, mirrors `BRAIN_VALUE_CHOICE`'s own 2026-08-26 idiom). Verified via a NEW
+  no-regression + anti-hollow soak run through the REAL production `ChatBrain`/gate/render path (not the `_FakeChat`
+  stand-in rank-4/rank-20's own prior 6-seed-GOs used) — 6/6 seeds, all 4 gates (ordinary-preserved,
+  on-loadbearing, lesion-collapses, no-confab-moat) pass on every seed. A pre-existing test-infra bug the flip
+  exposed (`_shared_salience_afferent_derisk.py::_clear_flags()` unset the var to mean OFF, silently wrong once the
+  default flips — the exact `tools/gates/flip_offarm_staleness.py` class) was caught + fixed + reconfirmed (rank-4's
+  own 6-seed gate re-run clean post-fix). A genuine, pre-existing, UNRELATED non-determinism was also found +
+  logged, not fixed here: `value_choice_production_organ._stable_seed` uses Python's per-process-randomized
+  `hash()` on a string tuple, which can flip the categorical winner on a near-tied ambiguity across independent
+  runs of "the same seed" — does not touch this flip's own gates (built on context floats, confirmed
+  byte-identical across two such runs). See `research/findings/2026-09-05-shared-salience-value-choice-flip-default-on-6seed-GO.md`.
+  SCOPED to the value-choice consumer only — this flip's OTHER 2 consumers (`da_mode_drives_chat`,
+  `bg_action_selection_production_organ`) are rank-4/rank-5's own separate, parallel verification scope, not
+  independently re-verified at the integrated-ChatBrain level here. Does not merge to `main` (feature branch,
+  `worktree-wf_5ba45863-4fb-4`, commit `389172ec2`); does not touch `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`
+  (left for the controller's consolidated update once the parallel ranks land).
 - **Rank 12 (GNW STOP host boolean-OR) — DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05.** An ACC/BG hyperdirect circuit
   (two afferent relay pools → ACC → STN → GPi, reusing the STN-veto de-risk's chain shape) reads the SAME
   `n_ignited` / `mm_peak` afferents `detect_trigger`'s boolean-OR read, directly as synaptic input, and decides the
