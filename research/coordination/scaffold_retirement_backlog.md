@@ -87,3 +87,20 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 11 (topic-swap regex+host) — AUDITED: ALREADY DONE, entry MIS-SCOPED, 2026-09-05.** The swap-vs-hold
+  DECISION this item asks to neuralize is not a proposal to build — it already IS the spiking mismatch/salience
+  `mm_k` + prediction-veto `pred_k` comparator (`research/runners/_gnw_neural_swap_intention_derisk.py`, 6/6-seed
+  GO, 2026-08-19), wired to `/api/brain-chat` DEFAULT-ON since 2026-08-19/20 (`webapp/gnw_thought_swap.py` #77,
+  `webapp/swap_drives_chat.py` #85, `_SWAP_DRIVES_DEFAULT_ON=True`) — and its `mm_peak` output is already the
+  SAME signal rank-12's own ACC/BG STOP circuit reuses a second time. Re-ran this task's exact 6-seed reproduce
+  command against today's code: the written artifact is BYTE-IDENTICAL to the file committed 2026-08-19 (no
+  drift). An exhaustive grep across `webapp/`, `sim/`, `research/runners/`, `tests/` found no separate host-regex
+  topic-swap DECISION anywhere — the only regex present is `_extract_topic`'s word tokenizer (topic EXTRACTION, a
+  different, already-tracked residual, not the swap detection). `docs/PRODUCTION_INTEGRATION_LEDGER.yaml`'s
+  Check-D taxonomy (dated 2026-09-02, three days before this backlog) already tracks this exact capability under
+  rows `gnw-thought-swap` / `swap-drives-response` and already names the true residual scaffolding (topic
+  extraction, the verdict→string articulation template, the mm→boost read-out, held-slot continuity, labeled-line
+  routing) — none of which is a swap-detection regex. See
+  `research/findings/2026-09-05-rank11-topic-swap-scaffold-backlog-item-already-integrated.md`. No code changed;
+  nothing to flip (the swap-vs-hold decision is already on-by-default). The named residuals above remain BLOCKED
+  per the ledger and are each separate, larger items (topic-extraction neuralization is rank-14's scope).
