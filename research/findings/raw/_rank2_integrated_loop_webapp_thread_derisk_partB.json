@@ -1,0 +1,2685 @@
+{
+  "part_b_production": {
+    "label": "rank2-production-v320-6seed",
+    "status": "UNDEFINED",
+    "go": false,
+    "undefined_reasons": [
+      "unmet: seed42_answer_identical (measured=False expect=True)",
+      "unmet: seed43_answer_identical (measured=False expect=True)",
+      "unmet: seed44_answer_identical (measured=False expect=True)",
+      "unmet: seed100_answer_identical (measured=False expect=True)",
+      "unmet: seed101_answer_identical (measured=False expect=True)",
+      "unmet: seed101_moat_fa_zero (measured=1 expect=0)",
+      "unmet: seed102_answer_identical (measured=False expect=True)"
+    ],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "seed42_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed42_moat_fa_zero",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed43_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed43_moat_fa_zero",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed44_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed44_moat_fa_zero",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed100_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed100_moat_fa_zero",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed101_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed101_moat_fa_zero",
+        "ok": false,
+        "detail": "measured=1 expect=0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed102_answer_identical",
+        "ok": false,
+        "detail": "measured=False expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "seed102_moat_fa_zero",
+        "ok": true,
+        "detail": "measured=0 expect=0",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null,
+    "per_seed": [
+      {
+        "seed": 42,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "rivb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "foxb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "birb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "frob",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "wave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "ston",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": true,
+        "fa": 0
+      },
+      {
+        "seed": 43,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "rivb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "sunb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "foxb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "birb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "birb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "leab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "frob",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "wave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "mud",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "ston",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": true,
+        "fa": 0
+      },
+      {
+        "seed": 44,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "rivb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "sunb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "leab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "frob",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "wave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "shor",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "ston",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": true,
+        "fa": 0
+      },
+      {
+        "seed": 100,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "rivb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "sunb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "foxb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "frob",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "shor",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "mud",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "ston",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": true,
+        "fa": 0
+      },
+      {
+        "seed": 101,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "rivb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "sunb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "foxb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "foxb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "birb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "leab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "mud",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": "clif",
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": false
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": false,
+        "fa": 1
+      },
+      {
+        "seed": 102,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_patient": "north",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_patient": "rivb",
+            "seq_patient": "north",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_patient": "treb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_patient": "sunb",
+            "seq_patient": "treb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "sun",
+              "hop"
+            ],
+            "kind": "blk4-present",
+            "host_patient": "monb",
+            "seq_patient": "sunb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "tree",
+              "dig"
+            ],
+            "kind": "blk5-present",
+            "host_patient": "foxb",
+            "seq_patient": "monb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moon",
+              "rest"
+            ],
+            "kind": "blk6-present",
+            "host_patient": "catb",
+            "seq_patient": "catb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "river",
+              "watch"
+            ],
+            "kind": "blk7-present",
+            "host_patient": "birb",
+            "seq_patient": "birb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "wolf",
+              "go"
+            ],
+            "kind": "blk8-present",
+            "host_patient": "hilb",
+            "seq_patient": "hilb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hawk",
+              "run"
+            ],
+            "kind": "blk9-present",
+            "host_patient": "lakb",
+            "seq_patient": "lakb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "deer",
+              "see"
+            ],
+            "kind": "blk10-present",
+            "host_patient": "rock",
+            "seq_patient": "rock",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "frog",
+              "fly"
+            ],
+            "kind": "blk11-present",
+            "host_patient": "stab",
+            "seq_patient": "stab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "star",
+              "hop"
+            ],
+            "kind": "blk12-present",
+            "host_patient": "leab",
+            "seq_patient": "leab",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "leaf",
+              "dig"
+            ],
+            "kind": "blk13-present",
+            "host_patient": "wolb",
+            "seq_patient": "wolb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "hill",
+              "rest"
+            ],
+            "kind": "blk14-present",
+            "host_patient": "deeb",
+            "seq_patient": "deeb",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "lake",
+              "watch"
+            ],
+            "kind": "blk15-present",
+            "host_patient": "frob",
+            "seq_patient": "frob",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bear",
+              "go"
+            ],
+            "kind": "blk16-present",
+            "host_patient": "cave",
+            "seq_patient": "cave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "crow",
+              "run"
+            ],
+            "kind": "blk17-present",
+            "host_patient": "nest",
+            "seq_patient": "nest",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "toad",
+              "see"
+            ],
+            "kind": "blk18-present",
+            "host_patient": "pond",
+            "seq_patient": "pond",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "reed",
+              "fly"
+            ],
+            "kind": "blk19-present",
+            "host_patient": "fern",
+            "seq_patient": "fern",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "mist",
+              "hop"
+            ],
+            "kind": "blk20-present",
+            "host_patient": "clod",
+            "seq_patient": "clod",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dune",
+              "dig"
+            ],
+            "kind": "blk21-present",
+            "host_patient": "sand",
+            "seq_patient": "sand",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "vine",
+              "rest"
+            ],
+            "kind": "blk22-present",
+            "host_patient": "root",
+            "seq_patient": "root",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "kelp",
+              "watch"
+            ],
+            "kind": "blk23-present",
+            "host_patient": "wave",
+            "seq_patient": "wave",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "newt",
+              "go"
+            ],
+            "kind": "blk24-present",
+            "host_patient": "log",
+            "seq_patient": "log",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "lynx",
+              "run"
+            ],
+            "kind": "blk25-present",
+            "host_patient": "den",
+            "seq_patient": "den",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "wren",
+              "see"
+            ],
+            "kind": "blk26-present",
+            "host_patient": "twig",
+            "seq_patient": "twig",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "seal",
+              "fly"
+            ],
+            "kind": "blk27-present",
+            "host_patient": "shor",
+            "seq_patient": "shor",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "moss",
+              "hop"
+            ],
+            "kind": "blk28-present",
+            "host_patient": "bark",
+            "seq_patient": "bark",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "clay",
+              "dig"
+            ],
+            "kind": "blk29-present",
+            "host_patient": "mud",
+            "seq_patient": "mud",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "pike",
+              "rest"
+            ],
+            "kind": "blk30-present",
+            "host_patient": "ston",
+            "seq_patient": "ston",
+            "host_yes_no": "yes",
+            "seq_yes_no": "yes",
+            "eq": true
+          },
+          {
+            "cue": [
+              "gull",
+              "watch"
+            ],
+            "kind": "blk31-present",
+            "host_patient": "clif",
+            "seq_patient": "clif",
+            "host_yes_no": "yes",
+            "seq_yes_no": "unknown",
+            "eq": false
+          },
+          {
+            "cue": [
+              "bark",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "bark"
+            ],
+            "kind": "absent-action",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_patient": null,
+            "seq_patient": null,
+            "host_yes_no": "unknown",
+            "seq_yes_no": "unknown",
+            "eq": true
+          }
+        ],
+        "answer_identical": false,
+        "moat_ok": true,
+        "fa": 0
+      }
+    ],
+    "V": 320,
+    "K": 32,
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ]
+  },
+  "overall_go": false
+}

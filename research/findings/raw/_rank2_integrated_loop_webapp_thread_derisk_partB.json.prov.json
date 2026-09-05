@@ -1,0 +1,29 @@
+{
+ "run_id": "1788613439-60708",
+ "runner": "research/runners/_rank2_integrated_loop_webapp_thread_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_rank2_integrated_loop_webapp_thread_derisk.py",
+  "--skip-mechanical",
+  "--out",
+  "research/findings/raw/_rank2_integrated_loop_webapp_thread_derisk_partB.json"
+ ],
+ "git_sha": "3e9cf5464",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T09:03:59",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2830.4,
+ "corpus_check_query": "affect salience gate opponent appraisal population",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_rank2_integrated_loop_webapp_thread_derisk_partB.json"
+}
