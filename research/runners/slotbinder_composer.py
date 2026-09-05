@@ -51,7 +51,19 @@ def _CLAUSE_LABEL(j):
 
 class SlotBinderComposer:
     def __init__(self, seed=42, vocab=None, D=128, max_facts=16, concepts=None, grounded_codes=None,
-                 gain=400.0, teach_steps=40, retr_steps=40, max_clauses=None, **_ignored):
+                 gain=400.0, teach_steps=40, retr_steps=40, max_clauses=None, fanout=None, prewire_facts=None,
+                 **_ignored):
+        """fanout / prewire_facts (L2 sparsification, 2026-09-04 -- see
+        research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md): `fanout=None`
+        (default) is byte-identical to the pre-2026-09-04 dense O(K*KF) slot->filler wiring. Passing an int
+        `< KF` switches to a fixed small per-slot candidate set (`build_binder_bridge`'s `fanout` -- O(K), not
+        O(K*KF)). `prewire_facts`, when given, is the ordered list of flat-SVO fact dicts/tuples this composer
+        will be `store()`-d with (the KNOWN-corpus batch-consolidation case this was built for -- e.g. migrating
+        an existing `facts.json` bundle) -- it lets `_ensure()` PRE-REGISTER each slot's one true required filler
+        so the sparsified wiring is guaranteed to include it (padded to `fanout` with random distractors). Without
+        `prewire_facts`, a sparse build is BLIND (no foreknowledge) -- honest about the coverage risk that
+        carries. `bind`/`write`/`recall`/`moat` mechanics below (`store_pair`, `read_slot`, `_match`, ...) are
+        UNCHANGED either way -- only the WIRING differs."""
         self.seed = int(seed)
         self.D = int(D)                        # API compat (unused: this composer binds pools, not D-dim codes)
         base = list(vocab) if vocab is not None else (list(concepts.keys()) if concepts else list(_DEFAULT_VOCAB))
@@ -74,6 +86,37 @@ class SlotBinderComposer:
         self.concepts = {w: i for i, w in enumerate(self.words)}
         self.facts = []                        # list of dicts: {agent, action, patient, polarity[, ptr_group]}
         self._b = None                         # bridge built lazily on first store
+        self.fanout = None if fanout is None else int(fanout)
+        self._prewire_facts = prewire_facts
+
+    def _required_fillers_from_prewire(self):
+        """Precompute {slot_index: [filler_index]} for every (fact_i, role) this composer will populate, from
+        `self._prewire_facts` (ordered flat-SVO fact dicts: 'agent','action','patient','polarity'[,'attribute']).
+        This is a WIRING-TIME pre-registration of a KNOWN corpus (not a per-query lookahead) -- see __init__.
+        Embedded-clause patients are not supported here (every real fact in the day_33 bundle is flat SVO) and
+        raise rather than silently mis-wire, since a wrong required-filler set defeats the point of using fanout."""
+        req = {}
+        for i, fact in enumerate(self._prewire_facts):
+            if isinstance(fact, dict):
+                agent, action, patient = fact["agent"], fact["action"], fact["patient"]
+                polarity, attribute = fact.get("polarity"), fact.get("attribute")
+            else:
+                agent, action, patient, polarity, attribute = (list(fact) + [None, None])[:5]
+            if self._as_clause(patient) is not None:
+                raise ValueError("prewire_facts: embedded-clause patients are not supported by fanout "
+                                  "pre-registration (fact %d)" % i)
+            noun, tuple_attr = self._resolve_patient(patient)
+            if attribute is None:
+                attribute = tuple_attr
+            pol = "NEGATE" if polarity in ("NEGATE", "neg", False) else "AFFIRM"
+            attr_filler = self._w2i[attribute] if attribute is not None else self._noattr
+            base = _ROLES * i
+            req[base + 0] = [self._w2i[agent]]
+            req[base + 1] = [self._w2i[action]]
+            req[base + 2] = [self._w2i[noun]]
+            req[base + 3] = [self._pol[pol]]
+            req[base + 4] = [attr_filler]
+        return req
 
     # ---- lazy bridge + primitives -------------------------------------------------------------------
     def _ensure(self):
@@ -81,7 +124,9 @@ class SlotBinderComposer:
             return
         from sim.backend import to_host, from_host
         KF = len(self._vocab)
-        b = build_binder_bridge(self.seed, K=_ROLES * self.max_facts, KF=KF)
+        required = self._required_fillers_from_prewire() if (self.fanout is not None and self._prewire_facts) else None
+        b = build_binder_bridge(self.seed, K=_ROLES * self.max_facts, KF=KF, fanout=self.fanout,
+                                required_fillers=required)
         n = b.core_config.num_neurons
         slot_idx = [_idx(b, f"w{k}") for k in range(b._K_slots)]
         fill_idx = [_idx(b, f"f{f}") for f in range(KF)]

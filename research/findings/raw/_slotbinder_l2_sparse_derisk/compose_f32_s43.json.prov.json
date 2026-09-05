@@ -1,0 +1,33 @@
+{
+ "run_id": "1788574962-3404075",
+ "runner": "research/runners/_slotbinder_l2_sparse_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-ad50b6a3d6dfe6935/research/runners/_slotbinder_l2_sparse_derisk.py",
+  "--mode",
+  "compose",
+  "--seed",
+  "43",
+  "--fanout",
+  "32",
+  "--n-facts",
+  "2",
+  "--out",
+  "research/findings/raw/_slotbinder_l2_sparse_derisk/compose_f32_s43.json"
+ ],
+ "git_sha": "7f52d97e1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T22:22:42",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_slotbinder_l2_sparse_derisk/compose_f32_s43.json"
+}

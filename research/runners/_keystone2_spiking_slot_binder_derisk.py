@@ -32,8 +32,42 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 
-def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, fs_to_exc=10.0, nmda=True):
-    """K NMDA-recurrent slot pools + shared FS + KF filler pools + a PLASTIC slot->filler pathway."""
+def slot_filler_nnz_formula(K, KF, fanout=None):
+    """The EXACT edge-count formula `build_binder_bridge` produces (see its docstring). DENSE (`fanout` is
+    `None` or `>= KF`) wires every one of the `K*KF` slot->filler pool-pairs; SPARSE (L2, 2026-09-04) wires only
+    `K*min(fanout, KF)` of them. Each wired pool-pair contributes `n_word*n_fill = 20*20 = 400` edges (the
+    module's fixed n_word/n_fill=20 defaults -- pass explicit values if you build with different pool sizes).
+    Plus `K*(400 self-recurrent + 480 slot->fs + 480 fs->slot) = K*1360`, independent of fanout. At `fanout=None`
+    this matches the dense-case formula in
+    `research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md` exactly (verified
+    against 4 real build points there); kept as one function so the dense and sparse formulas cannot drift apart.
+    """
+    K, KF = int(K), int(KF)
+    eff_kf = KF if (fanout is None or int(fanout) >= KF) else int(fanout)
+    return K * eff_kf * 400 + K * 1360
+
+
+def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, fs_to_exc=10.0, nmda=True,
+                        fanout=None, required_fillers=None):
+    """K NMDA-recurrent slot pools + shared FS + KF filler pools + a PLASTIC slot->filler pathway.
+
+    fanout (L2 sparsification, 2026-09-04 -- research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-...):
+    `None` (default) or `>= KF` wires EVERY slot to EVERY filler pool -- the ORIGINAL dense `O(K*KF)` pathway,
+    byte-identical to the pre-2026-09-04 code path. An int `< KF` gives each slot a FIXED, SMALL candidate set of
+    `fanout` filler pools instead of all KF -- `O(K)` synapses (`slot_filler_nnz_formula`), not `O(K*KF)`. Mirrors
+    the NO-GO finding's own recommendation #1: "each slot pool connecting to a small, fixed-size subset of
+    candidate filler pools rather than all KF of them."
+
+    required_fillers: optional `{slot_index: [filler_index, ...]}`. When a slot index has an entry, those
+    filler(s) are GUARANTEED to be in that slot's candidate set (the caller already knows -- from a KNOWN,
+    already-collected corpus -- which filler this slot will be taught; a batch-consolidation PRE-REGISTRATION,
+    analogous to a replay pass laying down structural connectivity for a known experience before Hebbian
+    learning strengthens it -- not a per-query lookahead). The remaining budget up to `fanout` is padded with a
+    SEEDED-RANDOM sample of the other filler pools (reproducible, independent of the teach/retrieval RNGs used
+    elsewhere). A slot with NO entry gets a purely random `fanout`-sized candidate set -- the BLIND/online
+    pre-wiring case, with no guarantee its eventual filler is reachable (see the L2 de-risk finding for the
+    measured coverage cost of that regime). Ignored when not sparsifying (`fanout is None or >= KF`).
+    """
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -47,6 +81,13 @@ def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, 
         regions.append(BrainRegion(name=f"f{f}", n_neurons=n_fill, exc_fraction=1.0, internal_density=0.0,
                                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
     pathways = []
+    sparse = fanout is not None and int(fanout) < KF
+    eff_fanout = int(fanout) if sparse else KF
+    required_fillers = required_fillers or {}
+    # independent of (and does not perturb) the teach/retrieval RNGs -- those are host `np.random.default_rng`
+    # calls made by CALLERS of this module (e.g. `run_seed`), never touched here.
+    fo_rng = np.random.default_rng(int(seed) * 7919 + 17)
+    filler_candidates = {}   # {slot_idx: sorted [filler_idx, ...]} -- only populated when sparse (empty = dense)
     for k in range(K):
         # NMDA self-excitation (the HOLD): w_k -> w_k via slow NMDA (Wang mechanism), like build_persistent_slot
         pathways.append(RegionPathway(from_region=f"w{k}", to_region=f"w{k}", density=1.0, weight_mean=recur,
@@ -55,10 +96,23 @@ def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, 
                                       weight_jitter=0.0, plastic=False))
         pathways.append(RegionPathway(from_region="fs", to_region=f"w{k}", density=1.0, weight_mean=fs_to_exc,
                                       weight_jitter=0.0, plastic=False))
-        # PLASTIC slot -> ALL filler pools (Hebbian writes the association at store time; zero-init). PER-SLOT gate so a
+        # PLASTIC slot -> filler pool(s) (Hebbian writes the association at store time; zero-init). PER-SLOT gate so a
         # bind's teach opens ONLY its own slot's synapses -> the Hebbian DECAY of inactive synapses cannot erode the
         # OTHER slots' already-written associations (the documented Hebbian-decay gotcha, seen as the multi-bind 0.00).
-        for f in range(KF):
+        # DENSE (not sparse): every one of the KF filler pools, unchanged from the original code path.
+        if not sparse:
+            fillers_k = range(KF)
+        else:
+            req = sorted({int(x) for x in required_fillers.get(k, ())})
+            if len(req) >= eff_fanout:
+                fillers_k = req[:eff_fanout]     # more required than the budget -- keep required, no room to pad
+            else:
+                pool = [f for f in range(KF) if f not in req]
+                n_pad = min(eff_fanout - len(req), len(pool))
+                pad_pos = fo_rng.choice(len(pool), size=n_pad, replace=False) if n_pad else []
+                fillers_k = req + [pool[i] for i in pad_pos]
+            filler_candidates[k] = sorted(fillers_k)
+        for f in fillers_k:
             pathways.append(RegionPathway(from_region=f"w{k}", to_region=f"f{f}", density=1.0, weight_mean=0.0,
                                           weight_jitter=0.0, plastic=True, plasticity_gate=f"slot{k}_to_filler"))
     # NOTE: a NAIVE always-on filler-WTA (f->ffs->f inhibition) HURT (0.56->0.11) -- it suppresses the target filler,
@@ -79,6 +133,8 @@ def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, 
     for k in range(K):
         b.set_plasticity_gate(f"slot{k}_to_filler", 0.0)     # all frozen until each slot's own store window
     b._K_slots = K
+    b._fanout = (eff_fanout if sparse else None)     # None signals dense (introspectable by callers/tests)
+    b._filler_candidates = filler_candidates         # {} when dense
     return b
 
 

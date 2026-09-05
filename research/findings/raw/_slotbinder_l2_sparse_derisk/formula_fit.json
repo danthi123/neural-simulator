@@ -1,0 +1,91 @@
+{
+  "purpose": "L2 FIT check: does sparsifying SlotBinderComposer's slot->filler wiring bring the REAL K=2020/KF=1195 production topology under the single-consumer-RTX-3090 (24GB) reference?",
+  "K": 2020,
+  "KF": 1195,
+  "n_neurons_full": 64324,
+  "n_facts": 404,
+  "vocab_size": 788,
+  "small_scale_formula_cross_check": [
+    {
+      "K": 6,
+      "KF": 19,
+      "fanout": null,
+      "actual_nnz": 53760,
+      "formula_nnz": 53760,
+      "match": true
+    },
+    {
+      "K": 6,
+      "KF": 19,
+      "fanout": 8,
+      "actual_nnz": 27360,
+      "formula_nnz": 27360,
+      "match": true
+    },
+    {
+      "K": 40,
+      "KF": 200,
+      "fanout": 32,
+      "actual_nnz": 566400,
+      "formula_nnz": 566400,
+      "match": true
+    }
+  ],
+  "real_scale_builds_per_fanout": [
+    {
+      "fanout": 8,
+      "nnz": 9211200,
+      "formula_nnz": 9211200,
+      "nnz_match": true,
+      "build_s": 11.331550359725952,
+      "this_process_peak_rss_gb": 3.355945587158203,
+      "vram_ch_gate_formula_gib": 5.488092660903931,
+      "vram_ch_gate_classify": "PASS",
+      "vram_exact_40bytes_per_synapse_gib": 0.34314393997192383,
+      "vram_exact_40bytes_per_synapse_classify": "PASS"
+    },
+    {
+      "fanout": 16,
+      "nnz": 15675200,
+      "formula_nnz": 15675200,
+      "nnz_match": true,
+      "build_s": 17.559636116027832,
+      "this_process_peak_rss_gb": 5.6331939697265625,
+      "vram_ch_gate_formula_gib": 8.57036805152893,
+      "vram_ch_gate_classify": "PASS",
+      "vram_exact_40bytes_per_synapse_gib": 0.583946704864502,
+      "vram_exact_40bytes_per_synapse_classify": "PASS"
+    },
+    {
+      "fanout": 32,
+      "nnz": 28603200,
+      "formula_nnz": 28603200,
+      "nnz_match": true,
+      "build_s": 30.731660842895508,
+      "this_process_peak_rss_gb": 10.012508392333984,
+      "vram_ch_gate_formula_gib": 14.73491883277893,
+      "vram_ch_gate_classify": "PASS",
+      "vram_exact_40bytes_per_synapse_gib": 1.0655522346496582,
+      "vram_exact_40bytes_per_synapse_classify": "PASS"
+    },
+    {
+      "fanout": 64,
+      "nnz": 54459200,
+      "formula_nnz": 54459200,
+      "nnz_match": true,
+      "build_s": 62.8518443107605,
+      "this_process_peak_rss_gb": 17.386512756347656,
+      "vram_ch_gate_formula_gib": 27.06402039527893,
+      "vram_ch_gate_classify": "BLOCK",
+      "vram_exact_40bytes_per_synapse_gib": 2.0287632942199707,
+      "vram_exact_40bytes_per_synapse_classify": "PASS"
+    }
+  ],
+  "dense_L1_reference_cited_not_remeasured": {
+    "nnz": 968307200,
+    "host_build_peak_rss_gb": 316.0,
+    "vram_ch_gate_gib": 462.85,
+    "vram_exact_40bytes_gib": 36.0722541809082,
+    "source": "research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md (L1, cited not re-measured)"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "seed": 42,
+  "fanout": 64,
+  "blind": false,
+  "n_facts_requested": 2,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    35,
+    312
+  ],
+  "full_methods": false,
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 54459200,
+  "formula_nnz": 54459200,
+  "build_and_store_seconds": 550.6000094413757,
+  "coverage_hits": 10,
+  "coverage_total": 10,
+  "coverage_rate": 1.0,
+  "per_fact": [
+    {
+      "fact_idx_in_corpus": 35,
+      "agent": "cat",
+      "action": "play",
+      "patient": "yard",
+      "polarity": "AFFIRM",
+      "query_patient_hit": true,
+      "query_patient_got": "yard"
+    },
+    {
+      "fact_idx_in_corpus": 312,
+      "agent": "tree",
+      "action": "wave",
+      "patient": "branch",
+      "polarity": "AFFIRM",
+      "query_patient_hit": true,
+      "query_patient_got": "branch"
+    }
+  ],
+  "recall_accuracy_query_patient": 1.0,
+  "moat_checks": [
+    {
+      "agent": "moon",
+      "action": "chair",
+      "abstained": true
+    }
+  ],
+  "moat_pass_rate": 1.0,
+  "mismatch_checks": [
+    {
+      "agent": "cat",
+      "action_from_other_fact": "wave",
+      "did_not_leak_fact_i_patient": true,
+      "got": null
+    }
+  ],
+  "mismatch_pass_rate": 1.0
+}

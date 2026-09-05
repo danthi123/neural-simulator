@@ -1,0 +1,58 @@
+{
+  "seed": 43,
+  "fanout": 32,
+  "blind": false,
+  "n_facts_requested": 2,
+  "n_facts_sampled": 2,
+  "sampled_corpus_indices": [
+    203,
+    263
+  ],
+  "full_methods": false,
+  "K": 2020,
+  "KF": 1195,
+  "measured_nnz": 28603200,
+  "formula_nnz": 28603200,
+  "build_and_store_seconds": 283.28287386894226,
+  "coverage_hits": 10,
+  "coverage_total": 10,
+  "coverage_rate": 1.0,
+  "per_fact": [
+    {
+      "fact_idx_in_corpus": 203,
+      "agent": "people",
+      "action": "use",
+      "patient": "history",
+      "polarity": "AFFIRM",
+      "query_patient_hit": true,
+      "query_patient_got": "history"
+    },
+    {
+      "fact_idx_in_corpus": 263,
+      "agent": "system",
+      "action": "base",
+      "patient": "law",
+      "polarity": "AFFIRM",
+      "query_patient_hit": true,
+      "query_patient_got": "law"
+    }
+  ],
+  "recall_accuracy_query_patient": 1.0,
+  "moat_checks": [
+    {
+      "agent": "details",
+      "action": "monster",
+      "abstained": true
+    }
+  ],
+  "moat_pass_rate": 1.0,
+  "mismatch_checks": [
+    {
+      "agent": "people",
+      "action_from_other_fact": "base",
+      "did_not_leak_fact_i_patient": true,
+      "got": null
+    }
+  ],
+  "mismatch_pass_rate": 1.0
+}
