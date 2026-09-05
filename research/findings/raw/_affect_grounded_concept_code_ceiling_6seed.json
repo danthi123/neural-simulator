@@ -1,0 +1,426 @@
+{
+  "probe": "affect_grounded_concept_code_ceiling_derisk (REQUIREMENTS de-risk: what must a grounded teacher deliver?)",
+  "verdict": "BOUNDARY/PARTIAL (6-seed, build-informative) -- grounded-fused ceiling 0.029 worst-case at the realistic operating point vs text-only 0.059; no-grounding 0.088; shuffle 0.127; synthetic instrument 1.000. FAILED: ['G1_lift_clears_bar']. See the (rho,sigma) frontier for what coverage/noise WOULD clear the bar. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
+  "GO": false,
+  "G1_lift_clears_bar": false,
+  "G2_attributable": true,
+  "G3_instrument": true,
+  "text_ceiling_worst": 0.058823529411764705,
+  "text_ceiling_mean": 0.0196078431372549,
+  "grounded_fused_realistic_worst": 0.029411764705882353,
+  "grounded_fused_realistic_mean": 0.1503267973856209,
+  "nogrounding_control_worst": 0.08823529411764706,
+  "shuffle_control_worst": 0.12745098039215685,
+  "clean_full_grounding_ceiling_worst": 1.0,
+  "synthetic_instrument_ceiling_worst": 1.0,
+  "ceiling_go_bar": 0.5,
+  "rho_realistic": 0.6,
+  "sigma_realistic": 1.0,
+  "attrib_margin": 0.15,
+  "text_ceil_max": 0.2,
+  "rho_sigma_frontier": [
+    {
+      "rho": 0.0,
+      "sigma": 0.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.0196078431372549,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 0.5,
+      "fused_worst": 0.0,
+      "fused_mean": 0.04411764705882353,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 1.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.04248366013071895,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.0,
+      "sigma": 2.0,
+      "fused_worst": 0.00980392156862745,
+      "fused_mean": 0.027777777777777776,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 0.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.04084967320261438,
+      "grounded_only_worst": 0.19607843137254902,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 0.5,
+      "fused_worst": 0.0,
+      "fused_mean": 0.10294117647058824,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 1.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.07679738562091502,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.2,
+      "sigma": 2.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.05718954248366013,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 0.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.13562091503267973,
+      "grounded_only_worst": 0.4019607843137255,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 0.5,
+      "fused_worst": 0.00980392156862745,
+      "fused_mean": 0.11601307189542485,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 1.0,
+      "fused_worst": 0.0392156862745098,
+      "fused_mean": 0.14052287581699344,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.4,
+      "sigma": 2.0,
+      "fused_worst": 0.029411764705882353,
+      "fused_mean": 0.07026143790849675,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.6,
+      "sigma": 0.0,
+      "fused_worst": 0.0392156862745098,
+      "fused_mean": 0.3709150326797386,
+      "grounded_only_worst": 0.5980392156862745,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.6,
+      "sigma": 0.5,
+      "fused_worst": 0.0196078431372549,
+      "fused_mean": 0.284313725490196,
+      "grounded_only_worst": 0.00980392156862745,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fused_worst": 0.029411764705882353,
+      "fused_mean": 0.1503267973856209,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.6,
+      "sigma": 2.0,
+      "fused_worst": 0.0,
+      "fused_mean": 0.04738562091503268,
+      "grounded_only_worst": 0.0,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.8,
+      "sigma": 0.0,
+      "fused_worst": 0.5392156862745098,
+      "fused_mean": 0.7679738562091503,
+      "grounded_only_worst": 0.803921568627451,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 0.8,
+      "sigma": 0.5,
+      "fused_worst": 0.21568627450980393,
+      "fused_mean": 0.5866013071895425,
+      "grounded_only_worst": 0.3137254901960784,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.8,
+      "sigma": 1.0,
+      "fused_worst": 0.09803921568627451,
+      "fused_mean": 0.3235294117647059,
+      "grounded_only_worst": 0.09803921568627451,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 0.8,
+      "sigma": 2.0,
+      "fused_worst": 0.029411764705882353,
+      "fused_mean": 0.09150326797385622,
+      "grounded_only_worst": 0.029411764705882353,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 1.0,
+      "sigma": 0.0,
+      "fused_worst": 1.0,
+      "fused_mean": 1.0,
+      "grounded_only_worst": 1.0,
+      "clears_go_bar": true
+    },
+    {
+      "rho": 1.0,
+      "sigma": 0.5,
+      "fused_worst": 0.43137254901960786,
+      "fused_mean": 0.9052287581699346,
+      "grounded_only_worst": 0.4803921568627451,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 1.0,
+      "sigma": 1.0,
+      "fused_worst": 0.049019607843137254,
+      "fused_mean": 0.6078431372549019,
+      "grounded_only_worst": 0.12745098039215685,
+      "clears_go_bar": false
+    },
+    {
+      "rho": 1.0,
+      "sigma": 2.0,
+      "fused_worst": 0.029411764705882353,
+      "fused_mean": 0.18790849673202614,
+      "grounded_only_worst": 0.029411764705882353,
+      "clears_go_bar": false
+    }
+  ],
+  "relaxed_fp_sensitivity": [
+    {
+      "arm": "grounded",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.029411764705882353,
+      "fp0.0_mean": 0.1503267973856209,
+      "fp0.05_worst": 0.43137254901960786,
+      "fp0.05_mean": 0.488562091503268,
+      "fp0.1_worst": 0.47058823529411764,
+      "fp0.1_mean": 0.6013071895424836
+    },
+    {
+      "arm": "grounded",
+      "rho": 0.8,
+      "sigma": 0.5,
+      "fp0.0_worst": 0.21568627450980393,
+      "fp0.0_mean": 0.5866013071895425,
+      "fp0.05_worst": 0.7941176470588235,
+      "fp0.05_mean": 0.8284313725490197,
+      "fp0.1_worst": 0.8235294117647058,
+      "fp0.1_mean": 0.8480392156862745
+    },
+    {
+      "arm": "grounded",
+      "rho": 0.8,
+      "sigma": 0.0,
+      "fp0.0_worst": 0.5392156862745098,
+      "fp0.0_mean": 0.7679738562091503,
+      "fp0.05_worst": 0.8235294117647058,
+      "fp0.05_mean": 0.8513071895424836,
+      "fp0.1_worst": 0.8431372549019608,
+      "fp0.1_mean": 0.8709150326797387
+    },
+    {
+      "arm": "grounded",
+      "rho": 1.0,
+      "sigma": 0.5,
+      "fp0.0_worst": 0.43137254901960786,
+      "fp0.0_mean": 0.9052287581699346,
+      "fp0.05_worst": 1.0,
+      "fp0.05_mean": 1.0,
+      "fp0.1_worst": 1.0,
+      "fp0.1_mean": 1.0
+    },
+    {
+      "arm": "grounded",
+      "rho": 1.0,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.049019607843137254,
+      "fp0.0_mean": 0.6078431372549019,
+      "fp0.05_worst": 0.7352941176470589,
+      "fp0.05_mean": 0.8856209150326798,
+      "fp0.1_worst": 0.9117647058823529,
+      "fp0.1_mean": 0.9722222222222222
+    },
+    {
+      "arm": "no_grounding",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.0,
+      "fp0.0_mean": 0.04248366013071895,
+      "fp0.05_worst": 0.14705882352941177,
+      "fp0.05_mean": 0.1895424836601307,
+      "fp0.1_worst": 0.29411764705882354,
+      "fp0.1_mean": 0.369281045751634
+    },
+    {
+      "arm": "shuffle",
+      "rho": 0.6,
+      "sigma": 1.0,
+      "fp0.0_worst": 0.00980392156862745,
+      "fp0.0_mean": 0.06372549019607843,
+      "fp0.05_worst": 0.049019607843137254,
+      "fp0.05_mean": 0.20424836601307192,
+      "fp0.1_worst": 0.18627450980392157,
+      "fp0.1_mean": 0.2679738562091503
+    }
+  ],
+  "required_coverage_spec_by_sigma": {
+    "0.0": 0.8,
+    "0.5": null,
+    "1.0": null,
+    "2.0": null
+  },
+  "n_pos_raw_gated": 102,
+  "n_neg_raw_excluded": 62,
+  "n_partition_words": 164,
+  "per_seed": [
+    {
+      "seed": 42,
+      "code_dim": 64,
+      "text_ceiling": 0.058823529411764705,
+      "real_fused_ceiling": 0.029411764705882353,
+      "nogrounding_ceiling": 0.0392156862745098,
+      "shuffle_ceiling": 0.11764705882352941,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 43,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "real_fused_ceiling": 0.22549019607843138,
+      "nogrounding_ceiling": 0.029411764705882353,
+      "shuffle_ceiling": 0.00980392156862745,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 44,
+      "code_dim": 64,
+      "text_ceiling": 0.0,
+      "real_fused_ceiling": 0.21568627450980393,
+      "nogrounding_ceiling": 0.0,
+      "shuffle_ceiling": 0.00980392156862745,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 100,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "real_fused_ceiling": 0.0784313725490196,
+      "nogrounding_ceiling": 0.058823529411764705,
+      "shuffle_ceiling": 0.12745098039215685,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 101,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "real_fused_ceiling": 0.0392156862745098,
+      "nogrounding_ceiling": 0.0392156862745098,
+      "shuffle_ceiling": 0.08823529411764706,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 102,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "real_fused_ceiling": 0.3137254901960784,
+      "nogrounding_ceiling": 0.08823529411764706,
+      "shuffle_ceiling": 0.029411764705882353,
+      "synth_code_ceiling": 1.0
+    }
+  ],
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "partition non-degenerate (affect + neutral both present)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the ceiling INSTRUMENT discriminates (synthetic clean code reads >=0.5, text code reads <0.2)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "grounding is LOAD-BEARING (clean/full grounding separates; the no-grounding rho=0 control does not)",
+      "ok": true,
+      "detail": "treatment=1 control=0.0882353 |sep|=0.911765 > 0.2",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "NO-GO",
+  "verdict_undefined_reasons": [],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "resample_frac": 0.8,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "grounded_dim": 8,
+    "rho_grid": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "sigma_grid": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "backend": "numpy"
+  },
+  "mechanism": "TEXT concept code = build_cooccurrence -> codes_from_cooccurrence (the register-confounded PPMI stream code, reused). GROUNDED body-state block = a G-dim interoceptive feature (host world/body boundary, declared STAND-IN) where +/-affect concepts share body-state axes, at coverage rho + noise sigma. FUSED = row-L2-normalized concat. CEILING = the validated supervised ridge k-fold probe (reused from the embodied-US runner) = the upper bound on any readout of the representation. Controls: rho=0 no-grounding (pure-noise same-scale block), shuffle (binding destroyed), grounded-only (replacement), synthetic clean code (instrument).",
+  "sources": [
+    "2026-09-05-affect-gate-embodied-US-necessary-not-sufficient-concept-code-must-be-grounded-BOUNDARY.md -- proved the text code ceiling is ~0 (an embodied US is necessary-but-not-sufficient; the concept code must be grounded); this runner measures the REQUIRED grounded-signal spec for that named next arc.",
+    "2026-08-19-embodied-affect-interoception-GO.md -- the interoceptive-grounding pattern (concepts sharing a bodily consequence share a body-state axis) that motivates the grounded feature structure; the board #49/#84 relay is the production delivery path for a real grounded US.",
+    "2026-07-02-emerge34-perception-grounded-emergence-GO.md + _genfrontier_capstone_vision_to_concept_derisk -- the perception->concept convergence template (Hebbian, spiking) a grounded-affect teacher would reuse.",
+    "Namburi, Tye et al. (2015, Nature) -- opponent valence populations bound to a real US, not lexical company."
+  ],
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; this is a standalone REQUIREMENTS de-risk (reuse-by-import only). _STRONG_MARGIN unchanged.",
+  "HONEST_RESIDUALS": "(1) the grounded body-state feature is a declared STAND-IN for a grounded-perception teacher's output (the SAME oracle-stand-in discipline the embodied-US runner used); this runner measures the REQUIRED signal quality, it does NOT deliver a real grounded stream (no world grounds the TinyStories vocabulary with bodily consequences today -- that is the named next build). (2) GO here means the grounded-teacher ARC is de-risked + specced, NOT that the gate is retired. (3) the ceiling is a linear upper bound (the spiking opponent's mild nonlinearity was measured NOT to help by the prior boundaries). (4) the shared-axis body-state structure is the simplest grounded model; a real interoceptive code may be richer but this is the conservative case (2 shared axes).",
+  "elapsed_seconds": 15.5
+}

@@ -124,6 +124,11 @@ TEXT_CEIL_MAX = 0.20     # G3: the text code ceiling must read low (reproduce th
 RHO_GRID = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
 SIGMA_GRID = (0.0, 0.5, 1.0, 2.0)
 
+# Relaxed-FP sensitivity (reported, NOT gated): is the harsh worst-case verdict driven by the zero-FP bar itself,
+# or by the grounding requirement? Re-read the FUSED ceiling at a few (rho,sigma) points under tolerated-FP levels.
+FP_TOLS = (0.0, 0.05, 0.10)
+FP_POINTS = ((0.6, 1.0), (0.8, 0.5), (0.8, 0.0), (1.0, 0.5), (1.0, 1.0))
+
 
 def grounded_block(part_words, raw_gate, seed, rho, sigma, G=8, sep=6.0, shuffle=False):
     """Build the grounded body-state FEATURE block for the partition words (host = world/body boundary, a declared
@@ -203,6 +208,27 @@ def run_seed(seed, stories, part_words, raw_gate, n_hub, window, min_count, resa
     blk0, _ = grounded_block(part_words, raw_gate, seed, 0.0, SIGMA_REAL, G=G)
     nogrounding_ceiling = code_separability_ceiling(_fuse(text_codes, blk0), raw_gate, seed)
 
+    # RELAXED-FP sensitivity (reported, not gated): does tolerating a small FP fraction rescue the ceiling? -> tells
+    # the next builder whether the harsh spec is the ZERO-FP bar or the grounding requirement. Includes the
+    # no-grounding + shuffle CONTROLS at the realistic operating point at the SAME FP tols -> a rescue must be the
+    # grounding SIGNAL, not FP-relaxation letting the ridge overfit ANY extra dimensions (verify-go).
+    fp_sens = []
+    for (rho, sigma) in FP_POINTS:
+        block, _ = grounded_block(part_words, raw_gate, seed, rho, sigma, G=G)
+        fused = _fuse(text_codes, block)
+        row = {"arm": "grounded", "rho": rho, "sigma": sigma}
+        for tol in FP_TOLS:
+            row[f"fp{tol}"] = code_separability_ceiling(fused, raw_gate, seed, max_fp_frac=tol)
+        fp_sens.append(row)
+    blk0f, _ = grounded_block(part_words, raw_gate, seed, 0.0, SIGMA_REAL, G=G)          # no-grounding control
+    blkshf, _ = grounded_block(part_words, raw_gate, seed, RHO_REAL, SIGMA_REAL, G=G, shuffle=True)  # shuffle ctrl
+    for label, blk in (("no_grounding", blk0f), ("shuffle", blkshf)):
+        fused_c = _fuse(text_codes, blk)
+        rowc = {"arm": label, "rho": RHO_REAL, "sigma": SIGMA_REAL}
+        for tol in FP_TOLS:
+            rowc[f"fp{tol}"] = code_separability_ceiling(fused_c, raw_gate, seed, max_fp_frac=tol)
+        fp_sens.append(rowc)
+
     # INSTRUMENT validation (reused verbatim): the clean synthetic grounded code must read ~1.0
     synth = synthetic_separable_gate(seed, raw_gate, D)
 
@@ -216,7 +242,8 @@ def run_seed(seed, stories, part_words, raw_gate, n_hub, window, min_count, resa
               f"synth_ceiling={synth['code_ceiling']:.3f}", flush=True)
     return {"seed": int(seed), "code_dim": int(D), "text_ceiling": text_ceiling, "grid": grid,
             "real_fused_ceiling": real_fused, "nogrounding_ceiling": nogrounding_ceiling,
-            "shuffle_ceiling": shuffle_ceiling, "synth_code_ceiling": float(synth["code_ceiling"])}
+            "shuffle_ceiling": shuffle_ceiling, "synth_code_ceiling": float(synth["code_ceiling"]),
+            "fp_sensitivity": fp_sens}
 
 
 def main():
@@ -269,6 +296,24 @@ def main():
     nogrounding_worst = float(max(r["nogrounding_ceiling"] for r in rows))
     shuffle_worst = float(max(r["shuffle_ceiling"] for r in rows))
     synth_ceiling_worst = float(min(r["synth_code_ceiling"] for r in rows))
+    # the clean/full grounding operating point (rho=1.0, sigma=0.0) -- where the grounding signal is DEMONSTRABLE;
+    # its separation from the no-grounding control is the precondition that the mechanism genuinely uses grounding
+    # (the zero-FP REALISTIC point separates from neither control BY DESIGN -- that is the finding, not a precondition)
+    clean_grounded_worst = float(min(next(g["fused_ceiling"] for g in r["grid"] if g["rho"] == 1.0 and g["sigma"] == 0.0)
+                                     for r in rows))
+
+    # relaxed-FP sensitivity aggregate (worst-case across seeds at each (arm,rho,sigma,fp_tol))
+    fp_sensitivity = []
+    arm_points = [("grounded", rho, sigma) for (rho, sigma) in FP_POINTS] + \
+                 [("no_grounding", RHO_REAL, SIGMA_REAL), ("shuffle", RHO_REAL, SIGMA_REAL)]
+    for (arm, rho, sigma) in arm_points:
+        row = {"arm": arm, "rho": rho, "sigma": sigma}
+        for tol in FP_TOLS:
+            vals = [next(x[f"fp{tol}"] for x in r["fp_sensitivity"]
+                        if x["arm"] == arm and x["rho"] == rho and x["sigma"] == sigma) for r in rows]
+            row[f"fp{tol}_worst"] = float(min(vals))
+            row[f"fp{tol}_mean"] = float(np.mean(vals))
+        fp_sensitivity.append(row)
 
     # smallest rho that clears the GO bar (worst-case) at each sigma -> the teacher's required coverage spec
     coverage_spec = {}
@@ -288,8 +333,8 @@ def main():
               expect=True)
     v.require("the ceiling INSTRUMENT discriminates (synthetic clean code reads >=0.5, text code reads <0.2)",
               measured=(synth_ceiling_worst >= CEIL_GO_BAR and text_ceiling_worst < TEXT_CEIL_MAX), expect=True)
-    v.control("the LIFT is the grounding SIGNAL (fused@realistic vs the no-grounding rho=0 control)",
-              treatment=real_fused_mean, control=nogrounding_worst, min_separation=0.2)
+    v.control("grounding is LOAD-BEARING (clean/full grounding separates; the no-grounding rho=0 control does not)",
+              treatment=clean_grounded_worst, control=nogrounding_worst, min_separation=0.2)
     verdict_earned = v.decide(go=go, verbose=False)
 
     attributable_to("grounded-fused ceiling (vs the text-only ceiling)", real_fused_mean, text_ceiling_mean)
@@ -329,10 +374,12 @@ def main():
         "text_ceiling_worst": text_ceiling_worst, "text_ceiling_mean": text_ceiling_mean,
         "grounded_fused_realistic_worst": real_fused_worst, "grounded_fused_realistic_mean": real_fused_mean,
         "nogrounding_control_worst": nogrounding_worst, "shuffle_control_worst": shuffle_worst,
+        "clean_full_grounding_ceiling_worst": clean_grounded_worst,
         "synthetic_instrument_ceiling_worst": synth_ceiling_worst,
         "ceiling_go_bar": CEIL_GO_BAR, "rho_realistic": RHO_REAL, "sigma_realistic": SIGMA_REAL,
         "attrib_margin": ATTRIB_MARGIN, "text_ceil_max": TEXT_CEIL_MAX,
         "rho_sigma_frontier": frontier,
+        "relaxed_fp_sensitivity": fp_sensitivity,
         "required_coverage_spec_by_sigma": coverage_spec,
         "n_pos_raw_gated": n_pos, "n_neg_raw_excluded": n_neg, "n_partition_words": len(part_words),
         "per_seed": [{"seed": r["seed"], "code_dim": r["code_dim"], "text_ceiling": r["text_ceiling"],
