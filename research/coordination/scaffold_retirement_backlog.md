@@ -44,7 +44,9 @@ start) · 11 topic-swap regex+host (HIGH · fresh, self-referential) · 12 GNW S
 GO on plain gate() AND the installed GNW-bus gate() — see `2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md`;
 residual is now flag-scoped not architecture-scoped) · 14 NL question-routing host comprehension
 (MED-HIGH · fresh) · 15 self-schema authorship host (LOW-actual/nominal-on · fresh) · 16 DA→write-magnitude host
-linear (MED · partial: homeostasis-half retired) · 17 pronoun detect/substitute host (MED · fresh) · 18 cross-turn
+linear (MED · LEAF DE-RISKED 2026-09-05, default-OFF `BRAIN_DA_ENCODING_SPIKING_GAIN`, 6/6-seed GO — see
+`2026-09-05-da-write-gain-spiking-derisk-GO.md`; homeostasis-half already retired 2026-08-25) · 17 pronoun
+detect/substitute host (MED · fresh) · 18 cross-turn
 persistence host state (MED · architecture change) · 19 per-turn fact WRITE host closed-form (MED · SlotBinder
 candidate exists) · 20 value-choice reward-context host recency (MED-narrow · low-risk) · 21 verdict→English
 template bank (OWNER-SANCTIONED Broca scaffold · deprioritized) · 22 curiosity multi-concept SELECTOR host dict
@@ -87,3 +89,19 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 16 (DA→write-magnitude host linear) — LEAF DE-RISKED + WIRED DEFAULT-OFF, 2026-09-05 (was "partial:
+  homeostasis-half retired").** The homeostasis half stays as landed 2026-08-25 (LEVER-3,
+  `apply_substrate_homeostasis`, on-substrate synaptic scaling). This session retires the REMAINING per-write
+  LEAF (`_gain_map()`'s closed form `g=clip(g_min,g_max,1+k_DA*(DA-baseline))`) with a small
+  `IZH2007_HIPPO_PYRAMIDAL` population whose excitability is DA-modulated via the SAME `excitability_drive`
+  neuromodulator target/scope idiom `str_D1`/`str_D2` already use; the gain is read off that population's own
+  firing rate. 6/6-seed GO (load-bearing 1.35-1.52 gain-unit span, lesion collapses to 0.0000 at the floor,
+  monotonic, corr 0.9958-0.9999 vs the host formula, 100% attribution to the live link, `cfg.seed` determinism
+  confirmed). Wired behind `BRAIN_DA_ENCODING_SPIKING_GAIN` (default-off; byte-identical-off verified in the
+  data on both leaf branches); the pre-existing whole-coupling wired-verify was re-run and its artifact is
+  byte-identical to the committed 2026-08-25 version (no regression). See
+  `research/findings/2026-09-05-da-write-gain-spiking-derisk-GO.md`. NOT flipped default-on (de-risk only, per
+  task scope). A pre-existing, unrelated latent bug in reused shared machinery
+  (`_da_composer_salience_cleanup_derisk.py::_build_snc_bridge` never disables structural plasticity, crashing —
+  caught, non-corrupting — on a zero-synapse bridge) was found and logged `research/FAILURE_LOG.md`
+  (NOT-GATEABLE; fixed only in this session's own new bridge, not retrofitted into the shared function).
