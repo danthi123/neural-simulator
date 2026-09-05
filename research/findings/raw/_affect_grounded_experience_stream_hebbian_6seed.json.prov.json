@@ -1,9 +1,17 @@
 {
- "run_id": "1788650129-377425",
+ "run_id": "1788650141-377626",
  "runner": "research/runners/_affect_grounded_experience_stream_hebbian_derisk.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/agent-a83e524973fc78a9e/research/runners/_affect_grounded_experience_stream_hebbian_derisk.py",
-  "--smoke"
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_affect_grounded_experience_stream_hebbian_6seed.json"
  ],
  "git_sha": "d969717cb",
  "git_dirty": true,
@@ -13,7 +21,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-05T19:15:29",
+ "started": "2026-09-05T19:15:41",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -22,5 +30,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_affect_grounded_experience_stream_hebbian.json"
+ "artifact": "research/findings/raw/_affect_grounded_experience_stream_hebbian_6seed.json"
 }

@@ -202,15 +202,29 @@ def _blocks_scaled(text_codes, X_intero, intero_present=True):
     return np.concatenate([T, I], axis=1)
 
 
-def train_convergence(X_train, seed, m=M_ASSEMBLY, epochs=EPOCHS, eta=ETA, k_wta=K_WTA):
+def arousal_gate(X_intero):
+    """LABEL-FREE neuromodulatory gate = the AROUSAL relay-pool magnitude (the interoceptive US SALIENCE the
+    world/body actually delivered), median-normalized. It uses the afferent DRIVE, never the affect label -- a real
+    US raises arousal, a neutral concept carries only relay noise. Feeds the three-factor plasticity gate below."""
+    ar = X_intero[:, 2 * N_RELAY:3 * N_RELAY].mean(axis=1)                # the AROUSAL channel's relay pool
+    med = float(np.median(ar[ar > 0])) if np.any(ar > 0) else 0.0
+    return np.clip(ar / (med + 1e-9), 0.0, 3.0) if med > 0 else np.zeros_like(ar)
+
+
+def train_convergence(X_train, seed, m=M_ASSEMBLY, epochs=EPOCHS, eta=ETA, k_wta=K_WTA, us_gate=None):
     """The HEBBIAN CONVERGENCE (brain-based): a concept-assembly FF weight matrix W (m x Din) learned by a
     competitive, Oja-stabilized Hebbian rule over the training concepts' convergence inputs. W is EMERGENT -- it
     starts small-random (never hand-set) and self-organizes assembly neurons selective to the reliable shared input
     directions (the interoceptive comfort/discomfort axes), exactly the EMERGE-34 / vision->concept convergence
     pattern. Competition = soft k-WTA per concept (only the top-k assembly neurons stay active, so assemblies
-    specialize). Oja's rule (dW = eta * a (x - a w)) keeps the weights bounded without a hand-set clamp."""
+    specialize). Oja's rule (dW = eta * a (x - a w)) keeps the weights bounded without a hand-set clamp.
+
+    us_gate (optional, len n): the THREE-FACTOR neuromodulatory gate (pre x post x US) -- the plasticity rate is
+    scaled by the US salience actually delivered (arousal_gate), so noise-only concepts (no real US) barely update.
+    us_gate=None -> ungated (the pre-registered primary; byte-identical to the original 2-factor rule)."""
     rng = np.random.default_rng(seed + 123)
     n, din = X_train.shape
+    g = np.ones(n) if us_gate is None else np.asarray(us_gate, float)
     W = np.abs(rng.standard_normal((m, din))) * 0.01                      # small non-negative excitatory FF init
     W /= (np.linalg.norm(W, axis=1, keepdims=True) + 1e-12)
     idx = np.arange(n)
@@ -222,7 +236,7 @@ def train_convergence(X_train, seed, m=M_ASSEMBLY, epochs=EPOCHS, eta=ETA, k_wta
             if k_wta < m:                                                 # soft k-WTA competition
                 thr = np.partition(a, -k_wta)[-k_wta]
                 a = np.where(a >= thr, a, 0.0)
-            W += eta * (np.outer(a, x) - (a ** 2)[:, None] * W)          # Oja-stabilized Hebbian update
+            W += eta * g[c] * (np.outer(a, x) - (a ** 2)[:, None] * W)   # three-factor-gated Oja-Hebbian update
     return W
 
 
@@ -321,19 +335,34 @@ def run_seed(seed, stories, part_words, raw_gate, n_hub, window, min_count, resa
             rowc[f"fp{tol}"] = code_separability_ceiling(code, raw_gate, seed, max_fp_frac=tol)
         fp_sens.append(rowc)
 
+    # US-GATED THREE-FACTOR convergence (REPORTED, not in the GO gate): the biologically-correct companion process
+    # the ungated rule proxies away -- plasticity gated by the delivered US salience (arousal_gate, label-free), so
+    # noise-only concepts do not bind. Does neuromodulatory gating recover the noisy realistic point? -----------------
+    def _gated_ceiling(Xi, fp=0.0):
+        Xf = _blocks_scaled(text_codes, Xi, intero_present=True)
+        W = train_convergence(Xf, seed, us_gate=arousal_gate(Xi))
+        return code_separability_ceiling(convergence_readout(W, Xf), raw_gate, seed, max_fp_frac=fp)
+    gated_real = _gated_ceiling(Xi_real)
+    gated_real_fp5 = _gated_ceiling(Xi_real, 0.05)
+    gated_clean = _gated_ceiling(Xi_clean)
+    gated_lesion = _gated_ceiling(Xi_les)                                                           # gated anti-hollow
+
     synth = synthetic_separable_gate(seed, raw_gate, D)                                             # G3 instrument
 
     if verbose:
         print(f"  [seed {seed}] D={D} text={text_ceiling:.3f} | learned@real(rho={RHO_REAL},sig={SIGMA_REAL})="
               f"{real_learned:.3f} clean/full={clean_learned:.3f} | lesion={lesion_ceiling:.3f} "
               f"shuffle={shuffle_ceiling:.3f} | held-out(clean)={heldout_clean:.3f} | text-only-xfer(clean)="
-              f"{textonly_transfer_clean:.3f} | synth_instr={synth['code_ceiling']:.3f}", flush=True)
+              f"{textonly_transfer_clean:.3f} | GATED@real={gated_real:.3f}(fp5%={gated_real_fp5:.3f}) "
+              f"GATED_clean={gated_clean:.3f} | synth_instr={synth['code_ceiling']:.3f}", flush=True)
     return {"seed": int(seed), "code_dim": int(D), "text_ceiling": text_ceiling, "grid": grid,
             "real_learned_ceiling": real_learned, "clean_learned_ceiling": clean_learned,
             "lesion_ceiling": lesion_ceiling, "lesion_clean_ceiling": lesion_clean,
             "shuffle_ceiling": shuffle_ceiling, "heldout_clean_ceiling": heldout_clean,
             "heldout_real_ceiling": heldout_real, "textonly_transfer_real_ceiling": textonly_transfer_real,
             "textonly_transfer_clean_ceiling": textonly_transfer_clean,
+            "gated_real_ceiling": gated_real, "gated_real_fp5_ceiling": gated_real_fp5,
+            "gated_clean_ceiling": gated_clean, "gated_lesion_ceiling": gated_lesion,
             "synth_code_ceiling": float(synth["code_ceiling"]), "fp_sensitivity": fp_sens}
 
 
@@ -392,6 +421,12 @@ def main():
     textonly_clean_mean = float(np.mean([r["textonly_transfer_clean_ceiling"] for r in rows]))
     textonly_real_mean = float(np.mean([r["textonly_transfer_real_ceiling"] for r in rows]))
     synth_ceiling_worst = float(min(r["synth_code_ceiling"] for r in rows))
+    gated_real_worst = float(min(r["gated_real_ceiling"] for r in rows))
+    gated_real_mean = float(np.mean([r["gated_real_ceiling"] for r in rows]))
+    gated_real_fp5_worst = float(min(r["gated_real_fp5_ceiling"] for r in rows))
+    gated_real_fp5_mean = float(np.mean([r["gated_real_fp5_ceiling"] for r in rows]))
+    gated_clean_worst = float(min(r["gated_clean_ceiling"] for r in rows))
+    gated_lesion_worst = float(max(r["gated_lesion_ceiling"] for r in rows))
 
     # relaxed-FP sensitivity aggregate (worst-case + mean across seeds)
     fp_sensitivity = []
@@ -439,7 +474,9 @@ def main():
     lift_line = (f"clean/full learned={clean_learned_worst:.3f} worst ({clean_learned_mean:.3f} mean) vs text "
                  f"{text_ceiling_worst:.3f}; lesion={lesion_worst:.3f}; shuffle={shuffle_worst:.3f}; held-out(clean)="
                  f"{heldout_clean_worst:.3f}; text-only-transfer(clean)={textonly_clean_worst:.3f} worst "
-                 f"({textonly_clean_mean:.3f} mean); synth-instrument={synth_ceiling_worst:.3f}")
+                 f"({textonly_clean_mean:.3f} mean); synth-instrument={synth_ceiling_worst:.3f}. THREE-FACTOR "
+                 f"US-gated (neuromodulatory-gated plasticity) @realistic={gated_real_worst:.3f} worst "
+                 f"(fp5%={gated_real_fp5_worst:.3f}), clean={gated_clean_worst:.3f}, lesion={gated_lesion_worst:.3f}")
     if go:
         verdict = (
             f"GO ({tag}) -- an EMERGENT Hebbian convergence over a grounded-experience STREAM TEACHES a concept code "
@@ -479,6 +516,10 @@ def main():
         "textonly_transfer_clean_worst": textonly_clean_worst, "textonly_transfer_clean_mean": textonly_clean_mean,
         "textonly_transfer_real_mean": textonly_real_mean,
         "synthetic_instrument_ceiling_worst": synth_ceiling_worst,
+        "gated_three_factor_realistic_worst": gated_real_worst, "gated_three_factor_realistic_mean": gated_real_mean,
+        "gated_three_factor_realistic_fp5_worst": gated_real_fp5_worst,
+        "gated_three_factor_realistic_fp5_mean": gated_real_fp5_mean,
+        "gated_three_factor_clean_worst": gated_clean_worst, "gated_three_factor_lesion_worst": gated_lesion_worst,
         "ceiling_go_bar": CEIL_GO_BAR, "rho_realistic": RHO_REAL, "sigma_realistic": SIGMA_REAL,
         "attrib_margin": ATTRIB_MARGIN, "text_ceil_max": TEXT_CEIL_MAX, "heldout_frac": HELDOUT_FRAC,
         "rho_sigma_frontier": frontier,
@@ -543,6 +584,7 @@ def main():
     print(f"[grounded-exp-stream-hebbian] text={text_ceiling_worst:.3f} | learned@real={real_learned_worst:.3f} "
           f"clean/full={clean_learned_worst:.3f} | lesion={lesion_worst:.3f} shuffle={shuffle_worst:.3f} | "
           f"held-out={heldout_clean_worst:.3f} | text-only-xfer={textonly_clean_worst:.3f} | "
+          f"GATED@real={gated_real_worst:.3f}(fp5%={gated_real_fp5_worst:.3f}) | "
           f"synth-instr={synth_ceiling_worst:.3f}", flush=True)
     print(f"[grounded-exp-stream-hebbian] required coverage spec by sigma: {coverage_spec}", flush=True)
     print(f"[grounded-exp-stream-hebbian] GO={go} (G1={g1} G2={g2} G2b={g2b} G3={g3})", flush=True)

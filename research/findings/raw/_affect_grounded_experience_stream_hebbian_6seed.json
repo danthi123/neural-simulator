@@ -1,33 +1,33 @@
 {
   "probe": "affect_grounded_experience_stream_hebbian_derisk (an EMERGENT Hebbian convergence teaches the code)",
-  "verdict": "PARTIAL/BOUNDARY (SMOKE(1-seed), build-informative) -- the EMERGENT Hebbian convergence over a grounded-experience stream DOES teach a separable code at clean/full grounding (1.000 worst-case vs text 0.000), and grounding is load-bearing (lesion 0.009, shuffle 0.057). But the pre-registered strict bar failed: clean/full learned=1.000 worst (1.000 mean) vs text 0.000; lesion=0.009; shuffle=0.057; held-out(clean)=1.000; text-only-transfer(clean)=0.000 worst (0.000 mean); synth-instrument=1.000. THREE-FACTOR US-gated (neuromodulatory-gated plasticity) @realistic=0.019 worst (fp5%=0.217), clean=1.000, lesion=0.009. FAILED: ['G1_lift_clears_bar']. See the (rho,sigma) frontier + relaxed-FP sensitivity for what coverage/noise/FP-tolerance WOULD clear it. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
+  "verdict": "PARTIAL/BOUNDARY (6-seed, build-informative) -- the EMERGENT Hebbian convergence over a grounded-experience stream DOES teach a separable code at clean/full grounding (1.000 worst-case vs text 0.059), and grounding is load-bearing (lesion 0.069, shuffle 0.059). But the pre-registered strict bar failed: clean/full learned=1.000 worst (1.000 mean) vs text 0.059; lesion=0.069; shuffle=0.059; held-out(clean)=1.000; text-only-transfer(clean)=0.010 worst (0.023 mean); synth-instrument=1.000. THREE-FACTOR US-gated (neuromodulatory-gated plasticity) @realistic=0.049 worst (fp5%=0.108), clean=1.000, lesion=0.039. FAILED: ['G1_lift_clears_bar']. See the (rho,sigma) frontier + relaxed-FP sensitivity for what coverage/noise/FP-tolerance WOULD clear it. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
   "GO": false,
   "G1_lift_clears_bar": false,
   "G2_load_bearing": true,
   "G2b_generalizes": true,
   "G3_instrument": true,
-  "text_ceiling_worst": 0.0,
-  "text_ceiling_mean": 0.0,
-  "grounded_taught_realistic_worst": 0.0660377358490566,
-  "grounded_taught_realistic_mean": 0.0660377358490566,
+  "text_ceiling_worst": 0.058823529411764705,
+  "text_ceiling_mean": 0.0196078431372549,
+  "grounded_taught_realistic_worst": 0.00980392156862745,
+  "grounded_taught_realistic_mean": 0.0392156862745098,
   "grounded_taught_clean_worst": 1.0,
   "grounded_taught_clean_mean": 1.0,
-  "lesion_control_worst": 0.009433962264150943,
-  "lesion_clean_control_worst": 0.009433962264150943,
-  "shuffle_control_worst": 0.05660377358490566,
+  "lesion_control_worst": 0.06862745098039216,
+  "lesion_clean_control_worst": 0.08823529411764706,
+  "shuffle_control_worst": 0.058823529411764705,
   "heldout_generalization_clean_worst": 1.0,
   "heldout_generalization_clean_mean": 1.0,
   "heldout_generalization_real_worst": 0.0,
-  "textonly_transfer_clean_worst": 0.0,
-  "textonly_transfer_clean_mean": 0.0,
-  "textonly_transfer_real_mean": 0.009433962264150943,
+  "textonly_transfer_clean_worst": 0.00980392156862745,
+  "textonly_transfer_clean_mean": 0.02287581699346405,
+  "textonly_transfer_real_mean": 0.026143790849673203,
   "synthetic_instrument_ceiling_worst": 1.0,
-  "gated_three_factor_realistic_worst": 0.018867924528301886,
-  "gated_three_factor_realistic_mean": 0.018867924528301886,
-  "gated_three_factor_realistic_fp5_worst": 0.2169811320754717,
-  "gated_three_factor_realistic_fp5_mean": 0.2169811320754717,
+  "gated_three_factor_realistic_worst": 0.049019607843137254,
+  "gated_three_factor_realistic_mean": 0.10130718954248367,
+  "gated_three_factor_realistic_fp5_worst": 0.10784313725490197,
+  "gated_three_factor_realistic_fp5_mean": 0.20751633986928106,
   "gated_three_factor_clean_worst": 1.0,
-  "gated_three_factor_lesion_worst": 0.009433962264150943,
+  "gated_three_factor_lesion_worst": 0.0392156862745098,
   "ceiling_go_bar": 0.5,
   "rho_realistic": 0.6,
   "sigma_realistic": 1.0,
@@ -38,141 +38,141 @@
     {
       "rho": 0.0,
       "sigma": 0.0,
-      "learned_worst": 0.009433962264150943,
-      "learned_mean": 0.009433962264150943,
+      "learned_worst": 0.0,
+      "learned_mean": 0.03594771241830065,
       "clears_go_bar": false
     },
     {
       "rho": 0.0,
       "sigma": 0.5,
       "learned_worst": 0.0,
-      "learned_mean": 0.0,
+      "learned_mean": 0.021241830065359475,
       "clears_go_bar": false
     },
     {
       "rho": 0.0,
       "sigma": 1.0,
-      "learned_worst": 0.0,
-      "learned_mean": 0.0,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.022875816993464054,
       "clears_go_bar": false
     },
     {
       "rho": 0.0,
       "sigma": 2.0,
-      "learned_worst": 0.0,
-      "learned_mean": 0.0,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.022875816993464054,
       "clears_go_bar": false
     },
     {
       "rho": 0.2,
       "sigma": 0.0,
-      "learned_worst": 0.19811320754716982,
-      "learned_mean": 0.19811320754716982,
+      "learned_worst": 0.19607843137254902,
+      "learned_mean": 0.20915032679738563,
       "clears_go_bar": false
     },
     {
       "rho": 0.2,
       "sigma": 0.5,
-      "learned_worst": 0.03773584905660377,
-      "learned_mean": 0.03773584905660377,
+      "learned_worst": 0.0,
+      "learned_mean": 0.026143790849673203,
       "clears_go_bar": false
     },
     {
       "rho": 0.2,
       "sigma": 1.0,
-      "learned_worst": 0.03773584905660377,
-      "learned_mean": 0.03773584905660377,
+      "learned_worst": 0.0,
+      "learned_mean": 0.01797385620915033,
       "clears_go_bar": false
     },
     {
       "rho": 0.2,
       "sigma": 2.0,
       "learned_worst": 0.0,
-      "learned_mean": 0.0,
+      "learned_mean": 0.021241830065359475,
       "clears_go_bar": false
     },
     {
       "rho": 0.4,
       "sigma": 0.0,
-      "learned_worst": 0.39622641509433965,
-      "learned_mean": 0.39622641509433965,
+      "learned_worst": 0.4019607843137255,
+      "learned_mean": 0.40849673202614384,
       "clears_go_bar": false
     },
     {
       "rho": 0.4,
       "sigma": 0.5,
-      "learned_worst": 0.04716981132075472,
-      "learned_mean": 0.04716981132075472,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.01797385620915033,
       "clears_go_bar": false
     },
     {
       "rho": 0.4,
       "sigma": 1.0,
-      "learned_worst": 0.04716981132075472,
-      "learned_mean": 0.04716981132075472,
+      "learned_worst": 0.0,
+      "learned_mean": 0.014705882352941178,
       "clears_go_bar": false
     },
     {
       "rho": 0.4,
       "sigma": 2.0,
-      "learned_worst": 0.04716981132075472,
-      "learned_mean": 0.04716981132075472,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.01797385620915033,
       "clears_go_bar": false
     },
     {
       "rho": 0.6,
       "sigma": 0.0,
-      "learned_worst": 0.6037735849056604,
-      "learned_mean": 0.6037735849056604,
+      "learned_worst": 0.5980392156862745,
+      "learned_mean": 0.6029411764705882,
       "clears_go_bar": true
     },
     {
       "rho": 0.6,
       "sigma": 0.5,
-      "learned_worst": 0.07547169811320754,
-      "learned_mean": 0.07547169811320754,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.07026143790849675,
       "clears_go_bar": false
     },
     {
       "rho": 0.6,
       "sigma": 1.0,
-      "learned_worst": 0.0660377358490566,
-      "learned_mean": 0.0660377358490566,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.0392156862745098,
       "clears_go_bar": false
     },
     {
       "rho": 0.6,
       "sigma": 2.0,
-      "learned_worst": 0.05660377358490566,
-      "learned_mean": 0.05660377358490566,
+      "learned_worst": 0.00980392156862745,
+      "learned_mean": 0.04248366013071895,
       "clears_go_bar": false
     },
     {
       "rho": 0.8,
       "sigma": 0.0,
-      "learned_worst": 0.8018867924528302,
-      "learned_mean": 0.8018867924528302,
+      "learned_worst": 0.803921568627451,
+      "learned_mean": 0.8039215686274509,
       "clears_go_bar": true
     },
     {
       "rho": 0.8,
       "sigma": 0.5,
-      "learned_worst": 0.10377358490566038,
-      "learned_mean": 0.10377358490566038,
+      "learned_worst": 0.0392156862745098,
+      "learned_mean": 0.14215686274509803,
       "clears_go_bar": false
     },
     {
       "rho": 0.8,
       "sigma": 1.0,
-      "learned_worst": 0.03773584905660377,
-      "learned_mean": 0.03773584905660377,
+      "learned_worst": 0.0,
+      "learned_mean": 0.04084967320261438,
       "clears_go_bar": false
     },
     {
       "rho": 0.8,
       "sigma": 2.0,
-      "learned_worst": 0.018867924528301886,
-      "learned_mean": 0.018867924528301886,
+      "learned_worst": 0.0,
+      "learned_mean": 0.04411764705882353,
       "clears_go_bar": false
     },
     {
@@ -185,22 +185,22 @@
     {
       "rho": 1.0,
       "sigma": 0.5,
-      "learned_worst": 0.1320754716981132,
-      "learned_mean": 0.1320754716981132,
+      "learned_worst": 0.06862745098039216,
+      "learned_mean": 0.15522875816993464,
       "clears_go_bar": false
     },
     {
       "rho": 1.0,
       "sigma": 1.0,
-      "learned_worst": 0.09433962264150944,
-      "learned_mean": 0.09433962264150944,
+      "learned_worst": 0.0392156862745098,
+      "learned_mean": 0.07026143790849672,
       "clears_go_bar": false
     },
     {
       "rho": 1.0,
       "sigma": 2.0,
-      "learned_worst": 0.09433962264150944,
-      "learned_mean": 0.09433962264150944,
+      "learned_worst": 0.0196078431372549,
+      "learned_mean": 0.053921568627450976,
       "clears_go_bar": false
     }
   ],
@@ -209,67 +209,67 @@
       "arm": "grounded",
       "rho": 0.6,
       "sigma": 1.0,
-      "fp0.0_worst": 0.0660377358490566,
-      "fp0.0_mean": 0.0660377358490566,
-      "fp0.05_worst": 0.12264150943396226,
-      "fp0.05_mean": 0.12264150943396226,
-      "fp0.1_worst": 0.1509433962264151,
-      "fp0.1_mean": 0.1509433962264151
+      "fp0.0_worst": 0.00980392156862745,
+      "fp0.0_mean": 0.0392156862745098,
+      "fp0.05_worst": 0.0392156862745098,
+      "fp0.05_mean": 0.10784313725490197,
+      "fp0.1_worst": 0.0784313725490196,
+      "fp0.1_mean": 0.18137254901960784
     },
     {
       "arm": "grounded",
       "rho": 0.8,
       "sigma": 0.5,
-      "fp0.0_worst": 0.10377358490566038,
-      "fp0.0_mean": 0.10377358490566038,
-      "fp0.05_worst": 0.20754716981132076,
-      "fp0.05_mean": 0.20754716981132076,
-      "fp0.1_worst": 0.2641509433962264,
-      "fp0.1_mean": 0.2641509433962264
+      "fp0.0_worst": 0.0392156862745098,
+      "fp0.0_mean": 0.14215686274509803,
+      "fp0.05_worst": 0.049019607843137254,
+      "fp0.05_mean": 0.2189542483660131,
+      "fp0.1_worst": 0.0784313725490196,
+      "fp0.1_mean": 0.3006535947712418
     },
     {
       "arm": "grounded",
       "rho": 1.0,
       "sigma": 0.5,
-      "fp0.0_worst": 0.1320754716981132,
-      "fp0.0_mean": 0.1320754716981132,
-      "fp0.05_worst": 0.2641509433962264,
-      "fp0.05_mean": 0.2641509433962264,
-      "fp0.1_worst": 0.42452830188679247,
-      "fp0.1_mean": 0.42452830188679247
+      "fp0.0_worst": 0.06862745098039216,
+      "fp0.0_mean": 0.15522875816993464,
+      "fp0.05_worst": 0.08823529411764706,
+      "fp0.05_mean": 0.26633986928104575,
+      "fp0.1_worst": 0.08823529411764706,
+      "fp0.1_mean": 0.38235294117647056
     },
     {
       "arm": "grounded",
       "rho": 1.0,
       "sigma": 1.0,
-      "fp0.0_worst": 0.09433962264150944,
-      "fp0.0_mean": 0.09433962264150944,
-      "fp0.05_worst": 0.16981132075471697,
-      "fp0.05_mean": 0.16981132075471697,
-      "fp0.1_worst": 0.25471698113207547,
-      "fp0.1_mean": 0.25471698113207547
+      "fp0.0_worst": 0.0392156862745098,
+      "fp0.0_mean": 0.07026143790849672,
+      "fp0.05_worst": 0.0784313725490196,
+      "fp0.05_mean": 0.17973856209150327,
+      "fp0.1_worst": 0.08823529411764706,
+      "fp0.1_mean": 0.2761437908496732
     },
     {
       "arm": "lesion",
       "rho": 0.6,
       "sigma": 1.0,
-      "fp0.0_worst": 0.009433962264150943,
-      "fp0.0_mean": 0.009433962264150943,
-      "fp0.05_worst": 0.02830188679245283,
-      "fp0.05_mean": 0.02830188679245283,
-      "fp0.1_worst": 0.07547169811320754,
-      "fp0.1_mean": 0.07547169811320754
+      "fp0.0_worst": 0.0,
+      "fp0.0_mean": 0.03104575163398693,
+      "fp0.05_worst": 0.058823529411764705,
+      "fp0.05_mean": 0.07843137254901962,
+      "fp0.1_worst": 0.0784313725490196,
+      "fp0.1_mean": 0.09803921568627451
     },
     {
       "arm": "shuffle",
       "rho": 0.6,
       "sigma": 1.0,
-      "fp0.0_worst": 0.05660377358490566,
-      "fp0.0_mean": 0.05660377358490566,
-      "fp0.05_worst": 0.10377358490566038,
-      "fp0.05_mean": 0.10377358490566038,
-      "fp0.1_worst": 0.14150943396226415,
-      "fp0.1_mean": 0.14150943396226415
+      "fp0.0_worst": 0.0,
+      "fp0.0_mean": 0.026143790849673203,
+      "fp0.05_worst": 0.029411764705882353,
+      "fp0.05_mean": 0.06372549019607844,
+      "fp0.1_worst": 0.0784313725490196,
+      "fp0.1_mean": 0.12745098039215688
     }
   ],
   "required_coverage_spec_by_sigma": {
@@ -278,20 +278,80 @@
     "1.0": null,
     "2.0": null
   },
-  "n_pos_raw_gated": 106,
+  "n_pos_raw_gated": 102,
   "n_neg_raw_excluded": 62,
-  "n_partition_words": 168,
+  "n_partition_words": 164,
   "per_seed": [
     {
       "seed": 42,
       "code_dim": 64,
-      "text_ceiling": 0.0,
-      "real_learned_ceiling": 0.0660377358490566,
+      "text_ceiling": 0.058823529411764705,
+      "real_learned_ceiling": 0.00980392156862745,
       "clean_learned_ceiling": 1.0,
-      "lesion_ceiling": 0.009433962264150943,
-      "shuffle_ceiling": 0.05660377358490566,
+      "lesion_ceiling": 0.0,
+      "shuffle_ceiling": 0.00980392156862745,
       "heldout_clean_ceiling": 1.0,
-      "textonly_transfer_clean_ceiling": 0.0,
+      "textonly_transfer_clean_ceiling": 0.0196078431372549,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 43,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "real_learned_ceiling": 0.049019607843137254,
+      "clean_learned_ceiling": 1.0,
+      "lesion_ceiling": 0.06862745098039216,
+      "shuffle_ceiling": 0.00980392156862745,
+      "heldout_clean_ceiling": 1.0,
+      "textonly_transfer_clean_ceiling": 0.058823529411764705,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 44,
+      "code_dim": 64,
+      "text_ceiling": 0.0,
+      "real_learned_ceiling": 0.06862745098039216,
+      "clean_learned_ceiling": 1.0,
+      "lesion_ceiling": 0.049019607843137254,
+      "shuffle_ceiling": 0.0392156862745098,
+      "heldout_clean_ceiling": 1.0,
+      "textonly_transfer_clean_ceiling": 0.00980392156862745,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 100,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "real_learned_ceiling": 0.029411764705882353,
+      "clean_learned_ceiling": 1.0,
+      "lesion_ceiling": 0.0,
+      "shuffle_ceiling": 0.0,
+      "heldout_clean_ceiling": 1.0,
+      "textonly_transfer_clean_ceiling": 0.0196078431372549,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 101,
+      "code_dim": 64,
+      "text_ceiling": 0.0196078431372549,
+      "real_learned_ceiling": 0.0392156862745098,
+      "clean_learned_ceiling": 1.0,
+      "lesion_ceiling": 0.0392156862745098,
+      "shuffle_ceiling": 0.0392156862745098,
+      "heldout_clean_ceiling": 1.0,
+      "textonly_transfer_clean_ceiling": 0.0196078431372549,
+      "synth_code_ceiling": 1.0
+    },
+    {
+      "seed": 102,
+      "code_dim": 64,
+      "text_ceiling": 0.00980392156862745,
+      "real_learned_ceiling": 0.0392156862745098,
+      "clean_learned_ceiling": 1.0,
+      "lesion_ceiling": 0.029411764705882353,
+      "shuffle_ceiling": 0.058823529411764705,
+      "heldout_clean_ceiling": 1.0,
+      "textonly_transfer_clean_ceiling": 0.00980392156862745,
       "synth_code_ceiling": 1.0
     }
   ],
@@ -314,14 +374,14 @@
       "kind": "control",
       "name": "grounding is LOAD-BEARING (clean/full grounded-taught code separates; the no-grounding LESION does not)",
       "ok": true,
-      "detail": "treatment=1 control=0.00943396 |sep|=0.990566 > 0.2",
+      "detail": "treatment=1 control=0.0882353 |sep|=0.911765 > 0.2",
       "note": ""
     },
     {
       "kind": "control",
       "name": "the code is TAUGHT not HANDED (held-out concepts separate; the shuffle-binding control does not)",
       "ok": true,
-      "detail": "treatment=1 control=0.0566038 |sep|=0.943396 > 0.2",
+      "detail": "treatment=1 control=0.0588235 |sep|=0.941176 > 0.2",
       "note": ""
     }
   ],
@@ -329,14 +389,19 @@
   "verdict_undefined_reasons": [],
   "config": {
     "seeds": [
-      42
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
     ],
-    "smoke": true,
-    "max_stories": 8000,
+    "smoke": false,
+    "max_stories": 60000,
     "resample_frac": 0.8,
     "n_hub": 64,
     "window": 4,
-    "min_count": 2,
+    "min_count": 5,
     "m_assembly": 48,
     "n_relay": 4,
     "epochs": 40,
@@ -368,5 +433,5 @@
   ],
   "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; this is a standalone de-risk (reuse-by-import only). _STRONG_MARGIN unchanged.",
   "HONEST_RESIDUALS": "(1) the body-state US is a declared ORACLE STAND-IN for a grounded world that does not exist for the TinyStories vocabulary (the SAME stand-in the embodied-US + grounded-code runners used); this measures whether a convergence CAN teach a separable code GIVEN such a stream + at what coverage/noise -- it does NOT deliver a real grounded world (the named next build). (2) GO here means the grounded-TEACHER convergence arc is de-risked, NOT that the gate is retired. (3) rate-Hebbian (numpy-CPU) convergence; a fully-spiking on-substrate convergence (build_propagation_bridge, GPU-queued) is the named next rung. (4) the ceiling is a linear supervised upper bound (the spiking opponent's mild nonlinearity was measured NOT to help by the prior boundaries). (5) the 164-word closed partition is inherited from the prior boundaries.",
-  "elapsed_seconds": 6.6
+  "elapsed_seconds": 36.5
 }
