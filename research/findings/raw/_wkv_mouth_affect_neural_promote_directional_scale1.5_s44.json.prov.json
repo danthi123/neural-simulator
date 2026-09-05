@@ -1,0 +1,35 @@
+{
+ "run_id": "1788572221-3318625",
+ "runner": "research/runners/_wkv_mouth_affect_neural_promote_validate.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_wkv_mouth_affect_neural_promote_validate.py",
+  "--phase",
+  "directional",
+  "--seed",
+  "44",
+  "--neg-pa-scale",
+  "1.5",
+  "--json",
+  "research/findings/raw/_wkv_mouth_affect_neural_promote_directional_scale1.5_s44.json"
+ ],
+ "git_sha": "7f52d97e1",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T21:37:01",
+ "env": {
+  "SIM_BACKEND": "numpy",
+  "CUDA_VISIBLE_DEVICES": ""
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4925.3,
+ "corpus_check_query": "SlotBinderComposer dense slot-to-filler pathway scale at 404 facts full vocab",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_mouth_affect_neural_promote_directional_scale1.5_s44.json"
+}

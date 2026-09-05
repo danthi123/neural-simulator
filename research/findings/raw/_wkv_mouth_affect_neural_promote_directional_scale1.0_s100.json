@@ -1,0 +1,94 @@
+{
+  "phase": "directional",
+  "seed": 100,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.0,
+  "directional": {
+    "seed": 100,
+    "affect_boost": 10.0,
+    "neg_pa_scale": 1.0,
+    "host": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy and said thank lily for the little bird said thank you and they are happy and played together every day the cat and the dog were happy and proud of the park with the cat and the house were happy and said thank you for my friend",
+        "B_neg": "The little girl was sad because he was too strong and he was very happy and he had a big box into the room and saw a big tree with lots of trees and flowers and the birds were too high in could not find the ball too high up in the",
+        "C_pos_repeat": "The little girl was happy and said thank lily for the little bird said thank you and they are happy and played together every day the cat and the dog were happy and proud of the park with the cat and the house were happy and said thank you for my friend",
+        "L_lesion": "The little girl was happy and said thank Lucy for the little bird said thank you and they all played together Spot and had lots of fun playing with the ball and ran to the park and saw a big tree with you to the cat and the dog were too high",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.17307692307692307,
+        "B_neg_affect_frac": 0.038461538461538464
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were happy and said thank lily for the little bird said thank you and they are happy and played together every day the cat and the dog were happy and proud of the park with the cat and the house were happy and said thank you for my friend",
+        "B_neg": "Tom and his dog were sad and didn't know who was going to the park with his mom and dad came back and said they were sorry to the park and they were happy to have a big party with the ball and cry they played together every day and had lots of",
+        "C_pos_repeat": "Tom and his dog were happy and said thank lily for the little bird said thank you and they are happy and played together every day the cat and the dog were happy and proud of the park with the cat and the house were happy and said thank you for my friend",
+        "L_lesion": "Tom and his dog were playing in the park with his mom and dad came back and said thank you to the world with the bird too little bird said I am a magic bird too cat and a dog came to the girl and said thank you for the little bird said",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.16981132075471697,
+        "B_neg_affect_frac": 0.09615384615384616
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy was happy and said don't worry lily thank the little boy and said thank you for my rain to help the bird so he said thank you and they are happy and they played together every day and much fun together they played together and had lots of",
+        "B_neg": "One day the boy was very sad and agreed to play with the ball all day long in the park with the ball and had lots of fun together and became best friends and played together every day the day the cat angry dog and ran away from the tree and played",
+        "C_pos_repeat": "One day the boy was happy and said don't worry lily thank the little boy and said thank you for my rain to help the bird so he said thank you and they are happy and they played together every day and much fun together they played together and had lots of",
+        "L_lesion": "One day the boy was very happy and played with the ball all day long in the park with his mom of the park and found a big box of the hill and saw the ball in the park there was a stick and a big box of the hill and saw",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.13725490196078433,
+        "B_neg_affect_frac": 0.07692307692307693
+      }
+    ],
+    "neural": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy and said thank Lucy mom and dad were sad and said thank you for the little friend a little girl named Lucy went to the park with his mom and dad came to the park and saw big tree with lots of joy and ran to the",
+        "B_neg": "The little girl was happy and said thank Lucy for the little bird said thank you and they all played together Spot and had lots of fun playing with the ball and ran to the park and saw a big tree with you to the cat and the dog were sad and",
+        "C_pos_repeat": "The little girl was happy and said thank Lucy mom and dad were sad and said thank you for the little friend a little girl named Lucy went to the park with his mom and dad came to the park and saw big tree with lots of joy and ran to the",
+        "L_lesion": "The little girl was happy and said thank Lucy for the little bird said thank you and they all played together Spot and had lots of fun playing with the ball and ran to the park and saw a big tree with you to the cat and the dog were too high",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.19230769230769232,
+        "B_neg_affect_frac": 0.09615384615384616
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were playing happy and said thank you for my friend my friend a little girl named Lucy came saw the big tree and wanted to help the bird love the tree and the cat played together every day the ball all day long time they had fun playing together",
+        "B_neg": "Tom and his dog were playing sad and said don't worry Spot that he could help the bird so he said thank hi lily and Tom and they played together every day and they played together every day and had lots of fun together and became scared of the day the cat and",
+        "C_pos_repeat": "Tom and his dog were playing happy and said thank you for my friend my friend a little girl named Lucy came saw the big tree and wanted to help the bird love the tree and the cat played together every day the ball all day long time they had fun playing together",
+        "L_lesion": "Tom and his dog were playing in the park with his mom and dad came back and said thank you to the world with the bird too little bird said I am a magic bird too cat and a dog came to the girl and said thank you for the little bird said",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.1320754716981132,
+        "B_neg_affect_frac": 0.09615384615384616
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy was very happy and played with the ball all day long in the park with his mom of the park and found a big box of the hill and saw the ball in the park there was a fun day at the park Tim saw a big tree",
+        "B_neg": "One day the boy was very happy and played with the ball all day long in the park with his mom of the park and found a big box of the hill and saw the ball in the park there was a stick and a big box of the hill and saw",
+        "C_pos_repeat": "One day the boy was very happy and played with the ball all day long in the park with his mom of the park and found a big box of the hill and saw the ball in the park there was a fun day at the park Tim saw a big tree",
+        "L_lesion": "One day the boy was very happy and played with the ball all day long in the park with his mom of the park and found a big box of the hill and saw the ball in the park there was a stick and a big box of the hill and saw",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": false,
+        "A_pos_affect_frac": 0.057692307692307696,
+        "B_neg_affect_frac": 0.038461538461538464
+      }
+    ]
+  },
+  "elapsed_s": 19.9
+}

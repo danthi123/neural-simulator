@@ -1,0 +1,94 @@
+{
+  "phase": "directional",
+  "seed": 42,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.0,
+  "directional": {
+    "seed": 42,
+    "affect_boost": 10.0,
+    "neg_pa_scale": 1.0,
+    "host": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy and thanked the bird for the bird and the bird became good friends and played together every day and had lots of fun in the park with her friends and they all played together and had lots of fun in the park with her mom cream okay",
+        "B_neg": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were very sad and cried and said I will help you feel better than the little dog and the dog were very sad and angry at the bird and said became oh",
+        "C_pos_repeat": "The little girl was happy and thanked the bird for the bird and the bird became good friends and played together every day and had lots of fun in the park with her friends and they all played together and had lots of fun in the park with her mom cream okay",
+        "L_lesion": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09615384615384616,
+        "B_neg_affect_frac": 0.11538461538461539
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were happy and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day long in the park with her mom and dad and they both laughed and played together every than would",
+        "B_neg": "Tom and his dog were very sad and angry at the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they wanted at",
+        "C_pos_repeat": "Tom and his dog were happy and they played together every day and had lots of fun in the park with her mom and dad and they both laughed and played together every day long in the park with her mom and dad and they both laughed and played together every than would",
+        "L_lesion": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11320754716981132,
+        "B_neg_affect_frac": 0.07547169811320754
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy saw the big red ball and the ball were happy and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her mom and dad and they both laughed and played together every snow away",
+        "B_neg": "One day the boy saw the big red ball and the ball were very sad and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they played together and had lots of fun kids are",
+        "C_pos_repeat": "One day the boy saw the big red ball and the ball were happy and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her mom and dad and they both laughed and played together every snow away",
+        "L_lesion": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09615384615384616,
+        "B_neg_affect_frac": 0.07692307692307693
+      }
+    ],
+    "neural": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was very happy and happy and thanked the bird for her friends and they played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they were walking faster",
+        "B_neg": "The little girl was very sad and cried and cried for her mom for the little girl and the dog were sad and the dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of all glass",
+        "C_pos_repeat": "The little girl was very happy and happy and thanked the bird for her friends and they played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends and they were walking faster",
+        "L_lesion": "The little girl was very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.07692307692307693,
+        "B_neg_affect_frac": 0.07692307692307693
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day thank the bird and the bird became best friends home happy and played together every day they were playing in the park with their toys and hug clothes",
+        "B_neg": "Tom and his dog were very happy and angry with him again and they both laughed and played together every day long in the park with her mom and dad and they both laughed cry and they both laughed and played together every day long in the park with her friends coming so",
+        "C_pos_repeat": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day thank the bird and the bird became best friends home happy and played together every day they were playing in the park with their toys and hug clothes",
+        "L_lesion": "Tom and his dog were very happy and thanked the bird for the bird and the bird became best friends and played together every day and had lots of fun in the park with her friends and they played together and had lots of fun in the park with her friends laughed for",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09433962264150944,
+        "B_neg_affect_frac": 0.09433962264150944
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy saw the big red ball and the ball were very happy and excited to see what was inside the big red ball but it was too hard and he was very happy and thanked the bird for his friends and happy and they played together every played glass",
+        "B_neg": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "C_pos_repeat": "One day the boy saw the big red ball and the ball were very happy and excited to see what was inside the big red ball but it was too hard and he was very happy and thanked the bird for his friends and happy and they played together every played glass",
+        "L_lesion": "One day the boy saw the big red ball and the ball were very happy and thanked the bird for the bird and the bird became best friends and played together every day long and had lots of fun in the park with her friends and they played together every puzzle just",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": false,
+        "A_pos_affect_frac": 0.07692307692307693,
+        "B_neg_affect_frac": 0.038461538461538464
+      }
+    ]
+  },
+  "elapsed_s": 20.5
+}

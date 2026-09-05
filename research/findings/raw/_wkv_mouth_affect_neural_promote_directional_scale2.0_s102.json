@@ -1,0 +1,94 @@
+{
+  "phase": "directional",
+  "seed": 102,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 2.0,
+  "directional": {
+    "seed": 102,
+    "affect_boost": 10.0,
+    "neg_pa_scale": 2.0,
+    "host": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy and said thank course you for the bird to play with the ball inside the ball and it was a good idea of fun and they were happy and they were all the best of friends dance and had a fun day playing with the big smile",
+        "B_neg": "The little girl was very scared and didn't mean to cry and said thank you for the bird you to me and said I can help you get the ball to the ball and it was a big red ball that it was a big red ball that it was a big",
+        "C_pos_repeat": "The little girl was happy and said thank course you for the bird to play with the ball inside the ball and it was a good idea of fun and they were happy and they were all the best of friends dance and had a fun day playing with the big smile",
+        "L_lesion": "The little girl was very happy and said friends can I play with the ball and the ball into the big red ball and had a great day playing with his friends and they were all the animals were very happy and played together and had a great day playing with the",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.17307692307692307,
+        "B_neg_affect_frac": 0.09803921568627451
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were happy and they played playing together in the sun and the big blue ball there was a happy and proud of his friends and they were happy and proud of the big red ball together and had a fun day playing with the big smile on the big",
+        "B_neg": "Tom and his dog were friends and they were played together and had a great day playing with the tasty cake and the dog were very happy and said thank you for the bird to the big tree and the dog were scared but it was too high and strong for the hurt",
+        "C_pos_repeat": "Tom and his dog were happy and they played playing together in the sun and the big blue ball there was a happy and proud of his friends and they were happy and proud of the big red ball together and had a fun day playing with the big smile on the big",
+        "L_lesion": "Tom and his dog were friends and they were played together and had a great day playing with the tasty cake and the cake was very happy and said thank you for the bird to the bird and the dog were happy and said thank you for the big red ball and it",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.1509433962264151,
+        "B_neg_affect_frac": 0.09433962264150944
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy was happy and said Mia thank the bird and the dog were happy and they played together and had a great day playing with the smile and the little girl were very happy and said thank you for the bird to the big cat and the dog were",
+        "B_neg": "One day the boy was very scared and hungry but the bird was too small to her friends was a big and a big dog named Max went to the park to play with his friends and they were very happy and they played together all day long and had a great",
+        "C_pos_repeat": "One day the boy was happy and said Mia thank the bird and the dog were happy and they played together and had a great day playing with the smile and the little girl were very happy and said thank you for the bird to the big cat and the dog were",
+        "L_lesion": "One day the boy was very happy and his friends were happy and they played together all day friends and had a great time together and the little boy became best friends and the big blue ball and the ball was very happy and said thank you for the big red ball",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11538461538461539,
+        "B_neg_affect_frac": 0.057692307692307696
+      }
+    ],
+    "neural": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was very happy and said thank you thank you for the bird to the bird so happy and proud of the big cat and the dog were happy and said thank you for the big red ball and it was a big red ball that it was happy and",
+        "B_neg": "The little girl was very sad and the scared of the big bird cry sad and said I both want to cry and angry friends came to fight and said thank you for the bird hurt the bird and the bird said I can help you fly away from the big bird",
+        "C_pos_repeat": "The little girl was very happy and said thank you thank you for the bird to the bird so happy and proud of the big cat and the dog were happy and said thank you for the big red ball and it was a big red ball that it was happy and",
+        "L_lesion": "The little girl was very happy and said friends can I play with the ball and the ball into the big red ball and had a great day playing with his friends and they were all the animals were very happy and played together and had a great day playing with the",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.15384615384615385,
+        "B_neg_affect_frac": 0.19230769230769232
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were friends and they were happy and they happy and they were proud of the pond together and proud of the big red ball and had a great day playing with his friends and they were all the friends happy and they were happy and they were all the",
+        "B_neg": "Tom and his dog were friends scared and cry sad and cry the dog was very sad and wanted with angry and she was sad and wanted to play with the ball and the ball was sad and the little hurt his friends and the little hurt bird and scared but the bird",
+        "C_pos_repeat": "Tom and his dog were friends and they were happy and they happy and they were proud of the pond together and proud of the big red ball and had a great day playing with his friends and they were all the friends happy and they were happy and they were all the",
+        "L_lesion": "Tom and his dog were friends and they were played together and had a great day playing with the tasty cake and the cake was very happy and said thank you for the bird to the bird and the dog were happy and said thank you for the big red ball and it",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11320754716981132,
+        "B_neg_affect_frac": 0.22641509433962265
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy was very happy happy Tom and said thank you for the bird to the farm and the bird became friends and the birds were happy and the big red ball together and the ball was fun and had a great day playing with his warm day and the",
+        "B_neg": "One day the boy was very happy and his friends were sad and scared of the dog were away and scared sad but the dog was too small and the little boy was hurt and angry and the dog were happy and scared but the dog was too small to the bird",
+        "C_pos_repeat": "One day the boy was very happy happy Tom and said thank you for the bird to the farm and the bird became friends and the birds were happy and the big red ball together and the ball was fun and had a great day playing with his warm day and the",
+        "L_lesion": "One day the boy was very happy and his friends were happy and they played together all day friends and had a great time together and the little boy became best friends and the big blue ball and the ball was very happy and said thank you for the big red ball",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11538461538461539,
+        "B_neg_affect_frac": 0.17307692307692307
+      }
+    ]
+  },
+  "elapsed_s": 20.3
+}

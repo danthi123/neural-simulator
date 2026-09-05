@@ -1,0 +1,31 @@
+{
+ "run_id": "1788568484-3231933",
+ "runner": "research/runners/lm_train_run.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/lm_train_run.py",
+  "start",
+  "--root",
+  "bridges/lmtrain/run3",
+  "--compile",
+  "1",
+  "--compile-mode",
+  "max-autotune"
+ ],
+ "git_sha": "f31bd9230",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T20:34:44",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "(unset -> runner default)",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 4744.1,
+ "corpus_check_query": "SlotBinderComposer dense slot-to-filler pathway scale at 404 facts full vocab",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_wkv_mouth_affect_neural_promote_directional_scale2.0_s102.json.log"
+}

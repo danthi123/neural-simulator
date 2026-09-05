@@ -1,0 +1,94 @@
+{
+  "phase": "directional",
+  "seed": 101,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 2.5,
+  "directional": {
+    "seed": 101,
+    "affect_boost": 10.0,
+    "neg_pa_scale": 2.5,
+    "host": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy to see the big red green ball and warm sun on the sky and the water was happy to see the big bird and the dog became good friends and they played together always played time for the rain to play with the ball all day long",
+        "B_neg": "The little girl was so happy to have a big smile on her face and said I can help you find my toy car now it was so fast and they could not get the ball and it went back what to the store to the store Tim and the dog became",
+        "C_pos_repeat": "The little girl was happy to see the big red green ball and warm sun on the sky and the water was happy to see the big bird and the dog became good friends and they played together always played time for the rain to play with the ball all day long",
+        "L_lesion": "The little girl was so happy to have a big red ball that he loved to play with his friends and they all lived happily ever after after a while they got to the top of the hill that the toys and the dog was very happy to see the big bird",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11538461538461539,
+        "B_neg_affect_frac": 0.07692307692307693
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were happy to see the big red green ball too high up in the sky and the sky was happy to see the big red ball and it was very happy to play with his dad and the dog were happy to see the big red ball and they",
+        "B_neg": "Tom and his dog were very happy to see the big bird and the dog became good friends and they played together all day long hurt the rain went to the park to play with his friends and they played together around the park and saw a big dog on the track and",
+        "C_pos_repeat": "Tom and his dog were happy to see the big red green ball too high up in the sky and the sky was happy to see the big red ball and it was very happy to play with his dad and the dog were happy to see the big red ball and they",
+        "L_lesion": "Tom and his dog were very happy to see the big bird and the dog became good friends and they played together all day long and they all clapped and the animals were happy to see the big red pond and laugh together and they all lived happily ever after the rain came",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11320754716981132,
+        "B_neg_affect_frac": 0.07547169811320754
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy saw a big tree with a toy boat on the ground and she was very happy to see the big red ball and was happy to see the big red ball on the grass colors and its friends went to play with the ball all day long in",
+        "B_neg": "One day the boy saw a big tree with a little bird named Tim went to the park to play with his friends and they all went back to the park to play with his friends and they played together sun all day long and they all lived happily ever after the",
+        "C_pos_repeat": "One day the boy saw a big tree with a toy boat on the ground and she was very happy to see the big red ball and was happy to see the big red ball on the grass colors and its friends went to play with the ball all day long in",
+        "L_lesion": "One day the boy saw a big tree with a little bird named Tim went to the park to play with his friends and they all went back to the park to play with his friends and they played together around the park and saw a big dog on the track and",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.07692307692307693,
+        "B_neg_affect_frac": 0.057692307692307696
+      }
+    ],
+    "neural": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was so happy to have a big red ball that he loved to play with his friends and they all lived happily ever after after a while they got to the top of the hill that the toys and laugh and the dog became good friends and they played",
+        "B_neg": "The little girl was so happy to cry and said yes I can help you find my toy car now it is a big red ball that the oven was not a toy for me too high for hurt scared dog but she did hurt the bird to sad and said I",
+        "C_pos_repeat": "The little girl was so happy to have a big red ball that he loved to play with his friends and they all lived happily ever after after a while they got to the top of the hill that the toys and laugh and the dog became good friends and they played",
+        "L_lesion": "The little girl was so happy to have a big red ball that he loved to play with his friends and they all lived happily ever after after a while they got to the top of the hill that the toys and the dog was very happy to see the big bird",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.07692307692307693,
+        "B_neg_affect_frac": 0.17307692307692307
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were very happy to see the big bird and the dog became good friends and they played together all day long and they laugh together and they all played together all day long long time the rain time the home was very happy to see the big bird and",
+        "B_neg": "Tom and his dog were angry but they did not cry anymore because bad thing to do it was hurt and it was very happy to see the tree and the dog became sad and angry scared of hurt being scared and sad Tim didn't know what to do mean to do it",
+        "C_pos_repeat": "Tom and his dog were very happy to see the big bird and the dog became good friends and they played together all day long and they laugh together and they all played together all day long long time the rain time the home was very happy to see the big bird and",
+        "L_lesion": "Tom and his dog were very happy to see the big bird and the dog became good friends and they played together all day long and they all clapped and the animals were happy to see the big red pond and laugh together and they all lived happily ever after the rain came",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09433962264150944,
+        "B_neg_affect_frac": 0.23076923076923078
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy saw a big tree with smile and a big smile on her face and said I can help you find my toy toy or make it for her friends and they share the fruit played with fun all good friends and played together all day long long time",
+        "B_neg": "One day the boy saw a big tree sad and sad dog him to hurt the bird and said I can help you find my toy my brother went to the park to play with her friends and said hi my friends is scared mean to the bird and the dog became",
+        "C_pos_repeat": "One day the boy saw a big tree with smile and a big smile on her face and said I can help you find my toy toy or make it for her friends and they share the fruit played with fun all good friends and played together all day long long time",
+        "L_lesion": "One day the boy saw a big tree with a little bird named Tim went to the park to play with his friends and they all went back to the park to play with his friends and they played together around the park and saw a big dog on the track and",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.15384615384615385,
+        "B_neg_affect_frac": 0.15384615384615385
+      }
+    ]
+  },
+  "elapsed_s": 22.1
+}

@@ -1,0 +1,50 @@
+{
+  "phase": "summary",
+  "seed": 42,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.0,
+  "summary": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "neg_pa_scale": 3.0,
+    "positive_direction_seeds_passing": "6/6",
+    "negative_direction_seeds_passing": "6/6",
+    "per_seed_positive_pass": {
+      "42": true,
+      "43": true,
+      "44": true,
+      "100": true,
+      "101": true,
+      "102": true
+    },
+    "per_seed_negative_pass": {
+      "42": true,
+      "43": true,
+      "44": true,
+      "100": true,
+      "101": true,
+      "102": true
+    },
+    "no_regression": {
+      "determinism_still_100pct": true,
+      "loadbearing_A_ne_B_still_100pct": true,
+      "positive_direction_still_100pct": true,
+      "host_mechanism_unaffected_loadbearing": true,
+      "host_mechanism_unaffected_determinism": true,
+      "salad_frac_under_ceiling": false,
+      "no_regression": false,
+      "_n_combos": 18,
+      "_max_B_neg_affect_word_frac": 0.4423076923076923
+    },
+    "min_seeds_required": 5,
+    "total_seeds": 6,
+    "directional_go_component": false
+  },
+  "elapsed_s": 0.0
+}

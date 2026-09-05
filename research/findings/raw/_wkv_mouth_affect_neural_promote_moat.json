@@ -1,0 +1,51 @@
+{
+  "phase": "moat",
+  "seed": 42,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.0,
+  "moat": {
+    "seed": 42,
+    "affect_boost": 10.0,
+    "arms": [
+      {
+        "neural": false,
+        "valence": 0.0,
+        "arousal": 0.0,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      },
+      {
+        "neural": false,
+        "valence": 0.16,
+        "arousal": 0.65,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      },
+      {
+        "neural": false,
+        "valence": -0.16,
+        "arousal": 0.65,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      },
+      {
+        "neural": true,
+        "valence": 0.0,
+        "arousal": 0.0,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      },
+      {
+        "neural": true,
+        "valence": 0.16,
+        "arousal": 0.65,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      },
+      {
+        "neural": true,
+        "valence": -0.16,
+        "arousal": 0.65,
+        "text": "The Bounce Around the Ground is located in the United Kingom"
+      }
+    ],
+    "moat_identical_regardless_of_flag_or_mood": true,
+    "fact_sentence_covered": true
+  },
+  "elapsed_s": 3.7
+}

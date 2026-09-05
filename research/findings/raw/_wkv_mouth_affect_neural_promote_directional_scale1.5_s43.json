@@ -1,0 +1,94 @@
+{
+  "phase": "directional",
+  "seed": 43,
+  "affect_boost": 10.0,
+  "neg_pa_scale": 1.5,
+  "directional": {
+    "seed": 43,
+    "affect_boost": 10.0,
+    "neg_pa_scale": 1.5,
+    "host": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was happy to have a friend a big dog with a big hug and a big smile on his face and a big shiny rock on his smile and his friends were happy and played together all day and the birds were best friends in the park happy he",
+        "B_neg": "The little girl was sad and angry but he was still sad for him to find a big shiny hill and a big tree with lots pretty leaves and a big red ball in the water and started to cry and make them happy together and they played together all make new",
+        "C_pos_repeat": "The little girl was happy to have a friend a big dog with a big hug and a big smile on his face and a big shiny rock on his smile and his friends were happy and played together all day and the birds were best friends in the park happy he",
+        "L_lesion": "The little girl was sad and cried for the little girl and asked her friends to play with his dog and the cat were best friends was sad but happy too too much for him to find for a moment and said I am sorry mom and said I am sad sorry",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.1346153846153846,
+        "B_neg_affect_frac": 0.11538461538461539
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were happy to play with his toys and his ball in his mouth and ran to the park to play with his toys outside and play with his toys and games they were happy together and had fun together and the sun together and the sun was cold pictures",
+        "B_neg": "Tom and his dog were sad but he was still sad but he went back to his friend to play pictures with his friends in the park together and the park was very happy to have a big party with his friends in the park and the park to play with had water",
+        "C_pos_repeat": "Tom and his dog were happy to play with his toys and his ball in his mouth and ran to the park to play with his toys outside and play with his toys and games they were happy together and had fun together and the sun together and the sun was cold pictures",
+        "L_lesion": "Tom and his dog were playing in the park with his mom and took the toy car together and the birds were the best day ever went in a big garden with his mom and dad a big tree with a big red ball in his mouth and a big tree truck near",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.1509433962264151,
+        "B_neg_affect_frac": 0.11320754716981132
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy went to the park to play with his house and went back to the park into the park and saw a big red ball in a big tree with lots of fun together and the sun on the grass and the sun was pretty and the yellow truck",
+        "B_neg": "One day the boy went to the park to play with his house and went back to the park into the park and saw a big ball in a big tree with lots of leaves and hurt the water and the water was very pretty and played with his toys room from",
+        "C_pos_repeat": "One day the boy went to the park to play with his house and went back to the park into the park and saw a big red ball in a big tree with lots of fun together and the sun on the grass and the sun was pretty and the yellow truck",
+        "L_lesion": "One day the boy went to the park to play with his mom and dad were very happy and he was happy to have a new day and his friends were playing with the ball and the cat became best friends and played together all day long in the water water is",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09615384615384616,
+        "B_neg_affect_frac": 0.057692307692307696
+      }
+    ],
+    "neural": [
+      {
+        "prompt": "the little girl was",
+        "A_pos": "The little girl was sad and cried for the little girl and asked her friends to play with his dog and the cat play with the smile and make them go away from a big tree and happy song together and the little girl became friends and played together all everyone in",
+        "B_neg": "The little girl was sad and cried for the little girl and asked her cry to help her friends but she was too small to reach things for the party for the little girl and the little scared dog away but he was still sad and cried for him hurt sad hands",
+        "C_pos_repeat": "The little girl was sad and cried for the little girl and asked her friends to play with his dog and the cat play with the smile and make them go away from a big tree and happy song together and the little girl became friends and played together all everyone in",
+        "L_lesion": "The little girl was sad and cried for the little girl and asked her friends to play with his dog and the cat were best friends was sad but happy too too much for him to find for a moment and said I am sorry mom and said I am sad sorry",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.09615384615384616,
+        "B_neg_affect_frac": 0.1346153846153846
+      },
+      {
+        "prompt": "tom and his dog were",
+        "A_pos": "Tom and his dog were playing in the park with his mom and dad were very happy and played together they all day and played together in all day long in the park with his mom and dad were very happy and played with the ball all day long in the other again",
+        "B_neg": "Tom and his dog were playing in the park with his mom and took the toy car together and the birds were the best day ever went scared and went to the park to play with his toys and games and they were very happy to cry and said thank you let's wait",
+        "C_pos_repeat": "Tom and his dog were playing in the park with his mom and dad were very happy and played together they all day and played together in all day long in the park with his mom and dad were very happy and played with the ball all day long in the other again",
+        "L_lesion": "Tom and his dog were playing in the park with his mom and took the toy car together and the birds were the best day ever went in a big garden with his mom and dad a big tree with a big red ball in his mouth and a big tree truck near",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.11320754716981132,
+        "B_neg_affect_frac": 0.1346153846153846
+      },
+      {
+        "prompt": "one day the boy",
+        "A_pos": "One day the boy went to the park home and the little little girl was sad but he was in a big tree and happy song played with his toys and had a good day at the park for the little girl and the little girl went to the park by her",
+        "B_neg": "One day the boy went to the park to play with his mom and dad were very happy and he was happy to have a new day and his friends were sad but sad but he was upset but he was still sad but he was still sad but he found still",
+        "C_pos_repeat": "One day the boy went to the park home and the little little girl was sad but he was in a big tree and happy song played with his toys and had a good day at the park for the little girl and the little girl went to the park by her",
+        "L_lesion": "One day the boy went to the park to play with his mom and dad were very happy and he was happy to have a new day and his friends were playing with the ball and the cat became best friends and played together all day long in the water water is",
+        "affect_loadbearing_A_ne_B": true,
+        "determinism_A_eq_C": true,
+        "lesion_ne_A": true,
+        "lesion_ne_B": true,
+        "A_pos_affect_frac": 0.07692307692307693,
+        "B_neg_affect_frac": 0.19230769230769232
+      }
+    ]
+  },
+  "elapsed_s": 45.1
+}
