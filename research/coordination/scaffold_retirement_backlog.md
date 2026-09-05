@@ -87,3 +87,15 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 23 (vision cluster) item 3 of 4 — DE-RISKED, GO, 2026-09-05 (no live consumer, nothing wired).** The
+  final bird-vs-fish DECISION inside the EMERGE-36 vision-identity pipeline (`SpikingPerceptionProbe.infer`'s
+  host `argmax` over two averaged apical-dendrite voltages) is reproduced by a 2-pool spiking lateral-inhibition
+  WTA circuit reusing `_affect_marker_wta_derisk._build_bridge` (board #86's motif) unmodified. 6-seed
+  (42/43/44/100/101/102): parity 1.00 vs the host decision, mis-route shuffle flips the decision as predicted
+  1.00 of clear-winner trials, a symmetric-drive control abstains 0.90 of trials (no pool bias), 84.4% of the
+  winner-margin attributable to the real signal. See
+  `research/findings/2026-09-05-rank23-vision-cluster-grouping-decision-spiking-wta-derisk-GO.md`. Items 1
+  (`encode_v1` host matmul), 2 (argsort+percentile feature-selection — left to the in-flight satdiv/board-#135
+  arc) and 4 (hand-Gabor RF / `BRAIN_V1_SELFORG`, BLOCKED) are UNTOUCHED; "vision cluster" as a whole is NOT
+  closed. Pure de-risk (no flag added, nothing wired) — `BRAIN_VISION_IDENTITY` stays default-ON-but-unreachable
+  (no caller ever populates `req.percept`; no image/camera transport exists).
