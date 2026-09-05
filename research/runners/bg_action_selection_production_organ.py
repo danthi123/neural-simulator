@@ -64,6 +64,9 @@ from research.runners._vocal_action_selector_gate import (
     _set_equal_tonic_current,
 )
 from sim.backend import get_backend, to_host
+# reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
+# research/runners/shared_salience_afferent.py) -- default-OFF (BRAIN_SHARED_SALIENCE); see salience()'s docstring.
+import research.runners.shared_salience_afferent as _SHARED
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -125,8 +128,23 @@ def salience(msg: str) -> tuple[float, float]:
     SPEAK salience rises with answerable content (saturates at 2 content tokens); STAY-SILENT salience is high only when
     the message carries no content token (a bare '...', a lone symbol). This is the environment/body salience layer — a
     cortical afferent to the neural selector, deliberately narrow so STAY-SILENT is a genuine contender ONLY on a
-    content-empty turn (a normal question always favors SPEAK, so the selector is never even consulted on it)."""
+    content-empty turn (a normal question always favors SPEAK, so the selector is never even consulted on it).
+
+    SHARED SPIKING AFFERENT (rank-4, default-OFF `BRAIN_SHARED_SALIENCE`, research/runners/shared_salience_afferent.py).
+    The ENTRY GATE (whether the turn even carries a content token — the environment's crude "is anything here" read)
+    stays the SAME host boolean (`n == 0`); what changes is the SALIENCE MAGNITUDE the composer hands the selector on a
+    content-empty turn: instead of the hardcoded (0.0, 1.0) pair, `speak` is the shared curiosity-organ ASK-pool's
+    spiking transduction of the SAME raw content-count scalar (`min(1, n/2)`), and `silent = 1 - speak`. So the exact
+    bias the striatal D1 race receives at the ONE reachable STAY-SILENT-candidate point is now a genuine spiking read
+    (mediated by the shared ASK-pool population), not two bare host formulas — and it collapses toward the SAME
+    baseline as the DA-mode/value-choice consumers under the SAME `BRAIN_SHARED_SALIENCE_LESION` lesion. OFF (unset)
+    -> byte-identical to the bare host formula below."""
     n = len(_CONTENT_TOKEN_RE.findall(msg or ""))
+    if _SHARED.shared_salience_enabled():
+        raw = min(1.0, n / 2.0)
+        speak = float(max(0.0, _SHARED.read_salience(raw)["normalized"]))
+        silent = max(0.0, 1.0 - speak) if n == 0 else 0.0   # entry-gate boolean unchanged (host content-count == 0)
+        return float(speak), float(silent)
     speak = min(1.0, n / 2.0)
     silent = max(0.0, 1.0 - float(n))
     return float(speak), float(silent)

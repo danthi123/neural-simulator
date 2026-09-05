@@ -213,6 +213,38 @@ class CuriosityProductionOrgan:
                 "want_hz": float(want), "threshold": float(self.threshold),
                 "curious": bool(want >= self.threshold), "calib": self.calib}
 
+    def salience_of(self, raw: float, lesion: bool = False) -> dict:
+        """THE SHARED SPIKING NOVELTY/SALIENCE AFFERENT (scaffold-retirement backlog rank-4, 2026-09-05): the SAME
+        ASK-pool spiking transduction `judge()` uses (`current_novelty_signal` -> `from_novelty` -> excitability_drive
+        -> the ASK pool fires -> `cp_firing_states[ask]` read, corr(gap,want)=+0.996), generalized to an ARBITRARY
+        continuous raw scalar in [0,1] (not just the two abstain-calibration anchors NOVEL_SIGNAL/FAMILIAR_SIGNAL),
+        and reported as a NORMALIZED salience against those SAME anchors:
+            normalized = (want_hz(raw) - want_hz(FAMILIAR_SIGNAL)) / (want_hz(NOVEL_SIGNAL) - want_hz(FAMILIAR_SIGNAL))
+        so normalized ~= raw's position on the organ's own familiar<->novel spiking scale (0 at FAMILIAR, ~1 at NOVEL;
+        an input above NOVEL_SIGNAL extrapolates slightly past 1).
+
+        THIS IS THE ONE SHARED AFFERENT other production organs (da_mode_drives_chat's per-turn engagement,
+        bg_action_selection_production_organ's SPEAK/STAY-SILENT salience, value_choice_production_organ's per-
+        candidate engagement context) read INSTEAD OF computing their own separate host novelty/salience formula --
+        REUSE of this already-6-seed-GO ASK-pool crave-drive, not a new mechanism (research/coordination/
+        scaffold_retirement_backlog.md rank-4: "Both halves EXIST + are independently de-risked but have never been
+        wired to each other or to the live turn -- this is INTEGRATION, not a new mechanism").
+
+        `lesion=True` reads the drive-removed twin (`curiosity_excit_sensitivity=0`, `judge()`'s own lesion): the
+        ASK-pool want COLLAPSES to its un-driven baseline regardless of `raw`, so `normalized` loses its dependence
+        on the input -- the load-bearing lesion arm every consumer site's de-risk reuses verbatim."""
+        self.ensure_built()
+        r = float(max(0.0, min(1.0, raw)))
+        if lesion:
+            st = self._ensure_les()
+            want = self._read_want_raw(r, st["bridge"], st["xp"], st["idx_ask"], st["snap0"])
+        else:
+            want = self._read_want_raw(r, self.bridge, self.xp, self.idx_ask, self.snap0)
+        span = float(self.calib["want_novel_hz"] - self.calib["want_familiar_hz"])
+        normalized = ((float(want) - self.calib["want_familiar_hz"]) / span) if abs(span) > 1e-9 else 0.0
+        return {"raw": r, "want_hz": float(want), "normalized": float(normalized), "lesioned": bool(lesion),
+                "calib": self.calib}
+
 
 _ORGAN: CuriosityProductionOrgan | None = None
 

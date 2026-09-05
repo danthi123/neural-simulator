@@ -113,6 +113,11 @@ import numpy as np
 # reuse-by-import the board-#76 6/6-seed-GO spiking DA-mode machinery (build + the live SNc->DA read) -- NO sim/ edit.
 import research.runners._neuromod_spiking_da_mode_derisk as _DA
 import research.runners._perturb_and_measure_derisk as _PM
+# reuse-by-import the shared spiking novelty/salience afferent (scaffold-retirement backlog rank-4, 2026-09-05,
+# research/runners/shared_salience_afferent.py) -- default-OFF (BRAIN_SHARED_SALIENCE); see engagement_of()'s
+# docstring below for the coupling this retires at its root (da-mode-drives-response + da-gated-encoding +
+# da-gated-curiosity all read the SAME chat._last_da_drives["da_level"] this module produces).
+import research.runners.shared_salience_afferent as _SHARED
 
 _DEFAULT_SEED = 42
 
@@ -193,7 +198,13 @@ def _content_tokens(message: str) -> list:
 def engagement_of(tokens: list, seen: set) -> float:
     """The per-turn ENGAGEMENT scalar in [0,1] (the environmental reward/context signal): novelty (fraction of
     content tokens NOT seen this session -- the dopaminergic novelty/reward response) + richness (content-word
-    count, saturating). This is the HOST boundary; the DA LEVEL it induces is the neural part."""
+    count, saturating). This is the HOST boundary; the DA LEVEL it induces is the neural part.
+
+    Until the shared-afferent wiring (2026-09-05, `BRAIN_SHARED_SALIENCE`) this raw scalar was fed DIRECTLY to the
+    SNc afferent (zero neurons mediating message -> pA). When the flag is on, `DaModeDrivesWorkspace.observe()`
+    routes this SAME raw scalar through the shared spiking ASK-pool afferent (`shared_salience_afferent.read_
+    salience`) before it reaches the EMA/afferent map below -- this function's OUTPUT is unchanged (still the host
+    sensory/comprehension boundary read), only what happens to it downstream changes."""
     if not tokens:
         return 0.0
     novelty = sum(1 for t in tokens if t not in seen) / float(len(tokens))
@@ -343,12 +354,21 @@ class DaModeDrivesWorkspace:
         with self._lock:
             self.n_turns += 1
             tokens = _content_tokens(message)
+            shared_info = None
             if afferent_override is not None:
                 afferent = float(afferent_override)
                 turn_e = None
             else:
                 if tokens:
                     turn_e = engagement_of(tokens, self.seen)
+                    # ── shared spiking novelty/salience afferent (rank-4, default-OFF) ─────────────────────────
+                    # Route the SAME raw host engagement scalar through the shared ASK-pool spiking transduction
+                    # BEFORE it folds into the EMA, instead of using the raw host arithmetic directly. `engagement_
+                    # of`'s OUTPUT (the sensory/comprehension boundary read) is unchanged; only what mediates it on
+                    # the way to the SNc afferent changes. OFF (unset) -> turn_e unchanged -> byte-identical.
+                    if _SHARED.shared_salience_enabled():
+                        shared_info = _SHARED.read_salience(turn_e, seed=self.seed)
+                        turn_e = float(np.clip(shared_info["normalized"], 0.0, 1.0))
                     d = _EMA_DECAY
                     self.ema_engagement = d * self.ema_engagement + (1.0 - d) * turn_e
                 else:
@@ -363,6 +383,8 @@ class DaModeDrivesWorkspace:
                     "ema_engagement": float(self.ema_engagement), "afferent_pA": float(afferent),
                     "da_level": 0.0, "snc_firing": 0.0, "mode": "rest", "lead": "", "reason": None,
                     "seed": self.seed}
+            if shared_info is not None:      # key present ONLY when the shared afferent ran (byte-identical-off idiom)
+                info["shared_salience"] = shared_info
             try:
                 self._isolated(self._ensure)
                 conc, sncf = self._isolated(lambda: self._read_da_level(afferent, lesion))
