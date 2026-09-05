@@ -3,9 +3,9 @@ type: biology
 id: coincidence-binding
 mechanism: Binding by coincidence -- a synapse is a supralinear detector of the near-simultaneity of two converging signals, so a conjunction can be written locally
 status: established
-last_verified: 2026-08-25
-current_finding: research/findings/2026-08-25-gap2-deltarule-binder-production-integration-NOT-WIRED.md
-current_status: "A per-fact fast-weight J written by a LOCAL coincidence rule (delta or plain Hebbian outer product over role-key/filler phasor pairs) and read through the spiking RF resonate loop reaches 1.000 at P=1..8 roles/fact (6-seed, full 788-code corpus) and to P=48 in a wider single-seed probe, permuted-role control 0.000 throughout -- matching the fixed exact-inverse FHRR ceiling it replaces, but the delta-vs-additive gap the runner was built to demonstrate NEVER OPENS at any tested scale (delta==additive==1.000 from P=1 to P=48, 12x production's real per-fact P=4). The WRITE remains host-numpy (rf_set_complex_weights installs a host-computed matrix; only the READ is on-substrate). Production has NEVER used this mechanism -- every deployed brain bundle checked (scale787/day_9, day_33) runs composer_kind='rf' (the fixed FHRR bind this mechanism targets), unchanged. A separate, more mature alternative for the same production shortcut (SlotBinderComposer -- genuinely on-bridge WRITE, 6-seed GO, covers embedded clauses) is also unwired; its own finding named the wire-in as the next step and it was never executed. The DENDRITIC two-compartment realization named as the ledger surpass is NOT built."
+last_verified: 2026-09-04
+current_finding: research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md
+current_status: "A per-fact fast-weight J written by a LOCAL coincidence rule (delta or plain Hebbian outer product over role-key/filler phasor pairs) and read through the spiking RF resonate loop reaches 1.000 at P=1..8 roles/fact (6-seed, full 788-code corpus) and to P=48 in a wider single-seed probe, permuted-role control 0.000 throughout -- matching the fixed exact-inverse FHRR ceiling it replaces, but the delta-vs-additive gap the runner was built to demonstrate NEVER OPENS at any tested scale (delta==additive==1.000 from P=1 to P=48, 12x production's real per-fact P=4). The WRITE remains host-numpy (rf_set_complex_weights installs a host-computed matrix; only the READ is on-substrate). Production has NEVER used this mechanism -- every deployed brain bundle checked (scale787/day_9, day_33) runs composer_kind='rf' (the fixed FHRR bind this mechanism targets), unchanged. The separate, more mature alternative for the same production shortcut (SlotBinderComposer -- genuinely on-bridge WRITE, 6-seed GO, covers embedded clauses) is now MEASURED, not just unwired: at the live production scale (404 facts/788-word vocab) its dense K*KF slot->filler pathway needs an extrapolated ~316GB host RAM to even BUILD and ~36-463GB GPU-resident thereafter, ~1000x heavier than the deployed FHRR composer measured at the identical real scale (334MB, ~0.9s/query) -- NO-GO on the current dense wiring, precondition L2 (sparsify the slot->filler pathway, ~40x fewer synapses needed) identified but not yet built or de-risked for accuracy. The DENDRITIC two-compartment realization named as the ledger surpass is NOT built."
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "a biochemical detector of the near simultaneity of"
@@ -22,6 +22,7 @@ findings:
   - research/findings/2026-07-21-gap2-spiking-learned-binder-6seed-GO-emergence-bar-close.md
   - research/findings/2026-07-17-gap2-adversarial-verify-CONFIRMED-and-content-addressable-wire-in-GO.md
   - research/findings/2026-08-25-gap2-deltarule-binder-production-integration-NOT-WIRED.md
+  - research/findings/2026-09-04-slotbinder-live-scale-derisk-NOGO-dense-pathway-blowup.md
 ---
 
 # A conjunction can be written by coincidence, locally, without an algebra
