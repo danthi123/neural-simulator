@@ -853,6 +853,133 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 outs.append(self.Wo(r[:, t] * read))
             return torch.stack(outs, 1)
 
+    class HippoAssocLayer(nn.Module):
+        """STRUCTURED HiPPO SSM -> CONTENT-ADDRESSABLE LEARNED-KEY ATTENTION (--recurrence hippokey, 2026-09-05,
+        own-voice-fluency arc). The LITERAL owner steer (MEMORY project_own_voice_fluency_pursue_fully_2026_09_03,
+        "a structured HiPPO-style SSM -> content-addressable learned-key attention"), realized as the composition
+        it names -- distinct from `learnkey` (which substituted a FIXED codebook and dropped the HiPPO SSM
+        entirely) and from `assoc`/`assoc_t` (which keyed attention off the token-local residual stream z).
+
+        WHY THIS IS A GENUINELY NEW MEMBER OF THE FAMILY, NOT A HOLLOW DUPLICATE OF THE assoc NO-GO (the crux):
+        assoc/assoc_t both LOST to the -0.125 ssm floor (bag -0.347, ordered -0.147). The ordered-attention
+        bound-investigation (research/findings/2026-09-03-ordered-attention-at-shared-fluency-bound-investigation-
+        verdict.md) concluded content+order is NECESSARY-BUT-NOT-SUFFICIENT: the read machinery was fine, the KEYS
+        were weak. That echoes the July diagnosis exactly (research/findings/2026-07-11-content-addressable-
+        retrieval-needs-LEARNED-keys-...md): "the fading reservoir state is a BAD KEY", content-addressable
+        retrieval is load-bearing only with keys carrying LEARNED long-range structure. assoc's keys are Wk(z_s)
+        where z_s is dominated by the CURRENT token embedding + shallow context -- so assoc can match "same token
+        near the same absolute position" (assoc_t's time code) but NOT "same deep multi-timescale CONTEXT". THIS
+        class forms Q/K from the FIXED HiPPO multi-timescale SSM STATE x_s (a rich, order-aware summary of the
+        whole prefix up to s across log-spaced timescales), keeping V as the token content Wv(z_s) -- the classic
+        "match by context, retrieve the content" key/value split. It fixes BOTH diagnosed assoc failure modes at
+        once: (a) BAD KEY -> the HiPPO state is a deep multi-timescale context code, not a shallow token read;
+        (b) ORDER-BLINDNESS -> the state is built by literally stepping through the sequence, so it is inherently
+        order-dependent (assoc's bag-of-tokens problem) WITHOUT needing assoc_t's added time-cell code.
+
+        WHY IT PLAUSIBLY BREAKS THE TRIGRAM BOUND WHERE THE LINEAR-RECURRENCE FAMILY DID NOT: research/findings/
+        2026-07-15-selective-ssm-generator-trigram-bound-... diagnosed the shared -0.125 wall as fixed-size-state
+        COMPRESSION -- wkv/ssm/hippo/linattn all crush the whole prefix into a fixed-size state a read-out cannot
+        losslessly invert, so they only APPROXIMATE which past token mattered, while a trigram keeps the EXACT
+        identity of the last two. linattn (the current deployable mouth) crosses the trigram on the SIMPLE
+        simplewiki domain (+0.0505 6/6) but FALLS BELOW it on the BROAD wikitext103 domain (2026-09-04, margin
+        -0.29..-0.57 at depth>=2) -- the fixed-state compression bites hardest when the domain is broad. A causal
+        softmax read keeps a per-position value for every past position (unbounded effective context, EXACT
+        recall), so it is not subject to that compression bound -- and here the position it recalls is chosen by a
+        DEEP multi-timescale HiPPO key, the structure a trigram cannot see. That is the unexhausted hypothesis
+        this arm tests: does a multi-timescale HiPPO key make content-addressable recall load-bearing at long
+        range on a broad domain?
+
+        BIOLOGICAL ANCHOR (a real circuit, not a transformer bolted on -- the owner accepts attention-like reads
+        IF bio-grounded): this is the ENTORHINAL -> CA3 pathway. The medial entorhinal cortex supplies a
+        multi-timescale temporal-context / grid code -- hippocampal time cells tiling elapsed time (MacDonald et
+        al. 2011), Howard & Kahana's slowly-drifting temporal-context vector (2002), and grid modules at multiple
+        spatial scales (Stensola et al. 2012) -- exactly a bank of leaky integrators at log-spaced time constants,
+        which IS the diagonal HiPPO-LegS multi-timescale approximation (Gu et al. 2020; the same A/B this file's
+        HippoLayer already validates). CA3's recurrent collaterals then perform content-addressable autoassociative
+        pattern completion (Marr 1971; Treves & Rolls 1994; Hasselmo's EC-context-cued CA3 retrieval), which
+        Ramsauer et al. 2020 prove is one-shot modern-Hopfield <-> softmax-attention. So "HiPPO multi-timescale
+        state (EC context) keying a content-addressable read (CA3 completion) over learned values" is the
+        entorhinal-hippocampal memory circuit, the same two anchors HippoLayer and AssocLayer already carry, now
+        COMPOSED as biology composes them (EC feeds the CA3 cue), not run in isolation.
+
+        DEPLOYABILITY (honest, named not hidden): the read here is EXACT causal softmax -- O(T^2), a CEILING /
+        capability instrument (like assoc/assoc_t, and like the BPTT-trained WKV that the local-rule read-out was
+        only later shown to match, 2026-07-20). It is NOT yet spike-deployable. This first version answers the
+        CAPABILITY question cheaply (does the HiPPO key break the bound?); IF GO, the spike-port rung is a
+        HiPPO-keyed linattn kernel (feed X into LinAttnLayer's phi(q)/phi(k) fast-weight trace, inheriting its
+        deployed LinAttnReadout machinery) or a fixed-slot read -- exactly the prove-on-instrument-then-port
+        discipline the arc already used for wkv and linattn. IF NO-GO, we have cheaply learned the key was not the
+        missing piece and the bound is deeper (objective/capacity), re-aiming the arc. Either way it is a
+        first-class deliverable, deferring a METHOD, never the capability.
+
+        A (the multi-timescale decay grid) and B (the input coupling) are FIXED buffers -- register_buffer, never
+        nn.Parameter -- so NO learned recurrent credit flows through the transition dynamics (the emergence bar
+        HippoLayer's docstring establishes: "only C/head learned"). Only Wq/Wk/Wv/Wo (and, with --assoc-gate, Wg)
+        are learned by gradient, on top of the shared embedding upstream.
+
+        MEMORYLESS anti-cheat (shared eval_perdepth machinery, self.memoryless): sets A_eff=0 (HiPPO carry off ->
+        x_t = u_t, current token only) AND masks the read to s==t (self-only) -- both collapse the read to a pure
+        current-token projection Wo(Wv(z_t)), so if deep-context NLL drops toward bigram the advantage genuinely
+        came from reading the past through the HiPPO-keyed recall. The generic --permute anti-cheat (eval_perdepth
+        permute=True, shuffles the prefix order upstream) applies unmodified and should degrade this arm strongly
+        (both the HiPPO state and the read depend on order).
+
+        BYTE-IDENTICAL WHEN OFF: this class and self.hippoassoc_layers are constructed ONLY when
+        --recurrence hippokey is selected (see the ModuleList construction in WKV.__init__ and the RECUR=="hippokey"
+        forward dispatch) -- when not selected it is defined but never instantiated, consuming ZERO init-RNG draws,
+        so wkv/ssm/hippo/assoc/assoc_t/linattn/learnkey are completely unaffected by this addition at any
+        --n-layers. Pre-norm residual block, forward(h, memoryless) -> delta, IDENTICAL contract to every other
+        layer here, so it stacks under --n-layers and composes with --contiguous/--tokenizer bpe unchanged.
+        """
+        def __init__(self, D, tau_lo=1.5, tau_hi=1000.0, permute_a=False, gate=False):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            # FIXED HiPPO multi-timescale diagonal recurrence (A, B buffers) -- identical construction to HippoLayer
+            # (fast->slow log-spaced decay grid + fixed random input projection; see HippoLayer's A-INIT docstring).
+            tau = torch.exp(torch.linspace(math.log(tau_lo), math.log(tau_hi), D))
+            A = torch.exp(-1.0 / tau)                        # FIXED diagonal decay, HiPPO-LegS-approx fast->slow
+            if permute_a:
+                A = A[torch.randperm(D)]                     # structural anti-cheat (shuffle channel<->tau labeling)
+            self.register_buffer("A", A)
+            Bmat = torch.randn(D, D) / math.sqrt(D)          # FIXED random input projection (never trained)
+            self.register_buffer("B", Bmat)
+            # LEARNED content-addressable read: Q/K over the HiPPO STATE (context match), V over the token content
+            # z (assoc's convention -- retrieve the content that followed matching contexts). Four projections +
+            # one causal softmax, exactly AssocLayer's read; the ONLY change is Q/K read x (the HiPPO state) not z.
+            self.Wq = nn.Linear(D, D, bias=False)
+            self.Wk = nn.Linear(D, D, bias=False)
+            self.Wv = nn.Linear(D, D, bias=False)
+            self.Wo = nn.Linear(D, D, bias=False)
+            self.scale = 1.0 / math.sqrt(D)
+            self.gate = gate                                 # --assoc-gate (learned retrieval trust gate), default OFF
+            if gate:
+                self.Wg = nn.Linear(D, D, bias=True)
+                nn.init.zeros_(self.Wg.weight)               # g_t starts UNIFORM across channels (init-open trick)
+                nn.init.constant_(self.Wg.bias, 2.0)         # sigmoid(2.0)~0.88 -> roughly open at init (reuse assoc-gate)
+
+        def forward(self, h, memoryless=False):              # h:[B,T,D] -> delta:[B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            u = z @ self.B.t()                               # B u_t (fixed random input coupling, as HippoLayer)
+            A_eff = torch.zeros_like(self.A) if memoryless else self.A   # ANTI-CHEAT: no carry -> current token only
+            x = torch.zeros(B, D, device=h.device)
+            xs = []
+            for t in range(T):
+                x = A_eff * x + u[:, t]                       # x_{t+1} = A x_t + B u_t (FIXED HiPPO multi-timescale state)
+                xs.append(x)
+            X = torch.stack(xs, 1)                            # [B,T,D] multi-timescale context code per position
+            q = self.Wq(X); k = self.Wk(X); v = self.Wv(z)   # match by HiPPO context (Q/K over X), retrieve content (V over z)
+            scores = torch.einsum("btd,bsd->bts", q, k) * self.scale     # [B,T,T] HiPPO-context content-similarity
+            causal = torch.tril(torch.ones(T, T, dtype=torch.bool, device=h.device))
+            if memoryless:
+                causal = torch.eye(T, dtype=torch.bool, device=h.device) # self-only: collapses read to current token
+            scores = scores.masked_fill(~causal.unsqueeze(0), float("-inf"))
+            alpha = torch.softmax(scores, dim=-1)                        # [B,T,T] causal content-addressed weights
+            read = torch.einsum("bts,bsd->btd", alpha, v)               # [B,T,D] weighted associative recall
+            if self.gate:
+                read = torch.sigmoid(self.Wg(z)) * read                  # learned retrieval trust gate (pre-Wo, on the read)
+            return self.Wo(read)
+
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
@@ -945,6 +1072,24 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                               gate=getattr(args, "assoc_gate", False))
                 for _ in range(max(n_layers, 1))
             ]) if RECUR == "learnkey" else nn.ModuleList()
+
+            # --recurrence hippokey (2026-09-05, own-voice-fluency arc): STRUCTURED HiPPO SSM -> CONTENT-
+            # ADDRESSABLE LEARNED-KEY ATTENTION (see HippoAssocLayer's docstring). The LITERAL owner steer
+            # ("a structured HiPPO-style SSM -> content-addressable learned-key attention"), distinct from
+            # learnkey (a FIXED codebook, no HiPPO SSM) and from assoc/assoc_t (keys from the token-local
+            # residual stream z, no multi-timescale context). Composed with --n-layers depth exactly like the
+            # lists above (ALL n_layers blocks are uniform HippoAssocLayer instances in ONE list). `gate=getattr(
+            # args, "assoc_gate", False)` reuses the SAME learned-retrieval-gate flag assoc/linattn/learnkey use;
+            # tau_lo/tau_hi reuse hippokey's own args (default to HiPPO's 1.5..1000). Built ONLY when
+            # RECUR=="hippokey" (else an empty ModuleList, consuming ZERO extra RNG draws) so every other arm's
+            # parameter-init RNG order -- hence its outputs -- is UNCHANGED by this addition at any --n-layers.
+            self.hippoassoc_layers = nn.ModuleList([
+                HippoAssocLayer(D, tau_lo=getattr(args, "hippokey_tau_lo", 1.5),
+                                tau_hi=getattr(args, "hippokey_tau_hi", 1000.0),
+                                permute_a=getattr(args, "hippo_permute_a", False),
+                                gate=getattr(args, "assoc_gate", False))
+                for _ in range(max(n_layers, 1))
+            ]) if RECUR == "hippokey" else nn.ModuleList()
 
             # PREDICTIVE-CODING AUXILIARY OBJECTIVE (2026-09-03, --pred-aux-weight, own-voice-fluency arc). WHY:
             # the bound-investigation of the fluency arc (research/findings/2026-09-03-spiking-depth-tokens-
@@ -1060,6 +1205,16 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # byte-identically to before this addition.
                 hh = h
                 for blk in self.learnkey_layers:
+                    hh = hh + blk(hh, memoryless=self.memoryless)
+                return self._out(hh, aux)
+            if RECUR == "hippokey":
+                # STRUCTURED HiPPO SSM -> CONTENT-ADDRESSABLE LEARNED-KEY ATTENTION (see HippoAssocLayer). Self-
+                # contained: does NOT touch self.Wk/Wv/Wr/w/u below (unused on this branch, no gradient reaches
+                # them). Inserted BEFORE any wkv/ssm-specific line, mirroring the hippo/assoc/linattn/learnkey
+                # insertions above, so when RECUR != "hippokey" this is one skipped comparison and every line
+                # below runs byte-identically to before this addition.
+                hh = h
+                for blk in self.hippoassoc_layers:
                     hh = hh + blk(hh, memoryless=self.memoryless)
                 return self._out(hh, aux)
             k = self.Wk(h); v = self.Wv(h); r = torch.sigmoid(self.Wr(h))
@@ -1449,7 +1604,7 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
-    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn", "learnkey"], default="wkv",
+    ap.add_argument("--recurrence", choices=["wkv", "ssm", "hippo", "assoc", "assoc_t", "linattn", "learnkey", "hippokey"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form); "
                          "hippo = FIXED diagonal HiPPO-structured multi-timescale recurrence (A=fixed log-spaced "
@@ -1479,7 +1634,18 @@ def main():
                          "Hebbian trace; the modern-Hopfield-with-FIXED-LEARNED-patterns case Ramsauer et al. "
                          "2020 describes, distinct from assoc/assoc_t's already-NO-GO per-token-key degenerate "
                          "case. Prepared as the NEXT mechanism class after linattn -- a ready-to-fire fallback "
-                         "if the linattn production-scale sweep plateaus, not yet run at scale.")
+                         "if the linattn production-scale sweep plateaus, not yet run at scale. "
+                         "hippokey = STRUCTURED HiPPO SSM -> CONTENT-ADDRESSABLE LEARNED-KEY ATTENTION (see "
+                         "HippoAssocLayer, 2026-09-05) -- the LITERAL owner steer: a FIXED HiPPO multi-timescale "
+                         "diagonal SSM produces a per-position multi-timescale context code x_s, and a causal "
+                         "softmax read forms Q/K over x_s (match by deep context) while V stays the token content "
+                         "z (retrieve what followed matching contexts). Distinct from learnkey (a FIXED codebook, "
+                         "no HiPPO) and from assoc/assoc_t (keys from the shallow token-local z, the 'bad key' the "
+                         "July record diagnosed) -- it fixes BOTH the bad-key and the order-blindness that sat "
+                         "assoc at the -0.147 bound, and its full per-position softmax recall is not subject to "
+                         "the fixed-state compression trigram-bound the linear-recurrence family (wkv/ssm/hippo/"
+                         "linattn) shares. Bio anchor: entorhinal multi-timescale context -> CA3 pattern "
+                         "completion. Exact-softmax CEILING instrument (O(T^2), spike-port is a named next rung).")
     ap.add_argument("--assoc-gate", dest="assoc_gate", action="store_true",
                     help="(--recurrence assoc / assoc_t only) LEARNED RETRIEVAL GATE (2026-09-03, default OFF, "
                          "see AssocLayer's LEARNED RETRIEVAL GATE docstring section): a per-channel, input-"
@@ -1544,6 +1710,11 @@ def main():
                     help="(--recurrence hippo) fastest time constant (steps) in the log-spaced HiPPO-LegS-approx decay grid")
     ap.add_argument("--hippo-tau-hi", dest="hippo_tau_hi", type=float, default=1000.0,
                     help="(--recurrence hippo) slowest time constant (steps) in the log-spaced decay grid")
+    ap.add_argument("--hippokey-tau-lo", dest="hippokey_tau_lo", type=float, default=1.5,
+                    help="(--recurrence hippokey) fastest time constant (steps) in the HiPPO multi-timescale decay "
+                         "grid whose state keys the content-addressable read (see HippoAssocLayer)")
+    ap.add_argument("--hippokey-tau-hi", dest="hippokey_tau_hi", type=float, default=1000.0,
+                    help="(--recurrence hippokey) slowest time constant (steps) in the HiPPO decay grid keying the read")
     ap.add_argument("--hippo-permute-a", dest="hippo_permute_a", action="store_true",
                     help="ANTI-CHEAT (structural, per the task spec): shuffle the per-channel tau assignment (same "
                          "multiset of decay rates, different channel labeling) -- distinct from eval_perdepth's "
