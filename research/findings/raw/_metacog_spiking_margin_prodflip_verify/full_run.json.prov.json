@@ -1,0 +1,25 @@
+{
+ "run_id": "1788599987-3997429",
+ "runner": "research/runners/_metacog_spiking_margin_prodflip_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_5ba45863-4fb-5/research/runners/_metacog_spiking_margin_prodflip_verify.py",
+  "--out",
+  "research/findings/raw/_metacog_spiking_margin_prodflip_verify/full_run.json"
+ ],
+ "git_sha": "551a84b57",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T05:19:47",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_metacog_spiking_margin_prodflip_verify/full_run.json"
+}

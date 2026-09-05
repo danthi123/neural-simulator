@@ -284,18 +284,20 @@ def run_seed_sweep(seed, results):
 def run_seed42_fresh_build_crosscheck(results):
     """A SEPARATE, literal fresh-build pair at seed 42 -- no shared process/env state -- confirming the main
     sweep's same-trace-counterfactual method agrees with an ACTUALLY-separate build on the SAME query (closes
-    the loop on realism per the module docstring). Post-2026-09-05-flip semantics: UNSET is now the TRUE
-    shipped default (ON); the explicit escape `BRAIN_METACOG_SPIKING_MARGIN=0` reproduces the PRE-flip
-    (host-only) behaviour -- so 'OFF' below sets that escape explicitly rather than relying on unset."""
+    the loop on realism per the module docstring). Shipped-default semantics (the flag stays default-OFF: see
+    the 2026-09-05 production-flip NO-GO finding): UNSET is the TRUE shipped default (OFF); the explicit
+    `BRAIN_METACOG_SPIKING_MARGIN=1` is the candidate this whole script evaluates -- so 'OFF' below relies on
+    unset (asserting the real default is correct, gates/flip-offarm-staleness's own sanctioned pattern for a
+    flag that legitimately still defaults off) and 'ON' sets the literal explicitly."""
     import subprocess
     out = {}
     script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                           "_metacog_spiking_margin_prodflip_verify.py")
-    for cond, env_val in (("OFF", "0"), ("ON", None)):
+    for cond, env_val in (("OFF", None), ("ON", "1")):
         env = dict(os.environ)
         env["BRAIN_LTM_SHIP_DEFAULT"] = "off"
         if env_val is None:
-            env.pop("BRAIN_METACOG_SPIKING_MARGIN", None)   # unset -> the TRUE shipped default (now ON)
+            env.pop("BRAIN_METACOG_SPIKING_MARGIN", None)   # unset -> the TRUE shipped default (OFF)
         else:
             env["BRAIN_METACOG_SPIKING_MARGIN"] = env_val
         code = (

@@ -183,20 +183,21 @@ def metacog_lesioned() -> bool:
 
 
 def spiking_recall_margin_enabled() -> bool:
-    """Default-ON (flipped 2026-09-05, PRODUCTION-FLIP verification; pre-flip rationale + full mechanism in
-    research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md, flip verdict in
-    research/findings/2026-09-05-metacog-spiking-margin-prodflip-*.md). `BRAIN_METACOG_SPIKING_MARGIN` in
-    {0,false,no,off} is the explicit escape back to the pre-flip host-only evidence chain (byte-identical to
-    before 2026-09-05); unset or {1,true,on,yes} -> ON. When ON, the recall composer (`OneBrainComposer`/
+    """Default-OFF. `BRAIN_METACOG_SPIKING_MARGIN` in {1,true,on,yes} -> the recall composer (`OneBrainComposer`/
     `RFPhasorComposer`) populates each role chip's `margin_spiking` field (a genuine spiking-competition read,
     scaffold-retirement backlog rank 9) and `mean_role_confidence` prefers it over the host `margin`/`margin_norm`/
     `margin_snr` chain. Reads the SAME env var the composer constructors check (`RFPhasorComposer.
     spiking_recall_margin`) -- this accessor exists for callers (the de-risk runner, a lesion test) that want to
-    confirm the flag's state without constructing a composer. See research/runners/rf_phasor_composer.py."""
-    v = os.environ.get("BRAIN_METACOG_SPIKING_MARGIN")
-    if v is None:
-        return True
-    return v.strip().lower() not in ("0", "false", "no", "off", "")
+    confirm the flag's state without constructing a composer. See research/runners/rf_phasor_composer.py.
+
+    PRODUCTION-FLIP VERIFIED NO-GO (2026-09-05): default-ON was tried + INTEGRATED-verified through the real
+    webapp.server.brain_chat handler across the mandated 6 seeds -- genuinely load-bearing (6/6 lesion collapse)
+    and content-preserving, but on 3 of 6 seeds a real degraded-recall turn read CONFIDENT under this evidence
+    while the shipped host evidence correctly hedged the SAME turn (4 instances / 42 natural noise-sweep
+    opportunities, 0 in the reverse direction) -- stays default-OFF. See
+    research/findings/2026-09-05-metacog-spiking-margin-prodflip-verify-NOGO.md."""
+    v = os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "")
+    return v.strip().lower() in ("1", "true", "on", "yes")
 
 
 CONFIDENCE_READS = ("nmda_norm", "balance")

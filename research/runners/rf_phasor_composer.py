@@ -173,10 +173,7 @@ class RFPhasorComposer:
         self._izh_bank_cache = {}      # Stage-2 Izhikevich WTA banks, keyed by candidate count
         self._cleanup_drive_pA = 60.0  # input-normalized drive for the winner (sane band 20-100; >=200 over-drives)
         self._cleanup_window = 120
-        # spiking_recall_margin (scaffold-retirement backlog rank 9, DEFAULT-ON 2026-09-05 -- see
-        # research/findings/2026-09-05-metacog-spiking-margin-prodflip-*.md, the PRODUCTION-FLIP verification this
-        # default change is anchored to; PRE-FLIP state + full rationale in the finding this superseded,
-        # research/findings/2026-09-05-metacog-spiking-recall-margin-derisk-PARTIAL.md):
+        # spiking_recall_margin (scaffold-retirement backlog rank 9, opt-in, DEFAULT-OFF = byte-identical):
         # `research/coordination/scaffold_retirement_backlog.md` #9 -- the metacog honesty-hedge's EVIDENCE
         # derivation (`metacog_production_organ.mean_role_confidence`) reads `margin`/`margin_norm`/`margin_snr`,
         # all HOST ARITHMETIC over the matched-filter scores ((peak-runner_up)/peak or a z-score, computed by
@@ -188,13 +185,19 @@ class RFPhasorComposer:
         # and reports the winner-vs-runner-up SPIKE-COUNT margin as an ADDITIONAL trace field `margin_spiking` --
         # never in place of the existing fields, never on the answer path (the decoded word is unchanged; this is
         # a trace-only evidence side-channel exactly like `margin` itself, see `_cleanup_all_score_stats` and
-        # `OneBrainComposer._block_role_scores`). `BRAIN_METACOG_SPIKING_MARGIN` in {0,false,no,off} is the
-        # explicit escape BACK to the pre-2026-09-05 host-only evidence chain (byte-identical to before this
-        # flip); unset/{1,true,on,yes} -> ON (the new default).
+        # `OneBrainComposer._block_role_scores`). Env BRAIN_METACOG_SPIKING_MARGIN=1 flips it on without a code
+        # change at any construction call site (the `enable_sparse_index` precedent).
+        #
+        # PRODUCTION-FLIP VERIFIED NO-GO (2026-09-05, research/findings/2026-09-05-metacog-spiking-margin-
+        # prodflip-verify-NOGO.md): default-ON was tried + INTEGRATED-verified (real webapp.server.brain_chat
+        # handler, true production faculty config, 6/6 mandated seeds). Genuinely load-bearing (6/6 lesion
+        # collapse) and content-preserving (recalled_svo byte-identical in every condition), but the ambiguous-
+        # band residual this de-risk already characterized is NOT a rare edge case at the conversational
+        # surface: on 3 of 6 seeds (42/44/100), a real degraded-recall turn reads CONFIDENT under the spiking
+        # evidence while the shipped host evidence correctly HEDGES the SAME turn -- 4 such instances across 42
+        # natural noise-sweep opportunities, 0 instances in the reverse (safer) direction. Stays default-OFF.
         self.spiking_recall_margin = bool(spiking_recall_margin) or (
-            os.environ.get("BRAIN_METACOG_SPIKING_MARGIN") is None
-            or os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "").strip().lower() not in
-            ("0", "false", "no", "off", ""))
+            os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "").strip().lower() in ("1", "true", "on", "yes"))
         # `_margin_drive_pA` (measured 2026-09-05, NOT `_cleanup_drive_pA`): the winner-PICK's 60pA settles this
         # population's heterogeneous Izhikevich thresholds to a SUBTHRESHOLD fixed point WITHOUT FIRING AT ALL
         # within `_cleanup_window` (measured directly: 0 spikes/120 steps at 60pA on the tiny-demo's cached bank;
