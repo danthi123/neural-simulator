@@ -1,0 +1,1930 @@
+{
+  "runner": "_gnw_acc_bg_stop_trigger_derisk",
+  "mode": "6seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "backend": "numpy",
+  "all_go": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "any_undefined": false,
+  "operating_point": {
+    "aff_acc_w": 22.0,
+    "acc_stn_w": 25.0,
+    "stn_gpi_w": 8.0,
+    "delib_scale": 60.0,
+    "mm_scale": 700.0,
+    "gpi_trigger_thresh": 0.05,
+    "heterogeneity": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.06666666666666667,
+        "mm_peak_mismatch": 0.3055555555555556,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 120.0,
+          "i_mm": 46.666666666666664,
+          "triggered": true,
+          "rate_delib_aff": 0.011666666666666667,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01666666666666667,
+          "rate_stn": 0.0725,
+          "rate_gpi": 0.12283333333333335,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3055555555555556,
+          "i_delib": 60.0,
+          "i_mm": 213.8888888888889,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666668,
+          "rate_acc": 0.054583333333333345,
+          "rate_stn": 0.11166666666666665,
+          "rate_gpi": 0.11983333333333333,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 60.0,
+          "i_mm": 46.666666666666664,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 60.0,
+          "i_mm": 46.666666666666664,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 120.0,
+          "i_mm": 46.666666666666664,
+          "triggered": true,
+          "rate_delib_aff": 0.014166666666666668,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01875,
+          "rate_stn": 0.07555555555555557,
+          "rate_gpi": 0.12783333333333335
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 180.0,
+          "i_mm": 46.666666666666664,
+          "triggered": true,
+          "rate_delib_aff": 0.028333333333333342,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.046666666666666676,
+          "rate_stn": 0.12111111111111114,
+          "rate_gpi": 0.13133333333333336
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 240.0,
+          "i_mm": 46.666666666666664,
+          "triggered": true,
+          "rate_delib_aff": 0.045833333333333344,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.05916666666666666,
+          "rate_stn": 0.12583333333333332,
+          "rate_gpi": 0.12883333333333338
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": false,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.06666666666666667,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 46.666666666666664,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.12638888888888888,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 88.47222222222221,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.020000000000000004,
+          "rate_acc": 0.04875,
+          "rate_stn": 0.07250000000000001,
+          "rate_gpi": 0.04349999999999999
+        },
+        {
+          "mm_peak": 0.18611111111111112,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 130.27777777777777,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.022500000000000006,
+          "rate_acc": 0.02041666666666667,
+          "rate_stn": 0.07472222222222222,
+          "rate_gpi": 0.11233333333333335
+        },
+        {
+          "mm_peak": 0.24583333333333335,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 172.08333333333334,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.025000000000000005,
+          "rate_acc": 0.0475,
+          "rate_stn": 0.11805555555555557,
+          "rate_gpi": 0.13049999999999995
+        },
+        {
+          "mm_peak": 0.3055555555555556,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 213.8888888888889,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03333333333333333,
+          "rate_acc": 0.05249999999999999,
+          "rate_stn": 0.11166666666666668,
+          "rate_gpi": 0.12050000000000001
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": false,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 120.0,
+          "i_mm": 46.666666666666664,
+          "triggered": false,
+          "rate_delib_aff": 0.011666666666666667,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3055555555555556,
+          "i_delib": 60.0,
+          "i_mm": 213.8888888888889,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666668,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3055555555555556,
+          "i_delib": 60.0,
+          "i_mm": 213.8888888888889,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666667,
+          "rate_acc": 0.05750000000000001,
+          "rate_stn": 0.11000000000000003,
+          "rate_gpi": 0.12116666666666666
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.06666666666666667,
+          "i_delib": 120.0,
+          "i_mm": 46.666666666666664,
+          "triggered": true,
+          "rate_delib_aff": 0.011666666666666667,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01666666666666667,
+          "rate_stn": 0.0725,
+          "rate_gpi": 0.12283333333333335
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "3ac2a7b11fd00704f685d3dc44f1dc57bf347a5589035b666d5c0743fd0fcae3",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 43,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.044444444444444446,
+        "mm_peak_mismatch": 0.29444444444444445,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 120.0,
+          "i_mm": 31.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.013333333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.025,
+          "rate_stn": 0.09472222222222221,
+          "rate_gpi": 0.13983333333333334,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.29444444444444445,
+          "i_delib": 60.0,
+          "i_mm": 206.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666667,
+          "rate_acc": 0.04541666666666667,
+          "rate_stn": 0.10638888888888892,
+          "rate_gpi": 0.12600000000000003,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 60.0,
+          "i_mm": 31.11111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 60.0,
+          "i_mm": 31.11111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 120.0,
+          "i_mm": 31.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.014166666666666668,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.02333333333333332,
+          "rate_stn": 0.09027777777777776,
+          "rate_gpi": 0.13383333333333333
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 180.0,
+          "i_mm": 31.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.02916666666666667,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.04625,
+          "rate_stn": 0.11611111111111108,
+          "rate_gpi": 0.1345
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 240.0,
+          "i_mm": 31.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.04666666666666667,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.052083333333333336,
+          "rate_stn": 0.12777777777777777,
+          "rate_gpi": 0.13016666666666668
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": false,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.044444444444444446,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 31.11111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.10694444444444445,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 74.86111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.01666666666666667,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.16944444444444445,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 118.61111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.010833333333333335,
+          "rate_acc": 0.01583333333333334,
+          "rate_stn": 0.07888888888888886,
+          "rate_gpi": 0.11766666666666668
+        },
+        {
+          "mm_peak": 0.23194444444444445,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 162.36111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.029166666666666674,
+          "rate_acc": 0.04874999999999999,
+          "rate_stn": 0.11861111111111113,
+          "rate_gpi": 0.11866666666666668
+        },
+        {
+          "mm_peak": 0.29444444444444445,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 206.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.036666666666666674,
+          "rate_acc": 0.044583333333333336,
+          "rate_stn": 0.10916666666666672,
+          "rate_gpi": 0.12400000000000001
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": true,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 120.0,
+          "i_mm": 31.11111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.013333333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.29444444444444445,
+          "i_delib": 60.0,
+          "i_mm": 206.11111111111111,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666667,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.29444444444444445,
+          "i_delib": 60.0,
+          "i_mm": 206.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03333333333333334,
+          "rate_acc": 0.04583333333333333,
+          "rate_stn": 0.10888888888888888,
+          "rate_gpi": 0.12533333333333335
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.044444444444444446,
+          "i_delib": 120.0,
+          "i_mm": 31.11111111111111,
+          "triggered": true,
+          "rate_delib_aff": 0.013333333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.025,
+          "rate_stn": 0.09472222222222221,
+          "rate_gpi": 0.13983333333333334
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "b3fc4e58f1f128bd74ebb0f742c3721d7c0ecc86d36cf7e614e92c4c5e5d094d",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 44,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.0,
+        "mm_peak_mismatch": 0.2777777777777778,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.0,
+          "i_delib": 120.0,
+          "i_mm": 0.0,
+          "triggered": true,
+          "rate_delib_aff": 0.015000000000000003,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01958333333333333,
+          "rate_stn": 0.08027777777777774,
+          "rate_gpi": 0.13566666666666669,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03000000000000001,
+          "rate_acc": 0.05041666666666667,
+          "rate_stn": 0.11416666666666667,
+          "rate_gpi": 0.13099999999999998,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.0,
+          "i_delib": 60.0,
+          "i_mm": 0.0,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.0,
+          "i_delib": 60.0,
+          "i_mm": 0.0,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.0,
+          "i_delib": 120.0,
+          "i_mm": 0.0,
+          "triggered": true,
+          "rate_delib_aff": 0.015000000000000001,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.02124999999999999,
+          "rate_stn": 0.08472222222222218,
+          "rate_gpi": 0.1365
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.0,
+          "i_delib": 180.0,
+          "i_mm": 0.0,
+          "triggered": true,
+          "rate_delib_aff": 0.02750000000000001,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.04500000000000001,
+          "rate_stn": 0.1163888888888889,
+          "rate_gpi": 0.1328333333333334
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.0,
+          "i_delib": 240.0,
+          "i_mm": 0.0,
+          "triggered": true,
+          "rate_delib_aff": 0.03833333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.06166666666666667,
+          "rate_stn": 0.12138888888888891,
+          "rate_gpi": 0.12966666666666665
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": false,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.0,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 0.0,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.06944444444444445,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 48.611111111111114,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.1388888888888889,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 97.22222222222223,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.008333333333333333,
+          "rate_acc": 0.05416666666666666,
+          "rate_stn": 0.11361111111111111,
+          "rate_gpi": 0.0898333333333333
+        },
+        {
+          "mm_peak": 0.20833333333333334,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 145.83333333333334,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03000000000000001,
+          "rate_acc": 0.04374999999999999,
+          "rate_stn": 0.10611111111111111,
+          "rate_gpi": 0.11283333333333335
+        },
+        {
+          "mm_peak": 0.2777777777777778,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.031666666666666676,
+          "rate_acc": 0.0475,
+          "rate_stn": 0.11277777777777778,
+          "rate_gpi": 0.13466666666666666
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": true,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.0,
+          "i_delib": 120.0,
+          "i_mm": 0.0,
+          "triggered": false,
+          "rate_delib_aff": 0.015000000000000003,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03000000000000001,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03083333333333334,
+          "rate_acc": 0.05000000000000001,
+          "rate_stn": 0.11583333333333332,
+          "rate_gpi": 0.13316666666666668
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.0,
+          "i_delib": 120.0,
+          "i_mm": 0.0,
+          "triggered": true,
+          "rate_delib_aff": 0.015000000000000003,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01958333333333333,
+          "rate_stn": 0.08027777777777774,
+          "rate_gpi": 0.13566666666666669
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "b34e393e96864b0f0a04d264799b6be53ae575eeb24e3051e53fd5ea4dc60022",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 100,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.022222222222222223,
+        "mm_peak_mismatch": 0.3,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 120.0,
+          "i_mm": 15.555555555555555,
+          "triggered": true,
+          "rate_delib_aff": 0.015000000000000001,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01875,
+          "rate_stn": 0.07861111111111109,
+          "rate_gpi": 0.12916666666666668,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3,
+          "i_delib": 60.0,
+          "i_mm": 210.0,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03333333333333335,
+          "rate_acc": 0.050833333333333335,
+          "rate_stn": 0.11638888888888892,
+          "rate_gpi": 0.12416666666666668,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 60.0,
+          "i_mm": 15.555555555555555,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 60.0,
+          "i_mm": 15.555555555555555,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 120.0,
+          "i_mm": 15.555555555555555,
+          "triggered": true,
+          "rate_delib_aff": 0.014999999999999998,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.017083333333333332,
+          "rate_stn": 0.07249999999999998,
+          "rate_gpi": 0.1265
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 180.0,
+          "i_mm": 15.555555555555555,
+          "triggered": true,
+          "rate_delib_aff": 0.029166666666666678,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.04541666666666666,
+          "rate_stn": 0.1241666666666667,
+          "rate_gpi": 0.1315
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 240.0,
+          "i_mm": 15.555555555555555,
+          "triggered": true,
+          "rate_delib_aff": 0.045833333333333344,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.05500000000000002,
+          "rate_stn": 0.12694444444444444,
+          "rate_gpi": 0.1325
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": true,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.022222222222222223,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 15.555555555555555,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.09166666666666667,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 64.16666666666667,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.16111111111111112,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 112.77777777777779,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.010833333333333334,
+          "rate_acc": 0.015000000000000006,
+          "rate_stn": 0.08083333333333334,
+          "rate_gpi": 0.11783333333333339
+        },
+        {
+          "mm_peak": 0.23055555555555557,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 161.38888888888889,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.025000000000000012,
+          "rate_acc": 0.04208333333333332,
+          "rate_stn": 0.10083333333333333,
+          "rate_gpi": 0.12066666666666667
+        },
+        {
+          "mm_peak": 0.3,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 210.0,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03333333333333334,
+          "rate_acc": 0.050416666666666665,
+          "rate_stn": 0.11722222222222221,
+          "rate_gpi": 0.12450000000000001
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": true,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 120.0,
+          "i_mm": 15.555555555555555,
+          "triggered": false,
+          "rate_delib_aff": 0.015000000000000001,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3,
+          "i_delib": 60.0,
+          "i_mm": 210.0,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03333333333333335,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.3,
+          "i_delib": 60.0,
+          "i_mm": 210.0,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03583333333333335,
+          "rate_acc": 0.04750000000000001,
+          "rate_stn": 0.11555555555555559,
+          "rate_gpi": 0.12583333333333332
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.022222222222222223,
+          "i_delib": 120.0,
+          "i_mm": 15.555555555555555,
+          "triggered": true,
+          "rate_delib_aff": 0.015000000000000001,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.01875,
+          "rate_stn": 0.07861111111111109,
+          "rate_gpi": 0.12916666666666668
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "b1bcc56c4a368051989c21bab9b1dc79c3860577a94ee76d78003ba0fefa53d0",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 101,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.016666666666666666,
+        "mm_peak_mismatch": 0.28888888888888886,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 120.0,
+          "i_mm": 11.666666666666666,
+          "triggered": true,
+          "rate_delib_aff": 0.019166666666666672,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.025,
+          "rate_stn": 0.08027777777777775,
+          "rate_gpi": 0.13066666666666668,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.28888888888888886,
+          "i_delib": 60.0,
+          "i_mm": 202.2222222222222,
+          "triggered": true,
+          "rate_delib_aff": 0.0008333333333333334,
+          "rate_mm_aff": 0.039166666666666676,
+          "rate_acc": 0.05333333333333334,
+          "rate_stn": 0.11861111111111113,
+          "rate_gpi": 0.12600000000000003,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 60.0,
+          "i_mm": 11.666666666666666,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 60.0,
+          "i_mm": 11.666666666666666,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 120.0,
+          "i_mm": 11.666666666666666,
+          "triggered": true,
+          "rate_delib_aff": 0.019166666666666672,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.028750000000000005,
+          "rate_stn": 0.07527777777777776,
+          "rate_gpi": 0.12783333333333333
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 180.0,
+          "i_mm": 11.666666666666666,
+          "triggered": true,
+          "rate_delib_aff": 0.03333333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.04541666666666666,
+          "rate_stn": 0.12583333333333332,
+          "rate_gpi": 0.12966666666666662
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 240.0,
+          "i_mm": 11.666666666666666,
+          "triggered": true,
+          "rate_delib_aff": 0.044166666666666674,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.06083333333333332,
+          "rate_stn": 0.12333333333333332,
+          "rate_gpi": 0.12583333333333332
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": false,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.016666666666666666,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 11.666666666666666,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.08472222222222221,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 59.30555555555555,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.15277777777777776,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 106.94444444444443,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.01,
+          "rate_acc": 0.0175,
+          "rate_stn": 0.09083333333333331,
+          "rate_gpi": 0.11166666666666665
+        },
+        {
+          "mm_peak": 0.22083333333333333,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 154.58333333333331,
+          "triggered": true,
+          "rate_delib_aff": 0.0008333333333333334,
+          "rate_mm_aff": 0.02750000000000001,
+          "rate_acc": 0.05708333333333334,
+          "rate_stn": 0.11916666666666667,
+          "rate_gpi": 0.121
+        },
+        {
+          "mm_peak": 0.28888888888888886,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 202.2222222222222,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.039166666666666676,
+          "rate_acc": 0.05333333333333334,
+          "rate_stn": 0.11833333333333336,
+          "rate_gpi": 0.12566666666666668
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": true,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 120.0,
+          "i_mm": 11.666666666666666,
+          "triggered": false,
+          "rate_delib_aff": 0.019166666666666672,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.28888888888888886,
+          "i_delib": 60.0,
+          "i_mm": 202.2222222222222,
+          "triggered": false,
+          "rate_delib_aff": 0.0008333333333333334,
+          "rate_mm_aff": 0.039166666666666676,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.28888888888888886,
+          "i_delib": 60.0,
+          "i_mm": 202.2222222222222,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03833333333333334,
+          "rate_acc": 0.053749999999999985,
+          "rate_stn": 0.11750000000000001,
+          "rate_gpi": 0.12616666666666665
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.016666666666666666,
+          "i_delib": 120.0,
+          "i_mm": 11.666666666666666,
+          "triggered": true,
+          "rate_delib_aff": 0.019166666666666672,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.025,
+          "rate_stn": 0.08027777777777775,
+          "rate_gpi": 0.13066666666666668
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "d8b4b226ce787f9d028d3f7478bf8a3c49292f2c25f72c0ec3489d25da7868e3",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    },
+    {
+      "seed": 102,
+      "verdict": "GO",
+      "seed_go": true,
+      "real_afferents": {
+        "n_ignited_solo": 1,
+        "n_ignited_conflict": 2,
+        "mm_peak_match": 0.05555555555555555,
+        "mm_peak_mismatch": 0.2777777777777778,
+        "swapped_match": false,
+        "swapped_mismatch": true
+      },
+      "operating_point": {
+        "aff_acc_w": 22.0,
+        "acc_stn_w": 25.0,
+        "stn_gpi_w": 8.0,
+        "delib_scale": 60.0,
+        "mm_scale": 700.0,
+        "gpi_trigger_thresh": 0.05,
+        "heterogeneity": true
+      },
+      "parity": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 120.0,
+          "i_mm": 38.888888888888886,
+          "triggered": true,
+          "rate_delib_aff": 0.020833333333333336,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.02958333333333334,
+          "rate_stn": 0.09222222222222219,
+          "rate_gpi": 0.13499999999999998,
+          "host_triggered": true,
+          "match": true
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03583333333333334,
+          "rate_acc": 0.045833333333333344,
+          "rate_stn": 0.11305555555555555,
+          "rate_gpi": 0.12533333333333335,
+          "host_triggered": true,
+          "match": true
+        },
+        "no_trigger": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 60.0,
+          "i_mm": 38.888888888888886,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0,
+          "host_triggered": false,
+          "match": true
+        }
+      },
+      "n_parity_match": 3,
+      "parity_all_match": true,
+      "delib_afferent_sweep": [
+        {
+          "n_ignited": 1.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 60.0,
+          "i_mm": 38.888888888888886,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "n_ignited": 2.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 120.0,
+          "i_mm": 38.888888888888886,
+          "triggered": true,
+          "rate_delib_aff": 0.020000000000000004,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.026249999999999992,
+          "rate_stn": 0.08944444444444442,
+          "rate_gpi": 0.13466666666666666
+        },
+        {
+          "n_ignited": 3.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 180.0,
+          "i_mm": 38.888888888888886,
+          "triggered": true,
+          "rate_delib_aff": 0.03333333333333334,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.05000000000000002,
+          "rate_stn": 0.12416666666666666,
+          "rate_gpi": 0.12549999999999997
+        },
+        {
+          "n_ignited": 4.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 240.0,
+          "i_mm": 38.888888888888886,
+          "triggered": true,
+          "rate_delib_aff": 0.03999999999999999,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.06374999999999999,
+          "rate_stn": 0.12694444444444442,
+          "rate_gpi": 0.12633333333333338
+        }
+      ],
+      "delib_sweep_flips": true,
+      "delib_sweep_monotone_gpi": false,
+      "mm_afferent_sweep": [
+        {
+          "mm_peak": 0.05555555555555555,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 38.888888888888886,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.1111111111111111,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 77.77777777777777,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.025833333333333333,
+          "rate_acc": 0.027916666666666666,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        {
+          "mm_peak": 0.16666666666666669,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 116.66666666666669,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.010833333333333332,
+          "rate_acc": 0.02291666666666666,
+          "rate_stn": 0.09138888888888888,
+          "rate_gpi": 0.1343333333333333
+        },
+        {
+          "mm_peak": 0.22222222222222224,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 155.55555555555557,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.02833333333333334,
+          "rate_acc": 0.041666666666666664,
+          "rate_stn": 0.10805555555555554,
+          "rate_gpi": 0.11866666666666667
+        },
+        {
+          "mm_peak": 0.2777777777777778,
+          "n_ignited": 1.0,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03416666666666667,
+          "rate_acc": 0.045416666666666675,
+          "rate_stn": 0.11777777777777777,
+          "rate_gpi": 0.1265
+        }
+      ],
+      "mm_sweep_flips": true,
+      "mm_sweep_monotone_gpi": false,
+      "lesion": {
+        "delib_conflict": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 120.0,
+          "i_mm": 38.888888888888886,
+          "triggered": false,
+          "rate_delib_aff": 0.020833333333333336,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "swap_only": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": false,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03583333333333334,
+          "rate_acc": 0.0,
+          "rate_stn": 0.0,
+          "rate_gpi": 0.0
+        },
+        "reverts_to_no_stop": true,
+        "afferent_attribution": 1.0
+      },
+      "per_pathway_lesion": {
+        "delib_lesioned_swap_still_fires": {
+          "n_ignited": 1.0,
+          "mm_peak": 0.2777777777777778,
+          "i_delib": 60.0,
+          "i_mm": 194.44444444444446,
+          "triggered": true,
+          "rate_delib_aff": 0.0,
+          "rate_mm_aff": 0.03500000000000001,
+          "rate_acc": 0.045,
+          "rate_stn": 0.1141666666666667,
+          "rate_gpi": 0.12700000000000003
+        },
+        "mm_lesioned_delib_still_fires": {
+          "n_ignited": 2.0,
+          "mm_peak": 0.05555555555555555,
+          "i_delib": 120.0,
+          "i_mm": 38.888888888888886,
+          "triggered": true,
+          "rate_delib_aff": 0.020833333333333336,
+          "rate_mm_aff": 0.0,
+          "rate_acc": 0.02958333333333334,
+          "rate_stn": 0.09222222222222219,
+          "rate_gpi": 0.13499999999999998
+        },
+        "both_independently_sufficient": true
+      },
+      "seed_deterministic": true,
+      "threshold_hash": "193a2b8d7327ef47dc66486c88236155c1a61dec1129bec3dee79c2949f27ade",
+      "preconditions": [
+        {
+          "kind": "require",
+          "name": "real solo n_ignited < real conflict n_ignited (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "real match mm_peak < real mismatch mm_peak (the afferent is genuinely informative)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "PARITY with the host boolean-OR on >=2/3 real-afferent turn-classes",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "n_ignited afferent ALONE flips the trigger (OFF at baseline, ON somewhere in 1..4)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "mm_peak afferent ALONE flips the trigger (OFF at match, ON toward mismatch)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "FULL afferent lesion reverts the trigger to OFF on both real-conflict scenarios",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "EACH afferent pathway alone remains independently sufficient (per-pathway lesion)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "require",
+          "name": "determinism: cfg.seed seeds the substrate (build-twice hash)",
+          "ok": true,
+          "detail": "measured=True expect=True",
+          "note": ""
+        },
+        {
+          "kind": "knob",
+          "name": "afferent->ACC weight (delib+mm)",
+          "ok": true,
+          "detail": "requested=22 applied=22",
+          "note": ""
+        }
+      ],
+      "disabled_processes": [
+        {
+          "process": "homeostasis",
+          "why": "frozen weights; the synaptic-scaling clip is a Rung-1/2/STN-veto foot-gun"
+        },
+        {
+          "process": "nmda",
+          "why": "pure feedforward relay chain, no sustained attractor needed for a one-shot trigger read"
+        }
+      ],
+      "undefined_reasons": []
+    }
+  ]
+}

@@ -231,7 +231,21 @@ def detect_trigger(chat):
       * gnw-deliberation acc_conflict_gate SUSTAINED multi-candidate co-ignition: `chat._last_gnw_delib` with
         `n_ignited >= 2` (a genuinely-competing multi-answer conflict the workspace could not settle to one winner);
       * a HARD TOPIC-BREAK the #85 swap detector flags: `chat._last_swap_drives` with `swapped == True`.
-    Read-only; never raises (an unreadable chat -> no trigger). n_held = # held contents to clear (>=2)."""
+    Read-only; never raises (an unreadable chat -> no trigger). n_held = # held contents to clear (>=2).
+
+    RANK-12 (scaffold_retirement_backlog.md): the boolean COMBINATION above (`n_ignited>=2 OR swapped`) is host
+    Python, even though each operand is itself a genuine spiking read-out of another organ. A de-risked (6/6 seeds
+    GO) spiking ACC/BG hyperdirect circuit reads the SAME two afferents (`n_ignited`, the swap detector's `mm_peak`
+    mismatch-population firing) directly as synaptic input and decides the trigger via spiking integration instead
+    -- see `research/runners/_gnw_acc_bg_stop_trigger_derisk.py`. DEFAULT-OFF (`BRAIN_GNW_STOP_TRIGGER_SPIKING`):
+    when unset, EVERYTHING below this point is UNCHANGED (byte-identical) -- the branch is additive, not a rewrite."""
+    try:
+        from webapp import gnw_acc_bg_stop_trigger as _accbg
+        if _accbg.stop_trigger_spiking_enabled():
+            return _accbg.detect_trigger_spiking(chat)
+    except Exception:
+        pass   # any import/circuit error -> fall through to the original host boolean-OR (never crash a turn)
+
     reason = None
     n_held = 2
     newcomer = None
