@@ -12,6 +12,7 @@ filler via a DIAGONAL complex synapse (weight = the role phasor); bundle = unit 
 opponency); unbind = conj diagonal synapse; cleanup = phase-cosine argmax. Abstention (the no-confab moat): the
 relational query returns None when no stored fact's cue roles match (architecture-preserved).
 """
+import os
 from collections import namedtuple
 
 import numpy as np
@@ -69,7 +70,7 @@ class RFPhasorComposer:
                  sparse_index_c=8, sparse_index_conf_floor=0.5,
                  enable_codebook_cache=False,
                  enable_decode_escalation=False, decode_escalate_margin=0.008,
-                 decode_escalate_period=2000):
+                 decode_escalate_period=2000, spiking_recall_margin=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -172,6 +173,35 @@ class RFPhasorComposer:
         self._izh_bank_cache = {}      # Stage-2 Izhikevich WTA banks, keyed by candidate count
         self._cleanup_drive_pA = 60.0  # input-normalized drive for the winner (sane band 20-100; >=200 over-drives)
         self._cleanup_window = 120
+        # spiking_recall_margin (scaffold-retirement backlog rank 9, opt-in, DEFAULT-OFF = byte-identical):
+        # `research/coordination/scaffold_retirement_backlog.md` #9 -- the metacog honesty-hedge's EVIDENCE
+        # derivation (`metacog_production_organ.mean_role_confidence`) reads `margin`/`margin_norm`/`margin_snr`,
+        # all HOST ARITHMETIC over the matched-filter scores ((peak-runner_up)/peak or a z-score, computed by
+        # `_cleanup_all_score_stats`/`OneBrainComposer._margin` -- numpy comparisons of cosine-similarity
+        # magnitudes, not a read of the recall circuit's own spiking). When ON, `_spiking_margin` (below) ALSO
+        # runs the SAME cached Izhikevich concept bank (`_izh_bank`) `_spiking_cleanup`/`OneBrainComposer.
+        # _spiking_select` already drive for the on-substrate winner-PICK (2026-06-05-phase1-tpam-cleanup-derisk-
+        # GO.md), at a SEPARATE, higher operating point (`_margin_drive_pA`, below -- NOT `_cleanup_drive_pA`),
+        # and reports the winner-vs-runner-up SPIKE-COUNT margin as an ADDITIONAL trace field `margin_spiking` --
+        # never in place of the existing fields, never on the answer path (the decoded word is unchanged; this is
+        # a trace-only evidence side-channel exactly like `margin` itself, see `_cleanup_all_score_stats` and
+        # `OneBrainComposer._block_role_scores`). Env BRAIN_METACOG_SPIKING_MARGIN=1 flips it on without a code
+        # change at any construction call site (the `enable_sparse_index` precedent) -- the owner reviews any
+        # default-on flip separately; leave OFF here. See
+        # research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md.
+        self.spiking_recall_margin = bool(spiking_recall_margin) or (
+            os.environ.get("BRAIN_METACOG_SPIKING_MARGIN", "").strip().lower() in ("1", "true", "on", "yes"))
+        # `_margin_drive_pA` (measured 2026-09-05, NOT `_cleanup_drive_pA`): the winner-PICK's 60pA settles this
+        # population's heterogeneous Izhikevich thresholds to a SUBTHRESHOLD fixed point WITHOUT FIRING AT ALL
+        # within `_cleanup_window` (measured directly: 0 spikes/120 steps at 60pA on the tiny-demo's cached bank;
+        # a single-outcome argmax-over-firing PICK never needs the loser to fire, so this was never noticed) --
+        # unusable as a MARGIN (a margin needs a graded spike-COUNT, not a single is-there-a-winner bit). 300pA
+        # reliably crosses threshold within the SAME 120-step window and produces a genuine graded count
+        # (measured on the real tiny-demo's captured role-score distributions, clean + 4 synaptic-noise levels,
+        # `research/findings/raw/_metacog_spiking_recall_margin_derisk/calibrate_margin.json`: Pearson r=0.964,
+        # Spearman rho=0.900 against the host `margin` across 25 role reads). `_cleanup_window` (120) is reused
+        # UNCHANGED -- it already suffices at this drive; no new window constant.
+        self._margin_drive_pA = 300.0
         self.words = sorted(vocab) if vocab is not None else sorted(DEFAULT_VOCAB)
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
@@ -759,6 +789,67 @@ class RFPhasorComposer:
             return words[int(np.argmax(scores))]
         return words[int(np.argmax(firing))]
 
+    def _spiking_margin(self, scores, lesion=False):
+        """WTA winner-vs-runner-up SPIKE-COUNT margin off the SAME Izhikevich cleanup bank Stage 2 that
+        `_spiking_cleanup`/`OneBrainComposer._spiking_select` already drive for the on-substrate winner-PICK
+        (scaffold-retirement backlog rank 9: `research/coordination/scaffold_retirement_backlog.md` -- replace
+        the metacog honesty-hedge's role-decode evidence, `_margin`/`margin_norm`/`margin_snr` (all HOST
+        ARITHMETIC comparisons of matched-filter score magnitudes: `(peak-runner_up)/peak` or a z-score), with a
+        genuine read of the recall circuit's OWN spiking competition).
+
+        Drives the SAME cached Izhikevich concept bank `_spiking_cleanup` uses (input-normalize `scores` to
+        `_margin_drive_pA` -- a SEPARATE, higher operating point than the winner-pick's `_cleanup_drive_pA`; see
+        that attribute's docstring for why -- integrate firing over `_cleanup_window`) and reads
+
+            (firing[winner] - firing[runner_up]) / (firing[winner] + eps)
+
+        -- the SAME normalized-decisiveness FORM `_margin` uses, off ACTUAL SPIKE COUNTS the competition produced,
+        not a host comparison of membrane amplitudes. A degenerate silent competition (peak score <= 0, or no
+        neuron fires within the window) reads margin 0 -- an uninformative/undecided competition, the same
+        verdict the host formula gives a flat/zero score vector. `V<2` (nothing to compete against) reads 0.
+
+        `lesion=True` (load-bearing test, mirrors `metacog_production_organ.nmda_norm_margin`'s own
+        evidence-differential lesion): REMOVE the recall circuit's discrimination BEFORE the competition runs by
+        replacing `scores` with a uniform (all-tied) vector of the same length -- every candidate drives the bank
+        identically, so any resulting margin can only be competition NOISE, not a read of the (now-absent) score
+        differential. A genuine read of the circuit's OWN discrimination must collapse toward 0 under this
+        lesion regardless of the ORIGINAL scores' decisiveness; a mechanism that did NOT collapse would mean the
+        margin was carrying information from somewhere other than this competition (a host leak).
+
+        NOT a "conductance" read (docs/TERMS.md: name what is actually measured) -- this Izhikevich bank is
+        driven by external CURRENT with no synapses (`connections_per_neuron=0`), so it carries no synaptic
+        conductance state; the graded signal is FIRING COUNT over the cleanup window, the same quantity
+        `_spiking_cleanup`'s winner-pick already reads (argmax-over-firing), here reported as a MARGIN between
+        the top two instead of just the argmax. Trace-only by construction at every current call site
+        (`_cleanup_all_score_stats`, `OneBrainComposer._block_role_scores`) -- never the answer-selection path,
+        so a query's decoded word is byte-identical whether or not this is called."""
+        scores = np.maximum(np.asarray(scores, dtype=float), 0.0)
+        V = scores.size
+        if V < 2:
+            return 0.0
+        peak = float(scores.max())
+        if peak <= 1e-9:
+            return 0.0
+        if lesion:
+            scores = np.ones(V, dtype=float)   # NO differential -> every candidate drives the bank identically
+            peak = 1.0
+        drive = (scores / peak) * self._margin_drive_pA
+        bank = self._izh_bank(V)
+        bank.cp_membrane_potential_v[:] = bank._cleanup_v0   # reset to resting -> each read is independent
+        bank.cp_recovery_variable_u[:] = bank._cleanup_u0
+        import sim.backend as _b
+        xp, _ = _b.get_backend()
+        bank.cp_external_input_current[:] = xp.asarray(drive, dtype=bank.cp_external_input_current.dtype)
+        firing = np.zeros(V)
+        for _ in range(self._cleanup_window):
+            bank._run_one_simulation_step()
+            firing += np.asarray(to_host(bank.cp_firing_states)).astype(float)
+        bank.cp_external_input_current[:] = 0.0
+        s = np.sort(firing)[::-1]
+        if s[0] <= 0.0:
+            return 0.0
+        return float((s[0] - s[1]) / (s[0] + 1e-9))
+
     # --- (#66 knowledge-scale, PORTED from OneBrainComposer) DG-indexed cleanup fast path ---------------------
     def _ensure_dg_index(self):
         """Build (lazily, once per codebook mutation) the DG-like sparse index + the concept phase-matrix over the
@@ -1062,6 +1153,15 @@ class RFPhasorComposer:
             nonwin_var = max(0.0, nonwin_sumsq / n_nonwin - nonwin_mean * nonwin_mean)
             nonwin_std = float(np.sqrt(nonwin_var))
             margin_snr = float((top_raw - nonwin_mean) / (nonwin_std + 1e-9)) if nonwin_std > 0.0 else 0.0
+            # `margin_spiking` (ADDED 2026-09-05, scaffold-retirement backlog rank 9, opt-in via
+            # `self.spiking_recall_margin` / BRAIN_METACOG_SPIKING_MARGIN, DEFAULT None = byte-identical): the
+            # SAME winner-vs-runner-up decisiveness read as `margin_norm`, but off the recall circuit's OWN
+            # Izhikevich WTA spike counts (`_spiking_margin`) instead of a host comparison of the `sims` row.
+            # None when the flag is off -- `mean_role_confidence` falls through to `margin_snr`/`margin_norm`/
+            # `margin` unchanged. Gated (not unconditional) because it runs a real Stage-2 spiking competition per
+            # row -- cheap at the tiny-demo's ~15-40 word vocab this is de-risked at, uncharacterized at LTM scale
+            # (research/findings/2026-09-05-metacog-spiking-recall-margin-derisk*.md names the residual).
+            margin_spiking = self._spiking_margin(row) if self.spiking_recall_margin else None
             out.append({
                 "word": words[top],
                 "confidence": confidence,
@@ -1072,6 +1172,7 @@ class RFPhasorComposer:
                 "margin": float(top_raw - runner_raw),
                 "margin_norm": margin_norm,
                 "margin_snr": margin_snr,
+                "margin_spiking": margin_spiking,
                 "conflict": float(runner_conf / (confidence + runner_conf + 1e-9)),
             })
         return out
