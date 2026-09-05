@@ -6,7 +6,7 @@ date: 2026-07-23
 
 # MASTER DEVELOPMENT ROADMAP — toward a genuinely-conversing, feeling, self-aware sim-brain
 
-**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-08-19** (2026-08-19 **STRATEGIC REFRAME** — the ⭐⭐ block immediately below the header supersedes the near-term sequencing where they disagree: Qwen-as-form + state-fidelity honesty + the "make the brain continuous" primary arc; the long-term onebrain/crutch-burndown north-star is unchanged. Prior 2026-08-18 GNW-keystone + integration wave and the 2026-08-12/13 production-wiring + faculty-audit wave landed; **read the ⭐⭐ reframe, then §0**). Update it as results/walls land.
+**Status:** LIVING master plan. Created 2026-07-23; **last synced 2026-09-05** (2026-08-19 **STRATEGIC REFRAME** — the ⭐⭐ block immediately below the header supersedes the near-term sequencing where they disagree: Qwen-as-form + state-fidelity honesty + the "make the brain continuous" primary arc; the long-term onebrain/crutch-burndown north-star is unchanged. Prior 2026-08-18 GNW-keystone + integration wave and the 2026-08-12/13 production-wiring + faculty-audit wave landed; **read the ⭐⭐ reframe, then §0**). Update it as results/walls land.
 **⭐ 2026-09-01 CONNECTOME-GROWTH ADDENDUM (scoped sync — one arc, not a full resync of the landings below):**
 `onebrain_crossedge_gate.py`'s GENERIC declarative functional gate landed (`4380e42d1`, `2026-09-01-declarative-
 cross-edge-functional-gate-...GO.md`): adding a learned cross-region edge is now a `CrossEdge` data row +
@@ -150,6 +150,25 @@ long-pole stays gated and honest, not faked with more templates.
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-09-05 — OVERNIGHT SHIPPING WAVE (autonomous, owner grant): de-risk → production-default.**
+> Four validated GO shortcuts FLIPPED to production-default + verified live (anti-hollow: vary→differs /
+> lesion→vanishes, no-regression, reversible via `=0`): rank-4 shared-salience afferent, rank-20 value-choice,
+> rank-5 Gate-B appraisal-via-interoception, rank-12 GNW STOP-trigger. **ONE-BRAIN MERGE flipped**
+> (`BRAIN_ONEBRAIN_SINGLE_POOL` default-ON) — the 4 core cortical organs (surprise/world-model/metacog/pragmatic)
+> now run on ONE shared `merge_organs` pool, de-risk GO 6/6; a 6-seed cupy rebaseline is queued.
+> **COMPOSER LATENCY WALL SOLVED (rank-1):** DG-CA3 sublinear SPIKING retrieval over the onebrain composer —
+> ~0.37s vs the ~149s full-scan (~402x) at 404 co-resident facts, recall 404/404 + moat 6/6 preserved; the host
+> FHRR composer is now RETIRABLE, production wire-in in flight
+> (`2026-09-05-onebrain-fact-shard-dg-ca3-sublinear-spiking-retrieval-derisk-GO.md`).
+> **MOUTH (Wall #7 / R4, the #1 goal-blocker) re-aimed:** the content-addressing direction is EXHAUSTED
+> (hippokey HiPPO-key NO-GO 6/6, the richest key the worst). A deep-research round (external literature +
+> RAG-cross-check) laddered the next levers — predictive-coding OBJECTIVE (a decisive wt103 A/B is queued),
+> CAPACITY, and two NEW build levers that are NOT content-addressing (delta-rule error-corrective write [in
+> build], short causal conv) — with a strong banked-exhausted list
+> (`2026-09-05-mouth-broad-domain-fluency-deep-research-ladder.md`). The production-integration gate reads
+> 0-problems (the ledger is consistent with the flipped source). Compute note: the 60-day learning-over-time
+> batch was deprioritized below scaffold-retirement per the owner's arc-order steer.
+>
 > **🗓️ 2026-09-03 — Wall-2 scaffold-retirement ledger-drift CORRECTION (read this FIRST for the retire_status column).**
 > The 2026-09-02 Check-D seeding (`560968f03`) marked THREE rows `retire_status: RETIRABLE_NOW` — `gnw-bus-shadow`,
 > `gnw-two-organ-bus`, `gnw-three-organ-bus` — describing all three as still "computed-then-overridden." Checked

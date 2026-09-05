@@ -7,6 +7,27 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-05 (overnight, continued) — shipping LANDS: 4 shortcuts + the one-brain merge switched ON, the meaning-composer's speed wall solved, the mouth re-aimed
+
+- **Four host shortcuts are now ON BY DEFAULT** (not just validated): the brain's salience/attention
+  signal, its value-choice, its appraisal-from-body-state, and its "halt a shaky thought" trigger all now
+  run as spiking circuits in the live brain — each checked to genuinely change the conversation, and
+  reversible if a problem shows up.
+- **The core thinking-organs now literally share ONE neural pool by default** (surprise, world-model,
+  self-monitoring, and phrasing) — the "one brain" goal for these four, switched on after a safety check,
+  with a full re-check running on the GPU.
+- **The meaning-composer's speed wall is SOLVED.** Recalling a fact from the brain's own memory used to
+  scan every stored fact (~2.5 minutes at 400 facts); a brain-based sharded lookup (hippocampus-style)
+  does it in ~0.4 seconds (~400x faster) with no loss of recall or the no-confabulation guarantee — so the
+  last big host shortcut on the live conversation path can now be retired. Wiring it in is in progress.
+- **The brain's own voice (the #1 remaining blocker) was honestly re-aimed.** The owner-specified
+  "better-memory-key" design was built and tested — it lost (a clean method dead-end, banked). A
+  deep-research round then produced a ranked plan of what to try next: a better training objective
+  (running now), more capacity, and two new mechanisms that target the exact way the voice fails on broad
+  topics (an erase-before-write memory, and a small local-pattern layer) — none of them the banked dead-ends.
+- **Nothing was flipped without a rigorous check**, and the honest gaps stay honest: the broad-topic voice
+  still isn't fluent enough to retire the language-model scaffold — that remains the tracked #1 blocker.
+
 ## 2026-09-05 (overnight) — wave-2 + the pivot to shipping: more shortcuts retired, the mouth's real mechanism built, and the production-flip campaign begun
 
 - **Wave-2 (a second parallel sweep, all default-off GO):** spiking/neural replacements tested + built for more host helper-formulas — the "does this match?" check in the global-workspace bus (rank-8), curiosity's novelty signal (rank-10), how strongly dopamine sets a memory's write-strength (rank-16), the vision grouping decision (rank-23), and the missing production→composer path for the spiking cue-match selection (rank-2, plumbing built + verified). The topic-change detector (rank-11) was found already shipped and running. All banked for production-flip decisions.
