@@ -1,0 +1,115 @@
+{
+  "seed": 42,
+  "bg_decide_action": {
+    "off": {
+      "action": "STAY_SILENT",
+      "winner": 1,
+      "speak_salience": 0.0,
+      "silent_salience": 1.0,
+      "decision_step": 88,
+      "loser_ratio": 0.0,
+      "lesion": null
+    },
+    "on": {
+      "action": "STAY_SILENT",
+      "winner": 1,
+      "speak_salience": 0.0,
+      "silent_salience": 1.0,
+      "decision_step": 113,
+      "loser_ratio": 0.0,
+      "lesion": null
+    },
+    "lesion": {
+      "action": "STAY_SILENT",
+      "winner": 1,
+      "speak_salience": 0.001430615164520748,
+      "silent_salience": 0.9985693848354793,
+      "decision_step": 90,
+      "loser_ratio": 0.0,
+      "lesion": null
+    },
+    "off_and_on_reach_a_decision": true
+  },
+  "value_choice_full": {
+    "build_seconds": 267.83,
+    "off_eng": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "on_eng": [
+      0.012875536480686697,
+      0.3333333333333333,
+      1.0858369098712446
+    ],
+    "lesion_shared_eng": [
+      0.005722460658082977,
+      0.0,
+      0.0
+    ],
+    "chosen_off": "shoe",
+    "chosen_on": "shoe",
+    "chosen_shared_lesion": "cat",
+    "meta_off": {
+      "V_hz": [
+        17.778,
+        28.75,
+        32.5
+      ],
+      "fed_spread_hz": 14.722,
+      "wta_counts": [
+        68.0,
+        80.0,
+        84.0
+      ],
+      "wta_margin": 4.0,
+      "wta_choice": 2,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "meta_on": {
+      "V_hz": [
+        20.278,
+        18.056,
+        31.25
+      ],
+      "fed_spread_hz": 13.194,
+      "wta_counts": [
+        79.0,
+        47.0,
+        87.0
+      ],
+      "wta_margin": 8.0,
+      "wta_choice": 2,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "meta_shared_lesion": {
+      "V_hz": [
+        15.972,
+        16.806,
+        19.444
+      ],
+      "fed_spread_hz": 3.472,
+      "wta_counts": [
+        80.0,
+        68.0,
+        80.0
+      ],
+      "wta_margin": 0.0,
+      "wta_choice": 0,
+      "decisive": true,
+      "lesion": false,
+      "untrained": false,
+      "v_margin_hz": 2.0,
+      "value_attribution_frac": null
+    },
+    "reaches_the_real_critic": true
+  }
+}
