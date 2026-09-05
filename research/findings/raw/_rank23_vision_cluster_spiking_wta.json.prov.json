@@ -1,0 +1,33 @@
+{
+ "run_id": "1788596466-3894102",
+ "runner": "research/runners/_rank23_vision_cluster_spiking_wta_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-aa26b53d57c095f89/research/runners/_rank23_vision_cluster_spiking_wta_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_rank23_vision_cluster_spiking_wta.json"
+ ],
+ "git_sha": "ff19d5212",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:21:06",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1105.2,
+ "corpus_check_query": "vision cluster host spiking grouping",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_rank23_vision_cluster_spiking_wta.json"
+}

@@ -1,0 +1,585 @@
+{
+  "probe": "rank23_vision_cluster_spiking_wta_derisk",
+  "backlog_item": "scaffold_retirement_backlog.md RANK-23 (vision cluster / grouping step, item 3 of 4: the host argmax-over-averaged-dendritic-voltages final decision)",
+  "verdict": "GO -- a spiking lateral-inhibition WTA circuit (board #86's reused, unmodified N-pool motif, n_pools=2) reproduces the EMERGE-36 vision-identity pipeline's host argmax-over-averaged-dendritic-voltages GROUPING decision: parity 1.00 (min 1.00/seed), mis-route shuffle flips the reported category as predicted 1.00 of clear-winner trials, the symmetric-drive control abstains 0.90 of trials (no baked-in pool bias), and 84% of the winner-margin is attributable to the real dendritic signal vs the symmetric control. 6-seed. RANK-23's decision-step host shortcut CAN be retired by the substrate; no live consumer exists to wire it into (honest scope: items 1/2/4 of the RANK-23 cluster are untouched, assigned elsewhere by the map).",
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "control",
+      "name": "winner margin: real dr vs symmetric-drive control",
+      "ok": true,
+      "detail": "treatment=0.152546 control=0.0238079 |sep|=0.128738 > 0.05",
+      "note": "the circuit must discriminate MORE under the real dendritic signal than under a no-signal (symmetric-drive) control, by more than its own dead-margin threshold"
+    },
+    {
+      "kind": "require",
+      "name": "symmetric-drive control mostly abstains (no baked-in pool-0 bias)",
+      "ok": true,
+      "detail": "measured=0.9 expect=<function main.<locals>.<lambda> at 0x7fc3e9367420>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "mis-route shuffle flips the decision as predicted (genuine wiring dependency)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fc3e9367420>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "parity is at least directionally robust on every seed",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function main.<locals>.<lambda> at 0x7fc3e9367420>",
+      "note": ""
+    }
+  ],
+  "mechanism": "board #86's reused N-pool spiking lateral-inhibition WTA motif (_affect_marker_wta_derisk._build_bridge, n_pools=2, unmodified) reads the SAME two PROP-population averaged apical voltages SpikingPerceptionProbe.infer() computes, replacing only its trailing `max(dr, key=dr.get)` host comparison with a spiking competitive decision.",
+  "scope_note": "RANK-23 groups 4 host residuals; items 1 (encode_v1 matmul), 2 (argsort+percentile feature-selection, assigned to the in-flight satdiv/board-#135 arc) and 4 (hand-written Gabor RF / BRAIN_V1_SELFORG, BLOCKED) are OUT OF SCOPE here -- this runner attacks item 3 (the final grouping decision) only.",
+  "no_live_consumer": "verified: BRAIN_VISION_IDENTITY is default-ON in webapp/server.py but its wiring block only fires on a turn whose req.percept is populated; no caller anywhere sets req.percept (no image/camera transport exists). This runner wires into NOTHING.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "dr_low": -65.0,
+    "dr_high": 20.0,
+    "decision_dead_margin": 0.05,
+    "warmup": 60,
+    "washout": 40,
+    "run": 60
+  },
+  "aggregate": {
+    "parity_mean": 1.0,
+    "parity_min": 1.0,
+    "shuffle_flip_rate_mean": 1.0,
+    "symmetric_abstain_rate_mean": 0.9,
+    "real_margin_mean_across_seeds": 0.15254629629629632,
+    "symmetric_margin_mean_across_seeds": 0.023807870370370368,
+    "attributable_to_real_vs_symmetric": 0.8439301972685888
+  },
+  "elapsed_seconds": 14.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.15243055555555557,
+      "symmetric_margin_mean": 0.041388888888888885,
+      "symmetric_abstain_rate": 0.7,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 12.747591018676758,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.14861,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 12.880420684814453,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 12.747591018676758,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15347,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.33906364440918
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15139,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 14.039102554321289
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15347,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.850725173950195
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15347,
+          "shuffle_flip_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.15381944444444445,
+      "symmetric_margin_mean": 0.028680555555555553,
+      "symmetric_abstain_rate": 0.9,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 13.27418327331543,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15139,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 13.913707733154297,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15139,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 12.880420684814453,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.14931,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.913707733154297
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15694,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.209068298339844
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15694,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.787504196166992
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15694,
+          "shuffle_flip_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.1486111111111111,
+      "symmetric_margin_mean": 0.011527777777777777,
+      "symmetric_abstain_rate": 1.0,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 13.209068298339844,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 13.913707733154297,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 13.660430908203125,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15347,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.532526016235352
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.14167,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.403743743896484
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.14375,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.33906364440918
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.14444,
+          "shuffle_flip_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.15381944444444445,
+      "symmetric_margin_mean": 0.01611111111111111,
+      "symmetric_abstain_rate": 1.0,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 13.209068298339844,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15486,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 13.012502670288086,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15347,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 13.209068298339844,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.46823501586914
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.07821273803711
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15208,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.46823501586914
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.15081018518518519,
+      "symmetric_margin_mean": 0.013333333333333336,
+      "symmetric_abstain_rate": 0.9,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 13.27418327331543,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.14792,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 12.814077377319336,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.14653,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 13.596555709838867,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.14653,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.209068298339844
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.209068298339844
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15486,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.660430908203125
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15486,
+          "shuffle_flip_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "n_evaluable": 6,
+      "n_clear_winner": 6,
+      "host_acc": 1.0,
+      "wta_acc": 1.0,
+      "parity": 1.0,
+      "shuffle_flip_rate": 1.0,
+      "real_margin_mean": 0.15578703703703703,
+      "symmetric_margin_mean": 0.03180555555555555,
+      "symmetric_abstain_rate": 0.9,
+      "per_object": [
+        {
+          "true_cat": 0,
+          "held": 6,
+          "dr": {
+            "0": 13.33906364440918,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15833,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 7,
+          "dr": {
+            "0": 13.143718719482422,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15764,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 0,
+          "held": 8,
+          "dr": {
+            "0": 13.143718719482422,
+            "1": -61.74185562133789
+          },
+          "host_best": 0,
+          "wta_best": 0,
+          "margin": 0.15764,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 15,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.403743743896484
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15278,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 16,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.209068298339844
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        },
+        {
+          "true_cat": 1,
+          "held": 17,
+          "dr": {
+            "0": -61.74185562133789,
+            "1": 13.787504196166992
+          },
+          "host_best": 1,
+          "wta_best": 1,
+          "margin": 0.15417,
+          "shuffle_flip_ok": true
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "additive-only: this file is new, reuses SpikingPerceptionProbe / _affect_marker_wta_derisk._build_bridge unmodified (import-only), and is wired into no production path. byte-identical-when-off is automatic (there is no flag; nothing existing changed)."
+}
