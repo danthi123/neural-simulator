@@ -1,0 +1,30 @@
+{
+ "run_id": "1788569066-3244241",
+ "runner": "research/runners/_touchpoint_a_fact_clause_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/wf_a2d68bca-4bc-3/research/runners/_touchpoint_a_fact_clause_derisk.py",
+  "--smoke",
+  "--out",
+  "research/findings/raw/_touchpoint_a_fact_clause_smoke.json"
+ ],
+ "git_sha": "f31bd9230",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-04T20:44:26",
+ "env": {
+  "CUDA_VISIBLE_DEVICES": "",
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 545.5,
+ "corpus_check_query": "Touchpoint A (Surface-A open-prose recall Qwen fallback) retirement via the fact-clause SpikingClauseProducer render",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_touchpoint_a_fact_clause_smoke.json"
+}
