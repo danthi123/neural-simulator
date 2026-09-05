@@ -1,0 +1,626 @@
+{
+  "verdict": "GO",
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_facts": 404,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 46.644789934158325,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 103.54552817344666,
+      "full_perblock_scan_seconds": 171.95038843154907,
+      "asis_perblock_seconds": 0.4256197733454185,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.075,
+      "shard_size_max": 2,
+      "latency_shard_median_seconds": {
+        "patient": 0.41504836082458496,
+        "agent": 0.41425061225891113,
+        "yesno": 0.4138197898864746
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 414.2900072895885,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 45.61052489280701,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 101.48669838905334,
+      "full_perblock_scan_seconds": 184.6468322277069,
+      "asis_perblock_seconds": 0.4570466144250171,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.05,
+      "shard_size_max": 2,
+      "latency_shard_median_seconds": {
+        "patient": 0.4710134267807007,
+        "agent": 0.47542834281921387,
+        "yesno": 0.47080886363983154
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 392.0203156197428,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    },
+    {
+      "seed": 44,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 57.03905391693115,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 108.70972108840942,
+      "full_perblock_scan_seconds": 192.72932744026184,
+      "asis_perblock_seconds": 0.4770527906937174,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.125,
+      "shard_size_max": 2,
+      "latency_shard_median_seconds": {
+        "patient": 0.45892250537872314,
+        "agent": 0.45996344089508057,
+        "yesno": 0.45654237270355225
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 419.9605057093748,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 54.765970945358276,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 116.17447590827942,
+      "full_perblock_scan_seconds": 186.2952389717102,
+      "asis_perblock_seconds": 0.46112682913789654,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.225,
+      "shard_size_max": 3,
+      "latency_shard_median_seconds": {
+        "patient": 0.4572908878326416,
+        "agent": 0.4538816213607788,
+        "yesno": 0.4521547555923462
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 407.38891573953725,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    },
+    {
+      "seed": 101,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 53.38327240943909,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 115.58845019340515,
+      "full_perblock_scan_seconds": 184.32264733314514,
+      "asis_perblock_seconds": 0.45624417656719096,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.225,
+      "shard_size_max": 2,
+      "latency_shard_median_seconds": {
+        "patient": 0.444433331489563,
+        "agent": 0.45071351528167725,
+        "yesno": 0.44617366790771484
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 414.736326628269,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "n_facts": 404,
+      "vocab_V": 308,
+      "n_facts_actual": 404,
+      "build_seconds": 55.132166624069214,
+      "enable_fact_shard": true,
+      "no_batched_region": true,
+      "enable_batched": false,
+      "enable_attributed": true,
+      "n_total": 58100,
+      "asis_n_total_with_batched_region": 1060220,
+      "bridge_shrink_ratio": 18.248192771084337,
+      "store_seconds": 113.6729462146759,
+      "full_perblock_scan_seconds": 185.68909335136414,
+      "asis_perblock_seconds": 0.45962646869149537,
+      "full_recall_vs_truth": [
+        404,
+        404
+      ],
+      "parity": {
+        "patient": [
+          40,
+          40
+        ],
+        "agent": [
+          40,
+          40
+        ],
+        "yesno": [
+          40,
+          40
+        ]
+      },
+      "parity_mismatches": [],
+      "shard_size_mean": 1.175,
+      "shard_size_max": 3,
+      "latency_shard_median_seconds": {
+        "patient": 0.4949839115142822,
+        "agent": 0.48853957653045654,
+        "yesno": 0.49693500995635986
+      },
+      "moat": {
+        "checked": 20,
+        "both_abstain": 20,
+        "new_confab": 0
+      },
+      "scramble_control": {
+        "checked": 30,
+        "recovered": 0,
+        "real_recovered": 30,
+        "real_rate": 1.0,
+        "scrambled_rate": 0.0,
+        "attributable_to_routing": 1.0
+      },
+      "speedup_full_over_shard": 375.14167436936236,
+      "go_flags": {
+        "parity": true,
+        "moat": true,
+        "scramble": true,
+        "sublinear": true,
+        "full_recall": true,
+        "latency": true
+      },
+      "go": true
+    }
+  ],
+  "byte_identical_off": {
+    "seed": 42,
+    "n_facts": 32,
+    "enable_fact_shard": false,
+    "no_batched_region": false,
+    "enable_batched": true,
+    "n_total": 69368,
+    "asis_n_total_with_batched_region": 69368,
+    "n_total_matches_asis": true,
+    "fact_shard_index_never_built": true,
+    "answers_eq_full_reference": [
+      96,
+      96
+    ],
+    "rows_hash": "6640a8132bc8c865fbfe0149fe165f3b4aa433680c247d88ee158869d54e58f8",
+    "rows_hash_2": "6640a8132bc8c865fbfe0149fe165f3b4aa433680c247d88ee158869d54e58f8",
+    "rows_hash_match": true,
+    "n_total_2": 69368,
+    "ok": true
+  },
+  "pool1_reachability": {
+    "seed": 42,
+    "n_facts": 60,
+    "composer_type": "Pool1BoundOneBrainComposer",
+    "is_pool1": true,
+    "enable_fact_shard": true,
+    "full_perblock_scan_seconds": 36.72283172607422,
+    "parity": {
+      "patient": [
+        30,
+        30
+      ],
+      "agent": [
+        30,
+        30
+      ],
+      "yesno": [
+        30,
+        30
+      ]
+    },
+    "shard_latency_median_seconds": 0.7167601585388184,
+    "moat_new_confab": 0,
+    "moat_checked": 12,
+    "ok": true
+  },
+  "aggregate": {
+    "pool1_reachability_ok": true,
+    "parity_all_ok": true,
+    "anchor_all_ok": true,
+    "moat_all_ok": true,
+    "full_recall_all_ok": true,
+    "sublinear_all_ok": true,
+    "latency_all_ok": true,
+    "scramble_all_ok": true,
+    "byte_identical_off_ok": true,
+    "shard_size_mean": 1.1458333333333333,
+    "shard_size_max": 3,
+    "full_perblock_scan_seconds_median": 185.16796278953552,
+    "shard_patient_latency_median": 0.4581066966056824,
+    "speedup_full_over_shard_median": 410.8394615145629,
+    "bridge_shrink_ratio": 18.248192771084337
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "no-regression: wired fast-path == full O(k_max) scan (all seeds, patient/agent/yes-no)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "real anchor: the composer's own full query_patient/query_agent/ask_yes_no == the cached reference",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "moat: 0 new confabulation on out-of-store cues (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "full recall == ground truth at scale (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "sublinear: shard mean << k_max (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "latency win: wired sharded recall < the full O(k_max) scan (all seeds)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "byte-identical when OFF: as-is layout + index never built + rows-hash match + answers==reference",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "wired/reachable: the DEFAULT served composer (Pool1BoundOneBrainComposer) reaches the fast path via the env flip, answers == its own full scan, moat clean, and is faster (fewer reads)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "scramble control: content routing vs scrambled routing recall",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "SIM_BACKEND == numpy (declared CPU verify backend)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "verdict_block": {
+    "label": "onebrain fact-shard DG-CA3 sublinear retrieval WIRED into production (agent path) @ 404 facts",
+    "status": "GO",
+    "go": true,
+    "undefined_reasons": [],
+    "preconditions": [
+      {
+        "kind": "require",
+        "name": "no-regression: wired fast-path == full O(k_max) scan (all seeds, patient/agent/yes-no)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "real anchor: the composer's own full query_patient/query_agent/ask_yes_no == the cached reference",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "moat: 0 new confabulation on out-of-store cues (all seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "full recall == ground truth at scale (all seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "sublinear: shard mean << k_max (all seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "latency win: wired sharded recall < the full O(k_max) scan (all seeds)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "byte-identical when OFF: as-is layout + index never built + rows-hash match + answers==reference",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "wired/reachable: the DEFAULT served composer (Pool1BoundOneBrainComposer) reaches the fast path via the env flip, answers == its own full scan, moat clean, and is faster (fewer reads)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      },
+      {
+        "kind": "control",
+        "name": "scramble control: content routing vs scrambled routing recall",
+        "ok": true,
+        "detail": "treatment=1 control=0 |sep|=1 > 0",
+        "note": ""
+      },
+      {
+        "kind": "require",
+        "name": "SIM_BACKEND == numpy (declared CPU verify backend)",
+        "ok": true,
+        "detail": "measured=True expect=True",
+        "note": ""
+      }
+    ],
+    "disabled_processes": [],
+    "chance": null
+  }
+}

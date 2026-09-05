@@ -1,0 +1,37 @@
+{
+ "run_id": "1788616101-108264",
+ "runner": "research/runners/_onebrain_fact_shard_wirein_verify.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af5c190fda31bc3fb/research/runners/_onebrain_fact_shard_wirein_verify.py",
+  "--n-facts",
+  "404",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af5c190fda31bc3fb/research/findings/raw/_onebrain_fact_shard_wirein/verify_404_6seed.json"
+ ],
+ "git_sha": "3e9cf5464",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T09:48:21",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5814.1,
+ "corpus_check_query": "wire onebrain fact-shard DG-CA3 sublinear retrieval into production composer query path",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_onebrain_fact_shard_wirein/verify_404_6seed.json"
+}
