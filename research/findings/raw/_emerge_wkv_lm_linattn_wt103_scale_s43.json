@@ -1,0 +1,87 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/wikitext103.txt",
+  "seeds": [
+    43
+  ],
+  "d_model": 192,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "43": {
+      "V": 8001,
+      "n_train": 1781187,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.489,
+          "bigram": 5.302,
+          "trigram": 6.478,
+          "wkv_perm": 8.984,
+          "wkv_memoryless": 5.489,
+          "margin_vs_trigram": 0.989,
+          "margin_vs_bigram": -0.187
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 4.961,
+          "bigram": 5.278,
+          "trigram": 4.392,
+          "wkv_perm": 8.945,
+          "wkv_memoryless": 5.752,
+          "margin_vs_trigram": -0.57,
+          "margin_vs_bigram": 0.317
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 4.809,
+          "bigram": 5.285,
+          "trigram": 4.342,
+          "wkv_perm": 8.999,
+          "wkv_memoryless": 5.81,
+          "margin_vs_trigram": -0.467,
+          "margin_vs_bigram": 0.477
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.906,
+          "bigram": 5.374,
+          "trigram": 4.504,
+          "wkv_perm": 8.766,
+          "wkv_memoryless": 5.848,
+          "margin_vs_trigram": -0.402,
+          "margin_vs_bigram": 0.468
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.818,
+          "bigram": 5.35,
+          "trigram": 4.462,
+          "wkv_perm": 8.759,
+          "wkv_memoryless": 5.826,
+          "margin_vs_trigram": -0.356,
+          "margin_vs_bigram": 0.532
+        },
+        "10-99": {
+          "n": 183709,
+          "wkv": 4.749,
+          "bigram": 5.361,
+          "trigram": 4.463,
+          "wkv_perm": 8.684,
+          "wkv_memoryless": 5.857,
+          "margin_vs_trigram": -0.286,
+          "margin_vs_bigram": 0.612
+        }
+      }
+    }
+  },
+  "elapsed_s": 13048.0
+}
