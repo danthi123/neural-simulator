@@ -20,7 +20,7 @@
       "self_identity_correct": true,
       "self_identity_retired": true,
       "anaphora_off_confabulated": false,
-      "anaphora_on_abstains": true,
+      "anaphora_on_abstains": false,
       "anaphora_first_turn_unaffected": true,
       "anaphora_vary_changes_output": true,
       "anaphora_retired": false,
@@ -366,12 +366,16 @@
         ],
         "anaphora_miss": {
           "off_confab": null,
-          "on_answer": null,
+          "on_answer": [
+            "brain",
+            "use",
+            "spikes"
+          ],
           "off_confabulated": false,
-          "on_abstains": true,
+          "on_abstains": false,
           "first_turn_unaffected": true,
           "vary_changes_output": true,
-          "retired": true
+          "retired": false
         },
         "regression": [
           {

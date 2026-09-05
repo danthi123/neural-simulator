@@ -1,0 +1,81 @@
+{
+  "runner": "_rank13_prodflip_corrected_diagnosis",
+  "seed44_it_eat": {
+    "seed": 44,
+    "trace": [
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it eat?",
+        "out": "what does ball eat?",
+        "substituted": true
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it fly?",
+        "out": "what does it fly?",
+        "substituted": false
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it eat?",
+        "out": "what does ball eat?",
+        "substituted": true
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it fly?",
+        "out": "what does it fly?",
+        "substituted": false
+      }
+    ],
+    "final_off": {
+      "what does it eat?": [
+        "cat",
+        "eat",
+        "fish"
+      ]
+    },
+    "final_on": {
+      "what does it eat?": [
+        "cat",
+        "eat",
+        "fish"
+      ]
+    }
+  },
+  "seed43_it_fly": {
+    "seed": 43,
+    "trace": [
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it eat?",
+        "out": "what does cat eat?",
+        "substituted": true
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it fly?",
+        "out": "what does brain fly?",
+        "substituted": true
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it eat?",
+        "out": "what does cat eat?",
+        "substituted": true
+      },
+      {
+        "call": "_resolve_anaphora",
+        "in": "what does it fly?",
+        "out": "what does brain fly?",
+        "substituted": true
+      }
+    ],
+    "final_off": {
+      "what does it fly?": null
+    },
+    "final_on": {
+      "what does it fly?": null
+    }
+  }
+}

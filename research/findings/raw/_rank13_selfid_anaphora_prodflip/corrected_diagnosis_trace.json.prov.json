@@ -1,9 +1,8 @@
 {
- "run_id": "1788607495-4149746",
- "runner": "research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
+ "run_id": "1788607939-4157643",
+ "runner": "research/runners/_rank13_prodflip_corrected_diagnosis.py",
  "argv": [
-  "/home/dant123/Projects/sim/.claude/worktrees/agent-a414698a8e90e1ae0/research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
-  "--skip-onebrain"
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a414698a8e90e1ae0/research/runners/_rank13_prodflip_corrected_diagnosis.py"
  ],
  "git_sha": "6061fe450",
  "git_dirty": true,
@@ -13,7 +12,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-05T07:24:55",
+ "started": "2026-09-05T07:32:19",
  "env": {
   "SIM_BACKEND": "numpy"
  },
@@ -22,5 +21,5 @@
  "sim_backend_cupy_importable": true,
  "corpus_check_age_s": null,
  "corpus_check_query": null,
- "artifact": "research/findings/raw/_rank13_selfid_anaphora_prodflip/result_fast_only.json"
+ "artifact": "research/findings/raw/_rank13_selfid_anaphora_prodflip/corrected_diagnosis_trace.json"
 }

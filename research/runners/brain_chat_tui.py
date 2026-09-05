@@ -491,15 +491,27 @@ def _spiking_plausibility_enabled():
 #     wrong referent, e.g. the "what does it fly?" -> wrong-referent -> keyword-confab shape).
 #
 # PRODUCTION FLIP (2026-09-05, Track-1 ship-the-validated-wins): the de-risk above earned GO 6/6 seeds, both
-# combiners (research/findings/2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md). Both flags now
-# default ON -- unset behaves as flag=1 (the neural self/identity comprehension + the honest anaphora-miss
-# abstain). BRAIN_NEURAL_SELFID=0 / BRAIN_NEURAL_ANAPHORA_ABSTAIN=0 is the escape back to the pre-flip host-router
-# behavior byte-identically, unchanged code path. See
-# research/findings/2026-09-05-rank13-selfid-anaphora-PRODUCTION-FLIP-verify.md for the flip verification.
+# combiners (research/findings/2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md). The flip to
+# default-ON was verified TWICE and is NO-GO both times -- BOTH FLAGS STAY DEFAULT OFF (unset = byte-identical to
+# before this whole block existed). (1)
+# research/findings/2026-09-05-rank13-selfid-anaphora-PRODUCTION-FLIP-NO-GO-stale-referent-selfalias-misroute.md:
+# a real seed=44 anaphora-hit regression, ATTRIBUTED (incorrectly, see (2)) to a stale-referent self-alias
+# misroute. (2)
+# research/findings/2026-09-05-rank13-selfid-anaphora-production-flip-CORRECTED-DIAGNOSIS.md: direct
+# instrumentation of the real verify functions shows `_resolve_anaphora` actually SUBSTITUTES successfully to a
+# confident-but-WRONG discourse referent (a pre-existing WM read-fidelity property, orthogonal to this flag pair)
+# -- seed=44's "it eat" regression is really `BRAIN_NEURAL_ANAPHORA_ABSTAIN` removing the pre-flip host router's
+# fortuitous forgiving-keyword rescue of that wrong referent, and PERSISTS (no narrow fix found; banked as the
+# next lever, a WM referent-confidence/cross-check mechanism). A SECOND, distinct seed=43 confabulation (fixed
+# this session, see `_substrate_recall`'s SELF/IDENTITY candidate-relation retry below) was a real bug: that
+# retry's guard was missing the `v == "isa"` check its own docstring claims and its `gnw_bus_shadow.gate_via_bus`
+# mirror already enforces, so it over-fired whenever a misresolved referent happened to equal the literal string
+# 'brain'. BRAIN_NEURAL_SELFID=1 / BRAIN_NEURAL_ANAPHORA_ABSTAIN=1 remain available as an explicit opt-in for
+# further investigation of the seed=44 residual; production and the shipped default never set them.
 # ============================================================================================================
 
-_NEURAL_SELFID_DEFAULT_ON = True
-_NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = True
+_NEURAL_SELFID_DEFAULT_ON = False
+_NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = False
 
 
 def _neural_selfid_enabled():
@@ -1409,7 +1421,24 @@ class ChatBrain:
             # recall instead of the router's bag-of-words scan. This is a comprehension-helper retry (matching the
             # existing v_candidates convention), not a claim of a neural BridgeParser parse for this bare-identity
             # shape -- see the module-level comment above `_neural_selfid_enabled`.
-            if not p and a == "brain" and _neural_selfid_enabled():
+            #
+            # PRODUCTION-FLIP FIX (2026-09-05, closes the seed=43 confabulation the flip-verify NO-GO found):
+            # this guard was missing the `v == "isa"` check its OWN docstring above claims ("reached ONLY for a
+            # bare identity query on the self") and that the `gnw_bus_shadow.gate_via_bus` mirror of this EXACT
+            # recipe already enforces (`action == "isa"`, gnw_bus_shadow.py). Without it, ANY miss with agent=='
+            # brain' fires the retry -- including a query whose agent is 'brain' NOT because the user asked a
+            # bare identity question, but because `_resolve_anaphora` substituted an anaphoric 'it' with a
+            # WRONGLY-identified discourse referent that happens to equal the literal string 'brain' (a real,
+            # measured failure mode of the discourse-WM cleanup-read under noise, orthogonal to this flag -- seed
+            # 43's "what does dog chase?" ... "what does it fly?" sequence resolves 'it' to 'brain' instead of
+            # the correct 'cat', then this retry rescues a FABRICATED ['brain','use','spikes'] for a question
+            # that was never about the brain). Restoring the documented `v == 'isa'` scope makes this retry fire
+            # ONLY for the genuine bare-identity shape it was built for (`_definitional_copula_route`'s
+            # ['brain','isa'] pair, or a literal 'what is brain?') -- a strict NARROWING (it can only stop firing
+            # in cases it never should have fired in; the intended self-identity answer path is v=='isa' by
+            # construction and is therefore unaffected). See the corrected diagnosis in
+            # research/findings/2026-09-05-rank13-selfid-anaphora-production-flip-CORRECTED-DIAGNOSIS.md.
+            if not p and a == "brain" and v == "isa" and _neural_selfid_enabled():
                 for v_cand in ("has", "have", "is", "uses", "use"):
                     if v_cand in (v, v_lemma):
                         continue

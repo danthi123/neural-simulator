@@ -1,5 +1,5 @@
 {
- "run_id": "1788607495-4149746",
+ "run_id": "1788604842-4101111",
  "runner": "research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
  "argv": [
   "/home/dant123/Projects/sim/.claude/worktrees/agent-a414698a8e90e1ae0/research/runners/_rank13_selfid_anaphora_prodflip_verify.py",
@@ -13,7 +13,7 @@
  "source_manifest_start_error": null,
  "source_manifest_verified_at_exit": null,
  "source_manifest_exit_error": null,
- "started": "2026-09-05T07:24:55",
+ "started": "2026-09-05T06:40:42",
  "env": {
   "SIM_BACKEND": "numpy"
  },
