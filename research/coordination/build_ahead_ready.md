@@ -23,13 +23,20 @@ bash tools/pool_queue.sh add 'SIM_BACKEND=numpy .venv/bin/python -u -m research.
 
 **3. one-brain Stage-2 — Touchpoint-A fact-clause retire** — lane E·Language / one-brain (pool). Retires the Surface-A
 open-prose recall Qwen dependency (follow-on to Stage-1). Runner `_touchpoint_a_fact_clause_derisk.py`, GO = 3
-structural invariants (content-preserved + scope-untouched + flag-off-inert). ⚠️ Two gates before the full n=4 run:
-(a) sync the new runner to pool nodes first (`pool_queue.sh` SSH-validates `--help` on pool40/41/42); (b) a real
-fluency regression the smoke exposed — `render_fact_sentence` clauses carry no trailing punctuation, so
-`render_paragraph`'s join runs sentences together, plus a `slug_to_np` determiner-doubling ("the The Republic of
-Turkey"). Content/moat unaffected, but fix the prose before promoting.
+structural invariants (content-preserved + scope-untouched + flag-off-inert). **2026-09-04 UPDATE: the prose fix (b)
+below landed (`webapp/wkv_mouth_generator.py::render_fact_sentence` now punctuates; `slug_to_np` no longer doubles a
+leading determiner; verified content-preserving via a git-stashed baseline comparison), but the full `--n-known 4`
+battery still returns `structural_checks_passed=False` for TWO SEPARATE, PRE-EXISTING reasons unrelated to the
+prose — an RNG-isolation gap in `RichAnswerComposer._render_one_verified`'s Touchpoint-A call site (fails
+`scope_untouched`) and a fact-count/gather divergence from Touchpoint-A rescuing facts the old renderer couldn't
+verify-render (fails `content_preserved`); both confirmed pre-existing (byte-identical on a clean baseline) and
+logged in `research/FAILURE_LOG.md` (2026-09-04, two rows) with root cause + candidate fixes. NOT YET promotable —
+those two need fixing first.** ⚠️ Two gates before the full n=4 run: (a) sync the new runner to pool nodes first
+(`pool_queue.sh` SSH-validates `--help` on pool40/41/42); (b) ~~a real fluency regression the smoke exposed —
+`render_fact_sentence` clauses carry no trailing punctuation, so `render_paragraph`'s join runs sentences together,
+plus a `slug_to_np` determiner-doubling ("the The Republic of Turkey")~~ FIXED 2026-09-04, see above.
 ```
-bash tools/pool_queue.sh add 'CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._touchpoint_a_fact_clause_derisk --n-known 4 --out research/findings/raw/_touchpoint_a_fact_clause_full.json' --checked 'one-brain Stage-2 Touchpoint-A retire n=4 battery (sync runner to pool nodes first)'
+bash tools/pool_queue.sh add 'CUDA_VISIBLE_DEVICES="" SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._touchpoint_a_fact_clause_derisk --n-known 4 --out research/findings/raw/_touchpoint_a_fact_clause_full.json' --checked 'one-brain Stage-2 Touchpoint-A retire n=4 battery (sync runner to pool nodes first; prose fixed 2026-09-04, two OTHER pre-existing structural failures still open, see research/FAILURE_LOG.md)'
 ```
 
 ## CONDITIONAL / DEFERRED-FOCUS (queue only when the trigger fires)
