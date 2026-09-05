@@ -1,0 +1,32 @@
+{
+ "run_id": "1788597803-3934012",
+ "runner": "research/runners/_shared_salience_afferent_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-af8d891c257bfcfba/research/runners/_shared_salience_afferent_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--out",
+  "research/findings/raw/_shared_salience_prodflip/derisk_postflip_6seed.json"
+ ],
+ "git_sha": "04cbd1bec",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:43:23",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/_shared_salience_prodflip/derisk_postflip_6seed.json"
+}

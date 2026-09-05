@@ -1,0 +1,676 @@
+{
+  "mode": "controller",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_pass": 6,
+  "all_seeds_pass": true,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          -0.007153075822603719,
+          0.10443490701001432,
+          0.30615164520743926,
+          0.6881258941344779,
+          0.9656652360515021,
+          1.082975679542203
+        ],
+        "lesioned_normalized": [
+          0.001430615164520748,
+          0.0,
+          -0.007153075822603719,
+          -0.007153075822603719,
+          -0.011444921316165948,
+          -0.010014306151645204
+        ],
+        "intact_span": 1.0901287553648067,
+        "lesioned_span": 0.012875536480686695,
+        "corr_intact": 0.9795500791879647,
+        "corr_lesioned": -0.9596056392406396,
+        "span_attributable_to_drive_pathway": 0.9881889763779527,
+        "build_seconds": 2.76,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7905688460684012,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.7908647185513825,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8540772532188842,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0,
+          1.0
+        ],
+        "on_content": [
+          1.0872675250357653,
+          0.0
+        ],
+        "lesion_empty": [
+          0.0,
+          1.0
+        ],
+        "lesion_content": [
+          0.0,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.0,
+          0.3133047210300429,
+          1.0600858369098711
+        ],
+        "lesion_eng": [
+          0.0014306151645207554,
+          0.0,
+          0.007153075822603719
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0600858369098711,
+        "lesion_spread": 0.007153075822603719,
+        "spread_attributable_to_drive_pathway": 0.9932523616734144,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 7.85
+    },
+    "43": {
+      "seed": 43,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          -0.0025740025740025687,
+          0.10553410553410551,
+          0.3088803088803089,
+          0.7104247104247104,
+          0.9858429858429858,
+          1.066924066924067
+        ],
+        "lesioned_normalized": [
+          -0.009009009009009009,
+          0.0,
+          -0.0025740025740025687,
+          0.011583011583011584,
+          -0.0038610038610038594,
+          0.0051480051480051435
+        ],
+        "intact_span": 1.0694980694980696,
+        "lesioned_span": 0.020592020592020595,
+        "corr_intact": 0.9805562995651239,
+        "corr_lesioned": 0.5633104858536401,
+        "span_attributable_to_drive_pathway": 0.980746089049338,
+        "build_seconds": 2.95,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7898481238877886,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.790421130409591,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8597168597168598,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0,
+          1.0
+        ],
+        "on_content": [
+          1.03989703989704,
+          0.0
+        ],
+        "lesion_empty": [
+          0.0,
+          1.0
+        ],
+        "lesion_content": [
+          0.0051480051480051435,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.009009009009009009,
+          0.35135135135135137,
+          1.018018018018018
+        ],
+        "lesion_eng": [
+          6.5841797908271844e-18,
+          0.0012870012870012909,
+          0.003861003861003866
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0090090090090091,
+        "lesion_spread": 0.0038610038610038594,
+        "spread_attributable_to_drive_pathway": 0.9961734693877551,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 7.06
+    },
+    "44": {
+      "seed": 44,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          0.02102496714848883,
+          0.11300919842312745,
+          0.36662286465177396,
+          0.759526938239159,
+          0.9855453350854139,
+          1.049934296977661
+        ],
+        "lesioned_normalized": [
+          0.026281208935611027,
+          0.0,
+          0.02102496714848883,
+          0.007884362680683307,
+          0.021024967148488824,
+          0.0052562417871222025
+        ],
+        "intact_span": 1.0289093298291723,
+        "lesioned_span": 0.026281208935611027,
+        "corr_intact": 0.9851716842991997,
+        "corr_lesioned": -0.24656418151955845,
+        "span_attributable_to_drive_pathway": 0.9744572158365262,
+        "build_seconds": 1.46,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7901346053995126,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.7936776292118501,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8764783180026281,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0,
+          1.0
+        ],
+        "on_content": [
+          1.0643889618922466,
+          0.0
+        ],
+        "lesion_empty": [
+          0.021024967148488824,
+          0.9789750328515112
+        ],
+        "lesion_content": [
+          0.0052562417871222025,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.038107752956635994,
+          0.38107752956636004,
+          1.0722733245729303
+        ],
+        "lesion_eng": [
+          0.014454664914586066,
+          0.0,
+          0.024967148488830478
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0341655716162943,
+        "lesion_spread": 0.024967148488830478,
+        "spread_attributable_to_drive_pathway": 0.9758576874205844,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 4.43
+    },
+    "100": {
+      "seed": 100,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          0.00247831474597274,
+          0.10532837670384139,
+          0.3717472118959109,
+          0.7410161090458489,
+          1.0061957868649323,
+          1.043370508054523
+        ],
+        "lesioned_normalized": [
+          0.0037174721189591068,
+          0.0,
+          0.00247831474597274,
+          -0.00371747211895911,
+          -0.0024783147459727334,
+          -0.003717472118959113
+        ],
+        "intact_span": 1.0408921933085502,
+        "lesioned_span": 0.00743494423791822,
+        "corr_intact": 0.987045849666887,
+        "corr_lesioned": -0.8581219329739691,
+        "span_attributable_to_drive_pathway": 0.9928571428571429,
+        "build_seconds": 1.71,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7911516953454193,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.7965297275061676,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8760842627013632,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0,
+          1.0
+        ],
+        "on_content": [
+          1.0755885997521688,
+          0.0
+        ],
+        "lesion_empty": [
+          0.0,
+          1.0
+        ],
+        "lesion_content": [
+          0.0,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.0,
+          0.3630731102850063,
+          1.0508054522924415
+        ],
+        "lesion_eng": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0508054522924415,
+        "lesion_spread": 0.0,
+        "spread_attributable_to_drive_pathway": 1.0,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 4.95
+    },
+    "101": {
+      "seed": 101,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          0.013138686131386858,
+          0.051094890510948905,
+          0.31532846715328466,
+          0.6525547445255475,
+          0.9824817518248177,
+          1.0364963503649633
+        ],
+        "lesioned_normalized": [
+          0.011678832116788322,
+          0.0,
+          0.013138686131386858,
+          0.0014598540145985407,
+          0.0,
+          0.0014598540145985407
+        ],
+        "intact_span": 1.0233576642335764,
+        "lesioned_span": 0.013138686131386858,
+        "corr_intact": 0.9746736433206545,
+        "corr_lesioned": -0.5631142396203813,
+        "span_attributable_to_drive_pathway": 0.9871611982881597,
+        "build_seconds": 2.4,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7901346053995126,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.7898481238877886,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8394160583941607,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0,
+          1.0
+        ],
+        "on_content": [
+          1.0423357664233577,
+          0.0
+        ],
+        "lesion_empty": [
+          0.0,
+          1.0
+        ],
+        "lesion_content": [
+          0.0014598540145985407,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.0072992700729927,
+          0.3167883211678832,
+          1.0277372262773723
+        ],
+        "lesion_eng": [
+          0.0,
+          0.005839416058394163,
+          0.005839416058394163
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0204379562043795,
+        "lesion_spread": 0.005839416058394163,
+        "spread_attributable_to_drive_pathway": 0.9942775393419171,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 4.53
+    },
+    "102": {
+      "seed": 102,
+      "organ_core": {
+        "raws": [
+          0.0,
+          0.25,
+          0.5,
+          0.75,
+          0.95,
+          1.0
+        ],
+        "intact_normalized": [
+          -0.005594405594405596,
+          0.07552447552447553,
+          0.32587412587412584,
+          0.6923076923076923,
+          0.9930069930069929,
+          1.0475524475524476
+        ],
+        "lesioned_normalized": [
+          0.002797202797202798,
+          0.0013986013986013953,
+          -0.005594405594405596,
+          0.004195804195804193,
+          0.005594405594405589,
+          -0.0013986013986014025
+        ],
+        "intact_span": 1.053146853146853,
+        "lesioned_span": 0.011188811188811185,
+        "corr_intact": 0.9813152939342099,
+        "corr_lesioned": 0.072888015238469,
+        "span_attributable_to_drive_pathway": 0.9893758300132802,
+        "build_seconds": 1.8,
+        "g_load_bearing": true,
+        "g_lesion": true
+      },
+      "da_mode": {
+        "off_da_level": 0.7907170135799801,
+        "off_mode": "focus",
+        "off_has_shared_key": false,
+        "on_da_level": 0.7905782371195631,
+        "on_mode": "focus",
+        "on_has_shared_key": true,
+        "on_turn_engagement": 0.8475524475524474,
+        "on_matches_independent_organ_call": true,
+        "lesion_da_level": 0.04616293556102311,
+        "lesion_mode": "rest",
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "bg_action_selection": {
+        "off_empty": [
+          0.0,
+          1.0
+        ],
+        "off_content": [
+          1.0,
+          0.0
+        ],
+        "n_content_tokens": 3,
+        "on_empty": [
+          0.0013986013986013953,
+          0.9986013986013986
+        ],
+        "on_content": [
+          1.0643356643356645,
+          0.0
+        ],
+        "lesion_empty": [
+          0.005594405594405589,
+          0.9944055944055944
+        ],
+        "lesion_content": [
+          0.0,
+          0.0
+        ],
+        "on_content_matches_independent_organ_call": true,
+        "c_off_identical": true,
+        "c_on_loadbearing_at_content": true,
+        "c_lesion_collapse_at_content": true,
+        "honest_note": "the ONLY live-reachable STAY-SILENT branch (decide_action) feeds raw=0.0 (n==0), which floors to ~0 both intact and lesioned -- there is no novelty to lesion away at the familiar floor. Load-bearing + lesion-collapse are demonstrated on salience()'s general input range (a real message, n>=1), proving the wiring is genuine even though the specific pre-existing entry-gate anchor is a floor case. See the finding's honest scope."
+      },
+      "value_choice_context": {
+        "off_eng": [
+          0.0,
+          0.5,
+          1.0
+        ],
+        "on_eng": [
+          0.0027972027972027907,
+          0.3356643356643356,
+          1.0433566433566435
+        ],
+        "lesion_eng": [
+          0.0013986013986013953,
+          0.013986013986013983,
+          0.0027972027972027907
+        ],
+        "off_spread": 1.0,
+        "on_spread": 1.0405594405594407,
+        "lesion_spread": 0.012587412587412587,
+        "spread_attributable_to_drive_pathway": 0.9879032258064516,
+        "c_off_identical": true,
+        "c_on_loadbearing": true,
+        "c_lesion_collapse": true
+      },
+      "all_gates_pass": true,
+      "wall_seconds": 5.78
+    }
+  }
+}
