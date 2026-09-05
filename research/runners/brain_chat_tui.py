@@ -490,11 +490,16 @@ def _spiking_plausibility_enabled():
 #     the SAME honesty already applied to the direct-query abstain (no host bag-of-words "rescue" of a possibly-
 #     wrong referent, e.g. the "what does it fly?" -> wrong-referent -> keyword-confab shape).
 #
-# Both default OFF: unset behaves byte-identical to before this block existed.
+# PRODUCTION FLIP (2026-09-05, Track-1 ship-the-validated-wins): the de-risk above earned GO 6/6 seeds, both
+# combiners (research/findings/2026-09-05-rank13-selfid-anaphora-scaffold-derisk-GO-6of6.md). Both flags now
+# default ON -- unset behaves as flag=1 (the neural self/identity comprehension + the honest anaphora-miss
+# abstain). BRAIN_NEURAL_SELFID=0 / BRAIN_NEURAL_ANAPHORA_ABSTAIN=0 is the escape back to the pre-flip host-router
+# behavior byte-identically, unchanged code path. See
+# research/findings/2026-09-05-rank13-selfid-anaphora-PRODUCTION-FLIP-verify.md for the flip verification.
 # ============================================================================================================
 
-_NEURAL_SELFID_DEFAULT_ON = False
-_NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = False
+_NEURAL_SELFID_DEFAULT_ON = True
+_NEURAL_ANAPHORA_ABSTAIN_DEFAULT_ON = True
 
 
 def _neural_selfid_enabled():

@@ -1,0 +1,2697 @@
+{
+  "runner": "_rank13_selfid_anaphora_prodflip_verify",
+  "go": false,
+  "status": "UNDEFINED",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "default_selfid_on": true,
+  "default_anaphora_on": true,
+  "fast_summary": {
+    "plain": {
+      "n_seeds": 6,
+      "self_factual_correct": true,
+      "self_factual_retired": true,
+      "self_identity_correct": true,
+      "self_identity_retired": true,
+      "anaphora_off_confabulated": false,
+      "anaphora_on_abstains": false,
+      "anaphora_first_turn_unaffected": true,
+      "anaphora_vary_changes_output": true,
+      "anaphora_retired": false,
+      "no_regression": false,
+      "n_regression_checks": 36
+    },
+    "bus": {
+      "n_seeds": 6,
+      "self_factual_correct": true,
+      "self_factual_retired": true,
+      "self_identity_correct": true,
+      "self_identity_retired": true,
+      "anaphora_off_confabulated": false,
+      "anaphora_on_abstains": true,
+      "anaphora_first_turn_unaffected": true,
+      "anaphora_vary_changes_output": true,
+      "anaphora_retired": false,
+      "no_regression": false,
+      "n_regression_checks": 36
+    }
+  },
+  "fast_rows": {
+    "plain": [
+      {
+        "combiner": "plain",
+        "seed": 42,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": null,
+          "off_confabulated": false,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "plain",
+        "seed": 43,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": [
+            "brain",
+            "use",
+            "spikes"
+          ],
+          "off_confabulated": false,
+          "on_abstains": false,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": false
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "plain",
+        "seed": 44,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": null,
+          "off_confabulated": false,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": false
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              null
+            ],
+            "identical": false,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "plain",
+        "seed": 100,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "plain",
+        "seed": 101,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "plain",
+        "seed": 102,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      }
+    ],
+    "bus": [
+      {
+        "combiner": "bus",
+        "seed": 42,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": null,
+          "off_confabulated": false,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "bus",
+        "seed": 43,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": null,
+          "off_confabulated": false,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "bus",
+        "seed": 44,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": null,
+          "on_answer": null,
+          "off_confabulated": false,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": false
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              null
+            ],
+            "identical": false,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "bus",
+        "seed": 100,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "bus",
+        "seed": 101,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      },
+      {
+        "combiner": "bus",
+        "seed": 102,
+        "self_factual": [
+          {
+            "q": "what do you use?",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you learn?",
+            "want": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "off_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_svo": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "what do you store?",
+            "want": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "off_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_svo": [
+              "brain",
+              "store",
+              "memory"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "self_identity": [
+          {
+            "q": "what are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          },
+          {
+            "q": "who are you",
+            "want": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "off_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_svo": [
+              "brain",
+              "use",
+              "spikes"
+            ],
+            "on_correct": true,
+            "retired": true
+          }
+        ],
+        "anaphora_miss": {
+          "off_confab": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "on_answer": null,
+          "off_confabulated": true,
+          "on_abstains": true,
+          "first_turn_unaffected": true,
+          "vary_changes_output": true,
+          "retired": true
+        },
+        "regression": [
+          {
+            "cls": "stored",
+            "q": "what does dog chase?",
+            "off": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "on": [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does cat eat?",
+            "off": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "on": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "stored",
+            "q": "what does brain learn?",
+            "off": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "on": [
+              "brain",
+              "learn",
+              "words"
+            ],
+            "identical": true,
+            "correct": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does fish fly?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "unstored",
+            "q": "what does ball roll?",
+            "off": null,
+            "on": null,
+            "identical": true,
+            "moat_ok": true
+          },
+          {
+            "cls": "anaphora_hit_seq",
+            "q": "dog chase cat / it eat",
+            "off": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "on": [
+              [
+                "dog",
+                "chase",
+                "cat"
+              ],
+              [
+                "cat",
+                "eat",
+                "fish"
+              ]
+            ],
+            "identical": true,
+            "correct": true
+          }
+        ]
+      }
+    ]
+  },
+  "onebrain_summary": null,
+  "onebrain_rows": null,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "BRAIN_NEURAL_SELFID resolves ON with the env var UNSET (a real default change)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "BRAIN_NEURAL_ANAPHORA_ABSTAIN resolves ON with the env var UNSET (a real default change)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FAST/rf: self-factual correct+retired, plain gate() and installed GNW-bus gate()",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FAST/rf: self-identity correct+retired, plain gate() and installed GNW-bus gate()",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FAST/rf: anaphora-miss confabulates OFF, abstains ON (both combiners) -- the defect is real",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "HOLLOW-CHECK: toggling the flag changes the anaphora-miss FINAL ANSWER (not byte-identical on vs off -- the affect-hollow-mouth failure mode does NOT hold here)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FAST/rf: legitimate anaphora-HIT recall unaffected by the flag",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "FAST/rf: NO REGRESSION on stored/unstored/anaphora-hit, genuinely-seeded, both combiners",
+      "ok": false,
+      "detail": "measured=False expect=True",
+      "note": "36+36 checks, 6 REAL seeds"
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "onebrain (TRUE production default) battery",
+      "why": "--skip-onebrain passed this run"
+    }
+  ],
+  "undefined_reasons": [
+    "unmet: FAST/rf: anaphora-miss confabulates OFF, abstains ON (both combiners) -- the defect is real (measured=False expect=True)",
+    "unmet: FAST/rf: NO REGRESSION on stored/unstored/anaphora-hit, genuinely-seeded, both combiners (measured=False expect=True)"
+  ]
+}
