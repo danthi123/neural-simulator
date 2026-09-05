@@ -137,7 +137,7 @@ that concrete and all are GO on `main`:
     brain-mouth-integration-ROADMAP.md SS4), scoped + measured: a fresh per-touchpoint re-measurement AFTER
     the linattn flip found the literal Qwen one-shot already fires on 0/15 forked turns of the project's own
     16-probe battery (was 9/15 = 60% pre-flip, ALL on known=False traffic — research/findings/2026-09-04-
-    per-touchpoint-qwen-call-share.md) — the flip's `BRAIN_WKV_MOUTH_SCOPE=broad` default already routes
+    onebrain-stage1-qwen-fallback-retire-GO.md) — the flip's `BRAIN_WKV_MOUTH_SCOPE=broad` default already routes
     known=False traffic to the WKV mouth's own free generation instead. This flag closes the narrower residual
     that measurement disclosed: when the WKV mouth genuinely does not cover a known=False turn (disabled,
     reverted to narrow vocab scope, or an exception), skip the Qwen forward pass entirely and set `raw=""` —
@@ -474,7 +474,7 @@ def no_qwen_fallback_enabled() -> bool:
     forward pass entirely and set `raw=""` instead.
 
     WHY THIS IS SAFE, not just cheaper. The per-touchpoint measurement (research/findings/2026-09-04-
-    per-touchpoint-qwen-call-share.md, commit 64fc4d5f) found `post_filter`'s unknown-topic branch
+    onebrain-stage1-qwen-fallback-retire-GO.md) found `post_filter`'s unknown-topic branch
     (`_base_post_filter`) discarded EVERY sentence of Qwen's raw reply on 9/9 sampled known=False turns and
     substituted the SAME fixed string, `f"I'm not sure about {topic} -- I don't have anything about it in
     what I've actually learned, so I'd only be guessing."` -- regardless of topic. The 2026-09-04 re-measurement

@@ -51,8 +51,9 @@ def wkv_mouth_generator(monkeypatch):
     """Import fresh with the path-override env var explicitly UNSET, so the test exercises the module's own
     default template -- not whatever a prior process/test happened to leave in the environment.
 
-    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
-    GO.md): the e-prop learned-head lever this whole file tests is EXPLICITLY, architecturally never reached
+    2026-09-04 (linattn production-default flip, commit ac58b81e/4ea2ff74; bare-default behavior independently
+    re-verified in research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md, check_d): the
+    e-prop learned-head lever this whole file tests is EXPLICITLY, architecturally never reached
     under 'linattn' recurrence -- `_get_readout`'s own guard skips `_apply_learned_head` entirely for
     `LinAttnReadout` (those matrices are trained against the ssm checkpoint's own hidden basis, incompatible
     with linattn's differently-shaped hidden representation; see that function's comment). Pin the EXPLICIT

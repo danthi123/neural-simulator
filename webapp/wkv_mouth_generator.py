@@ -17,15 +17,16 @@ words. This module is scoped EXCLUSIVELY to prompts whose content words substant
 falls back to the existing `SpikingQwenFaculty` path, unchanged. This module NEVER attempts an out-of-scope prompt
 itself, and never silently pads/guesses past what the checkpoint's own 1000-word vocabulary supports.
 
-UPDATE 2026-09-04 (production default flip — see the coherent-defaults mechanism comment above `_RECUR_ENV`
-below, and research/findings/2026-09-04-linattn-mouth-production-flip-GO.md): the paragraph above describes
-this module's ORIGINAL ssm/V=1000/vocab-gated scope, still exactly what an EXPLICIT
-`BRAIN_WKV_MOUTH_RECURRENCE=ssm` override gets, byte-identical. The NEW DEFAULT (recurrence unset -> 'linattn')
-instead loads the general-vocabulary BPE linattn checkpoint under `scope_mode() == "broad"` (see that
-function's own docstring), which does NOT hard-gate on vocabulary overlap — the caller's post-generation VERIFY
-moat is what still keeps an out-of-scope/unknown-topic reply from being asserted as fact (unchanged, and still
-exercised by this flip's own safety verification, see that finding's Q2 checks). This module's SCOPE claim
-above is therefore now conditional on which recurrence family is active, not a fixed property of the module.
+UPDATE 2026-09-04 (production default flip, commit ac58b81e/4ea2ff74 — see the coherent-defaults mechanism
+comment above `_RECUR_ENV` below): the paragraph above describes this module's ORIGINAL ssm/V=1000/vocab-gated
+scope, still exactly what an EXPLICIT `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override gets, byte-identical. The NEW
+DEFAULT (recurrence unset -> 'linattn') instead loads the general-vocabulary BPE linattn checkpoint under
+`scope_mode() == "broad"` (see that function's own docstring), which does NOT hard-gate on vocabulary overlap —
+the caller's post-generation VERIFY moat is what still keeps an out-of-scope/unknown-topic reply from being
+asserted as fact (unchanged, and independently re-verified under fresh-subprocess isolation by
+research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md, check_d's own moat gate — all
+five gates pass, verdict GO). This module's SCOPE claim above is therefore now conditional on which recurrence
+family is active, not a fixed property of the module.
 
 TWO HONEST RESIDUALS CARRIED FORWARD FROM THE SCOPING PASS (not resolved here — see the wiring finding doc):
   1. The specific e-prop LOCALLY-LEARNED read-out head (`W_hat`, `sub_recov_ratio_mean=0.8686`,
@@ -201,8 +202,10 @@ def tokenizer_mode() -> str:
 
 
 # ── RECURRENCE family (2026-09-03, `LinAttnReadout` production wiring, research/findings/2026-09-03-linattn-
-# production-mouth-wiring-DESIGN.md Sec 3e P2; 2026-09-04, PRODUCTION DEFAULT FLIP -- research/findings/
-# 2026-09-04-linattn-mouth-production-flip-GO.md). `_get_readout` below is the ONLY place this is read:
+# production-mouth-wiring-DESIGN.md Sec 3e P2; 2026-09-04, PRODUCTION DEFAULT FLIP -- commit ac58b81e/4ea2ff74;
+# bare-default safety independently re-verified in research/findings/2026-09-05-linattn-bare-default-fresh-
+# subprocess-verdict.md, check_d, all five gates pass/verdict GO). `_get_readout` below is the ONLY place this
+# is read:
 # 'linattn' (now the DEFAULT) builds `research.runners._wkv_fewspike_read_derisk.LinAttnReadout` against a
 # `--recurrence linattn --save-ssm` checkpoint; 'ssm' (reached only via an EXPLICIT
 # `BRAIN_WKV_MOUTH_RECURRENCE=ssm` override now) builds `WKVReadout` exactly as this function returned

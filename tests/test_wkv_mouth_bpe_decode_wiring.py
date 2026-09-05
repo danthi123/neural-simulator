@@ -94,8 +94,9 @@ def clean_env(monkeypatch):
     """Strip every WKV-mouth env knob this module reads at import time, so each test starts from the module's
     own documented defaults regardless of what a prior test (or the outer shell) left set.
 
-    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
-    GO.md): every scenario in this file is written against the `WKVReadout` code path specifically -- the
+    2026-09-04 (linattn production-default flip, commit ac58b81e/4ea2ff74; bare-default behavior independently
+    re-verified in research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md, check_d):
+    every scenario in this file is written against the `WKVReadout` code path specifically -- the
     hand-built dummy checkpoints in `_build_dummy_ckpt` carry EXACTLY `WKVReadout`'s expected keys
     (`emb.weight`/`Wv.weight`/`Wr.weight`/`Wo_sp.weight`/`head.weight`/...), not `LinAttnReadout`'s differently-
     shaped state dict, and "byte-identical to before this wiring existed" (this module's own docstring) is a

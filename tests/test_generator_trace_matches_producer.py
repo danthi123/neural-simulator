@@ -89,15 +89,19 @@ def clean_env(monkeypatch):
     what a prior test or the outer shell left set. `monkeypatch` auto-reverts at teardown regardless, but an
     explicit clean start matches this repo's existing test convention (see test_wkv_mouth_bpe_decode_wiring.py).
 
-    2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
-    GO.md): this file's routing fixtures (`_OOV_TOPIC`/`_IN_VOCAB_TOPIC`, the OOV-vs-in-vocab distinction
-    `in_vocab_scope` is asked to draw) are calibrated against the ssm/V=1000 TinyStories WORD-level checkpoint's
-    own vocabulary specifically -- not meaningful over the new default 'linattn' family's general BPE vocabulary
-    (see that gate's own docstring: a BPE checkpoint's `words` are subword symbols, not whole words).
-    `BRAIN_WKV_MOUTH_RECURRENCE` is therefore PINNED to the EXPLICIT 'ssm' override below (not merely stripped)
-    so scope/ckpt/tokenizer all keep resolving to the ssm-family defaults this file was written against,
-    regardless of the module's new top-level default. The bare post-flip 'linattn' default is independently
-    covered by research/findings/raw/_linattn_flip_verify/ and the committed phase6 clean-isolation artifact."""
+    2026-09-04 (linattn production-default flip, commit ac58b81e/4ea2ff74): this file's routing fixtures
+    (`_OOV_TOPIC`/`_IN_VOCAB_TOPIC`, the OOV-vs-in-vocab distinction `in_vocab_scope` is asked to draw) are
+    calibrated against the ssm/V=1000 TinyStories WORD-level checkpoint's own vocabulary specifically -- not
+    meaningful over the new default 'linattn' family's general BPE vocabulary (see that gate's own docstring:
+    a BPE checkpoint's `words` are subword symbols, not whole words). `BRAIN_WKV_MOUTH_RECURRENCE` is therefore
+    PINNED to the EXPLICIT 'ssm' override below (not merely stripped) so scope/ckpt/tokenizer all keep resolving
+    to the ssm-family defaults this file was written against, regardless of the module's new top-level default.
+    The bare post-flip 'linattn' default is independently covered by
+    research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md (check_d, fresh-subprocess-
+    per-arm re-verification -- all five gates pass, verdict GO); an earlier same-process check (check_b) had
+    returned a NO-GO on this exact default, later diagnosed as a same-process session/RNG-timeline confound
+    rather than a genuine defect (research/findings/2026-09-05-linattn-check-b-dropped-nogo-recovered-and-
+    reproduced.md)."""
     for k in ("BRAIN_WKV_MOUTH_SCOPE", "BRAIN_OPEN_ENDED_WKV_MOUTH", "BRAIN_OPEN_ENDED_FACT_CLAUSE_FALLBACK",
               "BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_SENTENCE", "BRAIN_OPEN_ENDED_WKV_MOUTH_FACT_GROUND",
               "BRAIN_OPEN_ENDED_GEN_TIME_HONESTY"):

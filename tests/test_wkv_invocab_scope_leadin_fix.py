@@ -38,15 +38,19 @@ _MUST_BE_EXCLUDED = {"tell", "me", "about", "know", "think", "describe", "explai
 
 @pytest.fixture(autouse=True)
 def _pin_ssm_recurrence(monkeypatch):
-    """2026-09-04 (linattn production-default flip, research/findings/2026-09-04-linattn-mouth-production-flip-
-    GO.md): every fixture in this file (the nonsense-tail phrases, "genuine multiword content", the "checkpoint
-    vocab" picked in `test_single_content_word_topic_is_an_honest_residual_not_silently_hidden`) is calibrated
-    against `in_vocab_scope`'s WORD-overlap heuristic over the ssm/V=1000 TinyStories WORD-level checkpoint's own
+    """2026-09-04 (linattn production-default flip, commit ac58b81e/4ea2ff74): every fixture in this file (the
+    nonsense-tail phrases, "genuine multiword content", the "checkpoint vocab" picked in
+    `test_single_content_word_topic_is_an_honest_residual_not_silently_hidden`) is calibrated against
+    `in_vocab_scope`'s WORD-overlap heuristic over the ssm/V=1000 TinyStories WORD-level checkpoint's own
     vocabulary specifically -- not meaningful over the new default 'linattn' family's general BPE vocabulary
     (subword symbols, not whole words; see `in_vocab_scope`'s own docstring). Autouse so every test below keeps
     exercising the EXPLICIT 'ssm' override this file was written against, regardless of the module's new bare
     top-level default. The bare post-flip 'linattn' default is independently covered by
-    research/findings/raw/_linattn_flip_verify/ and the committed phase6 clean-isolation artifact."""
+    research/findings/2026-09-05-linattn-bare-default-fresh-subprocess-verdict.md (check_d, fresh-subprocess-
+    per-arm re-verification -- all five gates pass, verdict GO); an earlier same-process check (check_b) had
+    returned a NO-GO on this exact default, later diagnosed as a same-process session/RNG-timeline confound
+    rather than a genuine defect (research/findings/2026-09-05-linattn-check-b-dropped-nogo-recovered-and-
+    reproduced.md)."""
     monkeypatch.setenv("BRAIN_WKV_MOUTH_RECURRENCE", "ssm")
 
 
