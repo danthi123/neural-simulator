@@ -126,9 +126,24 @@ def _build_seed_brain(seed):
 
 
 def _ask(S, chat, brain_label, sid_holder, message):
+    """BUG FOUND + FIXED IN-FLIGHT (2026-09-05, this same verification session): `sid_holder` used to reset to
+    [0] at the top of EACH `run_seed_sweep` call, so seed 42's turns and seed 43's turns (etc.) reused the
+    IDENTICAL session strings ('pf00001'..'pf00009') -- and webapp/server.py's module-level session caches
+    (`_BRAIN_RICH: dict[(session,brain,renderer), RichAnswerComposer]`, `_SESSION_DISCOURSE`, ...) are keyed on
+    exactly that tuple. `_get_rich_composer` does `rich = _BRAIN_RICH.get(cache_key); if rich is None: build ...`
+    -- it NEVER checks whether the cached rich composer's OWN `chat` matches the `chat` just passed in. So every
+    seed AFTER the first silently reused the FIRST seed's RichAnswerComposer (built around the first seed's
+    OneBrainComposer instance), while the query dict-lookups in `S.brain_chat` ran against the (correct) NEW
+    seed's `chat`/composer -- a state mismatch that manifested as every post-first-seed turn reading
+    `activity=None`/an empty metacog (confirmed: an ISOLATED single-seed-43 diagnostic, sharing no prior
+    session history, answered correctly with metacog confident=True; only the multi-seed IN-PROCESS sweep with
+    colliding session ids failed). FIX: `sid_holder` now carries a GLOBALLY-unique prefix (passed in, not
+    reset per seed) so no two turns in the whole run -- across any seed -- ever share a session key, matching
+    how a real multi-user production deployment never reuses a session id either."""
     from webapp.server import BrainChatRequest
-    sid_holder[0] += 1
-    sess = f"pf{sid_holder[0]:05d}"
+    prefix, counter = sid_holder
+    counter[0] += 1
+    sess = f"{prefix}{counter[0]:05d}"
     S._BRAIN_CHATS[(sess, brain_label, "stub")] = chat
     req = BrainChatRequest(session=sess, message=message, brain=brain_label, reset=False, rich=True,
                            renderer="stub")
@@ -161,7 +176,12 @@ def run_seed_sweep(seed, results):
     build_s = time.time() - t0
     comp = getattr(getattr(chat, "inner", None), "composer", None)
     base_conns = list(comp.store_conns)
-    sid = [0]
+    # (prefix, counter) -- the prefix MUST be unique per seed (see _ask's docstring: a bug found + fixed in this
+    # same session had this reset to a bare [0] per seed, so every seed's turns silently REUSED the identical
+    # session ids 'pf00001'..'pf00009' -- and webapp/server.py's module-level _BRAIN_RICH/_SESSION_DISCOURSE
+    # caches are keyed on (session,brain,renderer), so every seed after the first ran against the FIRST seed's
+    # stale cached RichAnswerComposer instead of its own).
+    sid = (f"pf{seed}_", [0])
     rng = np.random.default_rng(seed)
 
     turns = []
@@ -322,7 +342,7 @@ def run_ltm_smoke(results):
     t0 = time.time()
     chat, source = S._build_chat_brain("tiny-demo", "stub")
     build_s = time.time() - t0
-    resp = _ask(S, chat, "tiny-demo", [0], QUERY)
+    resp = _ask(S, chat, "tiny-demo", ("pfltm_", [0]), QUERY)
     results["_ltm_smoke"] = {
         "build_seconds": build_s, "source": source, "abstained": resp.get("abstained"),
         "recalled_svo": resp.get("recalled_svo"), "metacog": resp.get("metacog"),
