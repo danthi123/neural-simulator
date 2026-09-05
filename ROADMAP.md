@@ -7,6 +7,24 @@ the [project handoff](HANDOFF.md), and the live state in
 board, when checked out, was `research/coordination/workboard.json` (⚠️ now ~a month
 stale — the live board is [GAP_CLOSURE_MISSION.md](GAP_CLOSURE_MISSION.md) CURRENT STATE; workboard.json is being retired).
 
+## 2026-09-05 (evening) — the brain's own voice: WHY it isn't broadly fluent yet is now pinned down (it's a data-scale problem, not a missing idea); and its sense of emotion took a real step
+
+- **The #1 blocker (the brain's own voice on broad, arbitrary topics) is now diagnosed — and it's encouraging.**
+  Several clever "mechanism" fixes were each tried and each barely moved the needle on hard broad text. Set
+  against the project's own earlier proof that the voice keeps getting better the more text it trains on, the
+  honest conclusion is: the voice isn't missing an idea — it's **under-trained on broad text**. The fix is more
+  (and more varied) training text, which is a scaling job, not a research dead-end. First step (running now, no
+  new download): train it on Wikipedia + Simple-English-Wikipedia together and test on the hard set; if that
+  helps, a bigger text download is the clear next lever.
+- **The brain's sense of what's emotionally salient took a genuine step.** Earlier we found that no amount of
+  reading text can teach the brain which words *matter* emotionally (ordinary words sit in emotional scenes too).
+  This week it learned that from a *grounded body-state signal* instead: a from-experience learning rule (not
+  hand-coded) taught the brain a code that cleanly tells emotional words from ordinary ones — and, crucially, it
+  **generalizes to words it was never trained on**. It's not finished (the learned code gets noisy under realistic
+  body-signal noise), and closing that noise gap is the next step (in progress) — but the core idea is proven.
+- **The "one brain" merge (four core thinking-organs on one shared neural pool) passed its full re-check** (a
+  earlier alarming result turned out to be a test bug, now fixed and re-verified clean).
+
 ## 2026-09-05 (overnight, continued) — shipping LANDS: 4 shortcuts + the one-brain merge switched ON, the meaning-composer's speed wall solved, the mouth re-aimed
 
 - **Four host shortcuts are now ON BY DEFAULT** (not just validated): the brain's salience/attention

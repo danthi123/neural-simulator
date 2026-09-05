@@ -150,6 +150,23 @@ long-pole stays gated and honest, not faked with more templates.
 > [`docs/PRODUCTION_INTEGRATION_LEDGER.yaml`](../PRODUCTION_INTEGRATION_LEDGER.yaml). This doc is the single PLAN that
 > ties them to the staged path.
 
+> **🗓️ 2026-09-05 (evening) — MOUTH broad-domain wall DIAGNOSED (token/data-bound) + AFFECT gate ADVANCED.**
+> MOUTH (Wall #7 / R4, #1 blocker): the broad-domain (wt103) wall is now diagnosed as TRAINING-TOKEN/DATA-bound,
+> NOT architecture — every architecture lever came back small/flat on broad wt103 (content-addressing exhausted;
+> predictive-coding objective FLAT +0.005; delta-rule +0.035 sub-bar) vs the ~+0.3-0.57 needed to cross, while our
+> OWN 6-seed GO (2026-09-01 token-supply) shows more unique tokens give monotonic improvement + a growing margin.
+> Lever = Chinchilla-scale token supply. In flight: an additive `--eval-corpus` instrument (train/eval-corpus
+> separation, byte-identical-off) + a no-download local token-scaling test (train wt103+simplewiki, eval wt103,
+> s43) running; a larger same-domain corpus DOWNLOAD is step-2 if the local test lifts (owner-delegated fork).
+> Findings: `2026-09-05-mouth-objective-lever-flat-...-NO-GO`, `-deltanet-wt103-...-NO-GO`, `-eval-corpus-instrument-...`.
+> AFFECT gate (rank-7): ADVANCED from BOUNDARY to a working, GENERALIZING grounded mechanism — an emergent
+> rate-Hebbian competitive convergence over an interoceptive per-concept body-state TEACHES an affect concept code
+> that separates affect from register-neutral words at 1.000 worst-case clean AND on held-out concepts (grounding
+> lesion-load-bearing), where text (+ a perfect embodied-US oracle) could not. PARTIAL: the LEARNED code degrades
+> under interoceptive NOISE (the one residual); next = noise-robust homeostatic/three-factor gating (running on
+> CPU). Findings: `2026-09-05-affect-gate-embodied-US-...-BOUNDARY`, `-affect-grounded-experience-stream-...-PARTIAL`.
+> ONE-BRAIN rebaseline v2 = GO 6/6 (the single-pool flip validated; the earlier UNDEFINED was an off-arm confound).
+>
 > **🗓️ 2026-09-05 (later) — COMPOSER FHRR RECALL-LATENCY WALL RETIRED (rank-1 shipped).** The DG-CA3 sublinear
 > spiking fact-shard retrieval is now WIRED into the production `OneBrainComposer` and FLIPPED to production-default
 > (`BRAIN_FACT_SHARD_RETRIEVAL` default-ON, `=0` reverts byte-identical), verified GO 6/6 through the real
