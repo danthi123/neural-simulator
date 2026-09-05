@@ -1,0 +1,20 @@
+{
+  "what": "RANK-1 de-risk seed-42 mechanism cross-check (captured from the smoke before the full 6-seed runner). onebrain (plain OneBrainComposer, BRAIN_COMPOSER_MERGE=0) vs the rf oracle, on 30 of the deployed scale787/day_33 facts (its real 788-word vocab + 788 grounded codes).",
+  "bundle": "bridges/developed/scale787/day_33",
+  "bundle_composer_kind": "rf",
+  "n_facts_in_bundle": 404,
+  "vocab": 788,
+  "grounded_codes": 788,
+  "seed": 42,
+  "sim_backend": "cupy",
+  "backend": "cupy",
+  "device": "cuda RTX 3090 (24GB)",
+  "subset_k": 30,
+  "onebrain_k_max": 32,
+  "onebrain_V_with_headroom": 916,
+  "recall": {"cues": 21, "rf_ok": 21, "ob_ok": 21, "agree": 21, "mismatches": 0,
+             "note": "onebrain recall EXACTLY matches the rf oracle on every cue -- the spiking unbind (local_reciprocal_unbind) + NEF/Izhikevich cleanup (enable_spiking_cleanup) decode identically where the facts FIT the co-resident buffer."},
+  "timing": {"rf_build_store_30facts_s": 128.8, "onebrain_build_s": 75.4, "onebrain_store_30facts_s": 0.4,
+             "per_query_s_at_30_facts": "~7-14 (resonate-and-fire per query; scales with co-resident count)"},
+  "note": "The authoritative 6-seed result (42/43/44/100/101/102) + abstain/moat + VRAM scaling is in _rank1_composer_bundle_onebrain_derisk.json (runner _rank1_composer_bundle_onebrain_derisk.py)."
+}
