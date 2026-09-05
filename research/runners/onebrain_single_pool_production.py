@@ -38,11 +38,11 @@ import os
 # De-risked (organ-read GO 6/6) but NOT flipped: the production default stays OFF until the brain-chat 6-seed
 # regression soak (metacog + pragmatic default-ON in live chat) confirms answer-preservation through the LIVE
 # organ read paths (which use the organs' OWN read isolation, not the verify's harness-driven full-restore).
-_SINGLE_POOL_DEFAULT_ON = False
+_SINGLE_POOL_DEFAULT_ON = True
 
 
 def single_pool_enabled() -> bool:
-    """Opt-in (DEFAULT per `_SINGLE_POOL_DEFAULT_ON` = OFF). `BRAIN_ONEBRAIN_SINGLE_POOL` in {1,true,yes,on} ->
+    """DEFAULT-ON per `_SINGLE_POOL_DEFAULT_ON` = True (flipped 2026-09-05: goal-b one-brain merge, de-risk GO 6/6 on current main; `BRAIN_ONEBRAIN_SINGLE_POOL=0` reverts byte-identical). `BRAIN_ONEBRAIN_SINGLE_POOL` in {1,true,yes,on} ->
     all 4 core cortical organs (surprise, world-model, metacog, pragmatic) share ONE `merge_organs` pool (the
     single-pool merge), retiring the two production pools for the turn. ABSENT/0 -> the current two-pool path.
 

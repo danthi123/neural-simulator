@@ -9,3 +9,4 @@ Board reconciled 2026-09-03 ~22:50: #205 CONFIRMED — linattn deployable spikin
 2026-09-05 overnight REAL reconcile: board #209 appended with wave-2 GOs (rank-8/10/16/23/2 + rank-11 already-shipped) + flip-campaign status; ROADMAP.md wave-2 entry added. Actual board updated via tools/vikunja.sh, not a bare marker.
 2026-09-05 overnight REAL reconcile: FIRST production-flip recorded on board #209 — rank-4 shared-salience → default-ON (3/3 GO). Actual board updated.
 2026-09-05 overnight REAL reconcile: rank-5 + rank-12 production-flips recorded on #209 (both GO 6/6; rank-20 covered by rank-4). Actual board updated.
+2026-09-05 overnight REAL reconcile: ONE-BRAIN MERGE flipped to production-default (goal b — 4 core organs on one shared pool, de-risk GO 6/6 on current main). Board #209 updated.
