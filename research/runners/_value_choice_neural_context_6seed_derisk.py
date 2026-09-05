@@ -102,6 +102,10 @@ from tools.lab import attributable_to  # noqa: E402
 # REUSE-BY-IMPORT (no sim/ edit, no duplicated flag logic): the SAME env-flag helpers rank-4's own de-risk uses.
 from research.runners._shared_salience_afferent_derisk import _clear_flags, _set_flags  # noqa: E402
 
+# A verdict must carry what earned it (tools/gates/verdict_preconditions.py): the four per-seed gates, checked
+# at the CONTROLLER level across all seeds, become the artifact's `preconditions` block.
+from tools.verdict import Verdict  # noqa: E402
+
 RAW_DIR = "research/findings/raw/_value_choice_neural_context"
 
 
@@ -298,9 +302,26 @@ def main():
             per_seed[str(s)]["wall_seconds"] = round(time.time() - t0, 2)
         n_pass = sum(1 for s in a.seeds if per_seed.get(str(s), {}).get("all_gates_pass"))
         n_seeds = len(a.seeds)
+        go = n_pass >= max(5, n_seeds - 1) and n_seeds >= 5
+        # THE PRECONDITIONS a GO/NO-GO here must carry (tools/verdict.py): each of the 4 per-seed gates,
+        # aggregated across every seed that actually returned a result (an error'd seed fails its own
+        # aggregate below rather than silently dropping out of the count).
+        ok_seeds = [str(s) for s in a.seeds if "error" not in per_seed.get(str(s), {"error": "missing"})]
+        v = Verdict("value_choice_neural_context_6seed", chance=None)
+        v.require("6_project_standard_seeds_requested", n_seeds, expect=lambda x: x >= 6,
+                  note="the project's own 42/43/44/100/101/102 standard")
+        v.require("no_worker_errored", len(ok_seeds), expect=n_seeds,
+                  note="every subprocess worker returned a RESULT_JSON, none crashed/timed out")
+        for gate in ("g_off_identical", "g_on_loadbearing", "g_matches_or_improves", "g_lesion_loadbearing"):
+            v.require(gate + "_all_seeds", sum(1 for s in ok_seeds if per_seed[s].get(gate)),
+                      expect=len(ok_seeds), note="count of seeds passing this gate, out of %d ok seeds" % len(ok_seeds))
+        # Verdict.decide() refuses GO (returns UNDEFINED instead) whenever any registered check is unmet or
+        # was never measured -- so `decided["status"]` is the AUTHORITATIVE verdict, not the bare `go` bool.
+        decided = v.decide(go, verbose=False)
         result = {"mode": "controller", "seeds": a.seeds, "n_seeds": n_seeds, "n_pass": n_pass,
-                  "verdict": "GO" if n_pass >= max(5, n_seeds - 1) and n_seeds >= 5 else "NO-GO",
-                  "all_seeds_pass": bool(n_pass == n_seeds), "per_seed": per_seed}
+                  "verdict": decided["status"],
+                  "all_seeds_pass": bool(n_pass == n_seeds), "preconditions": decided["preconditions"],
+                  "undefined_reasons": decided["undefined_reasons"], "per_seed": per_seed}
     elif a.seed is not None:
         result = run_seed(a.seed, value_train_trials=a.value_train_trials)
         print("RESULT_JSON:" + json.dumps(result))
