@@ -31,6 +31,18 @@ For each seed it exercises the SAME organ the handler calls (`webapp.gnw_global_
 This is the NO-REGRESSION / stability soak, the load-bearing evidence (not a headline): the lesion arm proves the
 clearing is carried by the SPIKING depression of the shared recurrence at every seed, not a re-hidden host `if`.
 
+FIXTURE FIX (2026-09-05, found by the rank-12 ACC/BG STOP-trigger production-flip verify). The `swap_only` COUPLING
+fixture originally set `swapped=True` with NO `mm_peak` at all -- harmless while `detect_trigger` was a host
+`n_ignited>=2 or swapped` (mm_peak was never read), but STALE once `BRAIN_GNW_STOP_TRIGGER_SPIKING` flipped
+default-ON: the spiking circuit reads `mm_peak` as its OWN synaptic afferent, and a `swap_drives` dict with `swapped`
+set but `mm_peak` absent reads as `mm_peak=0.0` -> `detect_trigger_spiking`'s "nothing to read" bail-out fires ->
+no trigger. Traced end-to-end (`webapp/gnw_thought_swap.py::ThoughtSwapWorkspace.observe` / `run_intention_swap`'s
+own `swapped` computation, `webapp/swap_drives_chat.py::observe_turn`): a genuine `swapped=True` is CAUSALLY
+downstream of an elevated `mm_peak` (the boost driving the eviction IS `boost_gain * mm_rate`) and is ALWAYS
+returned alongside a real `mm_peak` float in production -- `swapped=True` with `mm_peak` absent is unreachable from
+`/api/brain-chat`, confirmed by code trace, not merely by not having seen it. The fixture now carries a realistic
+mismatch-level `mm_peak` (matching the de-risk's own real "mismatch" scenario magnitude, `_gnw_acc_bg_stop_trigger_derisk.get_real_mm_peak`), so this soak exercises the SAME afferent SHAPE production actually produces.
+
 Run (CPU cheap-first; EXPORT OMP/OPENBLAS/MKL=4):
     SIM_BACKEND=numpy python -u -m research.runners._gnw_global_stop_flip_soak \
         --seeds 42 43 44 100 101 102 --json research/findings/raw/_gnw_global_stop_flip_soak.json
@@ -49,18 +61,27 @@ from tools.verdict import Verdict
 
 DEFAULT_SEEDS = [42, 43, 44, 100, 101, 102]
 
+# a real "mismatch" mm_peak sits ~0.28-0.31 across seeds (research/runners/_gnw_acc_bg_stop_trigger_derisk.py's own
+# get_real_mm_peak); this fixture uses a fixed representative value rather than reuse-by-import so this file's own
+# COUPLING fixture stays the minimal, self-contained hand-built chat it always was (no new cross-module dependency).
+_REALISTIC_MISMATCH_MM_PEAK = 0.30
+
 
 class _FakeChat:
     """A minimal host-scaffold chat carrying only the per-turn spiking reads the stop consumer inspects."""
     pass
 
 
-def _chat(delib_n=None, swapped=False, topic=None):
+def _chat(delib_n=None, swapped=False, topic=None, mm_peak=None):
     c = _FakeChat()
     if delib_n is not None:
         c._last_gnw_delib = {"n_ignited": delib_n, "decision": "ABSTAIN"}
     if swapped:
-        c._last_swap_drives = {"swapped": True, "new_topic": topic, "held_topic": topic}
+        # a genuine swapped=True is CAUSALLY downstream of an elevated mm_peak in production (see the fixture-fix
+        # note above) -- default to a realistic mismatch-level value so this fixture matches production's shape
+        # instead of a `swapped` boolean production never actually delivers unaccompanied.
+        c._last_swap_drives = {"swapped": True, "new_topic": topic, "held_topic": topic,
+                               "mm_peak": float(mm_peak) if mm_peak is not None else _REALISTIC_MISMATCH_MM_PEAK}
     return c
 
 

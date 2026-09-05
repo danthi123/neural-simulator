@@ -1,21 +1,24 @@
-"""GNW STOP-TRIGGER ACC/BG circuit -- the default-OFF production hook for `webapp/gnw_global_stop.py`'s
-`detect_trigger` (scaffold-retirement-backlog rank-12, `research/coordination/scaffold_retirement_backlog.md`).
+"""GNW STOP-TRIGGER ACC/BG circuit -- the DEFAULT-ON (2026-09-05 production-flip) production hook for
+`webapp/gnw_global_stop.py`'s `detect_trigger` (scaffold-retirement-backlog rank-12,
+`research/coordination/scaffold_retirement_backlog.md`).
 
 WHAT THIS IS. `research/runners/_gnw_acc_bg_stop_trigger_derisk.py` builds + de-risks (6/6 seeds GO) a small
 feedforward ACC/BG hyperdirect circuit (two afferent relay pools -> ACC -> STN -> GPi) that reads the SAME two
 conflict/mismatch afferents `gnw_global_stop.detect_trigger` already reads (`n_ignited` off `chat._last_gnw_delib`,
 `mm_peak` off `chat._last_swap_drives`) DIRECTLY AS SYNAPTIC INPUT, and DECIDES the STOP trigger by spiking
 integration (GPi's own late-window firing rate crossing a fixed threshold) instead of a host
-`n_ignited >= 2 or swapped`. This module is the thin, additive, DEFAULT-OFF production glue that makes that de-risked
-circuit reachable from `detect_trigger` -- reuse-by-import, NO rebuild of the circuit or the afferents themselves.
+`n_ignited >= 2 or swapped`. This module is the thin, additive production glue that makes that de-risked circuit
+reachable from `detect_trigger` -- reuse-by-import, NO rebuild of the circuit or the afferents themselves.
 
-CONTRACT (additive, DEFAULT-OFF, byte-identical-off; mirrors the `gnw_global_stop`/`swap_drives_chat` pattern).
-  * `stop_trigger_spiking_enabled()` gates the whole thing. `BRAIN_GNW_STOP_TRIGGER_SPIKING` unset/0/false/off/no
-    (DEFAULT) -> `gnw_global_stop.detect_trigger` runs its ORIGINAL, UNCHANGED host boolean-OR -- this module is
-    never imported into that code path, so the default turn is provably byte-identical (`git diff` shows the branch,
-    not a rewrite). An explicit 1/true/on/yes -> `detect_trigger` delegates entirely to `detect_trigger_spiking`
+CONTRACT (additive, DEFAULT-ON, byte-identical-off; mirrors the `gnw_global_stop`/`swap_drives_chat` pattern).
+  * `stop_trigger_spiking_enabled()` gates the whole thing. `BRAIN_GNW_STOP_TRIGGER_SPIKING` unset (DEFAULT, since
+    the 2026-09-05 production-flip verify GO) -> `detect_trigger` delegates entirely to `detect_trigger_spiking`
     below for the BOOLEAN decision only; `n_held`/`newcomer` (which content to clear / how to label it -- host
-    bookkeeping, not the retired decision) are computed identically either way.
+    bookkeeping, not the retired decision) are computed identically either way. An explicit falsy
+    (0/false/off/no/'') -> `gnw_global_stop.detect_trigger` runs its ORIGINAL, UNCHANGED host boolean-OR -- this
+    module is never imported into that code path, so the opt-out turn is provably byte-identical to the pre-flip
+    logic (`git diff` shows the branch, not a rewrite; verified in the data by
+    `research/runners/_gnw_stop_trigger_production_flip_verify.py`, 6/6 seeds).
   * `stop_trigger_lesion_on()` -- `BRAIN_GNW_STOP_TRIGGER_LESION` truthy zeroes BOTH afferent->ACC synapses (the
     de-risk's OWN `afferent_lesion` lever): the circuit's ACC/STN/GPi chain survives but receives no afferent drive
     at all, so it can NEVER trigger regardless of the real (n_ignited, mm_peak) read -- the load-bearing proof,
@@ -36,8 +39,13 @@ HONEST RESIDUALS (named, not claimed closed; inherited from the de-risk).
      #1). What is retired is the COMBINATION (the OR), not this step.
   2. The GPi-rate->boolean read-out threshold is a fixed host constant, the same class of read-out every spiking
      decision in this codebase uses.
-  3. DEFAULT-OFF: this is a reversible, additive hook. The parent decides whether/when to flip
-     `BRAIN_GNW_STOP_TRIGGER_SPIKING` on, per this codebase's standing de-risk -> flip-soak -> flip sequence.
+  3. The host boolean-OR is NOT deleted -- it remains as an exception-only safety fallback (`except Exception: pass`
+     in `detect_trigger`, the same "never crash a turn" idiom every sibling consumer in this file family uses): on
+     any turn where the circuit builds without error (the normal case) it never executes, but it is not literally
+     gone from the source. Named honestly rather than claimed as a clean scaffold-retirement.
+  4. DEFAULT-ON (2026-09-05): this remains a reversible, additive hook -- the explicit-falsy escape hatch is
+     verified byte-identical to the pre-flip logic on every seed
+     (`research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-PRODUCTION-FLIP-GO.md`).
 """
 from __future__ import annotations
 
@@ -59,10 +67,14 @@ _LOCK = threading.Lock()
 
 
 def stop_trigger_spiking_enabled() -> bool:
-    """The master flag. `BRAIN_GNW_STOP_TRIGGER_SPIKING` DEFAULT-OFF: unset/0/false/off/no -> False (
-    `gnw_global_stop.detect_trigger` runs its original host boolean-OR, untouched). An explicit 1/true/on/yes ->
-    True (delegate to the spiking ACC/BG circuit for the boolean decision)."""
-    return os.environ.get("BRAIN_GNW_STOP_TRIGGER_SPIKING", "0").strip().lower() in ("1", "true", "on", "yes")
+    """The master flag. `BRAIN_GNW_STOP_TRIGGER_SPIKING` DEFAULT-ON (2026-09-05 production-flip, verified GO —
+    `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-PRODUCTION-FLIP-GO.md`): unset -> True (delegate
+    to the de-risked spiking ACC/BG circuit for the boolean decision). An explicit falsy (0/false/off/no/'') ->
+    False (`gnw_global_stop.detect_trigger` runs its original, unmodified host boolean-OR) — the escape hatch,
+    verified byte-identical to the pre-flip logic on every seed. Mirrors `gnw_global_stop.stop_enabled()`'s own
+    default-ON style (that flag's 2026-08-26 flip) exactly, per this module's own CONTRACT note above."""
+    v = os.environ.get("BRAIN_GNW_STOP_TRIGGER_SPIKING")
+    return not (v is not None and v.strip().lower() in ("0", "false", "off", "no", ""))
 
 
 def stop_trigger_lesion_on() -> bool:

@@ -87,3 +87,17 @@ being re-verified.
   (`webapp/gnw_global_stop.detect_trigger` behind `BRAIN_GNW_STOP_TRIGGER_SPIKING`, default-off) is byte-identical
   when off. See `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-derisk-GO.md`. NOT flipped default-on
   (owner call); the STOP *clear* itself is unchanged (still the distributed-overwrite workspace's own depression).
+- **Rank 12 — PRODUCTION-FLIP VERIFIED GO, 2026-09-05 (branch `worktree-wf_5ba45863-4fb-2`, not yet merged).**
+  `BRAIN_GNW_STOP_TRIGGER_SPIKING` flipped default-ON: 6/6-seed no-regression (opt-out byte-identical, bare-unset
+  == explicit-on, the SIBLING gnw-global-stop STOP-clear flip-soak re-run GO underneath the new default) + 6/6-seed
+  load-bearing/anti-hollow through `observe_turn`'s own `acted` surface (both afferents independently flip it
+  OFF→ON, afferent-lesion drives `n_hollow` to 0/12 on every seed, attribution 1.0). Two real bugs found en route,
+  and an adversarial A/B on which one actually mattered: a stale swap-only test fixture in
+  `_gnw_global_stop_flip_soak.py` (`swapped=True` with no `mm_peak`, a combination traced + confirmed UNREACHABLE
+  from production) was the SOLE, COMPLETE cause of the observed sibling-soak regression (fixed; reverting the
+  OTHER fix alone still reproduces 6/6 GO); a genuine but non-causal RNG-isolation gap (the circuit's stdlib
+  `random` state, missed by the `np.random`-only `_isolated()` pattern, leaking past the caller) was found first,
+  fixed anyway on its own merits, then proven NOT load-bearing for this symptom. See
+  `research/findings/2026-09-05-gnw-stop-trigger-accbg-circuit-PRODUCTION-FLIP-GO.md`. Ledger
+  (`docs/PRODUCTION_INTEGRATION_LEDGER.yaml` `gnw-global-stop` row) intentionally left untouched — that reconcile is
+  the controller's job at merge time, per this campaign's division of labor.

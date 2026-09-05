@@ -76,8 +76,11 @@ def _original_host_boolean_or(chat):
 
 
 def evaluate_seed(seed: int, *, verbose: bool = True) -> dict:
-    os.environ.pop("BRAIN_GNW_STOP_TRIGGER_SPIKING", None)
-    os.environ.pop("BRAIN_GNW_STOP_TRIGGER_LESION", None)
+    # OFF-ARM DISCIPLINE (2026-08-27 flip-soak-off-arm-staleness class, gates/flip_offarm_staleness): the flag's
+    # own default flipped ON 2026-09-05 -- an unset/pop OFF arm would now silently read ON (a vacuous ON-vs-ON
+    # compare). Force it explicitly, never pop the SPIKING flag itself.
+    os.environ["BRAIN_GNW_STOP_TRIGGER_SPIKING"] = "0"
+    os.environ.pop("BRAIN_GNW_STOP_TRIGGER_LESION", None)   # a *_LESION flag: unset correctly means "not lesioned"
 
     fixtures = {
         "delib_conflict": _chat(delib_n=2, mm_peak=0.02),

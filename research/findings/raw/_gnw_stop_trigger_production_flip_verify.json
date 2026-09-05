@@ -1,0 +1,930 @@
+{
+  "runner": "_gnw_stop_trigger_production_flip_verify",
+  "verdict": "GO",
+  "flip_go": true,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "the flag's default genuinely resolves ON when unset (asserted in the data), all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "explicit opt-out (=0) still reproduces the frozen original host boolean-OR byte-for-byte, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "bare-unset default byte-identical to explicit ON on real afferents, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the SIBLING gnw-global-stop STOP-clear flip-soak (default-ON since 2026-08-26) stays GO underneath this flip, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "n_ignited afferent ALONE varies the observable gnw_stop key-attachment (OFF->ON), all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "mm_peak afferent ALONE varies the observable gnw_stop key-attachment (OFF->ON), all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "afferent->ACC LESION makes n_hollow==0: the SAME input variation NEVER attaches gnw_stop, all seeds",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "regression_battery",
+      "why": "--no-battery smoke run: the one-shot cross-faculty check was skipped"
+    }
+  ],
+  "undefined_reasons": [],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "flag": "BRAIN_GNW_STOP_TRIGGER_SPIKING",
+  "lesion_flag": "BRAIN_GNW_STOP_TRIGGER_LESION",
+  "arm1_per_seed": [
+    {
+      "seed": 42,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 43,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 44,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 100,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 101,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    },
+    {
+      "seed": 102,
+      "arm1_ok": true,
+      "flip_is_on_when_unset": true,
+      "off_arm_byte_identical": true,
+      "off_matches": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_matches_explicit_on": {
+        "delib_conflict": true,
+        "swap_only": true,
+        "no_trigger": true
+      },
+      "default_is_audited_on": true,
+      "sibling_gnw_global_stop_flip_soak_go": true,
+      "sibling_gates": {
+        "clean_stop": true,
+        "lesion_holds": true,
+        "lead_present_on_stop": true,
+        "lead_vanishes_on_lesion": true,
+        "no_trigger_byte_identical": true,
+        "determinism": true
+      }
+    }
+  ],
+  "arm2_per_seed": [
+    {
+      "seed": 42,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.06666666666666667,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.06666666666666667,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.06666666666666667,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.18611111111111112,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.3055555555555556,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.06666666666666667,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.18611111111111112,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.3055555555555556,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    },
+    {
+      "seed": 43,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.044444444444444446,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.044444444444444446,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.044444444444444446,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.16944444444444445,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.29444444444444445,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.044444444444444446,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.16944444444444445,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.29444444444444445,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    },
+    {
+      "seed": 44,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.0,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.0,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.0,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.1388888888888889,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.2777777777777778,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.0,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.1388888888888889,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.2777777777777778,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    },
+    {
+      "seed": 100,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.022222222222222223,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.022222222222222223,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.022222222222222223,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.1611111111111111,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.3,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.022222222222222223,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.1611111111111111,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.3,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    },
+    {
+      "seed": 101,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.016666666666666666,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.016666666666666666,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.016666666666666666,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.15277777777777776,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.28888888888888886,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.016666666666666666,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.15277777777777776,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.28888888888888886,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    },
+    {
+      "seed": 102,
+      "arm2_ok": true,
+      "intact_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.05555555555555555,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.05555555555555555,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.05555555555555555,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "intact_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.16666666666666669,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.2777777777777778,
+          "acted": true,
+          "reason": "spiking_accbg",
+          "lead": "Setting the held thread aside \u2014 "
+        }
+      ],
+      "lesioned_delib_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 2,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 3,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 4,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "lesioned_mm_sweep": [
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.05555555555555555,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.16666666666666669,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        },
+        {
+          "n_ignited": 1,
+          "mm_peak": 0.2777777777777778,
+          "acted": false,
+          "reason": null,
+          "lead": ""
+        }
+      ],
+      "delib_varies": true,
+      "mm_varies": true,
+      "lesion_kills_delib_variation": true,
+      "lesion_kills_mm_variation": true,
+      "n_hollow": 0,
+      "attribution": 1.0
+    }
+  ],
+  "regression_battery": null
+}

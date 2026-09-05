@@ -237,12 +237,29 @@ def detect_trigger(chat):
     Python, even though each operand is itself a genuine spiking read-out of another organ. A de-risked (6/6 seeds
     GO) spiking ACC/BG hyperdirect circuit reads the SAME two afferents (`n_ignited`, the swap detector's `mm_peak`
     mismatch-population firing) directly as synaptic input and decides the trigger via spiking integration instead
-    -- see `research/runners/_gnw_acc_bg_stop_trigger_derisk.py`. DEFAULT-OFF (`BRAIN_GNW_STOP_TRIGGER_SPIKING`):
-    when unset, EVERYTHING below this point is UNCHANGED (byte-identical) -- the branch is additive, not a rewrite."""
+    -- see `research/runners/_gnw_acc_bg_stop_trigger_derisk.py`. DEFAULT-ON since the 2026-09-05 production-flip
+    (`BRAIN_GNW_STOP_TRIGGER_SPIKING`); an explicit falsy leaves EVERYTHING below this point UNCHANGED
+    (byte-identical) -- the branch is additive, not a rewrite.
+
+    STDLIB-RANDOM ISOLATION (2026-09-05 production-flip verify caught this): `_accbg`'s own `_isolated()` wrapper
+    snapshots/restores `np.random`/`xp.random` around the circuit's build+step (the #77/#85 footgun, inherited) but
+    NEVER touched Python's stdlib `random` module -- and the FIRST-import of `_accbg` (which transitively imports
+    `research.runners._gnw_acc_bg_stop_trigger_derisk` -> `sim`/`webapp.gnw_deliberation`/`webapp.gnw_thought_swap`)
+    happens INSIDE this function, before `_accbg`'s own isolation wrapper is ever entered, so no wrapper inside that
+    module could have contained it. Measured effect (`_gnw_stop_trigger_production_flip_verify.py`): this leak
+    deterministically flipped the ALREADY-SHIPPED (2026-08-26) STOP-*clear* workspace's own clean-stop outcome at
+    seed 42 (`_gnw_global_stop_flip_soak.py`'s coupling check, re-run after this flip: 2/2 fresh-process runs
+    reproduced the flip 100% of the time). Wrapping the WHOLE delegation (import + call) below in a stdlib-random
+    snapshot/restore closes it at its actual source -- the caller, not a callee that cannot see its own import."""
     try:
-        from webapp import gnw_acc_bg_stop_trigger as _accbg
-        if _accbg.stop_trigger_spiking_enabled():
-            return _accbg.detect_trigger_spiking(chat)
+        import random as _random
+        _host_random_state = _random.getstate()
+        try:
+            from webapp import gnw_acc_bg_stop_trigger as _accbg
+            if _accbg.stop_trigger_spiking_enabled():
+                return _accbg.detect_trigger_spiking(chat)
+        finally:
+            _random.setstate(_host_random_state)
     except Exception:
         pass   # any import/circuit error -> fall through to the original host boolean-OR (never crash a turn)
 
