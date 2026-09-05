@@ -49,9 +49,22 @@ template bank (OWNER-SANCTIONED Broca scaffold · deprioritized) · 22 curiosity
 (LOW/dormant · partial) · 23 vision cluster host (LOW/no live consumer · mixed) · 24 off-path/dormant/doc tail
 (LOW · flip-ready to fresh).
 
+## RANK 7 UPDATE (2026-09-05) — gate-half attempted a SECOND time, still failed, now with a sharper diagnosis
+A second, mechanistically-independent gate-retirement attempt (arousal co-gate, habituation/frequency
+exclusion, cross-resample stability, neighbor affect-purity, plus the strongest 2-way combination — none a
+re-threshold of the refuted learned-magnitude lever) was calibrated + validated jointly across the full corpus
+and 6 bootstrap resamples. Best achieved: 29.4% worst-case recall at zero false positives (below the 50%
+usability bar) — see `research/findings/2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md`.
+Diagnosis sharpened from "unseparable by any threshold" to a REGISTER confound: every candidate reads the SAME
+co-occurrence graph, and TinyStories' narrative voice frames ordinary actions/settings inside emotionally-
+resolved scenes about as consistently as it uses real emotion words, so no statistic of that graph separates
+them. Removed from "ready to build now" below (two independent misses is not a quick win); the standing
+surpass is the fully-spiking experience-bound opponent V+/V- appraisal population (D1's own named next rung),
+not a further statistic of the text co-occurrence graph. Production `_STRONG_MARGIN` threshold UNCHANGED.
+
 ## READY TO BUILD NOW (build-ahead wave-2 fodder)
 Rank-1 bundle-rebuild de-risk · Rank-2 integrated_loop thread + re-verify · Rank-5 appraisal-via-interocept (the
-readiest) · Rank-4 shared-afferent wiring · Rank-7 learned-affect-GATE · Rank-3 Touchpoint-A hardening (full
+readiest) · Rank-4 shared-afferent wiring · Rank-3 Touchpoint-A hardening (full
 battery + punctuation fix) · Rank-20 worldmodel-state WTA · Rank-23 vision compose (dormant, idle-compute) ·
 Rank-24 quick flips packaged (d5 depth_hold direct-read etc.) · Rank-15 self-schema neural-turn-class.
 

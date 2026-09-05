@@ -1,0 +1,226 @@
+{
+  "probe": "affect_learned_gate_derisk (attempt 2, retry of the 2026-08-12 D1 gate-half failure)",
+  "verdict": "BOUNDARY (6-seed, build-informative) -- tested 4 mechanistically-distinct candidate gates (arousal co-activation, habituation/frequency exclusion, cross-resample stability, neighbor affect-purity) plus the strongest 2-way combination, ALL calibrated then VALIDATED jointly across the full corpus + 6 independent 80%-bootstrap resamples (not just single-corpus fit -- a purity+magnitude config that looked FP=0 on the full corpus + 5/6 seeds failed at seed 42 during development, exactly the overfit the joint check exists to catch). BEST achieved: D_plus_B_combined at recall=0.294 (i.e. ~71% of genuinely affect-bearing words would be MISSED) -- below the 0.5 usability bar. The NAIVE negative control (thresholding the SAME learned-value magnitude DR-2 already computes) reproduces the named 2026-08-12 D1 failure quantitatively: no (Tv) achieves FP=0 at all, jointly across the full corpus + all seeds -- even giving up almost all recall does not buy back the neutral default. DIAGNOSIS: every candidate is a downstream read of the SAME co-occurrence/propagation graph, so all of them move TOGETHER on the confounded words (new/day/old/sit/look/cat/night/moon/garden/wonder score high on learned-magnitude, purity, AND frequency alike) -- this is a REGISTER confound (TinyStories frames ordinary actions inside emotionally-resolved scenes about as consistently as it uses real emotion words), not a threshold-tuning gap. Matches a documented limitation of label-propagation sentiment lexicons needing machinery beyond the propagated score to carry a neutral class (Hamilton, Clark, Leskovec & Jurafsky, EMNLP 2016, https://nlp.stanford.edu/pubs/hamilton2016inducing.pdf). The fixed Warriner threshold in affect_production_organ.py / wkv_mouth_generator.py is UNCHANGED (this file wires nothing).",
+  "GO": false,
+  "best_candidate": "D_plus_B_combined",
+  "best_worst_case_recall": 0.29411764705882354,
+  "recall_go_bar": 0.5,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "at least one candidate achieves joint FP=0 (full corpus + 6 resamples)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "best candidate recall vs the NAIVE/no-working-baseline floor",
+      "ok": true,
+      "detail": "0.294118 vs floor 0",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "NO-GO",
+  "verdict_undefined_reasons": [],
+  "results": {
+    "NAIVE_negative_control": null,
+    "A_arousal": {
+      "worst_case_recall": 0.00980392156862745,
+      "params": {
+        "Tv": 3.25,
+        "Ta": 1.25
+      },
+      "full_corpus_recall": 0.0196078431372549,
+      "per_seed": {
+        "42": {
+          "fp": 0,
+          "recall": 0.0196,
+          "tp": 2
+        },
+        "43": {
+          "fp": 0,
+          "recall": 0.0098,
+          "tp": 1
+        },
+        "44": {
+          "fp": 0,
+          "recall": 0.0196,
+          "tp": 2
+        },
+        "100": {
+          "fp": 0,
+          "recall": 0.0098,
+          "tp": 1
+        },
+        "101": {
+          "fp": 0,
+          "recall": 0.0196,
+          "tp": 2
+        },
+        "102": {
+          "fp": 0,
+          "recall": 0.0294,
+          "tp": 3
+        }
+      }
+    },
+    "B_habituation_freq": {
+      "worst_case_recall": 0.14705882352941177,
+      "params": {
+        "Tv": 2.8999999999999995,
+        "Fpct": 50
+      },
+      "full_corpus_recall": 0.16666666666666666,
+      "per_seed": {
+        "42": {
+          "fp": 0,
+          "recall": 0.2059,
+          "tp": 21
+        },
+        "43": {
+          "fp": 0,
+          "recall": 0.1863,
+          "tp": 19
+        },
+        "44": {
+          "fp": 0,
+          "recall": 0.1961,
+          "tp": 20
+        },
+        "100": {
+          "fp": 0,
+          "recall": 0.1471,
+          "tp": 15
+        },
+        "101": {
+          "fp": 0,
+          "recall": 0.1863,
+          "tp": 19
+        },
+        "102": {
+          "fp": 0,
+          "recall": 0.1961,
+          "tp": 20
+        }
+      }
+    },
+    "C_stability": {
+      "worst_case_recall": 0.0196078431372549,
+      "params": {
+        "Tv": 3.9,
+        "Sceil": 0.2,
+        "Afloor": 0.6
+      },
+      "full_corpus_recall": 0.0196078431372549,
+      "per_seed": {
+        "note": "6-resample ensemble already collapsed into mean/std/sign_agree above; tp=2"
+      }
+    },
+    "D_neighbor_purity": {
+      "worst_case_recall": 0.14705882352941177,
+      "params": {
+        "Tv": 1.4999999999999998,
+        "Pfloor": 0.8599999999999997
+      },
+      "full_corpus_recall": 0.16666666666666666,
+      "per_seed": {
+        "42": {
+          "fp": 0,
+          "recall": 0.1569,
+          "tp": 16
+        },
+        "43": {
+          "fp": 0,
+          "recall": 0.1471,
+          "tp": 15
+        },
+        "44": {
+          "fp": 0,
+          "recall": 0.1667,
+          "tp": 17
+        },
+        "100": {
+          "fp": 0,
+          "recall": 0.1765,
+          "tp": 18
+        },
+        "101": {
+          "fp": 0,
+          "recall": 0.1667,
+          "tp": 17
+        },
+        "102": {
+          "fp": 0,
+          "recall": 0.1471,
+          "tp": 15
+        }
+      }
+    },
+    "D_plus_B_combined": {
+      "worst_case_recall": 0.29411764705882354,
+      "params": {
+        "Tv": 2.6999999999999993,
+        "Pfloor": 0.6499999999999999,
+        "Fpct": 80
+      },
+      "full_corpus_recall": 0.3235294117647059,
+      "per_seed": {
+        "42": {
+          "fp": 0,
+          "recall": 0.3333,
+          "tp": 34
+        },
+        "43": {
+          "fp": 0,
+          "recall": 0.2941,
+          "tp": 30
+        },
+        "44": {
+          "fp": 0,
+          "recall": 0.3137,
+          "tp": 32
+        },
+        "100": {
+          "fp": 0,
+          "recall": 0.3039,
+          "tp": 31
+        },
+        "101": {
+          "fp": 0,
+          "recall": 0.3235,
+          "tp": 33
+        },
+        "102": {
+          "fp": 0,
+          "recall": 0.3137,
+          "tp": 32
+        }
+      }
+    }
+  },
+  "n_pos_raw_gated": 102,
+  "n_neg_raw_excluded": 62,
+  "n_common_vocab": 164,
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "resample_frac": 0.8,
+    "n_hub": 500,
+    "window": 4,
+    "min_count": 5,
+    "knn": 12,
+    "n_hops": 2
+  },
+  "external_source": "Hamilton, Clark, Leskovec, Jurafsky (EMNLP 2016) -- SentProp label-propagation sentiment lexicons, https://nlp.stanford.edu/pubs/hamilton2016inducing.pdf",
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; this is a standalone research probe (reuse-by-import only).",
+  "elapsed_seconds": 11.1
+}

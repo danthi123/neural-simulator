@@ -1,0 +1,26 @@
+{
+ "run_id": "1788588345-3703326",
+ "runner": "research/runners/_affect_learned_gate_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-a8617a588c8692df4/research/runners/_affect_learned_gate_derisk.py"
+ ],
+ "git_sha": "947d0fa79",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T02:05:45",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1796.8,
+ "corpus_check_query": "learned affect gate neutral default",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affect_learned_gate_derisk.json"
+}
