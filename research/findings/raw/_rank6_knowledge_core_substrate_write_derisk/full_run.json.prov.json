@@ -1,0 +1,43 @@
+{
+ "run_id": "1788596199-3888042",
+ "runner": "research/runners/_rank6_knowledge_core_substrate_write_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.claude/worktrees/agent-afa5647d71808aa9f/research/runners/_rank6_knowledge_core_substrate_write_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-stored",
+  "240",
+  "--n-moat",
+  "40",
+  "--cost-points",
+  "500",
+  "2000",
+  "8000",
+  "--out",
+  "research/findings/raw/_rank6_knowledge_core_substrate_write_derisk/full_run.json"
+ ],
+ "git_sha": "ff19d5212",
+ "git_dirty": true,
+ "source_kind": null,
+ "source_manifest_sha256": null,
+ "source_manifest_verified_at_start": null,
+ "source_manifest_start_error": null,
+ "source_manifest_verified_at_exit": null,
+ "source_manifest_exit_error": null,
+ "started": "2026-09-05T04:16:39",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3440.0,
+ "corpus_check_query": "78k fact core host write brain-based provenance",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_rank6_knowledge_core_substrate_write_derisk/full_run.json"
+}
