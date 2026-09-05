@@ -1,0 +1,87 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "/home/dant123/Projects/sim/data/corpus/wikitext103.txt",
+  "seeds": [
+    43
+  ],
+  "d_model": 192,
+  "pred_aux_weight": 0.0,
+  "pred_aux_offsets": [
+    2
+  ],
+  "per_seed": {
+    "43": {
+      "V": 8001,
+      "n_train": 1781187,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 4000,
+          "wkv": 5.379,
+          "bigram": 5.302,
+          "trigram": 6.478,
+          "wkv_perm": 8.525,
+          "wkv_memoryless": 5.379,
+          "margin_vs_trigram": 1.098,
+          "margin_vs_bigram": -0.078
+        },
+        "2": {
+          "n": 4000,
+          "wkv": 4.89,
+          "bigram": 5.278,
+          "trigram": 4.392,
+          "wkv_perm": 8.639,
+          "wkv_memoryless": 5.595,
+          "margin_vs_trigram": -0.498,
+          "margin_vs_bigram": 0.389
+        },
+        "3": {
+          "n": 4000,
+          "wkv": 4.745,
+          "bigram": 5.285,
+          "trigram": 4.342,
+          "wkv_perm": 8.745,
+          "wkv_memoryless": 5.649,
+          "margin_vs_trigram": -0.403,
+          "margin_vs_bigram": 0.541
+        },
+        "4-5": {
+          "n": 8000,
+          "wkv": 4.856,
+          "bigram": 5.374,
+          "trigram": 4.504,
+          "wkv_perm": 8.647,
+          "wkv_memoryless": 5.717,
+          "margin_vs_trigram": -0.352,
+          "margin_vs_bigram": 0.518
+        },
+        "6-9": {
+          "n": 16000,
+          "wkv": 4.791,
+          "bigram": 5.35,
+          "trigram": 4.462,
+          "wkv_perm": 8.714,
+          "wkv_memoryless": 5.691,
+          "margin_vs_trigram": -0.329,
+          "margin_vs_bigram": 0.559
+        },
+        "10-99": {
+          "n": 183709,
+          "wkv": 4.714,
+          "bigram": 5.361,
+          "trigram": 4.463,
+          "wkv_perm": 8.723,
+          "wkv_memoryless": 5.702,
+          "margin_vs_trigram": -0.251,
+          "margin_vs_bigram": 0.647
+        }
+      }
+    }
+  },
+  "elapsed_s": 11921.3
+}
