@@ -167,8 +167,26 @@ class TestGeneratorLabelMatchesProducerViaAnswerTurn:
         # internal branch produced it (see `generate()`'s own final two lines). `raw` is therefore genuinely
         # sentence-initial-capitalized in production; `expected_surface`'s fixture predates truecase and must be
         # compared through the SAME pass, not hand-recapitalized here.
-        assert res["raw"] == WKV._truecase(exp)
-        assert res["answer"] == res["raw"], "a moat-safe single fact clause must survive post_filter whole"
+        # 2026-09-04 Touchpoint-A Stage-2 prose fix: `render_fact_sentence` now appends sentence-final "." (see
+        # its own docstring) so `RichAnswerComposer.render_paragraph`'s join doesn't run consecutive fact-clause
+        # sentences together -- `expected_surface` is a pure ground-truth token-composer (used elsewhere for a
+        # whitespace-token-level structural check) and deliberately does NOT grow that terminator, so the two
+        # are compared with it appended on this side.
+        assert res["raw"] == WKV._truecase(exp) + "."
+        # 2026-09-04: a SEPARATE, pre-existing mechanism this prose fix newly exposes (not something it changes).
+        # `OEC.post_filter`'s known-topic branch rejoins via `_sentences()`
+        # (research/runners/_open_ended_state_driven_generation_derisk.py: `re.split(r"[.!?]+", text)`), which
+        # discards the matched delimiter for EVERY sentence of EVERY known-topic reply on this `BRAIN_OPEN_ENDED`
+        # surface, by construction -- unrelated to `render_fact_sentence`/`RichAnswerComposer.render_paragraph`
+        # (the Touchpoint-A surface this prose fix targets, research/coordination/build_ahead_ready.md, which
+        # never calls `post_filter` at all). Before this fix `raw` carried no sentence punctuation, so the
+        # round-trip was accidentally byte-identical; now that `render_fact_sentence` correctly appends a
+        # trailing ".", `post_filter`'s pre-existing punctuation-agnostic rejoin is visible here for the first
+        # time. The fact clause's CONTENT still survives whole -- only the sentence-final punctuation
+        # `_sentences` structurally cannot round-trip does not.
+        assert res["answer"] == res["raw"].rstrip(".!?"), \
+            "a moat-safe single fact clause must survive post_filter whole (modulo post_filter's own, unrelated" \
+            " punctuation-stripping _sentences() rejoin)"
 
     def test_vocab_scope_in_vocab_covered_relation_traces_spiking_clause(self, clean_env, tmp_path):
         """The SAME bug, under the DEFAULT scope='vocab': when the message ALSO happens to pass the narrow
@@ -302,7 +320,8 @@ class TestGenerateTraceParameterDirect:
         # 2026-09-04: same pre-existing, flip-UNRELATED truecase interaction as
         # TestGeneratorLabelMatchesProducerViaAnswerTurn.test_broad_scope_covered_relation_traces_spiking_clause
         # above (confirmed via git-stash baseline) -- generate()'s default-ON output truecase pass applies here too.
-        assert text == WKV._truecase(exp)
+        # 2026-09-04 Touchpoint-A Stage-2 prose fix: same trailing-"." delta as that test -- see its comment.
+        assert text == WKV._truecase(exp) + "."
 
     def test_trace_records_false_when_sentence_facts_uncovered_or_absent(self):
         uncovered_triple = (_IN_VOCAB_TOPIC, _UNCOVERED_ACTION, "something")

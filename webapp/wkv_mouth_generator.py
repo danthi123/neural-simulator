@@ -670,13 +670,18 @@ def render_fact_sentence(facts, seed: int = 42) -> str | None:
     `webapp.open_ended_chat.retrieve` returns) as a coherent factual clause, via the merged board #112 rung-3
     lexicon (`RELATION_LEXICON` + `slug_to_np`) driving the UNMODIFIED, already-6-seed-GO
     `SpikingClauseProducer` -- e.g. `("bounce_around_the_ground", "country", "united_kingom")` -> "the Bounce
-    Around the Ground is located in the United Kingom". Returns `None` (NEVER a fabricated or naive-morphology
+    Around the Ground is located in the United Kingom." Returns `None` (NEVER a fabricated or naive-morphology
     guess) when `facts` carries no relation this lexicon covers -- the caller (`generate()`) then falls
     through to the pre-existing free-generation path, unchanged.
 
     MOAT-SAFE by construction (the same property the lever's own `parse_and_score` verified 1.0/6-seed): every
     token in the returned surface is either the fact's own subject/object NP or a fixed closed-class
-    predicate/determiner word -- nothing else can appear.
+    predicate/determiner word -- nothing else can appear. The one exception is the trailing sentence punctuation
+    added below, which is not one of `emit()`'s slot tokens either (a fixed closed-class terminator, the same
+    category as the DET slot's own fixed "the") -- it exists so `RichAnswerComposer.render_paragraph`'s
+    `' '.join(sentences)` (research/runners/rich_answer_composer.py) does not run consecutive fact-clause
+    sentences together with no sentence boundary between them (one-brain Stage-2 Touchpoint-A build-ahead smoke
+    finding, 2026-09-04, research/coordination/build_ahead_ready.md).
 
     Must be called from inside `_RngIsolation.run` (see `generate()`'s `_run()` below) -- `SpikingClauseProducer.
     __init__` (reached on a cache miss, see `_get_clause_producer`) builds a real `SimulationBridge`
@@ -695,7 +700,14 @@ def render_fact_sentence(facts, seed: int = 42) -> str | None:
     if not prod.spiked:
         # honesty: never claim a spiking-produced sentence the bridge did not genuinely spike for
         return None
-    return " ".join(words)
+    sentence = " ".join(words)
+    # Sentence-final punctuation. `emit()` only ever realizes the fact's own subject/object NP words or a fixed
+    # closed-class predicate/determiner word (see the moat-safe note above) -- never punctuation -- so `sentence`
+    # here never already ends in one; the endswith guard is belt-and-braces (matching this function's own
+    # existing style, e.g. the `covered` check above), not a case actually exercised today.
+    if sentence and not sentence.endswith((".", "!", "?")):
+        sentence += "."
+    return sentence
 
 
 def _apply_fact_boost(lg: np.ndarray, fact_ids, boost: float) -> np.ndarray:
