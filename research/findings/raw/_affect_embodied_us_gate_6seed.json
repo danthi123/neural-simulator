@@ -1,0 +1,429 @@
+{
+  "probe": "affect_embodied_us_gate_derisk (attempt 4: isolate the US SOURCE from the CONCEPT CODE)",
+  "verdict": "BOUNDARY (6-seed, build-informative) -- the embodied-US-oracle gate recovers worst-case recall=0.000 at joint FP=0 (banked text-US 0.000; no-cond lesion 0.000). DECISIVE: even a PERFECT embodied US cannot retire the gate through the existing TEXT CODE -- the supervised code-separability CEILING (a generous ridge probe GIVEN the affect labels, noise-free) is only 0.000 worst-case (0.020 mean) recall@FP0, so NO readout of this code (opponent included) can reach 0.5 in expectation. The register confound is in the CONCEPT CODE (perception), not only the US SOURCE. The ceiling INSTRUMENT is validated (it reads 1.000 worst-case on a cleanly-separable synthetic grounded-code, not stuck at 0), so the low real-code ceiling is a property of the text code. SHARPENS the surpass the three prior boundaries named (add an embodied US): it is NECESSARY BUT NOT SUFFICIENT -- the CONCEPT CODE must ALSO be grounded (a grounded-perception teacher), not just the US delivered. FAILED: ['G1_recall>=0.5', 'G2_surpass_text_US']. The fixed _STRONG_MARGIN gate in affect_production_organ.py is UNCHANGED (this file wires nothing).",
+  "GO": false,
+  "G1_recall>=0.5": false,
+  "G2_surpass_text_US": false,
+  "G3_lesion_collapses": true,
+  "embodied_us_worst_case_recall": 0.0,
+  "text_us_worst_case_recall": 0.0,
+  "nocond_lesion_worst_case_recall": 0.0,
+  "code_separability_ceiling_worst": 0.0,
+  "code_separability_ceiling_mean": 0.0196078431372549,
+  "code_separability_ceiling_per_seed": [
+    0.058823529411764705,
+    0.0196078431372549,
+    0.0,
+    0.00980392156862745,
+    0.0196078431372549,
+    0.00980392156862745
+  ],
+  "synthetic_separable_code_recall_worst": 0.0392156862745098,
+  "synthetic_separable_code_recall_mean": 0.16176470588235292,
+  "synthetic_code_ceiling_worst": 1.0,
+  "synthetic_code_ceiling_mean": 1.0,
+  "synthetic_detail": [
+    {
+      "recall_at_fp0": 0.10784313725490197,
+      "code_ceiling": 1.0,
+      "floor": 0.0,
+      "sep": 6.0,
+      "noise": 0.5
+    },
+    {
+      "recall_at_fp0": 0.06862745098039216,
+      "code_ceiling": 1.0,
+      "floor": 0.022708333333333334,
+      "sep": 6.0,
+      "noise": 0.5
+    },
+    {
+      "recall_at_fp0": 0.3333333333333333,
+      "code_ceiling": 1.0,
+      "floor": 0.00375,
+      "sep": 6.0,
+      "noise": 0.5
+    },
+    {
+      "recall_at_fp0": 0.38235294117647056,
+      "code_ceiling": 1.0,
+      "floor": 0.015729166666666666,
+      "sep": 6.0,
+      "noise": 0.5
+    },
+    {
+      "recall_at_fp0": 0.0392156862745098,
+      "code_ceiling": 1.0,
+      "floor": 0.013645833333333334,
+      "sep": 6.0,
+      "noise": 0.5
+    },
+    {
+      "recall_at_fp0": 0.0392156862745098,
+      "code_ceiling": 1.0,
+      "floor": 0.014895833333333332,
+      "sep": 6.0,
+      "noise": 0.5
+    }
+  ],
+  "recall_go_bar": 0.5,
+  "no_cond_max_recall": 0.15,
+  "input_lesion_floor_max": 0.011666666666666667,
+  "mean_drive_emb": 0.14921747967479673,
+  "mean_drive_nocond": 0.0,
+  "emergent_ignition_per_seed": [
+    {
+      "seed": 42,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.00733
+    },
+    {
+      "seed": 43,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.00864
+    },
+    {
+      "seed": 44,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.00875
+    },
+    {
+      "seed": 100,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.00722
+    },
+    {
+      "seed": 101,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.01225
+    },
+    {
+      "seed": 102,
+      "fp": 62,
+      "recall": 1.0,
+      "thr": 0.01203
+    }
+  ],
+  "embodied_us_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0098,
+        "tp": 1
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    ],
+    "n_pos": 102
+  },
+  "text_us_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0098,
+        "tp": 1
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0294,
+        "tp": 3
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    ],
+    "n_pos": 102
+  },
+  "nocond_detail": {
+    "per_seed": [
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      {
+        "fp": 0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    ],
+    "n_pos": 102
+  },
+  "embodied_us_threshold_norm": 1.2918482520859635,
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "input-lesion floor is ~silent (pools fire ONLY from the code FF)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "partition non-degenerate (affect + neutral both present)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the embodied US is the true-affect oracle (corr==1 by construction)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "the code-ceiling INSTRUMENT is valid (reads ~1.0 on a cleanly-separable synthetic code, not stuck at 0)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "the embodied-US opponent read is EXPERIENCE-driven (no-conditioning lesion collapses the drive)",
+      "ok": true,
+      "detail": "treatment=0.149217 control=0 |sep|=0.149217 > 0.0746087",
+      "note": ""
+    }
+  ],
+  "verdict_earned_status": "NO-GO",
+  "verdict_undefined_reasons": [],
+  "n_pos_raw_gated": 102,
+  "n_neg_raw_excluded": 62,
+  "n_partition_words": 164,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 167,
+      "code_dim": 64,
+      "n_reinforced": 151,
+      "primaries": [
+        "cuddle",
+        "kiss",
+        "cozy",
+        "hug",
+        "food",
+        "bite",
+        "fall",
+        "hungry",
+        "pain",
+        "scared"
+      ],
+      "floor_text": 0.004166666666666667,
+      "floor_emb": 0.006979166666666667,
+      "code_ceiling_recall_fp0": 0.058823529411764705,
+      "corr_s_c_text_warriner": 0.4618924960528022,
+      "corr_s_c_emb_warriner": 1.0
+    },
+    {
+      "seed": 43,
+      "n_vocab": 167,
+      "code_dim": 64,
+      "n_reinforced": 154,
+      "primaries": [
+        "cake",
+        "sweet",
+        "warm",
+        "treat",
+        "candy",
+        "scared",
+        "hungry",
+        "afraid",
+        "pain",
+        "sick"
+      ],
+      "floor_text": 0.004166666666666667,
+      "floor_emb": 0.008229166666666668,
+      "code_ceiling_recall_fp0": 0.0196078431372549,
+      "corr_s_c_text_warriner": 0.48667225911950757,
+      "corr_s_c_emb_warriner": 1.0
+    },
+    {
+      "seed": 44,
+      "n_vocab": 165,
+      "code_dim": 64,
+      "n_reinforced": 148,
+      "primaries": [
+        "warm",
+        "kiss",
+        "treat",
+        "candy",
+        "cozy",
+        "pain",
+        "afraid",
+        "fall",
+        "cry",
+        "cold"
+      ],
+      "floor_text": 0.0060416666666666665,
+      "floor_emb": 0.008333333333333333,
+      "code_ceiling_recall_fp0": 0.0,
+      "corr_s_c_text_warriner": 0.6195952047887637,
+      "corr_s_c_emb_warriner": 1.0
+    },
+    {
+      "seed": 100,
+      "n_vocab": 167,
+      "code_dim": 64,
+      "n_reinforced": 151,
+      "primaries": [
+        "sweet",
+        "cozy",
+        "candy",
+        "cake",
+        "warm",
+        "bite",
+        "cry",
+        "afraid",
+        "sick",
+        "fall"
+      ],
+      "floor_text": 0.005208333333333333,
+      "floor_emb": 0.006875,
+      "code_ceiling_recall_fp0": 0.00980392156862745,
+      "corr_s_c_text_warriner": 0.5876410232913919,
+      "corr_s_c_emb_warriner": 1.0
+    },
+    {
+      "seed": 101,
+      "n_vocab": 167,
+      "code_dim": 64,
+      "n_reinforced": 154,
+      "primaries": [
+        "cake",
+        "treat",
+        "warm",
+        "hug",
+        "candy",
+        "scared",
+        "sick",
+        "hurt",
+        "pain",
+        "cry"
+      ],
+      "floor_text": 0.004895833333333333,
+      "floor_emb": 0.011666666666666667,
+      "code_ceiling_recall_fp0": 0.0196078431372549,
+      "corr_s_c_text_warriner": 0.5071311908034078,
+      "corr_s_c_emb_warriner": 1.0
+    },
+    {
+      "seed": 102,
+      "n_vocab": 166,
+      "code_dim": 64,
+      "n_reinforced": 151,
+      "primaries": [
+        "candy",
+        "warm",
+        "hug",
+        "sweet",
+        "cozy",
+        "afraid",
+        "hurt",
+        "hungry",
+        "cold",
+        "sick"
+      ],
+      "floor_text": 0.006354166666666667,
+      "floor_emb": 0.011458333333333334,
+      "code_ceiling_recall_fp0": 0.00980392156862745,
+      "corr_s_c_text_warriner": 0.6003189517303706,
+      "corr_s_c_emb_warriner": 1.0
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "resample_frac": 0.8,
+    "n_hub": 64,
+    "window": 4,
+    "min_count": 5,
+    "n_each": 5,
+    "min_events": 2,
+    "backend": "numpy"
+  },
+  "mechanism": "spiking opponent V+/V- (build_bridge: code_in -> appr_vplus/appr_vminus with xinh cross-inhibition); weights = selforg_opponent_weights (three-factor Hebbian over the learned code); GATE = pos_rate+neg_rate (total opponent drive), read HELD-OUT via 2-fold cross-fit, per-seed label-free median gain-control, joint-FP=0. THE ONLY VARIABLE vs the experienced-opponent BOUNDARY is the conditioning US SOURCE: EMBODIED-US-ORACLE (signed true-affect current, the world/body grounded-US stand-in) vs TEXT-US (co-occurrence with ~10 innate primary words). code_separability_ceiling = supervised ridge k-fold-CV probe on the raw code (the upper bound on any code readout); synthetic_separable_code = the SAME embodied-US read on a synthetic separable code (readout-mechanism soundness).",
+  "sources": [
+    "Namburi, Tye et al. (2015, Nature) -- opposing valence-coding BLA populations bound by conditioning to a REAL unconditioned stimulus (shock/reward), NOT to lexical company: the biological grounding for the embodied-US redirection and the salience(total-drive)-vs-valence(differential) distinction.",
+    "Rescorla & Wagner (1972) -- the associative-strength asymptote (the text-US control's s_c).",
+    "2026-09-05-affect-experienced-opponent-gate-needs-embodiment-BOUNDARY.md -- named the embodied US as the surpass; this runner tests whether that US alone suffices or the concept code is also a wall.",
+    "2026-09-05-affect-learned-gate-retry-register-confound-BOUNDARY.md -- the register confound (text co-occurrence cannot separate affect from neutral); reproduced here as the text-US channel."
+  ],
+  "production_wiring": "NONE -- affect_production_organ.py and wkv_mouth_generator.py are byte-unchanged; this is a standalone research probe (reuse-by-import only).",
+  "HONEST_RESIDUALS": "(1) the embodied US is an ORACLE stand-in (signed true affect) for a grounded-world US that does NOT exist for the conversational vocabulary -- the finding names exactly what grounded-world signal must produce it; using Warriner as the oracle is the world's-US role, distinct from a graph-statistic read (the banked confound), and the read is HELD-OUT so it is not a re-read of the US. (2) rate-level Hebbian conditioning WRITE (codes are spiking-validated; fully-spiking three-factor write = a further rung). (3) the code ceiling is a linear upper bound; the spiking opponent's mild nonlinearity was measured NOT to help by the prior boundaries. (4) standalone de-risk bridge.",
+  "elapsed_seconds": 48.6
+}
