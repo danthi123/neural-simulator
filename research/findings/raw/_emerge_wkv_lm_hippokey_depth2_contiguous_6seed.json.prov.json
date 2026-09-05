@@ -1,0 +1,29 @@
+{
+  "run_id": "1788605431-4111560",
+  "started": "2026-09-05T06:50:31",
+  "sim_backend": "cupy",
+  "backend": "cupy",
+  "device": "cuda:0",
+  "corpus_check_fresh": true,
+  "corpus_check_note": "The July+Sept own-voice-fluency record was consulted before this build (RAG review of the linattn breakthrough, the wt103 scale NO-GO, the ordered-attention bound-investigation, and the July learned-keys arc; documented as step 1 of the hippokey ROADMAP/NO-GO finding). Scripted check also logged to research/queue/.corpus_checks.jsonl.",
+  "git_sha": "9c155bd6e",
+  "git_dirty": true,
+  "python": "/home/dant123/Projects/sim/.venv/bin/python",
+  "cwd": "/home/dant123/Projects/sim/.claude/worktrees/agent-a2ffcfb98fd7f6096",
+  "env": {
+    "SIM_BACKEND": "cupy"
+  },
+  "argv": [
+    "-m", "research.runners._emerge_wkv_lm_derisk",
+    "--recurrence", "hippokey", "--n-layers", "2", "--uniform-decay",
+    "--d-model", "192", "--batch", "128", "--tokenizer", "bpe",
+    "--corpus", "/home/dant123/Projects/sim/data/corpus/simplewiki.txt",
+    "--bpe-path", "/home/dant123/Projects/sim/bridges/wkv_ckpt/wkv_bpe8k.json",
+    "--contiguous", "--max-len", "40",
+    "--n-sentences", "1200000", "--max-train-sents", "1000000",
+    "--max-eval-sents", "4000", "--epochs", "5",
+    "--seeds", "42", "43", "44", "100", "101", "102", "--tok-cache",
+    "--json", "/home/dant123/Projects/sim/research/findings/raw/_emerge_wkv_lm_hippokey_depth2_contiguous_6seed.json"
+  ],
+  "note": "Sidecar reconstructed from the authentic central provenance record (research/findings/raw/_provenance/runs.jsonl, run_id 1788605431-4111560) because the run's absolute --json output path bypassed the per-artifact sidecar writer. Backend/device/git_sha are the run's recorded values."
+}
